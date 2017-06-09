@@ -187,7 +187,6 @@ import edu.utah.ece.async.ibiosim.gui.analysisView.Run;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.learnView.DataManager;
 import edu.utah.ece.async.ibiosim.gui.learnView.LearnView;
-import edu.utah.ece.async.ibiosim.gui.learnView.LearnViewLEMA;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.movie.MovieContainer;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.ElementsPanel;
@@ -1639,9 +1638,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof LearnView) {
 					((LearnView) component).viewModel();
-				} else if (component instanceof LearnViewLEMA) {
-					((LearnViewLEMA) component).viewLPN();
-				}
+				} 
 			} else if (comp instanceof LHPNEditor) {
 				((LHPNEditor) comp).viewLhpn();
 			} else if (comp instanceof JPanel) {
@@ -1667,9 +1664,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					if (component instanceof LearnView) {
 						((LearnView) component).viewLog();
 						return;
-					} else if (component instanceof LearnViewLEMA) {
-						((LearnViewLEMA) component).viewLog();
-						return;
 					}
 				}
 			}
@@ -1677,10 +1671,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			Component comp = tab.getSelectedComponent();
 			for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 				Component component = ((JTabbedPane) comp).getComponent(i);
-				if (component instanceof LearnViewLEMA) {
-					((LearnViewLEMA) component).viewCoverage();
-					return;
-				}
 			}
 		} else if (e.getSource() == saveModel) {
 			Component comp = tab.getSelectedComponent();
@@ -1688,8 +1678,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				for (Component component : ((JTabbedPane) comp).getComponents()) {
 					if (component instanceof LearnView) {
 						((LearnView) component).saveModel();
-					} else if (component instanceof LearnViewLEMA) {
-						((LearnViewLEMA) component).saveLPN();
 					}
 				}
 			}
@@ -1921,7 +1909,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 		} else if (e.getActionCommand().equals("openLearn")) {
 			if (lema) {
-				openLearnLHPN();
+				// TODO: removed
 			} else {
 				openLearn();
 			}
@@ -2321,9 +2309,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				if (component instanceof LearnView) {
 					((LearnView) component).viewModel();
 					return;
-				} else if (component instanceof LearnViewLEMA) {
-					((LearnViewLEMA) component).viewLPN();
-					return;
 				}
 			}
 		}
@@ -2612,8 +2597,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 							((Graph) component).save();
 						} else if (component instanceof LearnView) {
 							((LearnView) component).save();
-						} else if (component instanceof LearnViewLEMA) {
-							((LearnViewLEMA) component).save();
 						} else if (component instanceof DataManager) {
 							((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
 						}
@@ -2856,10 +2839,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						} else if (component instanceof LearnView) {
 							((LearnView) component).save();
 							new Thread((LearnView) component).start();
-							break;
-						} else if (component instanceof LearnViewLEMA) {
-							((LearnViewLEMA) component).save();
-							((LearnViewLEMA) component).learn();
 							break;
 						}
 					}
@@ -5332,11 +5311,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				lrnTab.addTab("Data Manager", data);
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 				if (lema) {
-					LearnViewLEMA learn = new LearnViewLEMA(root + GlobalConstants.separator + lrnName, log, this);
-					lrnTab.addTab("Learn Options", learn);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+					// TODO: removed
 				} else {
 					LearnView learn = new LearnView(root + GlobalConstants.separator + lrnName, log, this);
 					lrnTab.addTab("Learn Options", learn);
@@ -7259,42 +7234,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 										}
 									}
 								}
-								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnViewLEMA) {
-									if (((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-											.hasChanged()) {
-										if (autosave == 0) {
-											int value = JOptionPane.showOptionDialog(frame,
-													"Do you want to save learn option changes for " + getTitleAt(index)
-													+ "?",
-													"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-													JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-											if (value == YES_OPTION) {
-												if (((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i) instanceof LearnViewLEMA) {
-													((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
-															.getComponent(i)).save();
-												}
-											} else if (value == CANCEL_OPTION) {
-												return 0;
-											} else if (value == YES_TO_ALL_OPTION) {
-												if (((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i) instanceof LearnViewLEMA) {
-													((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index))
-															.getComponent(i)).save();
-												}
-												autosave = 1;
-											} else if (value == NO_TO_ALL_OPTION) {
-												autosave = 2;
-											}
-										} else if (autosave == 1) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnViewLEMA) {
-												((LearnViewLEMA) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-												.save();
-											}
-										}
-									}
-								}
 							} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 									.equals("Data Manager")) {
 								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
@@ -8243,7 +8182,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					openVerify();
 				} else if (learn) {
 					if (lema) {
-						openLearnLHPN();
+						// TODO: removed
 					} else {
 						openLearn();
 					}
@@ -8542,111 +8481,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
 									+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			// tsdGraph.addMouseListener(this);
-			lrnTab.addTab("TSD Graph", tsdGraph);
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			addTab(tree.getFile()
-					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1],
-					lrnTab, null);
-		}
-	}
-
-	private void openLearnLHPN() {
-		boolean done = false;
-		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (getTitleAt(i).equals(tree.getFile()
-					.split(GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1])) {
-				tab.setSelectedIndex(i);
-				done = true;
-			}
-		}
-		if (!done) {
-			JTabbedPane lrnTab = new JTabbedPane();
-			lrnTab.addMouseListener(this);
-			// String graphFile = "";
-			String open = null;
-			if (new File(tree.getFile()).isDirectory()) {
-				String[] list = new File(tree.getFile()).list();
-				int run = 0;
-				for (int i = 0; i < list.length; i++) {
-					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-						String end = "";
-						for (int j = 1; j < 5; j++) {
-							end = list[i].charAt(list[i].length() - j) + end;
-						}
-						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
-								if (tempNum > run) {
-									run = tempNum;
-									// graphFile = tree.getFile() + separator +
-									// list[i];
-								}
-							}
-						} else if (end.equals(".grf")) {
-							open = tree.getFile() + GlobalConstants.separator + list[i];
-						}
-					}
-				}
-			}
-
-			String lrnFile = tree.getFile() + GlobalConstants.separator
-					+ tree.getFile().split(
-							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-									+ ".lrn";
-			String lrnFile2 = tree.getFile() + GlobalConstants.separator + ".lrn";
-			Properties load = new Properties();
-			String learnFile = "";
-			try {
-				if (new File(lrnFile2).exists()) {
-					FileInputStream in = new FileInputStream(new File(lrnFile2));
-					load.load(in);
-					in.close();
-					new File(lrnFile2).delete();
-				}
-				if (new File(lrnFile).exists()) {
-					FileInputStream in = new FileInputStream(new File(lrnFile));
-					load.load(in);
-					in.close();
-					if (load.containsKey("genenet.file")) {
-						learnFile = load.getProperty("genenet.file");
-						learnFile = learnFile.split(
-								GlobalConstants.separator)[learnFile.split(GlobalConstants.separator).length - 1];
-					}
-				}
-				FileOutputStream out = new FileOutputStream(new File(lrnFile));
-				load.store(out, learnFile);
-				out.close();
-
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (getTitleAt(i).equals(learnFile)) {
-					tab.setSelectedIndex(i);
-					if (save(i, 0) == 0) {
-						return;
-					}
-					break;
-				}
-			}
-			if (!(new File(root + GlobalConstants.separator + learnFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			DataManager data = new DataManager(tree.getFile(), this);
-			lrnTab.addTab("Data Manager", data);
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-			LearnViewLEMA learn = new LearnViewLEMA(tree.getFile(), log, this);
-			lrnTab.addTab("Learn Options", learn);
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-			Graph tsdGraph = new Graph(null, "Number of molecules",
-					tree.getFile().split(
-							GlobalConstants.separator)[tree.getFile().split(GlobalConstants.separator).length - 1]
-									+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
 			addTab(tree.getFile()
@@ -9289,10 +9123,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnView) {
 						} else {
 							if (lema) {
-								LearnViewLEMA learn = new LearnViewLEMA(root + GlobalConstants.separator + learnName, log, this);
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
-										learn.getAdvancedOptionsPanel());
+								// TODO: removed
 							} else {
 								LearnView learn = new LearnView(root + GlobalConstants.separator + learnName, log, this);
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
@@ -9385,9 +9216,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						} else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
-							((LearnViewLEMA) (learn.getComponentAt(j)))
-							.updateSpecies(root + GlobalConstants.separator + updatedFile);
-							((LearnViewLEMA) (learn.getComponentAt(j))).reload(updatedFile);
+							// TODO: removed
 						} else if (learn.getComponentAt(j).getName().contains("Graph")) {
 							((Graph) (learn.getComponentAt(j))).refresh();
 						}
@@ -9781,9 +9610,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				if (c instanceof LearnView) {
 					learn = true;
 					learnComponent = c;
-				} else if (c instanceof LearnViewLEMA) {
-					learnLHPN = true;
-					learnComponent = c;
 				}
 			}
 			if (component instanceof Graph) {
@@ -9808,13 +9634,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
 				} else if (learnLHPN && learnComponent != null) {
-					run.setEnabled(true);
-					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					saveAsVerilog.setEnabled(false);
-					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
+					// TODO: removed
 				}
 				saveAs.setEnabled(true);
 				refresh.setEnabled(true);
@@ -9876,19 +9696,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				viewCircuit.setEnabled(((LearnView) component).getViewModelEnabled());
 				viewLog.setEnabled(((LearnView) component).getViewLogEnabled());
 				saveModel.setEnabled(((LearnView) component).getViewModelEnabled());
-			} else if (component instanceof LearnViewLEMA) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(true);
-				save.setEnabled(true);
-				saveAll.setEnabled(true);
-				close.setEnabled(true);
-				closeAll.setEnabled(true);
-				run.setEnabled(true);
-				viewLearnedModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
-				viewCircuit.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
-				viewLog.setEnabled(((LearnViewLEMA) component).getViewLogEnabled());
-				viewCoverage.setEnabled(((LearnViewLEMA) component).getViewCoverageEnabled());
-				saveModel.setEnabled(((LearnViewLEMA) component).getViewLhpnEnabled());
 			} else if (component instanceof DataManager) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
@@ -9906,14 +9713,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
 					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
-				} else if (learnLHPN && learnComponent != null) {
-					run.setEnabled(true);
-					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
-				}
+				} 
 			} else if (component instanceof JPanel) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
@@ -9931,14 +9731,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
 					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
-				} else if (learnLHPN && learnComponent != null) {
-					run.setEnabled(true);
-					saveModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewLearnedModel.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewCircuit.setEnabled(((LearnViewLEMA) learnComponent).getViewLhpnEnabled());
-					viewLog.setEnabled(((LearnViewLEMA) learnComponent).getViewLogEnabled());
-					viewCoverage.setEnabled(((LearnViewLEMA) learnComponent).getViewCoverageEnabled());
-				}
+				} 
 			} else if (component instanceof JScrollPane) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
