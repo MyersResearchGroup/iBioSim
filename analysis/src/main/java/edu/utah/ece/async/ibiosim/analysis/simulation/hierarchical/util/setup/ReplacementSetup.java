@@ -146,7 +146,7 @@ public class ReplacementSetup
 		{
 			if (sbasePlugin.isSetReplacedBy())
 			{
-				setupReplacedBy(sbasePlugin.getReplacedBy(), node,container);
+				setupReplacedBy(sbasePlugin.getReplacedBy(), sbase.getId(), node,container);
 			}
 
 			if (sbasePlugin.isSetListOfReplacedElements())
@@ -211,7 +211,7 @@ public class ReplacementSetup
 		}
 	}
 
-	private static void setupReplacedBy(ReplacedBy element, VariableNode node, ModelContainer container)
+	private static void setupReplacedBy(ReplacedBy element, String id, VariableNode node, ModelContainer container)
 	{
 		String subModelId = element.getSubmodelRef();
 		HierarchicalModel top = container.getHierarchicalModel();
@@ -237,7 +237,7 @@ public class ReplacementSetup
         {
 				  sub.addMappingNode(subId, node);
         }
-        top.addDeletedBySid(subId);
+        top.addDeletedBySid(id);
 			}
 			else
 			{
@@ -246,7 +246,7 @@ public class ReplacementSetup
         {
           sub.addMappingNode(subId, node);
         }
-				top.addDeletedBySid(subId);
+				top.addDeletedBySid(id);
 			}
 		}
 		else if (element.isSetPortRef())
@@ -257,7 +257,7 @@ public class ReplacementSetup
       {
         sub.addMappingNode(subId, node);
       }
-			top.addDeletedBySid(subId);
+			top.addDeletedBySid(id);
 		}
 	}
 	

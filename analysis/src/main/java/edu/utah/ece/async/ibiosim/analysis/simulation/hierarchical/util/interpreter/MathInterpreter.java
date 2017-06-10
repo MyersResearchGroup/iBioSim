@@ -21,6 +21,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Hierarch
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionDefNode;
 
 /**
  * 
@@ -89,7 +90,7 @@ public final class MathInterpreter
 			}
 			break;
 		case FUNCTION:
-			node = new HierarchicalNode(Type.FUNCTION);
+			node = new FunctionDefNode(math.getName());
 			for (ASTNode child : math.getListOfNodes())
 			{
 				node.addChild(parseASTNode(child, variableToNodes, dimensionNodes, parent));

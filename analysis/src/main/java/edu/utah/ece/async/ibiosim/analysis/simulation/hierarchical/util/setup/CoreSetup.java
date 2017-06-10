@@ -93,6 +93,8 @@ public class CoreSetup
       if(node == null)
       {
         node = new VariableNode(compartmentID);
+
+        modelstate.addMappingNode(compartmentID, node);
       }
       ReplacementSetup.setupReplacement(compartment, node, container);
       if (modelstate.isDeletedBySId(compartmentID))
@@ -102,7 +104,6 @@ public class CoreSetup
       if (compartment.getConstant())
       {
         node.createState(StateType.SCALAR, wrapper);
-        modelstate.addMappingNode(compartmentID, node);
 
       }
       else
@@ -112,16 +113,16 @@ public class CoreSetup
         node.getState().addState(modelstate.getIndex(), 0);
         if(sim.getInterestingSpecies() == null)
         {
-            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
         }
       }
-      
-      
+
+
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
       }
-      
+
 
       if (Double.isNaN(compartment.getSize()))
       {
@@ -153,7 +154,7 @@ public class CoreSetup
         {
           continue;
         }
-        
+
         id = constraint.getMetaId();
       }
       else
@@ -161,7 +162,7 @@ public class CoreSetup
         id = "constraint " + count++;
       }
 
-      
+
 
       ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, constraint.getMath(), model);
 
@@ -205,7 +206,7 @@ public class CoreSetup
     {
 
       ReplacementSetup.setupReplacement(event, null, container);
-      
+
       if (modelstate.isDeletedBySId(event.getId()))
       {
         continue;
@@ -277,7 +278,7 @@ public class CoreSetup
     for (InitialAssignment initAssignment : model.getListOfInitialAssignments())
     {
       ReplacementSetup.setupReplacement(initAssignment, container);
-      
+
       if (initAssignment.isSetMetaId() && modelstate.isDeletedByMetaId(initAssignment.getMetaId()))
       {
         continue;
@@ -324,25 +325,21 @@ public class CoreSetup
     {
       node = modelstate.getNode(parameter.getId());
       String printVariable = container.getPrefix() + parameter.getId();
-      
+
       if(node == null)
       {
         node = new VariableNode(parameter.getId());
+        modelstate.addMappingNode(parameter.getId(), node);
       }
       ReplacementSetup.setupReplacement(parameter, node, container);
       if (modelstate.isDeletedBySId(parameter.getId()))
       {
         continue;
       }
-      else if (ArraysSetup.checkArray(parameter))
-      {
-        continue;
-      }
-      
+
       if (parameter.isConstant())
       {
         node.createState(StateType.SCALAR, wrapper);
-        modelstate.addMappingNode(parameter.getId(), node);
       }
       else
       {
@@ -351,7 +348,7 @@ public class CoreSetup
         node.getState().addState(modelstate.getIndex(), 0);
         if(sim.getInterestingSpecies() == null)
         {
-            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
         }
       }
 
@@ -359,7 +356,7 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
       }
-      
+
       node.setValue(modelstate.getIndex(), parameter.getValue());
     }
   }
@@ -509,7 +506,7 @@ public class CoreSetup
           VariableNode node = new VariableNode(id, StateType.SCALAR);
           node.setValue(localParameter.getValue());
           reactionNode.addLocalParameter(id, node);
-          
+
           String printVariable = container.getPrefix() + localParameter.getId();
           if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
           {
@@ -617,29 +614,30 @@ public class CoreSetup
       {
         node = new SpeciesNode(species.getId());
         node.createSpeciesTemplate();
-        if(species.getConstant())
-        {
-          node.createState(StateType.SCALAR, wrapper);
-          modelstate.addMappingNode(node.getName(), node);
-        }
-        else
-        {
-          node.createState(type, wrapper);
-          modelstate.addVariable(node);
-          node.getState().addState(modelstate.getIndex(), 0);
-          if(sim.getInterestingSpecies() == null)
-          {
-              sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
-          }
-        }
-        
-        
-        if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+
+        modelstate.addMappingNode(species.getId(), node);
+      }
+      if(species.getConstant())
+      {
+        node.createState(StateType.SCALAR, wrapper);
+      }
+      else
+      {
+        node.createState(type, wrapper);
+        modelstate.addVariable(node);
+        node.getState().addState(modelstate.getIndex(), 0);
+        if(sim.getInterestingSpecies() == null)
         {
           sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
         }
-        
       }
+
+
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+      }
+
       ReplacementSetup.setupReplacement(species, node, container);
       if (modelstate.isDeletedBySId(species.getId()))
       {
@@ -649,7 +647,7 @@ public class CoreSetup
       {
         continue;
       }
-      
+
       node.setBoundaryCondition(species.getBoundaryCondition());
       node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
       VariableNode compartment = modelstate.getNode(species.getCompartment());
