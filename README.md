@@ -35,10 +35,9 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
 
 ## Installing iBioSim
-1. SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project (e.g. ```git clone https://github.com/SynBioDex/SBOLDesigner.git```) in a location of your preference.
-2. Go to the directory where the SBOLDesigner is checked out and perform ```mvn clean install```. This will build SBOLDesigner and install it into your local repository, which is used as a dependency in iBioSim. 
-3. In a directory outside SBOLDesigner, clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```).
-4. Now, go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
+1. SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project (e.g. ```git clone https://github.com/SynBioDex/SBOLDesigner.git```) in a location of your preference. Go to the directory where the SBOLDesigner is checked out and perform ```mvn clean install```. This will build SBOLDesigner and install it into your local repository, which is used as a dependency in iBioSim. 
+3. In a directory outside SBOLDesigner, clone the LEMA project (https://github.com/MyersResearchGroup/LEMA). Go to the directory where LEMA is checked out, and inside LEMA/verification, perform ```mvn clean install```.
+3. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ## Running iBioSim
 1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
@@ -66,7 +65,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * All installation should be complete so click ```Finish```
 5. Perform ```Update Project``` under Maven by right clicking on the iBioSim project.
 6. If you want to import SBOLDesigner into Eclipse, then repeat the previous steps for SBOLDesigner. Make sure you execute ```Maven generate-sources``` to resolve some dependencies in SBOLDesigner as well.
-7. If you want to update SBOLDesigner in iBioSim, then under ```Package Explorer``` in Eclipse, right click on the SBOLDesigner pom.xml file and click select ```Run As``` and click ```Maven clean```. Do the same for ```Maven install```. Alternatively, you can do this from the command-line as instructed in [Installing iBioSim](#installing-iBioSim).
+7. If you want to update SBOLDesigner in iBioSim, then under ```Package Explorer``` in Eclipse, right click on the SBOLDesigner pom.xml file and click select ```Run As``` and click ```Maven clean```. Do the same for ```Maven install```. Alternatively, you can do this from the command-line as instructed in [Installing iBioSim](#installing-ibiosim).
 
 ### Setting up iBioSim Configurations in Eclipse
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
