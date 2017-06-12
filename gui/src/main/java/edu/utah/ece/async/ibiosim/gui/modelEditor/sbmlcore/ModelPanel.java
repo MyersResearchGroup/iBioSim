@@ -312,6 +312,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolField.getSBOLURIs(),
 							sbolField.getSBOLStrand());
+					
 					if(!AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot))
 					{
 					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(sbmlModel) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 

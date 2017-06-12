@@ -599,7 +599,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
 					3, false);
-
+			
 			grid.add(sbolField);
 
 			if (bioModel.isInput(species.getId())) {
@@ -893,6 +893,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+							sbolField.getSBOLURIs().iterator().next()); 
 					
 					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
 					{

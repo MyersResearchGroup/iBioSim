@@ -38,7 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import org.sbml.jsbml.JSBML;
 
 /**
- * 
+ * Indicate the pattern of SBOL Annotation
  *
  * @author Nicholas Roehner
  * @author Chris Myers
