@@ -178,7 +178,7 @@ public class EventNode extends HierarchicalNode
 			state.setMinEnabledTime(Double.POSITIVE_INFINITY);
 
 			
-			if (!isPersistent)
+			if (isPersistent)
 			{
 				if (!computeTrigger(index))
 				{
@@ -247,7 +247,7 @@ public class EventNode extends HierarchicalNode
 		
 		if (trigger)
 		{
-			if(state.getMaxDisabledTime() >= 0 && time > state.getMaxDisabledTime() && time < state.getMinEnabledTime())
+			if(state.getMaxDisabledTime() >= 0 && time >= state.getMaxDisabledTime() && time <= state.getMinEnabledTime())
 			{
 				state.setMinEnabledTime(time);
 			}

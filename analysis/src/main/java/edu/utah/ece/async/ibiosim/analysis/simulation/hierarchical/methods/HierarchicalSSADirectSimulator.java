@@ -143,7 +143,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     }
     printTime.setValue(getOutputStartTime());
     previousTime = 0;
-    nextEventTime = getNextEventTime();
 
     while (currentTime.getValue(0) < getTimeLimit() && !isCancelFlag())
     {
@@ -280,15 +279,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
   private double getNextEventTime()
   {
-    for(HierarchicalModel model : modules)
-    {
-
-      for (EventNode event : model.getEvents())
-      {
-        event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
-      }
-    }
-    computeEvents();
+    checkEvents();
     if (triggeredEventList != null && !triggeredEventList.isEmpty())
     {
       return triggeredEventList.peek().getFireTime();

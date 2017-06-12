@@ -18,6 +18,7 @@ import java.util.Map;
 import org.sbml.jsbml.ASTNode;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.NumberNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
