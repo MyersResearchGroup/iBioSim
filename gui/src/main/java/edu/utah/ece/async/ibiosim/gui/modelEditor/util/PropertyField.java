@@ -106,18 +106,18 @@ public class PropertyField extends JPanel implements ActionListener,
 		// }
 	}
 
-	private void init(String nameString, String valueString, String stateString) {
-		name = new JLabel(nameString);
+	private void init(String nameString, String valueString, String stateString)
+	{
+		name = new JLabel(nameString, JLabel.RIGHT);
 		name.setName(nameString);
 		name.setText(nameString);
 		if (textArea) {
-			this.add(name,"North");
+			this.add(name); 
 		} else {
 			this.add(name);
 		}
-//		if (!(valueString == null) && !(stateString == null)) {
 		if (nameString != null && stateString != null) {
-			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + ") ");
+			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + "):" );
 //			idLabel = new JLabel("ID");
 //			idLabel.setEnabled(false);
 //			this.add(idLabel);

@@ -83,8 +83,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	
 	/**
 	 * 
-	 * @param sbolURIs
-	 * @param sbolStrand
+	 * @param sbolURIs - The URI of the SBOL object identity to be annotated
+	 * @param sbolStrand - The SBOL sequence to be annotated to the SBOL object.
 	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. 
 	 * @param modelEditor
 	 * @param styleOption
@@ -123,7 +123,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * Creates an instance for SBOL Association. 
 	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. This sbolType is currently limited to ComponentDefinition or ModuleDefinition.
 	 * @param modelEditor
-	 * @param styleOption
+	 * @param styleOption - The number of columns to create for the UI components.
 	 * @param isModelPanelField
 	 */
 	public SBOLField2(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField){
@@ -317,6 +317,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	private void associateSBOL(String filePath, SBOLDocument workingDoc)
 	{
+		//TODO: Add check to perform SBOL association for CompDef and ModDef
 		String[] options = {"Registry part", "Generic part", "Cancel"};
 		int choice = JOptionPane.showOptionDialog(getParent(),
 				"There is currently no associated SBOL part.  Would you like to associate one from a registry or associate a generic part?",
@@ -452,6 +453,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		writeSBOLDocument(filePath, workingDoc);
 	}
 	
+	/**
+	 * Write the given SBOLDocument to the specified filePath
+	 * @param filePath - The location to write the SBOLDocument to
+	 * @param workingDoc - The SBOLDocument to write 
+	 */
 	private void writeSBOLDocument(String filePath, SBOLDocument workingDoc)
 	{
 		try 
@@ -474,6 +480,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Read the given SBOLDocument from the specified filePath.
+	 * @param filePath - The location to read the SBOLDocument.
+	 * @return The SBOLDocument that was read in. 
+	 */
 	private SBOLDocument readSBOLFile(String filePath)
 	{
 		SBOLDocument doc = null;
@@ -517,7 +528,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			if (styleOption == 3)
 				sbolLabel = new JLabel("SBOL ComponentDefinition");
 			else
-				sbolLabel = new JLabel("SBOL ComponentDefinition: ");
+				sbolLabel = new JLabel("SBOL ComponentDefinition:", JLabel.RIGHT);
 		} 
 		else if (sbolType.equals(GlobalConstants.SBOL_CDS))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
