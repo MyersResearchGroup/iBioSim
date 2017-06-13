@@ -608,7 +608,6 @@ public class CoreSetup
     for (Species species : model.getListOfSpecies())
     {
 
-      String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
       if(node == null)
       {
@@ -617,6 +616,18 @@ public class CoreSetup
 
         modelstate.addMappingNode(species.getId(), node);
       }
+      
+      ReplacementSetup.setupReplacement(species, node, container);
+      if (modelstate.isDeletedBySId(species.getId()))
+      {
+        continue;
+      }
+      if (ArraysSetup.checkArray(species))
+      {
+        continue;
+      }
+      String printVariable = container.getPrefix() + species.getId();
+      
       if(species.getConstant())
       {
         node.createState(StateType.SCALAR, wrapper);
@@ -636,16 +647,6 @@ public class CoreSetup
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
-      }
-
-      ReplacementSetup.setupReplacement(species, node, container);
-      if (modelstate.isDeletedBySId(species.getId()))
-      {
-        continue;
-      }
-      if (ArraysSetup.checkArray(species))
-      {
-        continue;
       }
 
       node.setBoundaryCondition(species.getBoundaryCondition());
