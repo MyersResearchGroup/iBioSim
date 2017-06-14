@@ -56,7 +56,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * <p>
  * "-b" check best practices
  * <p>
- * "-cf" second SBOL file if file diff. option is selected
+ * "-cf" The name of the file that will be produced to hold the result of the second SBOL file, if SBOL file diff was selected.
  * <p>
  * "-d" display detailed error trace
  * <p>
@@ -70,7 +70,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * <p>
  * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
  * <p>
- * "-mf" main SBOL file if file diff. option is selected
+ * "-mf" The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.
  * <p>
  * "-n" allow non-compliant URIs
  * <p>
@@ -93,8 +93,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * "-v" specifies version to use for converted objects
  * <p>
  *
- * @author Zhen Zhang
  * @author Tramy Nguyen
+ * @author Zhen Zhang
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -127,7 +127,7 @@ public class Converter {
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
 		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
-		System.err.println("\t-mf  The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.");
+		System.err.println("\t-mf The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
 		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
 		System.err.println("\t-no  indicate no output file to be generated from validation");
@@ -467,7 +467,7 @@ public class Converter {
 							{
 								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
 								saveSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
-							} //end of root md for loop
+							} 
 						}
 					}
 					catch (FileNotFoundException e) {
@@ -502,6 +502,12 @@ public class Converter {
 	} // end of method
 
 
+	/**
+	 * Check if the given file is an SBML file.
+	 * @param file - The file to check if it is a valid SBML file.
+	 * @return True if it is an SBML file. False otherwise. 
+	 * @throws IOException - Unable to read file.
+	 */
 	private static boolean isSBMLFile(String file) throws IOException
 	{
 		BufferedReader b = new BufferedReader( new FileReader(file));
@@ -569,12 +575,12 @@ public class Converter {
 			} 
 			catch (SBMLException e) 
 			{
-				// TODO Auto-generated catch block
+				System.err.println("ERR: SBML Exception occurred when exporting BioModels to an SBML file");
 				e.printStackTrace();
 			} 
 			catch (XMLStreamException e) 
 			{
-				// TODO Auto-generated catch block
+				System.err.println("ERR: Invalid XML file");
 				e.printStackTrace();
 			}
 		}
@@ -612,16 +618,21 @@ public class Converter {
 		} 
 		catch (XMLStreamException e) 
 		{
-			System.err.println("ERR: Invalid XML file");
+			System.err.println("ERR: Invalid XML file.");
 			e.printStackTrace();
 		} 
 		catch (IOException e) 
 		{
-			System.err.println("ERR: Unable to write file to SBML");
+			System.err.println("ERR: Unable to write file to SBML.");
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Export a list of BioModels to the specified output directory.
+	 * @param models - The list of BioModels
+	 * @param outputDir - The output directory to store the SBML files
+	 */
 	private static void exportMultSBMLFile(List<BioModel> models, String outputDir)
 	{
 		//Multiple SBML output
