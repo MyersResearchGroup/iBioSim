@@ -248,7 +248,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	public String getSBOLObjSBOTerm()
 	{
-		return associatedObjSBO;
+		return (associatedObjSBO != null) ? associatedObjSBO : GlobalConstants.SBO_PROTEIN;
 	}
 	
 	

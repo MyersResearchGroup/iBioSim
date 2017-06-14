@@ -27,12 +27,12 @@ public abstract class ConversionAbstractTests {
 	
 	protected String resourceDir = ConversionAbstractTests.class.getResource(".").getPath() + File.separator ;
 	protected String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
-	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
+	
 	protected String genBank_outputDir = resourceDir + "GenBank_Output" + File.separator;
 	protected String fasta_outputDir = resourceDir + "FASTA_Output" + File.separator;
 	protected String sbmlDir = resourceDir + "SBML" + File.separator;
 	protected String sbolDir = resourceDir + "SBOL" + File.separator;
-	protected String repressionDir = sbolDir + File.separator + "genModels" + File.separator;
+	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_out" + File.separator;
 
 	
 	
