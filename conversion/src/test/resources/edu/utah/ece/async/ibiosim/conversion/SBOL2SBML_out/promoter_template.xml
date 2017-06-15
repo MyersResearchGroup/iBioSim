@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" arrays:required="true" comp:required="true" fbc:required="false" layout:required="false" level="3" version="1" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+    <comp:externalModelDefinition comp:id="degradation_template" comp:md5="2e27db9006c94342c23bedc3b2bb053a" comp:source="degradation_template.xml"/>
+    <comp:externalModelDefinition comp:id="transcription_template" comp:md5="f8daa3b8e37865e1c848fb5e50d2b690" comp:source="transcription_template.xml"/>
+  </comp:listOfExternalModelDefinitions>
+  <model fbc:strict="false" id="promoter_template" metaid="iBioSim1">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:ModuleDefinitions>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template"/></rdf:Bag></mts:ModuleDefinitions></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:submodel comp:id="mrna_degradation" comp:modelRef="degradation_template" metaid="iBioSim5">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim5">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/degradation_template"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="transcription" comp:modelRef="transcription_template" metaid="iBioSim7">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim7">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/transcription_template"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+    </comp:listOfSubmodels>
+    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__mRNA" comp:idRef="mRNA" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__sigmaFactor" comp:idRef="sigmaFactor" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__promoter" comp:idRef="promoter" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="40" layout:width="80"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__mrna_degradation" layout:reference="mrna_degradation">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__transcription" layout:reference="transcription">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__mrna_degradation" layout:id="TextGlyph__mrna_degradation" layout:text="mrna_degradation">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__transcription" layout:id="TextGlyph__transcription" layout:text="transcription">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="mrna_degradation"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="transcription"/>
+        </comp:listOfReplacedElements>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="mRNA" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__mRNA"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__mRNA"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__species" comp:submodelRef="mrna_degradation" metaid="iBioSim6">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim6">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template/mrna_degradation/mRNA"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__mRNA" comp:submodelRef="transcription" metaid="iBioSim9">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim9">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template/transcription/mRNA"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="sigmaFactor" initialAmount="0" metaid="iBioSim3" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__sigmaFactor"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__sigmaFactor"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__sigmaFactor" comp:submodelRef="transcription" metaid="iBioSim8">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim8">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template/transcription/sigmaFactor"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="promoter" initialAmount="0" metaid="iBioSim4" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim4">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__promoter"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template__promoter"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__popsSpecies" comp:submodelRef="transcription" metaid="iBioSim10">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim10">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/promoter_template/transcription/promoter"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+    </listOfSpecies>
+  </model>
+</sbml>

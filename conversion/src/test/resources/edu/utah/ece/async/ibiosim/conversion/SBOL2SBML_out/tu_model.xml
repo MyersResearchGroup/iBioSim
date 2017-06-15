@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" arrays:required="true" comp:required="true" fbc:required="false" layout:required="false" level="3" version="1" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+    <comp:externalModelDefinition comp:id="BO_2685_model" comp:md5="2a28b8f9f74757f9434be2bd64996bd4" comp:source="BO_2685_model.xml"/>
+    <comp:externalModelDefinition comp:id="BO_27783_model" comp:md5="4e08986806cbfabb81582b0f4269216f" comp:source="BO_27783_model.xml"/>
+    <comp:externalModelDefinition comp:id="BO_32077_model" comp:md5="943485a0d1bc3b5e477fddf9d3dfd709" comp:source="BO_32077_model.xml"/>
+    <comp:externalModelDefinition comp:id="BO_10845repressesBO_2685_model" comp:md5="13841353a00a142cc019d904beb80fa5" comp:source="BO_10845repressesBO_2685_model.xml"/>
+  </comp:listOfExternalModelDefinitions>
+  <model fbc:strict="false" id="tu_model" metaid="iBioSim1">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:ModuleDefinitions>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model"/></rdf:Bag></mts:ModuleDefinitions></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:submodel comp:id="BO_2685C1_model" comp:modelRef="BO_2685_model" metaid="iBioSim8">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim8">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/BO_2685_model"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="BO_27783C2_model_BO_2685C1" comp:modelRef="BO_27783_model" metaid="iBioSim12">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim12">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/BO_27783_model"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="BO_32077C3_model_BO_2685C1" comp:modelRef="BO_32077_model" metaid="iBioSim15">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim15">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="BO_10845repressesBO_2685_BO_2685C1_model" comp:modelRef="BO_10845repressesBO_2685_model" metaid="iBioSim18">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim18">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+    </comp:listOfSubmodels>
+    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="40" layout:width="80"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__BO_2685C1_model" layout:reference="BO_2685C1_model">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__BO_27783C2_model_BO_2685C1" layout:reference="BO_27783C2_model_BO_2685C1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__BO_32077C3_model_BO_2685C1" layout:reference="BO_32077C3_model_BO_2685C1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__BO_10845repressesBO_2685_BO_2685C1_model" layout:reference="BO_10845repressesBO_2685_BO_2685C1_model">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__BO_2685C1_model" layout:id="TextGlyph__BO_2685C1_model" layout:text="BO_2685C1_model">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__BO_27783C2_model_BO_2685C1" layout:id="TextGlyph__BO_27783C2_model_BO_2685C1" layout:text="BO_27783C2_model_BO_2685C1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__BO_32077C3_model_BO_2685C1" layout:id="TextGlyph__BO_32077C3_model_BO_2685C1" layout:text="BO_32077C3_model_BO_2685C1">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__BO_10845repressesBO_2685_BO_2685C1_model" layout:id="TextGlyph__BO_10845repressesBO_2685_BO_2685C1_model" layout:text="BO_10845repressesBO_2685_BO_2685C1_model">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="BO_2685C1_model"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="BO_27783C2_model_BO_2685C1"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="BO_32077C3_model_BO_2685C1"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="BO_10845repressesBO_2685_BO_2685C1_model"/>
+        </comp:listOfReplacedElements>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BO_2685C1" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_2685C1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_2685C1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__BO_2685" comp:submodelRef="BO_2685C1_model" metaid="iBioSim9">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim9">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/BO_2685C1"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__promoter" comp:submodelRef="BO_10845repressesBO_2685_BO_2685C1_model" metaid="iBioSim21">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim21">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_2685C1"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BO_27783C2" initialAmount="0" metaid="iBioSim3" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_27783C2"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_27783C2"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__rbs" comp:submodelRef="BO_27783C2_model_BO_2685C1" metaid="iBioSim14">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim14">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/BO_27783C2"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BO_32077C3" initialAmount="0" metaid="iBioSim4" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim4">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_32077C3"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_32077C3"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__cds" comp:submodelRef="BO_32077C3_model_BO_2685C1" metaid="iBioSim16">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim16">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_32077C3"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BO_10845" initialAmount="0" metaid="iBioSim5" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim5">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_10845"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_10845"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__protein" comp:submodelRef="BO_32077C3_model_BO_2685C1" metaid="iBioSim17">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim17">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_10845"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__activator" comp:submodelRef="BO_10845repressesBO_2685_BO_2685C1_model" metaid="iBioSim19">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim19">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_10845"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="SigmaA" initialAmount="0" metaid="iBioSim6" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim6">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__SigmaA"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__SigmaA"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__SigmaA" comp:submodelRef="BO_2685C1_model" metaid="iBioSim11">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim11">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/SigmaA"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="mrnaBO_2685C1" initialAmount="0" metaid="iBioSim7" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim7">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__mrnaBO_2685C1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model__mrnaBO_2685C1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__mRNA" comp:submodelRef="BO_2685C1_model" metaid="iBioSim10">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim10">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/mrnaBO_2685C1"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__mRNA" comp:submodelRef="BO_27783C2_model_BO_2685C1" metaid="iBioSim13">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim13">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/mrnaBO_2685C1"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__mRNA" comp:submodelRef="BO_10845repressesBO_2685_BO_2685C1_model" metaid="iBioSim20">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim20">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/mrnaBO_2685C1"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+    </listOfSpecies>
+  </model>
+</sbml>
