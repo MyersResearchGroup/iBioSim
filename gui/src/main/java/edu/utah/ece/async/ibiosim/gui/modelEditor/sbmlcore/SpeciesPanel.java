@@ -900,9 +900,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					}
 					
 					//Update iBioSim species id, name and SBO term from the annotated SBOL element
-					newSpeciesID = sbolField.getSBOLObjID();
-					species.setName(sbolField.getSBOLObjName()); 
-					species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+					// TODO: these are causing null pointer exceptions
+					//newSpeciesID = sbolField.getSBOLObjID();
+					//species.setName(sbolField.getSBOLObjName()); 
+					//species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
 					
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);
