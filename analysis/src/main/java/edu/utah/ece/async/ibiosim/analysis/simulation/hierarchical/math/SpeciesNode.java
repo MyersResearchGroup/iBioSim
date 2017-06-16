@@ -121,7 +121,7 @@ public class SpeciesNode extends VariableNode
 	@Override
 	public double computeRateOfChange(int index, double time)
 	{
-		double rate = 0;
+	  double rate = state.getRateValue(index);
 		if (rateRule != null)
 		{
 			rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
@@ -143,13 +143,14 @@ public class SpeciesNode extends VariableNode
 	    {
 	      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
 	    }
-			
+			state.setRateValue(index, rate);
 			return rate;
 
 		}
 		else if (odeRate != null && !speciesTemplates.isBoundary)
 		{
 			rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
+			state.setRateValue(index, rate);
 		}
 		return rate;
 	}

@@ -31,12 +31,11 @@ public class VariableNode extends HierarchicalNode
 {
 
   protected boolean			isVariableConstant;
-  protected String			name;
   protected boolean hasRule;
 
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
-
+  
   public VariableNode(String name)
   {
     super(Type.NAME);
@@ -55,16 +54,6 @@ public class VariableNode extends HierarchicalNode
     super(copy);
     this.name = copy.name;
     this.isVariableConstant = copy.isVariableConstant;
-  }
-
-  public void setName(String name)
-  {
-    this.name = name;
-  }
-
-  public String getName()
-  {
-    return name;
   }
 
   public List<ReactionNode> getReactionDependents()
@@ -95,11 +84,13 @@ public class VariableNode extends HierarchicalNode
 
   public double computeRateOfChange(int index, double time)
   {
-    if (rateRule == null)
+    double rate = state.getRateValue(index);
+    if (rateRule != null)
     {
-      return 0;
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
+      state.setStateValue(index, rate);
     }
-    return Evaluator.evaluateExpressionRecursive(rateRule, false, index);
+    return rate;
   }
 
   public void setRateRule( HierarchicalNode rateRule)
@@ -135,5 +126,9 @@ public class VariableNode extends HierarchicalNode
     return hasRule;
   }
 
+  public void setName(String name)
+  {
+    this.name = name;
+  }
 
 }

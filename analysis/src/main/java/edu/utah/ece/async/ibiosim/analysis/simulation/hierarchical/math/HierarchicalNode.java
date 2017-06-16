@@ -38,7 +38,8 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   private List<HierarchicalNode>  children;
   private ArrayNode       arrayNode;
   protected HierarchicalState   state;
-
+  protected String name;
+  
   public HierarchicalNode(Type type)
   {
     super(type);
@@ -203,11 +204,16 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   {
     return state;
   }
-
+  
   @Override
   public String report()
   {
     return toString();
+  }
+  
+  public String getName()
+  {
+    return name;
   }
 
 }

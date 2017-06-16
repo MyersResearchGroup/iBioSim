@@ -31,20 +31,18 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Install](http://sbml.org/Software/libSBML/) libSBML for validation and flattening.
+5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.15.0/experimental/binaries/) libSBML for validation and flattening.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
 
-## Setting up iBioSim
-1. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) and SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project from command-line (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) or any other method of your choice as instructed in the provided link.
-2. Go to the directory where the SBOLDesigner is checked out and perform ```mvn clean install```. This will build SBOLDesigner and install it into your local repository, which is used as a dependency in iBioSim. 
-4. Now, go to the directory where the iBioSim is checked out and perform ```mvn clean```. This will install the local non-Maven dependencies into your local repository and then build iBioSim.
-5. Once you do ```mvn clean```, execute ```mvn package``` to build iBioSim. NOTE: if you do not want to generate source and javadocs, use the flag ```-Dmaven.javadoc.skip=true``` during ```mvn package```.
+## Installing iBioSim
+1. SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project (e.g. ```git clone https://github.com/SynBioDex/SBOLDesigner.git```) in a location of your preference. Go to the directory where the SBOLDesigner is checked out and perform ```mvn clean install```. This will build SBOLDesigner and install it into your local repository, which is used as a dependency in iBioSim. 
+3. In a directory outside SBOLDesigner, clone the LEMA project (https://github.com/MyersResearchGroup/LEMA). Go to the directory where LEMA is checked out, and inside LEMA/verification, perform ```mvn clean install```.
+3. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ## Running iBioSim
 1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
-2. Copy ```gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project.
-3. Rename ```iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
-4. In the bin directory, run:
+2. Copy ```gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project and rename ```iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
+3. In the bin directory, run:
       * Windows: ```iBioSim.bat``` 
       * Mac OS X: ```iBioSim.mac64```
       * Linux: ```iBioSim.linux64```
@@ -55,8 +53,9 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
 2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
 
-## [Optional] Installing iBioSim in Eclipse
-1. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) and SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project from command-line (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) or any other method of your choice as instructed in the provided link.
+## [Optional] Setting up iBioSim in Eclipse
+### Importing iBioSim to Eclipse
+1. Follow the installation instructions for iBioSim above.
 2. Open up your Eclipse workspace that you want to import your iBioSim project to.
 3. Select Import from the File Menu.
 4. When given the option to select which project import, select ```Existing Maven Projects``` under Maven
@@ -64,12 +63,11 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * Root Directory: full path to your iBioSim project (i.e. path/to/iBioSim)
       * Once root directory is set, all the pom.xml should be displayed under Projects. Select all pom.xml files.
       * All installation should be complete so click ```Finish```
-5. Under ```Package Explorer``` in Eclipse, right click on the iBioSim pom.xml file and click select ```Run As``` and click ```Maven clean```. This will install the local jars as dependencies in your local repository. 
-6. If you want to import SBOLDesigner into Eclipse, then repeat the previous steps for SBOLDesigner. Make sure you execute ```Maven generate-sources``` to resolve some dependencies in SBOLDesigner as well. Alternatively, follow the instructions from the ```Setting up iBioSim``` section.
-7. Perform ```Update Project``` under Maven by right clicking on the iBioSim project.
+5. Perform ```Update Project``` under Maven by right clicking on the iBioSim project.
+6. If you want to import SBOLDesigner into Eclipse, then repeat the previous steps for SBOLDesigner. Make sure you execute ```Maven generate-sources``` to resolve some dependencies in SBOLDesigner as well.
+7. If you want to update SBOLDesigner in iBioSim, then under ```Package Explorer``` in Eclipse, right click on the SBOLDesigner pom.xml file and click select ```Run As``` and click ```Maven clean```. Do the same for ```Maven install```. Alternatively, you can do this from the command-line as instructed in [Installing iBioSim](#installing-ibiosim).
 
-
-## [Optional] Setting up iBioSim Configurations in Eclipse
+### Setting up iBioSim Configurations in Eclipse
 1. Open up iBioSim ```Run Configurations``` window and create a new ```Java Application``` in your Eclipse workspace
   * Give the java application a name (i.e. iBioSim_GUI)
   * Set the Main tab to the following information:
