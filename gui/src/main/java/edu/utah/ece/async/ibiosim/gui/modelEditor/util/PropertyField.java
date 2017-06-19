@@ -106,18 +106,18 @@ public class PropertyField extends JPanel implements ActionListener,
 		// }
 	}
 
-	private void init(String nameString, String valueString, String stateString) {
+	private void init(String nameString, String valueString, String stateString)
+	{
 		name = new JLabel(nameString);
 		name.setName(nameString);
 		name.setText(nameString);
 		if (textArea) {
-			this.add(name,"North");
+			this.add(name); 
 		} else {
 			this.add(name);
 		}
-//		if (!(valueString == null) && !(stateString == null)) {
 		if (nameString != null && stateString != null) {
-			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + ") ");
+			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + ")" );
 //			idLabel = new JLabel("ID");
 //			idLabel.setEnabled(false);
 //			this.add(idLabel);
@@ -136,7 +136,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		} else {
 			field = new JTextField(20);
 		}
-		field.setText(valueString);
+		setValue(valueString);
 		if (stateString != null) {
 			if (paramsOnly) {
 				box = new JComboBox(new DefaultComboBoxModel(paramStates));
@@ -331,7 +331,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	@Override
 	public String getKey() {
-		return name.getName();
+		return this.name.getName();
 	}
 
 	@Override

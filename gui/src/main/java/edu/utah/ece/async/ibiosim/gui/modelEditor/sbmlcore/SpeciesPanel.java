@@ -15,7 +15,6 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore;
 
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,7 +57,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 
 
 /**
- * 
+ * Construct the Species Editor Panel.
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -128,10 +127,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList componentsList, 
 			BioModel bioModel, boolean paramsOnly, BioModel refGCM,
 			ModelEditor modelEditor, boolean inTab){
-
 		super(new BorderLayout());
+		
 		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
+//		loadSpeciesEditor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
+		
 	}
+	
 	
 	/**
 	 * constructs the species panel
@@ -151,8 +153,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel grid;
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
-		if (paramsOnly)
+		if (paramsOnly){
 			grid = new JPanel(new GridLayout(7,1));
+			}
 		else {
 			grid = new JPanel(new GridLayout(18,1));
 		}
@@ -598,8 +601,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-					3, false);
-
+					2, false);
+			
 			grid.add(sbolField);
 
 			if (bioModel.isInput(species.getId())) {
@@ -893,17 +896,21 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+							sbolField.getSBOLURIs().iterator().next()); 
 					
 					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
 					{
 					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
 					
+
 					//Update iBioSim species id, name and SBO term from the annotated SBOL element
 					// TODO: these are causing null pointer exceptions
 					//newSpeciesID = sbolField.getSBOLObjID();
 					//species.setName(sbolField.getSBOLObjName()); 
 					//species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+
 					
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);

@@ -37,11 +37,11 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
@@ -57,8 +57,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
  * @author Tramy Nguyen
  * @author Nicholas Roehner
  * @author Chris Myers
- * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim
- *         Contributors </a>
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
 public class SBOLField2 extends JPanel implements ActionListener {
@@ -74,16 +73,19 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private URI removedBioSimURI;
 	
 	private String associateObjID, associateObjName, associatedObjSBO;
+	
+	private String sbolType;
+	boolean isComponentDefinition = false;
+	boolean isModuleDefinition = false;
 
 	//TODO: not sure what the purpose of this field is for
 	private boolean isModelPanelField;
-	private String sbolType;
 	
 	/**
 	 * 
-	 * @param sbolURIs
-	 * @param sbolStrand
-	 * @param sbolType
+	 * @param sbolURIs - The URI of the SBOL object identity to be annotated
+	 * @param sbolStrand - The SBOL sequence to be annotated to the SBOL object.
+	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. 
 	 * @param modelEditor
 	 * @param styleOption
 	 * @param isModelPanelField
@@ -93,20 +95,43 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		super(new GridLayout(1, styleOption));
 		this.sbolURIs.addAll(sbolURIs);
 		this.sbolStrand = sbolStrand;
-		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
+		this.sbolType = sbolType;
+		setSBOLAssociate_Type(sbolType);
+		constructField(modelEditor, styleOption, isModelPanelField);
+		
+	}
+	
+	/**
+	 * Store what type of SBOL object is being annotated for SBOL association.
+	 * @param sbolType -The SBOL object type that the user want to annotate the SBML element with. This sbolType is currently limited to ComponentDefinition or ModuleDefinition.
+	 */
+	private void setSBOLAssociate_Type(String sbolType) 
+	{
+		if(sbolType.equals(GlobalConstants.SBOL_COMPONENTDEFINITION))
+		{
+			isComponentDefinition = true;
+			isModuleDefinition = false;
+		}
+		else if(sbolType.equals(GlobalConstants.SBOL_MODULEDEFINITION))
+		{
+			isComponentDefinition = false;
+			isModuleDefinition = true;
+		}
 	}
 
 	/**
-	 * 
-	 * @param sbolType
+	 * Creates an instance for SBOL Association. 
+	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. This sbolType is currently limited to ComponentDefinition or ModuleDefinition.
 	 * @param modelEditor
-	 * @param styleOption
+	 * @param styleOption - The number of columns to create for the UI components.
 	 * @param isModelPanelField
 	 */
-	public SBOLField2(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
+	public SBOLField2(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField){
 		super(new GridLayout(1, styleOption));
 		sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-		constructField(sbolType, modelEditor, styleOption, isModelPanelField);
+		this.sbolType = sbolType;
+		constructField(modelEditor, styleOption, isModelPanelField);
+		setSBOLAssociate_Type(sbolType);
 	}
 
 	/**
@@ -114,13 +139,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * 1. Add/Edit SBOL Association
 	 * 2. Remove SBOL Association
 	 * 
-	 * @param sbolType - The SBOL object type. This is currently limited to SBOL ComponentDefinition or ModuleDefinition
 	 * @param modelEditor - The SBML model editor that the sbol association will take place on.
 	 * @param styleOption - specify 2 or 3 to set set SBOL association label to SBOL types.
 	 * @param isModelPanelField - 
 	 */
-	public void constructField(String sbolType, ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
-		this.sbolType = sbolType;
+	public void constructField(ModelEditor modelEditor, int styleOption, boolean isModelPanelField) {
 		this.styleOption = styleOption;
 		if (styleOption == 2 || styleOption == 3) {
 			setLabel(sbolType);
@@ -181,46 +204,23 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	{
 		HashSet<String> sbolFilePaths = modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 		String filePath = sbolFilePaths.iterator().next();
+
+		SBOLDocument workingDoc = readSBOLFile(filePath);
+
 		if (e.getActionCommand().equals("associateSBOL")) 
 		{
-			try
+			if (sbolURIs.size() > 0) 
 			{
-				if (sbolURIs.size() > 0) 
-				{
-
-					editSBOL(filePath);
-				}
-				else 
-				{
-					associateSBOL(filePath);
-				}
-			} 
-			catch (IOException e1) 
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} 
-			catch (SBOLConversionException e1) 
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} 
-			catch (SBOLValidationException e1) 
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				editSBOL(filePath, workingDoc);
 			}
-			catch (Exception e1) 
+			else 
 			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				associateSBOL(filePath, workingDoc);
 			}
 		}
 		else if(e.getActionCommand().equals("removeAssociateSBOL"))
 		{
-			//TODO: remove the associated SBOL component off of the SBML element.
-			removeAssociatedSBOL(filePath);
-			
+			removeAssociatedSBOL(filePath, workingDoc);
 		}
 	}
 	
@@ -248,8 +248,9 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	public String getSBOLObjSBOTerm()
 	{
-		return associatedObjSBO;
+		return (associatedObjSBO != null) ? associatedObjSBO : GlobalConstants.SBO_PROTEIN;
 	}
+	
 	
 	/**
 	 * Update the following SBML fields after SBOL association has been performed.
@@ -261,6 +262,10 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		
 		associateObjName = sbolObj.getName();
 		
+		/*
+		 * There is no mapping from ModuleDefinition to the SBO term we use on the SBML Model.
+		 * Map only ComponentDefinition SBO term to SBML.
+		 */
 		if(sbolObj instanceof ComponentDefinition)
 		{
 			ComponentDefinition compDef = (ComponentDefinition) sbolObj;
@@ -270,11 +275,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 				URI type = compDef_types.iterator().next();
 				associatedObjSBO = getSpeciesSBOTerm(type);
 			}
-		}
-		if(sbolObj instanceof ModuleDefinition)
-		{
-			ModuleDefinition modDef = (ModuleDefinition) sbolObj;
-			//TODO: determine the mapping for ModuleDefinition's SBO term.
 		}
 	}
 	
@@ -311,19 +311,18 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	
 
 	/**
-	 * associate a ComponentDefinition to this part
+	 * Run dialog to ask user if they want to associate SBOL from parts registry or create a generic part.
 	 * @param filePath - the full path to the SBOL file.
 	 * @throws Exception - SBOL data exception
 	 */
-	private void associateSBOL(String filePath) throws Exception {
+	private void associateSBOL(String filePath, SBOLDocument workingDoc)
+	{
+		//TODO: Add check to perform SBOL association for CompDef and ModDef
 		String[] options = {"Registry part", "Generic part", "Cancel"};
 		int choice = JOptionPane.showOptionDialog(getParent(),
 				"There is currently no associated SBOL part.  Would you like to associate one from a registry or associate a generic part?",
 				"Associate SBOL Part", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
 				options[0]);
-
-		SBOLDocument workingDoc = SBOLReader.read(filePath);
-		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 		switch (choice) {
 
@@ -333,83 +332,195 @@ public class SBOLField2 extends JPanel implements ActionListener {
 
 			if (selection != null) 
 			{
-				SBOLUtils.insertTopLevels(selection, workingDoc);
-				SBOLWriter.write(workingDoc, filePath);
+				try 
+				{
+					SBOLUtils.insertTopLevels(selection, workingDoc);
+				} 
+				catch (Exception e) 
+				{
+					JOptionPane.showMessageDialog(getParent(), "Unable to load parts to SBOLDesigner dialog for SBOL Association: " + filePath, 
+							"Failed Loading SBOL Parts",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
 				ComponentDefinition associated_compDef = selection.getRootComponentDefinitions().iterator().next();
-				sbolURIs = Arrays.asList(associated_compDef.getIdentity());
-				updateSBMLFieldsFromSBOL(associated_compDef);
+				setAssociatedSBOL(filePath, workingDoc, associated_compDef);
 			}
 			break;
 
 		case 1: // Generic Part
 			ComponentDefinition cd = Parts.GENERIC.createComponentDefinition(workingDoc);
 
-			SBOLWriter.write(workingDoc, filePath);
-			sbolURIs = Arrays.asList(cd.getIdentity());
+			setAssociatedSBOL(filePath, workingDoc, cd);
 			break;
 
 		case JOptionPane.CLOSED_OPTION:
 		default:
 		}
 	}
+	
+	
+	/**
+	 * Return the associated SBOL object that is to be annotated on the given SBML element.
+	 * If the SBOL element can't be found, null is returned.
+	 * @param workingDoc - The SBOLDocument to get the SBOL element to be annotated on the SBML element.
+	 * @return The SBOL object. Null is returned if no the SBOL object could not be found in the workingDoc.
+	 */
+	private TopLevel getAssociatedSBOL_Obj(String filePath, SBOLDocument workingDoc)
+	{
+		URI sbolObjURI = sbolURIs.get(0); //There can be only one SBOL object associated to an SBML element.
+		if(isComponentDefinition)
+		{
+			ComponentDefinition cd = workingDoc.getComponentDefinition(sbolObjURI);
+			if (cd == null) {
+				JOptionPane.showMessageDialog(getParent(), "Can't find" + sbolObjURI + " in " + filePath);
+				return null;
+			}
+			return cd;
+		}
+		else if(isModuleDefinition)
+		{
+			ModuleDefinition modDef = workingDoc.getModuleDefinition(sbolObjURI);
+			if (modDef == null) 
+			{
+				JOptionPane.showMessageDialog(getParent(), "Can't find" + sbolObjURI + " in " + filePath);
+				return null;
+			}
+			return modDef;
+		}
+		
+		return null; 
+	}
 
 	/**
 	 * use PartEditDialog to edit/view the part
+	 * @param filePath - full path to SBOL file
+	 * @param workingDoc - The SBOLDocument that contain all parts that the user can use to associate SBOL.
 	 */
-	private void editSBOL(String filePath) throws IOException, SBOLConversionException, SBOLValidationException 
+	private void editSBOL(String filePath, SBOLDocument workingDoc) 
 	{
-		SBOLDocument workingDoc = SBOLReader.read(filePath);
-		workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-
-		URI compDefURI = sbolURIs.get(0);
-		ComponentDefinition cd = workingDoc.getComponentDefinition(compDefURI);
-		if (cd == null) {
-			JOptionPane.showMessageDialog(getParent(), "Can't find" + compDefURI + " in " + filePath);
-			return;
-		}
-		ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
-
-		if (editedCD == null) {
-			// nothing was changed
-			return;
-		}
-
-		sbolURIs = Arrays.asList(editedCD.getIdentity());
-		updateSBMLFieldsFromSBOL(editedCD);
-		
-		SBOLWriter.write(workingDoc, filePath);
-	}
-	
-	private void removeAssociatedSBOL(String filePath)
-	{
-		try {
-			SBOLDocument workingDoc = SBOLReader.read(filePath);
-			workingDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-
-			URI compDefURI = sbolURIs.get(0);
-			ComponentDefinition cd = workingDoc.getComponentDefinition(compDefURI);
-			if (cd == null) {
-				JOptionPane.showMessageDialog(getParent(), "Can't find" + compDefURI + " in " + filePath);
+		TopLevel sbolObj = getAssociatedSBOL_Obj(filePath, workingDoc);
+		TopLevel editedSBOLObj = null;
+		if(isComponentDefinition)
+		{
+			ComponentDefinition cd = (ComponentDefinition) sbolObj;
+			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), cd, true, true, workingDoc);
+			if (editedCD == null) {
+				// nothing was changed
 				return;
 			}
-			boolean isRemoved = workingDoc.removeComponentDefinition(cd);
-			if(isRemoved)
-			{
-				sbolURIs.clear();
-				SBOLWriter.write(workingDoc, filePath);
-			}
-		} catch (SBOLValidationException e) {
-			JOptionPane.showMessageDialog(getParent(), "Invalid SBOL file: " + filePath);
-			e.printStackTrace();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(getParent(), "Unable to read SBOL file: " + filePath);
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			JOptionPane.showMessageDialog(getParent(), "Internal libSBOLj conversion exception for " + filePath);
-			e.printStackTrace(); 
+			editedSBOLObj = editedCD;
+		}
+		else if(isModuleDefinition)
+		{
+			ModuleDefinition md = (ModuleDefinition) sbolObj;
+			//TODO: implement a dialog for getting ModuleDefinition parts.
 		}
 		
-		
+		setAssociatedSBOL(filePath, workingDoc, editedSBOLObj);
+	}
+	
+	/**
+	 * Get the annotated SBOL object and remove it from the 
+	 * @param filePath - The full path on where the associated SBOL object is located
+	 * @param workingDoc - The SBOLDocument that contains the associated SBOL object.
+	 */
+	private void removeAssociatedSBOL(String filePath, SBOLDocument workingDoc)
+	{
+		TopLevel removeSBOLObj = getAssociatedSBOL_Obj(filePath, workingDoc);
+		sbolURIs.remove(removeSBOLObj.getIdentity());
+		//TODO: Determine how to update the SBML fields here
+		try {
+			deleteRemovedBioSimComponent();
+		} catch (SBOLValidationException e) {
+			JOptionPane.showMessageDialog(getParent(), "Unable to remove SBOL parts for SBOL Association: " + filePath, "SBOL Validation Error",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+		writeSBOLDocument(filePath, workingDoc);
+	}
+	
+	/**
+	 * Set information for the Associated SBOL type.
+	 * @param filePath - The full path on where the associated SBOL object is located
+	 * @param workingDoc - The SBOLDocument that contains the associated SBOL object.
+	 * @param sbolObj - The SBOL object that the user want to perform SBOL association to.
+	 */
+	private void setAssociatedSBOL(String filePath, SBOLDocument workingDoc, TopLevel sbolObj)
+	{
+		sbolURIs = Arrays.asList(sbolObj.getIdentity());
+		updateSBMLFieldsFromSBOL(sbolObj);
+		writeSBOLDocument(filePath, workingDoc);
+	}
+	
+	/**
+	 * Write the given SBOLDocument to the specified filePath
+	 * @param filePath - The location to write the SBOLDocument to
+	 * @param workingDoc - The SBOLDocument to write 
+	 */
+	private void writeSBOLDocument(String filePath, SBOLDocument workingDoc)
+	{
+		try 
+		{
+			SBOLUtility.writeSBOLDocument(filePath, workingDoc);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "File cannot be found for SBOL Association: " + filePath, 
+					"File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (SBOLConversionException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "Unable to perform SBOLConversion when reading or writing this file for SBOL Association: " + filePath, 
+					"SBOL Conversion Error",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Read the given SBOLDocument from the specified filePath.
+	 * @param filePath - The location to read the SBOLDocument.
+	 * @return The SBOLDocument that was read in. 
+	 */
+	private SBOLDocument readSBOLFile(String filePath)
+	{
+		SBOLDocument doc = null;
+		try 
+		{
+			doc =  SBOLUtility.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
+		} 
+		catch (FileNotFoundException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "File cannot be found for SBOL Association: " + filePath, 
+					"File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (SBOLValidationException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "Invalid SBOL was encountered when parsing the SBOL library file" + filePath, 
+					"Invalid SBOL file",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "Unable to read SBOL file for SBOL Association: " + filePath, 
+					"I/O Exception",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (SBOLConversionException e) 
+		{
+			JOptionPane.showMessageDialog(getParent(), "Unable to perform SBOLConversion when reading or writing this file for SBOL Association: " + filePath, 
+					"SBOL Conversion Error",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+		return doc;
 	}
 
 	private void setLabel(String sbolType) {
@@ -417,7 +528,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			if (styleOption == 3)
 				sbolLabel = new JLabel("SBOL ComponentDefinition");
 			else
-				sbolLabel = new JLabel("SBOL ComponentDefinition: ");
+				sbolLabel = new JLabel("SBOL ComponentDefinition:", JLabel.RIGHT);
 		} 
 		else if (sbolType.equals(GlobalConstants.SBOL_CDS))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
@@ -429,32 +540,25 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			sbolLabel = new JLabel("SBOL Terminator");
 	}
 
-	// Deletes from local SBOL files any iBioSim composite component that had
-	// its URI removed from the SBOLAssociationPanel
-	public void deleteRemovedBioSimComponent() throws SBOLValidationException {
-		if (removedBioSimURI != null) {
-			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
-				SBOLDocument sbolDoc;
-				try {
-					sbolDoc = SBOLUtility.loadSBOLFile(filePath, EditPreferences.getDefaultUriPrefix());
-					SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
-					SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SBOLConversionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+	/**
+	 * Deletes from local SBOL files any iBioSim composite component that had
+	 * its URI removed from the SBOLAssociationPanel
+	 * @throws SBOLValidationException
+	 */
+	public void deleteRemovedBioSimComponent() throws SBOLValidationException 
+	{
+		if (removedBioSimURI != null) 
+		{
+			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) 
+			{
+				SBOLDocument sbolDoc = readSBOLFile(filePath);
+				SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
+				writeSBOLDocument(filePath, sbolDoc);
 			}
 
 			removedBioSimURI = null;
 		}
-	}
+	} 
 
 	public void resetRemovedBioSimURI() {
 		removedBioSimURI = null;

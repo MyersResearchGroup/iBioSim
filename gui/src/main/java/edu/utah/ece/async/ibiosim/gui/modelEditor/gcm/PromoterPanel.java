@@ -371,11 +371,16 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			// TODO: if sbolURIs.size > 0, add them to the promoter species, and remove from reaction
 			if (sbolURIs.size()>0) {
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
+				sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+						sbolField.getSBOLURIs().iterator().next()); 
 				if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
 				{
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 				}
-				AnnotationUtility.removeSBOLAnnotation(production);
+				else
+				{
+					AnnotationUtility.removeSBOLAnnotation(production);
+				}
 			} 
 			else 
 			{

@@ -164,7 +164,8 @@ public class GlobalConstants {
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SO_AUTHORITY = "purl.obolibrary.org";
 	public static final String SO_AUTHORITY2 = "identifiers.org";
-	public static final String SBOL_COMPONENTDEFINITION = "sbolDnaComponent";
+	public static final String SBOL_COMPONENTDEFINITION = "ComponentDefinition";
+	public static final String SBOL_MODULEDEFINITION = "ModuleDefinition";
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = 
 			SO_PROMOTER + "(" + SO_RBS + "," + SO_CDS + ")+" + SO_TERMINATOR + "+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
