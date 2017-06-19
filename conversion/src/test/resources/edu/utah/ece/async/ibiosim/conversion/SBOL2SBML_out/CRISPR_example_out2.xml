@@ -12,10 +12,10 @@
     </annotation>
           <comp:listOfPorts>
         <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
-        <comp:port comp:id="output__target" comp:idRef="target" sboTerm="SBO:0000601"/>
         <comp:port comp:id="output__target_gene" comp:idRef="target_gene" sboTerm="SBO:0000601"/>
-        <comp:port comp:id="output__cas9_generic" comp:idRef="cas9_generic" sboTerm="SBO:0000601"/>
+        <comp:port comp:id="output__target" comp:idRef="target" sboTerm="SBO:0000601"/>
         <comp:port comp:id="output__gRNA_generic" comp:idRef="gRNA_generic" sboTerm="SBO:0000601"/>
+        <comp:port comp:id="output__cas9_generic" comp:idRef="cas9_generic" sboTerm="SBO:0000601"/>
         <comp:port comp:id="output__cas9_gRNA_complex" comp:idRef="cas9_gRNA_complex" sboTerm="SBO:0000601"/>
       </comp:listOfPorts>
       <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -43,25 +43,11 @@
         <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
       </listOfCompartments>
       <listOfSpecies>
-        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="target" initialAmount="0" metaid="CRISPR_Template__iBioSim2" sboTerm="SBO:0000252">
+        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="target_gene" initialAmount="2" metaid="CRISPR_Template__iBioSim2" sboTerm="SBO:0000590">
           <annotation>
           <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
               <rdf:Description rdf:about="#iBioSim2">
-                <mts:ComponentDefinitions>
-                  <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
-                  <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
-                  <rdf:Seq>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target_gene/1.0.0"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
-        </annotation>
-                </species>
-        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="target_gene" initialAmount="2" metaid="CRISPR_Template__iBioSim3" sboTerm="SBO:0000590">
-          <annotation>
-          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
-            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
-              <rdf:Description rdf:about="#iBioSim3">
                 <mts:ComponentDefinitions>
                   <rdf:Bag>
                     <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target_gene/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
@@ -71,28 +57,42 @@
                     <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target_gene/1.0.0"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
         </annotation>
                 </species>
-        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="cas9_generic" initialAmount="0" metaid="CRISPR_Template__iBioSim4" sboTerm="SBO:0000252">
+        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="target" initialAmount="0" metaid="CRISPR_Template__iBioSim3" sboTerm="SBO:0000252">
+          <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/target_gene/1.0.0"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+                </species>
+        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="gRNA_generic" initialAmount="0" metaid="CRISPR_Template__iBioSim4" sboTerm="SBO:0000635">
           <annotation>
           <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
               <rdf:Description rdf:about="#iBioSim4">
                 <mts:ComponentDefinitions>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/cas9_generic/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/gRNA_generic/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/cas9_generic"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/gRNA_generic"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
         </annotation>
                 </species>
-        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="gRNA_generic" initialAmount="0" metaid="CRISPR_Template__iBioSim5" sboTerm="SBO:0000635">
+        <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="cas9_generic" initialAmount="0" metaid="CRISPR_Template__iBioSim5" sboTerm="SBO:0000252">
           <annotation>
           <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
               <rdf:Description rdf:about="#iBioSim5">
                 <mts:ComponentDefinitions>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/gRNA_generic/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/cas9_generic/1.0.0"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/gRNA_generic"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+                    <rdf:li rdf:resource="http://sbols.org/CRISPR_Example/cas9_generic"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
         </annotation>
                 </species>
         <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="cas9_gRNA_complex" initialAmount="0" metaid="CRISPR_Template__iBioSim6" sboTerm="SBO:0000253">

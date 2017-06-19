@@ -114,7 +114,10 @@ public class Converter {
 				+ "and can convert to/from SBOL 1.1, to/from SBML, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("\tjava -jar conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
+		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
+		System.err.println();
+		System.err.println("Convert SBOL to SBML Example:");
+		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar -l SBML -p <SBOL default URI prefix> <inputFile> -oDir <outputDirectory> -o <outputFileName> ");
 		System.err.println();
 		System.err.println("Required:");
 		System.err.println("<inputFile> name of input file");
