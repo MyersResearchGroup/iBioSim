@@ -52,6 +52,14 @@ public abstract class TreeState extends HierarchicalState{
     return 0;
   }
   
+  @Override
+  public void setRateValue(int index, double value) {
+  }
+
+  @Override
+  public void setRateValue(double value) {
+  }
+  
   protected abstract boolean containsChild(int index);
  
 }

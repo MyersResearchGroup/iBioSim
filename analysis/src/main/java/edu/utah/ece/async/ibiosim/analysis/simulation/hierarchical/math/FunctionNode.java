@@ -29,13 +29,15 @@ public class FunctionNode extends HierarchicalNode
 
   private VariableNode	variable;
   private boolean isInitialAssignment;
-
+  
   public FunctionNode(VariableNode variable, HierarchicalNode math)
   {
     this(math);
     this.variable = variable;
   }
 
+
+  
   public FunctionNode(Type type)
   {
     super(type);
@@ -55,6 +57,7 @@ public class FunctionNode extends HierarchicalNode
    {
      this.state = math.state;
    }
+   this.name = math.name;
 
   }
 

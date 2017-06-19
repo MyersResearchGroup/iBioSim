@@ -904,8 +904,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
 					
-					//TODO: Update iBioSim species id, name and SBO term from the annotated SBOL element
-					
+
+					//Update iBioSim species id, name and SBO term from the annotated SBOL element
+					// TODO: these are causing null pointer exceptions
+					//newSpeciesID = sbolField.getSBOLObjID();
+					//species.setName(sbolField.getSBOLObjName()); 
+					//species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+
 					
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);

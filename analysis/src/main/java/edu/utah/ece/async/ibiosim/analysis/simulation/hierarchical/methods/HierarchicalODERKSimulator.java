@@ -338,14 +338,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       vectorWrapper.setValues(y);
       computeAssignmentRules();
       computeReactionPropensities();
-      int i = 0;
+      vectorWrapper.setRates(yDot);
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
         for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          yDot[i++] = node.computeRateOfChange(index, t);
+          node.computeRateOfChange(index, t);
         }
       }
-      vectorWrapper.setRates(yDot);
     }
   }
 }

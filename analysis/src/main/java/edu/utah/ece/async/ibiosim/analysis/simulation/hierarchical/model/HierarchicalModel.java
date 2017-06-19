@@ -133,7 +133,6 @@ public final class HierarchicalModel
 	public VariableNode addVariable(VariableNode node)
 	{
 	  variables.add(node);
-	  idToNode.put(node.getName(), node);
 	  return node;
 	}
 
