@@ -6362,6 +6362,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				}
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
+				//update SBOL library file with newly generated components that vpr model generator created.
+				chosenDesign.write(filePath + fileName);
 				generateSBMLFromSBOL(chosenDesign, tree.getFile());
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}

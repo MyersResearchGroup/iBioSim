@@ -401,7 +401,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		{
 			ComponentDefinition cd = workingDoc.getComponentDefinition(sbolObjURI);
 			if (cd == null) {
-				JOptionPane.showMessageDialog(getParent(), "Can't find" + sbolObjURI + " in " + filePath);
+				JOptionPane.showMessageDialog(getParent(), "Can't find " + sbolObjURI + " in " + filePath);
 				return null;
 			}
 			return cd;
