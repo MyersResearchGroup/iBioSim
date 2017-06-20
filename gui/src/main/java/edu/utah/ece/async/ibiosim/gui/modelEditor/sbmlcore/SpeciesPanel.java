@@ -130,8 +130,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		super(new BorderLayout());
 		
 		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
-//		loadSpeciesEditor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
-		
+
 	}
 	
 	
@@ -907,9 +906,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 					//Update iBioSim species id, name and SBO term from the annotated SBOL element
 					// TODO: these are causing null pointer exceptions
-					//newSpeciesID = sbolField.getSBOLObjID();
-					//species.setName(sbolField.getSBOLObjName()); 
-					//species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+					if(sbolField.isSBOLIDSet())
+					{
+						newSpeciesID = sbolField.getSBOLObjID();
+					}
+					if(sbolField.isSBOLNameSet())
+					{
+						species.setName(sbolField.getSBOLObjName());
+					}
+					if(sbolField.isSBOLSBOSet())
+					{
+						species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+					}
+					 
 
 					
 				} else 

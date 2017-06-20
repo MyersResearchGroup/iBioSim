@@ -318,10 +318,15 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					{
 					  JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(sbmlModel) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
-					//Update iBioSim model editor id, name and SBO term from the annotated SBOL element
-					sbmlModel.setId(sbolField.getSBOLObjID());
-					modelName.setText(sbolField.getSBOLObjName());
-					framework.setSelectedItem(SBMLutilities.sbo.getName(sbolField.getSBOLObjSBOTerm()));
+					//Update iBioSim model editor id, and name from the annotated SBOL element
+					if(sbolField.isSBOLIDSet())
+					{
+						sbmlModel.setId(sbolField.getSBOLObjID());
+					}
+					if(sbolField.isSBOLNameSet())
+					{
+						modelName.setText(sbolField.getSBOLObjName());
+					}
 					
 				} else {
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);

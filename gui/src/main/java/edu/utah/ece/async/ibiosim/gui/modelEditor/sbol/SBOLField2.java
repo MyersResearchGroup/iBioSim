@@ -35,18 +35,15 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
-import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartEditDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
@@ -87,7 +84,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * @param sbolStrand - The SBOL sequence to be annotated to the SBOL object.
 	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. 
 	 * @param modelEditor
-	 * @param styleOption
+	 * @param styleOption - Specify 2 or 3 to indicate how many columns the GUI will occupy to insert the SBOL Association add/edit and remove buttons.
 	 * @param isModelPanelField
 	 */
 	public SBOLField2(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor modelEditor, int styleOption,
@@ -171,7 +168,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * Get a list of SBOL URIs.
 	 * @return A list of SBOL URIs.
 	 */
-	public List<URI> getSBOLURIs() {
+	public List<URI> getSBOLURIs() 
+	{
 		return sbolURIs;
 	}
 
@@ -179,7 +177,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * Set a list of SBOL URIs.
 	 * @param sbolURIs - The list of SBOL URIs to set.
 	 */
-	public void setSBOLURIs(List<URI> sbolURIs) {
+	public void setSBOLURIs(List<URI> sbolURIs) 
+	{
 		this.sbolURIs = sbolURIs;
 	}
 
@@ -187,7 +186,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * Get the SBOL strand.
 	 * @return The SBOL strand.
 	 */
-	public String getSBOLStrand() {
+	public String getSBOLStrand() 
+	{
 		return sbolStrand;
 	}
 
@@ -195,7 +195,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 * Set the SBOL strand.
 	 * @param sbolStrand - The SBOL strand to set to.
 	 */
-	public void setSBOLStrand(String sbolStrand) {
+	public void setSBOLStrand(String sbolStrand) 
+	{
 		this.sbolStrand = sbolStrand;
 	}
 
@@ -225,6 +226,33 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Check if the SBOL object's displayId is set.
+	 * @return True if the SBOL object's displayId is set. False otherwise.
+	 */
+	public boolean isSBOLIDSet()
+	{
+		return associatedObjSBO != null;
+	}
+	
+	/**
+	 * Check if the SBOL object's name is set.
+	 * @return True if the SBOL object's name is set. False otherwise.
+	 */
+	public boolean isSBOLNameSet()
+	{
+		return associateObjName != null;
+	}
+	
+	/**
+	 * Check if the SBOL object's SBO term is set. 
+	 * @return True if the SBOL object's SBO term is set. False otherwise.
+	 */
+	public boolean isSBOLSBOSet()
+	{
+		return associatedObjSBO != null;
+	}
+	
+	/**
 	 * Get the associated SBOL objects displayID.
 	 * @return SBOL object displayID
 	 */
@@ -248,7 +276,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	public String getSBOLObjSBOTerm()
 	{
-		return (associatedObjSBO != null) ? associatedObjSBO : GlobalConstants.SBO_PROTEIN;
+		return associatedObjSBO;
 	}
 	
 	
