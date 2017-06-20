@@ -6388,8 +6388,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		} 
 		catch (VPRException e) 
 		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
+			e.printStackTrace(); 
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Unable to Perform VPR Model Generation",
 					JOptionPane.ERROR_MESSAGE);
 		} 
 		catch (VPRTripleStoreException e) 
