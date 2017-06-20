@@ -1808,19 +1808,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
     if (noAbstraction.isSelected() && ODE.isSelected())
     {
-      properties.setNone(true);
+      properties.setNone();
     }
     else if (expandReactions.isSelected())
     {
-      properties.setExpand(true);      
+      properties.setExpand();      
     }
     else if (reactionAbstraction.isSelected())
     {
-      properties.setAbs(true);
+      properties.setAbs();
     }
     else if (stateAbstraction.isSelected())
     {
-      properties.setNary(true);
+      properties.setNary();
     }
     if(ODE.isSelected())
     {

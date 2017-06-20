@@ -1,17 +1,16 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationProperties {
 
 
   private int         numSteps, run;
-  private double        initialTime, outputStartTime, minTimeStep, printInterval, timeLimit, timeStep, absError, relError;
-
+  private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, timeStep, absError, relError;
   
   private String        printer_id, printer_track_quantity,genStats;
-  
-
+ 
   private long        rndSeed;
   
   private List<String>      intSpecies;
@@ -49,6 +48,12 @@ public class SimulationProperties {
    */
   public double getMinTimeStep() {
     return minTimeStep;
+  }
+  /**
+   * @return the maxTimeStep
+   */
+  public double getMaxTimeStep() {
+    return maxTimeStep;
   }
   
   /**
@@ -135,6 +140,13 @@ public class SimulationProperties {
   }
   
   /**
+   * @param maxTimeStep the minTimeStep to set
+   */
+  public void setMaxTimeStep(double maxTimeStep) {
+    this.maxTimeStep = maxTimeStep;
+  }
+  
+  /**
    * @param outputStartTime the outputStartTime to set
    */
   public void setOutputStartTime(double outputStartTime) {
@@ -202,6 +214,17 @@ public class SimulationProperties {
   
   public void setNumSteps(int numSteps) {
     this.numSteps = numSteps;
+  }
+  
+  /**
+   * 
+   */
+  public void addIntSpecies(String species) {
+    if(intSpecies==null)
+    {
+      intSpecies = new ArrayList<String>();
+    }
+    intSpecies.add(species);
   }
   
   /**

@@ -11,25 +11,29 @@ public final class AnalysisProperties {
 	  ODE, SSA, MARKOV, FBA, SBML, DOT, XHTML, LHPN;
   } 
 	
+	 private static enum AbstractionMethod{
+	    NONE, EXPAND, ABSTRACTION, NARY;
+	  }
 
   private String filename, id, root, directory, outDir, modelFile, command;
  
   
 	private SimMethod method;
 
+	private AbstractionMethod abs;
+	
 	private final AdvancedProperties advProperties;
 	private final IncrementalProperties incProperties;
 	private final SimulationProperties simProperties;
 	private final VerificationProperties verifProperties;
 	private final OptionalProperties optProperties;
 	
-	private boolean none, expand, abs, nary;
 	
 	private final boolean gui;
 	
 	private String				sim;
 	private String				simProp;
-	
+	private String fileStem;
 	
 	private UserInterval userInterval;
 	
@@ -39,6 +43,10 @@ public final class AnalysisProperties {
 	  this.filename = filename;
 	  this.root = root;
 	  this.gui = isGui;
+	  
+	  this.method = SimMethod.ODE;
+	  this.abs = AbstractionMethod.NONE;
+	  this.userInterval = UserInterval.PRINT_INTERVAL;
 	  
 	  this.advProperties = new AdvancedProperties();
 	  this.incProperties = new IncrementalProperties();
@@ -131,7 +139,7 @@ public final class AnalysisProperties {
 	 * @return the abs
 	 */
 	public boolean isAbs() {
-		return abs;
+		return abs == AbstractionMethod.ABSTRACTION;
 	}
 
 	/**
@@ -144,7 +152,7 @@ public final class AnalysisProperties {
 	 * @return the expand
 	 */
 	public boolean isExpand() {
-		return expand;
+		return abs == AbstractionMethod.EXPAND;
 	}
 	/**
 	 * @return the fba
@@ -180,13 +188,13 @@ public final class AnalysisProperties {
 	 * @return the nary
 	 */
 	public boolean isNary() {
-		return nary;
+		return abs == AbstractionMethod.NARY;
 	}
 	/**
 	 * @return the none
 	 */
 	public boolean isNone() {
-		return none;
+		return abs == AbstractionMethod.NONE;
 	}
 	public boolean isNumSteps()
 	{
@@ -223,8 +231,8 @@ public final class AnalysisProperties {
 	/**
 	 * @param abs the abs to set
 	 */
-	public void setAbs(boolean abs) {
-		this.abs = abs;
+	public void setAbs() {
+		this.abs = AbstractionMethod.ABSTRACTION;
 	}
 
 
@@ -245,8 +253,8 @@ public final class AnalysisProperties {
 	/**
 	 * @param expand the expand to set
 	 */
-	public void setExpand(boolean expand) {
-		this.expand = expand;
+	public void setExpand() {
+		this.abs = AbstractionMethod.EXPAND;
 	}
 	/**
 	 */
@@ -285,14 +293,14 @@ public final class AnalysisProperties {
 	/**
 	 * @param nary the nary to set
 	 */
-	public void setNary(boolean nary) {
-		this.nary = nary;
+	public void setNary() {
+		this.abs = AbstractionMethod.NARY;
 	}
 	/**
 	 * @param none the none to set
 	 */
-	public void setNone(boolean none) {
-		this.none = none;
+	public void setNone() {
+		this.abs = AbstractionMethod.NONE;
 	}
 
 	public void setNumSteps()
@@ -427,6 +435,16 @@ public final class AnalysisProperties {
    */
   public void setModelFile(String modelFile) {
     this.modelFile = modelFile;
+  }
+
+  
+  public String getFileStem() {
+    return fileStem;
+  }
+
+  
+  public void setFileStem(String fileStem) {
+    this.fileStem = fileStem;
   }
   
   

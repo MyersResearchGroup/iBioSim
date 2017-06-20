@@ -3,7 +3,7 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 
 public class IncrementalProperties {
 
-  private boolean mpde, meanPath, adaptive;
+  private boolean mpde, meanPath, medianPath, adaptive;
 
   private int numPaths;
   
@@ -22,6 +22,13 @@ public class IncrementalProperties {
     return adaptive;
   }
   
+  
+  /**
+   * @return the medianPath
+   */
+  public boolean isMedianPath() {
+    return medianPath;
+  }
   /**
    * @return the meanPath
    */
@@ -49,6 +56,13 @@ public class IncrementalProperties {
    */
   public void setMeanPath(boolean meanPath) {
     this.meanPath = meanPath;
+  }
+  
+  /**
+   * @param medianPath the medianPath to set
+   */
+  public void setMedianPath(boolean medianPath) {
+    this.medianPath = medianPath;
   }
   
   /**
