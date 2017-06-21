@@ -75,7 +75,7 @@ public class AnalysisPropertiesLoader {
    * Loads the simulate options.
    * @throws IOException 
    */
-  public void loadPropertiesFile(AnalysisProperties properties) throws IOException
+  public static void loadPropertiesFile(AnalysisProperties properties) throws IOException
   {
     String root = properties.getRoot();
     String simName = properties.getId();
