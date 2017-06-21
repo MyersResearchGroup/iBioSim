@@ -391,7 +391,7 @@ public class Converter {
 					} 
 					else
 					{
-						System.err.println("ERR: You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
+						System.err.println("ERROR: You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
 						usage();
 					}
 
@@ -399,12 +399,12 @@ public class Converter {
 					{
 						if(outputFileName.isEmpty())
 						{
-							System.err.println("ERR: You must provide an output file name to convert SBML to SBOL.");
+							System.err.println("ERROR: You must provide an output file name to convert SBML to SBOL.");
 							usage();
 						}
 						if(outputDir.isEmpty())
 						{
-							System.err.println("ERR: You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
+							System.err.println("ERROR: You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
 							usage();
 						}
 						outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
@@ -422,22 +422,22 @@ public class Converter {
 				} 
 				catch (XMLStreamException e) 
 				{
-					System.err.println("ERR: Invalid XML file");
+					System.err.println("ERROR: Invalid XML file");
 					e.printStackTrace();
 				} 
 				catch (SBOLValidationException e) 
 				{
-					System.err.println("ERR: Invalid SBOL file");
+					System.err.println("ERROR: Invalid SBOL file");
 					e.printStackTrace();
 				} 
 				catch (SBOLConversionException e) 
 				{
-					System.err.println("ERR: Unable to perform SBOL conversion");
+					System.err.println("ERROR: Unable to perform SBOL conversion");
 					e.printStackTrace();
 				} 
 				catch (IOException e) 
 				{
-					System.err.println("ERR: Unable to read or write file");
+					System.err.println("ERROR: Unable to read or write file");
 					e.printStackTrace();
 				}
 			} //end of is input is SBML
@@ -474,19 +474,19 @@ public class Converter {
 						}
 					}
 					catch (FileNotFoundException e) {
-						System.err.println("ERR:  Unable to located file");
+						System.err.println("ERROR:  Unable to located file");
 						e.printStackTrace();
 					} catch (SBOLValidationException e) {
-						System.err.println("ERR: Invalid SBOL file");
+						System.err.println("ERROR: Invalid SBOL file");
 						e.printStackTrace();
 					} catch (IOException e) {
-						System.err.println("ERR: Unable to read or write file");
+						System.err.println("ERROR: Unable to read or write file");
 						e.printStackTrace();
 					} catch (SBOLConversionException e) {
-						System.err.println("ERR: Unable to perform SBOL conversion");
+						System.err.println("ERROR: Unable to perform SBOL conversion");
 						e.printStackTrace();
 					} catch (XMLStreamException e) {
-						System.err.println("ERR: Invalid XML file");
+						System.err.println("ERROR: Invalid XML file");
 						e.printStackTrace();
 					} //end of last catch
 				}
@@ -578,12 +578,12 @@ public class Converter {
 			} 
 			catch (SBMLException e) 
 			{
-				System.err.println("ERR: SBML Exception occurred when exporting BioModels to an SBML file");
+				System.err.println("ERROR: SBML Exception occurred when exporting BioModels to an SBML file");
 				e.printStackTrace();
 			} 
 			catch (XMLStreamException e) 
 			{
-				System.err.println("ERR: Invalid XML file");
+				System.err.println("ERROR: Invalid XML file");
 				e.printStackTrace();
 			}
 		}
@@ -621,12 +621,12 @@ public class Converter {
 		} 
 		catch (XMLStreamException e) 
 		{
-			System.err.println("ERR: Invalid XML file.");
+			System.err.println("ERROR: Invalid XML file.");
 			e.printStackTrace();
 		} 
 		catch (IOException e) 
 		{
-			System.err.println("ERR: Unable to write file to SBML.");
+			System.err.println("ERROR: Unable to write file to SBML.");
 			e.printStackTrace();
 		}
 	}
@@ -644,10 +644,10 @@ public class Converter {
 			try {
 				model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 			} catch (XMLStreamException e) {
-				System.err.println("ERR: Invalid XML file");
+				System.err.println("ERROR: Invalid XML file");
 				e.printStackTrace();
 			} catch (IOException e) {
-				System.err.println("ERR: Unable to write file to SBML.");
+				System.err.println("ERROR: Unable to write file to SBML.");
 				e.printStackTrace();
 			}
 		}
