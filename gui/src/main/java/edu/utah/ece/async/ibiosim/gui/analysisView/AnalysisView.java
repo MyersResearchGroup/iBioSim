@@ -79,7 +79,10 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 //import org.jmathml.ASTNode;
 import org.sbml.libsbml.ASTNode;
 
+import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
@@ -112,29 +115,29 @@ import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener
 {
 
-  private static final long	serialVersionUID	= 3181014495993143825L;
+  private static final long serialVersionUID  = 3181014495993143825L;
 
   /*
    * Simulation Options
    */
   private JTextField modelFileField ;
-  private JRadioButton		noAbstraction, expandReactions, reactionAbstraction, stateAbstraction;
-  private JRadioButton		ODE, monteCarlo, markov, fba, sbml, dot, xhtml;
+  private JRadioButton    noAbstraction, expandReactions, reactionAbstraction, stateAbstraction;
+  private JRadioButton    ODE, monteCarlo, markov, fba, sbml, dot, xhtml;
 
   private JTextField fileStem;
   private JLabel fileStemLabel;
 
-  private JTextField			initialTimeField, outputStartTimeField, limit, minStep, step, relErr, absErr, seed, runs;
+  private JTextField      initialTimeField, outputStartTimeField, limit, minStep, step, relErr, absErr, seed, runs;
   private JLabel          initialTimeLabel, outputStartTimeLabel, limitLabel, minStepLabel, stepLabel, relErrorLabel, errorLabel, seedLabel, runsLabel;
 
   private JTextField interval;
-  private JComboBox			intervalLabel;
+  private JComboBox     intervalLabel;
 
   // Description of simulator method
-  private JLabel				description, explanation;
+  private JLabel        description, explanation;
 
-  private JComboBox			simulators;																	
-  private JLabel				simulatorsLabel;																		
+  private JComboBox     simulators;                                 
+  private JLabel        simulatorsLabel;                                    
 
 
   // Report options
@@ -146,8 +149,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
    */
 
   // iSSA
-  private JRadioButton		mpde, meanPath, medianPath;
-  private JRadioButton		adaptive, nonAdaptive;
+  private JRadioButton    mpde, meanPath, medianPath;
+  private JRadioButton    adaptive, nonAdaptive;
   private JComboBox     bifurcation;
   private JLabel iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
@@ -160,24 +163,25 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   private JButton       addPostAbs, rmPostAbs, editPostAbs;
 
   private JTextField      rapid1, rapid2, qssa, maxCon, diffStoichAmp;  
-  private JLabel				rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;																												// sbml
+  private JLabel        rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;                                                       // sbml
 
   private JComboBox     transientProperties, subTaskList;
 
-  private final Gui			gui;																														// reference																											// simulation
+  private final Gui     gui;                                                            // reference                                                      // simulation
 
-  private final Log			log;																														// the
+  private final Log     log;                                                            // the
 
-  private final JTabbedPane	simTab;																													// the
+  private final JTabbedPane simTab;                                                         // the
 
-  private ModelEditor			modelEditor;																												// model
+  private ModelEditor     modelEditor;                                                        // model
 
 
-  private final Pattern		stemPat				= Pattern.compile("([a-zA-Z]|[0-9]|_)*");
+  private final Pattern   stemPat       = Pattern.compile("([a-zA-Z]|[0-9]|_)*");
 
   private final AnalysisProperties properties;
   private final Preferences biosimrc = Preferences.userRoot();
 
+  private final SEDMLDocument SedMLDoc;  
   /**
    * This is the constructor for the GUI. It initializes all the input fields,
    * puts them on panels, adds the panels to the frame, and then displays the
@@ -198,7 +202,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
    * @param modelFile
    *            - the SBML model file
    */
-  public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstractionPanel  abstractionPanel, String root, String simName, String modelFile)
+  public AnalysisView(Gui gui, Log log, JTabbedPane simTab, AbstractionPanel  abstractionPanel, SEDMLDocument SedMLDoc, String root, String simName, String modelFile)
   {
 
     super(new BorderLayout());
@@ -208,6 +212,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     this.gui = gui;
     this.log = log;
     this.simTab = simTab;
+    this.SedMLDoc = SedMLDoc;
+
     createMainView(simName, modelFile);
   }
 
@@ -222,8 +228,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     subTaskList.addItem("(none)");
 
 
-    //loadPropertiesFile(simName, modelFile.replace(".xml", ""));
-    //loadSEDML("");
+    try {
+      AnalysisPropertiesLoader.loadPropertiesFile(properties);
+      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, "", properties);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
 
     JLabel modelFileLabel = new JLabel("Model File:");
@@ -726,482 +736,474 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   }
 
-  public void run(String direct, boolean refresh) {
-//    try
-//    {
-      if (sbml.isSelected())
-      {
-        //      File f = new File(root + GlobalConstants.separator + sbmlName);
-        //      if (f.exists())
-        //      {
-        //        Object[] options = { "Overwrite", "Cancel" };
-        //        int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        //        if (value == JOptionPane.YES_OPTION)
-        //        {
-        //          File dir = new File(root + GlobalConstants.separator + sbmlName);
-        //          if (dir.isDirectory())
-        //          {
-        //            gui.deleteDir(dir);
-        //          }
-        //          else
-        //          {
-        //            System.gc();
-        //            dir.delete();
-        //          }
-        //        }
-        //        else
-        //        {
-        //          new File(directory + GlobalConstants.separator + "running").delete();
-        //          logFile.close();
-        //          return 0;
-        //        }
-        //      }
-//        if (sbmlName != null && !sbmlName.trim().equals(""))
-//        {
-//          if (!gui.updateOpenModelEditor(sbmlName))
-//          {
-//            try
-//            {
-//              ModelEditor gcm = new ModelEditor(root + GlobalConstants.separator, sbmlName, gui, log, false, null, null, null, false, false);
-//              gui.addTab(sbmlName, gcm, "Model Editor");
-//              gui.addToTree(sbmlName);
-//            }
-//            catch (Exception e)
-//            {
-//              e.printStackTrace();
-//            }
-//          }
-//          else
-//          {
-//            gui.getTab().setSelectedIndex(gui.getTab(sbmlName));
-//          }
-//          gui.enableTabMenu(gui.getTab().getSelectedIndex());
-//        }
-      }
-      else if (ODE.isSelected())
-      {
-        updateTSDGraph();
-      }
-      else if (monteCarlo.isSelected())
-      {
-        updateTSDGraph();
-      }
+  public void run(boolean refresh) {
+    String root = properties.getRoot();
+    String directory = properties.getDirectory();
 
-      //      new File(directory + GlobalConstants.separator + "running").delete();
-      //      logFile.close();
-//    }
-//    catch (InterruptedException e1)
-//    {
-//      JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);
-//      e1.printStackTrace();
-//    }
-//    catch (IOException e1)
-//    {
-//      JOptionPane.showMessageDialog(Gui.frame, "File I/O Error!", "File I/O Error", JOptionPane.ERROR_MESSAGE);
-//      e1.printStackTrace();
-//    }
-//    catch (XMLStreamException e) {
-//      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-//      e.printStackTrace();
-//    }
+    if (sbml.isSelected())
+    {
+      String sbmlName =  sbmlName = JOptionPane.showInputDialog(this, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
+      File f = new File(root + GlobalConstants.separator + sbmlName);
+      if (f.exists())
+      {
+        Object[] options = { "Overwrite", "Cancel" };
+        int value = JOptionPane.showOptionDialog(this, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (value == JOptionPane.YES_OPTION)
+        {
+          File dir = new File(root + GlobalConstants.separator + sbmlName);
+          if (dir.isDirectory())
+          {
+            gui.deleteDir(dir);
+          }
+          else
+          {
+            System.gc();
+            dir.delete();
+          }
+        }
+        else
+        {
+          new File(directory + GlobalConstants.separator + "running").delete();
+          return;
+        }
+      }
+      if (sbmlName != null && !sbmlName.trim().equals(""))
+      {
+        if (!gui.updateOpenModelEditor(sbmlName))
+        {
+          try
+          {
+            ModelEditor gcm = new ModelEditor(root + GlobalConstants.separator, sbmlName, gui, log, false, null, null, null, false, false);
+            gui.addTab(sbmlName, gcm, "Model Editor");
+            gui.addToTree(sbmlName);
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          gui.getTab().setSelectedIndex(gui.getTab(sbmlName));
+        }
+        gui.enableTabMenu(gui.getTab().getSelectedIndex());
+      }
+    }
+    else if (ODE.isSelected())
+    {
+      updateTSDGraph(refresh);
+    }
+    else if (monteCarlo.isSelected())
+    {
+      updateTSDGraph(refresh);
+    }
+
+    new File(directory + GlobalConstants.separator + "running").delete();
 
   }
 
   public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem)
   {
-    //    for (AnalysisThread thread : threads)
-    //    {
-    //      try
-    //      {
-    //        thread.join();
-    //      }
-    //      catch (InterruptedException e)
-    //      {
-    //      }
-    //    }
-    //    if (!dirs.isEmpty() && new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + dirs.get(0) + GlobalConstants.separator + "sim-rep.txt").exists())
-    //    {
-    //      ArrayList<String> dataLabels = new ArrayList<String>();
-    //      ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-    //      String spec = dirs.get(0).split("=")[0];
-    //      dataLabels.add(spec);
-    //      data.add(new ArrayList<Double>());
-    //      for (String prefix : levelOne)
-    //      {
-    //        double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
-    //        data.get(0).add(val);
-    //        for (String d : dirs)
-    //        {
-    //          if (d.startsWith(prefix))
-    //          {
-    //            String suffix = d.replace(prefix, "");
-    //            ArrayList<String> vals = new ArrayList<String>();
-    //            try
-    //            {
-    //              Scanner s = new Scanner(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + d + GlobalConstants.separator + "sim-rep.txt"));
-    //              while (s.hasNextLine())
-    //              {
-    //                String[] ss = s.nextLine().split(" ");
-    //                if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-    //                {
-    //                }
-    //                if (vals.size() == 0)
-    //                {
-    //                  for (String add : ss)
-    //                  {
-    //                    vals.add(add + suffix);
-    //                  }
-    //                }
-    //                else
-    //                {
-    //                  for (int i = 0; i < ss.length; i++)
-    //                  {
-    //                    vals.set(i, vals.get(i) + " " + ss[i]);
-    //                  }
-    //                }
-    //              }
-    //              s.close();
-    //            }
-    //            catch (Exception e)
-    //            {
-    //              e.printStackTrace();
-    //            }
-    //            double total = 0;
-    //            int i = 0;
-    //            if (vals.get(0).split(" ")[0].startsWith("#total"))
-    //            {
-    //              total = Double.parseDouble(vals.get(0).split(" ")[1]);
-    //              i = 1;
-    //            }
-    //            for (; i < vals.size(); i++)
-    //            {
-    //              int index;
-    //              if (dataLabels.contains(vals.get(i).split(" ")[0]))
-    //              {
-    //                index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
-    //              }
-    //              else
-    //              {
-    //                dataLabels.add(vals.get(i).split(" ")[0]);
-    //                data.add(new ArrayList<Double>());
-    //                index = dataLabels.size() - 1;
-    //              }
-    //              if (total == 0)
-    //              {
-    //                data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
-    //              }
-    //              else
-    //              {
-    //                data.get(index).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
-    //              }
-    //            }
-    //          }
-    //        }
-    //      }
-    //      DataParser constData = new DataParser(dataLabels, data);
-    //      constData.outputTSD(root + GlobalConstants.separator + simName + GlobalConstants.separator + "sim-rep.tsd");
-    //      for (int i = 0; i < simTab.getComponentCount(); i++)
-    //      {
-    //        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-    //        {
-    //          if (simTab.getComponentAt(i) instanceof Graph)
-    //          {
-    //            ((Graph) simTab.getComponentAt(i)).refresh();
-    //          }
-    //        }
-    //      }
-    //    }
+    String root = properties.getRoot();
+    String simName = properties.getSim();
+
+    for (AnalysisThread thread : threads)
+    {
+      try
+      {
+        thread.join();
+      }
+      catch (InterruptedException e)
+      {
+      }
+    }
+    if (!dirs.isEmpty() && new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + dirs.get(0) + GlobalConstants.separator + "sim-rep.txt").exists())
+    {
+      ArrayList<String> dataLabels = new ArrayList<String>();
+      ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+      String spec = dirs.get(0).split("=")[0];
+      dataLabels.add(spec);
+      data.add(new ArrayList<Double>());
+      for (String prefix : levelOne)
+      {
+        double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
+        data.get(0).add(val);
+        for (String d : dirs)
+        {
+          if (d.startsWith(prefix))
+          {
+            String suffix = d.replace(prefix, "");
+            ArrayList<String> vals = new ArrayList<String>();
+            try
+            {
+              Scanner s = new Scanner(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + d + GlobalConstants.separator + "sim-rep.txt"));
+              while (s.hasNextLine())
+              {
+                String[] ss = s.nextLine().split(" ");
+                if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
+                {
+                }
+                if (vals.size() == 0)
+                {
+                  for (String add : ss)
+                  {
+                    vals.add(add + suffix);
+                  }
+                }
+                else
+                {
+                  for (int i = 0; i < ss.length; i++)
+                  {
+                    vals.set(i, vals.get(i) + " " + ss[i]);
+                  }
+                }
+              }
+              s.close();
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+            }
+            double total = 0;
+            int i = 0;
+            if (vals.get(0).split(" ")[0].startsWith("#total"))
+            {
+              total = Double.parseDouble(vals.get(0).split(" ")[1]);
+              i = 1;
+            }
+            for (; i < vals.size(); i++)
+            {
+              int index;
+              if (dataLabels.contains(vals.get(i).split(" ")[0]))
+              {
+                index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
+              }
+              else
+              {
+                dataLabels.add(vals.get(i).split(" ")[0]);
+                data.add(new ArrayList<Double>());
+                index = dataLabels.size() - 1;
+              }
+              if (total == 0)
+              {
+                data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
+              }
+              else
+              {
+                data.get(index).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
+              }
+            }
+          }
+        }
+      }
+      DataParser constData = new DataParser(dataLabels, data);
+      constData.outputTSD(root + GlobalConstants.separator + simName + GlobalConstants.separator + "sim-rep.tsd");
+      for (int i = 0; i < simTab.getComponentCount(); i++)
+      {
+        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+        {
+          if (simTab.getComponentAt(i) instanceof Graph)
+          {
+            ((Graph) simTab.getComponentAt(i)).refresh();
+          }
+        }
+      }
+    }
   }
 
-
-  private void updateTSDGraph()
+  private void updateTSDGraph(boolean refresh)
   {
-    //    for (int i = 0; i < simTab.getComponentCount(); i++)
-    //    {
-    //      if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-    //      {
-    //        if (simTab.getComponentAt(i) instanceof Graph)
-    //        {
-    //          boolean outputM = true;
-    //          boolean outputV = true;
-    //          boolean outputS = true;
-    //          boolean outputTerm = false;
-    //          boolean warning = false;
-    //          ArrayList<String> run = new ArrayList<String>();
-    //          for (String f : work.list())
-    //          {
-    //            if (f.contains("mean"))
-    //            {
-    //              outputM = false;
-    //            }
-    //            else if (f.contains("variance"))
-    //            {
-    //              outputV = false;
-    //            }
-    //            else if (f.contains("standard_deviation"))
-    //            {
-    //              outputS = false;
-    //            }
-    //            if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
-    //            {
-    //              run.add(f);
-    //            }
-    //            else if (f.equals("term-time.txt"))
-    //            {
-    //              outputTerm = true;
-    //            }
-    //          }
-    //          if (genStats && (outputM || outputV || outputS))
-    //          {
-    //            warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-    //            ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-    //          }
-    //          new File(directory + GlobalConstants.separator + "running").delete();
-    //          logFile.close();
-    //          if (outputTerm)
-    //          {
-    //            ArrayList<String> dataLabels = new ArrayList<String>();
-    //            dataLabels.add("time");
-    //            ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-    //            if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
-    //            {
-    //              try
-    //              {
-    //                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
-    //                if (s.hasNextLine())
-    //                {
-    //                  String[] ss = s.nextLine().split(" ");
-    //                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-    //                  {
-    //                  }
-    //                  else
-    //                  {
-    //                    for (String add : ss)
-    //                    {
-    //                      if (!add.equals("#total") && !add.equals("time-limit"))
-    //                      {
-    //                        dataLabels.add(add);
-    //                        ArrayList<Double> times = new ArrayList<Double>();
-    //                        terms.add(times);
-    //                      }
-    //                    }
-    //                  }
-    //                }
-    //                s.close();
-    //              }
-    //              catch (Exception e)
-    //              {
-    //                e.printStackTrace();
-    //              }
-    //            }
-    //            Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
-    //            while (scan.hasNextLine())
-    //            {
-    //              String line = scan.nextLine();
-    //              String[] term = line.split(" ");
-    //              if (!dataLabels.contains(term[0]))
-    //              {
-    //                dataLabels.add(term[0]);
-    //                ArrayList<Double> times = new ArrayList<Double>();
-    //                times.add(Double.parseDouble(term[1]));
-    //                terms.add(times);
-    //              }
-    //              else
-    //              {
-    //                terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-    //              }
-    //            }
-    //            scan.close();
-    //            ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-    //            ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-    //            for (int j = 0; j < dataLabels.size(); j++)
-    //            {
-    //              ArrayList<Double> temp = new ArrayList<Double>();
-    //              temp.add(0.0);
-    //              data.add(temp);
-    //              temp = new ArrayList<Double>();
-    //              temp.add(0.0);
-    //              percentData.add(temp);
-    //            }
-    //            for (double j = printInterval; j <= timeLimit; j += printInterval)
-    //            {
-    //              data.get(0).add(j);
-    //              percentData.get(0).add(j);
-    //              for (int k = 1; k < dataLabels.size(); k++)
-    //              {
-    //                data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-    //                percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-    //                for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
-    //                {
-    //                  if (terms.get(k - 1).get(l) < j)
-    //                  {
-    //                    data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-    //                    percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-    //                    terms.get(k - 1).remove(l);
-    //                  }
-    //                }
-    //              }
-    //            }
-    //            DataParser probData = new DataParser(dataLabels, data);
-    //            probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
-    //            probData = new DataParser(dataLabels, percentData);
-    //            probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
-    //          }
-    //          if (refresh)
-    //          {
-    //            ((Graph) simTab.getComponentAt(i)).refresh();
-    //          }
-    //        }
-    //        else
-    //        {
-    //          simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, true, false));
-    //          boolean outputM = true;
-    //          boolean outputV = true;
-    //          boolean outputS = true;
-    //          boolean outputTerm = false;
-    //          boolean warning = false;
-    //          ArrayList<String> run = new ArrayList<String>();
-    //          for (String f : work.list())
-    //          {
-    //            if (f.contains("mean"))
-    //            {
-    //              outputM = false;
-    //            }
-    //            else if (f.contains("variance"))
-    //            {
-    //              outputV = false;
-    //            }
-    //            else if (f.contains("standard_deviation"))
-    //            {
-    //              outputS = false;
-    //            }
-    //            if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
-    //            {
-    //              run.add(f);
-    //            }
-    //            else if (f.equals("term-time.txt"))
-    //            {
-    //              outputTerm = true;
-    //            }
-    //          }
-    //          if (genStats && (outputM || outputV || outputS))
-    //          {
-    //            warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-    //            ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-    //          }
-    //          new File(directory + GlobalConstants.separator + "running").delete();
-    //          logFile.close();
-    //          if (outputTerm)
-    //          {
-    //            ArrayList<String> dataLabels = new ArrayList<String>();
-    //            dataLabels.add("time");
-    //            ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-    //            if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
-    //            {
-    //              try
-    //              {
-    //                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
-    //                if (s.hasNextLine())
-    //                {
-    //                  String[] ss = s.nextLine().split(" ");
-    //                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-    //                  {
-    //                  }
-    //                  else
-    //                  {
-    //                    for (String add : ss)
-    //                    {
-    //                      if (!add.equals("#total") && !add.equals("time-limit"))
-    //                      {
-    //                        dataLabels.add(add);
-    //                        ArrayList<Double> times = new ArrayList<Double>();
-    //                        terms.add(times);
-    //                      }
-    //                    }
-    //                  }
-    //                }
-    //                s.close();
-    //              }
-    //              catch (Exception e)
-    //              {
-    //                e.printStackTrace();
-    //              }
-    //            }
-    //            Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
-    //            while (scan.hasNextLine())
-    //            {
-    //              String line = scan.nextLine();
-    //              String[] term = line.split(" ");
-    //              if (!dataLabels.contains(term[0]))
-    //              {
-    //                dataLabels.add(term[0]);
-    //                ArrayList<Double> times = new ArrayList<Double>();
-    //                times.add(Double.parseDouble(term[1]));
-    //                terms.add(times);
-    //              }
-    //              else
-    //              {
-    //                terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-    //              }
-    //            }
-    //            scan.close();
-    //            ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-    //            ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-    //            for (int j = 0; j < dataLabels.size(); j++)
-    //            {
-    //              ArrayList<Double> temp = new ArrayList<Double>();
-    //              temp.add(0.0);
-    //              data.add(temp);
-    //              temp = new ArrayList<Double>();
-    //              temp.add(0.0);
-    //              percentData.add(temp);
-    //            }
-    //            for (double j = printInterval; j <= timeLimit; j += printInterval)
-    //            {
-    //              data.get(0).add(j);
-    //              percentData.get(0).add(j);
-    //              for (int k = 1; k < dataLabels.size(); k++)
-    //              {
-    //                data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-    //                percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-    //                for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
-    //                {
-    //                  if (terms.get(k - 1).get(l) < j)
-    //                  {
-    //                    data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-    //                    percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-    //                    terms.get(k - 1).remove(l);
-    //                  }
-    //                }
-    //              }
-    //            }
-    //            DataParser probData = new DataParser(dataLabels, data);
-    //            probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
-    //            probData = new DataParser(dataLabels, percentData);
-    //            probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
-    //          }
-    //          simTab.getComponentAt(i).setName("TSD Graph");
-    //        }
-    //      }
-    //      if (refresh)
-    //      {
-    //        if (simTab.getComponentAt(i).getName().equals("Histogram"))
-    //        {
-    //          if (simTab.getComponentAt(i) instanceof Graph)
-    //          {
-    //            ((Graph) simTab.getComponentAt(i)).refresh();
-    //          }
-    //          else
-    //          {
-    //            if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
-    //            {
-    //              simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
-    //              simTab.getComponentAt(i).setName("Histogram");
-    //            }
-    //          }
-    //        }
-    //      }
-    //    }
+    String directory = properties.getDirectory();
+    File work = new File(directory);
+    String printer_id = properties.getSimulationProperties().getPrinter_id();
+    String printer_track_quantity = properties.getSimulationProperties().getPrinter_track_quantity();
+    boolean genStats = "true".equals(properties.getSimulationProperties().getGenStats());
+    double printInterval = properties.getSimulationProperties().getPrintInterval();
+    double timeLimit = properties.getSimulationProperties().getTimeLimit();
+    int runs = properties.getSimulationProperties().getRun();
+    String filename = properties.getFilename();
+    String outDir = properties.getOutDir();
+
+    try
+    {
+      for (int i = 0; i < simTab.getComponentCount(); i++)
+      {
+        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+        {
+          if (simTab.getComponentAt(i) instanceof Graph)
+          {
+            boolean outputM = true;
+            boolean outputV = true;
+            boolean outputS = true;
+            boolean outputTerm = false;
+            boolean warning = false;
+            ArrayList<String> run = new ArrayList<String>();
+            for (String f : work.list())
+            {
+              if (f.contains("mean"))
+              {
+                outputM = false;
+              }
+              else if (f.contains("variance"))
+              {
+                outputV = false;
+              }
+              else if (f.contains("standard_deviation"))
+              {
+                outputS = false;
+              }
+              if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
+              {
+                run.add(f);
+              }
+              else if (f.equals("term-time.txt"))
+              {
+                outputTerm = true;
+              }
+            }
+            if (genStats && (outputM || outputV || outputS))
+            {
+              warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+              //TODO: fix ""
+              ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0,"",  warning, true);
+            }
+            new File(directory + GlobalConstants.separator + "running").delete();
+            if (outputTerm)
+            {
+              ArrayList<String> dataLabels = new ArrayList<String>();
+              dataLabels.add("time");
+              ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+              if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+              {
+                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                if (s.hasNextLine())
+                {
+                  String[] ss = s.nextLine().split(" ");
+                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
+                  {
+                  }
+                  else
+                  {
+                    for (String add : ss)
+                    {
+                      if (!add.equals("#total") && !add.equals("time-limit"))
+                      {
+                        dataLabels.add(add);
+                        ArrayList<Double> times = new ArrayList<Double>();
+                        terms.add(times);
+                      }
+                    }
+                  }
+                }
+                s.close();
+              }
+              Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+              while (scan.hasNextLine())
+              {
+                String line = scan.nextLine();
+                String[] term = line.split(" ");
+                if (!dataLabels.contains(term[0]))
+                {
+                  dataLabels.add(term[0]);
+                  ArrayList<Double> times = new ArrayList<Double>();
+                  times.add(Double.parseDouble(term[1]));
+                  terms.add(times);
+                }
+                else
+                {
+                  terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
+                }
+              }
+              scan.close();
+              ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+              ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+              for (int j = 0; j < dataLabels.size(); j++)
+              {
+                ArrayList<Double> temp = new ArrayList<Double>();
+                temp.add(0.0);
+                data.add(temp);
+                temp = new ArrayList<Double>();
+                temp.add(0.0);
+                percentData.add(temp);
+              }
+              for (double j = printInterval; j <= timeLimit; j += printInterval)
+              {
+                data.get(0).add(j);
+                percentData.get(0).add(j);
+                for (int k = 1; k < dataLabels.size(); k++)
+                {
+                  data.get(k).add(data.get(k).get(data.get(k).size() - 1));
+                  percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
+                  for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
+                  {
+                    if (terms.get(k - 1).get(l) < j)
+                    {
+                      data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
+                      percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+                      terms.get(k - 1).remove(l);
+                    }
+                  }
+                }
+              }
+              DataParser probData = new DataParser(dataLabels, data);
+              probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+              probData = new DataParser(dataLabels, percentData);
+              probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+            }
+            if (refresh)
+            {
+              ((Graph) simTab.getComponentAt(i)).refresh();
+            }
+          }
+          else
+          {
+            simTab.setComponentAt(i, new Graph(this, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, true, false));
+            boolean outputM = true;
+            boolean outputV = true;
+            boolean outputS = true;
+            boolean outputTerm = false;
+            boolean warning = false;
+            ArrayList<String> run = new ArrayList<String>();
+            for (String f : work.list())
+            {
+              if (f.contains("mean"))
+              {
+                outputM = false;
+              }
+              else if (f.contains("variance"))
+              {
+                outputV = false;
+              }
+              else if (f.contains("standard_deviation"))
+              {
+                outputS = false;
+              }
+              if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
+              {
+                run.add(f);
+              }
+              else if (f.equals("term-time.txt"))
+              {
+                outputTerm = true;
+              }
+            }
+            if (genStats && (outputM || outputV || outputS))
+            {
+              warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+              ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, "", warning, true);
+            }
+            new File(directory + GlobalConstants.separator + "running").delete();
+
+            if (outputTerm)
+            {
+              ArrayList<String> dataLabels = new ArrayList<String>();
+              dataLabels.add("time");
+              ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+              if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+              {
+                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                if (s.hasNextLine())
+                {
+                  String[] ss = s.nextLine().split(" ");
+                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
+                  {
+                  }
+                  else
+                  {
+                    for (String add : ss)
+                    {
+                      if (!add.equals("#total") && !add.equals("time-limit"))
+                      {
+                        dataLabels.add(add);
+                        ArrayList<Double> times = new ArrayList<Double>();
+                        terms.add(times);
+                      }
+                    }
+                  }
+                }
+                s.close();
+
+              }
+              Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+              while (scan.hasNextLine())
+              {
+                String line = scan.nextLine();
+                String[] term = line.split(" ");
+                if (!dataLabels.contains(term[0]))
+                {
+                  dataLabels.add(term[0]);
+                  ArrayList<Double> times = new ArrayList<Double>();
+                  times.add(Double.parseDouble(term[1]));
+                  terms.add(times);
+                }
+                else
+                {
+                  terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
+                }
+              }
+              scan.close();
+              ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+              ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+              for (int j = 0; j < dataLabels.size(); j++)
+              {
+                ArrayList<Double> temp = new ArrayList<Double>();
+                temp.add(0.0);
+                data.add(temp);
+                temp = new ArrayList<Double>();
+                temp.add(0.0);
+                percentData.add(temp);
+              }
+              for (double j = printInterval; j <= timeLimit; j += printInterval)
+              {
+                data.get(0).add(j);
+                percentData.get(0).add(j);
+                for (int k = 1; k < dataLabels.size(); k++)
+                {
+                  data.get(k).add(data.get(k).get(data.get(k).size() - 1));
+                  percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
+                  for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
+                  {
+                    if (terms.get(k - 1).get(l) < j)
+                    {
+                      data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
+                      percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
+                      terms.get(k - 1).remove(l);
+                    }
+                  }
+                }
+              }
+              DataParser probData = new DataParser(dataLabels, data);
+              probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+              probData = new DataParser(dataLabels, percentData);
+              probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+            }
+            simTab.getComponentAt(i).setName("TSD Graph");
+          }
+        }
+        if (refresh)
+        {
+          if (simTab.getComponentAt(i).getName().equals("Histogram"))
+          {
+            if (simTab.getComponentAt(i) instanceof Graph)
+            {
+              ((Graph) simTab.getComponentAt(i)).refresh();
+            }
+            else
+            {
+              if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
+              {
+                simTab.setComponentAt(i, new Graph(this, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
+                simTab.getComponentAt(i).setName("Histogram");
+              }
+            }
+          }
+        }
+      }
+    }
+    catch(IOException e)
+    {
+
+    }
   }
   /**
    * adds a string with the species ID and its threshold values to the
@@ -1352,7 +1354,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public void executeRun()
   {
-    /*
+    String modelFile = properties.getModelFile();
+    String root = properties.getRoot();
+    String simName = properties.getSim();
+
     boolean ignoreSweep = false;
     if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected())
     {
@@ -1411,7 +1416,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
     if (modelEditor != null)
     {
-      saveSEDML();
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
       modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
     }
     else
@@ -1425,7 +1430,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         try {
           LPN lhpnFile = new LPN();
           lhpnFile.load(root + GlobalConstants.separator + modelFile);
-          Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction.getAbstractionProperty());
+          Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
           abst.abstractSTG(false);
           abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
 
@@ -1473,7 +1478,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         new AnalysisThread(this).start(".", true);
       }
     }
-     */
   }
 
   public void setModelEditor(ModelEditor modelEditor)
@@ -1519,10 +1523,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   /**
    * Saves the simulate options.
    */
-  public boolean save(String direct)
+  public boolean save()
   {
 
-    String sim = properties.getSim();
+    String simName = properties.getSim();
+    String root = properties.getRoot();
+    String outDir = properties.getOutDir();
+    String propName = properties.getModelFile();
     try
     {
       double initialTime = Double.parseDouble(initialTimeField.getText().trim());
@@ -1633,12 +1640,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       return false;
     }
 
-    if (step.getText().trim().equals("inf") && !sim.equals("euler"))
+    if (step.getText().trim().equals("inf") && !simName.equals("euler"))
     {
       double timeStep = Double.MAX_VALUE;
       properties.getSimulationProperties().setTimeStep(timeStep);
     }
-    else if (step.getText().trim().equals("inf") && sim.equals("euler"))
+    else if (step.getText().trim().equals("inf") && simName.equals("euler"))
     {
       JOptionPane.showMessageDialog(Gui.frame, "Cannot Select an Infinite Maximum Time Step with Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
       return false;
@@ -1850,105 +1857,78 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       properties.setXhtml();
     }
-    // Run runProgram = new Run(this);
-    //    int cut = 0;
-    //    sbmlProp = sbmlProp.replace("\\", "/");
-    //    String[] getFilename = sbmlProp.split("/");
-    //    for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++)
-    //    {
-    //      if (getFilename[getFilename.length - 1].charAt(i) == '.')
-    //      {
-    //        cut = i;
-    //      }
-    //    }
-    //    boolean saveTopLevel = false;
-    //    if (!direct.equals("."))
-    //    {
-    //      simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + GlobalConstants.separator + simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
-    //      saveTopLevel = true;
-    //    }
-    //    String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-    //    log.addText("Creating properties file:\n" + propName + "\n");
-    //    int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
-    //    Run.createProperties(initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError, relError, ".", rndSeed,
-    //      run, numPaths, intSpecies, printer_id, printer_track_quantity, generate_statistics, sbmlProp.split("/"), selectedButtons, this,
-    //      sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs, postAbs, lpnAbstraction, mpde.isSelected(), meanPath.isSelected(),
-    //      adaptive.isSelected());
-    //    if (direct.equals("."))
-    //    {
-    //      outDir = simName;
-    //    }
-    //    else
-    //    {
-    //      outDir = simName + GlobalConstants.separator + direct;
-    //    }
-    //    if (!runs.isEnabled())
-    //    {
-    //      for (String runs : new File(root + GlobalConstants.separator + outDir).list())
-    //      {
-    //        if (runs.length() >= 4)
-    //        {
-    //          String end = "";
-    //          for (int j = 1; j < 5; j++)
-    //          {
-    //            end = runs.charAt(runs.length() - j) + end;
-    //          }
-    //          if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
-    //          {
-    //            if (runs.contains("run-"))
-    //            {
-    //              run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
-    //            }
-    //          }
-    //        }
-    //      }
-    //    }
-    //    String topLevelProps = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-    //    try
-    //    {
-    //      Properties getProps = new Properties();
-    //      FileInputStream load = new FileInputStream(new File(topLevelProps));
-    //      getProps.load(load);
-    //      load.close();
-    //      getProps.setProperty("selected.simulator", sim);
-    //      if (transientProperties != null)
-    //      {
-    //        getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
-    //      }
-    //      if (!fileStem.getText().trim().equals(""))
-    //      {
-    //        new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim()).mkdir();
-    //        getProps.setProperty("file.stem", fileStem.getText().trim());
-    //      }
-    //      if (monteCarlo.isSelected() || ODE.isSelected())
-    //      {
-    //        if (append.isSelected())
-    //        {
-    //          getProps.setProperty("monte.carlo.simulation.start.index", 
-    //            getStartIndex(outDir) + "");
-    //        }
-    //        else
-    //        {
-    //          getProps.setProperty("monte.carlo.simulation.start.index", "1");
-    //        }
-    //      }
-    //      FileOutputStream store = new FileOutputStream(new File(propName));
-    //      getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
-    //      store.close();
-    //      if (saveTopLevel)
-    //      {
-    //        store = new FileOutputStream(new File(topLevelProps));
-    //        getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
-    //        store.close();
-    //      }
-    //      //saveSEDML();
-    //    }
-    //    catch (Exception e)
-    //    {
-    //      e.printStackTrace();
-    //      JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
-    //    }
-    //    //change = false;
+    
+    log.addText("Creating properties file:\n" + propName + "\n");
+    int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
+    properties.getIncrementalProperties().setNumPaths(numPaths);
+    
+    try {
+      AnalysisPropertiesWriter.createProperties(properties);
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+
+//    if (!runs.isEnabled())
+//    {
+//      for (String runs : new File(root + GlobalConstants.separator + outDir).list())
+//      {
+//        if (runs.length() >= 4)
+//        {
+//          String end = "";
+//          for (int j = 1; j < 5; j++)
+//          {
+//            end = runs.charAt(runs.length() - j) + end;
+//          }
+//          if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
+//          {
+//            if (runs.contains("run-"))
+//            {
+//              run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
+//            }
+//          }
+//        }
+//      }
+//    }
+    try
+    {
+      Properties getProps = new Properties();
+      FileInputStream load = new FileInputStream(new File(propName));
+      getProps.load(load);
+      load.close();
+      getProps.setProperty("selected.simulator", simName);
+      if (transientProperties != null)
+      {
+        getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
+      }
+      if (!fileStem.getText().trim().equals(""))
+      {
+        new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim()).mkdir();
+        getProps.setProperty("file.stem", fileStem.getText().trim());
+      }
+      if (monteCarlo.isSelected() || ODE.isSelected())
+      {
+        if (append.isSelected())
+        {
+          getProps.setProperty("monte.carlo.simulation.start.index", 
+            getStartIndex(outDir) + "");
+        }
+        else
+        {
+          getProps.setProperty("monte.carlo.simulation.start.index", "1");
+        }
+      }
+      FileOutputStream store = new FileOutputStream(new File(propName));
+      getProps.store(store, properties.getModelFile() + " Properties");
+      store.close();
+
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    //change = false;
     return true;
   }
 
@@ -1961,9 +1941,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public void setSim(String newSimName)
   {
-    //    sbmlFile = sbmlFile.replace("\\", "/");
-    //    sbmlProp = root + GlobalConstants.separator + newSimName + GlobalConstants.separator + sbmlFile.split("/")[sbmlFile.split("/").length - 1];
-    //    simName = newSimName;
+    properties.setSim(newSimName);
   }
 
   public boolean hasChanged()
@@ -1983,32 +1961,35 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public void updateProperties()
   {
-    //    if (transientProperties != null && modelFile.contains(".lpn"))
-    //    {
-    //      Object selected = transientProperties.getSelectedItem();
-    //      String[] props = new String[] { "none" };
-    //      LPN lpn = new LPN();
-    //      try {
-    //        lpn.load(root + GlobalConstants.separator + modelFile);
-    //        String[] getProps = lpn.getProperties().toArray(new String[0]);
-    //        props = new String[getProps.length + 1];
-    //        props[0] = "none";
-    //        for (int i = 0; i < getProps.length; i++)
-    //        {
-    //          props[i + 1] = getProps[i];
-    //        }
-    //        transientProperties.removeAllItems();
-    //        for (String s : props)
-    //        {
-    //          transientProperties.addItem(s);
-    //        }
-    //        transientProperties.setSelectedItem(selected);
-    //      } catch (BioSimException e) {
-    //        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
-    //        e.printStackTrace();
-    //      }
-    //      
-    //    }
+    String root = properties.getRoot();
+    String modelFile = properties.getModelFile();
+
+    if (transientProperties != null && modelFile.contains(".lpn"))
+    {
+      Object selected = transientProperties.getSelectedItem();
+      String[] props = new String[] { "none" };
+      LPN lpn = new LPN();
+      try {
+        lpn.load(root + GlobalConstants.separator + modelFile);
+        String[] getProps = lpn.getProperties().toArray(new String[0]);
+        props = new String[getProps.length + 1];
+        props[0] = "none";
+        for (int i = 0; i < getProps.length; i++)
+        {
+          props[i + 1] = getProps[i];
+        }
+        transientProperties.removeAllItems();
+        for (String s : props)
+        {
+          transientProperties.addItem(s);
+        }
+        transientProperties.setSelectedItem(selected);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+        e.printStackTrace();
+      }
+
+    }
   }
 
   private void refreshHistogram()
@@ -2088,6 +2069,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
    */
   private void enableNoAbstraction()
   {
+    String modelFile = properties.getModelFile();
     ODE.setEnabled(true);
     monteCarlo.setEnabled(true);
     fba.setEnabled(true);
@@ -2114,10 +2096,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       ODE.setSelected(true);
       enableODE();
     }
-    //    if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
-    //    {
-    //      markov.setEnabled(true);
-    //    }
+    if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
+    {
+      markov.setEnabled(true);
+    }
     if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected())
     {
       append.setEnabled(true);
@@ -2142,8 +2124,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
         subTask = (String)subTaskList.getSelectedItem();
       }
-      //saveSEDML();
-      //loadSEDML(subTask);
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, subTask, properties);
     }
     else if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
     {
@@ -2378,40 +2360,31 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       }
       // TODO: Does this part actually still work. Seems you need to look
       // at the runs themselves.
-      //      int cut = 0;
-      //      sbmlProp = sbmlProp.replace("\\", "/");
-      //      String[] getFilename = sbmlProp.split("/");
-      //      for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++)
-      //      {
-      //        if (getFilename[getFilename.length - 1].charAt(i) == '.')
-      //        {
-      //          cut = i;
-      //        }
-      //      }
-      //      String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-      //      try
-      //      {
-      //        if (new File(propName).exists())
-      //        {
-      //          Properties getProps = new Properties();
-      //          FileInputStream load = new FileInputStream(new File(propName));
-      //          getProps.load(load);
-      //          load.close();
-      //          if (getProps.containsKey("monte.carlo.simulation.time.limit"))
-      //          {
-      //            initialTimeField.setText(getProps.getProperty("simulation.initial.time"));
-      //            outputStartTimeField.setText(getProps.getProperty("simulation.output.start.time"));
-      //            minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
-      //            step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
-      //            limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
-      //            interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
-      //          }
-      //        }
-      //      }
-      //      catch (IOException e1)
-      //      {
-      //        JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
-      //      }
+      int cut = 0;
+      String propName = properties.getFilename() + ".properties";
+      try
+      {
+        if (new File(propName).exists())
+        {
+          Properties getProps = new Properties();
+          FileInputStream load = new FileInputStream(new File(propName));
+          getProps.load(load);
+          load.close();
+          if (getProps.containsKey("monte.carlo.simulation.time.limit"))
+          {
+            initialTimeField.setText(getProps.getProperty("simulation.initial.time"));
+            outputStartTimeField.setText(getProps.getProperty("simulation.output.start.time"));
+            minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+            step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
+            limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
+            interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
+          }
+        }
+      }
+      catch (IOException e1)
+      {
+        JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
+      }
     }
     else
     {

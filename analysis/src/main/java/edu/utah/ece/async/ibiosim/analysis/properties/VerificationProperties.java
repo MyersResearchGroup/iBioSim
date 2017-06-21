@@ -14,12 +14,6 @@ public class VerificationProperties
   
   private ArrayList<String> abstractInteresting;
 
-  /**
-   * @return the absProproperty
-   */
-  public AbstractionProperty getAbsProproperty() {
-    return absProperty;
-  }
   
   /**
    * @return the constraintProperty

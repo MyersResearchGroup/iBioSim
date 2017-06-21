@@ -440,7 +440,7 @@ public class Run extends Observable implements ActionListener
       {
         LPN lhpnFile = new LPN();
         lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-        Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProproperty());
+        Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
         abst.abstractSTG(false);
         abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
         t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
@@ -718,7 +718,7 @@ public class Run extends Observable implements ActionListener
       }
       if (properties.isAbs())
       {
-        Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProproperty());
+        Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
         abst.abstractSTG(false);
         abst.printDot(properties.getRoot() + GlobalConstants.separator + properties.getSim() + outputFileName);
       }
@@ -814,7 +814,7 @@ public class Run extends Observable implements ActionListener
           {
             LPN lhpnFile = new LPN();
             lhpnFile.load(root + GlobalConstants.separator + modelFile);
-            Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProproperty());
+            Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
             abst.abstractSTG(false);
             abst.save(root + GlobalConstants.separator + properties.getSim() + GlobalConstants.separator + modelFile);
             t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, properties.getVerificationProperties().getLpnProperty());
@@ -873,7 +873,7 @@ public class Run extends Observable implements ActionListener
             {
               LPN lhpnFile = new LPN();
               lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
-              Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProproperty());
+              Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
               abst.abstractSTG(false);
               abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
               t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);

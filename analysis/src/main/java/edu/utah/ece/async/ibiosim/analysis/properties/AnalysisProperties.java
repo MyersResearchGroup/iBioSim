@@ -393,14 +393,6 @@ public final class AnalysisProperties {
 
   
   /**
-   * @param filename the filename to set
-   */
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
-  
-  /**
    * @param id the id to set
    */
   public void setId(String id) {

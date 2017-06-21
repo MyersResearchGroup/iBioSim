@@ -33,7 +33,7 @@ public class AnalysisPropertiesWriter {
 	 * @param analysisProperties
 	 * @throws IOException
 	 */
-	public void createProperties(AnalysisProperties analysisProperties) throws IOException
+	public static void createProperties(AnalysisProperties analysisProperties) throws IOException
 	{
 		Properties properties = new Properties();
 		if (analysisProperties.isAbs() || analysisProperties.isNary())
@@ -102,9 +102,9 @@ public class AnalysisPropertiesWriter {
 		{
 			properties.setProperty(reb2sac_abstraction, "nary");
 		}
-		if (analysisProperties.getVerificationProperties().getAbsProproperty() != null)
+		if (analysisProperties.getVerificationProperties().getAbsProperty() != null)
 		{
-			AbstractionProperty absProperty =  analysisProperties.getVerificationProperties().getAbsProproperty();
+			AbstractionProperty absProperty =  analysisProperties.getVerificationProperties().getAbsProperty();
 			
 			for (Integer i = 0; i < absProperty.preAbsModel.size(); i++)
 			{

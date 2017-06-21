@@ -346,9 +346,9 @@ public class AnalysisPropertiesLoader {
       HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
       HashMap<String, Boolean> containsXform = new HashMap<String, Boolean>();
       boolean containsAbstractions = false;
-      if (properties.getVerificationProperties().getAbsProproperty() != null)
+      if (properties.getVerificationProperties().getAbsProperty() != null)
       {
-        AbstractionProperty abs = verifProperties.getAbsProproperty();
+        AbstractionProperty abs = verifProperties.getAbsProperty();
         for (String s : abs.transforms)
         {
           if (load.containsKey("abstraction.transform." + s))

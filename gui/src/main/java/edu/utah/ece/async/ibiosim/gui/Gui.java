@@ -2643,7 +2643,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
             else if (component instanceof ModelEditor) {
               ((ModelEditor) component).saveParams(false, "", true, null);
             } else if (component instanceof AnalysisView) {
-              ((AnalysisView) component).save("");
+              ((AnalysisView) component).save();
             } else if (component instanceof MovieContainer) {
               ((MovieContainer) component).savePreferences();
             }
@@ -4558,7 +4558,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
     addToTree(simName);
     JTabbedPane simTab = new JTabbedPane();
     simTab.addMouseListener(this);
-    AnalysisView analysisView = new AnalysisView(this, log, simTab, null, root, simName, modelFileName);
+    AnalysisView analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root,  simName, modelFileName);
     simTab.addTab("Simulation Options", analysisView);
     simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
     simTab.addTab("Advanced Options", analysisView.getAdvanced());
@@ -4575,7 +4575,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
     simTab.addTab("Parameters", modelEditor);
     simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
     modelEditor.createSBML("", ".", "");
-    new AnalysisThread(analysisView).start(".", true);
+    new AnalysisThread(analysisView).start("", true);
     Graph tsdGraph;
     if (new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".grf")
         .exists()) {
@@ -7229,19 +7229,19 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
                         JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
                     if (value == YES_OPTION) {
                       ((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-                      .save("");
+                      .save();
                     } else if (value == CANCEL_OPTION) {
                       return 0;
                     } else if (value == YES_TO_ALL_OPTION) {
                       ((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-                      .save("");
+                      .save();
                       autosave = 1;
                     } else if (value == NO_TO_ALL_OPTION) {
                       autosave = 2;
                     }
                   } else if (autosave == 1) {
                     ((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-                    .save("");
+                    .save();
                   }
                 }
               } else if (((JTabbedPane) tab.getComponentAt(index))
@@ -9065,9 +9065,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
     AbstractionPanel lhpnAbstraction = null;
     if (modelFileName.contains(".lpn")) {
       lhpnAbstraction = new AbstractionPanel(root, modelFileName, log);
-      analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, root, analysisName, modelFileName);
+      analysisView = new AnalysisView(this, log, simTab, lhpnAbstraction, sedmlDocument, root, analysisName, modelFileName);
     } else {
-      analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
+      analysisView = new AnalysisView(this, log, simTab, null,  sedmlDocument, root, analysisName, modelFileName);
     }
     simTab.addTab("Simulation Options", analysisView);
     simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
