@@ -98,9 +98,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   protected double            initTotalPropensity;
   protected PriorityQueue<EventState>    triggeredEventList;
   protected boolean           isInitialized;
-  
+
   protected boolean hasEvents;
-  
+
   private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
@@ -110,11 +110,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private double              initialTime, outputStartTime;
 
   private HierarchicalWriter writer;
-  
+
 
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
     String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
-    {
+  {
     this.SBMLFileName = SBMLFileName;
     this.timeLimit = timeLimit;
     this.maxTimeStep = maxTimeStep;
@@ -127,13 +127,14 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.printConcentrationSpecies = new HashSet<String>();
     if(interestingSpecies != null && interestingSpecies.length > 0)
     {
-    	this.interestingSpecies = new HashSet<String>();
-        for(String species : interestingSpecies)
-        {
-          this.interestingSpecies.add(species);
-        }
+      this.interestingSpecies = new HashSet<String>();
+      for(String species : interestingSpecies)
+      {
+        this.interestingSpecies.add(species);
+      }
     }
-    
+
+
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
     this.type = type;
@@ -146,12 +147,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.outputStartTime = outputStartTime;
 
     this.initValues = new ArrayList<Double>();
-    
+
     this.writer = new HierarchicalTSDWriter();
     this.addPrintVariable("time", printTime.getState());
-    
+
     this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
-    
+
 
     if (quantityType != null)
     {
@@ -184,12 +185,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         errorString += errors.getError(i);
       }
 
-      
+
       throw new BioSimException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "Error!");
     }
 
     separator = GlobalConstants.separator;
-    }
+  }
 
   public HierarchicalSimulation(HierarchicalSimulation copy)
   {
@@ -229,32 +230,32 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
     modules.add(modelstate);
   }
-  
+
   public void addPrintVariable(String id, HierarchicalState state)
   {
-      writer.addVariable(id, state);
+    writer.addVariable(id, state);
   }
 
   public List<HierarchicalModel> getListOfHierarchicalModels()
   {
     return modules;
   }
-  
+
   public void setListOfHierarchicalModels(List<HierarchicalModel> modules)
   {
-     this.modules = modules;
+    this.modules = modules;
   }
 
   public void setHasEvents(boolean value)
   {
     this.hasEvents = value;
   }
-  
+
   public boolean hasEvents()
   {
     return this.hasEvents;
   }
-  
+
   /**
    * @return the cancelFlag
    */
@@ -646,7 +647,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     return randomNumberGenerator;
   }
 
- 
+
 
   /**
    * @return the topmodel
@@ -699,7 +700,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       e.printStackTrace();
     }
   }
-  
+
   public double getInitialTime()
   {
     return initialTime;
@@ -801,30 +802,36 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
     }
   }
+
+  protected void checkEvents()
+  {
+    for(HierarchicalModel model : modules)
+    {
+      for (EventNode event : model.getEvents())
+      {
+        if(!event.isEnabled(model.getIndex()))
+        {
+          event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
+          if(event.computeEnabled(model.getIndex(), currentTime.getValue()))
+          {
+            triggeredEventList.add(event.getEventState(model.getIndex()));
+          }
+        }
+      }
+    }
+  }
   
   protected void computeEvents()
   {
     boolean changed = true;
     double time = currentTime.getValue();
-    
+
     while (changed)
     {
       changed = false;
-      for(HierarchicalModel modelstate : this.modules)
-      {
-        int index = modelstate.getIndex();
-        for (EventNode event : modelstate.getEvents())
-        {
-          if(!event.isEnabled(index))
-          {
-            if (event.computeEnabled(index, time))
-            {
-              triggeredEventList.add(event.getEventState(index));
-            }
-          }
-        }
-      }
       
+      checkEvents();
+
       while (triggeredEventList != null && !triggeredEventList.isEmpty())
       {
         EventState eventState = triggeredEventList.peek();
@@ -842,66 +849,66 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         }
       }
     }
-    
+
   }
-  
-    /**
-     * Calculate fixed-point of initial assignments
-     * 
-     * @param modelstate
-     * @param variables
-     * @param math
-     */
-    protected void computeFixedPoint()
+
+  /**
+   * Calculate fixed-point of initial assignments
+   * 
+   * @param modelstate
+   * @param variables
+   * @param math
+   */
+  protected void computeFixedPoint()
+  {
+    boolean changed = true;
+
+    while (changed)
     {
-      boolean changed = true;
+      changed = false;
 
-      while (changed)
+      for(HierarchicalModel modelstate : this.modules)
       {
-        changed = false;
-
-        for(HierarchicalModel modelstate : this.modules)
+        if(modelstate.getAssignRules() != null)
         {
-          if(modelstate.getAssignRules() != null)
+          for(FunctionNode node : modelstate.getAssignRules())
           {
-            for(FunctionNode node : modelstate.getAssignRules())
-            {
-              changed = changed | node.computeFunction(modelstate.getIndex());
-            }
+            changed = changed | node.computeFunction(modelstate.getIndex());
+          }
+        }
+
+        if(modelstate.getInitAssignments() != null)
+        {
+          for(FunctionNode node : modelstate.getInitAssignments())
+          {
+            changed = changed | node.computeFunction(modelstate.getIndex());
+          }
+        }
+
+        if(modelstate.getReactions() != null)
+        {
+          for(ReactionNode node : modelstate.getReactions())
+          {
+            changed = changed | node.computePropensity(modelstate.getIndex());
           }
 
-          if(modelstate.getInitAssignments() != null)
-          {
-            for(FunctionNode node : modelstate.getInitAssignments())
-            {
-              changed = changed | node.computeFunction(modelstate.getIndex());
-            }
-          }
-
-          if(modelstate.getReactions() != null)
-          {
-            for(ReactionNode node : modelstate.getReactions())
-            {
-              changed = changed | node.computePropensity(modelstate.getIndex());
-            }
-            
-            modelstate.getPropensity().computeFunction(modelstate.getIndex());
-          }
+          modelstate.getPropensity().computeFunction(modelstate.getIndex());
         }
       }
     }
-    
-    public boolean evaluateConstraints()
+  }
+
+  public boolean evaluateConstraints()
+  {
+    boolean hasSuccess = true;
+    for(HierarchicalModel model : modules)
     {
-      boolean hasSuccess = true;
-      for(HierarchicalModel model : modules)
+      for (ConstraintNode constraintNode : model.getConstraints())
       {
-        for (ConstraintNode constraintNode : model.getConstraints())
-        {
-          hasSuccess = hasSuccess && constraintNode.evaluateConstraint(model.getIndex());
-        }
+        hasSuccess = hasSuccess && constraintNode.evaluateConstraint(model.getIndex());
       }
-      return hasSuccess;
     }
-    
+    return hasSuccess;
+  }
+
 }

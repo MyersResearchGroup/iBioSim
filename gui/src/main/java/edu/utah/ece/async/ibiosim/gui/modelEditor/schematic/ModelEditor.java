@@ -34,15 +34,11 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.stream.XMLStreamException;
@@ -141,7 +137,6 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.Runnable;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.UndoManager;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
-import edu.utah.ece.async.ibiosim.gui.util.SpringUtilities;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.Assembler2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.AssemblyGraph2;
@@ -753,143 +748,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		// Show the UploadDialog
 		UploadDialog ud = new UploadDialog(getParent(), registry, uploadDoc);
-	}
-
-	/**
-	 * Creates a frame used to edit SynBioHub submission information
-	 */
-	public void exportSynBioHubDeprecated() {
-		JPanel submissionInfoPanel = new JPanel();
-		JPanel submissionPanel = new JPanel(new SpringLayout());
-
-		JLabel registryLabel = new JLabel("Registry:");
-		JLabel userLabel = new JLabel("User:");
-		JLabel passwordLabel = new JLabel("Password:");
-		JLabel idLabel = new JLabel("ID:");
-		JLabel versionLabel = new JLabel("Version:");
-		JLabel nameLabel = new JLabel("Name:");
-		JLabel descriptionLabel = new JLabel("Description:");
-		JLabel citationLabel = new JLabel("Citations:");
-		JLabel keywordLabel = new JLabel("Keywords:");
-		JLabel ifExistingLabel = new JLabel("If Existing:");
-
-		// PersonInfo info = SBOLEditorPreferences.INSTANCE.getUserInfo();
-		// String email = info == null || info.getEmail() == null ? null :
-		// info.getEmail().getLocalName();
-		// String uri = info == null ? null : info.getURI().stringValue();
-		// String submissionId = cd.getDisplayId();
-		// String submissionName = cd.isSetName() ? cd.getName() :
-		// cd.getDisplayId();
-		// String submissionDescription = cd.isSetDescription() ?
-		// cd.getDescription() : "Test";
-		// String submissionVersion = cd.isSetVersion() ? cd.getVersion() : "1";
-
-		JComboBox registries = new JComboBox();
-
-		registries.addItem("http://synbiohub.org");
-		registries.addItem("http://synbiohub.utah.edu");
-		registries.addItem("http://cidarlab.org:7777");
-		registries.addItem("https://synbiohub.cidarlab.org");
-		registries.addItem("http://localhost:7777");
-		registries.addItem("http://14compsci099.ncl.ac.uk:7777");
-		JTextField userField = new JTextField(12);
-		JPasswordField passwordField = new JPasswordField(12);
-		JTextField idField = new JTextField(12);
-		idField.setText(biomodel.getSBMLDocument().getModel().getId());
-		JTextField versionField = new JTextField(12);
-		versionField.setText("1");
-		JTextField nameField = new JTextField(12);
-		nameField.setText(biomodel.getSBMLDocument().getModel().getName());
-		JTextField descriptionField = new JTextField(12);
-		descriptionField.setText(biomodel.getSBMLDocument().getModel().getName());
-		JTextField citationField = new JTextField(12);
-		JTextField keywordField = new JTextField(12);
-		JComboBox ifExisting = new JComboBox();
-		ifExisting.addItem("Prevent Submission");
-		ifExisting.addItem("Overwrite Submission");
-		ifExisting.addItem("Merge and Prevent, If Existing");
-		ifExisting.addItem("Merge and Replace, If Existing");
-
-		submissionPanel.add(registryLabel);
-		submissionPanel.add(registries);
-		submissionPanel.add(userLabel);
-		submissionPanel.add(userField);
-		submissionPanel.add(passwordLabel);
-		submissionPanel.add(passwordField);
-		submissionPanel.add(idLabel);
-		submissionPanel.add(idField);
-		submissionPanel.add(versionLabel);
-		submissionPanel.add(versionField);
-		submissionPanel.add(nameLabel);
-		submissionPanel.add(nameField);
-		submissionPanel.add(descriptionLabel);
-		submissionPanel.add(descriptionField);
-		submissionPanel.add(citationLabel);
-		submissionPanel.add(citationField);
-		submissionPanel.add(keywordLabel);
-		submissionPanel.add(keywordField);
-		submissionPanel.add(ifExistingLabel);
-		submissionPanel.add(ifExisting);
-
-		SpringUtilities.makeCompactGrid(submissionPanel, 10, 2, // rows, cols
-				6, 6, // initX, initY
-				6, 6); // xPad, yPad
-		submissionInfoPanel.add(submissionPanel);
-		Object[] options = { "Submit", "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, submissionInfoPanel, "Submission Information",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		boolean error = true;
-		while (error && value == JOptionPane.YES_OPTION) {
-			error = false;
-			String user = userField.getText().trim();
-			if (user.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "User Id Required", "Submission Error",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String password = passwordField.getPassword().toString().trim();
-			if (password.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Password Required", "Submission Error",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String id = idField.getText().trim();
-			if (id.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Id Required", "Submission Error", JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String version = versionField.getText().trim();
-			if (version.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Version Required", "Submission Error",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String name = nameField.getText().trim();
-			if (name.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Name Required", "Submission Error",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String description = descriptionField.getText().trim();
-			if (description.equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Description Required", "Submission Error",
-						JOptionPane.ERROR_MESSAGE);
-				error = true;
-			}
-			String citations = citationField.getText().trim();
-			String keywords = keywordField.getText().trim();
-
-			if (!error) {
-				submitSBOL((String) registries.getSelectedItem(), user, password, id, version, name, description,
-						citations, keywords, ifExisting.getSelectedIndex() + "");
-			} else {
-				value = JOptionPane.showOptionDialog(Gui.frame, submissionInfoPanel, "Submission Information",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			}
-		}
-		if (value == JOptionPane.NO_OPTION) {
-			return;
-		}
 	}
 
 	/**

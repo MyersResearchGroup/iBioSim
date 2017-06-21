@@ -57,17 +57,60 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 
 
 /**
- * 
+ * Construct the Species Editor Panel.
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
 public class SpeciesPanel extends JPanel implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	private String selected = "";
+
+	private PropertyList speciesList = null;
+	
+	private PropertyList components = null;
+
+	private String[] options = { "Ok", "Cancel" };
+
+	private BioModel bioModel = null;
+	private BioModel refGCM = null;
+
+	private JComboBox typeBox = null;
+	private JComboBox SBOTerms = null;
+	private JComboBox compartBox = null;
+	private JComboBox convBox = null;
+	private JComboBox unitsBox = null;
+	private JCheckBox specBoundary, specConstant, specHasOnly = null;
+	private JTextField initialField = null;
+	
+	private JTextField iIndex = null;
+	private JTextField conviIndex = null;
+	
+	private JCheckBox specInteresting = null;
+	private JCheckBox specDiffusible = null;
+	private JCheckBox specConstitutive = null;
+	private JCheckBox specDegradable = null;
+	
+	private Species species = null;
+	private Reaction diffusion = null;
+	private Reaction constitutive = null;
+	private Reaction degradation = null;
+	private Reaction complex = null;
+	
+	private JTextField thresholdTextField = null;
+	
+	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
+		GlobalConstants.OUTPUT};
+
+	private HashMap<String, PropertyField> fields = null;
+	
+	private SBOLField2 sbolField; //instance of SBOL association
+	
+	private boolean paramsOnly;
+	
+	private ModelEditor modelEditor;
 	
 	/**
 	 * calls constructor to construct the panel
@@ -84,23 +127,23 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList componentsList, 
 			BioModel bioModel, boolean paramsOnly, BioModel refGCM,
 			ModelEditor modelEditor, boolean inTab){
-
 		super(new BorderLayout());
+		
 		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
+
 	}
+	
 	
 	/**
 	 * constructs the species panel
-	 * 
 	 * @param selected
 	 * @param speciesList
-	 * @param influencesList
-	 * @param conditionsList
 	 * @param componentsList
 	 * @param bioModel
 	 * @param paramsOnly
 	 * @param refGCM
-	 * @param gcmEditor
+	 * @param modelEditor
+	 * @param inTab - True if the user is still browsing within the Species Editor. 
 	 */
 	private void constructor(String selected, PropertyList speciesList, 
 			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
@@ -109,8 +152,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel grid;
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
-		if (paramsOnly)
+		if (paramsOnly){
 			grid = new JPanel(new GridLayout(7,1));
+			}
 		else {
 			grid = new JPanel(new GridLayout(18,1));
 		}
@@ -556,8 +600,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-					3, false);
-
+					2, false);
+			
 			grid.add(sbolField);
 
 			if (bioModel.isInput(species.getId())) {
@@ -574,8 +618,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 		
-
-		
 		setFieldEnablings();
 		
 		boolean display = false;
@@ -589,7 +631,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-
+	
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
 			if (!f.isValidValue()) {
@@ -598,14 +640,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		return true;
 	}
-	
-//	private boolean checkSbolValues() {
-//		for (SBOLField sf : sbolFields.values()) {
-//			if (!sf.isValidText())
-//				return false;
-//		}
-//		return true;
-//	}
+
 
 	/**
 	 * adds interesting species to a list in Reb2Sac.java
@@ -860,20 +895,42 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								bioModel.getMetaIDIndex());
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+					sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+							sbolField.getSBOLURIs().iterator().next()); 
+					
 					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
 					{
 					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
+					
+
+					//Update iBioSim species id, name and SBO term from the annotated SBOL element
+					// TODO: these are causing null pointer exceptions
+					if(sbolField.isSBOLIDSet())
+					{
+						newSpeciesID = sbolField.getSBOLObjID();
+					}
+					if(sbolField.isSBOLNameSet())
+					{
+						species.setName(sbolField.getSBOLObjName());
+					}
+					if(sbolField.isSBOLSBOSet())
+					{
+						species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+					}
+					 
+
+					
 				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);
 			}
 			
 			try {
-        bioModel.changeSpeciesId(selected, newSpeciesID);
-      } catch (BioSimException e1) {
-        JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-        e1.printStackTrace();
-      }
+				bioModel.changeSpeciesId(selected, newSpeciesID);
+			} catch (BioSimException e1) {
+				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -1054,50 +1111,5 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			specDiffusible.setEnabled(true);
 		}
 	}
-	
-	private String selected = "";
 
-	private PropertyList speciesList = null;
-	
-	private PropertyList components = null;
-
-	private String[] options = { "Ok", "Cancel" };
-
-	private BioModel bioModel = null;
-	private BioModel refGCM = null;
-
-	private JComboBox typeBox = null;
-	private JComboBox SBOTerms = null;
-	private JComboBox compartBox = null;
-	private JComboBox convBox = null;
-	private JComboBox unitsBox = null;
-	private JCheckBox specBoundary, specConstant, specHasOnly = null;
-	private JTextField initialField = null;
-	
-	private JTextField iIndex = null;
-	private JTextField conviIndex = null;
-	
-	private JCheckBox specInteresting = null;
-	private JCheckBox specDiffusible = null;
-	private JCheckBox specConstitutive = null;
-	private JCheckBox specDegradable = null;
-	
-	private Species species = null;
-	private Reaction diffusion = null;
-	private Reaction constitutive = null;
-	private Reaction degradation = null;
-	private Reaction complex = null;
-	
-	private JTextField thresholdTextField = null;
-	
-	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
-		GlobalConstants.OUTPUT};
-
-	private HashMap<String, PropertyField> fields = null;
-	
-	private SBOLField2 sbolField;
-	
-	private boolean paramsOnly;
-	
-	private ModelEditor modelEditor;
 }

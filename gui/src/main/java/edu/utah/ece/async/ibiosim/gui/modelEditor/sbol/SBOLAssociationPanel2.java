@@ -24,8 +24,6 @@ import javax.swing.*;
 import org.sbolstandard.core2.*;
 
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
-import edu.utah.ece.async.sboldesigner.sbol.editor.Part;
-import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
@@ -35,7 +33,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
-import edu.utah.ece.async.ibiosim.gui.sbolBrowser.SBOLBrowser2;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 
 import java.net.URI;

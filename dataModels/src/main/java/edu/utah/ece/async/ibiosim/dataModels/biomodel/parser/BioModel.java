@@ -6078,6 +6078,8 @@ public class BioModel extends Observable{
 
 		for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
 			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
+			if (replacement.isSetMetaId()) SBMLutilities.setMetaId(replacement, 
+					subModelId + "___" + replacement.getMetaId());
 			if (replacement.getSubmodelRef().equals(replacementModelId)) {
 				if (replacement.isSetPortRef()) {
 					Port port = subBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
@@ -6094,6 +6096,8 @@ public class BioModel extends Observable{
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			ReplacedBy replacement = sbmlSBase.getReplacedBy();
+			if (replacement.isSetMetaId()) SBMLutilities.setMetaId(replacement, 
+					subModelId + "___" + replacement.getMetaId());
 			if (replacement.getSubmodelRef().equals(replacementModelId)) {
 				if (replacement.isSetPortRef()) {
 					Port port = subBioModel.getSBMLCompModel().getListOfPorts().get(replacement.getPortRef());
@@ -6240,7 +6244,12 @@ public class BioModel extends Observable{
 			} else {
 				updateVarId(true, spec.getId(), spec.getId().replace("___", "__"), subBioModel);
 				spec.setId(spec.getId().replace("___","__"));
-				if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, spec.getMetaId().replace("___","__"));
+				if (spec.isSetMetaId()) {
+					SBMLutilities.setMetaId(spec, spec.getMetaId().replace("___","__"));
+					while (SBMLutilities.getElementByMetaId(model, spec.getMetaId()) != null) {
+						spec.setMetaId(spec.getMetaId()+"_");
+					}
+				}
 				if (model.getSpecies(spec.getId())==null) {
 					model.addSpecies(spec);
 					CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(spec.getId()));

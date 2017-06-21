@@ -16,6 +16,7 @@ package edu.utah.ece.async.ibiosim.conversion;
 import java.io.IOException;
 import java.net.URI;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -35,16 +36,15 @@ import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
 public class VPRModelGenerator {
 
 	/**
-	 * Generate SBOL model from the given design file using given synbiohub repository
-	 * 
-	 * @param endpoint - The specified synbiohub repository the user wants VPR model generator to connect to. 
+	 * Perform VPR model generation. 
+	 * @param selectedRepo - The specified synbiohub repository the user wants VPR model generator to connect to. 
 	 * @param generatedModel - The file to generate the model from.
-	 * @return
+	 * @return The generated model.
 	 * @throws SBOLValidationException
-	 * @throws IOException
-	 * @throws SBOLConversionException
-	 * @throws VPRException
-	 * @throws VPRTripleStoreException
+	 * @throws IOException - Unable to read or write the given SBOLDocument
+	 * @throws SBOLConversionException - Unable to perform conversion for the given SBOLDocument.
+	 * @throws VPRException - Unable to perform VPR Model Generation on the given SBOLDocument.
+	 * @throws VPRTripleStoreException - Unable to perform VPR Model Generation on the given SBOLDocument.
 	 */
 	public static SBOLDocument generateModel(String selectedRepo, SBOLDocument generatedModel) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{ 

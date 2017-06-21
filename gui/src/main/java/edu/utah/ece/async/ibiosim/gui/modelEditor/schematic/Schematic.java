@@ -2092,6 +2092,13 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 					else if (bioActivationButton.isSelected()) {
+						if (bioModel.getComplexReaction(sourceID)!=null) {
+							JOptionPane.showMessageDialog(Gui.frame, "Source of a complex reaction arc cannot be a product of a complex reaction.");
+							graph.buildGraph();
+							modelEditor.refresh();
+							return;
+						}
+
 						/*
 						if (bioModel.isArray(sourceID)) {	
 							JOptionPane.showMessageDialog(Gui.frame, "Complex formation arcs cannot currently be connected between species arrays.");

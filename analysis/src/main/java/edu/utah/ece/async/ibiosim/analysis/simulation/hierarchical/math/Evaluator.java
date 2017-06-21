@@ -299,7 +299,7 @@ public final class Evaluator
     {
     case FUNCTION:
     {
-      String nodeName = ((VariableNode) node).getName();
+      String nodeName = node.getName();
 
       if (nodeName.equals("uniform"))
       {
