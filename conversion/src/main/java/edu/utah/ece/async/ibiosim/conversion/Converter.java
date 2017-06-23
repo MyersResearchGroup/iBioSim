@@ -38,61 +38,12 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
- * Command line method for running conversion jar file. 
- * java -jar conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile 
- * <p>
- * By default, validations on compliance and completeness are performed, and types
- * for top-level objects are not used in URIs.
- * <p>
- * Requirements:
- * <p>
- * inputfile
- * <p>
+ * Command line for:
+ * - running conversion for SBML to/from SBOL, GenBank, Fasta, SBOL1 
+ * - validating SBOL files.
  * 
- * Options:
- * <p>
- * "-b" check best practices
- * <p>
- * "-cf" The name of the file that will be produced to hold the result of the second SBOL file, if SBOL file diff was selected.
- * <p>
- * "-d" display detailed error trace
- * <p>
- * "-e" specifies a file to compare if equal to
- * <p>
- * "-esf" export single SBML file
- * <p>
- * "-f" fail on first error
- * <p>
- * "-i" allow SBOL document to be incomplete
- * <p>
- * "-l" indicates the language for output (default=SBOL2, other options SBOL1, GenBank, FASTA, SBML)
- * <p>
- * "-mf" The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.
- * <p>
- * "-n" allow non-compliant URIs
- * <p>
- * "-no" indicate no output file to be generated from validation
- * <p>
- * "-o" specifies an output filename
- * <p>
- * "-oDir" output directory of resulting conversion and validation file
- * <p>
- * "-p" specifies the default URI prefix for converted objects
- * <p>
- * "-rsbml" The full path of external SBML files to be referenced in the SBML2SBOL conversion
- * <p>
- * "-rsbol" The full path of external SBOL files to be referenced in the SBML2SBOL conversion
- * <p>
- * "-s" select only this topLevel object and those it references
- * <p>
- * "-t" uses types in URIs
- * <p>
- * "-v" specifies version to use for converted objects
- * <p>
- *
  * @author Tramy Nguyen
  * @author Zhen Zhang
  * @author Chris Myers
@@ -117,10 +68,10 @@ public class Converter {
 		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
 		System.err.println();
 		System.err.println("Convert SBOL to SBML Example:");
-		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar -l SBML -p <SBOL default URI prefix> <inputFile> -oDir <outputDirectory> -o <outputFileName> ");
+		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar -l SBML -p <SBOL default URI prefix> <inputFile> -o <outputFileName> ");
 		System.err.println();
 		System.err.println("Required:");
-		System.err.println("<inputFile> name of input file");
+		System.err.println("<inputFile> full path of input file");
 		System.err.println();
 		System.err.println("Options:");
 		System.err.println("\t-b  check best practices");
@@ -132,9 +83,9 @@ public class Converter {
 		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
 		System.err.println("\t-mf The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
-		System.err.println("\t-o  <outputFile> specifies the output file produced from the converter");
+		System.err.println("\t-o  <outputFile> specifies the full path of the output file produced from the converter");
 		System.err.println("\t-no  indicate no output file to be generated from validation");
-		System.err.println("\t-oDir  output directory of resulting conversion and validation file");
+		System.err.println("\t-oDir  output directory when SBOL to SBML conversion is performed and multiple SBML files are produced for individual submodels.");
 		System.err.println("\t-p  <URIprefix> used for converted objects");
 		System.err.println("\t-rsbml  The full path of external SBML files to be referenced in the SBML2SBOL conversion");
 		System.err.println("\t-rsbol  The full path of external SBOL files to be referenced in the SBML2SBOL conversion");
@@ -147,7 +98,7 @@ public class Converter {
 	public static void main(String[] args) 
 	{
 		//-----REQUIRED FIELD-----
-		String fileName = ""; //input file name
+		String fullInputFileName = ""; //input file name
 
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
@@ -313,18 +264,18 @@ public class Converter {
 				version = args[++index];
 				break;
 			default:
-				fileName = args[index];
+				fullInputFileName = args[index];
 			}
 		}
 
 		/* Note: Check all required field has been set. If not, stop user from continuing.*/
 		boolean inputIsSBOL = false; 
 		boolean inputIsSBML = false;
-		if(!fileName.isEmpty())
+		if(!fullInputFileName.isEmpty())
 		{
 			//find out what input file format is
 			try {
-				if(isSBMLFile(fileName))
+				if(isSBMLFile(fullInputFileName))
 				{
 					inputIsSBML = true;
 				}
@@ -354,7 +305,9 @@ public class Converter {
 			File fileDir = new File(externalSBOLPath);
 			File[] sbolFiles =  fileDir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return (name.toLowerCase().endsWith(".rdf") || name.toLowerCase().endsWith(".sbol"));
+					return (name.toLowerCase().endsWith(".rdf") || 
+							name.toLowerCase().endsWith(".sbol") || 
+							name.toLowerCase().endsWith(".xml"));
 				}
 			});
 
@@ -363,8 +316,17 @@ public class Converter {
 				ref_sbolInputFilePath.add(f.getAbsolutePath());
 			}
 		}
+		
+		//If the output directory is empty, get the path from the output file name that the user has specified
+		// since we assume that the user will always provide the full path for the output file name.
+		File f = new File(outputFileName);
+		String outFileName = f.getName();
+		if(outputDir.isEmpty())
+		{
+			outputDir = f.getParent();
+		}
 
-		File file = new File(fileName); 
+		File file = new File(fullInputFileName); 
 		boolean isDirectory = file.isDirectory();
 		if (!isDirectory) 
 		{
@@ -375,46 +337,36 @@ public class Converter {
 				try 
 				{
 					//We must guarantee user must provide SBOL default URI or else tell user to provide one.
-					if(!URIPrefix.isEmpty())
+					if(URIPrefix.isEmpty())
 					{
-						if (externalSBMLPath.isEmpty()) 
-						{
-							//SBML file is relative. No external path was given for the input SBML file. 
-							inputSBMLDoc = SBMLutilities.readSBML(fileName);
-						} 
-						else 
-						{
-							inputSBMLDoc = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + fileName);
-						}
-
-						SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fileName, ref_sbolInputFilePath, URIPrefix); 
-					} 
-					else
-					{
-						System.err.println("ERROR: You must provide an SBOL URI prefix in order to convert SBML to SBOL.");
+						System.err.println("ERROR: You must provide an SBOL URI prefix in order to perform "
+								+ "conversion or validation for the inputted file.");
 						usage();
 					}
+					
+					//SBML file is relative. No external path was given for the input SBML file. 
+					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName);
+
+					SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fullInputFileName, ref_sbolInputFilePath, URIPrefix); 
+
 
 					if(!noOutput)
 					{
 						if(outputFileName.isEmpty())
 						{
-							System.err.println("ERROR: You must provide an output file name to convert SBML to SBOL.");
-							usage();
+							outSBOLDoc.write(new ByteArrayOutputStream());
 						}
-						if(outputDir.isEmpty())
+						else
 						{
-							System.err.println("ERROR: You must provide an output directory to store the SBOL file after SBML to SBOL conversion is performed.");
-							usage();
+							outSBOLDoc.write(outputFileName, SBOLDocument.RDF);
 						}
-						outSBOLDoc.write(outputDir + outputFileName, SBOLDocument.RDF);
 					}
 					else
 					{
 						outSBOLDoc.write(new ByteArrayOutputStream());
 					}
-					String sbolVal_fileName = outputDir + outputFileName;
-					String sbolVal_outFileName = outputDir + outputFileName + "_validated";
+					String sbolVal_fileName = outputFileName;
+					String sbolVal_outFileName = outputFileName + "_validated";
 					org.sbolstandard.core2.SBOLValidate.validate(sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 							version, keepGoing, compareFile, compFileResult, mainFileResult, 
 							topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
@@ -443,25 +395,23 @@ public class Converter {
 			} //end of is input is SBML
 			else if(inputIsSBOL)
 			{
-				String sbolVal_outFileName = outputDir + outputFileName;
-				//Perform validation on the input SBOL file if no SBML output file is expected
-				org.sbolstandard.core2.SBOLValidate.validate(fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
-						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
-						showDetail, noOutput);
 				//If the user only want to diff between two SBOL file, call the validation method and then skip the rest. 
+				org.sbolstandard.core2.SBOLValidate.validate(fullInputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
+						version, keepGoing, compareFile, compFileResult, mainFileResult, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
+						showDetail, noOutput);
 				if(!isDiffFile)
 				{
 					SBOLDocument sbolDoc;
 					try 
-					{
+					{	
 						SBOLReader.setURIPrefix(URIPrefix);
-						sbolDoc = SBOLReader.read(new FileInputStream(fileName));
+						sbolDoc = SBOLReader.read(new FileInputStream(fullInputFileName));
 						if(!topLevelURIStr.isEmpty())
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
 							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-							saveSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
+							saveSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
 						} 
 						else
 						{
@@ -469,12 +419,12 @@ public class Converter {
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
 								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-								saveSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
+								saveSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
 					}
 					catch (FileNotFoundException e) {
-						System.err.println("ERROR:  Unable to located file");
+						System.err.println("ERROR:  Unable to locate file");
 						e.printStackTrace();
 					} catch (SBOLValidationException e) {
 						System.err.println("ERROR: Invalid SBOL file");
@@ -498,7 +448,7 @@ public class Converter {
 				// TODO: should allow compare to a directory of same named files
 				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outFileName, 
 						showDetail, noOutput);
 			}
 		}
@@ -563,6 +513,15 @@ public class Converter {
 		return false;
 	}
 	
+	/**
+	 * Export a list of BioModels to SBML files. 
+	 * @param models - The list of BioModels
+	 * @param outputDir - The output directory to save the BioModels in
+	 * @param outputFileName - The output file name if there was only one BioModel to export
+	 * @param noOutput - True if no output file is to be produced. False otherwise. 
+	 * @param sbmlOut - True if the user want to write the BioModel to an SBML file. False otherwise.
+	 * @param singleSBMLOutput - True if the user want to the list of BioModels into one SBML file rather than multiple files. False otherwise.
+	 */
 	private static void saveSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
 			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput)
 	{
@@ -572,25 +531,19 @@ public class Converter {
 
 		if(noOutput)
 		{
-			try 
-			{
-				SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
-			} 
-			catch (SBMLException e) 
-			{
-				System.err.println("ERROR: SBML Exception occurred when exporting BioModels to an SBML file");
-				e.printStackTrace();
-			} 
-			catch (XMLStreamException e) 
-			{
-				System.err.println("ERROR: Invalid XML file");
-				e.printStackTrace();
-			}
+			printSBMLModel(target);
 		}
-		else
+		else if(sbmlOut)
 		{
-			if(sbmlOut)
+			if(outputFileName.isEmpty())
 			{
+				printSBMLModel(target);
+			}
+			else
+			{
+				//Note: In order to export multiple BioModels into one single SBML file, we must first
+				//generate each submodel and then collapse all models into one file. This is necessary because
+				//the top level SBML models are using external ModelDefinitions.
 				exportMultSBMLFile(models, outputDir);
 				if(singleSBMLOutput)
 				{
@@ -598,8 +551,15 @@ public class Converter {
 				}
 			}
 		}
+
 	}
 	
+	/**
+	 * Export a BioModel to the specified output directory.
+	 * @param target - The BioModel to be exported
+	 * @param outputDir - The directory to store the exported BioModel
+	 * @param outputFileName - The output file name
+	 */
 	private static void exportSingleSBMLFile(BioModel target, String outputDir, String outputFileName)
 	{
 		try 
@@ -632,6 +592,28 @@ public class Converter {
 	}
 	
 	/**
+	 * Print the BioModel to the console
+	 * @param target - The BioModel to be printed to the console.
+	 */
+	private static void printSBMLModel(BioModel target)
+	{
+		try 
+		{
+			SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
+		} 
+		catch (SBMLException e) 
+		{
+			System.err.println("ERROR: SBML Exception occurred when exporting BioModels to an SBML file");
+			e.printStackTrace();
+		} 
+		catch (XMLStreamException e) 
+		{
+			System.err.println("ERROR: Invalid XML file");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Export a list of BioModels to the specified output directory.
 	 * @param models - The list of BioModels
 	 * @param outputDir - The output directory to store the SBML files
@@ -650,9 +632,7 @@ public class Converter {
 				System.err.println("ERROR: Unable to write file to SBML.");
 				e.printStackTrace();
 			}
-		}
-		
-		
+		}	
 	}
 
 }

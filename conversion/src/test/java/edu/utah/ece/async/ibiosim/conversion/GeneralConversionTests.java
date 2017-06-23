@@ -13,6 +13,9 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
@@ -32,7 +35,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbolDir + fileName + ".xml";
 		
 		//Options
-		String uriPrefix = "http://www.async.ece.utah.edu";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String selectedMod = "http://sbols.org/CRISPR_Example/CRPb_characterization_Circuit/1.0.0";
 		
 		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-s", selectedMod};
@@ -48,23 +51,40 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbolDir + fileName + ".xml";
 		String inputfile2 = sbolDir + fileName2 + ".xml";
 		
-		String[] converter_cmdArgs = {"-no", inputfile, "-e", inputfile2, "-mf", "mainfileRes" , "-cf", "secondFileRes"};
+		String uriPrefix = "http://www.async.ece.utah.edu/";
+		
+		String[] converter_cmdArgs = {"-no", inputfile, "-p", uriPrefix, "-e", inputfile2, "-mf", "mainfileRes" , "-cf", "secondFileRes"};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 
 	
 	@Test
-	public void test_cmd_l_sbml(){
+	public void test_cmd_l_sbml() throws IOException{
 		/* convert sbol2sbml*/
 		String fileName = "CRISPR_example"; 
 		String inputfile = sbolDir + fileName + ".xml";
-		String outFile = fileName + "_out2";
+		String outFile =  sbol2sbml_outputDir + fileName + "_out2";
 		
 		//Options
-		String uriPrefix = "http://www.async.ece.utah.edu";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputLang = "SBML";	
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", sbol2sbml_outputDir, "-o", outFile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbml2() throws IOException{
+		/* convert sbol2sbml*/
+		String fileName = "CRISPR_example"; 
+		String inputfile = sbolDir + fileName + ".xml";
+		String outFile =  sbol2sbml_outputDir + fileName + "_out2";
+		
+		//Options
+		String uriPrefix = "http://www.async.ece.utah.edu/";
+		String outputLang = "SBML";	
+		
+		String[] converter_cmdArgs = {"-l", outputLang, "-rsbol", sbolDir, "-p", uriPrefix, inputfile, "-o", outFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	
@@ -73,27 +93,61 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		/* convert sbol2genbank*/
 		String fileName = "acoA_full"; 
 		String inputfile = sbolDir + fileName + ".xml";
-		String outFile = fileName + "_out";
+		String outFile = genBank_outputDir + fileName + "_out";
 		
 		//Options
 		String outputLang = "GenBank";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-oDir", genBank_outputDir, "-o", outFile};
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	
 	@Test
-	public void test_cmd_l_sbol(){
+	public void test_cmd_l_sbol()
+	{
 		/* convert sbml2sbol*/
 		String fileName = "repressibleTU_Connected"; 
 		String inputfile = sbmlDir + fileName + ".xml";
 		
 		//Options
 		String outputLang = "SBOL2";
-		String uriPrefix = "http://www.async.ece.utah.edu";
-		String outputFile = fileName + "_out";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
+		String outputFile = sbml2sbol_outputDir + fileName + "_out";
 		
-		String[] converter_cmdArgs = {"-l", outputLang, "-p", uriPrefix, inputfile, "-oDir", sbml2sbol_outputDir, "-o", outputFile};
+		String[] converter_cmdArgs = {"-l", outputLang, "-p", uriPrefix, inputfile, "-o", outputFile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbol2()
+	{
+		/* convert sbml2sbol with external SBML files using -rsbml*/
+		String fileName = "GeneticToggle"; 
+		String inputfile = sbmlDir + fileName + ".xml";
+		
+		//Options
+		String outputLang = "SBOL2";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
+		String outputFile = sbml2sbol_outputDir + fileName + "_out";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, "-rsbml", sbmlDir, "-p", uriPrefix, inputfile, "-o", outputFile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbol3()
+	{
+		/* convert sbml2sbol with external SBML files using -rsbml*/
+		String fileName = "Main"; 
+		String inputfile = sbmlDir + fileName + ".xml";
+		
+		//Options
+		String outputLang = "SBOL2";
+		String uriPrefix = "http://www.async.ece.utah.edu/";
+		String outputFile = sbml2sbol_outputDir + fileName + "_out";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, "-rsbml", sbmlDir, "-p", uriPrefix, inputfile, "-o", outputFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 }

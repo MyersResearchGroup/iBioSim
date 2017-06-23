@@ -1,0 +1,595 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
+  <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+    <comp:externalModelDefinition comp:md5="0f9994db514aa60a7c1f22496036a2cd" comp:source="file:LacI_Inverter.xml" comp:id="LacI_Inverter"/>
+    <comp:externalModelDefinition comp:md5="2904753da1d3461ae3f1204dd47d979e" comp:source="file:TetR_Inverter.xml" comp:id="TetR_Inverter"/>
+  </comp:listOfExternalModelDefinitions>
+  <model id="GeneticToggle" metaid="iBioSim7">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim7">
+            <mts:DNAComponents>
+              <rdf:Seq>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_6_15_2015_14_1_42_196_iBioSim"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:submodel comp:modelRef="LacI_Inverter" metaid="iBioSim11" comp:id="C1"/>
+      <comp:submodel comp:modelRef="TetR_Inverter" metaid="iBioSim12" comp:id="C2"/>
+    </comp:listOfSubmodels>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425" layout:depth="0"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:reference="C1" layout:id="Glyph__C1">
+            <layout:boundingBox>
+              <layout:position layout:x="289" layout:y="98"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="C2" layout:id="Glyph__C2">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="270"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="IPTG_High" layout:id="Glyph__IPTG_High">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="240"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__IPTG_High__product__IPTG" layout:role="product" layout:glyph="Glyph__IPTG">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="67.5" layout:y="252.5"/>
+                      <layout:end layout:x="110" layout:y="365"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="IPTG_Low" layout:id="Glyph__IPTG_Low">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="240"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__IPTG_Low__product__IPTG" layout:role="product" layout:glyph="Glyph__IPTG">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="177.5" layout:y="252.5"/>
+                      <layout:end layout:x="110" layout:y="365"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="aTc_High" layout:id="Glyph__aTc_High">
+            <layout:boundingBox>
+              <layout:position layout:x="740" layout:y="230"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__aTc_High__product__aTc" layout:role="product" layout:glyph="Glyph__aTc">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="777.5" layout:y="242.5"/>
+                      <layout:end layout:x="700" layout:y="165"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:reference="aTc_Low" layout:id="Glyph__aTc_Low">
+            <layout:boundingBox>
+              <layout:position layout:x="620" layout:y="230"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__aTc_Low__product__aTc" layout:role="product" layout:glyph="Glyph__aTc">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="657.5" layout:y="242.5"/>
+                      <layout:end layout:x="700" layout:y="165"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__LacI" layout:species="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="270"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__TetR" layout:species="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="460" layout:y="110"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__GFP" layout:species="GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="100"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__IPTG" layout:species="IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="350"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__aTc" layout:species="aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="650" layout:y="150"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__IPTG_LacI" layout:species="IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="360"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__aTc_TetR" layout:species="aTc_TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="580" layout:y="50"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__IPTG__complex__IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="330" layout:y="375"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__IPTG__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="110" layout:y="365"/>
+                      <layout:end layout:x="330" layout:y="375"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__LacI__complex__IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="330" layout:y="375"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__LacI__complex__IPTG_LacI" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="330" layout:y="285"/>
+                      <layout:end layout:x="330" layout:y="375"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__aTc__complex__aTc_TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="630" layout:y="65"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__aTc__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="700" layout:y="165"/>
+                      <layout:end layout:x="630" layout:y="65"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__TetR__complex__aTc_TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="630" layout:y="65"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__TetR__complex__aTc_TetR" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="510" layout:y="125"/>
+                      <layout:end layout:x="630" layout:y="65"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C1" layout:id="TextGlyph__C1" layout:text="C1">
+            <layout:boundingBox>
+              <layout:position layout:x="289" layout:y="98"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C2" layout:id="TextGlyph__C2" layout:text="C2">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="270"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__LacI" layout:id="TextGlyph__LacI" layout:text="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="270"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__TetR" layout:id="TextGlyph__TetR" layout:text="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="460" layout:y="110"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__GFP" layout:id="TextGlyph__GFP" layout:text="GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="100"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG" layout:id="TextGlyph__IPTG" layout:text="IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="350"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc" layout:id="TextGlyph__aTc" layout:text="aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="650" layout:y="150"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG_LacI" layout:id="TextGlyph__IPTG_LacI" layout:text="IPTG_LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="360"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc_TetR" layout:id="TextGlyph__aTc_TetR" layout:text="aTc_TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="580" layout:y="50"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG_High" layout:id="TextGlyph__IPTG_High" layout:text="IPTG_High">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="240"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG_Low" layout:id="TextGlyph__IPTG_Low" layout:text="IPTG_Low">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="240"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc_High" layout:id="TextGlyph__aTc_High" layout:text="aTc_High">
+            <layout:boundingBox>
+              <layout:position layout:x="740" layout:y="230"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc_Low" layout:id="TextGlyph__aTc_Low" layout:text="aTc_Low">
+            <layout:boundingBox>
+              <layout:position layout:x="620" layout:y="230"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment id="Cell" constant="true" spatialDimensions="3" size="1">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C1"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C2"/>
+        </comp:listOfReplacedElements>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="LacI" constant="false" initialAmount="60" hasOnlySubstanceUnits="true" metaid="iBioSim4" boundaryCondition="false" compartment="Cell">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="input__LacI" comp:submodelRef="C1"/>
+          <comp:replacedElement comp:portRef="output__LacI" comp:submodelRef="C2"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species id="TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim5" boundaryCondition="false" compartment="Cell">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__TetR" comp:submodelRef="C1"/>
+          <comp:replacedElement comp:portRef="input__TetR" comp:submodelRef="C2"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species id="GFP" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim6" boundaryCondition="false" compartment="Cell">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__GFP" comp:submodelRef="C1"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species id="IPTG" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim1" boundaryCondition="true" compartment="Cell"/>
+      <species id="aTc" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim3" boundaryCondition="true" compartment="Cell"/>
+      <species id="IPTG_LacI" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim13" boundaryCondition="false" compartment="Cell"/>
+      <species id="aTc_TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim14" boundaryCondition="false" compartment="Cell"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="kd" constant="true" name="Degradation rate" metaid="iBioSim2" value="0.0075"/>
+      <parameter id="kc_f" constant="true" name="Forward complex formation rate" value="0.05"/>
+      <parameter id="kc_r" constant="true" name="Reverse complex formation rate" value="1"/>
+      <parameter id="nc" constant="true" name="Stoichiometry of binding" value="2"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="Degradation_TetR" metaid="iBioSim8" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="TetR" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> TetR </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_LacI" metaid="iBioSim9" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="LacI" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> LacI </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_GFP" metaid="iBioSim10" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="GFP" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> GFP </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_IPTG_LacI" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="IPTG_LacI" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> IPTG_LacI </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_aTc_TetR" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="aTc_TetR" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> aTc_TetR </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction id="Complex_IPTG_LacI" reversible="true" sboTerm="SBO:0000177" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="IPTG" stoichiometry="1"/>
+          <speciesReference constant="true" species="LacI" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="IPTG_LacI" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kc_f </ci>
+                  <apply>
+                    <power/>
+                    <ci> IPTG </ci>
+                    <ci> nc_IPTG </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> LacI </ci>
+                  <ci> nc_LacI </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> IPTG_LacI </ci>
+              </apply>
+            </apply>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="nc_IPTG" value="1"/>
+            <localParameter id="nc_LacI" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Complex_aTc_TetR" reversible="true" sboTerm="SBO:0000177" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference constant="true" species="aTc" stoichiometry="1"/>
+          <speciesReference constant="true" species="TetR" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" species="aTc_TetR" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kc_f </ci>
+                  <apply>
+                    <power/>
+                    <ci> aTc </ci>
+                    <ci> nc_aTc </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> TetR </ci>
+                  <ci> nc_TetR </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> aTc_TetR </ci>
+              </apply>
+            </apply>
+          </math>
+                  <listOfLocalParameters>
+            <localParameter id="nc_aTc" value="1"/>
+            <localParameter id="nc_TetR" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="IPTG_High" metaid="iBioSim16" useValuesFromTriggerTime="false">
+        <trigger persistent="false" initialValue="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <true/>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 2000 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="IPTG">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 60 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="IPTG_Low" metaid="iBioSim17" useValuesFromTriggerTime="false">
+        <trigger persistent="false" initialValue="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <true/>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 4000 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="IPTG">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="aTc_High" metaid="iBioSim18" useValuesFromTriggerTime="false">
+        <trigger persistent="false" initialValue="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <true/>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 6000 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="aTc">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 60 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="aTc_Low" metaid="iBioSim19" useValuesFromTriggerTime="false">
+        <trigger persistent="false" initialValue="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <true/>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 8000 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="aTc">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>
