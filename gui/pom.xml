@@ -230,11 +230,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>edu.utah.ece.async</groupId>
-			<artifactId>iBioSim-verification</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 
 		<dependency>
 			<groupId>edu.utah.ece.async.sboldesigner</groupId>
