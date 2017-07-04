@@ -225,36 +225,36 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
 public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
 	public static JFrame frame; // Frame where components of the GUI are displayed
-	private JMenuBar menuBar;
-	private JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
-	private JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
-	private JMenuItem newCsp, newHse, newUnc, newRsg, newSpice;
-	private JMenuItem exit;
-	private JMenuItem importSbol, importGenBank, importFasta;
-	private JMenuItem importSedml, importSbml, importBioModel, importVirtualPart, importVhdl;
-	private JMenuItem importS, importInst, importLpn, importG, importCsp, importHse, importUnc;
-	private JMenuItem importRsg, importSpice, importProperty;
-	private JMenuItem manual;
-	private JMenuItem bugReport;
-	private JMenuItem about;
-	private JMenuItem openProj;
-	private JMenuItem clearRecent;
-	private JMenuItem pref;
-	private JMenuItem graph;
-	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
-	private JMenuItem exportPng, exportSvg, exportTsd, exportSBML, exportFlatSBML;
-	private JMenuItem exportSBOL1, exportSBOL2, exportSynBioHub, exportGenBank, exportFasta, exportArchive, exportAvi,
+	protected JMenuBar menuBar;
+	protected JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
+	protected JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
+	protected JMenuItem newCsp, newHse, newUnc, newRsg, newSpice;
+	protected JMenuItem exit;
+	protected JMenuItem importSbol, importGenBank, importFasta;
+	protected JMenuItem importSedml, importSbml, importBioModel, importVirtualPart, importVhdl;
+	protected JMenuItem importS, importInst, importLpn, importG, importCsp, importHse, importUnc;
+	protected JMenuItem importRsg, importSpice, importProperty, importArchive;
+	protected JMenuItem manual;
+	protected JMenuItem bugReport;
+	protected JMenuItem about;
+	protected JMenuItem openProj;
+	protected JMenuItem clearRecent;
+	protected JMenuItem pref;
+	protected JMenuItem graph;
+	protected JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
+	protected JMenuItem exportPng, exportSvg, exportTsd, exportSBML, exportFlatSBML;
+	protected JMenuItem exportSBOL1, exportSBOL2, exportSynBioHub, exportGenBank, exportFasta, exportArchive, exportAvi,
 	exportMp4;
-	private JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
-	private String root;
-	private String currentProjectId;
-	private FileTree tree;
-	private CloseAndMaxTabbedPane tab;
-	private JToolBar toolbar;
-	private JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton;
-	private JPanel mainPanel;
-	private JSplitPane topSplit;
-	private JSplitPane mainSplit;
+	protected JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
+	protected String root;
+	protected String currentProjectId;
+	protected FileTree tree;
+	protected CloseAndMaxTabbedPane tab;
+	protected JToolBar toolbar;
+	protected JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton;
+	protected JPanel mainPanel;
+	protected JSplitPane topSplit;
+	protected JSplitPane mainSplit;
 
 	public static String reb2sacExecutable;
 
@@ -265,73 +265,73 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	public Log log; // the
 	// log
 
-	private JPopupMenu popup; // popup
+	protected JPopupMenu popup; // popup
 	// menu
 
-	private KeyEventDispatcher dispatcher;
+	protected KeyEventDispatcher dispatcher;
 
-	private JMenuItem recentProjects[];
+	protected JMenuItem recentProjects[];
 
-	private String recentProjectPaths[];
+	protected String recentProjectPaths[];
 
-	private int numberRecentProj;
+	protected int numberRecentProj;
 
-	private int ShortCutKey;
+	protected int ShortCutKey;
 
 	public static String SBMLLevelVersion;
 
-	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+	protected Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean async;
+	protected boolean async;
 	// treeSelected
 	// = false;
 
 	public boolean atacs, lema;
 
-	private String viewer;
+	protected String viewer;
 
-	private boolean runGetNames;
+	protected boolean runGetNames;
 
-	// private boolean showParts = false;
+	// protected boolean showParts = false;
 
-	// private Thread getPartsThread = null;
+	// protected Thread getPartsThread = null;
 
-	private String[] BioModelIds = null;
+	protected String[] BioModelIds = null;
 
-	// private Parts allVirtualParts = null;
+	// protected Parts allVirtualParts = null;
 
-	private JMenuItem addCompartment, addSpecies, addReaction, addModule, addPromoter, addVariable, addBoolean,
+	protected JMenuItem addCompartment, addSpecies, addReaction, addModule, addPromoter, addVariable, addBoolean,
 	addPlace, addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select, undo, redo, copy,
 	rename, delete, moveLeft, moveRight, moveUp, moveDown;
 
-	private JMenuItem save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
+	protected JMenuItem save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
 	viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser,
 	createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll,
 	convertToLPN;
 
-	public String ENVVAR;
+	protected String ENVVAR;
 
-	public static final Object[] OPTIONS = { "Yes", "No", "Yes To All", "No To All", "Cancel" };
+	protected static final Object[] OPTIONS = { "Yes", "No", "Yes To All", "No To All", "Cancel" };
 
-	public static final int YES_OPTION = JOptionPane.YES_OPTION;
+	protected static final int YES_OPTION = JOptionPane.YES_OPTION;
 
-	public static final int NO_OPTION = JOptionPane.NO_OPTION;
+	protected static final int NO_OPTION = JOptionPane.NO_OPTION;
 
-	public static final int YES_TO_ALL_OPTION = JOptionPane.CANCEL_OPTION;
+	protected static final int YES_TO_ALL_OPTION = JOptionPane.CANCEL_OPTION;
 
-	public static final int NO_TO_ALL_OPTION = 3;
+	protected static final int NO_TO_ALL_OPTION = 3;
 
-	public static final int CANCEL_OPTION = 4;
+	protected static final int CANCEL_OPTION = 4;
 
 	public static Object ICON_EXPAND = UIManager.get("Tree.expandedIcon");
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	private static final String lemaVersion = "2.9.5";
+	protected static final String lemaVersion = "2.9.5";
 
-	private static final String atacsVersion = "6.1";
+	protected static final String atacsVersion = "6.1";
 
-	private static final String		iBioSimVersion		= "2.9.5";	
+	protected static final String		iBioSimVersion		= "2.9.5";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
@@ -547,6 +547,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		importGenBank = new JMenuItem("GenBank File");
 		importFasta = new JMenuItem("Fasta File");
 		importSedml = new JMenuItem("SED-ML File");
+		importArchive = new JMenuItem("Archive");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
 		importVirtualPart = new JMenuItem("Virtual Part");
@@ -666,6 +667,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		importGenBank.addActionListener(this);
 		importFasta.addActionListener(this);
 		importSedml.addActionListener(this);
+		importArchive.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
 		importVirtualPart.addActionListener(this);
@@ -801,6 +803,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		importGenBank.setEnabled(false);
 		importFasta.setEnabled(false);
 		importSedml.setEnabled(false);
+		importArchive.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
 		importVirtualPart.setEnabled(false);
@@ -997,6 +1000,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			importMenu.add(importGenBank);
 			importMenu.add(importFasta);
 			importMenu.add(importSedml);
+			importMenu.add(importArchive);
 		} else if (atacs) {
 			importMenu.add(importVhdl);
 			importMenu.add(importG);
@@ -1461,6 +1465,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			importGenBank.setEnabled(true);
 			importFasta.setEnabled(true);
 			importSedml.setEnabled(true);
+			importArchive.setEnabled(true);
 			importSbml.setEnabled(true);
 			importBioModel.setEnabled(true);
 			importVirtualPart.setEnabled(true);
@@ -1579,6 +1584,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					importGenBank.setEnabled(true);
 					importFasta.setEnabled(true);
 					importSedml.setEnabled(true);
+					importArchive.setEnabled(true);
 					importSbml.setEnabled(true);
 					importBioModel.setEnabled(true);
 					importVirtualPart.setEnabled(true);
@@ -2990,6 +2996,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			importSBOL("Import Fasta");
 		} else if (e.getSource().equals(importSedml)) {
 			importSEDML();
+		} else if (e.getSource().equals(importArchive)) {
+			importArchive();
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -4983,6 +4991,31 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		if (!filename.trim().equals("")) {
 			biosimrc.put("biosim.general.import_dir", filename.trim());
 			importSEDMLFile(filename);
+		}
+	}
+
+
+	public void importArchive() {
+		Preferences biosimrc = Preferences.userRoot();
+		File importFile;
+		if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+			importFile = null;
+		} else {
+			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+		}
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import Archive", -1);
+		if (!filename.trim().equals("")) {
+			biosimrc.put("biosim.general.import_dir", filename.trim());
+			String path = filename.substring(0, filename.lastIndexOf(GlobalConstants.separator)+1);
+			try {
+				importCombineArchive(filename,path);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(frame, "Unable to import COMBINE archive.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -8935,10 +8968,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			// For extra safety, check that the jar file is in the classpath.
 			Class.forName("org.sbml.libsbml.libsbml");
 		} catch (UnsatisfiedLinkError e) {
+			System.out.println("UnsatisfiedLinkError: libsbml not found");
+			e.printStackTrace();
 			libsbmlFound = false;
 		} catch (ClassNotFoundException e) {
+			System.out.println("ClassNotFoundException: libsbml not found");
 			libsbmlFound = false;
 		} catch (SecurityException e) {
+			System.out.println("SecurityException: libsbml not found");
 			libsbmlFound = false;
 		}
 		Runtime.getRuntime();
@@ -8984,11 +9021,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != -1) {
 				SBMLutilities.reb2sacFound = false;
+				System.out.println("ERROR: " + reb2sacExecutable + " not found.");
 			}
 		} catch (IOException e) {
 			SBMLutilities.reb2sacFound = false;
+			System.out.println("ERROR: " + reb2sacExecutable + " reb2sac not found.");
 		} catch (InterruptedException e) {
 			SBMLutilities.reb2sacFound = false;
+			System.out.println("ERROR: " + reb2sacExecutable + "reb2sac not found.");
 		}
 		exitValue = 1;
 		try {
@@ -9026,11 +9066,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 				SBMLutilities.geneNetFound = false;
+				System.out.println("ERROR: " + geneNetExecutable + " not found.");
 			}
 		} catch (IOException e) {
 			SBMLutilities.geneNetFound = false;
+			System.out.println("ERROR: " + geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
 			SBMLutilities.geneNetFound = false;
+			System.out.println("ERROR: " + geneNetExecutable + " not found.");
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}

@@ -700,6 +700,11 @@ public class Utils {
    */
   public static boolean check(String file, SBMLDocument doc, boolean overdeterminedOnly)
   {
+	 
+	// TODO: added to turn off checking until libsbml bug is found
+	//if (true) {
+	//	return true;
+	//}
   	String message = "";
   	long numErrors = 0;
   	Preferences biosimrc = Preferences.userRoot();

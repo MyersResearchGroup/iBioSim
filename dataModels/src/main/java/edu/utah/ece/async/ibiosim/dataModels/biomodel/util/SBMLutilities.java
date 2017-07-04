@@ -5547,7 +5547,11 @@ public class SBMLutilities
 		if (deletion == null)
 		{
 			deletion = submodel.createDeletion();
-			deletion.setId("delete_" + subPortId);
+			String id = "delete_" + subPortId;
+			while (submodel.getSBMLDocument().getElementBySId(id) != null) {
+				id = id.replace("_", "__");
+			}
+			deletion.setId(id);
 			deletion.setPortRef(subPortId);
 		}
 		SBMLutilities.createDimensions(deletion, dimensionIds, dimensions);
