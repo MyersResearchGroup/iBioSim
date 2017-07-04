@@ -80,7 +80,7 @@ public class Converter {
 		System.err.println("\t-e  The second SBOL file to compare to the main SBOL file.");
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
-		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2)");
+		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2). To output FASTA or GenBank, no SBOL default URI prefix is needed.");
 		System.err.println("\t-mf The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
 		System.err.println("\t-o  <outputFile> specifies the full path of the output file produced from the converter");
