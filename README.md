@@ -36,12 +36,11 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 
 ## Installing iBioSim
 1. SBOLDesigner (https://github.com/SynBioDex/SBOLDesigner) project (e.g. ```git clone https://github.com/SynBioDex/SBOLDesigner.git```) in a location of your preference. Go to the directory where the SBOLDesigner is checked out and perform ```mvn clean install```. This will build SBOLDesigner and install it into your local repository, which is used as a dependency in iBioSim. 
-3. In a directory outside SBOLDesigner, clone the LEMA project (https://github.com/MyersResearchGroup/LEMA). Go to the directory where LEMA is checked out, and inside LEMA/verification, perform ```mvn clean install```.
-3. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
+2. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ## Running iBioSim
 1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
-2. Copy ```gui/target/iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project and rename ```iBioSim-gui-0.0.1-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
+2. Copy ```gui/target/iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project and rename ```iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
 3. In the bin directory, run:
       * Windows: ```iBioSim.bat``` 
       * Mac OS X: ```iBioSim.mac64```
