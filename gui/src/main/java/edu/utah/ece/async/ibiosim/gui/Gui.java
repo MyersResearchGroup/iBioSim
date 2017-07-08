@@ -327,11 +327,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	protected static final String lemaVersion = "2.9.5";
+	protected static final String lemaVersion = "2.9.6";
 
 	protected static final String atacsVersion = "6.1";
 
-	protected static final String		iBioSimVersion		= "2.9.5";	
+	protected static final String		iBioSimVersion		= "2.9.6";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
