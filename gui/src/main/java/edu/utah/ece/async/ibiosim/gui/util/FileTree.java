@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -26,7 +25,6 @@ import javax.swing.tree.*;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbolstandard.core2.SBOLConversionException;
-import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 

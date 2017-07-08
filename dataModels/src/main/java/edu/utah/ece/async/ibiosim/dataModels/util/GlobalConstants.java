@@ -330,7 +330,7 @@ public class GlobalConstants {
 	public static final int DEFAULT_COMPARTMENT_HEIGHT = 250;
 	public static final int DEFAULT_TEXT_WIDTH = 40;
 	public static final int DEFAULT_TEXT_HEIGHT = 10;
-	public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
+	public static final String		separator			= /*(File.separator.equals("\\")) ? "\\\\" :*/ File.separator;
 	public static int				SBML_LEVEL			= 3;
 	public static int				SBML_VERSION		= 1;
 	
