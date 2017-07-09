@@ -13,13 +13,17 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.learn.parameterestimator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
@@ -83,9 +87,20 @@ public class ParameterEstimator
 
 		// TODO: report results: take average of error
 		// TODO: weight mean square error. Add small value
+		SBMLDocument doc = SBMLReader.read(new File(SBMLFileName));
+		Model model = doc.getModel();
+		
+		for(int i = 0; i < parameterList.size(); i++)
+		{
+		  Parameter parameter = model.getParameter(parameterList.get(i));
+		  
+		  if(parameter != null)
+		  {
+		    parameter.setValue(solution.getFeatures()[i]);
+		  }
+		}
 		System.out.println(solution.toString());
-		// TODO: copy best parameter to a new SBML document
-		return null;
+		return doc;
 	}
 
 }
