@@ -37,8 +37,6 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.sres.SRES;
 
 /**
  * 
- *
- * @author 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -58,6 +56,22 @@ public class ParameterEstimator
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
 	static String				quantityType		= "amount";
 
+	/**
+	 * This function is used to execute parameter estimation from a given SBML file. The input model serves
+	 * as a template and the existing parameters in the model will set the bounds to which parameter estimation will use.
+	 * <p>
+	 * In addition, the SBML file is used for simulation when estimating the values of the parameters. 
+	 * 
+	 * @param SBMLFileName: the input SBML file
+	 * @param root: the directory where the experimental data is located
+	 * @param parameterList: the list of parameters that needs to have the value estimated.
+	 * @param experiments: data object that holds the experimental data.
+	 * @param speciesCollection: data object that holds the species in the model.
+	 * @return A new SBMLDocument containing the new parameter values.
+	 * @throws IOException - when a file cannot be read or written.
+	 * @throws XMLStreamException - when an SBML file cannot be parsed.
+	 * @throws BioSimException - when simulation encounters a problem.
+	 */
 	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, BioSimException
 	{
 
@@ -82,7 +96,6 @@ public class ParameterEstimator
 		ObjectiveSqureError TP = new ObjectiveSqureError(sim, experiments, parameterList, speciesCollection, M1, 0.1);
 
 		SRES sres = new SRES(TP, EMS);
-		// System.out.println("test");
 		SRES.Solution solution = sres.run(200).getBestSolution();
 
 		// TODO: report results: take average of error

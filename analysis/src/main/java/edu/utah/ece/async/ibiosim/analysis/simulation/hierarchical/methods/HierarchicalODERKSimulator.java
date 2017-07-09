@@ -208,6 +208,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
         } catch (NumberIsTooSmallException e) {
           setCurrentTime(nextEndTime);
         }
+        catch (MaxCountExceededException e) {
+          setCurrentTime(nextEndTime);
+        }
       } else {
         setCurrentTime(nextEndTime);
       }
@@ -338,6 +341,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     @Override
     public void computeDerivatives(double t, double[] y, double[] yDot)
         throws MaxCountExceededException, DimensionMismatchException {
+      
+      if(Double.isNaN(t))
+      {
+        throw new MaxCountExceededException(t);
+      }
+      
       setCurrentTime(t);
       vectorWrapper.setValues(y);
       computeAssignmentRules();

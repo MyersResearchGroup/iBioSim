@@ -22,11 +22,8 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.AbstractEstim
  * A class that implements Stochastic Ranking Evolutionary Strategy (SRES), an
  * evolutionary algorithm for constrained optimization of real multivariate
  * objective functions. User should provide an objective function instance
- * inherited from abstract {@link com.antigenomics.jsres.Objective} class. The
- * algorithm is executed via { #run} method. Objective function evaluation is
- * optimized by implementing .
+ * inherited. The algorithm is executed via { #run} method. 
  *
- * @author 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -103,6 +100,14 @@ public final class SRES implements AbstractEstimator
 	 * this.rankingPenalizationFactor = rankingPenalizationFactor; }
 	 */
 
+	/**
+	 * Creates an instance of SRES algorithm for a given objective function.
+	 * 
+	 * @param objective
+	 *           objective function instance
+	 * @param EMS
+	 *           the evolution method setting instance
+	 */
 	public SRES(Objective objective, EvolutionMethodSetting EMS)
 	{
 		this.objective = objective;
