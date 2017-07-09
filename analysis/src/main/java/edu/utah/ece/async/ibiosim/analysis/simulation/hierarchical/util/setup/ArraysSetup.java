@@ -17,6 +17,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.ExplicitRule;
 import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -33,6 +34,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Variable
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ArrayNode.ArraysType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 
 /**
@@ -63,10 +65,6 @@ public class ArraysSetup
 		return plugin.getNumDimensions() > 0;
 	}
 
-	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, SBase sbase, ASTNode math, ArraysType type)
-	{
-		return setupDimensions(modelstate, sbase, math, null, type);
-	}
 
 	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, ArraysType type)
 	{
@@ -78,12 +76,14 @@ public class ArraysSetup
 		setupDimensions(modelstate, sbase, node, null, type);
 	}
 
-	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type)
+	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type)
 	{
+	  Model model = container.getModel();
+	  
 		HierarchicalNode refObj = null;
 		EventNode eventNode = null;
 		FunctionNode eventAssignNode = null;
-
+		
 		ArrayNode arrayNode = setupArrayDimensions(modelstate, sbase, parent, type);
 		if (arrayNode != null)
 		{
@@ -100,7 +100,7 @@ public class ArraysSetup
 				eventAssignNode.setArrayNode(arrayNode);
 				return eventAssignNode;
 			default:
-				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
+				refObj = MathInterpreter.parseASTNode(math,  modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
 				refObj.setArrayNode(arrayNode);
 				return refObj;
 			}
@@ -192,7 +192,7 @@ public class ArraysSetup
 		}
 	}
 
-	public static void setupIndices(HierarchicalModel modelstate, SBase sbase, ArrayNode arrayNode, ArraysType type)
+	public static void setupIndices(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ArrayNode arrayNode, ArraysType type)
 	{
 
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
@@ -212,33 +212,33 @@ public class ArraysSetup
 			case SPECIES:
 				Species species = (Species) sbase;
 				attribute = compartmentAttr;
-				math = convertIndex(modelstate, arrayNode, species.getCompartment(), plugin, attribute);
+				math = convertIndex(modelstate, container, arrayNode, species.getCompartment(), plugin, attribute);
 				arrayNode.addIndex(attribute, math);
 				break;
 			case ASSIGNRULE:
 			case RATERULE:
 				ExplicitRule rule = (ExplicitRule) sbase;
 				attribute = variableAttr;
-				math = convertIndex(modelstate, arrayNode, rule.getVariable(), plugin, attribute);
+				math = convertIndex(modelstate, container, arrayNode, rule.getVariable(), plugin, attribute);
 				arrayNode.addIndex(attribute, math);
 				break;
 			case INITASSIGNMENT:
 				InitialAssignment initAssignment = (InitialAssignment) sbase;
 				attribute = symbolAttr;
-				math = convertIndex(modelstate, arrayNode, initAssignment.getVariable(), plugin, attribute);
+				math = convertIndex(modelstate,container, arrayNode, initAssignment.getVariable(), plugin, attribute);
 				arrayNode.addIndex(attribute, math);
 				break;
 			case REACTANT:
 			case PRODUCT:
 				SpeciesReference specRef = (SpeciesReference) sbase;
 				attribute = speciesAttr;
-				math = convertIndex(modelstate, arrayNode, specRef.getSpecies(), plugin, attribute);
+				math = convertIndex(modelstate, container, arrayNode, specRef.getSpecies(), plugin, attribute);
 				arrayNode.addIndex(attribute, math);
 				break;
 			case EVENTASSIGNMENT:
 				EventAssignment eventAssignment = (EventAssignment) sbase;
 				attribute = variableAttr;
-				math = convertIndex(modelstate, arrayNode, eventAssignment.getVariable(), plugin, attribute);
+				math = convertIndex(modelstate, container,arrayNode, eventAssignment.getVariable(), plugin, attribute);
 				arrayNode.addIndex(attribute, math);
 				break;
 			}
@@ -280,8 +280,9 @@ public class ArraysSetup
 		return maxIndex;
 	}
 
-	private static HierarchicalNode convertIndex(HierarchicalModel modelstate, ArrayNode arrayNode, String referencedNode, ArraysSBasePlugin plugin, String attribute)
+	private static HierarchicalNode convertIndex(HierarchicalModel modelstate, ModelContainer container, ArrayNode arrayNode, String referencedNode, ArraysSBasePlugin plugin, String attribute)
 	{
+	  Model model = container.getModel(); 
 		int maxIndex = getMaxArrayDim(plugin, attribute);
 
 		HierarchicalNode selector = new HierarchicalNode(Type.FUNCTION_SELECTOR);

@@ -87,12 +87,9 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public double getRateValue(int index) {
-    return 0;
-  }
-
-  @Override
-  public void setRateValue(int index, double value) {
+  public boolean isSetRate()
+  {
+    return false;
   }
 
   @Override

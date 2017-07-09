@@ -203,6 +203,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
         try {
           odecalc.integrate(de, currentTime.getValue(),
             vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
+         
           computeAssignmentRules();
         } catch (NumberIsTooSmallException e) {
           setCurrentTime(nextEndTime);
@@ -246,6 +247,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       double returnValue = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
+      vectorWrapper.setRates(null);
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getEvents()) {
@@ -265,6 +267,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       value = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
+      vectorWrapper.setRates(null);
       computeAssignmentRules();
       computeEvents();
       return EventHandler.Action.STOP;
@@ -288,7 +291,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
     @Override
     public double g(double t, double[] y) {
-      currentTime.setValue(0, t);
+      currentTime.setValue(t);
       if (!triggeredEventList.isEmpty()) {
         if (triggeredEventList.peek().getFireTime() <= t) {
           return value;
@@ -303,6 +306,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       value = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
+      vectorWrapper.setRates(null);
       computeAssignmentRules();
       computeEvents();
       return EventHandler.Action.STOP;
@@ -342,9 +346,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
         for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          node.computeRateOfChange(index, t);
+          node.computeRateOfChange(index);
         }
       }
+
+      computeAssignmentRules();
     }
   }
 }

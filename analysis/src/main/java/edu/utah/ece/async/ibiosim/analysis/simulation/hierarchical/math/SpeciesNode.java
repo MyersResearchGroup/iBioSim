@@ -119,16 +119,16 @@ public class SpeciesNode extends VariableNode
 	}
 
 	@Override
-	public double computeRateOfChange(int index, double time)
+	public double computeRateOfChange(int index)
 	{
-	  double rate = state.getRateValue(index);
-		if (rateRule != null)
+	  double rate = 0;
+	  if (rateRule != null)
 		{
 			rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
 			
 			if (!speciesTemplates.hasOnlySubstance)
       {
-        double compartmentChange = compartment.computeRateOfChange(index, time);
+        double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
         {
           rate = rate * compartment.getValue(index);
@@ -143,14 +143,14 @@ public class SpeciesNode extends VariableNode
 	    {
 	      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
 	    }
-			state.setRateValue(index, rate);
+			state.setRateValue(rate);
 			return rate;
 
 		}
 		else if (odeRate != null && !speciesTemplates.isBoundary)
 		{
 			rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
-			state.setRateValue(index, rate);
+			state.setRateValue(rate);
 		}
 		return rate;
 	}
