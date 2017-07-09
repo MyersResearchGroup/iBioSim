@@ -809,7 +809,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			System.out.println("exportPath="+exportPath);
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(File.separator));
 			biosimrc.put("biosim.general.export_dir", dir);
 			try {
 				biomodel.exportSingleFile(exportPath);
