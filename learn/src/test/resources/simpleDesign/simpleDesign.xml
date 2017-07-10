@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" arrays:required="true" comp:required="true" fbc:required="false" layout:required="false" level="3" version="1" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <model fbc:strict="false" id="simpleDesign" metaid="iBioSim4">
+            <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="S0" initialAmount="10" metaid="iBioSim1"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="S1" initialAmount="100" metaid="iBioSim3"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="S2" initialAmount="0" metaid="iBioSim5"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P0" initialAmount="2" metaid="iBioSim6" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P1" initialAmount="2" metaid="iBioSim9" sboTerm="SBO:0000590"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="kr_f" name="Forward repression binding rate" value="0.5"/>
+      <parameter constant="true" id="kr_r" name="Reverse repression binding rate" value="1"/>
+      <parameter constant="true" id="ka_f" name="Forward activation binding rate" value="0.0033"/>
+      <parameter constant="true" id="ka_r" name="Reverse activation binding rate" value="1"/>
+      <parameter constant="true" id="ko_f" name="Forward RNAP binding rate" value="0.033"/>
+      <parameter constant="true" id="ko_r" name="Reverse RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_f" name="Forward activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_r" name="Reverse activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="nc" name="Stoichiometry of binding" value="2"/>
+      <parameter constant="true" id="nr" name="Initial RNAP count" value="30"/>
+      <parameter constant="true" id="ko" name="Open complex production rate" value="0.05"/>
+      <parameter constant="true" id="kb" name="Basal production rate" value="0.0001"/>
+      <parameter constant="true" id="ng" name="Initial promoter count" value="2"/>
+      <parameter constant="true" id="np" name="Stoichiometry of production" value="10"/>
+      <parameter constant="true" id="ka" name="Activated production rate" value="0.25"/>
+      <parameter constant="true" id="kd" name="Degradation rate" value="0.0075"/>
+    </listOfParameters>
+            <listOfReactions>
+      <reaction compartment="Cell" fast="false" id="Production_P0" metaid="iBioSim8" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="S2" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P0"/>
+          <modifierSpeciesReference sboTerm="SBO:0000459" species="S0"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> P0 </ci>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kb </ci>
+                      <apply>
+                        <divide/>
+                        <ci> ko_f </ci>
+                        <ci> ko_r </ci>
+                      </apply>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <apply>
+                        <times/>
+                        <ci> ka </ci>
+                        <apply>
+                          <divide/>
+                          <ci> kao_f </ci>
+                          <ci> kao_r </ci>
+                        </apply>
+                      </apply>
+                      <ci> nr </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <times/>
+                        <apply>
+                          <divide/>
+                          <ci> ka_f </ci>
+                          <ci> ka_r </ci>
+                        </apply>
+                        <ci> S0 </ci>
+                      </apply>
+                      <ci> nc </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kao_f </ci>
+                      <ci> kao_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <times/>
+                      <apply>
+                        <divide/>
+                        <ci> ka_f </ci>
+                        <ci> ka_r </ci>
+                      </apply>
+                      <ci> S0 </ci>
+                    </apply>
+                    <ci> nc </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" fast="false" id="Production_P1" metaid="iBioSim11" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="S1" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P1"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="S0"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> P1 </ci>
+                    <ci> ko </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> S0 </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" fast="false" id="Degradation_S1" reversible="false" sboTerm="SBO:0000179">
+        <listOfReactants>
+          <speciesReference constant="true" species="S1" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> S1 </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" fast="false" id="Degradation_S2" reversible="false" sboTerm="SBO:0000179">
+        <listOfReactants>
+          <speciesReference constant="true" species="S2" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> S2 </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" fast="false" id="Degradation_S0" reversible="false" sboTerm="SBO:0000179">
+        <listOfReactants>
+          <speciesReference constant="true" species="S0" stoichiometry="1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> S0 </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+      </model>
+</sbml>

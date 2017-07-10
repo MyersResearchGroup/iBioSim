@@ -82,7 +82,7 @@ public class VectorState extends HierarchicalState{
   
   @Override
   public double getRateValue() {
-    if(vectorState.isSet())
+    if(isSetRate())
     {
       return vectorState.getRates()[vectorIndex];
     }
@@ -93,21 +93,16 @@ public class VectorState extends HierarchicalState{
   }
 
   @Override
-  public double getRateValue(int index) {
-    return getRateValue();
-  }
-  
-  @Override
-  public void setRateValue(int index, double value) {
-    setRateValue(value);
-  }
-
-  @Override
   public void setRateValue(double value) {
-    if(vectorState.isSet())
+    if(isSetRate())
     {
       vectorState.getRates()[vectorIndex] = value;
     }
+  }
+
+  @Override
+  public boolean isSetRate() {
+    return vectorState.isSet() && vectorState.getRates() != null;
   }
 
 }

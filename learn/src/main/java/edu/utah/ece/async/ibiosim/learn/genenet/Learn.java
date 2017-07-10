@@ -28,11 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
- * 
+ * The class that encapsulates the GeneNet algorithm.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -44,28 +45,34 @@ public class Learn
 
 	private int	bins;
 
+	/**
+	 * Creates a learn object.
+	 * 
+	 * @param bins - the number of bins that specifies level assignments.
+	 */
 	public Learn(int bins)
 	{
 		this.bins = bins;
 	}
 
-	public void learnBaselineNetwork(SpeciesCollection S, Experiments E, NetCon C)
-	{
-		for (int i = 0; i < S.size(); i++)
-		{
-			String s_0 = S.getInterestingSpecies(i);
 
-			for (int j = 0; j < S.size(); j++)
-			{
-				String s_1 = S.getInterestingSpecies(j);
-
-				if (!s_0.equals(s_1))
-				{
-					addParent(s_0, s_1, E, S, C);
-				}
-			}
-		}
-	}
+//	private void learnBaselineNetwork(SpeciesCollection S, Experiments E, NetCon C)
+//	{
+//		for (int i = 0; i < S.size(); i++)
+//		{
+//			String s_0 = S.getInterestingSpecies(i);
+//
+//			for (int j = 0; j < S.size(); j++)
+//			{
+//				String s_1 = S.getInterestingSpecies(j);
+//
+//				if (!s_0.equals(s_1))
+//				{
+//					addParent(s_0, s_1, E, S, C);
+//				}
+//			}
+//		}
+//	}
 
 	private void addParent(String parent, String child, Experiments E, SpeciesCollection S, NetCon C)
 	{
@@ -148,6 +155,18 @@ public class Learn
 		}
 	}
 
+	/**
+	 * This is the core of the GeneNet procedure. It will learn the connectivity of the
+	 * species from experimental data.
+	 * 
+	 * @param S - collection of species.
+	 * @param E - collection of experiments.
+	 * @param C - network connectivity of the model.
+	 * @param T - threshold values.
+	 * @param L - the encodings of the data.
+	 * 
+	 * @throws BioSimException - when there is malformed data input.
+	 */
 	public void learnNetwork(SpeciesCollection S, Experiments E, NetCon C, Thresholds T, Encodings L) throws BioSimException
 	{
 		EncodeExpts(S, E, C, T, L);
@@ -629,6 +648,16 @@ public class Learn
 
 	}
 
+	/**
+	 * Builds a dot file corresponding to the connectivity of the species.
+	 * 
+	 * @param filename - name of the dot file being produced.
+	 * @param directory - where the dot file will be saved.
+	 * @param collection - the species that will be in the dot file.
+	 * @param network - the connections among species.
+	 * 
+	 * @throws BioSimException - when an error occurs.
+	 */
 	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network) throws BioSimException
 	{
 		Map<String, String> speciesToNode;
@@ -703,8 +732,7 @@ public class Learn
 			{
 			  throw new BioSimException("Failed to close outputstream", "Error in Learning");
 			}
-
 		}
 	}
-
+	
 }

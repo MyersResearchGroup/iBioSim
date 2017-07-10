@@ -23,9 +23,8 @@ import edu.utah.ece.async.ibiosim.learn.genenet.Experiments;
 import edu.utah.ece.async.ibiosim.learn.genenet.SpeciesCollection;
 
 /**
- * 
- *
- * @author 
+ * ObjectiveSqureError 
+ *  
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -55,6 +54,15 @@ public class ObjectiveSqureError extends Objective
 	 * allowedViolatedConstraintsCount, 1e-6, 1e-3); }
 	 */
 
+	/**
+	 * Creates an ObjectiveSqureError object.
+	 * @param sim - simulators
+	 * @param experiments - experimental data
+	 * @param parameterList - list of parameters to estimate
+	 * @param speciesCollection - list of interesting species
+	 * @param Ms - model settings
+	 * @param valueAtSolution - true value
+	 */
 	public ObjectiveSqureError(HierarchicalSimulation sim, Experiments experiments, List<String> parameterList, SpeciesCollection speciesCollection, Modelsettings Ms, double valueAtSolution)
 	{
 		super(Ms);
@@ -73,6 +81,15 @@ public class ObjectiveSqureError extends Objective
 		this.sim = sim;
 	}
 
+	/**
+	 * Creates an ObjectiveSqureError object.
+	 * 
+	 * @param Ms - model settings
+	 * @param valueAtSolution - true value
+	 * @param allowedViolatedConstraintsCount - constraint count
+	 * @param absolutePrecision - absolute error
+	 * @param relativePrecision - relative error
+	 */
 	public ObjectiveSqureError(Modelsettings Ms, double valueAtSolution, int allowedViolatedConstraintsCount, double absolutePrecision, double relativePrecision)
 	{
 		super(Ms);
@@ -123,6 +140,12 @@ public class ObjectiveSqureError extends Objective
 		return new Result(sum);
 	}
 
+	/**
+	 * Checked if solution is solved.
+	 * 
+	 * @param solution - solution object
+	 * @return true is solution is solved. False otherwise.
+	 */
 	public boolean isSolved(SRES.Solution solution)
 	{
 		Objective.Result result = solution.getObjectiveResult();

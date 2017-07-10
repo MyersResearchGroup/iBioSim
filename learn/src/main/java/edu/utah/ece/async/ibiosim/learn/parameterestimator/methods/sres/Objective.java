@@ -19,10 +19,9 @@ import java.util.Arrays;
  * A class representing a real multivariate objective function and constraints
  * that are subject to optimization. The objective functionmethod is left for
  * the user to specify. Arbitrary value range is allowed for objective function.
- * Constraints are provided as { constraint_value <= 0} inequalities, the
+ * Constraints are provided as constraint &le; 0 inequalities, the
  * computation of array should be implemented by user.
  * 
- * @author 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -34,18 +33,17 @@ public abstract class Objective
 	private final double[]	mutationRates;
 	private final boolean	maximizationProblem;
 
-	/**
-	 * Generates an objective function instance and specifies the feature
-	 * (argument) space.
-	 * 
-	 * @param featureLowerBounds
-	 *            lower bounds of feature space
-	 * @param featureUpperBounds
-	 *            upper bounds of feature space
-	 * @param maximizationProblem
-	 *            if set to true, the objective function is subject to
-	 *            maximization task, minimization will be performed otherwise
-	 */
+  /**
+   * Generates an objective function instance and specifies the feature
+   * (argument) space.
+   * 
+   * @param Ms contains information about:            
+   * featureUpperBounds
+   *            upper bounds of feature space and lower bounds of feature space
+   * maximizationProblem
+   *            if set to true, the objective function is subject to
+   *            maximization task, minimization will be performed otherwise
+   */
 	public Objective(Modelsettings Ms)
 	{
 
@@ -125,7 +123,6 @@ public abstract class Objective
 	 * @param features
 	 *            an array of objective function features
 	 * @return objective function evaluation result
-	 * @see com.antigenomics.jsres.Objective.Result
 	 */
 	public abstract Result evaluate(double[] features);
 
@@ -183,7 +180,7 @@ public abstract class Objective
 
 		/**
 		 * Creates a new instance of objective function evaluation result.
-		 * Constraints should be re-written as {constraint_value <= 0}
+		 * Constraints should be re-written as {constraint_value &le; 0}
 		 * inequalities and {@code constraint_value} array should be provided.
 		 * 
 		 * @param value

@@ -14,9 +14,8 @@
 package edu.utah.ece.async.ibiosim.learn.parameterestimator.methods;
 
 /**
- * 
- *
- * @author 
+ * Interface for parameter estimation methods.
+ *  
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%

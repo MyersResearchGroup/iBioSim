@@ -32,13 +32,9 @@ public abstract class HierarchicalState
     DENSE, SPARSE, SCALAR, VECTOR
   };
 
-  public abstract void setRateValue(int index, double value);
-  
   public abstract void setRateValue(double value);
   
   public abstract double getRateValue();
-
-  public abstract double getRateValue(int index);
   
   public abstract double getStateValue();
 
@@ -54,5 +50,6 @@ public abstract class HierarchicalState
 
   public abstract HierarchicalState getState(int index);
 
+  public abstract boolean isSetRate();
 
 }

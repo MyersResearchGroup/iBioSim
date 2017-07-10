@@ -52,7 +52,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * This class provides the state variables of the simulation.
  *
  * @author Leandro Watanabe
- * @author Leandro Watanabe
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
@@ -859,6 +858,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
           for(FunctionNode node : modelstate.getInitAssignments())
           {
             changed = changed | node.computeFunction(modelstate.getIndex());
+          }
+        }
+        
+        if(modelstate.getInitConcentration() != null)
+        {
+          for(FunctionNode node : modelstate.getInitConcentration())
+          {
+            if(!node.getVariable().hasRule() && !node.getVariable().hasInitRule())
+            {
+              changed = changed | node.computeFunction(modelstate.getIndex());
+            }
           }
         }
 

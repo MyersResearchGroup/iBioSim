@@ -32,7 +32,8 @@ public class VariableNode extends HierarchicalNode
 
   protected boolean			isVariableConstant;
   protected boolean hasRule;
-
+  protected boolean hasInitRule;
+  
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
   
@@ -81,14 +82,14 @@ public class VariableNode extends HierarchicalNode
   }
 
 
-
-  public double computeRateOfChange(int index, double time)
+  @Override
+  public double computeRateOfChange(int index)
   {
-    double rate = state.getRateValue(index);
+    double rate = 0;
     if (rateRule != null)
     {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      state.setStateValue(index, rate);
+      state.setRateValue(rate);
     }
     return rate;
   }
@@ -124,6 +125,16 @@ public class VariableNode extends HierarchicalNode
   public boolean hasRule()
   {
     return hasRule;
+  }
+  
+  public void setHasInitRule(boolean hasInitRule)
+  {
+    this.hasInitRule = hasInitRule;
+  }
+
+  public boolean hasInitRule()
+  {
+    return hasInitRule;
   }
 
   public void setName(String name)
