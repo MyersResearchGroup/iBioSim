@@ -16,6 +16,7 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -387,7 +388,7 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 					}
 					if (dnaComponent != null) {
 						SBOLDescriptorPanel2 descriptorPanel = new SBOLDescriptorPanel2(
-								SBOLFileName.substring(SBOLFileName.lastIndexOf(GlobalConstants.separator) + 1),
+								GlobalConstants.getPath(SBOLFileName) + File.separator,
 								dnaComponent.getDisplayId(), dnaComponent.getName(), dnaComponent.getDescription());
 						descriptorPanel.openViewer();
 					}

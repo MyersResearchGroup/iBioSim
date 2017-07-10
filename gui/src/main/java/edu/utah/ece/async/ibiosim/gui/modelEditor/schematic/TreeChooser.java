@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.gui.modelEditor.schematic;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -23,8 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
  * 
@@ -70,7 +69,7 @@ public class TreeChooser extends JPanel {
 		String out = "";
 		
 		for (Object part : tp.getPath()) {
-			out += GlobalConstants.separator + ((DefaultMutableTreeNode)part).toString();
+			out += File.separator + ((DefaultMutableTreeNode)part).toString();
 		}
 		
 		return out;

@@ -632,7 +632,7 @@ public class Learn
 	public void getDotFile(String filename, String directory, SpeciesCollection collection, NetCon network) throws BioSimException
 	{
 		Map<String, String> speciesToNode;
-		File fout = new File(directory + GlobalConstants.separator + filename);
+		File fout = new File(directory + File.separator + filename);
 		FileOutputStream fos = null;
 		OutputStreamWriter osw = null;
 		try

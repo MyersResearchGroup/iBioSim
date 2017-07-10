@@ -613,7 +613,7 @@ public class SBML2SBOL {
 				Model subModel = null;
 				if (extModelRef!=null) {
 					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					SBMLDocument subDocument = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + extModel);
+					SBMLDocument subDocument = SBMLutilities.readSBML(externalSBMLPath + File.separator + extModel);
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
@@ -764,7 +764,7 @@ public class SBML2SBOL {
 						sbmlDoc = SBMLutilities.readSBML(inputFilePath);
 					} 
 					else {
-						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + GlobalConstants.separator + inputFilePath);
+						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + File.separator + inputFilePath);
 					}
 					SBOLDocument sbolDoc = new SBOLDocument();
 					SBML2SBOL.convert_SBML2SBOL(sbolDoc,includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);

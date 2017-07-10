@@ -729,7 +729,7 @@ public class Translator extends Observable {
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		document = new SBMLDocument(3,1);
-		String[] filenameSplit = filename.split(GlobalConstants.separator);
+		String[] filenameSplit = GlobalConstants.splitPath(filename);
 		String modelId = filenameSplit[filenameSplit.length-1].replace(".xml","");
 		Model m = document.createModel(modelId);
 		

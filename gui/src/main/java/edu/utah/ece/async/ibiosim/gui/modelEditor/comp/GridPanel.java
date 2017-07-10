@@ -18,6 +18,7 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -149,7 +150,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				//don't allow dropping a grid component
 				try {
           if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-          		GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          		File.separator + component.replace(".gcm",".xml"))) {
           	
           	JOptionPane.showMessageDialog(Gui.frame,
           			"Dropping grid modules is disallowed.\n" +
@@ -278,7 +279,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				//don't allow dropping a grid component
 				try {
           if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 
-          			GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          			File.separator + component.replace(".gcm",".xml"))) {
           	
           	JOptionPane.showMessageDialog(Gui.frame,
           		"Dropping grid modules is disallowed.\n" +

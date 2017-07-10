@@ -249,13 +249,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     this.modelFile = modelFile;
     if (modelFile.endsWith(".lpn"))
     {
-      sbmlFile = root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile.replace(".lpn", ".xml");
+      sbmlFile = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
     }
     else
     {
-      sbmlFile = root + GlobalConstants.separator + modelFile;
+      sbmlFile = root + File.separator + modelFile;
     }
-    sbmlProp = root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile.replace(".lpn", ".xml");
+    sbmlProp = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
     interestingSpecies = new ArrayList<String>();
     change = false;
     biosimrc = Preferences.userRoot();
@@ -538,7 +538,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
       try {
-        lpn.load(root + GlobalConstants.separator + modelFile);
+        lpn.load(root + File.separator + modelFile);
         String[] getProps = lpn.getProperties().toArray(new String[0]);
         props = new String[getProps.length + 1];
         props[0] = "none";
@@ -1070,23 +1070,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       if (append.isSelected())
       {
-        String[] searchForRunFiles = new File(root + GlobalConstants.separator + outDir).list();
+        String[] searchForRunFiles = new File(root + File.separator + outDir).list();
         for (String s : searchForRunFiles)
         {
-          if (s.length() > 3 && new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
+          if (s.length() > 3 && new File(root + File.separator + outDir + File.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
           {
-            new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).delete();
+            new File(root + File.separator + outDir + File.separator + s).delete();
           }
         }
       }
       else
       {
-        String[] searchForRunFiles = new File(root + GlobalConstants.separator + outDir).list();
+        String[] searchForRunFiles = new File(root + File.separator + outDir).list();
         for (String s : searchForRunFiles)
         {
-          if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).isFile())
+          if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
           {
-            new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).delete();
+            new File(root + File.separator + outDir + File.separator + s).delete();
           }
         }
       }
@@ -1115,7 +1115,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     gui.getExitButton().addActionListener(runProgram);
     if (monteCarlo.isSelected() || ODE.isSelected())
     {
-      File[] files = new File(root + GlobalConstants.separator + outDir).listFiles();
+      File[] files = new File(root + File.separator + outDir).listFiles();
       for (File f : files)
       {
         if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
@@ -1137,18 +1137,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     String directory = null;
     if (!direct.equals("."))
     {
-      simulationName = simName + GlobalConstants.separator + direct;
+      simulationName = simName + File.separator + direct;
       directory = direct;
     }
     exit = runProgram.execute(simProp, fba, sbml, dot, xhtml, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-      + GlobalConstants.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
+      + File.separator + simName, stateAbstraction, 1, intSpecies, log, gui, simTab, root, progress, simulationName, modelEditor, directory,
       initialTime, outputStartTime, timeLimit, runTime, modelFile, lpnAbstraction, reactionAbstraction, expandReactions, lpnProperty, absError, relError, timeStep, printInterval,
       run, rndSeed, refresh, label, running);
     if (stateAbstraction.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && exit == 0)
     {
       simProp = simProp.replace("\\", "/");
       Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
-        initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + GlobalConstants.separator + simName,
+        initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + File.separator + simName,
         rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
         reactionAbstraction, lpnAbstraction, absError, relError);
       nary_Run.open();
@@ -1173,11 +1173,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   public int getStartIndex(String outDir) {
     if (append.isSelected())
     {
-      String[] searchForRunFiles = new File(root + GlobalConstants.separator + outDir).list();
+      String[] searchForRunFiles = new File(root + File.separator + outDir).list();
       int start = 1;
       for (String s : searchForRunFiles)
       {
-        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).isFile())
+        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
         {
           String getNumber = s.substring(4, s.length());
           String number = "";
@@ -1594,7 +1594,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     boolean saveTopLevel = false;
     if (!direct.equals("."))
     {
-      simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + GlobalConstants.separator + simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
+      simProp = simProp.substring(0, simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length()) + direct + File.separator + simProp.substring(simProp.length() - simProp.split("/")[simProp.split("/").length - 1].length());
       saveTopLevel = true;
     }
     String propName = simProp.substring(0, simProp.length() - getFilename[getFilename.length - 1].length()) + getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
@@ -1610,11 +1610,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
     else
     {
-      outDir = simName + GlobalConstants.separator + direct;
+      outDir = simName + File.separator + direct;
     }
     if (!runs.isEnabled())
     {
-      for (String runs : new File(root + GlobalConstants.separator + outDir).list())
+      for (String runs : new File(root + File.separator + outDir).list())
       {
         if (runs.length() >= 4)
         {
@@ -1647,7 +1647,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       }
       if (!fileStem.getText().trim().equals(""))
       {
-        new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim()).mkdir();
+        new File(root + File.separator + simName + File.separator + fileStem.getText().trim()).mkdir();
         getProps.setProperty("file.stem", fileStem.getText().trim());
       }
       if (monteCarlo.isSelected() || ODE.isSelected())
@@ -2011,10 +2011,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
    */
   private void loadPropertiesFile(String simName, String modelName)
   {
-    String openFile = root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".properties";
+    String openFile = root + File.separator + simName + File.separator + simName + ".properties";
     if (!(new File(openFile)).exists())
     {
-      openFile = root + GlobalConstants.separator + simName + GlobalConstants.separator + modelName + ".properties";
+      openFile = root + File.separator + simName + File.separator + modelName + ".properties";
       if (!(new File(openFile)).exists())
       {
         return;
@@ -2998,7 +2998,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public Graph createGraph(String open)
   {
-    String outDir = root + GlobalConstants.separator + simName;
+    String outDir = root + File.separator + simName;
     String printer_id;
     printer_id = "tsd.printer";
     String printer_track_quantity = "amount";
@@ -3082,20 +3082,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       {
         try {
           LPN lhpnFile = new LPN();
-          lhpnFile.load(root + GlobalConstants.separator + modelFile);
+          lhpnFile.load(root + File.separator + modelFile);
           Abstraction abst = new Abstraction(lhpnFile, lpnAbstraction.getAbstractionProperty());
           abst.abstractSTG(false);
-          abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
+          abst.save(root + File.separator + simName + File.separator + modelFile);
         
           if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
           {
 
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
 
           }
           else
           {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, "");
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, "");
           }
         } catch (BioSimException e) {
           // TODO Auto-generated catch block
@@ -3109,18 +3109,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         try {
           if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
           {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+            t1.convertLPN2SBML(root + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
           }
           else
           {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, "");
+            t1.convertLPN2SBML(root + File.separator + modelFile, "");
           }
         } catch (BioSimException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
-      t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + GlobalConstants.separator + modelFile.replace(".lpn", ".xml"));
+      t1.setFilename(root + File.separator + simName + File.separator + stem + File.separator + modelFile.replace(".lpn", ".xml"));
       t1.outputSBML();
       if (!stem.equals(""))
       {
@@ -3205,7 +3205,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   public void setSim(String newSimName)
   {
     sbmlFile = sbmlFile.replace("\\", "/");
-    sbmlProp = root + GlobalConstants.separator + newSimName + GlobalConstants.separator + sbmlFile.split("/")[sbmlFile.split("/").length - 1];
+    sbmlProp = root + File.separator + newSimName + File.separator + sbmlFile.split("/")[sbmlFile.split("/").length - 1];
     simName = newSimName;
   }
 
@@ -3264,7 +3264,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public Graph createProbGraph(String open)
   {
-    String outDir = root + GlobalConstants.separator + simName;
+    String outDir = root + File.separator + simName;
     String printer_id;
     printer_id = "tsd.printer";
     String printer_track_quantity = "amount";
@@ -3287,7 +3287,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       {
       }
     }
-    if (!dirs.isEmpty() && new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + dirs.get(0) + GlobalConstants.separator + "sim-rep.txt").exists())
+    if (!dirs.isEmpty() && new File(root + File.separator + simName + File.separator + stem + dirs.get(0) + File.separator + "sim-rep.txt").exists())
     {
       ArrayList<String> dataLabels = new ArrayList<String>();
       ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
@@ -3306,7 +3306,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
             ArrayList<String> vals = new ArrayList<String>();
             try
             {
-              Scanner s = new Scanner(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + d + GlobalConstants.separator + "sim-rep.txt"));
+              Scanner s = new Scanner(new File(root + File.separator + simName + File.separator + stem + d + File.separator + "sim-rep.txt"));
               while (s.hasNextLine())
               {
                 String[] ss = s.nextLine().split(" ");
@@ -3367,7 +3367,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         }
       }
       DataParser constData = new DataParser(dataLabels, data);
-      constData.outputTSD(root + GlobalConstants.separator + simName + GlobalConstants.separator + "sim-rep.tsd");
+      constData.outputTSD(root + File.separator + simName + File.separator + "sim-rep.tsd");
       for (int i = 0; i < simTab.getComponentCount(); i++)
       {
         if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
@@ -3591,9 +3591,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   {
     if (!fileStem.getText().trim().equals(""))
     {
-      return root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim();
+      return root + File.separator + simName + File.separator + fileStem.getText().trim();
     }
-    return root + GlobalConstants.separator + simName;
+    return root + File.separator + simName;
   }
 
   public String getSimName()
@@ -3619,7 +3619,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
       try {
-        lpn.load(root + GlobalConstants.separator + modelFile);
+        lpn.load(root + File.separator + modelFile);
         String[] getProps = lpn.getProperties().toArray(new String[0]);
         props = new String[getProps.length + 1];
         props[0] = "none";

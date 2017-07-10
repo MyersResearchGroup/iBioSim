@@ -52,8 +52,6 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
  */
 public class LPN extends Observable {
 
-	protected String separator;
-
 	protected HashMap<String, Transition> transitions;
 
 	protected HashMap<String, Place> places;
@@ -126,7 +124,6 @@ public class LPN extends Observable {
     private static int implicitPlaceCount=0;
 	
 	public LPN() {
-		separator = GlobalConstants.separator;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
 		implicitPlaceMap = new HashMap<String,String>();
@@ -870,7 +867,7 @@ public class LPN extends Observable {
 
 	public void load(String filename) throws BioSimException {
 		StringBuffer data = new StringBuffer();
-		label = filename.split(separator)[filename.split(separator).length - 1].replace(".lpn","");
+		label = GlobalConstants.getFilename(filename).replace(".lpn","");
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String str;

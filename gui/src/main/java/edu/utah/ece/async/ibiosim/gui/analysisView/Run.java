@@ -401,10 +401,10 @@ public class Run implements ActionListener, Observer
         theFile = filename.substring(filename.lastIndexOf('\\') + 1);
       }
       File work = new File(directory);
-      new FileWriter(new File(directory + GlobalConstants.separator + "running")).close();
-      FileWriter logFile = new FileWriter(new File(directory + GlobalConstants.separator + "log.txt"));
+      new FileWriter(new File(directory + File.separator + "running")).close();
+      FileWriter logFile = new FileWriter(new File(directory + File.separator + "log.txt"));
       Properties properties = new Properties();
-      properties.load(new FileInputStream(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".properties"));
+      properties.load(new FileInputStream(directory + File.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".properties"));
       boolean genStats = Boolean.parseBoolean(properties.getProperty("reb2sac.generate.statistics"));
       String out = theFile;
       if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml"))
@@ -437,7 +437,7 @@ public class Run implements ActionListener, Observer
           }
         }
         BioModel bioModel = new BioModel(root);
-        bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+        bioModel.load(root + File.separator + modelEditor.getRefFile());
         time1 = System.nanoTime();
         String prop = null;
         if (!lpnProperty.equals(""))
@@ -478,29 +478,29 @@ public class Run implements ActionListener, Observer
         prop = mutProp.getString();
         if (lpnFile == null)
         {
-          new File(directory + GlobalConstants.separator + "running").delete();
+          new File(directory + File.separator + "running").delete();
           logFile.close();
           return 0;
         }
-        lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+        lpnFile.save(root + File.separator + simName + File.separator + lpnName);
         try
         {
           Translator t1 = new Translator();
           if (abstraction.isSelected())
           {
             LPN lhpnFile = new LPN();
-            lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+            lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
             Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
             abst.addObserver(this);
             abst.abstractSTG(false);
-            abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+            abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
           }
           else
           {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
           }
-          t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName.replace(".lpn", ".xml"));
+          t1.setFilename(root + File.separator + simName + File.separator + lpnName.replace(".lpn", ".xml"));
           t1.outputSBML();
         }
         catch(BioSimException e)
@@ -519,7 +519,7 @@ public class Run implements ActionListener, Observer
       else if (fba.isSelected())
       {
         time1 = System.nanoTime();
-        FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + GlobalConstants.separator, theFile, absError);
+        FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + File.separator, theFile, absError);
         exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
       }
       else if (sbml.isSelected())
@@ -532,14 +532,14 @@ public class Run implements ActionListener, Observer
           {
             sbmlName += ".xml";
           }
-          File f = new File(root + GlobalConstants.separator + sbmlName);
+          File f = new File(root + File.separator + sbmlName);
           if (f.exists())
           {
             Object[] options = { "Overwrite", "Cancel" };
             int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (value == JOptionPane.YES_OPTION)
             {
-              File dir = new File(root + GlobalConstants.separator + sbmlName);
+              File dir = new File(root + File.separator + sbmlName);
               if (dir.isDirectory())
               {
                 gui.deleteDir(dir);
@@ -552,7 +552,7 @@ public class Run implements ActionListener, Observer
             }
             else
             {
-              new File(directory + GlobalConstants.separator + "running").delete();
+              new File(directory + File.separator + "running").delete();
               logFile.close();
               return 0;
             }
@@ -567,17 +567,17 @@ public class Run implements ActionListener, Observer
               if (abstraction.isSelected())
               {
                 LPN lhpnFile = new LPN();
-                lhpnFile.load(root + GlobalConstants.separator + modelFile);
+                lhpnFile.load(root + File.separator + modelFile);
                 Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
                 abst.abstractSTG(false);
-                abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
-                t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, lpnProperty);
+                abst.save(root + File.separator + simName + File.separator + modelFile);
+                t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, lpnProperty);
               }
               else
               {
-                t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, lpnProperty);
+                t1.convertLPN2SBML(root + File.separator + modelFile, lpnProperty);
               }
-              t1.setFilename(root + GlobalConstants.separator + sbmlName);
+              t1.setFilename(root + File.separator + sbmlName);
               t1.outputSBML();
               exitValue = 0;
               logFile.close();
@@ -611,7 +611,7 @@ public class Run implements ActionListener, Observer
             }
             progress.setIndeterminate(true);
             BioModel bioModel = new BioModel(root);
-            bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+            bioModel.load(root + File.separator + modelEditor.getRefFile());
             if (bioModel.flattenModel(true) != null)
             {
               time1 = System.nanoTime();
@@ -654,28 +654,28 @@ public class Run implements ActionListener, Observer
               prop = mutProp.getString();
               if (lpnFile == null)
               {
-                new File(directory + GlobalConstants.separator + "running").delete();
+                new File(directory + File.separator + "running").delete();
                 logFile.close();
                 return 0;
               }
-              lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+              lpnFile.save(root + File.separator + simName + File.separator + lpnName);
               try
               {
                 Translator t1 = new Translator();
                 if (abstraction.isSelected())
                 {
                   LPN lhpnFile = new LPN();
-                  lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+                  lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
                   Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
                   abst.abstractSTG(false);
-                  abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-                  t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+                  abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+                  t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
                 }
                 else
                 {
-                  t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+                  t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
                 }
-                t1.setFilename(root + GlobalConstants.separator + sbmlName);
+                t1.setFilename(root + File.separator + sbmlName);
                 t1.outputSBML();
               }
               catch(BioSimException e)
@@ -686,7 +686,7 @@ public class Run implements ActionListener, Observer
             else
             {
               time1 = System.nanoTime();
-              new File(directory + GlobalConstants.separator + "running").delete();
+              new File(directory + File.separator + "running").delete();
               logFile.close();
               return 0;
             }
@@ -696,17 +696,17 @@ public class Run implements ActionListener, Observer
           {
             if (analysisView.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected()))
             {
-              log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename + "\n");
-              logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename + "\n\n");
+              log.addText("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + filename + "\n");
+              logFile.write("Executing:\n" + Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + filename + "\n\n");
               time1 = System.nanoTime();
-              reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + theFile, Gui.envp, work);
+              reb2sac = exec.exec(Gui.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + theFile, Gui.envp, work);
             }
             else
             {
-              log.addText("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName + "\n");
-              logFile.write("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName + "\n\n");
+              log.addText("Outputting SBML file:\n" + root + File.separator + sbmlName + "\n");
+              logFile.write("Outputting SBML file:\n" + root + File.separator + sbmlName + "\n\n");
               time1 = System.nanoTime();
-              FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
+              FileOutputStream fileOutput = new FileOutputStream(new File(root + File.separator + sbmlName));
               FileInputStream fileInput = new FileInputStream(new File(filename));
               int read = fileInput.read();
               while (read != -1)
@@ -732,13 +732,13 @@ public class Run implements ActionListener, Observer
           LPN lhpnFile = new LPN();
           lhpnFile.addObserver(this);
           try {
-            lhpnFile.load(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
+            lhpnFile.load(directory + File.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
           } catch (BioSimException e) {
             JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
               JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
           }
-          lhpnFile.printDot(directory + GlobalConstants.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
+          lhpnFile.printDot(directory + File.separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
           time1 = System.nanoTime();
           exitValue = 0;
         }
@@ -746,7 +746,7 @@ public class Run implements ActionListener, Observer
         {
           LPN lhpnFile = new LPN();
           try {
-            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            lhpnFile.load(root + File.separator + modelFile);
           } catch (BioSimException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -755,11 +755,11 @@ public class Run implements ActionListener, Observer
           {
             Abstraction abst = new Abstraction(lhpnFile, abstPane.getAbstractionProperty());
             abst.abstractSTG(false);
-            abst.printDot(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile.replace(".lpn", ".dot"));
+            abst.printDot(root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".dot"));
           }
           else
           {
-            lhpnFile.printDot(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile.replace(".lpn", ".dot"));
+            lhpnFile.printDot(root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".dot"));
           }
           time1 = System.nanoTime();
           exitValue = 0;
@@ -800,7 +800,7 @@ public class Run implements ActionListener, Observer
           {
             lhpnFile = new LPN();
             try {
-              lhpnFile.load(root + GlobalConstants.separator + modelFile);
+              lhpnFile.load(root + File.separator + modelFile);
             } catch (BioSimException e) {
               JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
                 JOptionPane.ERROR_MESSAGE);
@@ -829,7 +829,7 @@ public class Run implements ActionListener, Observer
             }
             BioModel bioModel = new BioModel(root);
             bioModel.addObserver(this);
-            bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+            bioModel.load(root + File.separator + modelEditor.getRefFile());
             if (bioModel.flattenModel(true) != null)
             {
               time1 = System.nanoTime();
@@ -871,7 +871,7 @@ public class Run implements ActionListener, Observer
               prop = mutProp.getString();
               if (lhpnFile == null)
               {
-                new File(directory + GlobalConstants.separator + "running").delete();
+                new File(directory + File.separator + "running").delete();
                 logFile.close();
                 return 0;
               }
@@ -956,7 +956,7 @@ public class Run implements ActionListener, Observer
             }
             else
             {
-              new File(directory + GlobalConstants.separator + "running").delete();
+              new File(directory + File.separator + "running").delete();
               logFile.close();
               return 0;
             }
@@ -972,7 +972,7 @@ public class Run implements ActionListener, Observer
           {
             lhpnFile = new LPN();
             try {
-              lhpnFile.load(root + GlobalConstants.separator + modelFile);
+              lhpnFile.load(root + File.separator + modelFile);
             } catch (BioSimException e) {
               JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
                 JOptionPane.ERROR_MESSAGE);
@@ -1001,7 +1001,7 @@ public class Run implements ActionListener, Observer
               }
             }
             BioModel bioModel = new BioModel(root);
-            bioModel.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+            bioModel.load(root + File.separator + modelEditor.getRefFile());
             if (bioModel.flattenModel(true) != null)
             {
               time1 = System.nanoTime();
@@ -1043,7 +1043,7 @@ public class Run implements ActionListener, Observer
               prop = mutProp.getString();
               if (lhpnFile == null)
               {
-                new File(directory + GlobalConstants.separator + "running").delete();
+                new File(directory + File.separator + "running").delete();
                 logFile.close();
                 return 0;
               }
@@ -1053,7 +1053,7 @@ public class Run implements ActionListener, Observer
             }
             else
             {
-              new File(directory + GlobalConstants.separator + "running").delete();
+              new File(directory + File.separator + "running").delete();
               logFile.close();
               return 0;
             }
@@ -1123,7 +1123,7 @@ public class Run implements ActionListener, Observer
               else
               {
                 BioModel gcm = new BioModel(root);
-                gcm.load(root + GlobalConstants.separator + modelEditor.getRefFile());
+                gcm.load(root + File.separator + modelEditor.getRefFile());
                 ArrayList<Property> propList = new ArrayList<Property>();
                 if (prop == null)
                 {
@@ -1158,7 +1158,7 @@ public class Run implements ActionListener, Observer
                 String simrep = sg.getMarkovResults();
                 if (simrep != null)
                 {
-                  FileOutputStream simrepstream = new FileOutputStream(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                  FileOutputStream simrepstream = new FileOutputStream(new File(directory + File.separator + "sim-rep.txt"));
                   simrepstream.write((simrep).getBytes());
                   simrepstream.close();
                 }
@@ -1239,7 +1239,7 @@ public class Run implements ActionListener, Observer
                 String simrep = sg.getMarkovResults();
                 if (simrep != null)
                 {
-                  FileOutputStream simrepstream = new FileOutputStream(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                  FileOutputStream simrepstream = new FileOutputStream(new File(directory + File.separator + "sim-rep.txt"));
                   simrepstream.write((simrep).getBytes());
                   simrepstream.close();
                 }
@@ -1277,7 +1277,7 @@ public class Run implements ActionListener, Observer
                     JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error", JOptionPane.ERROR_MESSAGE);
                   }
                 }
-                if (sg.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd"))
+                if (sg.outputTSD(directory + File.separator + "percent-term-time.tsd"))
                 {
                   if (refresh)
                   {
@@ -1330,15 +1330,15 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.CR);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
 
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1351,14 +1351,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.DIRECT);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1371,14 +1371,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1391,14 +1391,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1411,14 +1411,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1431,14 +1431,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1449,15 +1449,15 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.RK);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, (int) Math.floor(timeLimit / printInterval), 0, absError, printer_track_quantity, genStats,
                 simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1468,14 +1468,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction, initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1486,14 +1486,14 @@ public class Run implements ActionListener, Observer
 
             dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
             dynSim.addObserver(this);
-            String SBMLFileName = directory + GlobalConstants.separator + theFile;
+            String SBMLFileName = directory + File.separator + theFile;
             if (direct != null && !direct.equals("."))
             {
-              outDir = outDir + GlobalConstants.separator + direct;
+              outDir = outDir + File.separator + direct;
             }
-            dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
+            dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
             exitValue = 0;
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return exitValue;
           }
@@ -1722,7 +1722,7 @@ public class Run implements ActionListener, Observer
             {
               try
               {
-                ModelEditor gcm = new ModelEditor(root + GlobalConstants.separator, sbmlName, gui, log, false, null, null, null, false, false);
+                ModelEditor gcm = new ModelEditor(root + File.separator, sbmlName, gui, log, false, null, null, null, false, false);
                 gui.addTab(sbmlName, gcm, "Model Editor");
                 gui.addToTree(sbmlName);
               }
@@ -1842,18 +1842,18 @@ public class Run implements ActionListener, Observer
                     warning = ((Graph) simTab.getComponentAt(i)).getWarning();
                     ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
                   }
-                  new File(directory + GlobalConstants.separator + "running").delete();
+                  new File(directory + File.separator + "running").delete();
                   logFile.close();
                   if (outputTerm)
                   {
                     ArrayList<String> dataLabels = new ArrayList<String>();
                     dataLabels.add("time");
                     ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-                    if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+                    if (new File(directory + File.separator + "sim-rep.txt").exists())
                     {
                       try
                       {
-                        Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                        Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
                         if (s.hasNextLine())
                         {
                           String[] ss = s.nextLine().split(" ");
@@ -1880,7 +1880,7 @@ public class Run implements ActionListener, Observer
                         e.printStackTrace();
                       }
                     }
-                    Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+                    Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
                     while (scan.hasNextLine())
                     {
                       String line = scan.nextLine();
@@ -1929,9 +1929,9 @@ public class Run implements ActionListener, Observer
                       }
                     }
                     DataParser probData = new DataParser(dataLabels, data);
-                    probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "term-time.tsd");
                     probData = new DataParser(dataLabels, percentData);
-                    probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
                   }
                   if (refresh)
                   {
@@ -1975,18 +1975,18 @@ public class Run implements ActionListener, Observer
                     warning = ((Graph) simTab.getComponentAt(i)).getWarning();
                     ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
                   }
-                  new File(directory + GlobalConstants.separator + "running").delete();
+                  new File(directory + File.separator + "running").delete();
                   logFile.close();
                   if (outputTerm)
                   {
                     ArrayList<String> dataLabels = new ArrayList<String>();
                     dataLabels.add("time");
                     ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-                    if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+                    if (new File(directory + File.separator + "sim-rep.txt").exists())
                     {
                       try
                       {
-                        Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                        Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
                         if (s.hasNextLine())
                         {
                           String[] ss = s.nextLine().split(" ");
@@ -2013,7 +2013,7 @@ public class Run implements ActionListener, Observer
                         e.printStackTrace();
                       }
                     }
-                    Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+                    Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
                     while (scan.hasNextLine())
                     {
                       String line = scan.nextLine();
@@ -2062,9 +2062,9 @@ public class Run implements ActionListener, Observer
                       }
                     }
                     DataParser probData = new DataParser(dataLabels, data);
-                    probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "term-time.tsd");
                     probData = new DataParser(dataLabels, percentData);
-                    probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
                   }
                   simTab.getComponentAt(i).setName("TSD Graph");
                 }
@@ -2131,18 +2131,18 @@ public class Run implements ActionListener, Observer
                     warning = ((Graph) simTab.getComponentAt(i)).getWarning();
                     ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
                   }
-                  new File(directory + GlobalConstants.separator + "running").delete();
+                  new File(directory + File.separator + "running").delete();
                   logFile.close();
                   if (outputTerm)
                   {
                     ArrayList<String> dataLabels = new ArrayList<String>();
                     dataLabels.add("time");
                     ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-                    if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+                    if (new File(directory + File.separator + "sim-rep.txt").exists())
                     {
                       try
                       {
-                        Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                        Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
                         if (s.hasNextLine())
                         {
                           String[] ss = s.nextLine().split(" ");
@@ -2169,7 +2169,7 @@ public class Run implements ActionListener, Observer
                         e.printStackTrace();
                       }
                     }
-                    Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+                    Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
                     while (scan.hasNextLine())
                     {
                       String line = scan.nextLine();
@@ -2218,9 +2218,9 @@ public class Run implements ActionListener, Observer
                       }
                     }
                     DataParser probData = new DataParser(dataLabels, data);
-                    probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "term-time.tsd");
                     probData = new DataParser(dataLabels, percentData);
-                    probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
                   }
                   if (refresh)
                   {
@@ -2264,18 +2264,18 @@ public class Run implements ActionListener, Observer
                     warning = ((Graph) simTab.getComponentAt(i)).getWarning();
                     ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
                   }
-                  new File(directory + GlobalConstants.separator + "running").delete();
+                  new File(directory + File.separator + "running").delete();
                   logFile.close();
                   if (outputTerm)
                   {
                     ArrayList<String> dataLabels = new ArrayList<String>();
                     dataLabels.add("time");
                     ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-                    if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
+                    if (new File(directory + File.separator + "sim-rep.txt").exists())
                     {
                       try
                       {
-                        Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
+                        Scanner s = new Scanner(new File(directory + File.separator + "sim-rep.txt"));
                         if (s.hasNextLine())
                         {
                           String[] ss = s.nextLine().split(" ");
@@ -2302,7 +2302,7 @@ public class Run implements ActionListener, Observer
                         e.printStackTrace();
                       }
                     }
-                    Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
+                    Scanner scan = new Scanner(new File(directory + File.separator + "term-time.txt"));
                     while (scan.hasNextLine())
                     {
                       String line = scan.nextLine();
@@ -2351,9 +2351,9 @@ public class Run implements ActionListener, Observer
                       }
                     }
                     DataParser probData = new DataParser(dataLabels, data);
-                    probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "term-time.tsd");
                     probData = new DataParser(dataLabels, percentData);
-                    probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
+                    probData.outputTSD(directory + File.separator + "percent-term-time.tsd");
                   }
                   simTab.getComponentAt(i).setName("TSD Graph");
                 }
@@ -2380,7 +2380,7 @@ public class Run implements ActionListener, Observer
           }
         }
       }
-      new File(directory + GlobalConstants.separator + "running").delete();
+      new File(directory + File.separator + "running").delete();
       logFile.close();
     }
     catch (InterruptedException e1)

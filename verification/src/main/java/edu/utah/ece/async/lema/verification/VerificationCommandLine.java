@@ -16,9 +16,6 @@ package edu.utah.ece.async.lema.verification;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.platu.main.Options;
@@ -34,8 +31,6 @@ import edu.utah.ece.async.lema.verification.platu.project.Project;
  * @version %I%
  */
 public class VerificationCommandLine {
-	
-	static String separator = GlobalConstants.separator;
 	
 	public static void main (String[] args) {
 		if (args.length == 0) {
@@ -145,14 +140,14 @@ public class VerificationCommandLine {
 			for (int i=0; i < lpns.length; i++) {
 				String curLPNname = lpns[i].getName();
 				LPN curLPN = new LPN();
-        curLPN.load(directory + separator + curLPNname);
+				curLPN.load(directory + File.separator + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}
 		else {
 			for (int i=0; i < lpnNames.size(); i++) {
 				LPN curLPN = new LPN();
-				curLPN.load(directory + separator + lpnNames.get(i));//load(directory + curLPNname);
+				curLPN.load(directory + File.separator + lpnNames.get(i));//load(directory + curLPNname);
 				lpnList.add(curLPN);
 			}
 		}

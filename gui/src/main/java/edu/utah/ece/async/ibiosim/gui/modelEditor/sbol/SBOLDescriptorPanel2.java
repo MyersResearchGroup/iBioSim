@@ -16,6 +16,7 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -101,9 +102,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 		saveFilePaths.add("Save to New File");
 		saveFileIDBox = new JComboBox();
 		for (String saveFilePath : saveFilePaths) {
-			String regex = GlobalConstants.separator;
-			String[] splitPath = saveFilePath.split(regex);
-			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
+			saveFileIDBox.addItem(GlobalConstants.getFilename(saveFilePath));
 		}
 		
 		add(new JLabel("SBOL ComponentDefinition ID:"));
@@ -178,7 +177,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 				SBOLDocument newSBOLDoc = new SBOLDocument();
 				newSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				
-				String filePath =  identityManager.getBioModel().getPath() + GlobalConstants.separator + newName;
+				String filePath =  identityManager.getBioModel().getPath() + File.separator + newName;
 				try
 				{
 					newSBOLDoc.write(filePath);

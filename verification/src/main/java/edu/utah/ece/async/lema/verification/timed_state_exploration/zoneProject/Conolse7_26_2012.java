@@ -16,7 +16,6 @@ package edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.platu.main.Options;
@@ -91,8 +90,8 @@ public class Conolse7_26_2012 {
 		
 		LPN lpn = new LPN();
 
-		lpn.load(directory + GlobalConstants.separator + lpnList[0]);
-		Options.set_TimingLogFile(directory + GlobalConstants.separator
+		lpn.load(directory + File.separator + lpnList[0]);
+		Options.set_TimingLogFile(directory + File.separator
 				+ lpnList[0] + ".tlog");
 
 		
@@ -103,7 +102,7 @@ public class Conolse7_26_2012 {
 		for (int i=1; i < lpnList.length; i++) {
 			 String curLPNname = lpnList[i];
 			 LPN curLPN = new LPN();
-			 curLPN.load(directory + GlobalConstants.separator + curLPNname);
+			 curLPN.load(directory + File.separator + curLPNname);
 			 selectedLPNs.add(curLPN);
 		}
 		

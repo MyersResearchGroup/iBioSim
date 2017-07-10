@@ -14,6 +14,7 @@
 package edu.utah.ece.async.lema.verification.platu.project;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -78,8 +78,6 @@ public class Project {
 	protected CompositionalAnalysis analysis = null;
 	
 	private Observer observer;
-	
-	private static String separator = GlobalConstants.separator;
   	
 	public Project() {
 		this.label = "";
@@ -429,7 +427,7 @@ public class Project {
 		try {
 			String fileName = null;
 			if (isPOR) {
-				fileName = Options.getPrjSgPath() + separator + Options.getLogName() + "_"
+				fileName = Options.getPrjSgPath() + File.separator + Options.getLogName() + "_"
 						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
 						+ Options.getCycleClosingStrongStubbornMethd() +  "_runtime.log";
 			}

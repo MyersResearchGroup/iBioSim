@@ -36,6 +36,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -2125,7 +2126,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the module.
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2152,7 +2153,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return a boolean representing success or failure.
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2180,7 +2181,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2215,7 +2216,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectVariableToComponent(String varID, String compID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2605,7 +2606,7 @@ public class Schematic extends JPanel implements ActionListener {
 						String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(bioModel.getSBMLCompModel().getListOfSubmodels().get(s)
 									.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 						try {
-              subModel.load(bioModel.getPath() + bioModel.getSeparator() + extModel);
+              subModel.load(bioModel.getPath() + File.separator + extModel);
               Model submodel = subModel.getSBMLDocument().getModel();
               
               for (int j = 0; j < submodel.getSpeciesCount(); ++j)
@@ -2975,19 +2976,18 @@ public class Schematic extends JPanel implements ActionListener {
 	public void outputFrame(String filename, boolean scale) {
 
 		FileOutputStream out = null;		
-		String separator = GlobalConstants.separator;
 		
 		String path = "";
 		
-		if (filename.contains(separator)) {
-			path = filename.substring(0, filename.lastIndexOf(separator));
-			filename = filename.substring(filename.lastIndexOf(separator)+1, filename.length());
+		if (filename.contains(File.separator)) {
+			path = GlobalConstants.getPath(filename);
+			filename = GlobalConstants.getFilename(filename);
 		}
 		
 		if (filename.contains("."))
 			filename = filename.substring(0, filename.indexOf("."));		
 		
-		filename = path + separator + filename + ".jpg";
+		filename = path + File.separator + filename + ".jpg";
 		
 		try {
 			out = new FileOutputStream(filename);

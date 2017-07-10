@@ -14,6 +14,7 @@
 package edu.utah.ece.async.lema.verification.platu.logicAnalysis;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -26,7 +27,6 @@ import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
@@ -81,7 +81,6 @@ public class Analysis extends Observable{
 	 */
 	private HashSet<Transition> visitedTrans;
 	HashMap<Transition, StaticDependencySets> staticDependency = new HashMap<Transition, StaticDependencySets>();
-	private String separator = GlobalConstants.separator;
 		
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<Transition>();
@@ -1273,7 +1272,7 @@ public class Analysis extends Observable{
 	}
 	
 	private void drawDependencyGraphs(LPN[] lpnList) {
-		String fileName = Options.getPrjSgPath() + separator + "dependencyGraph.dot";
+		String fileName = Options.getPrjSgPath() + File.separator + "dependencyGraph.dot";
 		BufferedWriter out;
 		try {
 			out = new BufferedWriter(new FileWriter(fileName));
@@ -1834,7 +1833,7 @@ public class Analysis extends Observable{
 		try {
 			String fileName = null;
 			if (isPOR) {
-				fileName = Options.getPrjSgPath() + separator + Options.getLogName() + "_" + Options.getPOR() + "_" 
+				fileName = Options.getPrjSgPath() + File.separator + Options.getLogName() + "_" + Options.getPOR() + "_" 
 					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingStrongStubbornMethd() + ".log";
 			}				
 			else

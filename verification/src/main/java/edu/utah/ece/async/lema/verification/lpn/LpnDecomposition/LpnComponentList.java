@@ -13,6 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.lema.verification.lpn.LpnDecomposition;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -110,7 +111,7 @@ public class LpnComponentList extends LPN{
 			LpnComponentGraph componentGraph = new LpnComponentGraph(sharedCompVarsMap, compMap, maxNumVarsInOneComp);
 			if (Options.getDebugMode()) {
 				String graphFileName = lpnFileName + maxNumVarsInOneComp + "Vars" + "_compGraph" + iter + ".dot";
-				componentGraph.outputDotFile(directory + separator + graphFileName);
+				componentGraph.outputDotFile(directory + File.separator + graphFileName);
 			}
 			Vertex vertexToCoalesce = componentGraph.selectVerticesToCoalesce();
 			if (vertexToCoalesce != null) {

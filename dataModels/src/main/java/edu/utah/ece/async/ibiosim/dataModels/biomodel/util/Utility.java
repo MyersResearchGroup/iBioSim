@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.xml.stream.XMLStreamException;
@@ -281,12 +280,11 @@ public class Utility {
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
-		String separator = GlobalConstants.separator;
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
 		String[] files = getTSDFiles(folder);
 		for (int i = 0; i < files.length; i++) {
-			result = readFile(folder+separator+files[i]);
+			result = readFile(folder+File.separator+files[i]);
 			if (average == null) {
 				average = result;
 			} else {

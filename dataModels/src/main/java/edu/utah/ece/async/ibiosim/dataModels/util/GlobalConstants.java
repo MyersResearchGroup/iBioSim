@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -330,9 +331,23 @@ public class GlobalConstants {
 	public static final int DEFAULT_COMPARTMENT_HEIGHT = 250;
 	public static final int DEFAULT_TEXT_WIDTH = 40;
 	public static final int DEFAULT_TEXT_HEIGHT = 10;
-	public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
+	//public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
+	//public static final String		separator			= File.separator;
 	public static int				SBML_LEVEL			= 3;
 	public static int				SBML_VERSION		= 1;
 	
+	public static String[] splitPath(String path) {
+		String[] subDirs = path.split(Pattern.quote(File.separator));
+		return subDirs;
+	}
+	
+	public static String getFilename(String path) {
+		String[] subDirs = splitPath(path);
+		return subDirs[subDirs.length-1];
+	}
+	
+	public static String getPath(String path) {
+		return path.substring(0, path.lastIndexOf(File.separator));
+	}
 	
 }

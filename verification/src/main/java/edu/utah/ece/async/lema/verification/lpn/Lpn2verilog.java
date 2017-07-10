@@ -33,14 +33,13 @@ public class Lpn2verilog {
 	public static void convert(String lpnFileName) throws BioSimException {
 		HashMap<String,Boolean> visitedPlaces;
 		String enable = "";
-		String separator = GlobalConstants.separator;
 		try{
 			LPN lpn = new LPN();
 			lpn.load(lpnFileName);
 			String svFileName = lpnFileName.replaceAll(".lpn", ".sv");
 			File svFile = new File(svFileName);
 			svFile.createNewFile();
-			String[] svPath = svFileName.split(separator);
+			String[] svPath = GlobalConstants.splitPath(svFileName);
 			//for (int i=0; i < svPath.length; i++){
 			//System.out.println("\nModule string is " + svPath[i] + "\n");}
 			String svModuleName = svPath[svPath.length -1].split("\\.")[0];

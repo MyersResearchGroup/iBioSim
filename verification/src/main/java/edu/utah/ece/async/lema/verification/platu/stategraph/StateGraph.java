@@ -14,6 +14,7 @@
 package edu.utah.ece.async.lema.verification.platu.stategraph;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -25,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Place;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
@@ -84,7 +84,6 @@ public class StateGraph {
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
     protected LPN lpn;
     protected static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
-    private String separator = GlobalConstants.separator;
     
     public StateGraph(LPN lpn) {
     	this.lpn = lpn;   	
@@ -1250,10 +1249,10 @@ public class StateGraph {
 			String graphFileName = null;
 			if ( Options.getTimingAnalysisType() == "off") {
 				if (Options.getPOR().toLowerCase().equals("off")) {
-					graphFileName = Options.getPrjSgPath() + separator + getLpn().getLabel() + "_local_full_sg.dot";
+					graphFileName = Options.getPrjSgPath() + File.separator + getLpn().getLabel() + "_local_full_sg.dot";
 				}					
 				else {
-					graphFileName = Options.getPrjSgPath() + separator + getLpn().getLabel() + "_POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+					graphFileName = Options.getPrjSgPath() + File.separator + getLpn().getLabel() + "_POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
 				}					
 			} else {
 				// TODO: Need to add separator here?
