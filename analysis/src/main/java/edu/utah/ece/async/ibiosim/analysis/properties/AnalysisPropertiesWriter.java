@@ -63,23 +63,28 @@ public class AnalysisPropertiesWriter {
 		}
 		properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
 		properties.setProperty(sim_tracking_quantity, analysisProperties.getSimulationProperties().getPrinter_track_quantity());
-		for (int i = 0; i < analysisProperties.getSimulationProperties().getIntSpecies().size(); i++)
+		
+		if(analysisProperties.getSimulationProperties().getIntSpecies() != null)
 		{
-		  String species = analysisProperties.getSimulationProperties().getIntSpecies().get(i);
-			if (!species.equals(""))
-			{
-				String[] split = species.split(" ");
-				properties.setProperty(reb2sac_interesting_species + (i + 1), split[0]);
-				if (split.length > 1)
-				{
-					String[] levels = split[1].split(",");
-					for (int j = 0; j < levels.length; j++)
-					{
-						properties.setProperty(reb2sac_concentration_level + split[0] + "." + (j + 1), levels[j]);
-					}
-				}
-			}
+		  for (int i = 0; i < analysisProperties.getSimulationProperties().getIntSpecies().size(); i++)
+	    {
+	      String species = analysisProperties.getSimulationProperties().getIntSpecies().get(i);
+	      if (!species.equals(""))
+	      {
+	        String[] split = species.split(" ");
+	        properties.setProperty(reb2sac_interesting_species + (i + 1), split[0]);
+	        if (split.length > 1)
+	        {
+	          String[] levels = split[1].split(",");
+	          for (int j = 0; j < levels.length; j++)
+	          {
+	            properties.setProperty(reb2sac_concentration_level + split[0] + "." + (j + 1), levels[j]);
+	          }
+	        }
+	      }
+	    }
 		}
+		
 		properties.setProperty(reb2sac_rapid_equil_1, "" + analysisProperties.getAdvancedProperties().getRap1());
 		properties.setProperty(reb2sac_rapid_equil_2, "" + analysisProperties.getAdvancedProperties().getRap2());
 		properties.setProperty(reb2sac_qssa_1, "" + analysisProperties.getAdvancedProperties().getQss());

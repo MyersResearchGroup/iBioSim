@@ -40,7 +40,7 @@ public final class AnalysisProperties {
 	public AnalysisProperties(String id, String filename, String root, boolean isGui)
 	{
 	  this.id = id;
-	  this.filename = filename;
+	  this.modelFile = filename;
 	  this.root = root;
 	  this.gui = isGui;
 	  

@@ -217,7 +217,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     this.SedMLDoc = SedMLDoc;
 
     String  sbmlFile = root + File.separator + modelFile;
-    this.properties.getVerificationProperties().setAbsProperty(abstractionPanel.getAbstractionProperty());
+    if(abstractionPanel != null)
+    {
+      this.properties.getVerificationProperties().setAbsProperty(abstractionPanel.getAbstractionProperty());  
+    }
+    
 
     if (modelFile.endsWith(".lpn"))
     {
@@ -283,7 +287,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   /* Creates the abstraction radio button options */
   private JPanel createAbstractionOptions()
   {
-    String modelFile = properties.getFilename();
+    String modelFile = properties.getModelFile();
     JLabel choose = new JLabel("Abstraction:");
     noAbstraction = new JRadioButton("None");
     expandReactions = new JRadioButton("Expand Reactions");
@@ -578,7 +582,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     JPanel inputHolder = new JPanel(new BorderLayout());
     JPanel inputHolderLeft;
     JPanel inputHolderRight;
-    if (properties.getFilename().contains(".lpn"))
+    String modelFile = properties.getModelFile();
+    if (modelFile.contains(".lpn"))
     {
       inputHolderLeft = new JPanel(new GridLayout(3, 1));
       inputHolderRight = new JPanel(new GridLayout(3, 1));
@@ -592,7 +597,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     inputHolderRight.add(simulators);
     inputHolderLeft.add(explanation);
     inputHolderRight.add(description);
-    if (properties.getFilename().contains(".lpn"))
+    if (modelFile.contains(".lpn"))
     {
       JLabel prop = new JLabel("Property:");
       String[] props = new String[] { "none" };
