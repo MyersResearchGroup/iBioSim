@@ -350,7 +350,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		//If the user decide to double click on a design, open the design in SBOLDesigner.
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 1 && table.getSelectedRow() >= 0 && !showModDefs.isSelected())
+				if (e.getClickCount() == 2 && table.getSelectedRow() >= 0 && !showModDefs.isSelected())
 				{
 					SBOLDocument chosenDesign = getSelection(); 
 					gui.openSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), chosenDesign.getDefaultURIprefix());
