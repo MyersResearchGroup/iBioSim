@@ -205,6 +205,11 @@ public class HierarchicalNode extends AbstractHierarchicalNode
     return state;
   }
   
+  public double computeRateOfChange(int index)
+  {
+    return 0;
+  }
+  
   @Override
   public String report()
   {

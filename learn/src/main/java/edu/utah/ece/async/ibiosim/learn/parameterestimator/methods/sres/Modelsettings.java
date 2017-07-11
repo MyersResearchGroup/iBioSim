@@ -23,8 +23,6 @@ import java.util.List;
 
 /**
  * 
- *
- * @author 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -41,6 +39,17 @@ public class Modelsettings
 	boolean				verbose;
 	int					nums;
 
+	/**
+	 * Creates a model settings object.
+	 * 
+	 * @param ic - time course.
+	 * @param ngenes - number of genes.
+	 * @param sp - starting point.
+	 * @param ep - ending point.
+	 * @param lowerbounds - lower bounds of parameter search space.
+	 * @param upperbounds - upper bounds of parameter search space.
+	 * @param verbose - verbose option.
+	 */
 	public Modelsettings(List<Double> ic, int ngenes, int sp, int ep, double[] lowerbounds, double[] upperbounds, boolean verbose)
 	{
 
@@ -51,59 +60,6 @@ public class Modelsettings
 		this.lowerBounds = lowerbounds;
 		this.upperBounds = upperbounds;
 		this.verbose = verbose;
-	}
-
-	public double[][] loaddata(String filename)
-	{
-		// StringBuffer sb=new StringBuffer();
-		String tempstr = null;
-		int lines = 0;
-		int rows = 0;
-		double[][] tmps = new double[100][100];
-		try
-		{
-			// String path="/Users/mfan/Documents/program/data/model1.txt";
-			String path = new String(filename);
-			File file = new File(path);
-			if (!file.exists())
-			{
-				throw new FileNotFoundException();
-			}
-			// BufferedReader br=new BufferedReader(new FileReader(file));
-			// while((tempstr=br.readLine())!=null)
-			// sb.append(tempstr);
-			FileInputStream fis = new FileInputStream(file);
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-			while ((tempstr = br.readLine()) != null)
-			{
-				String s[] = tempstr.split(" ");
-				// System.out.println(s.length);
-				for (int i = 0; i < s.length; ++i)
-				{
-					tmps[lines][i] = Double.parseDouble(s[i]);
-				}
-				lines = lines + 1;
-				rows = s.length;
-			}
-			br.close();
-			// double rows=tmps[0].length;
-
-		}
-		catch (IOException ex)
-		{
-			System.out.println(ex.getStackTrace());
-		}
-		double[][] data = new double[lines][rows];
-		for (int i = 0; i < lines; i++)
-		{
-			for (int j = 0; j < rows; j++)
-			{
-				data[i][j] = tmps[i][j];
-			}
-		}
-		return data;
-		// return sb.toString();
 	}
 
 }

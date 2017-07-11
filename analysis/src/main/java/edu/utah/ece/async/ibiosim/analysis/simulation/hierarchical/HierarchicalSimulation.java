@@ -27,8 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.jlibsedml.SEDMLDocument;
-import org.jlibsedml.SedML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
@@ -47,14 +45,12 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.Hierarc
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 
 /**
  * This class provides the state variables of the simulation.
  *
- * @author Leandro Watanabe
  * @author Leandro Watanabe
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -85,7 +81,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private JFrame              running;
   private String              SBMLFileName;
   private boolean             sbmlHasErrorsFlag;
-  private String              separator;
   private boolean             stoichAmpBoolean;
   private double              stoichAmpGridValue;
   protected double            timeLimit;
@@ -189,7 +184,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       throw new BioSimException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "Error!");
     }
 
-    separator = GlobalConstants.separator;
   }
 
   public HierarchicalSimulation(HierarchicalSimulation copy)
@@ -212,7 +206,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.type = copy.type;
     this.isGrid = copy.isGrid;
     this.topmodel = copy.topmodel;
-    this.separator = copy.separator;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
     this.initValues = copy.initValues;
@@ -385,14 +378,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @return the separator
-   */
-  public String getSeparator()
-  {
-    return separator;
-  }
-
-  /**
    * @return the stoichAmpBoolean
    */
   public boolean isStoichAmpBoolean()
@@ -548,15 +533,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag)
   {
     this.sbmlHasErrorsFlag = sbmlHasErrorsFlag;
-  }
-
-  /**
-   * @param separator
-   *            the separator to set
-   */
-  public void setSeparator(String separator)
-  {
-    this.separator = separator;
   }
 
   /**
@@ -882,6 +858,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
           for(FunctionNode node : modelstate.getInitAssignments())
           {
             changed = changed | node.computeFunction(modelstate.getIndex());
+          }
+        }
+        
+        if(modelstate.getInitConcentration() != null)
+        {
+          for(FunctionNode node : modelstate.getInitConcentration())
+          {
+            if(!node.getVariable().hasRule() && !node.getVariable().hasInitRule())
+            {
+              changed = changed | node.computeFunction(modelstate.getIndex());
+            }
           }
         }
 

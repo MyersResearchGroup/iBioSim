@@ -13,6 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -315,7 +316,7 @@ public class Synthesizer {
 	
 	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) throws XMLStreamException, IOException {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
-		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
+		subBiomodel.load(biomodel.getPath() + File.separator + sbmlFileID);
 		String md5 = Utility.MD5(subBiomodel.getSBMLDocument());
 		
 		biomodel.addComponent(submodelID, sbmlFileID, subBiomodel.IsWithinCompartment(), 

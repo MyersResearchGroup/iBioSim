@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1047,7 +1048,7 @@ public class Grid {
 		if (!compGCM.equals("none")) {
 			BioModel compGCMFile = new BioModel(bioModel.getPath());
 			try {
-        compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + compGCM);
+        compGCMFile.load(bioModel.getPath() + File.separator + compGCM);
 		  } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();

@@ -79,7 +79,7 @@ public class AnalysisPropertiesLoader {
   {
     String root = properties.getRoot();
     String simName = properties.getId();
-    String openFile = root + GlobalConstants.separator + simName + GlobalConstants.separator + simName + ".properties";
+    String openFile = root + File.separator + simName + File.separator + simName + ".properties";
     String modelName = properties.getModelFile();
 
     VerificationProperties verifProperties = properties.getVerificationProperties();
@@ -88,7 +88,7 @@ public class AnalysisPropertiesLoader {
     
     if (!(new File(openFile)).exists())
     {
-      openFile = root + GlobalConstants.separator + simName + GlobalConstants.separator + modelName + ".properties";
+      openFile = root + File.separator + simName + File.separator + modelName + ".properties";
       if (!(new File(openFile)).exists())
       {
         return;

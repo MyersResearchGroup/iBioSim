@@ -45,8 +45,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import edu.utah.ece.async.ibiosim.analysis.Run;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
@@ -225,8 +224,6 @@ public class Nary_Run implements ActionListener, Runnable
 
 	private final String				root;
 
-	private String						separator;
-
 	private final String				useInterval;
 
 	private final String				direct;
@@ -256,8 +253,6 @@ public class Nary_Run implements ActionListener, Runnable
 			String direct, String modelFile, JRadioButton abstraction, AbstractionPanel abstPane,
 			double absError, double relError)
 	{
-		separator = GlobalConstants.separator;
-
 		// intitializes the member variables
 		this.absError = absError;
 		this.relError = relError;
@@ -381,17 +376,17 @@ public class Nary_Run implements ActionListener, Runnable
 		Properties naryProps = new Properties();
 		try
 		{
-			FileInputStream load = new FileInputStream(new File(outDir + separator
+			FileInputStream load = new FileInputStream(new File(outDir + File.separator
 					+ "species.properties"));
 			naryProps.load(load);
 			load.close();
-			FileOutputStream store = new FileOutputStream(new File(outDir + separator
+			FileOutputStream store = new FileOutputStream(new File(outDir + File.separator
 					+ "species.properties"));
 			naryProps.store(store, "");
 			store.close();
 			naryProps = new Properties();
 			new File("species.properties").delete();
-			load = new FileInputStream(new File(outDir + separator + "species.properties"));
+			load = new FileInputStream(new File(outDir + File.separator + "species.properties"));
 			naryProps.load(load);
 			load.close();
 		}
@@ -803,7 +798,7 @@ public class Nary_Run implements ActionListener, Runnable
 		Properties nary = new Properties();
 		try
 		{
-			FileInputStream load = new FileInputStream(new File(outDir + GlobalConstants.separator
+			FileInputStream load = new FileInputStream(new File(outDir + File.separator
 					+ "species.properties"));
 			nary.load(load);
 			load.close();

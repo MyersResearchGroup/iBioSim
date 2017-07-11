@@ -181,7 +181,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   private final AnalysisProperties properties;
   private final Preferences biosimrc = Preferences.userRoot();
 
-  private final SEDMLDocument SedMLDoc;  
+  private final SEDMLDocument SedMLDoc; 
+
+  private boolean change;
   /**
    * This is the constructor for the GUI. It initializes all the input fields,
    * puts them on panels, adds the panels to the frame, and then displays the
@@ -213,6 +215,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     this.log = log;
     this.simTab = simTab;
     this.SedMLDoc = SedMLDoc;
+
+    String  sbmlFile = root + File.separator + modelFile;
+    this.properties.getVerificationProperties().setAbsProperty(abstractionPanel.getAbstractionProperty());
+
+    if (modelFile.endsWith(".lpn"))
+    {
+      sbmlFile = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
+    }
+
+    //    String sbmlProp = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
+    //    interestingSpecies = new ArrayList<String>();
+    //    change = false;
 
     createMainView(simName, modelFile);
   }
@@ -305,6 +319,91 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       abstractionOptions.add(stateAbstraction);
     }
     return abstractionOptions;
+  }
+
+  private JFrame createProgressBar(JLabel label, JProgressBar progress, final JButton cancel)
+  {
+    final JFrame running = new JFrame("Progress");
+    WindowListener w = new WindowListener()
+    {
+      @Override
+      public void windowClosing(WindowEvent arg0)
+      {
+        cancel.doClick();
+        running.dispose();
+      }
+
+      @Override
+      public void windowOpened(WindowEvent arg0)
+      {
+      }
+
+      @Override
+      public void windowClosed(WindowEvent arg0)
+      {
+      }
+
+      @Override
+      public void windowIconified(WindowEvent arg0)
+      {
+      }
+
+      @Override
+      public void windowDeiconified(WindowEvent arg0)
+      {
+      }
+
+      @Override
+      public void windowActivated(WindowEvent arg0)
+      {
+      }
+
+      @Override
+      public void windowDeactivated(WindowEvent arg0)
+      {
+      }
+    };
+    running.addWindowListener(w);
+    JPanel text = new JPanel();
+    JPanel progBar = new JPanel();
+    JPanel button = new JPanel();
+    JPanel all = new JPanel(new BorderLayout());
+    progress.setStringPainted(true);
+    progress.setValue(0);
+    text.add(label);
+    progBar.add(progress);
+    button.add(cancel);
+    all.add(text, "North");
+    all.add(progBar, "Center");
+    all.add(button, "South");
+    running.setContentPane(all);
+    running.pack();
+    Dimension screenSize;
+    try
+    {
+      Toolkit tk = Toolkit.getDefaultToolkit();
+      screenSize = tk.getScreenSize();
+    }
+    catch (AWTError awe)
+    {
+      screenSize = new Dimension(640, 480);
+    }
+    Dimension frameSize = running.getSize();
+
+    if (frameSize.height > screenSize.height)
+    {
+      frameSize.height = screenSize.height;
+    }
+    if (frameSize.width > screenSize.width)
+    {
+      frameSize.width = screenSize.width;
+    }
+    int x = screenSize.width / 2 - frameSize.width / 2;
+    int y = screenSize.height / 2 - frameSize.height / 2;
+    running.setLocation(x, y);
+    running.setVisible(true);
+    running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    return running;
   }
 
   /* Creates the radio buttons for selecting the simulation type */
@@ -499,7 +598,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
       try {
-        lpn.load(properties.getRoot() + GlobalConstants.separator + properties.getFilename());
+        lpn.load(properties.getRoot() + File.separator + properties.getModelFile());
+
         String[] getProps = lpn.getProperties().toArray(new String[0]);
         props = new String[getProps.length + 1];
         props[0] = "none";
@@ -730,603 +830,155 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     advanced.add(advAbs, "North");
   }
 
-
-  @Override
-  public void run() {
-
-  }
-
-  public void run(boolean refresh) {
-    String root = properties.getRoot();
-    String directory = properties.getDirectory();
-
-    if (sbml.isSelected())
-    {
-      String sbmlName =  sbmlName = JOptionPane.showInputDialog(this, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
-      File f = new File(root + GlobalConstants.separator + sbmlName);
-      if (f.exists())
-      {
-        Object[] options = { "Overwrite", "Cancel" };
-        int value = JOptionPane.showOptionDialog(this, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (value == JOptionPane.YES_OPTION)
-        {
-          File dir = new File(root + GlobalConstants.separator + sbmlName);
-          if (dir.isDirectory())
-          {
-            gui.deleteDir(dir);
-          }
-          else
-          {
-            System.gc();
-            dir.delete();
-          }
-        }
-        else
-        {
-          new File(directory + GlobalConstants.separator + "running").delete();
-          return;
-        }
-      }
-      if (sbmlName != null && !sbmlName.trim().equals(""))
-      {
-        if (!gui.updateOpenModelEditor(sbmlName))
-        {
-          try
-          {
-            ModelEditor gcm = new ModelEditor(root + GlobalConstants.separator, sbmlName, gui, log, false, null, null, null, false, false);
-            gui.addTab(sbmlName, gcm, "Model Editor");
-            gui.addToTree(sbmlName);
-          }
-          catch (Exception e)
-          {
-            e.printStackTrace();
-          }
-        }
-        else
-        {
-          gui.getTab().setSelectedIndex(gui.getTab(sbmlName));
-        }
-        gui.enableTabMenu(gui.getTab().getSelectedIndex());
-      }
-    }
-    else if (ODE.isSelected())
-    {
-      updateTSDGraph(refresh);
-    }
-    else if (monteCarlo.isSelected())
-    {
-      updateTSDGraph(refresh);
-    }
-
-    new File(directory + GlobalConstants.separator + "running").delete();
-
-  }
-
-  public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem)
+  /**
+   * If the run button is pressed, this method starts a new thread for the
+   * simulation.
+   * 
+   * @param refresh
+   * @throws BioSimException 
+   * @throws InterruptedException 
+   * @throws IOException 
+   * @throws XMLStreamException
+   * @throws NumberFormatException
+   */
+  public void run(String direct, boolean refresh)
   {
+    if (!save())
+    {
+      return;
+    }
     String root = properties.getRoot();
-    String simName = properties.getSim();
-
-    for (AnalysisThread thread : threads)
-    {
-      try
-      {
-        thread.join();
-      }
-      catch (InterruptedException e)
-      {
-      }
-    }
-    if (!dirs.isEmpty() && new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + dirs.get(0) + GlobalConstants.separator + "sim-rep.txt").exists())
-    {
-      ArrayList<String> dataLabels = new ArrayList<String>();
-      ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-      String spec = dirs.get(0).split("=")[0];
-      dataLabels.add(spec);
-      data.add(new ArrayList<Double>());
-      for (String prefix : levelOne)
-      {
-        double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
-        data.get(0).add(val);
-        for (String d : dirs)
-        {
-          if (d.startsWith(prefix))
-          {
-            String suffix = d.replace(prefix, "");
-            ArrayList<String> vals = new ArrayList<String>();
-            try
-            {
-              Scanner s = new Scanner(new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + d + GlobalConstants.separator + "sim-rep.txt"));
-              while (s.hasNextLine())
-              {
-                String[] ss = s.nextLine().split(" ");
-                if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-                {
-                }
-                if (vals.size() == 0)
-                {
-                  for (String add : ss)
-                  {
-                    vals.add(add + suffix);
-                  }
-                }
-                else
-                {
-                  for (int i = 0; i < ss.length; i++)
-                  {
-                    vals.set(i, vals.get(i) + " " + ss[i]);
-                  }
-                }
-              }
-              s.close();
-            }
-            catch (Exception e)
-            {
-              e.printStackTrace();
-            }
-            double total = 0;
-            int i = 0;
-            if (vals.get(0).split(" ")[0].startsWith("#total"))
-            {
-              total = Double.parseDouble(vals.get(0).split(" ")[1]);
-              i = 1;
-            }
-            for (; i < vals.size(); i++)
-            {
-              int index;
-              if (dataLabels.contains(vals.get(i).split(" ")[0]))
-              {
-                index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
-              }
-              else
-              {
-                dataLabels.add(vals.get(i).split(" ")[0]);
-                data.add(new ArrayList<Double>());
-                index = dataLabels.size() - 1;
-              }
-              if (total == 0)
-              {
-                data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
-              }
-              else
-              {
-                data.get(index).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
-              }
-            }
-          }
-        }
-      }
-      DataParser constData = new DataParser(dataLabels, data);
-      constData.outputTSD(root + GlobalConstants.separator + simName + GlobalConstants.separator + "sim-rep.tsd");
-      for (int i = 0; i < simTab.getComponentCount(); i++)
-      {
-        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-        {
-          if (simTab.getComponentAt(i) instanceof Graph)
-          {
-            ((Graph) simTab.getComponentAt(i)).refresh();
-          }
-        }
-      }
-    }
-  }
-
-  private void updateTSDGraph(boolean refresh)
-  {
-    String directory = properties.getDirectory();
-    File work = new File(directory);
-    String printer_id = properties.getSimulationProperties().getPrinter_id();
-    String printer_track_quantity = properties.getSimulationProperties().getPrinter_track_quantity();
-    boolean genStats = "true".equals(properties.getSimulationProperties().getGenStats());
-    double printInterval = properties.getSimulationProperties().getPrintInterval();
-    double timeLimit = properties.getSimulationProperties().getTimeLimit();
-    int runs = properties.getSimulationProperties().getRun();
-    String filename = properties.getFilename();
     String outDir = properties.getOutDir();
+    String simName = properties.getSim();
+    double timeLimit = properties.getSimulationProperties().getTimeLimit();
+    int run = properties.getSimulationProperties().getRun();
 
-    try
+    if (monteCarlo.isSelected() || ODE.isSelected())
     {
-      for (int i = 0; i < simTab.getComponentCount(); i++)
+      if (append.isSelected())
       {
-        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+        String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+        for (String s : searchForRunFiles)
         {
-          if (simTab.getComponentAt(i) instanceof Graph)
+          if (s.length() > 3 && new File(root + File.separator + outDir + File.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
           {
-            boolean outputM = true;
-            boolean outputV = true;
-            boolean outputS = true;
-            boolean outputTerm = false;
-            boolean warning = false;
-            ArrayList<String> run = new ArrayList<String>();
-            for (String f : work.list())
-            {
-              if (f.contains("mean"))
-              {
-                outputM = false;
-              }
-              else if (f.contains("variance"))
-              {
-                outputV = false;
-              }
-              else if (f.contains("standard_deviation"))
-              {
-                outputS = false;
-              }
-              if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
-              {
-                run.add(f);
-              }
-              else if (f.equals("term-time.txt"))
-              {
-                outputTerm = true;
-              }
-            }
-            if (genStats && (outputM || outputV || outputS))
-            {
-              warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-              //TODO: fix ""
-              ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0,"",  warning, true);
-            }
-            new File(directory + GlobalConstants.separator + "running").delete();
-            if (outputTerm)
-            {
-              ArrayList<String> dataLabels = new ArrayList<String>();
-              dataLabels.add("time");
-              ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-              if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
-              {
-                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
-                if (s.hasNextLine())
-                {
-                  String[] ss = s.nextLine().split(" ");
-                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-                  {
-                  }
-                  else
-                  {
-                    for (String add : ss)
-                    {
-                      if (!add.equals("#total") && !add.equals("time-limit"))
-                      {
-                        dataLabels.add(add);
-                        ArrayList<Double> times = new ArrayList<Double>();
-                        terms.add(times);
-                      }
-                    }
-                  }
-                }
-                s.close();
-              }
-              Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
-              while (scan.hasNextLine())
-              {
-                String line = scan.nextLine();
-                String[] term = line.split(" ");
-                if (!dataLabels.contains(term[0]))
-                {
-                  dataLabels.add(term[0]);
-                  ArrayList<Double> times = new ArrayList<Double>();
-                  times.add(Double.parseDouble(term[1]));
-                  terms.add(times);
-                }
-                else
-                {
-                  terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-                }
-              }
-              scan.close();
-              ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-              ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-              for (int j = 0; j < dataLabels.size(); j++)
-              {
-                ArrayList<Double> temp = new ArrayList<Double>();
-                temp.add(0.0);
-                data.add(temp);
-                temp = new ArrayList<Double>();
-                temp.add(0.0);
-                percentData.add(temp);
-              }
-              for (double j = printInterval; j <= timeLimit; j += printInterval)
-              {
-                data.get(0).add(j);
-                percentData.get(0).add(j);
-                for (int k = 1; k < dataLabels.size(); k++)
-                {
-                  data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-                  percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-                  for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
-                  {
-                    if (terms.get(k - 1).get(l) < j)
-                    {
-                      data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-                      percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-                      terms.get(k - 1).remove(l);
-                    }
-                  }
-                }
-              }
-              DataParser probData = new DataParser(dataLabels, data);
-              probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
-              probData = new DataParser(dataLabels, percentData);
-              probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
-            }
-            if (refresh)
-            {
-              ((Graph) simTab.getComponentAt(i)).refresh();
-            }
-          }
-          else
-          {
-            simTab.setComponentAt(i, new Graph(this, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, true, false));
-            boolean outputM = true;
-            boolean outputV = true;
-            boolean outputS = true;
-            boolean outputTerm = false;
-            boolean warning = false;
-            ArrayList<String> run = new ArrayList<String>();
-            for (String f : work.list())
-            {
-              if (f.contains("mean"))
-              {
-                outputM = false;
-              }
-              else if (f.contains("variance"))
-              {
-                outputV = false;
-              }
-              else if (f.contains("standard_deviation"))
-              {
-                outputS = false;
-              }
-              if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8)))
-              {
-                run.add(f);
-              }
-              else if (f.equals("term-time.txt"))
-              {
-                outputTerm = true;
-              }
-            }
-            if (genStats && (outputM || outputV || outputS))
-            {
-              warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-              ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, "", warning, true);
-            }
-            new File(directory + GlobalConstants.separator + "running").delete();
-
-            if (outputTerm)
-            {
-              ArrayList<String> dataLabels = new ArrayList<String>();
-              dataLabels.add("time");
-              ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-              if (new File(directory + GlobalConstants.separator + "sim-rep.txt").exists())
-              {
-                Scanner s = new Scanner(new File(directory + GlobalConstants.separator + "sim-rep.txt"));
-                if (s.hasNextLine())
-                {
-                  String[] ss = s.nextLine().split(" ");
-                  if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
-                  {
-                  }
-                  else
-                  {
-                    for (String add : ss)
-                    {
-                      if (!add.equals("#total") && !add.equals("time-limit"))
-                      {
-                        dataLabels.add(add);
-                        ArrayList<Double> times = new ArrayList<Double>();
-                        terms.add(times);
-                      }
-                    }
-                  }
-                }
-                s.close();
-
-              }
-              Scanner scan = new Scanner(new File(directory + GlobalConstants.separator + "term-time.txt"));
-              while (scan.hasNextLine())
-              {
-                String line = scan.nextLine();
-                String[] term = line.split(" ");
-                if (!dataLabels.contains(term[0]))
-                {
-                  dataLabels.add(term[0]);
-                  ArrayList<Double> times = new ArrayList<Double>();
-                  times.add(Double.parseDouble(term[1]));
-                  terms.add(times);
-                }
-                else
-                {
-                  terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-                }
-              }
-              scan.close();
-              ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-              ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-              for (int j = 0; j < dataLabels.size(); j++)
-              {
-                ArrayList<Double> temp = new ArrayList<Double>();
-                temp.add(0.0);
-                data.add(temp);
-                temp = new ArrayList<Double>();
-                temp.add(0.0);
-                percentData.add(temp);
-              }
-              for (double j = printInterval; j <= timeLimit; j += printInterval)
-              {
-                data.get(0).add(j);
-                percentData.get(0).add(j);
-                for (int k = 1; k < dataLabels.size(); k++)
-                {
-                  data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-                  percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-                  for (int l = terms.get(k - 1).size() - 1; l >= 0; l--)
-                  {
-                    if (terms.get(k - 1).get(l) < j)
-                    {
-                      data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-                      percentData.get(k).set(percentData.get(k).size() - 1, ((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-                      terms.get(k - 1).remove(l);
-                    }
-                  }
-                }
-              }
-              DataParser probData = new DataParser(dataLabels, data);
-              probData.outputTSD(directory + GlobalConstants.separator + "term-time.tsd");
-              probData = new DataParser(dataLabels, percentData);
-              probData.outputTSD(directory + GlobalConstants.separator + "percent-term-time.tsd");
-            }
-            simTab.getComponentAt(i).setName("TSD Graph");
+            new File(root + File.separator + outDir + File.separator + s).delete();
           }
         }
-        if (refresh)
+      }
+      else
+      {
+        String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+        for (String s : searchForRunFiles)
         {
-          if (simTab.getComponentAt(i).getName().equals("Histogram"))
+          if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
           {
-            if (simTab.getComponentAt(i) instanceof Graph)
-            {
-              ((Graph) simTab.getComponentAt(i)).refresh();
-            }
-            else
-            {
-              if (new File(filename.substring(0, filename.length() - filename.split("/")[filename.split("/").length - 1].length()) + "sim-rep.txt").exists())
-              {
-                simTab.setComponentAt(i, new Graph(this, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
-                simTab.getComponentAt(i).setName("Histogram");
-              }
-            }
+            new File(root + File.separator + outDir + File.separator + s).delete();
           }
         }
       }
     }
-    catch(IOException e)
+    JProgressBar progress = new JProgressBar(0, 100);
+    final JButton cancel = new JButton("Cancel");
+    JFrame running;
+    JLabel label;
+    if (!direct.equals("."))
     {
-
+      label = new JLabel("Running " + simName + " " + direct);
     }
-  }
-  /**
-   * adds a string with the species ID and its threshold values to the
-   * arraylist of interesting species
-   * 
-   * @param speciesAndThresholds
-   */
-  public void addInterestingSpecies(String speciesAndThresholds)
-  {
-    List<String> interestingSpecies = properties.getSimulationProperties().getIntSpecies();
-    String species = speciesAndThresholds.split(" ")[0];
-    for (int i = 0; i < interestingSpecies.size(); i++)
+    else
     {
-      if (interestingSpecies.get(i).split(" ")[0].equals(species))
+      label = new JLabel("Running " + simName);
+    }
+    running = createProgressBar(label, progress, cancel);
+    // int steps;
+    double runTime = timeLimit * run;
+    if (simulators.getSelectedItem().equals("iSSA"))
+    {
+      runTime = timeLimit;
+    }
+    Run runProgram = new Run(properties);
+    cancel.addActionListener(runProgram);
+    gui.getExitButton().addActionListener(runProgram);
+    if (monteCarlo.isSelected() || ODE.isSelected())
+    {
+      File[] files = new File(root + File.separator + outDir).listFiles();
+      for (File f : files)
       {
-        interestingSpecies.set(i, speciesAndThresholds);
-        return;
+        if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
+        {
+          f.delete();
+        }
       }
     }
-    interestingSpecies.add(speciesAndThresholds);
-  }
-
-  /**
-   * removes a string with the species ID and its threshold values from the
-   * arraylist of interesting species
-   * 
-   * @param species
-   */
-  public void removeInterestingSpecies(String species)
-  {
-    List<String> interestingSpecies = properties.getSimulationProperties().getIntSpecies();
-    for (int i = 0; i < interestingSpecies.size(); i++)
-    {
-      if (interestingSpecies.get(i).split(" ")[0].equals(species))
-      {
-        interestingSpecies.remove(i);
-        return;
-      }
-    }
-  }
-
-  public String getSimName()
-  {
-    return properties.getSim();
-  }
-
-  public List<String> getInterestingSpecies()
-  {
-    return properties.getSimulationProperties().getIntSpecies();
-  }
-
-  public String getRootPath()
-  {
-    return properties.getRoot();
-  }
-
-  public String getSimID()
-  {
-    return fileStem.getText().trim();
-  }
-
-  public String getSimPath()
-  {
-    String simName = properties.getId();
-    String root = properties.getRoot();
-    if (!fileStem.getText().trim().equals(""))
-    {
-      return root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim();
-    }
-    return root + GlobalConstants.separator + simName;
-  }
-
-  public boolean noExpand()
-  {
-    return noAbstraction.isSelected();
-  }
-
-  public String getProperty()
-  {
+    int exit;
+    String lpnProperty = "";
     if (transientProperties != null)
     {
       if (!((String) transientProperties.getSelectedItem()).equals("none"))
       {
-        return ((String) transientProperties.getSelectedItem());
+        lpnProperty = ((String) transientProperties.getSelectedItem());
       }
-      return "";
     }
-    return null;
-  }
-
-  public int getNumRuns() {
-    try {
-      return Integer.parseInt(runs.getText());
-    } catch (Exception e) {
-      return 1;
-    }
-  }
-
-  // Reports which gcm abstraction options are selected
-  public ArrayList<String> getGcmAbstractions()
-  {
-    ArrayList<String> gcmAbsList = new ArrayList<String>();
-    ListModel preAbsList = preAbs.getModel();
-    for (int i = 0; i < preAbsList.getSize(); i++)
+    String simulationName = simName;
+    String directory = null;
+    if (!direct.equals("."))
     {
-      String abstractionOption = (String) preAbsList.getElementAt(i);
-      if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
+      simulationName = simName + File.separator + direct;
+      directory = direct;
+    }
+    try {
+      exit = runProgram.execute();
+      if (stateAbstraction.isSelected() && modelEditor == null && !simName.contains("markov-chain-analysis") && exit == 0)
       {
-        gcmAbsList.add(abstractionOption);
+        //      simProp = simProp.replace("\\", "/");
+        //      Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split("/"), simProp, fba, sbml, dot, xhtml, stateAbstraction, ODE, monteCarlo,
+        //        initialTime, outputStartTime, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + File.separator + simName,
+        //        rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, gui, simTab, root, directory, modelFile,
+        //        reactionAbstraction, lpnAbstraction, absError, relError);
+        // nary_Run.open();
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (XMLStreamException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (BioSimException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    running.setCursor(null);
+    running.dispose();
+    gui.getExitButton().removeActionListener(runProgram);
+    if (append.isSelected())
+    {
+      Random rnd = new Random();
+      seed.setText("" + rnd.nextInt());
+    }
+    for (int i = 0; i < gui.getTab().getTabCount(); i++)
+    {
+      if (gui.getTab().getComponentAt(i) instanceof Graph)
+      {
+        ((Graph) gui.getTab().getComponentAt(i)).refresh();
       }
     }
-    return gcmAbsList;
   }
 
   public int getStartIndex(String outDir) {
+
     String root = properties.getRoot();
     if (append.isSelected())
     {
-      String[] searchForRunFiles = new File(root + GlobalConstants.separator + outDir).list();
+      String[] searchForRunFiles = new File(root + File.separator + outDir).list();
       int start = 1;
       for (String s : searchForRunFiles)
       {
-        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + GlobalConstants.separator + outDir + GlobalConstants.separator + s).isFile())
+        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
         {
           String getNumber = s.substring(4, s.length());
           String number = "";
@@ -1352,172 +1004,189 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
   }
 
-  public void executeRun()
+  private Algorithm getAlgorithm()
   {
-    String modelFile = properties.getModelFile();
-    String root = properties.getRoot();
-    String simName = properties.getSim();
-
-    boolean ignoreSweep = false;
-    if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected())
+    Algorithm algorithm = null;
+    Element para = new Element("analysis");
+    para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
+    if (ODE.isSelected())
     {
-      ignoreSweep = true;
-    }
-    String stem = "";
-    if (!fileStem.getText().trim().equals(""))
-    {
-      if (!(stemPat.matcher(fileStem.getText().trim()).matches()))
+      if (((String) simulators.getSelectedItem()).contains("euler"))
       {
-        JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem", JOptionPane.ERROR_MESSAGE);
-        return;
+        algorithm = new Algorithm(GlobalConstants.KISAO_EULER);
       }
-      stem += fileStem.getText().trim();
-    }
-    for (int i = 0; i < gui.getTab().getTabCount(); i++)
-    {
-      if (modelEditor != null)
+      else if (((String) simulators.getSelectedItem()).contains("rk8pd"))
       {
-        if (gui.getTitleAt(i).equals(modelEditor.getRefFile()))
-        {
-          if (gui.getTab().getComponentAt(i) instanceof ModelEditor)
-          {
-            ModelEditor gcm = ((ModelEditor) (gui.getTab().getComponentAt(i)));
-            if (gcm.isDirty())
-            {
-              Object[] options = { "Yes", "No" };
-              int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelEditor.getRefFile() + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-              if (value == JOptionPane.YES_OPTION)
-              {
-                gcm.save(false);
-              }
-            }
-          }
-        }
+        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
       }
-      else
+      else if (((String) simulators.getSelectedItem()).contains("rkf45") || ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
       {
-        if (gui.getTitleAt(i).equals(modelFile))
-        {
-          if (gui.getTab().getComponentAt(i) instanceof LHPNEditor)
-          {
-            LHPNEditor lpn = ((LHPNEditor) (gui.getTab().getComponentAt(i)));
-            if (lpn.isDirty())
-            {
-              Object[] options = { "Yes", "No" };
-              int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-              if (value == JOptionPane.YES_OPTION)
-              {
-                lpn.save();
-              }
-            }
-          }
-        }
+        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
+        para.setAttribute("method", ((String) simulators.getSelectedItem()));
+      } 
+      else {
+        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
+        para.setAttribute("method", ((String) simulators.getSelectedItem()));
       }
     }
-    if (modelEditor != null)
+    else if (monteCarlo.isSelected())
     {
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
-      modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
+      if (((String) simulators.getSelectedItem()).equals("gillespie"))
+      {
+        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+      }
+      if (((String) simulators.getSelectedItem()).contains("Hierarchical"))
+      {
+        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+      }
+      else if (((String) simulators.getSelectedItem()).contains("SSA-CR"))
+      {
+        algorithm = new Algorithm(GlobalConstants.KISAO_SSA_CR);
+      }
+      else {
+        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+        para.setAttribute("method", ((String) simulators.getSelectedItem()));
+      }
+    } 
+    else if (fba.isSelected()) 
+    {
+      algorithm = new Algorithm(GlobalConstants.KISAO_FBA);
     }
     else
     {
-      if (!stem.equals(""))
-      {
-      }
-      Translator t1 = new Translator();
-      if (reactionAbstraction.isSelected())
-      {
-        try {
-          LPN lhpnFile = new LPN();
-          lhpnFile.load(root + GlobalConstants.separator + modelFile);
-          Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
-          abst.abstractSTG(false);
-          abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile);
-
-          if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
-          {
-
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, ((String) transientProperties.getSelectedItem()));
-
-          }
-          else
-          {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, "");
-          }
-        } catch (BioSimException e) {
-          // TODO Auto-generated catch block
-          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
-
-          e.printStackTrace();
-        }
-      }
-      else
-      {
-        try {
-          if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
-          {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, ((String) transientProperties.getSelectedItem()));
-          }
-          else
-          {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, "");
-          }
-        } catch (BioSimException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-      t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + stem + GlobalConstants.separator + modelFile.replace(".lpn", ".xml"));
-      t1.outputSBML();
-      if (!stem.equals(""))
-      {
-        new AnalysisThread(this).start(stem, true);
-      }
-      else
-      {
-        new AnalysisThread(this).start(".", true);
+      algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
+      if (sbml.isSelected()) {
+        para.setAttribute("method", "Model");
+      } else if (dot.isSelected()) {
+        para.setAttribute("method", "Network");
+      } else if (xhtml.isSelected()) {
+        para.setAttribute("method", "Browser");
+      } else {
+        para.setAttribute("method", ((String) simulators.getSelectedItem()));
       }
     }
+    if (expandReactions.isSelected()) {
+      para.setAttribute("abstraction", "Expand Reactions");
+    } else if (reactionAbstraction.isSelected()) {
+      para.setAttribute("abstraction", "Reaction-based");
+    } else if (stateAbstraction.isSelected()) {
+      para.setAttribute("abstraction", "State-based");
+    }
+    Annotation ann = new Annotation(para);
+    algorithm.addAnnotation(ann);
+    AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
+    algorithm.addAlgorithmParameter(ap);
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());
+    algorithm.addAlgorithmParameter(ap);
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE, absErr.getText());
+    algorithm.addAlgorithmParameter(ap);
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE,relErr.getText());
+    algorithm.addAlgorithmParameter(ap);
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
+    algorithm.addAlgorithmParameter(ap);
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_SAMPLES,runs.getText());
+    algorithm.addAlgorithmParameter(ap);
+    return algorithm;
   }
 
-  public void setModelEditor(ModelEditor modelEditor)
+  private void setAlgorithm(Algorithm algorithm)
   {
-    this.modelEditor = modelEditor;
-    if (markov.isSelected())
+    String kisaoId = algorithm.getKisaoID();
+    KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
+    String method = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "method", null);
+    if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
+      ODE.setSelected(true);
+      enableODE();
+      simulators.setSelectedItem("euler");
+    }
+    else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
     {
-      simulators.removeAllItems();
-      simulators.addItem("steady-state-markov-chain-analysis");
-      simulators.addItem("transient-markov-chain-analysis");
-      simulators.addItem("reachability-analysis");
-      simulators.addItem("prism");
-      if (Executables.reb2sacFound)
-      {
-        simulators.addItem("atacs");
-        simulators.addItem("ctmc-transient");
+      ODE.setSelected(true); 
+      enableODE();
+      simulators.setSelectedItem((String)"rkf45");
+      if (method!=null) {
+        simulators.setSelectedItem(method);
       }
-      //      if (selectedMarkovSim != null)
-      //      {
-      //        simulators.setSelectedItem(selectedMarkovSim);
-      //      }
+    } else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
+      ODE.setSelected(true);
+      enableODE();
+      simulators.setSelectedItem((String)"rk8pd");
+    } else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE) ||
+        kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
+      monteCarlo.setSelected(true);
+      enableMonteCarlo();
+      simulators.setSelectedItem((String)"gillespie");
+      if (method!=null) {
+        simulators.setSelectedItem(method);
+      }
+    } else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
+      monteCarlo.setSelected(true);
+      enableMonteCarlo();
+      simulators.setSelectedItem("SSA-CR (Dynamic)");
     }
-    //change = false;
-  }
-
-
-  public Graph createGraph(String open, boolean regularGraph)
-  {
-    String root = properties.getRoot();
-    String simName = properties.getId();
-
-    String outDir = root + GlobalConstants.separator + simName;
-    String printer_id;
-    printer_id = "tsd.printer";
-    String printer_track_quantity = "amount";
-    if (concentrations.isSelected())
+    else if (kisaoId.equals(GlobalConstants.KISAO_FBA))
     {
-      printer_track_quantity = "concentration";
+      fba.setSelected(true);
+      enableFBA();
+    } else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
+      if (method!=null) {
+        if (method.equals("Model")) {
+          sbml.setSelected(true);
+        } else if (method.equals("Network")) {
+          dot.setSelected(true);
+        } else if (method.equals("Browser")) {
+          xhtml.setSelected(true);
+        } else {
+          markov.setSelected(true);
+          if (method!=null) {
+            simulators.setSelectedItem(method);
+          }
+        }
+      }
+    } else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
+      ODE.setSelected(true);
+      enableODE();
+      simulators.setSelectedItem("rkf45");
     }
-    return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, regularGraph, false);
+    else
+    {
+      monteCarlo.setSelected(true);
+      enableMonteCarlo();
+      simulators.setSelectedItem("gillespie");
+    }
+    String abstraction = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "abstraction", null);
+    if (abstraction!=null) {
+      if (abstraction.equals("Expand Reactions")) {
+        expandReactions.setSelected(true);
+      } else if (abstraction.equals("Reaction-based")) {
+        reactionAbstraction.setSelected(true);
+      } else if (abstraction.equals("State-based")) {
+        stateAbstraction.setSelected(true);
+      } else {
+        noAbstraction.setSelected(true);
+      }
+    } else {
+      noAbstraction.setSelected(true);
+    }
+    for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
+      if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
+        minStep.setText(ap.getValue());
+      }
+      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE))
+      {
+        step.setText(ap.getValue());
+      }
+      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE))
+      {
+        absErr.setText(ap.getValue());
+      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_RELATIVE_TOLERANCE)) {
+        relErr.setText(ap.getValue());
+      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
+        seed.setText(ap.getValue());
+      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
+        runs.setText(ap.getValue());
+      }
+    }
   }
 
   /**
@@ -1857,38 +1526,38 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       properties.setXhtml();
     }
-    
+
     log.addText("Creating properties file:\n" + propName + "\n");
     int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
     properties.getIncrementalProperties().setNumPaths(numPaths);
-    
+
     try {
       AnalysisPropertiesWriter.createProperties(properties);
     } catch (IOException e1) {
       e1.printStackTrace();
     }
 
-//    if (!runs.isEnabled())
-//    {
-//      for (String runs : new File(root + GlobalConstants.separator + outDir).list())
-//      {
-//        if (runs.length() >= 4)
-//        {
-//          String end = "";
-//          for (int j = 1; j < 5; j++)
-//          {
-//            end = runs.charAt(runs.length() - j) + end;
-//          }
-//          if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
-//          {
-//            if (runs.contains("run-"))
-//            {
-//              run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
-//            }
-//          }
-//        }
-//      }
-//    }
+    //    if (!runs.isEnabled())
+    //    {
+    //      for (String runs : new File(root + GlobalConstants.separator + outDir).list())
+    //      {
+    //        if (runs.length() >= 4)
+    //        {
+    //          String end = "";
+    //          for (int j = 1; j < 5; j++)
+    //          {
+    //            end = runs.charAt(runs.length() - j) + end;
+    //          }
+    //          if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
+    //          {
+    //            if (runs.contains("run-"))
+    //            {
+    //              run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
+    //            }
+    //          }
+    //        }
+    //      }
+    //    }
     try
     {
       Properties getProps = new Properties();
@@ -1902,7 +1571,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       }
       if (!fileStem.getText().trim().equals(""))
       {
-        new File(root + GlobalConstants.separator + simName + GlobalConstants.separator + fileStem.getText().trim()).mkdir();
+        new File(root + File.separator + simName + File.separator + fileStem.getText().trim()).mkdir();
         getProps.setProperty("file.stem", fileStem.getText().trim());
       }
       if (monteCarlo.isSelected() || ODE.isSelected())
@@ -1932,11 +1601,219 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     return true;
   }
 
-  public JPanel getAdvanced()
+
+
+  public Graph createGraph(String open, boolean regularGraph)
   {
-    JPanel constructPanel = new JPanel(new BorderLayout());
-    constructPanel.add(advanced, "Center");
-    return constructPanel;
+    String root = properties.getRoot();
+    String simName = properties.getId();
+
+    String outDir = root + File.separator + simName;
+    String printer_id;
+    printer_id = "tsd.printer";
+    String printer_track_quantity = "amount";
+    if (concentrations.isSelected())
+    {
+      printer_track_quantity = "concentration";
+    }
+    return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", gui, open, log, null, regularGraph, false);
+  }
+
+  public void executeRun()
+  {
+    boolean ignoreSweep = false;
+    String modelFile = properties.getModelFile();
+    String root = properties.getRoot();
+    String simName = properties.getSim();
+
+    if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected())
+    {
+      ignoreSweep = true;
+    }
+    String stem = "";
+    if (!fileStem.getText().trim().equals(""))
+    {
+      if (!(stemPat.matcher(fileStem.getText().trim()).matches()))
+      {
+        JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem", JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+      stem += fileStem.getText().trim();
+    }
+    for (int i = 0; i < gui.getTab().getTabCount(); i++)
+    {
+      if (modelEditor != null)
+      {
+        if (gui.getTitleAt(i).equals(modelEditor.getRefFile()))
+        {
+          if (gui.getTab().getComponentAt(i) instanceof ModelEditor)
+          {
+            ModelEditor gcm = ((ModelEditor) (gui.getTab().getComponentAt(i)));
+            if (gcm.isDirty())
+            {
+              Object[] options = { "Yes", "No" };
+              int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelEditor.getRefFile() + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+              if (value == JOptionPane.YES_OPTION)
+              {
+                gcm.save(false);
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        if (gui.getTitleAt(i).equals(modelFile))
+        {
+          if (gui.getTab().getComponentAt(i) instanceof LHPNEditor)
+          {
+            LHPNEditor lpn = ((LHPNEditor) (gui.getTab().getComponentAt(i)));
+            if (lpn.isDirty())
+            {
+              Object[] options = { "Yes", "No" };
+              int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile + " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+              if (value == JOptionPane.YES_OPTION)
+              {
+                lpn.save();
+              }
+            }
+          }
+        }
+      }
+    }
+    if (modelEditor != null)
+    {
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
+    }
+    else
+    {
+      if (!stem.equals(""))
+      {
+      }
+      Translator t1 = new Translator();
+      if (reactionAbstraction.isSelected())
+      {
+        try {
+          LPN lhpnFile = new LPN();
+          lhpnFile.load(root + File.separator + modelFile);
+          Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
+          abst.abstractSTG(false);
+          abst.save(root + File.separator + simName + File.separator + modelFile);
+
+          if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
+          {
+
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+
+          }
+          else
+          {
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, "");
+          }
+        } catch (BioSimException e) {
+          // TODO Auto-generated catch block
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+
+          e.printStackTrace();
+        }
+      }
+      else
+      {
+        try {
+          if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
+          {
+            t1.convertLPN2SBML(root + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+          }
+          else
+          {
+            t1.convertLPN2SBML(root + File.separator + modelFile, "");
+          }
+        } catch (BioSimException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+      t1.setFilename(root + File.separator + simName + File.separator + stem + File.separator + modelFile.replace(".lpn", ".xml"));
+      t1.outputSBML();
+      if (!stem.equals(""))
+      {
+        new AnalysisThread(this).start(stem, true);
+      }
+      else
+      {
+        new AnalysisThread(this).start(".", true);
+      }
+    }
+  }
+
+  public boolean noExpand()
+  {
+    return noAbstraction.isSelected();
+  }
+
+  // Reports which gcm abstraction options are selected
+  public ArrayList<String> getGcmAbstractions()
+  {
+    ArrayList<String> gcmAbsList = new ArrayList<String>();
+    ListModel preAbsList = preAbs.getModel();
+    for (int i = 0; i < preAbsList.getSize(); i++)
+    {
+      String abstractionOption = (String) preAbsList.getElementAt(i);
+      if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
+      {
+        gcmAbsList.add(abstractionOption);
+      }
+    }
+    return gcmAbsList;
+  }
+
+  // Reports if any reb2sac abstraction options are selected
+  public boolean reb2sacAbstraction()
+  {
+    ListModel preAbsList = preAbs.getModel();
+    for (int i = 0; i < preAbsList.getSize(); i++)
+    {
+      String abstractionOption = (String) preAbsList.getElementAt(i);
+      if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction") && !abstractionOption.equals("operator-site-reduction-abstraction"))
+      {
+        return true;
+      }
+    }
+    ListModel loopAbsList = loopAbs.getModel();
+    if (loopAbsList.getSize() > 0)
+    {
+      return true;
+    }
+    ListModel postAbsList = postAbs.getModel();
+    if (postAbsList.getSize() > 0)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  public void setModelEditor(ModelEditor modelEditor)
+  {
+    this.modelEditor = modelEditor;
+    if (markov.isSelected())
+    {
+      simulators.removeAllItems();
+      simulators.addItem("steady-state-markov-chain-analysis");
+      simulators.addItem("transient-markov-chain-analysis");
+      simulators.addItem("reachability-analysis");
+      simulators.addItem("prism");
+      if (Gui.isReb2sacFound())
+      {
+        simulators.addItem("atacs");
+        simulators.addItem("ctmc-transient");
+      }
+      //      if (selectedMarkovSim != null)
+      //      {
+      //        simulators.setSelectedItem(selectedMarkovSim);
+      //      }
+    }
+    change = false;
   }
 
   public void setSim(String newSimName)
@@ -1946,23 +1823,619 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public boolean hasChanged()
   {
-    return false;
+    return change;
   }
+
+  public String[] getInterestingSpecies()
+  {
+    return properties.getSimulationProperties().getIntSpecies().toArray(new String[properties.getSimulationProperties().getIntSpecies().size()]);
+  }
+
+  public List<String> getInterestingSpeciesAsArrayList()
+  {
+    return properties.getSimulationProperties().getIntSpecies();
+  }
+
+  /**
+   * adds a string with the species ID and its threshold values to the
+   * arraylist of interesting species
+   * 
+   * @param speciesAndThresholds
+   */
+  public void addInterestingSpecies(String speciesAndThresholds)
+  {
+    String species = speciesAndThresholds.split(" ")[0];
+    List<String> interestingSpecies = properties.getSimulationProperties().getIntSpecies();
+    for (int i = 0; i < interestingSpecies.size(); i++)
+    {
+      if (interestingSpecies.get(i).split(" ")[0].equals(species))
+      {
+        interestingSpecies.set(i, speciesAndThresholds);
+        return;
+      }
+    }
+    interestingSpecies.add(speciesAndThresholds);
+  }
+
+  /**
+   * removes a string with the species ID and its threshold values from the
+   * arraylist of interesting species
+   * 
+   * @param species
+   */
+  public void removeInterestingSpecies(String species)
+  {
+    List<String> interestingSpecies = properties.getSimulationProperties().getIntSpecies();
+    for (int i = 0; i < interestingSpecies.size(); i++)
+    {
+      if (interestingSpecies.get(i).split(" ")[0].equals(species))
+      {
+        interestingSpecies.remove(i);
+        return;
+      }
+    }
+  }
+
+  public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem)
+  {
+
+    String root = properties.getRoot();
+    String simName = properties.getSim();
+    for (AnalysisThread thread : threads)
+    {
+      try
+      {
+        thread.join();
+      }
+      catch (InterruptedException e)
+      {
+      }
+    }
+    if (!dirs.isEmpty() && new File(root + File.separator + simName + File.separator + stem + dirs.get(0) + File.separator + "sim-rep.txt").exists())
+    {
+      ArrayList<String> dataLabels = new ArrayList<String>();
+      ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+      String spec = dirs.get(0).split("=")[0];
+      dataLabels.add(spec);
+      data.add(new ArrayList<Double>());
+      for (String prefix : levelOne)
+      {
+        double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
+        data.get(0).add(val);
+        for (String d : dirs)
+        {
+          if (d.startsWith(prefix))
+          {
+            String suffix = d.replace(prefix, "");
+            ArrayList<String> vals = new ArrayList<String>();
+            try
+            {
+              Scanner s = new Scanner(new File(root + File.separator + simName + File.separator + stem + d + File.separator + "sim-rep.txt"));
+              while (s.hasNextLine())
+              {
+                String[] ss = s.nextLine().split(" ");
+                if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0"))
+                {
+                }
+                if (vals.size() == 0)
+                {
+                  for (String add : ss)
+                  {
+                    vals.add(add + suffix);
+                  }
+                }
+                else
+                {
+                  for (int i = 0; i < ss.length; i++)
+                  {
+                    vals.set(i, vals.get(i) + " " + ss[i]);
+                  }
+                }
+              }
+              s.close();
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+            }
+            double total = 0;
+            int i = 0;
+            if (vals.get(0).split(" ")[0].startsWith("#total"))
+            {
+              total = Double.parseDouble(vals.get(0).split(" ")[1]);
+              i = 1;
+            }
+            for (; i < vals.size(); i++)
+            {
+              int index;
+              if (dataLabels.contains(vals.get(i).split(" ")[0]))
+              {
+                index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
+              }
+              else
+              {
+                dataLabels.add(vals.get(i).split(" ")[0]);
+                data.add(new ArrayList<Double>());
+                index = dataLabels.size() - 1;
+              }
+              if (total == 0)
+              {
+                data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
+              }
+              else
+              {
+                data.get(index).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
+              }
+            }
+          }
+        }
+      }
+      DataParser constData = new DataParser(dataLabels, data);
+      constData.outputTSD(root + File.separator + simName + File.separator + "sim-rep.tsd");
+      for (int i = 0; i < simTab.getComponentCount(); i++)
+      {
+        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
+        {
+          if (simTab.getComponentAt(i) instanceof Graph)
+          {
+            ((Graph) simTab.getComponentAt(i)).refresh();
+          }
+        }
+      }
+    }
+  }
+
+  @Override
+  public void run()
+  {
+  }
+
+
+
+  public String getProperty()
+  {
+    if (transientProperties != null)
+    {
+      if (!((String) transientProperties.getSelectedItem()).equals("none"))
+      {
+        return ((String) transientProperties.getSelectedItem());
+      }
+      return "";
+    }
+    return null;
+  }
+
+  public String getRootPath()
+  {
+    return properties.getRoot();
+  }
+  
+  public int getNumRuns() {
+    try {
+      return Integer.parseInt(runs.getText());
+    } catch (Exception e) {
+      return 1;
+    }
+  }
+  
+  public String getSimID()
+  {
+    return fileStem.getText().trim();
+  }
+
+  public String getSimPath()
+  {
+    String root = properties.getRoot();
+    String simName = properties.getSim();
+    if (!fileStem.getText().trim().equals(""))
+    {
+      return root + File.separator + simName + File.separator + fileStem.getText().trim();
+    }
+    return root + File.separator + simName;
+  }
+
+  public String getSimName()
+  {
+    String simName = properties.getSim();
+    return simName;
+  }
+
   public void updateBackgroundFile(String updatedFile)
   {
-    properties.setId(updatedFile);
     modelFileField.setText(updatedFile);
   }
 
   public String getBackgroundFile()
   {
-    return properties.getId();
+    return modelFileField.getText();
   }
+  /**
+   * Loads the simulate options.
+   */
+  private void loadPropertiesFile()
+  {
 
+    //      lpnAbstraction.preAbs.setListData(lpnAbstraction.getAbstractionProperty().preAbsModel.toArray());
+    //      lpnAbstraction.loopAbs.setListData(lpnAbstraction.getAbstractionProperty().loopAbsModel.toArray());
+    //      lpnAbstraction.postAbs.setListData(lpnAbstraction.getAbstractionProperty().postAbsModel.toArray());
+
+    if (properties.isNone())
+    {
+      noAbstraction.setSelected(true);
+      enableNoAbstraction();
+    }
+    else if (properties.isExpand())
+    {
+      expandReactions.setSelected(true);
+      enableNoAbstraction();
+    }
+    else if (properties.isAbs())
+    {
+      reactionAbstraction.setSelected(true);
+      enableReactionAbstraction();
+    }
+    else
+    {
+      stateAbstraction.setSelected(true);
+      enableStateAbstraction();
+    }
+
+
+    // usingSSA.doClick();
+
+    description.setEnabled(true);
+    explanation.setEnabled(true);
+    simulators.setEnabled(true);
+    simulatorsLabel.setEnabled(true);
+    if (!stateAbstraction.isSelected())
+    {
+      ODE.setEnabled(true);
+    }
+    else
+    {
+      markov.setEnabled(true);
+    }
+
+    if(properties.getSimulationProperties().getPrinter_track_quantity().equals("concentration"))
+    {
+      concentrations.doClick();
+    }
+    if (properties.getSimulationProperties().getPrinter_id().equals("null.printer"))
+    {
+      genRuns.doClick();
+
+    }
+    
+    if(properties.isPrintInterval())
+    {
+      intervalLabel.setSelectedItem("Print Interval");
+      interval.setText(String.valueOf(properties.getSimulationProperties().getPrintInterval()));
+    }
+    else if (properties.isMinPrintInterval())
+    {
+      intervalLabel.setSelectedItem("Minimum Print Interval");
+      interval.setText(String.valueOf(properties.getSimulationProperties().getMinTimeStep()));
+    }
+    else
+    {
+      intervalLabel.setSelectedItem("Number Of Steps");
+      interval.setText(String.valueOf(properties.getSimulationProperties().getNumSteps()));
+    }
+    
+    initialTimeField.setText(String.valueOf(properties.getSimulationProperties().getInitialTime()));
+
+    outputStartTimeField.setText(String.valueOf(properties.getSimulationProperties().getOutputStartTime()));
+
+    limit.setText(String.valueOf(properties.getSimulationProperties().getTimeLimit()));
+
+    absErr.setText(String.valueOf(properties.getSimulationProperties().getAbsError()));
+
+    relErr.setText(String.valueOf(properties.getSimulationProperties().getRelError()));
+
+    step.setText(String.valueOf(properties.getSimulationProperties().getTimeStep()));
+
+    minStep.setText(String.valueOf(properties.getSimulationProperties().getMinTimeStep()));
+
+    simulators.setSelectedItem(properties.getSim());
+
+    fileStem.setText(properties.getFileStem());
+    
+    seed.setText(String.valueOf(properties.getSimulationProperties().getRndSeed()));
+
+    runs.setText(String.valueOf(properties.getSimulationProperties().getRun()));
+
+    if (properties.isOde())
+    {
+      ODE.setSelected(true);
+      enableODE();
+      
+
+    }
+    else if (properties.isSsa())
+    {
+      monteCarlo.setSelected(true);
+      append.setEnabled(true);
+      enableMonteCarlo();
+        String simId = properties.getSim();
+        if (simId.equals("mpde"))
+        {
+          simulators.setSelectedItem("iSSA");
+          mpde.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("mean_path"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("median_path"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("mean_path-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else if (simId.equals("median_path-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else if (simId.equals("mean_path-adaptive"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          adaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("median_path-adaptive"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          adaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("mean_path-adaptive-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          adaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else if (simId.equals("median_path-adaptive-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          adaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else if (simId.equals("mean_path-event"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("median_path-event"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("1");
+        }
+        else if (simId.equals("mean_path-event-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          meanPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else if (simId.equals("median_path-event-bifurcation"))
+        {
+          simulators.setSelectedItem("iSSA");
+          medianPath.doClick();
+          nonAdaptive.doClick();
+          bifurcation.setSelectedItem("2");
+        }
+        else
+        {
+          simulators.setSelectedItem(simId);
+        }
+      
+       fileStem.setText(properties.getFileStem());
+      
+    }
+    else if (properties.isMarkov())
+    {
+      markov.setSelected(true);
+      enableMarkov();
+      simulators.setSelectedItem(properties.getSim());
+    }
+    else if (properties.isFba())
+    {
+      fba.doClick();
+      enableFBA();
+      // absErr.setEnabled(false);
+    }
+    else if (properties.isSbml())
+    {
+      sbml.setSelected(true);
+      enableSbmlDotAndXhtml();
+    }
+    else if (properties.isDot())
+    {
+      dot.setSelected(true);
+      enableSbmlDotAndXhtml();
+    }
+    else if (properties.isXhtml())
+    {
+      xhtml.setSelected(true);
+      enableSbmlDotAndXhtml();
+    }
+    else if (properties.isLhpn())
+    {
+      enableSbmlDotAndXhtml();
+    }
+    
+//    if (load.containsKey("selected.property"))
+//    {
+//      if (transientProperties != null)
+//      {
+//        transientProperties.setSelectedItem(load.getProperty("selected.property"));
+//      }
+//    }
+//    ArrayList<String> getLists = new ArrayList<String>();
+//    int i = 1;
+//    while (load.containsKey("simulation.run.termination.condition." + i))
+//    {
+//      getLists.add(load.getProperty("simulation.run.termination.condition." + i));
+//      i++;
+//    }
+//    getLists = new ArrayList<String>();
+//    i = 1;
+//    while (load.containsKey("reb2sac.interesting.species." + i))
+//    {
+//      String species = load.getProperty("reb2sac.interesting.species." + i);
+//      int j = 2;
+//      String interesting = " ";
+//      if (load.containsKey("reb2sac.concentration.level." + species + ".1"))
+//      {
+//        interesting += load.getProperty("reb2sac.concentration.level." + species + ".1");
+//      }
+//      while (load.containsKey("reb2sac.concentration.level." + species + "." + j))
+//      {
+//        interesting += "," + load.getProperty("reb2sac.concentration.level." + species + "." + j);
+//        j++;
+//      }
+//      if (!interesting.equals(" "))
+//      {
+//        species += interesting;
+//      }
+//      getLists.add(species);
+//      i++;
+//    }
+//    for (String s : getLists)
+//    {
+//      String[] split1 = s.split(" ");
+//
+//      // load the species and its thresholds into the list of
+//      // interesting species
+//      String speciesAndThresholds = split1[0];
+//
+//      if (split1.length > 1)
+//      {
+//        speciesAndThresholds += " " + split1[1];
+//      }
+//
+//      interestingSpecies.add(speciesAndThresholds);
+//    }
+//
+//    getLists = new ArrayList<String>();
+//    i = 1;
+//    while (load.containsKey("gcm.abstraction.method." + i))
+//    {
+//      getLists.add(load.getProperty("gcm.abstraction.method." + i));
+//      i++;
+//    }
+//    i = 1;
+//    while (load.containsKey("reb2sac.abstraction.method.1." + i))
+//    {
+//      getLists.add(load.getProperty("reb2sac.abstraction.method.1." + i));
+//      i++;
+//    }
+//    preAbstractions = getLists.toArray();
+//    preAbs.setListData(preAbstractions);
+//
+//    getLists = new ArrayList<String>();
+//    i = 1;
+//    while (load.containsKey("reb2sac.abstraction.method.2." + i))
+//    {
+//      getLists.add(load.getProperty("reb2sac.abstraction.method.2." + i));
+//      i++;
+//    }
+//    loopAbstractions = getLists.toArray();
+//    loopAbs.setListData(loopAbstractions);
+//
+//    getLists = new ArrayList<String>();
+//    i = 1;
+//    while (load.containsKey("reb2sac.abstraction.method.3." + i))
+//    {
+//      getLists.add(load.getProperty("reb2sac.abstraction.method.3." + i));
+//      i++;
+//    }
+//    postAbstractions = getLists.toArray();
+//    postAbs.setListData(postAbstractions);
+//
+//    if (load.containsKey("reb2sac.rapid.equilibrium.condition.1"))
+//    {
+//      rapid1.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.1"));
+//    }
+//    if (load.containsKey("reb2sac.rapid.equilibrium.condition.2"))
+//    {
+//      rapid2.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.2"));
+//    }
+//    if (load.containsKey("reb2sac.qssa.condition.1"))
+//    {
+//      qssa.setText(load.getProperty("reb2sac.qssa.condition.1"));
+//    }
+//    if (load.containsKey("reb2sac.operator.max.concentration.threshold"))
+//    {
+//      maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
+//    }
+//    if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
+//    {
+//      diffStoichAmp.setText(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+//    }
+//    if (load.containsKey("reb2sac.iSSA.number.paths"))
+//    {
+//      bifurcation.setSelectedItem(load.getProperty("reb2sac.iSSA.number.paths"));
+//    }
+//    if (load.containsKey("reb2sac.iSSA.type"))
+//    {
+//      String type = load.getProperty("reb2sac.iSSA.type");
+//      if (type.equals("mpde"))
+//      {
+//        mpde.doClick();
+//      }
+//      else if (type.equals("medianPath"))
+//      {
+//        medianPath.doClick();
+//      }
+//      else
+//      {
+//        meanPath.doClick();
+//      }
+//    }
+//    if (load.containsKey("reb2sac.iSSA.adaptive"))
+//    {
+//      String type = load.getProperty("reb2sac.iSSA.adaptive");
+//      if (type.equals("true"))
+//      {
+//        adaptive.doClick();
+//      }
+//      else
+//      {
+//        nonAdaptive.doClick();
+//      }
+//    }
+
+    change = false;
+  }
   public void updateProperties()
   {
-    String root = properties.getRoot();
     String modelFile = properties.getModelFile();
+    String root = properties.getRoot();
 
     if (transientProperties != null && modelFile.contains(".lpn"))
     {
@@ -1970,7 +2443,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       String[] props = new String[] { "none" };
       LPN lpn = new LPN();
       try {
-        lpn.load(root + GlobalConstants.separator + modelFile);
+        lpn.load(root + File.separator + modelFile);
         String[] getProps = lpn.getProperties().toArray(new String[0]);
         props = new String[getProps.length + 1];
         props[0] = "none";
@@ -1992,77 +2465,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
   }
 
-  private void refreshHistogram()
+  public JPanel getAdvanced()
   {
-    for (int i = 0; i < simTab.getComponentCount(); i++)
-    {
-      if (simTab.getComponentAt(i).getName().equals("Histogram"))
-      {
-        if (simTab.getComponentAt(i) instanceof Graph)
-        {
-          ((Graph) simTab.getComponentAt(i)).refresh();
-        }
-        else
-        {
-          //TODO:simTab.setComponentAt(i, new Graph(analysisView, printer_track_quantity, outDir.split("/")[outDir.split("/").length - 1] + " simulation results", printer_id, outDir, "time", gui, null, log, null, false, false));
-          simTab.getComponentAt(i).setName("Histogram");
-        }
-      }
-    }
+    JPanel constructPanel = new JPanel(new BorderLayout());
+    constructPanel.add(advanced, "Center");
+    return constructPanel;
   }
-
-  /**
-   * This method enables and disables the required fields for none and
-   * abstraction.
-   */
-  private void enableReactionAbstraction()
-  {
-    String modelFile = properties.getFilename();
-    ODE.setEnabled(true);
-    monteCarlo.setEnabled(true);
-    fba.setEnabled(true);
-    markov.setEnabled(false);
-    enableAbstractionOptions(true, true);
-    ArrayList<String> getLists = new ArrayList<String>();
-    getLists.add("complex-formation-and-sequestering-abstraction");
-    getLists.add("operator-site-reduction-abstraction");
-    Object[] objects = getLists.toArray();
-    preAbs.setListData(objects);
-    getLists = new ArrayList<String>();
-    objects = getLists.toArray();
-    loopAbs.setListData(objects);
-    getLists = new ArrayList<String>();
-    if (monteCarlo.isSelected())
-    {
-      getLists.add("distribute-transformer");
-      getLists.add("reversible-to-irreversible-transformer");
-    }
-    if (monteCarlo.isSelected() || ODE.isSelected())
-    {
-      getLists.add("kinetic-law-constants-simplifier");
-    }
-    objects = getLists.toArray();
-    postAbs.setListData(objects);
-    if (markov.isSelected())
-    {
-      ODE.setSelected(true);
-      enableODE();
-    }
-    if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
-    {
-      markov.setEnabled(true);
-    }
-    if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected())
-    {
-      append.setEnabled(true);
-      concentrations.setEnabled(true);
-      genRuns.setEnabled(true);
-      genStats.setEnabled(true);
-      report.setEnabled(true);
-      setupToAppendRuns(false);
-    }
-  }
-
+  
   /**
    * This method enables and disables the required fields for none and
    * abstraction.
@@ -2112,290 +2521,54 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   }
 
   /**
-   * This method performs different functions depending on what buttons are
-   * pushed and what input fields contain data.
+   * This method enables and disables the required fields for none and
+   * abstraction.
    */
-  @Override
-  public void actionPerformed(ActionEvent e)
+  private void enableReactionAbstraction()
   {
-    //    change = true;
-    if (e.getSource() == subTaskList) {
-      String subTask = "";
-      if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
-        subTask = (String)subTaskList.getSelectedItem();
-      }
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
-      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, subTask, properties);
-    }
-    else if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
+    String modelFile = properties.getModelFile();
+    ODE.setEnabled(true);
+    monteCarlo.setEnabled(true);
+    fba.setEnabled(true);
+    markov.setEnabled(false);
+    enableAbstractionOptions(true, true);
+    ArrayList<String> getLists = new ArrayList<String>();
+    getLists.add("complex-formation-and-sequestering-abstraction");
+    getLists.add("operator-site-reduction-abstraction");
+    Object[] objects = getLists.toArray();
+    preAbs.setListData(objects);
+    getLists = new ArrayList<String>();
+    objects = getLists.toArray();
+    loopAbs.setListData(objects);
+    getLists = new ArrayList<String>();
+    if (monteCarlo.isSelected())
     {
-      enableNoAbstraction();
+      getLists.add("distribute-transformer");
+      getLists.add("reversible-to-irreversible-transformer");
     }
-    else if (e.getSource() == reactionAbstraction)
+    if (monteCarlo.isSelected() || ODE.isSelected())
     {
-      enableReactionAbstraction();
+      getLists.add("kinetic-law-constants-simplifier");
     }
-    else if (e.getSource() == stateAbstraction)
+    objects = getLists.toArray();
+    postAbs.setListData(objects);
+    if (markov.isSelected())
     {
-      enableStateAbstraction();
-    }
-    else if (e.getSource() == ODE)
-    {
+      ODE.setSelected(true);
       enableODE();
     }
-    else if (e.getSource() == monteCarlo)
+    if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst"))
     {
-      enableMonteCarlo();
+      markov.setEnabled(true);
     }
-    else if (e.getSource() == markov)
+    if (!fba.isSelected() && !sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected())
     {
-      enableMarkov();
-    }
-    else if (e.getSource() == fba)
-    {
-      enableFBA();
-    }
-    else if (e.getSource() == sbml || e.getSource() == dot || e.getSource() == xhtml)
-    {
-      enableSbmlDotAndXhtml();
-    }
-    else if (e.getSource() == mpde)
-    {
-      enableMPDEMethod();
-    }
-    else if (e.getSource() == meanPath)
-    {
-      enableMeanMedianPath();
-    }
-    else if (e.getSource() == medianPath)
-    {
-      enableMeanMedianPath();
-    }
-    else if (e.getSource() == simulators)
-    {
-      if (simulators.getItemCount() == 0)
-      {
-        description.setText("");
-        disableiSSASimulatorOptions();
-      }
-      else if (simulators.getSelectedItem().equals("euler"))
-      {
-        description.setText("Euler method");
-        enableEulerMethod();
-      }
-      else if (simulators.getSelectedItem().equals("gear1"))
-      {
-        description.setText("Gear method, M=1");
-        enableODESimulator();
-      }
-      else if (simulators.getSelectedItem().equals("gear2"))
-      {
-        description.setText("Gear method, M=2");
-        enableODESimulator();
-      }
-      else if (simulators.getSelectedItem().equals("rk4imp"))
-      {
-        description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
-        enableODESimulator();
-      }
-      else if (simulators.getSelectedItem().equals("rk8pd"))
-      {
-        description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
-        enableODESimulator();
-      }
-      else if (simulators.getSelectedItem().equals("rkf45"))
-      {
-        description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
-        enableODESimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("SSA-CR (Dynamic)"))
-      {
-        description.setText("SSA Composition and Rejection Method");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("SSA-Direct (Dynamic)"))
-      {
-        description.setText("SSA-Direct Method (Java)");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Dynamic)"))
-      {
-        description.setText("Runge-Kutta-Fehlberg Method (java)");
-        enableODESimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Hierarchical)"))
-      {
-        description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
-        enableODESimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("Mixed-Hierarchical"))
-      {
-        description.setText("FBA+SSA+ODE Simulator");
-        enableODESimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Flatten)"))
-      {
-        description.setText("Runge-Kutta-Fehlberg Method on Flattened Models (java)");
-        enableODESimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).equals("Hierarchical-Hybrid"))
-      {
-        description.setText("Hybrid SSA/ODE on Hierarchical Models (java)");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).contains("gillespie"))
-      {
-        description.setText("SSA-Direct Method");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Flatten)"))
-      {
-        description.setText("SSA-Direct Method on Flattened Models (java)");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Hierarchical)"))
-      {
-        description.setText("SSA-Direct Method on Hierarchical Models (java)");
-        enableSSASimulator();
-      }
-      else if (((String) simulators.getSelectedItem()).contains("interactive"))
-      {
-        description.setText("Interactive SSA-Direct Method (java)");
-        enableSSASimulator();
-      }
-      else if (simulators.getSelectedItem().equals("iSSA"))
-      {
-        description.setText("incremental SSA");
-        enableiSSASimulator();
-      }
-      else if (simulators.getSelectedItem().equals("emc-sim"))
-      {
-        description.setText("Monte Carlo sim with jump count as independent variable");
-        enableSSASimulator();
-      }
-      else if (simulators.getSelectedItem().equals("bunker"))
-      {
-        description.setText("Bunker's method");
-        enableSSASimulator();
-      }
-      else if (simulators.getSelectedItem().equals("nmc"))
-      {
-        description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
-        enableSSASimulator();
-      }
-      else if (simulators.getSelectedItem().equals("ctmc-transient"))
-      {
-        description.setText("Transient Distribution Analysis");
-        enableMarkovAnalyzer();
-      }
-      else if (simulators.getSelectedItem().equals("atacs"))
-      {
-        description.setText("ATACS Analysis Tool");
-        enableMarkovAnalyzer();
-      }
-      else if (simulators.getSelectedItem().equals("prism"))
-      {
-        description.setText("PRISM Analysis Tool");
-        enableMarkovAnalyzer();
-      }
-      else if (simulators.getSelectedItem().equals("reachability-analysis"))
-      {
-        description.setText("State Space Exploration");
-        enableMarkovAnalyzer();
-      }
-      else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis"))
-      {
-        description.setText("Steady State Markov Chain Analysis");
-        enableMarkovAnalyzer();
-      }
-      else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis"))
-      {
-        description.setText("Transient Markov Chain Analysis Using Uniformization");
-        enableTransientMarkovAnalyzer();
-      }
-    }
-    else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs))
-    {
-      addAbstractionMethod(e);
-    }
-    else if (e.getSource() == rmPreAbs)
-    {
-      Utility.remove(preAbs);
-    }
-    else if (e.getSource() == rmLoopAbs)
-    {
-      Utility.remove(loopAbs);
-    }
-    else if (e.getSource() == rmPostAbs)
-    {
-      Utility.remove(postAbs);
-    }
-    else if (e.getSource() == append)
-    {
-      setupToAppendRuns(true);
-    }
-    else if (e.getSource() == fileStem)
-    {
-      System.out.println("ACTION");
-    }
-  }
-
-  /* Setup to append runs */
-  private void setupToAppendRuns(boolean newSeed)
-  {
-    if (append.isSelected())
-    {
-      initialTimeLabel.setEnabled(false);
-      initialTimeField.setEnabled(false);
-      outputStartTimeLabel.setEnabled(false);
-      outputStartTimeField.setEnabled(false);
-      limit.setEnabled(false);
-      interval.setEnabled(false);
-      limitLabel.setEnabled(false);
-      intervalLabel.setEnabled(false);
-      if (newSeed)
-      {
-        Random rnd = new Random();
-        seed.setText("" + rnd.nextInt());
-      }
-      // TODO: Does this part actually still work. Seems you need to look
-      // at the runs themselves.
-      int cut = 0;
-      String propName = properties.getFilename() + ".properties";
-      try
-      {
-        if (new File(propName).exists())
-        {
-          Properties getProps = new Properties();
-          FileInputStream load = new FileInputStream(new File(propName));
-          getProps.load(load);
-          load.close();
-          if (getProps.containsKey("monte.carlo.simulation.time.limit"))
-          {
-            initialTimeField.setText(getProps.getProperty("simulation.initial.time"));
-            outputStartTimeField.setText(getProps.getProperty("simulation.output.start.time"));
-            minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
-            step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
-            limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
-            interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
-          }
-        }
-      }
-      catch (IOException e1)
-      {
-        JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
-      }
-    }
-    else
-    {
-      initialTimeField.setEnabled(true);
-      initialTimeLabel.setEnabled(true);
-      outputStartTimeField.setEnabled(true);
-      outputStartTimeLabel.setEnabled(true);
-      limit.setEnabled(true);
-      limitLabel.setEnabled(true);
-      interval.setEnabled(true);
-      intervalLabel.setEnabled(true);
+      append.setEnabled(true);
+      concentrations.setEnabled(true);
+      genRuns.setEnabled(true);
+      genStats.setEnabled(true);
+      report.setEnabled(true);
+      setupToAppendRuns(false);
     }
   }
 
@@ -2875,6 +3048,65 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
   }
 
+  /* Setup to append runs */
+  private void setupToAppendRuns(boolean newSeed)
+  {
+    if (append.isSelected())
+    {
+      initialTimeLabel.setEnabled(false);
+      initialTimeField.setEnabled(false);
+      outputStartTimeLabel.setEnabled(false);
+      outputStartTimeField.setEnabled(false);
+      limit.setEnabled(false);
+      interval.setEnabled(false);
+      limitLabel.setEnabled(false);
+      intervalLabel.setEnabled(false);
+      if (newSeed)
+      {
+        Random rnd = new Random();
+        seed.setText("" + rnd.nextInt());
+      }
+      // TODO: Does this part actually still work. Seems you need to look
+      // at the runs themselves.
+      int cut = 0;
+      String propName = properties.getFilename() + ".properties";
+      try
+      {
+        if (new File(propName).exists())
+        {
+          Properties getProps = new Properties();
+          FileInputStream load = new FileInputStream(new File(propName));
+          getProps.load(load);
+          load.close();
+          if (getProps.containsKey("monte.carlo.simulation.time.limit"))
+          {
+            initialTimeField.setText(getProps.getProperty("simulation.initial.time"));
+            outputStartTimeField.setText(getProps.getProperty("simulation.output.start.time"));
+            minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+            step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
+            limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
+            interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
+          }
+        }
+      }
+      catch (IOException e1)
+      {
+        JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    else
+    {
+      initialTimeField.setEnabled(true);
+      initialTimeLabel.setEnabled(true);
+      outputStartTimeField.setEnabled(true);
+      outputStartTimeLabel.setEnabled(true);
+      limit.setEnabled(true);
+      limitLabel.setEnabled(true);
+      interval.setEnabled(true);
+      intervalLabel.setEnabled(true);
+    }
+  }
+
   /* Add an abstraction method */
   private void addAbstractionMethod(ActionEvent e)
   {
@@ -3024,5 +3256,233 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   {
   }
 
+  /**
+   * This method performs different functions depending on what buttons are
+   * pushed and what input fields contain data.
+   */
+  @Override
+  public void actionPerformed(ActionEvent e)
+  {
+    //    change = true;
+    if (e.getSource() == subTaskList) {
+      String subTask = "";
+      if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
+        subTask = (String)subTaskList.getSelectedItem();
+      }
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, subTask, properties);
+    }
+    else if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
+    {
+      enableNoAbstraction();
+    }
+    else if (e.getSource() == reactionAbstraction)
+    {
+      enableReactionAbstraction();
+    }
+    else if (e.getSource() == stateAbstraction)
+    {
+      enableStateAbstraction();
+    }
+    else if (e.getSource() == ODE)
+    {
+      enableODE();
+    }
+    else if (e.getSource() == monteCarlo)
+    {
+      enableMonteCarlo();
+    }
+    else if (e.getSource() == markov)
+    {
+      enableMarkov();
+    }
+    else if (e.getSource() == fba)
+    {
+      enableFBA();
+    }
+    else if (e.getSource() == sbml || e.getSource() == dot || e.getSource() == xhtml)
+    {
+      enableSbmlDotAndXhtml();
+    }
+    else if (e.getSource() == mpde)
+    {
+      enableMPDEMethod();
+    }
+    else if (e.getSource() == meanPath)
+    {
+      enableMeanMedianPath();
+    }
+    else if (e.getSource() == medianPath)
+    {
+      enableMeanMedianPath();
+    }
+    else if (e.getSource() == simulators)
+    {
+      if (simulators.getItemCount() == 0)
+      {
+        description.setText("");
+        disableiSSASimulatorOptions();
+      }
+      else if (simulators.getSelectedItem().equals("euler"))
+      {
+        description.setText("Euler method");
+        enableEulerMethod();
+      }
+      else if (simulators.getSelectedItem().equals("gear1"))
+      {
+        description.setText("Gear method, M=1");
+        enableODESimulator();
+      }
+      else if (simulators.getSelectedItem().equals("gear2"))
+      {
+        description.setText("Gear method, M=2");
+        enableODESimulator();
+      }
+      else if (simulators.getSelectedItem().equals("rk4imp"))
+      {
+        description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
+        enableODESimulator();
+      }
+      else if (simulators.getSelectedItem().equals("rk8pd"))
+      {
+        description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
+        enableODESimulator();
+      }
+      else if (simulators.getSelectedItem().equals("rkf45"))
+      {
+        description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
+        enableODESimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("SSA-CR (Dynamic)"))
+      {
+        description.setText("SSA Composition and Rejection Method");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("SSA-Direct (Dynamic)"))
+      {
+        description.setText("SSA-Direct Method (Java)");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Dynamic)"))
+      {
+        description.setText("Runge-Kutta-Fehlberg Method (java)");
+        enableODESimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Hierarchical)"))
+      {
+        description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
+        enableODESimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("Mixed-Hierarchical"))
+      {
+        description.setText("FBA+SSA+ODE Simulator");
+        enableODESimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Flatten)"))
+      {
+        description.setText("Runge-Kutta-Fehlberg Method on Flattened Models (java)");
+        enableODESimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).equals("Hierarchical-Hybrid"))
+      {
+        description.setText("Hybrid SSA/ODE on Hierarchical Models (java)");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).contains("gillespie"))
+      {
+        description.setText("SSA-Direct Method");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Flatten)"))
+      {
+        description.setText("SSA-Direct Method on Flattened Models (java)");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).contains("SSA-Direct (Hierarchical)"))
+      {
+        description.setText("SSA-Direct Method on Hierarchical Models (java)");
+        enableSSASimulator();
+      }
+      else if (((String) simulators.getSelectedItem()).contains("interactive"))
+      {
+        description.setText("Interactive SSA-Direct Method (java)");
+        enableSSASimulator();
+      }
+      else if (simulators.getSelectedItem().equals("iSSA"))
+      {
+        description.setText("incremental SSA");
+        enableiSSASimulator();
+      }
+      else if (simulators.getSelectedItem().equals("emc-sim"))
+      {
+        description.setText("Monte Carlo sim with jump count as independent variable");
+        enableSSASimulator();
+      }
+      else if (simulators.getSelectedItem().equals("bunker"))
+      {
+        description.setText("Bunker's method");
+        enableSSASimulator();
+      }
+      else if (simulators.getSelectedItem().equals("nmc"))
+      {
+        description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
+        enableSSASimulator();
+      }
+      else if (simulators.getSelectedItem().equals("ctmc-transient"))
+      {
+        description.setText("Transient Distribution Analysis");
+        enableMarkovAnalyzer();
+      }
+      else if (simulators.getSelectedItem().equals("atacs"))
+      {
+        description.setText("ATACS Analysis Tool");
+        enableMarkovAnalyzer();
+      }
+      else if (simulators.getSelectedItem().equals("prism"))
+      {
+        description.setText("PRISM Analysis Tool");
+        enableMarkovAnalyzer();
+      }
+      else if (simulators.getSelectedItem().equals("reachability-analysis"))
+      {
+        description.setText("State Space Exploration");
+        enableMarkovAnalyzer();
+      }
+      else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis"))
+      {
+        description.setText("Steady State Markov Chain Analysis");
+        enableMarkovAnalyzer();
+      }
+      else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis"))
+      {
+        description.setText("Transient Markov Chain Analysis Using Uniformization");
+        enableTransientMarkovAnalyzer();
+      }
+    }
+    else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs))
+    {
+      addAbstractionMethod(e);
+    }
+    else if (e.getSource() == rmPreAbs)
+    {
+      Utility.remove(preAbs);
+    }
+    else if (e.getSource() == rmLoopAbs)
+    {
+      Utility.remove(loopAbs);
+    }
+    else if (e.getSource() == rmPostAbs)
+    {
+      Utility.remove(postAbs);
+    }
+    else if (e.getSource() == append)
+    {
+      setupToAppendRuns(true);
+    }
+    else if (e.getSource() == fileStem)
+    {
+      System.out.println("ACTION");
+    }
+  }
 
 }

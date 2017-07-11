@@ -27,6 +27,7 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.sbml.jsbml.ASTNode;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 
@@ -288,6 +289,10 @@ public final class Evaluator
     {
       return Math.PI;
     }
+    case NAME_AVOGADRO:
+    {
+      return 6.02214179e23;
+    }
     default:
       return 0;
     }
@@ -472,7 +477,7 @@ public final class Evaluator
         }
 
       }
-       return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), checkSubstance, index);
+      return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), checkSubstance, index);
     }
     case FUNCTION_REM:
     {
@@ -614,8 +619,12 @@ public final class Evaluator
     case FUNCTION_RATEOF:
     {
       HierarchicalNode value = node.getChild(0);
-      
-      return value.getRate();
+      if(value.getState().isSetRate())
+      {
+        return value.getRate();
+      }
+      return value.computeRateOfChange(index);
+
     }
     case FUNCTION_MIN:
     {
@@ -623,7 +632,7 @@ public final class Evaluator
       {
         return Double.NaN;
       }
-      
+
       double min = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
       double tmp;
       for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
@@ -642,7 +651,7 @@ public final class Evaluator
       {
         return Double.NaN;
       }
-      
+
       double max = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
       double tmp;
       for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
@@ -707,6 +716,7 @@ public final class Evaluator
         return reaction.getValue(index);
       }
     }
+    
     return node.getValue(index);
   }
 

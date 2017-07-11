@@ -164,11 +164,16 @@ public class CoreSetup
 
 
 
-      ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, constraint.getMath(), model);
+      ASTNode math = constraint.getMath();
 
-      HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
+      if(math != null)
+      {
+        HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());  
+        modelstate.addConstraint(id, constraintNode);
+      }
+      
 
-      modelstate.addConstraint(id, constraintNode);
+      
     }
 
   }
@@ -185,7 +190,7 @@ public class CoreSetup
         continue;
       }
 
-      ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, eventAssignment.getMath(), container.getModel());
+      ASTNode math = eventAssignment.getMath();
       HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
       VariableNode variable = modelstate.getNode(eventAssignment.getVariable());
       FunctionNode eventAssignmentNode = new FunctionNode(variable, assignmentNode);
@@ -218,7 +223,7 @@ public class CoreSetup
       {
 
         Trigger trigger = event.getTrigger();
-        ASTNode triggerMath = HierarchicalUtilities.inlineFormula(modelstate, trigger.getMath(), model);
+        ASTNode triggerMath = trigger.getMath();
         HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
 
         EventNode node = modelstate.addEvent(triggerNode);
@@ -245,8 +250,8 @@ public class CoreSetup
 
           if (!(priority.isSetMetaId() && modelstate.isDeletedByMetaId(priority.getMetaId())) && priority.isSetMath())
           {
-            ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, priority.getMath(), model);
-            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
+            ASTNode math = priority.getMath();
+            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math,  variableToNodeMap);
             node.setPriorityValue(priorityNode);
           }
 
@@ -257,7 +262,7 @@ public class CoreSetup
 
           if (!(delay.isSetMetaId() && modelstate.isDeletedByMetaId(delay.getMetaId())) && delay.isSetMath())
           {
-            ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, delay.getMath(), model);
+            ASTNode math = delay.getMath();
             HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
             node.setDelayValue(delayNode);
           }
@@ -288,7 +293,7 @@ public class CoreSetup
 
       if(initAssignment.isSetMath())
       {
-        ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, initAssignment.getMath(), model);
+        ASTNode math = initAssignment.getMath();
         HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
 
         if (variableNode.isSpecies())
@@ -305,6 +310,7 @@ public class CoreSetup
         }
 
         FunctionNode node = new FunctionNode(variableNode, initAssignNode);
+        variableNode.setHasInitRule(true);
         node.setIsInitAssignment(true);
         modelstate.addInitAssignment(node);
       }
@@ -516,11 +522,10 @@ public class CoreSetup
         if (kineticLaw.isSetMath())
         {
           ASTNode reactionFormula = kineticLaw.getMath();
-          reactionFormula = HierarchicalUtilities.inlineFormula(modelstate, reactionFormula, model);
 
           if (reaction.isReversible() && split)
           {
-            setupSingleRevReaction(sim, modelstate, reactionNode, reactionFormula);
+            setupSingleRevReaction(sim, modelstate, reactionNode, reactionFormula, model);
           }
           else
           {
@@ -548,7 +553,7 @@ public class CoreSetup
       if (rule.isAssignment())
       {
         AssignmentRule assignRule = (AssignmentRule) rule;
-        ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, assignRule.getMath(), model);
+        ASTNode math = assignRule.getMath();
         VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
         HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode);
         FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
@@ -560,7 +565,7 @@ public class CoreSetup
         RateRule rateRule = (RateRule) rule;
         if(rateRule.isSetMath())
         {
-          ASTNode math = HierarchicalUtilities.inlineFormula(modelstate, rateRule.getMath(), model);
+          ASTNode math = rateRule.getMath();
           VariableNode variableNode = variableToNodes.get(rateRule.getVariable());
           HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes);
           variableNode.setRateRule(rateNode);
@@ -571,24 +576,24 @@ public class CoreSetup
 
   private static void setupSingleNonRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
   {
-    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode);
+    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode);
     reactionNode.setForwardRate(math);
     //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
   }
 
-  private static void setupSingleRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula)
+  private static void setupSingleRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
   {
     ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
     if (splitMath == null)
     {
-      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
+      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
       reactionNode.setForwardRate(math);
       //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
     }
     else
     {
-      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], modelstate.getVariableToNodeMap(), reactionNode);
-      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1], modelstate.getVariableToNodeMap(), reactionNode);
+      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode);
+      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null,modelstate.getVariableToNodeMap(), reactionNode);
       reactionNode.setForwardRate(forwardRate);
       reactionNode.setReverseRate(reverseRate);
       //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
@@ -662,8 +667,7 @@ public class CoreSetup
         initConcentration.addChild(new HierarchicalNode(species.getInitialConcentration()));
         initConcentration.addChild(compartment);
         FunctionNode functionNode = new FunctionNode(node, initConcentration);
-        modelstate.addInitAssignment(functionNode);
-        functionNode.setIsInitAssignment(true);
+        modelstate.addInitConcentration(functionNode);
       }
 
       //TODO: check initial assignment on replaced species

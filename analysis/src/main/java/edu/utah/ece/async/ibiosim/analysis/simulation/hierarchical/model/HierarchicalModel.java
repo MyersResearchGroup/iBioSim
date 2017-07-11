@@ -58,6 +58,7 @@ public final class HierarchicalModel
 	private List<ReactionNode>			reactions;
 	private List<VariableNode>			arrays;
 	private List<ConstraintNode>		constraints;
+	private List<FunctionNode> initConcentrations;
 	private List<FunctionNode> initAssignments;
 	private List<FunctionNode> assignRules;
 	private List<VariableNode> variables;
@@ -363,6 +364,15 @@ public final class HierarchicalModel
 		return index;
 	}
 
+	public void addInitConcentration(FunctionNode node)
+  {
+    if(initConcentrations == null)
+    {
+      initConcentrations = new ArrayList<FunctionNode>();
+    }
+
+    initConcentrations.add(node);
+  }
 
 	public void addInitAssignment(FunctionNode node)
 	{
@@ -388,6 +398,10 @@ public final class HierarchicalModel
 		return initAssignments;
 	}
 
+	public List<FunctionNode> getInitConcentration() 
+  {
+    return initConcentrations;
+  }
 
 	public void setInitAssignments(List<FunctionNode> initAssignments) 
 	{

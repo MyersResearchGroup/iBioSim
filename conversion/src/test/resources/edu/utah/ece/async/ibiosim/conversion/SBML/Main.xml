@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" level="3" version="1" arrays:required="true" fbc:required="false" comp:required="true" layout:required="false">
+  <model metaid="iBioSim14" id="Main" fbc:strict="false">
+    <listOfCompartments>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C7"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C6"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C5"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C2"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C4"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C1"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="C3"/>
+        </comp:listOfReplacedElements>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim1" id="Ara" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__Ara" comp:submodelRef="C1"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim3" id="IPTG" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__IPTG" comp:submodelRef="C2"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim4" id="_3OC6" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input___3OC6" comp:submodelRef="C3"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim5" id="aTc" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__aTc" comp:submodelRef="C4"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim10" id="ipgC" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__ipgC" comp:submodelRef="C5"/>
+          <comp:replacedElement comp:portRef="output__ipgC" comp:submodelRef="C1"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim11" id="mxiE" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__mxiE" comp:submodelRef="C5"/>
+          <comp:replacedElement comp:portRef="output__mxiE" comp:submodelRef="C2"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim12" id="exsC" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__exsC" comp:submodelRef="C6"/>
+          <comp:replacedElement comp:portRef="output__exsC" comp:submodelRef="C3"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim13" id="exsDA" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__exsDA" comp:submodelRef="C6"/>
+          <comp:replacedElement comp:portRef="output__exsDA" comp:submodelRef="C4"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim17" id="sicA" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__sicA" comp:submodelRef="C7"/>
+          <comp:replacedElement comp:portRef="output__sicA" comp:submodelRef="C5"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim18" id="invF" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="input__invF" comp:submodelRef="C7"/>
+          <comp:replacedElement comp:portRef="output__invF" comp:submodelRef="C6"/>
+        </comp:listOfReplacedElements>
+      </species>
+      <species metaid="iBioSim19" id="rfp" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <comp:listOfReplacedElements>
+          <comp:replacedElement comp:portRef="output__rfp" comp:submodelRef="C7"/>
+        </comp:listOfReplacedElements>
+      </species>
+    </listOfSpecies>
+    <comp:listOfSubmodels>
+      <comp:submodel metaid="iBioSim6" comp:id="C3" comp:modelRef="Sensor_3OC6"/>
+      <comp:submodel metaid="iBioSim20" comp:id="C1" comp:modelRef="Sensor_Ara"/>
+      <comp:submodel metaid="iBioSim21" comp:id="C4" comp:modelRef="Sensor_aTc"/>
+      <comp:submodel metaid="iBioSim23" comp:id="C2" comp:modelRef="Sensor_IPTG"/>
+      <comp:submodel metaid="iBioSim24" comp:id="C5" comp:modelRef="AND_pipaH"/>
+      <comp:submodel metaid="iBioSim25" comp:id="C6" comp:modelRef="AND_pexsC"/>
+      <comp:submodel metaid="iBioSim26" comp:id="C7" comp:modelRef="AND_psicA"/>
+    </comp:listOfSubmodels>
+    <comp:listOfPorts>
+      <comp:port sboTerm="SBO:0000600" comp:idRef="Ara" comp:id="input__Ara"/>
+      <comp:port sboTerm="SBO:0000600" comp:idRef="IPTG" comp:id="input__IPTG"/>
+      <comp:port sboTerm="SBO:0000600" comp:idRef="_3OC6" comp:id="input___3OC6"/>
+      <comp:port sboTerm="SBO:0000600" comp:idRef="aTc" comp:id="input__aTc"/>
+      <comp:port sboTerm="SBO:0000601" comp:idRef="rfp" comp:id="output__rfp"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="520" layout:height="510"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="10" layout:y="0"/>
+              <layout:dimensions layout:width="510" layout:height="510"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__Ara" layout:species="Ara">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__IPTG" layout:species="IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph___3OC6" layout:species="_3OC6">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__aTc" layout:species="aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__ipgC" layout:species="ipgC">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__mxiE" layout:species="mxiE">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__exsC" layout:species="exsC">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__exsDA" layout:species="exsDA">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__sicA" layout:species="sicA">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="320"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__invF" layout:species="invF">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="320"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__rfp" layout:species="rfp">
+            <layout:boundingBox>
+              <layout:position layout:x="210.429764228427" layout:y="460.323365358909"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__Cell" layout:text="Cell" layout:graphicalObject="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="10" layout:y="0"/>
+              <layout:dimensions layout:width="510" layout:height="510"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C3" layout:text="C3" layout:graphicalObject="Glyph__C3">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C1" layout:text="C1" layout:graphicalObject="Glyph__C1">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C4" layout:text="C4" layout:graphicalObject="Glyph__C4">
+            <layout:boundingBox>
+              <layout:position layout:x="400" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C2" layout:text="C2" layout:graphicalObject="Glyph__C2">
+            <layout:boundingBox>
+              <layout:position layout:x="160" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__Ara" layout:text="Ara" layout:graphicalObject="Glyph__Ara">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__IPTG" layout:text="IPTG" layout:graphicalObject="Glyph__IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph___3OC6" layout:text="_3OC6" layout:graphicalObject="Glyph___3OC6">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__aTc" layout:text="aTc" layout:graphicalObject="Glyph__aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="30.4775390625"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__ipgC" layout:text="ipgC" layout:graphicalObject="Glyph__ipgC">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__mxiE" layout:text="mxiE" layout:graphicalObject="Glyph__mxiE">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__exsC" layout:text="exsC" layout:graphicalObject="Glyph__exsC">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__exsDA" layout:text="exsDA" layout:graphicalObject="Glyph__exsDA">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="179.955078125"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C5" layout:text="C5" layout:graphicalObject="Glyph__C5">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="249.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C6" layout:text="C6" layout:graphicalObject="Glyph__C6">
+            <layout:boundingBox>
+              <layout:position layout:x="340" layout:y="249.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__sicA" layout:text="sicA" layout:graphicalObject="Glyph__sicA">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="320"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__invF" layout:text="invF" layout:graphicalObject="Glyph__invF">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="320"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__rfp" layout:text="rfp" layout:graphicalObject="Glyph__rfp">
+            <layout:boundingBox>
+              <layout:position layout:x="210.429764228427" layout:y="460.323365358909"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C7" layout:text="C7" layout:graphicalObject="Glyph__C7">
+            <layout:boundingBox>
+              <layout:position layout:x="220" layout:y="389.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__C3" layout:reference="C3">
+            <layout:boundingBox>
+              <layout:position layout:x="280" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C1" layout:reference="C1">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C4" layout:reference="C4">
+            <layout:boundingBox>
+              <layout:position layout:x="400" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C2" layout:reference="C2">
+            <layout:boundingBox>
+              <layout:position layout:x="160" layout:y="99.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C5" layout:reference="C5">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="249.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C6" layout:reference="C6">
+            <layout:boundingBox>
+              <layout:position layout:x="340" layout:y="249.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C7" layout:reference="C7">
+            <layout:boundingBox>
+              <layout:position layout:x="220" layout:y="389.955078125"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+  </model>
+  <comp:listOfExternalModelDefinitions>
+    <comp:externalModelDefinition comp:id="Sensor_3OC6" comp:source="file:Sensor_3OC6.xml" comp:md5="3ea4a9f2fe49be769c135229535a3886"/>
+    <comp:externalModelDefinition comp:id="Sensor_Ara" comp:source="file:Sensor_Ara.xml" comp:md5="ea693bf37090d041e1954121b24a7dbc"/>
+    <comp:externalModelDefinition comp:id="Sensor_aTc" comp:source="file:Sensor_aTc.xml" comp:md5="fe6a8e301964d572fdf51712c5d5defd"/>
+    <comp:externalModelDefinition comp:id="Sensor_IPTG" comp:source="file:Sensor_IPTG.xml" comp:md5="36ac8d4a131afcbb50a180e742e91fbd"/>
+    <comp:externalModelDefinition comp:id="AND_pipaH" comp:source="file:AND_pipaH.xml" comp:md5="032c262d2bb8da4ac7d767444be7c0a7"/>
+    <comp:externalModelDefinition comp:id="AND_pexsC" comp:source="file:AND_pexsC.xml" comp:md5="b7570eab93b8bfac08b28122d7dfdeeb"/>
+    <comp:externalModelDefinition comp:id="AND_psicA" comp:source="file:AND_psicA.xml" comp:md5="b4c16004ecfd787495a1334f0f47ef65"/>
+  </comp:listOfExternalModelDefinitions>
+</sbml>

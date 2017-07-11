@@ -19,6 +19,7 @@ import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -217,7 +218,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				
 				//don't allow dropping a grid component
 				try {
-          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
           	
           	JOptionPane.showMessageDialog(Gui.frame,
           			"Dropping grid modules is disallowed.\n" +
@@ -293,7 +294,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		BioModel compGCMFile = new BioModel(bioModel.getPath());
 		try {
-      compGCMFile.load(bioModel.getPath() + GlobalConstants.separator + component);
+      compGCMFile.load(bioModel.getPath() + File.separator + component);
 	  } catch (XMLStreamException e) {
       JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
@@ -351,7 +352,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				
 				//don't allow grids within a grid
 				try {
-          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + GlobalConstants.separator + component.replace(".gcm",".xml"))) {
+          if (compGCM.getGridEnabledFromFile(bioModel.getPath() + File.separator + component.replace(".gcm",".xml"))) {
           	JOptionPane.showMessageDialog(Gui.frame,
           			"Dropping grid modules is disallowed.\n" +
           			"Please choose a different module.",
@@ -446,7 +447,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			for(int col=0; col<colCount; col++) {
 				BioModel compBioModel = new BioModel(bioModel.getPath());
 				try {
-          compBioModel.load(bioModel.getPath() + GlobalConstants.separator + comp);
+          compBioModel.load(bioModel.getPath() + File.separator + comp);
         } catch (XMLStreamException e) {
           JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();

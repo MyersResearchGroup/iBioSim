@@ -23,6 +23,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.Runnable;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
@@ -58,7 +59,7 @@ public class ParameterEditor extends JPanel implements ActionListener {
 	
 	private PropertyList variables;
 
-	private String separator, root;
+	private String root;
 
 	//private String directory, verFile, oldBdd, sourceFileNoPath;
 	
@@ -81,20 +82,10 @@ public class ParameterEditor extends JPanel implements ActionListener {
 	 * then displays the frame.
 	 */
 	public ParameterEditor(String directory, boolean lema, boolean atacs) {
-		separator = GlobalConstants.separator;
-		//this.atacs = atacs;
-		//this.biosim = biosim;
-		//this.log = log;
-		//this.directory = directory;
-		//this.bigTab = bigTab;
-		// String[] getFilename = directory.split(separator);
-		//String[] tempArray = filename.split("\\.");
-		//String traceFilename = tempArray[0] + ".trace";
-		//File traceFile = new File(traceFilename);
-		String[] tempDir = directory.split(separator);
+		String[] tempDir = GlobalConstants.splitPath(directory);
 		root = tempDir[0];
 		for (int i = 1; i < tempDir.length - 1; i++) {
-			root = root + separator + tempDir[i];
+			root = root + File.separator + tempDir[i];
 		}
 
 		JPanel abstractionPanel = new JPanel();

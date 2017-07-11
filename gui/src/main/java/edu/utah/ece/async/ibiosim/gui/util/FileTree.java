@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -26,7 +25,6 @@ import javax.swing.tree.*;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbolstandard.core2.SBOLConversionException;
-import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
@@ -60,8 +58,6 @@ public class FileTree extends JPanel implements MouseListener {
 	//private File dir; // root directory
 
 	public JTree tree; // JTree
-
-	private String separator;
 
 	private boolean lema, atacs, async, lpn;
 
@@ -122,7 +118,6 @@ public class FileTree extends JPanel implements MouseListener {
 		this.lpn = lpn;
 		this.gui = gui;
 		async = lema || atacs;
-		separator = GlobalConstants.separator;
 
 		ICON_VHDL = ResourceManager.getImageIcon("iconVHDL.png");
 
@@ -191,7 +186,7 @@ public class FileTree extends JPanel implements MouseListener {
 					fileLocation = "";
 					while (node != null) {
 						if (node.getParent() != null) {
-							fileLocation = separator + node + fileLocation;
+							fileLocation = File.separator + node + fileLocation;
 							String parentNode = node.getParent().toString();   //DK
 							if (parentNode.endsWith(".xml") || parentNode.endsWith(".sbml") || parentNode.endsWith(".gcm")
 									|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
@@ -213,7 +208,7 @@ public class FileTree extends JPanel implements MouseListener {
 						fileLocations[i] = "";
 						while (node != null) {
 							if (node.getParent() != null) {
-								fileLocations[i] = separator + node + fileLocations[i];
+								fileLocations[i] = File.separator + node + fileLocations[i];
 								String parentNode = node.getParent().toString();   //DK
 								if (parentNode.endsWith(".xml") || parentNode.endsWith(".sbml") || parentNode.endsWith(".gcm")
 										|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
@@ -312,7 +307,7 @@ public class FileTree extends JPanel implements MouseListener {
 			if (curPath.equals("."))
 				newPath = thisObject;
 			else
-				newPath = curPath + separator + thisObject;
+				newPath = curPath + File.separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				dirs.add(thisObject);
 			}
@@ -322,19 +317,19 @@ public class FileTree extends JPanel implements MouseListener {
 					if (!sbolFile.equals(gui.getCurrentProjectId()+".sbol")) {
 						try {
 							SBOLReader.setDropObjectsWithDuplicateURIs(true);
-							gui.getSBOLDocument().read(curPath + separator + sbolFile);
+							gui.getSBOLDocument().read(curPath + File.separator + sbolFile);
 							SBOLReader.setDropObjectsWithDuplicateURIs(false);
 							gui.writeSBOLDocument();
-							new File(curPath + separator + sbolFile).delete();
+							new File(curPath + File.separator + sbolFile).delete();
 
-							//						if (!SBOLReader.getSBOLVersion(curPath + separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
+							//						if (!SBOLReader.getSBOLVersion(curPath + File.separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
 							//							Preferences biosimrc = Preferences.userRoot();
 							//							SBOLReader.setKeepGoing(true);
 							//							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
 							//							SBOLDocument sbolDoc;
-							//							sbolDoc = SBOLReader.read(curPath + separator + sbolFile);
+							//							sbolDoc = SBOLReader.read(curPath + File.separator + sbolFile);
 							//							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-							//							sbolDoc.write(curPath + separator + sbolFile);
+							//							sbolDoc.write(curPath + File.separator + sbolFile);
 							//						}
 						}
 						catch (SBOLValidationException e) {
@@ -355,12 +350,12 @@ public class FileTree extends JPanel implements MouseListener {
 				String sbmlFile = thisObject.replace(".gcm",".xml");
 				BioModel bioModel = new BioModel(curPath);
 				try {
-					bioModel.load(curPath + separator + sbmlFile);
+					bioModel.load(curPath + File.separator + sbmlFile);
 					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
-					gcm2sbml.load(curPath + separator + thisObject.toString());
-					System.out.println(curPath + separator + thisObject.toString());
+					gcm2sbml.load(curPath + File.separator + thisObject.toString());
+					System.out.println(curPath + File.separator + thisObject.toString());
 					gcm2sbml.convertGCM2SBML(curPath,thisObject.toString());
-					bioModel.save(curPath + separator + sbmlFile);
+					bioModel.save(curPath + File.separator + sbmlFile);
 					files.add(sbmlFile);
 				} catch (XMLStreamException e) {
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
@@ -485,11 +480,11 @@ public class FileTree extends JPanel implements MouseListener {
 					if (curPath.equals("."))
 						newPath = d;
 					else
-						newPath = curPath + separator + d;
+						newPath = curPath + File.separator + d;
 					f = new File(newPath);
-					if (new File(newPath + separator + d + ".sim").exists()) {
+					if (new File(newPath + File.separator + d + ".sim").exists()) {
 						try {
-							Scanner scan = new Scanner(new File(newPath + separator + d + ".sim"));
+							Scanner scan = new Scanner(new File(newPath + File.separator + d + ".sim"));
 							String refFile = scan.nextLine();
 							if (refFile.equals(files.get(fnum)) || refFile.replace(".gcm", ".xml").equals(files.get(fnum))) {
 								file.add(new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, d)));
@@ -499,9 +494,9 @@ public class FileTree extends JPanel implements MouseListener {
 						catch (Exception e) {
 							e.printStackTrace();
 						}
-					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
+					} else if (new File(newPath + File.separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
+							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, File.separator, Gui.frame);
 							if (synthProps != null)
 								if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 									String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
@@ -514,21 +509,21 @@ public class FileTree extends JPanel implements MouseListener {
 						catch (Exception e) {
 							e.printStackTrace();
 						}
-					} else if (new File(newPath + separator + d + ".lrn").exists()) {
+					} else if (new File(newPath + File.separator + d + ".lrn").exists()) {
 						try {
 							Properties load = new Properties();
-							FileInputStream in = new FileInputStream(new File(newPath + separator + d + ".lrn"));
+							FileInputStream in = new FileInputStream(new File(newPath + File.separator + d + ".lrn"));
 							load.load(in);
 							in.close();
 							if (load.containsKey("genenet.file")) {
-								String[] getProp = load.getProperty("genenet.file").split(separator);
+								String[] getProp = GlobalConstants.splitPath(load.getProperty("genenet.file"));
 								if (files.get(fnum).equals(getProp[getProp.length - 1])
 										|| files.get(fnum).equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
 									file.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, d)));
 								}
 							}
 							else if (load.containsKey("learn.file")) {
-								String[] getProp = load.getProperty("learn.file").split(separator);
+								String[] getProp = GlobalConstants.splitPath(load.getProperty("learn.file"));
 								if (files.get(fnum).equals(getProp[getProp.length - 1])
 										|| files.get(fnum).equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
 									file.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, d)));
@@ -539,14 +534,14 @@ public class FileTree extends JPanel implements MouseListener {
 							e.printStackTrace();
 						}
 					}
-					else if (new File(newPath + separator + d + ".syn").exists()) {
+					else if (new File(newPath + File.separator + d + ".syn").exists()) {
 						try {
 							Properties load = new Properties();
-							FileInputStream in = new FileInputStream(new File(newPath + separator + d + ".syn"));
+							FileInputStream in = new FileInputStream(new File(newPath + File.separator + d + ".syn"));
 							load.load(in);
 							in.close();
 							if (load.containsKey("synthesis.file")) {
-								String[] getProp = load.getProperty("synthesis.file").split(separator);
+								String[] getProp = GlobalConstants.splitPath(load.getProperty("synthesis.file"));
 								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
 									file.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, d)));
 								}
@@ -556,14 +551,14 @@ public class FileTree extends JPanel implements MouseListener {
 							e.printStackTrace();
 						}
 					}
-					else if (new File(newPath + separator + d + ".ver").exists()) {
+					else if (new File(newPath + File.separator + d + ".ver").exists()) {
 						try {
 							Properties load = new Properties();
-							FileInputStream in = new FileInputStream(new File(newPath + separator + d + ".ver"));
+							FileInputStream in = new FileInputStream(new File(newPath + File.separator + d + ".ver"));
 							load.load(in);
 							in.close();
 							if (load.containsKey("verification.file")) {
-								String[] getProp = load.getProperty("verification.file").split(separator);
+								String[] getProp = GlobalConstants.splitPath(load.getProperty("verification.file"));
 								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
 									file.add(new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, d)));
 								}
@@ -590,12 +585,12 @@ public class FileTree extends JPanel implements MouseListener {
 
 	public void addToTree(String item, String dir) {
 		deleteFromTree(item);
-		String path = dir + separator + item;
-		File file = new File(dir + separator + item);
+		String path = dir + File.separator + item;
+		File file = new File(dir + File.separator + item);
 		if (file.isDirectory()) {
-			if (new File(path + separator + item + ".sim").exists()) {
+			if (new File(path + File.separator + item + ".sim").exists()) {
 				try {
-					Scanner scan = new Scanner(new File(path + separator + item + ".sim"));
+					Scanner scan = new Scanner(new File(path + File.separator + item + ".sim"));
 					String refFile = scan.nextLine();
 					scan.close();
 					for (int i = 0; i < root.getChildCount(); i++) {
@@ -622,9 +617,9 @@ public class FileTree extends JPanel implements MouseListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (new File(path + separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
+			} else if (new File(path + File.separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, Gui.frame);
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, File.separator, Gui.frame);
 					if (synthProps != null) {
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
@@ -655,14 +650,14 @@ public class FileTree extends JPanel implements MouseListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (new File(path + separator + item + ".lrn").exists()) {
+			} else if (new File(path + File.separator + item + ".lrn").exists()) {
 				try {
 					Properties load = new Properties();
-					FileInputStream in = new FileInputStream(new File(path + separator + item + ".lrn"));
+					FileInputStream in = new FileInputStream(new File(path + File.separator + item + ".lrn"));
 					load.load(in);
 					in.close();
 					if (load.containsKey("genenet.file")) {
-						String[] getProp = load.getProperty("genenet.file").split(separator);
+						String[] getProp = GlobalConstants.splitPath(load.getProperty("genenet.file"));
 						for (int i = 0; i < root.getChildCount(); i++) {
 							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])
 									|| root.getChildAt(i).toString().equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
@@ -686,7 +681,7 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					}
 					else if (load.containsKey("learn.file")) {
-						String[] getProp = load.getProperty("learn.file").split(separator);
+						String[] getProp = GlobalConstants.splitPath(load.getProperty("learn.file"));
 						for (int i = 0; i < root.getChildCount(); i++) {
 							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])
 									|| root.getChildAt(i).toString().equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
@@ -714,14 +709,14 @@ public class FileTree extends JPanel implements MouseListener {
 					e.printStackTrace();
 				}
 			}
-			else if (new File(path + separator + item + ".syn").exists()) {
+			else if (new File(path + File.separator + item + ".syn").exists()) {
 				try {
 					Properties load = new Properties();
-					FileInputStream in = new FileInputStream(new File(path + separator + item + ".syn"));
+					FileInputStream in = new FileInputStream(new File(path + File.separator + item + ".syn"));
 					load.load(in);
 					in.close();
 					if (load.containsKey("synthesis.file")) {
-						String[] getProp = load.getProperty("synthesis.file").split(separator);
+						String[] getProp = GlobalConstants.splitPath(load.getProperty("synthesis.file"));
 						for (int i = 0; i < root.getChildCount(); i++) {
 							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
 								int insert = 0;
@@ -748,14 +743,14 @@ public class FileTree extends JPanel implements MouseListener {
 					e.printStackTrace();
 				}
 			}
-			else if (new File(path + separator + item + ".ver").exists()) {
+			else if (new File(path + File.separator + item + ".ver").exists()) {
 				try {
 					Properties load = new Properties();
-					FileInputStream in = new FileInputStream(new File(path + separator + item + ".ver"));
+					FileInputStream in = new FileInputStream(new File(path + File.separator + item + ".ver"));
 					load.load(in);
 					in.close();
 					if (load.containsKey("verification.file")) {
-						String[] getProp = load.getProperty("verification.file").split(separator);
+						String[] getProp = GlobalConstants.splitPath(load.getProperty("verification.file"));
 						for (int i = 0; i < root.getChildCount(); i++) {
 							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
 								int insert = 0;
@@ -848,11 +843,11 @@ public class FileTree extends JPanel implements MouseListener {
 				String[] files = new File(dir).list();
 				sort(files);
 				for (String f : files) {
-					path = dir + separator + f;
+					path = dir + File.separator + f;
 					if (new File(path).isDirectory()) {
-						if (new File(path + separator + f + ".sim").exists()) {
+						if (new File(path + File.separator + f + ".sim").exists()) {
 							try {
-								Scanner scan = new Scanner(new File(path + separator + f + ".sim"));
+								Scanner scan = new Scanner(new File(path + File.separator + f + ".sim"));
 								String refFile = scan.nextLine();
 								scan.close();
 								if (item.equals(refFile) || item.equals(refFile.replace(".gcm", ".xml"))) {
@@ -863,20 +858,20 @@ public class FileTree extends JPanel implements MouseListener {
 								e.printStackTrace();
 							}
 						}
-						else if (new File(path + separator + f + ".lrn").exists()) {
+						else if (new File(path + File.separator + f + ".lrn").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f + ".lrn"));
+								FileInputStream in = new FileInputStream(new File(path + File.separator + f + ".lrn"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("genenet.file")) {
-									String[] getProp = load.getProperty("genenet.file").split(separator);
+									String[] getProp = GlobalConstants.splitPath(load.getProperty("genenet.file"));
 									if (item.equals(getProp[getProp.length - 1]) || item.equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
 										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, f)));
 									}
 								}
 								else if (load.containsKey("learn.file")) {
-									String[] getProp = load.getProperty("learn.file").split(separator);
+									String[] getProp = GlobalConstants.splitPath(load.getProperty("learn.file"));
 									if (item.equals(getProp[getProp.length - 1]) || item.equals(getProp[getProp.length - 1].replace(".gcm", ".xml"))) {
 										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, f)));
 									}
@@ -886,14 +881,14 @@ public class FileTree extends JPanel implements MouseListener {
 								e.printStackTrace();
 							}
 						}
-						else if (new File(path + separator + f + ".syn").exists()) {
+						else if (new File(path + File.separator + f + ".syn").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f + ".syn"));
+								FileInputStream in = new FileInputStream(new File(path + File.separator + f + ".syn"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("synthesis.file")) {
-									String[] getProp = load.getProperty("synthesis.file").split(separator);
+									String[] getProp = GlobalConstants.splitPath(load.getProperty("synthesis.file"));
 									if (item.equals(getProp[getProp.length - 1])) {
 										node.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, f)));
 									}
@@ -903,14 +898,14 @@ public class FileTree extends JPanel implements MouseListener {
 								e.printStackTrace();
 							}
 						}
-						else if (new File(path + separator + f + ".ver").exists()) {
+						else if (new File(path + File.separator + f + ".ver").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f + ".ver"));
+								FileInputStream in = new FileInputStream(new File(path + File.separator + f + ".ver"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("verification.file")) {
-									String[] getProp = load.getProperty("verification.file").split(separator);
+									String[] getProp = GlobalConstants.splitPath(load.getProperty("verification.file"));
 									if (item.equals(getProp[getProp.length - 1])) {
 										node.add(new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, f)));
 									}

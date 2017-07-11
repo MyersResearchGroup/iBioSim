@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
+ * An encodings object is used to represent how a set of data is represented in the
+ * learning procedure. The data is discretized to facilitate the identification of 
+ * potential influencing connections between species.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -33,6 +35,9 @@ public class Encodings
 	private Map<Integer, double[]>		discreteSpecies;
 	private List<List<List<Integer>>>	levelAssignments;
 
+	/**
+	 * Creates an Encodings object with default number of bins.
+	 */
 	public Encodings()
 	{
 		numBins = 3;
@@ -40,6 +45,11 @@ public class Encodings
 		levelAssignments = new ArrayList<List<List<Integer>>>();
 	}
 
+	/**
+   * Creates an Encodings object with a specified number of bins.
+   * 
+	 * @param bin - number of bins.
+	 */
 	public Encodings(int bin)
 	{
 		numBins = bin;
@@ -47,11 +57,25 @@ public class Encodings
 		levelAssignments = new ArrayList<List<List<Integer>>>();
 	}
 
+	/**
+	 * Add the values of a particular species.
+	 * 
+	 * @param col - integer corresponding to the column entry of a species in the data table.
+	 * @param values - the values of the species.
+	 */
 	public void addDiscreteSpecies(int col, double[] values)
 	{
 		discreteSpecies.put(col, values);
 	}
 
+	/**
+	 * Associate a value to a certain entry in the data table from a specified experiment. 
+	 * 
+	 * @param experiment - experiment index from which the value is coming from
+	 * @param row - the row in the data table to insert a value.
+	 * @param col - the column in the data table to insert a value.
+	 * @param data - the value that is inserted to the data table.
+	 */
 	public void addLevelAssignment(int experiment, int row, int col, double data)
 	{
 		while (levelAssignments.size() < experiment + 1)
@@ -69,6 +93,13 @@ public class Encodings
 		levelAssignments.get(experiment).get(row).set(col, getLevelAssignment(col, data));
 	}
 
+	/**
+	 * The discretized value of a certain value.
+	 * 
+	 * @param col - the column entry of the data table.
+	 * @param data - the value to be transformed.
+	 * @return the discretized value of data.
+	 */
 	public int getLevelAssignment(int col, double data)
 	{
 		double[] discrete = discreteSpecies.get(col);
@@ -84,16 +115,29 @@ public class Encodings
 		return numBins - 1;
 	}
 
+	/**
+	 * Get the level assignments.
+	 * 
+	 * @return the level assignments.
+	 */
 	public List<List<List<Integer>>> getLevelAssignments()
 	{
 		return levelAssignments;
 	}
 
+	/**
+	 * Get the size of the level assignments.
+	 * 
+	 * @return size of level assignments.
+	 */
 	public int size()
 	{
 		return levelAssignments.size();
 	}
 
+	/**
+	 * Print the level assignments for each experiment.
+	 */
 	public void print()
 	{
 		for (int i = 0; i < levelAssignments.size(); i++)

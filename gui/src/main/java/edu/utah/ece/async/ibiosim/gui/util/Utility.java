@@ -29,11 +29,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -388,7 +384,7 @@ public class Utility {
 					fd.setDirectory(file.getPath());
 				}
 				else {
-					fd.setDirectory(file.getPath().substring(file.getPath().indexOf(GlobalConstants.separator)+1));
+					fd.setDirectory(GlobalConstants.getPath(file.getPath()) + File.separator);
 					fd.setFile(file.getName());
 				}
 			}
@@ -456,7 +452,7 @@ public class Utility {
 							selectedFile += ".tsd";
 						}
 					}
-					return fd.getDirectory() + GlobalConstants.separator + selectedFile;
+					return fd.getDirectory() + File.separator + selectedFile;
 				}
 				return "";
 			}

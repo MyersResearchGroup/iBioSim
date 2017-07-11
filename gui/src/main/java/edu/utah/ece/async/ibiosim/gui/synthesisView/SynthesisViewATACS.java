@@ -71,7 +71,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
-	private String directory, separator, root, synthFile, synthesisFile, sourceFile,
+	private String directory, root, synthFile, synthesisFile, sourceFile,
 			sourceFileNoPath;
 
 	private String oldMax, oldDelay, oldBdd;
@@ -90,18 +90,17 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 	 * displays the frame.
 	 */
 	public SynthesisViewATACS(String directory, String filename, Log log, Gui biosim) {
-		separator = GlobalConstants.separator;
 
 		this.biosim = biosim;
 		this.directory = directory;
 		this.log = log;
 		this.sourceFile = filename;
-		String[] getFilename = directory.split(separator);
-		synthFile = getFilename[getFilename.length - 1] + ".syn";
-		String[] tempDir = directory.split(separator);
+		String[] getFilename = GlobalConstants.splitPath(directory);
+		synthFile = GlobalConstants.getFilename(directory) + ".syn";
+		String[] tempDir = GlobalConstants.splitPath(directory);
 		root = tempDir[0];
 		for (int i = 1; i < tempDir.length - 1; i++) {
-			root = root + separator + tempDir[i];
+			root = root + File.separator + tempDir[i];
 		}
 
 		JPanel timingRadioPanel = new JPanel();
@@ -389,11 +388,11 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 		Properties load = new Properties();
 		synthesisFile = "";
 		try {
-			FileInputStream in = new FileInputStream(new File(directory + separator + synthFile));
+			FileInputStream in = new FileInputStream(new File(directory + File.separator + synthFile));
 			load.load(in);
 			in.close();
 			if (load.containsKey("synthesis.file")) {
-				String[] getProp = load.getProperty("synthesis.file").split(separator);
+				String[] getProp = GlobalConstants.splitPath(load.getProperty("synthesis.file"));
 				synthesisFile = directory.substring(0, directory.length()
 						- getFilename[getFilename.length - 1].length())
 						+ getProp[getProp.length - 1];
@@ -681,7 +680,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
-		String[] tempArray = synthesisFile.split(separator);
+		String[] tempArray = GlobalConstants.splitPath(synthesisFile);
 		sourceFileNoPath = tempArray[tempArray.length - 1];
 		backgroundField = new JTextField(sourceFileNoPath);
 		
@@ -710,7 +709,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			}
 		}
 
-		getFilename = sourceFile.split(separator);
+		getFilename = GlobalConstants.splitPath(sourceFile);
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
 		File graphFile = new File(getFilename[0] + ".dot");
 		File rulesFile = new File(getFilename[0] + ".prs");
@@ -821,7 +820,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			new Thread(this).start();
 		}
 		else if (e.getSource() == save) {
-			log.addText("Saving:\n" + directory + separator + synthFile + "\n");
+			log.addText("Saving:\n" + directory + File.separator + synthFile + "\n");
 			save();
 		}
 		else if (e.getSource() == viewCircuit) {
@@ -864,7 +863,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				else if (new File(directory + separator + filename).exists()
+				else if (new File(directory + File.separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
 					JOptionPane.showMessageDialog(Gui.frame,
 							"This component is already contained in this tool.", "Error",
@@ -879,14 +878,14 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			if (componentList.getSelectedValue() != null) {
 				String selected = componentList.getSelectedValue().toString();
 				componentList.removeItem(selected);
-				new File(directory + separator + selected).delete();
+				new File(directory + File.separator + selected).delete();
 			}
 		}
 	}
 
 	@Override
 	public void run() {
-		String[] tempArray = synthesisFile.split(separator);
+		String[] tempArray = GlobalConstants.splitPath(synthesisFile);
 		String circuitFile = tempArray[tempArray.length - 1];
 		tempArray = sourceFile.split("separator");
 		tempArray = tempArray[tempArray.length - 1].split("\\.");
@@ -899,8 +898,8 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			graphFilename = tempArray[0] + ".dot";
 		}
 		else {
-			rulesFilename = directory + separator + componentField.getText().trim() + ".prs";
-			graphFilename = directory + separator + componentField.getText().trim() + ".dot";
+			rulesFilename = directory + File.separator + componentField.getText().trim() + ".prs";
+			graphFilename = directory + File.separator + componentField.getText().trim() + ".dot";
 		}
 		File rulesFile = new File(rulesFilename);
 		File graphFile = new File(graphFilename);
@@ -915,8 +914,8 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 		}
 		for (String s : componentList.getItems()) {
 			try {
-				FileInputStream in = new FileInputStream(new File(root + separator + s));
-				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+				FileInputStream in = new FileInputStream(new File(root + File.separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + File.separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -1237,7 +1236,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			InputStream reb = synth.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
 			BufferedReader br = new BufferedReader(isr);
-			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+			FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
 			while ((output = br.readLine()) != null) {
 				out.write(output);
 				out.write("\n");
@@ -1584,10 +1583,10 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			else {
 				prop.setProperty("synthesis.minins", "false");
 			}
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
+			FileOutputStream out = new FileOutputStream(new File(directory + File.separator + synthFile));
 			prop.store(out, synthesisFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + synthFile + "\n");
+			log.addText("Saving Parameter File:\n" + directory + File.separator + synthFile + "\n");
 			change = false;
 			oldMax = maxSize.getText();
 			oldDelay = gateDelay.getText();
@@ -1599,9 +1598,9 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 		}
 		for (String s : componentList.getItems()) {
 			try {
-				new File(directory + separator + s).createNewFile();
-				FileInputStream in = new FileInputStream(new File(root + separator + s));
-				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+				new File(directory + File.separator + s).createNewFile();
+				FileInputStream in = new FileInputStream(new File(root + File.separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + File.separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -1639,7 +1638,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 	}
 
 	public void viewCircuit() {
-		String[] getFilename = sourceFile.split(separator);
+		String[] getFilename = GlobalConstants.splitPath(sourceFile);
 		String circuitFile = getFilename[getFilename.length - 1];
 		String graphFile;
 		if (componentField.getText().trim().equals("")) {
@@ -1653,7 +1652,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 		try {
 			File work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
-			File circuit = new File(directory + separator + graphFile);
+			File circuit = new File(directory + File.separator + graphFile);
 			if (!circuit.exists()) {
 				String cmd = "";
 				if (circuitFile.endsWith(".g")) {
@@ -1677,12 +1676,12 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 				else if (circuitFile.endsWith(".rsg")) {
 					cmd = "atacs -lsodps " + circuitFile;
 				}
-				if (new File(directory + separator + graphFile).exists()) {
+				if (new File(directory + File.separator + graphFile).exists()) {
 					exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
 				}
 				else {
-					File log = new File(directory + separator + "atacs.log");
+					File log = new File(directory + File.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(log));
 					String line = null;
 					JTextArea messageArea = new JTextArea();
@@ -1705,7 +1704,7 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 			Preferences biosimrc = Preferences.userRoot();
 			String command = biosimrc.get("biosim.general.graphviz", "");
 			exec.exec(command + " " + graphFile, null, work);
-			log.addText(command + " " + directory + separator + graphFile + "\n");
+			log.addText(command + " " + directory + File.separator + graphFile + "\n");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to view circuit.", "Error",
@@ -1785,8 +1784,8 @@ public class SynthesisViewATACS extends JPanel implements ActionListener, Runnab
 
 	public void viewLog() {
 		try {
-			if (new File(directory + separator + "run.log").exists()) {
-				File log = new File(directory + separator + "run.log");
+			if (new File(directory + File.separator + "run.log").exists()) {
+				File log = new File(directory + File.separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
 				String line = null;
 				JTextArea messageArea = new JTextArea();

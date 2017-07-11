@@ -139,8 +139,6 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 
 	private Log								log;
 
-	private String							separator;
-
 	private Gui								biosim;
 
 	private String							learnFile;
@@ -166,11 +164,10 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 	 */
 	public LearnView(String directory, Log log, Gui biosim)
 	{
-		separator = GlobalConstants.separator;
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		String[] getFilename = directory.split(separator);
+		String[] getFilename = GlobalConstants.splitPath(directory);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 		Preferences biosimrc = Preferences.userRoot();
 		// Sets up the encodings area
@@ -401,13 +398,13 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		learnFile = "";
 		try
 		{
-			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+			FileInputStream in = new FileInputStream(new File(directory + File.separator + lrnFile));
 			load.load(in);
 			in.close();
 			if (load.containsKey("genenet.file"))
 			{
-				String[] getProp = load.getProperty("genenet.file").split(separator);
-				learnFile = directory.substring(0, directory.length() - getFilename[getFilename.length - 1].length()) + separator + getProp[getProp.length - 1];
+				String[] getProp = GlobalConstants.splitPath(load.getProperty("genenet.file"));
+				learnFile = directory.substring(0, directory.length() - getFilename[getFilename.length - 1].length()) + File.separator + getProp[getProp.length - 1];
 				backgroundField.setText(getProp[getProp.length - 1]);
 			}
 			if (load.containsKey("genenet.Tn"))
@@ -503,7 +500,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
       try {
         document = SBMLutilities.readSBML(learnFile);
         Model model = document.getModel();
-        FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+        FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
         write.write("digraph G {\n");
         for (int i = 0; i < model.getSpeciesCount(); i++)
         {
@@ -576,7 +573,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 	      BioModel bioModel = new BioModel(biosim.getRoot());
 	      bioModel.load(learnFile);
 	      speciesList = bioModel.getSpecies();
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null)
@@ -623,12 +620,12 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		// runHolder.add(viewLog);
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
-		if (!(new File(directory + separator + "method.gcm").exists()))
+		if (!(new File(directory + File.separator + "method.gcm").exists()))
 		{
 			viewModel.setEnabled(false);
 			saveModel.setEnabled(false);
 		}
-		if (!(new File(directory + separator + "run.log").exists()))
+		if (!(new File(directory + File.separator + "run.log").exists()))
 		{
 			viewLog.setEnabled(false);
 		}
@@ -786,7 +783,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			{
 				try
 				{
-					FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+					FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++)
 					{
@@ -882,7 +879,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		{
 			if (!readfile)
 			{
-				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+				FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 				write.write("time, 0\n");
 				for (int i = 0; i < species.size(); i++)
 				{
@@ -940,7 +937,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 					InputStream reb = learn.getInputStream();
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
 					while ((output = br.readLine()) != null)
 					{
 						out.write(output);
@@ -957,7 +954,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 				}
 				learn.waitFor();
 			}
-			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
+			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
 			str = new ArrayList<String>();
 			while (f.hasNextLine())
 			{
@@ -1236,7 +1233,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 
 	public void saveModel()
 	{
-		if (new File(directory + separator + "method.gcm").exists())
+		if (new File(directory + File.separator + "method.gcm").exists())
 		{
 			String copy = null;
 			while (copy == null)
@@ -1273,7 +1270,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 					copy += ".gcm";
 				}
 			}
-			biosim.saveGCM(copy, directory + separator + "method.gcm");
+			biosim.saveGCM(copy, directory + File.separator + "method.gcm");
 		}
 		else
 		{
@@ -1286,19 +1283,19 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		try
 		{
 			File work = new File(directory);
-			if (new File(directory + separator + "method.gcm").exists())
+			if (new File(directory + File.separator + "method.gcm").exists())
 			{
 				if (System.getProperty("os.name").contentEquals("Linux"))
 				{
 					String command = "dotty method.gcm";
-					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					log.addText("Executing:\n" + "dotty " + directory + File.separator + "method.gcm\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 				{
 					String command = "open method.dot";
-					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+					log.addText("Executing:\n" + "open " + directory + File.separator + "method.dot\n");
 					Runtime exec = Runtime.getRuntime();
 					//exec.exec("cp method.gcm method.dot", null, work);
 					//exec = Runtime.getRuntime();
@@ -1307,7 +1304,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 				else
 				{
 					String command = "dotty method.gcm";
-					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					log.addText("Executing:\n" + "dotty " + directory + File.separator + "method.gcm\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
@@ -1327,9 +1324,9 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 	{
 		try
 		{
-			if (new File(directory + separator + "run.log").exists())
+			if (new File(directory + File.separator + "run.log").exists())
 			{
-				File log = new File(directory + separator + "run.log");
+				File log = new File(directory + File.separator + "run.log");
 				FileInputStream input = new FileInputStream(log);
 				JTextArea messageArea = new JTextArea();
 				int read = -1;
@@ -1361,7 +1358,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		try
 		{
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+			FileInputStream in = new FileInputStream(new File(directory + File.separator + lrnFile));
 			prop.load(in);
 			in.close();
 			prop.setProperty("genenet.file", learnFile);
@@ -1410,12 +1407,12 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			{
 				prop.setProperty("genenet.find.base.prob", "false");
 			}
-			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile + "\n");
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
+			log.addText("Saving learn parameters to file:\n" + directory + File.separator + lrnFile + "\n");
+			FileOutputStream out = new FileOutputStream(new File(directory + File.separator + lrnFile));
 			prop.store(out, learnFile);
 			out.close();
-			log.addText("Creating levels file:\n" + directory + separator + "levels.lvl\n");
-			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+			log.addText("Creating levels file:\n" + directory + File.separator + "levels.lvl\n");
+			FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++)
 			{
@@ -1594,7 +1591,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			FileWriter write;
 			try
 			{
-				write = new FileWriter(new File(directory + separator + "levels.lvl"));
+				write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 				write.write("time, 0\n");
 				for (int i = 0; i < species.size(); i++)
 				{
@@ -1765,7 +1762,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			InputStream reb = learn.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
 			BufferedReader br = new BufferedReader(isr);
-			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+			FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
 			int count = 0;
 			while ((output = br.readLine()) != null)
 			{
@@ -1804,13 +1801,13 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			opendot(exec, work);
 			running.setCursor(null);
 			running.dispose();
-			if (new File(directory + separator + "method.gcm").exists())
+			if (new File(directory + File.separator + "method.gcm").exists())
 			{
 				viewModel.setEnabled(true);
 				saveModel.setEnabled(true);
 				saveModel();
 			}
-			if (new File(directory + separator + "run.log").exists())
+			if (new File(directory + File.separator + "run.log").exists())
 			{
 				viewLog.setEnabled(true);
 			}
@@ -1820,21 +1817,21 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 
 	private void opendot(Runtime exec, File work)
 	{
-		if (new File(directory + separator + "method.gcm").exists())
+		if (new File(directory + File.separator + "method.gcm").exists())
 		{
 			try
 			{
 				if (System.getProperty("os.name").contentEquals("Linux"))
 				{
 					String command = "dotty method.gcm";
-					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					log.addText("Executing:\n" + "dotty " + directory + File.separator + "method.gcm\n");
 					exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
 				{
 					String command = "open method.dot";
-					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+					log.addText("Executing:\n" + "open " + directory + File.separator + "method.dot\n");
 					exec = Runtime.getRuntime();
 					//exec.exec("cp method.gcm method.dot", null, work);
 					//exec = Runtime.getRuntime();
@@ -1843,7 +1840,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 				else
 				{
 					String command = "dotty method.gcm";
-					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					log.addText("Executing:\n" + "dotty " + directory + File.separator + "method.gcm\n");
 					exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
 				}
@@ -1908,7 +1905,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 			{
 	      SBMLDocument document = SBMLutilities.readSBML(learnFile);
 	      Model model = document.getModel();
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getSpeciesCount(); i++)
 				{
@@ -1979,7 +1976,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 	      BioModel bioModel = new BioModel(biosim.getRoot());
 	      bioModel.load(learnFile);
 	      speciesList = bioModel.getSpecies();
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null)
@@ -2027,7 +2024,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 	public void setDirectory(String directory)
 	{
 		this.directory = directory;
-		String[] getFilename = directory.split(separator);
+		String[] getFilename = GlobalConstants.splitPath(directory);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 	}
 

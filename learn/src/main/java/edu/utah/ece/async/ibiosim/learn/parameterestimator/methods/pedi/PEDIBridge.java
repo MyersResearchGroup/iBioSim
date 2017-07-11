@@ -13,9 +13,14 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.pedi;
 
+/**
+ * 
+ * @author Chris Myers
+ * @version $Rev$
+ */
 public interface PEDIBridge
 {
 
-	public double[][] simulate(GeneProduct[] genes, double startTime, double endTime, double printInterval);
+	//public double[][] simulate(GeneProduct[] genes, double startTime, double endTime, double printInterval);
 
 }

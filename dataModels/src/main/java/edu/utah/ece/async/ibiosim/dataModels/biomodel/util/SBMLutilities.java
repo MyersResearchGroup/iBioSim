@@ -5549,7 +5549,11 @@ public class SBMLutilities
 		if (deletion == null)
 		{
 			deletion = submodel.createDeletion();
-			deletion.setId("delete_" + subPortId);
+			String id = "delete_" + subPortId;
+			while (submodel.getSBMLDocument().getElementBySId(id) != null) {
+				id = id.replace("_", "__");
+			}
+			deletion.setId(id);
 			deletion.setPortRef(subPortId);
 		}
 		SBMLutilities.createDimensions(deletion, dimensionIds, dimensions);
@@ -5829,9 +5833,9 @@ public class SBMLutilities
 			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
 			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
 					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + GlobalConstants.separator + extModel);
+			subModel.load(root + File.separator + extModel);
 			id += changeIdToPortRef(root, sbaseRef.getSBaseRef(), subModel);
-			subModel.save(root + GlobalConstants.separator + extModel);
+			subModel.save(root + File.separator + extModel);
 		}
 		if (sbaseRef.isSetIdRef())
 		{
@@ -5934,7 +5938,7 @@ public class SBMLutilities
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
 			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + GlobalConstants.separator + extModel);
+			subModel.load(root + File.separator + extModel);
 			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{
@@ -5953,7 +5957,7 @@ public class SBMLutilities
 				Deletion deletion = submodel.getListOfDeletions().get(j);
 				changeIdToPortRef(root, deletion, subModel);
 			}
-			subModel.save(root + GlobalConstants.separator + extModel);
+			subModel.save(root + File.separator + extModel);
 		}
 
 		return true;

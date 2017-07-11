@@ -1,0 +1,9 @@
+digraph G { 
+s1 [shape=ellipse,color=black,label="S0"];
+s2 [shape=ellipse,color=black,label="S1"];
+s3 [shape=ellipse,color=black,label="S2"];
+s4 [shape=ellipse,color=black,label="P0"];
+s5 [shape=ellipse,color=black,label="P1"];
+s1 -> s2 [color="firebrick4",arrowhead=tee]
+s3 -> s2 [color="firebrick4",arrowhead=tee]
+} 

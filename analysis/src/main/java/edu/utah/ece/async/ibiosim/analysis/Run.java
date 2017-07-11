@@ -170,7 +170,7 @@ public class Run extends Observable implements ActionListener
   {
     int exitValue = 255;
 
-    FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getRoot() + GlobalConstants.separator, properties.getFilename(), properties.getSimulationProperties().getAbsError());
+    FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getRoot() + File.separator, properties.getFilename(), properties.getSimulationProperties().getAbsError());
     exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 
     if (exitValue == 1)
@@ -251,7 +251,7 @@ public class Run extends Observable implements ActionListener
     if (properties.getFilename().contains(".lpn"))
     {
       lhpnFile = new LPN();
-      lhpnFile.load(root + GlobalConstants.separator + filename);
+      lhpnFile.load(root + File.separator + filename);
     }
     else
     {
@@ -261,7 +261,7 @@ public class Run extends Observable implements ActionListener
       retrieveSpeciesAndConLevels(specs, conLevel);
 
       BioModel bioModel = new BioModel(properties.getRoot());
-      bioModel.load(root + GlobalConstants.separator + filename);
+      bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
         if (!properties.getVerificationProperties().getLpnProperty().equals(""))
@@ -278,7 +278,7 @@ public class Run extends Observable implements ActionListener
         prop = mutProp.getString();
         if (lhpnFile == null)
         {
-          new File(properties.getRoot() + GlobalConstants.separator + "running").delete();
+          new File(properties.getRoot() + File.separator + "running").delete();
           return 0;
         }
         lhpnFile.save(properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
@@ -286,7 +286,7 @@ public class Run extends Observable implements ActionListener
       }
       else
       {
-        new File(properties.getRoot() + GlobalConstants.separator + "running").delete();
+        new File(properties.getRoot() + File.separator + "running").delete();
         return 0;
       }
     }
@@ -321,7 +321,7 @@ public class Run extends Observable implements ActionListener
         else
         {
           BioModel gcm = new BioModel(root);
-          gcm.load(root + GlobalConstants.separator + filename);
+          gcm.load(root + File.separator + filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
           {
@@ -343,7 +343,7 @@ public class Run extends Observable implements ActionListener
           String simrep = sg.getMarkovResults();
           if (simrep != null)
           {
-            FileOutputStream simrepstream = new FileOutputStream(new File(root + GlobalConstants.separator + "sim-rep.txt"));
+            FileOutputStream simrepstream = new FileOutputStream(new File(root + File.separator + "sim-rep.txt"));
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
@@ -389,7 +389,7 @@ public class Run extends Observable implements ActionListener
           String simrep = sg.getMarkovResults();
           if (simrep != null)
           {
-            FileOutputStream simrepstream = new FileOutputStream(new File(properties.getRoot() + GlobalConstants.separator + "sim-rep.txt"));
+            FileOutputStream simrepstream = new FileOutputStream(new File(properties.getRoot() + File.separator + "sim-rep.txt"));
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
@@ -417,7 +417,7 @@ public class Run extends Observable implements ActionListener
     retrieveSpeciesAndConLevels(specs, conLevel);
     BioModel bioModel = new BioModel(root);
     //TODO: check
-    bioModel.load(root + GlobalConstants.separator + modelFile);
+    bioModel.load(root + File.separator + modelFile);
     String prop = null;
     if (!lpnProperty.equals(""))
     {
@@ -428,28 +428,28 @@ public class Run extends Observable implements ActionListener
     prop = mutProp.getString();
     if (lpnFile == null)
     {
-      new File(directory + GlobalConstants.separator + "running").delete();
+      new File(directory + File.separator + "running").delete();
       //logFile.close();
       return 0;
     }
-    lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+    lpnFile.save(root + File.separator + simName + File.separator + lpnName);
     try
     {
       Translator t1 = new Translator();
       if (properties.isAbs())
       {
         LPN lhpnFile = new LPN();
-        lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+        lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
         Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
         abst.abstractSTG(false);
-        abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-        t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+        abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+        t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
       }
       else
       {
-        t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+        t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
       }
-      t1.setFilename(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName.replace(".lpn", ".xml"));
+      t1.setFilename(root + File.separator + simName + File.separator + lpnName.replace(".lpn", ".xml"));
       t1.outputSBML();
     }
     catch(BioSimException e)
@@ -462,7 +462,7 @@ public class Run extends Observable implements ActionListener
   private int executeSimulation() throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
     int exitValue = 0;
-    String SBMLFileName = properties.getRoot() + GlobalConstants.separator + properties.getFilename();
+    String SBMLFileName = properties.getRoot() + File.separator + properties.getFilename();
     String command = null;
     String[] env = Executables.envp;
 
@@ -535,9 +535,9 @@ public class Run extends Observable implements ActionListener
 
     if(runJava)
     {
-      //dynSim.simulate(SBMLFileName, root, outDir + GlobalConstants.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
+      //dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
 
-      new File(properties.getRoot() + GlobalConstants.separator + "running").delete();
+      new File(properties.getRoot() + File.separator + "running").delete();
     }
     else
     {
@@ -582,7 +582,7 @@ public class Run extends Observable implements ActionListener
     if (properties.getFilename().contains(".lpn"))
     {
       lhpnFile = new LPN();
-      lhpnFile.load(properties.getRoot() + GlobalConstants.separator + properties.getFilename());
+      lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename());
     }
     else
     {
@@ -591,7 +591,7 @@ public class Run extends Observable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
       BioModel bioModel = new BioModel(root);
-      bioModel.load(root + GlobalConstants.separator + properties.getFilename());
+      bioModel.load(root + File.separator + properties.getFilename());
       if (bioModel.flattenModel(true) != null)
       {
         if (!properties.getVerificationProperties().getLpnProperty().equals(""))
@@ -607,7 +607,7 @@ public class Run extends Observable implements ActionListener
         prop = mutProp.getString();
         if (lhpnFile == null)
         {
-          new File(properties.getRoot() + GlobalConstants.separator + "running").delete();
+          new File(properties.getRoot() + File.separator + "running").delete();
           return 0;
         }
         message.setLog("Saving SBML file as PRISM file:\n" + properties.getFilename().replace(".xml", ".prism"));
@@ -676,7 +676,7 @@ public class Run extends Observable implements ActionListener
       }
       else
       {
-        new File(directory + GlobalConstants.separator + "running").delete();
+        new File(directory + File.separator + "running").delete();
         logFile.close();
         exitValue = 0;
       }
@@ -704,15 +704,15 @@ public class Run extends Observable implements ActionListener
     if (properties.isNary())
     {
       LPN lhpnFile = new LPN();
-      lhpnFile.load(properties.getRoot() + GlobalConstants.separator + properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".lpn");
-      lhpnFile.printDot(properties.getRoot() + GlobalConstants.separator + outputFileName);
+      lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".lpn");
+      lhpnFile.printDot(properties.getRoot() + File.separator + outputFileName);
       exitValue = 0;
     }
     else if (properties.getFilename().contains(".lpn"))
     {
       LPN lhpnFile = new LPN();
       try {
-        lhpnFile.load(properties.getRoot() + GlobalConstants.separator + properties.getFilename());
+        lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename());
       } catch (BioSimException e) {
         e.printStackTrace();
       }
@@ -720,11 +720,11 @@ public class Run extends Observable implements ActionListener
       {
         Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
         abst.abstractSTG(false);
-        abst.printDot(properties.getRoot() + GlobalConstants.separator + properties.getSim() + outputFileName);
+        abst.printDot(properties.getRoot() + File.separator + properties.getSim() + outputFileName);
       }
       else
       {
-        lhpnFile.printDot(properties.getRoot() + GlobalConstants.separator + properties.getSim() + GlobalConstants.separator + outputFileName);
+        lhpnFile.printDot(properties.getRoot() + File.separator + properties.getSim() + File.separator + outputFileName);
       }
       exitValue = 0;
     }
@@ -813,17 +813,17 @@ public class Run extends Observable implements ActionListener
           if (properties.isAbs())
           {
             LPN lhpnFile = new LPN();
-            lhpnFile.load(root + GlobalConstants.separator + modelFile);
+            lhpnFile.load(root + File.separator + modelFile);
             Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
             abst.abstractSTG(false);
-            abst.save(root + GlobalConstants.separator + properties.getSim() + GlobalConstants.separator + modelFile);
-            t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + modelFile, properties.getVerificationProperties().getLpnProperty());
+            abst.save(root + File.separator + properties.getSim() + File.separator + modelFile);
+            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, properties.getVerificationProperties().getLpnProperty());
           }
           else
           {
-            t1.convertLPN2SBML(root + GlobalConstants.separator + modelFile, properties.getVerificationProperties().getLpnProperty());
+            t1.convertLPN2SBML(root + File.separator + modelFile, properties.getVerificationProperties().getLpnProperty());
           }
-          t1.setFilename(root + GlobalConstants.separator + sbmlName);
+          t1.setFilename(root + File.separator + sbmlName);
           t1.outputSBML();
           exitValue = 0;
           logFile.close();
@@ -842,7 +842,7 @@ public class Run extends Observable implements ActionListener
         String directory = properties.getDirectory();
         retrieveSpeciesAndConLevels(specs, conLevel);
         BioModel bioModel = new BioModel(root);
-        bioModel.load(root + GlobalConstants.separator + properties.getModelFile());
+        bioModel.load(root + File.separator + properties.getModelFile());
 
         if (bioModel.flattenModel(true) != null)
         {
@@ -861,28 +861,28 @@ public class Run extends Observable implements ActionListener
           prop = mutProp.getString();
           if (lpnFile == null)
           {
-            new File(directory + GlobalConstants.separator + "running").delete();
+            new File(directory + File.separator + "running").delete();
             logFile.close();
             return 0;
           }
-          lpnFile.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+          lpnFile.save(root + File.separator + simName + File.separator + lpnName);
           try
           {
             Translator t1 = new Translator();
             if (properties.isAbs())
             {
               LPN lhpnFile = new LPN();
-              lhpnFile.load(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName);
+              lhpnFile.load(root + File.separator + simName + File.separator + lpnName);
               Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
               abst.abstractSTG(false);
-              abst.save(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp");
-              t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName + ".temp", prop);
+              abst.save(root + File.separator + simName + File.separator + lpnName + ".temp");
+              t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName + ".temp", prop);
             }
             else
             {
-              t1.convertLPN2SBML(root + GlobalConstants.separator + simName + GlobalConstants.separator + lpnName, prop);
+              t1.convertLPN2SBML(root + File.separator + simName + File.separator + lpnName, prop);
             }
-            t1.setFilename(root + GlobalConstants.separator + sbmlName);
+            t1.setFilename(root + File.separator + sbmlName);
             t1.outputSBML();
           }
           catch(BioSimException e)
@@ -892,7 +892,7 @@ public class Run extends Observable implements ActionListener
         }
         else
         {
-          new File(directory + GlobalConstants.separator + "running").delete();
+          new File(directory + File.separator + "running").delete();
           logFile.close();
           return 0;
         }
@@ -903,15 +903,15 @@ public class Run extends Observable implements ActionListener
         String filename = properties.getFilename();
         if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
         {
-          message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + filename);
+          message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + filename);
           this.notifyObservers(message);
-          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + GlobalConstants.separator + sbmlName + " " + modelFile, Executables.envp, work);
+          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + modelFile, Executables.envp, work);
         }
         else
         {
-          message.setLog("Outputting SBML file:\n" + root + GlobalConstants.separator + sbmlName);
+          message.setLog("Outputting SBML file:\n" + root + File.separator + sbmlName);
           this.notifyObservers(message);
-          FileOutputStream fileOutput = new FileOutputStream(new File(root + GlobalConstants.separator + sbmlName));
+          FileOutputStream fileOutput = new FileOutputStream(new File(root + File.separator + sbmlName));
           FileInputStream fileInput = new FileInputStream(new File(filename));
           int read = fileInput.read();
           while (read != -1)

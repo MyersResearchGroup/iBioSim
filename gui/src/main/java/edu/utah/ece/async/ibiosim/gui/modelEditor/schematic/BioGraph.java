@@ -1340,7 +1340,7 @@ public class BioGraph extends mxGraph {
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
 			try {
-        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+        compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
@@ -2294,11 +2294,11 @@ public class BioGraph extends mxGraph {
 		if (modelFileName.equals("")) {
 			return false;
 		}
-		File compFile = new File(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+		File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
 		
 		if (compFile.exists()) {
 			try {
-        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+        compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();

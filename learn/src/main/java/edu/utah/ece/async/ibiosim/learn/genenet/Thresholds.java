@@ -14,7 +14,7 @@
 package edu.utah.ece.async.ibiosim.learn.genenet;
 
 /**
- * 
+ * A Thresholds object is used to compute the type of interaction of a connection.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -26,6 +26,9 @@ public class Thresholds
 
 	private double	Ta, Tr, Tv, Tt;
 
+	/**
+	 * Creates a Thresholds object using default values.
+	 */
 	public Thresholds()
 	{
 		Ta = 1.15;
@@ -34,6 +37,13 @@ public class Thresholds
 		Tt = 0.025;
 	}
 
+	/**
+   * Creates a Thresholds object using custom values.
+   *
+	 * @param Ta - activation threshold.
+	 * @param Tr - repression threshold.
+	 * @param Tv - no influence threshold.
+	 */
 	public Thresholds(double Ta, double Tr, double Tv)
 	{
 		this.Ta = Ta;
@@ -42,36 +52,71 @@ public class Thresholds
 		this.Tt = 0.025;
 	}
 
+	/**
+	 * Returns the threshold value of activation.
+	 * 
+	 * @return activation threshold value.
+	 */
 	public double getTa()
 	{
 		return Ta;
 	}
 
+	/**
+	 * Returns the threshold value of repression.
+	 * 
+	 * @return repression threshold value.
+	 */
 	public double getTr()
 	{
 		return Tr;
 	}
 
+	/**
+	 * Returns the threshold value with no influence.
+	 * 
+	 * @return threshold for no influence.
+	 */
 	public double getTv()
 	{
 		return Tv;
 	}
 
+	/**
+	 * Set activation threshold.
+	 * 
+	 * @param Ta - value of threshold.
+	 */
 	public void setTa(double Ta)
 	{
 		this.Ta = Ta;
 	}
 
+	/**
+	 * Set repression threshold.
+	 * 
+	 * @param Tr - value of threshold.
+	 */
 	public void setTr(double Tr)
 	{
 		this.Tr = Tr;
 	}
 
+	/**
+	 * Set threshold for no influence.
+	 * 
+	 * @param Tv - value of threshold.
+	 */
 	public void setTv(double Tv)
 	{
 		this.Tv = Tv;
 	}
 
+	/**
+	 * Returns relaxation threshold.
+	 * 
+	 * @return relaxation threshold.
+	 */
 	public double getTt()
 	{
 		return Tt;
