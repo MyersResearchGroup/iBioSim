@@ -141,13 +141,16 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.GenericTopLevel;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
+import org.sbolstandard.core2.TopLevel;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -6314,7 +6317,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		String fileName = currentProjectId + ".sbol";
 		String filePath = root + File.separator;
 		
-		// Open up the SBOL design/part dialog 
+		//Open up the SBOL design/part dialog 
 		SBOLInputDialog s = new SBOLInputDialog(mainPanel, this, filePath, fileName, currentDoc);
 		if(s.getInput() == null)
 		{
@@ -6350,7 +6353,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	/**
 	 * Perform VPR Model generator from the given SBOLDocument.
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
-	 * @param chosenDesign - The chosen design, stored within an SBOLDocument, that the user would like to perform VPR Model Generation from.
+	 * @param chosenDesign - The chosen design that the user would like to perform VPR Model Generation from.
 	 */
 	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign)
 	{
@@ -6366,7 +6369,41 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
 				//update SBOL library file with newly generated components that vpr model generator created.
-				chosenDesign.write(filePath + fileName);
+				SBOLDocument libSBOLDoc = getSBOLDocument();
+				for(TopLevel vprTopLevObj : chosenDesign.getTopLevels())
+				{
+					if(vprTopLevObj instanceof Sequence)
+					{
+						Sequence libSeq = libSBOLDoc.getSequence(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libSeq, vprTopLevObj);
+					}
+					else if(vprTopLevObj instanceof ComponentDefinition)
+					{
+						ComponentDefinition libCD = libSBOLDoc.getComponentDefinition(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libCD, vprTopLevObj);
+					}
+					else if(vprTopLevObj instanceof ModuleDefinition)
+					{
+						ModuleDefinition libMD = libSBOLDoc.getModuleDefinition(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libMD, vprTopLevObj);
+					}
+					else if(vprTopLevObj instanceof org.sbolstandard.core2.Model)
+					{
+						org.sbolstandard.core2.Model libModel = libSBOLDoc.getModel(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libModel, vprTopLevObj);
+					}
+					else if(vprTopLevObj instanceof GenericTopLevel)
+					{
+						GenericTopLevel libGTL = libSBOLDoc.getGenericTopLevel(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libGTL, vprTopLevObj);
+					}
+					else if(vprTopLevObj instanceof org.sbolstandard.core2.Collection)
+					{
+						org.sbolstandard.core2.Collection libColl = libSBOLDoc.getCollection(vprTopLevObj.getIdentity());
+						copySBOLObj(libSBOLDoc, libColl, vprTopLevObj);
+					}
+				}
+				
 				generateSBMLFromSBOL(chosenDesign, tree.getFile());
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
@@ -6401,6 +6438,47 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
 					JOptionPane.ERROR_MESSAGE);
 		}	
+	}
+	
+	/**
+	 * Copy the given SBOL object to the SBOL library document. If the given SBOL object already exist in the 
+	 * SBOL library document but have differing content, then an error is thrown. If the given SBOL object doesn't
+	 * exist within the SBOL library document, then it will be added.
+	 * 
+	 * @param libSBOLDoc - The SBOL library document.
+	 * @param libTopLevelObj - The Top Level SBOL library object to compare to the TopLevel SBOL object to be added. 
+	 * @param givenTopLevObj - The given TopLevel SBOL object to be added to the SBOL library document.
+	 */
+	private void copySBOLObj(SBOLDocument libSBOLDoc, TopLevel libTopLevelObj, TopLevel givenTopLevObj)
+	{
+		if(libTopLevelObj == null)
+		{
+			try 
+			{
+				libSBOLDoc.createCopy(givenTopLevObj); 
+			} 
+			catch (SBOLValidationException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, 
+						"SBOL Validation error occurred when performing createCopy() from an SBOL object to the SBOL library document. \n" + e.toString(), 
+						"SBOL Valdiation Error",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			//If the library SBOL obj isn't the same as the vpr SBOL object, report to the user 
+			//that this model had SBOL objects with same SBOL id but diff. content. 
+			if(!libTopLevelObj.equals(givenTopLevObj))
+			{
+				JOptionPane.showMessageDialog(Gui.frame, 
+						"The SBOL library file with this TopLevel Identity: " + libTopLevelObj.getIdentity() +
+						"does not match the content of the VPR SBOL TopLevel Identity: " + givenTopLevObj.getIdentity(), 
+						"SBOL Content Not Equal",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 	
 	/**
@@ -6531,6 +6609,12 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
+	/**
+	 * Convert SBOL to SBML.
+	 * @param inputSBOLDoc - The SBOLDocument to convert to SBML
+	 * @param filePath - The file location where the SBOL document is located.
+	 * @return The number of SBML models that was converted from SBOL. 
+	 */
 	private int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
 		int numGeneratedSBML = 0;
 		try {
