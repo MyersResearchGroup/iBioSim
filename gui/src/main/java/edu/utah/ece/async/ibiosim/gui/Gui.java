@@ -6296,7 +6296,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		}
 	}
 
-
 	/**
 	 * Bring up an SBOL dialog window that will ask the user to select an SBOL design/part that was loaded from
 	 * the library SBOL document stored in iBioSim's project. Once a SBOL design/part has been selected from the 
@@ -6312,8 +6311,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			return;
 		}
 		
+		String fileName = currentProjectId + ".sbol";
+		String filePath = root + File.separator;
+		
 		// Open up the SBOL design/part dialog 
-		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
+		SBOLInputDialog s = new SBOLInputDialog(mainPanel, this, filePath, fileName, currentDoc);
 		if(s.getInput() == null)
 		{
 			return;
@@ -6325,7 +6327,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			JOptionPane.showMessageDialog(Gui.frame, "You need to select at least one design to run VPR Model Generator or open SBOLDesigner. Try again.", 
 					"No Design Selected",
 					JOptionPane.INFORMATION_MESSAGE);
-			s = new SBOLInputDialog(mainPanel, currentDoc);
+			s = new SBOLInputDialog(mainPanel, this, filePath, fileName, currentDoc);
 			if(s.getInput() == null)
 			{
 				return;
@@ -6333,8 +6335,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			chosenDesign = s.getSelection();
 		}
 		
-		String fileName = currentProjectId + ".sbol";
-		String filePath = root + File.separator;
 		if(s.isVPRGenerator())
 		{
 			runVPRGenerator(filePath, fileName, chosenDesign);
@@ -6345,6 +6345,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			
 		}
 	}
+	
 	
 	/**
 	 * Perform VPR Model generator from the given SBOLDocument.
@@ -6437,13 +6438,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 	
 	/**
-	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found from the given SBOLDocument.
+	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found in the given SBOLDocument.
 	 * @param filePath - The location where the given file is located.
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
 	 * @param chosenDesigns - The selected SBOL design/part that the user wants to open in SBOLDesigner.
 	 * @param docURIPrefix - The default URI prefix of the given SBOLDocument "chosenDesign" is set to.
 	 */
-	private void openSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
+	public void openSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
 	{
 		try 
 		{
