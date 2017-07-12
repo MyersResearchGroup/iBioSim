@@ -53,6 +53,7 @@ public final class AnalysisProperties {
 	  this.method = SimMethod.ODE;
 	  this.abs = AbstractionMethod.NONE;
 	  this.userInterval = UserInterval.PRINT_INTERVAL;
+	  this.command = "";
 	  
 	  this.advProperties = new AdvancedProperties();
 	  this.incProperties = new IncrementalProperties();

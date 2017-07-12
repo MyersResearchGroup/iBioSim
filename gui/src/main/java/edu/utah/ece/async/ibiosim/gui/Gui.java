@@ -257,11 +257,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	protected JSplitPane topSplit;
 	protected JSplitPane mainSplit;
 
-	public static String reb2sacExecutable;
-
 	public static String[] envp;
 
-	public static String geneNetExecutable;
 
 	public Log log; // the
 	// log
@@ -2250,10 +2247,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 //						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 //						false, false);
 
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						envp, work);
 				String error = "";
 				String output = "";
@@ -2424,10 +2421,10 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 //						"tsd.printer", "amount", "false", GlobalConstants.splitPath(directory + theFile),
 //						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
 //						false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						null, work);
 				String error = "";
 				String output = "";
@@ -2521,11 +2518,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 //						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
 //						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
 
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
 						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec(
-						reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
+				  Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -8897,6 +8894,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				}
 			}
 		}
+		Executables.checkExecutables();
 		try {
 			System.loadLibrary("sbmlj");
 			// For extra safety, check that the jar file is in the classpath.
@@ -8916,13 +8914,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		int exitValue = 1;
 		try {
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				reb2sacExecutable = "reb2sac.linux64";
+			  Executables.reb2sacExecutable = "reb2sac.linux64";
 			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				reb2sacExecutable = "reb2sac.mac64";
+			  Executables.reb2sacExecutable = "reb2sac.mac64";
 			} else {
-				reb2sacExecutable = "reb2sac.exe";
+			  Executables.reb2sacExecutable = "reb2sac.exe";
 			}
-			ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
+			ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
 				env.put("BIOSIM", System.getenv("BIOSIM"));
@@ -8955,25 +8953,25 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != -1) {
 				Executables.reb2sacFound = false;
-				System.out.println("ERROR: " + reb2sacExecutable + " not found.");
+				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
 			}
 		} catch (IOException e) {
 		  Executables.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + " reb2sac not found.");
+			System.out.println("ERROR: " + Executables.reb2sacExecutable + " reb2sac not found.");
 		} catch (InterruptedException e) {
 		  Executables.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + "reb2sac not found.");
+			System.out.println("ERROR: " + Executables.reb2sacExecutable + "reb2sac not found.");
 		}
 		exitValue = 1;
 		try {
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				geneNetExecutable = "GeneNet.linux64";
+			  Executables.geneNetExecutable = "GeneNet.linux64";
 			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				geneNetExecutable = "GeneNet.mac64";
+			  Executables.geneNetExecutable = "GeneNet.mac64";
 			} else {
-				geneNetExecutable = "GeneNet.exe";
+			  Executables.geneNetExecutable = "GeneNet.exe";
 			}
-			ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
+			ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
 				env.put("BIOSIM", System.getenv("BIOSIM"));
@@ -9000,37 +8998,17 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 			  Executables.geneNetFound = false;
-				System.out.println("ERROR: " + geneNetExecutable + " not found.");
+				System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
 			}
 		} catch (IOException e) {
 
 		  Executables.geneNetFound = false;
-			System.out.println("ERROR: " + geneNetExecutable + " not found.");
+			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
 		  Executables.geneNetFound = false;
-			System.out.println("ERROR: " + geneNetExecutable + " not found.");
+			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
-	}
-
-	public static boolean isLibsbmlFound() {
-		return Executables.libsbmlFound;
-	}
-
-	public static boolean isReb2sacFound() {
-		return Executables.reb2sacFound;
-	}
-
-	public static String getReb2sacExecutable() {
-		return reb2sacExecutable;
-	}
-
-	public static boolean isGeneNetFound() {
-		return Executables.geneNetFound;
-	}
-
-	public static String getGeneNetExecutable() {
-		return geneNetExecutable;
 	}
 
 	public void refreshLearn(String learnName) {

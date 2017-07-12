@@ -462,7 +462,7 @@ public class Run extends Observable implements ActionListener
   private int executeSimulation() throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
     int exitValue = 0;
-    String SBMLFileName = properties.getRoot() + File.separator + properties.getFilename();
+    String SBMLFileName = properties.getFilename();
     String command = null;
     String[] env = Executables.envp;
 

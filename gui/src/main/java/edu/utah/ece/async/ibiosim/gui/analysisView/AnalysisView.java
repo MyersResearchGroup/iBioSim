@@ -876,7 +876,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       }
       else
       {
-        String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+        String[] searchForRunFiles = new File(outDir).list();
         for (String s : searchForRunFiles)
         {
           if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
@@ -910,7 +910,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     gui.getExitButton().addActionListener(runProgram);
     if (monteCarlo.isSelected() || ODE.isSelected())
     {
-      File[] files = new File(root + File.separator + outDir).listFiles();
+      File[] files = new File(outDir).listFiles();
       for (File f : files)
       {
         if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
@@ -982,11 +982,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     String root = properties.getRoot();
     if (append.isSelected())
     {
-      String[] searchForRunFiles = new File(root + File.separator + outDir).list();
+      String[] searchForRunFiles = new File(outDir).list();
       int start = 1;
       for (String s : searchForRunFiles)
       {
-        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
+        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(outDir + File.separator + s).isFile())
         {
           String getNumber = s.substring(4, s.length());
           String number = "";
@@ -1626,7 +1626,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       simulators.addItem("transient-markov-chain-analysis");
       simulators.addItem("reachability-analysis");
       simulators.addItem("prism");
-      if (Gui.isReb2sacFound())
+      if (Executables.reb2sacFound)
       {
         simulators.addItem("atacs");
         simulators.addItem("ctmc-transient");
@@ -1859,7 +1859,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
   public String getSimName()
   {
-    String simName = properties.getSim();
+    String simName = properties.getId();
     return simName;
   }
 
@@ -1919,11 +1919,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       markov.setEnabled(true);
     }
 
-    if(properties.getSimulationProperties().getPrinter_track_quantity().equals("concentration"))
+    if(properties.getSimulationProperties().getPrinter_track_quantity() != null && properties.getSimulationProperties().getPrinter_track_quantity().equals("concentration"))
     {
       concentrations.doClick();
     }
-    if (properties.getSimulationProperties().getPrinter_id().equals("null.printer"))
+    if (properties.getSimulationProperties().getPrinter_id() != null && properties.getSimulationProperties().getPrinter_id().equals("null.printer"))
     {
       genRuns.doClick();
 

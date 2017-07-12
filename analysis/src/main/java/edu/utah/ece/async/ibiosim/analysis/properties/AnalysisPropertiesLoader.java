@@ -286,7 +286,6 @@ public class AnalysisPropertiesLoader {
         }
         else if (key.equals("selected.simulator"))
         {
-          properties.setSim(load.getProperty("selected.simulator"));
         }
         else if (key.equals("file.stem"))
         {
@@ -460,6 +459,13 @@ public class AnalysisPropertiesLoader {
       {
         properties.setNary();
       }
+      if (load.containsKey("selected.simulator"))
+      {
+        properties.setSim(load.getProperty("selected.simulator"));
+      }
+      if (load.containsKey("file.stem"))
+      {
+      }
       if (load.containsKey("ode.simulation.absolute.error"))
       {
         simProperties.setAbsError(PropertiesUtil.parseDouble(load.getProperty("ode.simulation.absolute.error")));
@@ -564,7 +570,11 @@ public class AnalysisPropertiesLoader {
         {
           properties.setSsa();
           String simId = properties.getSim();
-          if (simId.equals("mpde"))
+          if(simId == null)
+          {
+            
+          }
+          else if (simId.equals("mpde"))
           {
             properties.getIncrementalProperties().setMpde(true);
             properties.getIncrementalProperties().setAdaptive(false);
