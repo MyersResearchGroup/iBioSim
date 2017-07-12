@@ -1,5 +1,7 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+import java.io.File;
+
 public final class AnalysisProperties {
 
   
@@ -15,7 +17,7 @@ public final class AnalysisProperties {
 	    NONE, EXPAND, ABSTRACTION, NARY;
 	  }
 
-  private String filename, id, root, directory, outDir, modelFile, command;
+  private String filename, id, root, directory, outDir, modelFile, command, propertiesFile;
  
   
 	private SimMethod method;
@@ -37,13 +39,17 @@ public final class AnalysisProperties {
 	
 	private UserInterval userInterval;
 	
-	public AnalysisProperties(String id, String filename, String root, boolean isGui)
+	public AnalysisProperties(String id, String modelFile, String root, boolean isGui)
 	{
 	  this.id = id;
-	  this.modelFile = filename;
+	  this.modelFile = modelFile;
 	  this.root = root;
 	  this.gui = isGui;
 	  
+	  this.fileStem = "";
+	  this.filename = root + File.separator + modelFile;
+	  this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
+	  this.outDir = root + File.separator + id;
 	  this.method = SimMethod.ODE;
 	  this.abs = AbstractionMethod.NONE;
 	  this.userInterval = UserInterval.PRINT_INTERVAL;
@@ -439,7 +445,9 @@ public final class AnalysisProperties {
     this.fileStem = fileStem;
   }
   
-  
+  public String getPropertiesName() {
+    return propertiesFile;
+  }
   
   
 }

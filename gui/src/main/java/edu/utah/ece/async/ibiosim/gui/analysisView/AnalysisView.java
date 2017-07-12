@@ -246,12 +246,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     subTaskList.addItem("(none)");
 
 
-    try {
-      AnalysisPropertiesLoader.loadPropertiesFile(properties);
-      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, "", properties);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
 
 
     JLabel modelFileLabel = new JLabel("Model File:");
@@ -282,6 +276,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     this.add(buttonPanel, BorderLayout.NORTH);
     this.add(simulationOptions, BorderLayout.CENTER);
     subTaskList.addActionListener(this);
+    
+
+    try {
+      AnalysisPropertiesLoader.loadPropertiesFile(properties);
+      AnalysisPropertiesLoader.loadSEDML(SedMLDoc, "", properties);
+      loadPropertiesFile();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /* Creates the abstraction radio button options */
@@ -1009,191 +1012,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     }
   }
 
-  private Algorithm getAlgorithm()
-  {
-    Algorithm algorithm = null;
-    Element para = new Element("analysis");
-    para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));
-    if (ODE.isSelected())
-    {
-      if (((String) simulators.getSelectedItem()).contains("euler"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_EULER);
-      }
-      else if (((String) simulators.getSelectedItem()).contains("rk8pd"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
-      }
-      else if (((String) simulators.getSelectedItem()).contains("rkf45") || ((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
-        para.setAttribute("method", ((String) simulators.getSelectedItem()));
-      } 
-      else {
-        algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
-        para.setAttribute("method", ((String) simulators.getSelectedItem()));
-      }
-    }
-    else if (monteCarlo.isSelected())
-    {
-      if (((String) simulators.getSelectedItem()).equals("gillespie"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
-      }
-      if (((String) simulators.getSelectedItem()).contains("Hierarchical"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
-      }
-      else if (((String) simulators.getSelectedItem()).contains("SSA-CR"))
-      {
-        algorithm = new Algorithm(GlobalConstants.KISAO_SSA_CR);
-      }
-      else {
-        algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
-        para.setAttribute("method", ((String) simulators.getSelectedItem()));
-      }
-    } 
-    else if (fba.isSelected()) 
-    {
-      algorithm = new Algorithm(GlobalConstants.KISAO_FBA);
-    }
-    else
-    {
-      algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
-      if (sbml.isSelected()) {
-        para.setAttribute("method", "Model");
-      } else if (dot.isSelected()) {
-        para.setAttribute("method", "Network");
-      } else if (xhtml.isSelected()) {
-        para.setAttribute("method", "Browser");
-      } else {
-        para.setAttribute("method", ((String) simulators.getSelectedItem()));
-      }
-    }
-    if (expandReactions.isSelected()) {
-      para.setAttribute("abstraction", "Expand Reactions");
-    } else if (reactionAbstraction.isSelected()) {
-      para.setAttribute("abstraction", "Reaction-based");
-    } else if (stateAbstraction.isSelected()) {
-      para.setAttribute("abstraction", "State-based");
-    }
-    Annotation ann = new Annotation(para);
-    algorithm.addAnnotation(ann);
-    AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE,minStep.getText());
-    algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE, step.getText());
-    algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE, absErr.getText());
-    algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE,relErr.getText());
-    algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
-    algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_SAMPLES,runs.getText());
-    algorithm.addAlgorithmParameter(ap);
-    return algorithm;
-  }
-
-  private void setAlgorithm(Algorithm algorithm)
-  {
-    String kisaoId = algorithm.getKisaoID();
-    KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
-    String method = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "method", null);
-    if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
-      ODE.setSelected(true);
-      enableODE();
-      simulators.setSelectedItem("euler");
-    }
-    else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
-    {
-      ODE.setSelected(true); 
-      enableODE();
-      simulators.setSelectedItem((String)"rkf45");
-      if (method!=null) {
-        simulators.setSelectedItem(method);
-      }
-    } else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
-      ODE.setSelected(true);
-      enableODE();
-      simulators.setSelectedItem((String)"rk8pd");
-    } else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE) ||
-        kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
-      monteCarlo.setSelected(true);
-      enableMonteCarlo();
-      simulators.setSelectedItem((String)"gillespie");
-      if (method!=null) {
-        simulators.setSelectedItem(method);
-      }
-    } else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
-      monteCarlo.setSelected(true);
-      enableMonteCarlo();
-      simulators.setSelectedItem("SSA-CR (Dynamic)");
-    }
-    else if (kisaoId.equals(GlobalConstants.KISAO_FBA))
-    {
-      fba.setSelected(true);
-      enableFBA();
-    } else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
-      if (method!=null) {
-        if (method.equals("Model")) {
-          sbml.setSelected(true);
-        } else if (method.equals("Network")) {
-          dot.setSelected(true);
-        } else if (method.equals("Browser")) {
-          xhtml.setSelected(true);
-        } else {
-          markov.setSelected(true);
-          if (method!=null) {
-            simulators.setSelectedItem(method);
-          }
-        }
-      }
-    } else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
-      ODE.setSelected(true);
-      enableODE();
-      simulators.setSelectedItem("rkf45");
-    }
-    else
-    {
-      monteCarlo.setSelected(true);
-      enableMonteCarlo();
-      simulators.setSelectedItem("gillespie");
-    }
-    String abstraction = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "abstraction", null);
-    if (abstraction!=null) {
-      if (abstraction.equals("Expand Reactions")) {
-        expandReactions.setSelected(true);
-      } else if (abstraction.equals("Reaction-based")) {
-        reactionAbstraction.setSelected(true);
-      } else if (abstraction.equals("State-based")) {
-        stateAbstraction.setSelected(true);
-      } else {
-        noAbstraction.setSelected(true);
-      }
-    } else {
-      noAbstraction.setSelected(true);
-    }
-    for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
-      if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
-        minStep.setText(ap.getValue());
-      }
-      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE))
-      {
-        step.setText(ap.getValue());
-      }
-      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE))
-      {
-        absErr.setText(ap.getValue());
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_RELATIVE_TOLERANCE)) {
-        relErr.setText(ap.getValue());
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
-        seed.setText(ap.getValue());
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
-        runs.setText(ap.getValue());
-      }
-    }
-  }
-
   /**
    * Saves the simulate options.
    */
@@ -1203,7 +1021,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     String simName = properties.getSim();
     String root = properties.getRoot();
     String outDir = properties.getOutDir();
-    String propName = properties.getModelFile();
+    String propName = properties.getPropertiesName();
     try
     {
       double initialTime = Double.parseDouble(initialTimeField.getText().trim());
@@ -1538,6 +1356,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
     try {
       AnalysisPropertiesWriter.createProperties(properties);
+
+      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
     } catch (IOException e1) {
       e1.printStackTrace();
     }
@@ -1563,45 +1383,43 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     //        }
     //      }
     //    }
-    try
-    {
-      Properties getProps = new Properties();
-      FileInputStream load = new FileInputStream(new File(propName));
-      getProps.load(load);
-      load.close();
-      getProps.setProperty("selected.simulator", simName);
-      if (transientProperties != null)
-      {
-        getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
-      }
-      if (!fileStem.getText().trim().equals(""))
-      {
-        new File(root + File.separator + simName + File.separator + fileStem.getText().trim()).mkdir();
-        getProps.setProperty("file.stem", fileStem.getText().trim());
-      }
-      if (monteCarlo.isSelected() || ODE.isSelected())
-      {
-        if (append.isSelected())
-        {
-          getProps.setProperty("monte.carlo.simulation.start.index", 
-            getStartIndex(outDir) + "");
-        }
-        else
-        {
-          getProps.setProperty("monte.carlo.simulation.start.index", "1");
-        }
-      }
-      FileOutputStream store = new FileOutputStream(new File(propName));
-      getProps.store(store, properties.getModelFile() + " Properties");
-      store.close();
-
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
+//    try
+//    {
+//      Properties getProps = new Properties();
+//      FileInputStream load = new FileInputStream(new File(propName));
+//      getProps.load(load);
+//      load.close();
+//      getProps.setProperty("selected.simulator", simName);
+//      if (transientProperties != null)
+//      {
+//        getProps.setProperty("selected.property", (String) transientProperties.getSelectedItem());
+//      }
+//      if (!fileStem.getText().trim().equals(""))
+//      {
+//        new File(root + File.separator + simName + File.separator + fileStem.getText().trim()).mkdir();
+//        getProps.setProperty("file.stem", fileStem.getText().trim());
+//      }
+//      if (monteCarlo.isSelected() || ODE.isSelected())
+//      {
+//        if (append.isSelected())
+//        {
+//          getProps.setProperty("monte.carlo.simulation.start.index", 
+//            getStartIndex(outDir) + "");
+//        }
+//        else
+//        {
+//          getProps.setProperty("monte.carlo.simulation.start.index", "1");
+//        }
+//      }
+//      FileOutputStream store = new FileOutputStream(new File(propName));
+//      getProps.store(store, properties.getModelFile() + " Properties");
+//      store.close();
+//    }
+//    catch (Exception e)
+//    {
+//      e.printStackTrace();
+//      JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
+//    }
     //change = false;
     return true;
   }
@@ -2031,7 +1849,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   public String getSimPath()
   {
     String root = properties.getRoot();
-    String simName = properties.getSim();
+    String simName = properties.getId();
     if (!fileStem.getText().trim().equals(""))
     {
       return root + File.separator + simName + File.separator + fileStem.getText().trim();

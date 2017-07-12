@@ -267,7 +267,7 @@ public class AnalysisPropertiesWriter {
 		properties.setProperty(sim_run_term , "constraint");
 
 
-		FileOutputStream store = new FileOutputStream(new File(analysisProperties.getFilename()));
+		FileOutputStream store = new FileOutputStream(new File(analysisProperties.getPropertiesName()));
 		properties.store(store, analysisProperties.getId() + " Properties");
 		store.close();
 	}
@@ -278,7 +278,7 @@ public class AnalysisPropertiesWriter {
 	    double timeLimit = properties.getSimulationProperties().getTimeLimit();
 	    double printInterval = properties.getSimulationProperties().getPrintInterval();
 	    int numberOfSteps;
-	    String fileStem = null;
+	    String fileStem = properties.getFileStem();
 	    String simName = properties.getSim();
 	    if (properties.isNumSteps())
 	    {
@@ -305,8 +305,7 @@ public class AnalysisPropertiesWriter {
 	    if (task != null) {
 	      sedml.removeTask(task);
 	    }
-	    //Algorithm algo = getAlgorithm();
-	    Algorithm algo = null;
+	    Algorithm algo = PropertiesUtil.getAlgorithm(properties);
 	    if (algo.getKisaoID().equals(GlobalConstants.KISAO_FBA)) {
 	      simulation = new SteadyState(taskId+"_sim", "", algo);
 	    } else if (algo.getKisaoID().equals(GlobalConstants.KISAO_GENERIC)) {

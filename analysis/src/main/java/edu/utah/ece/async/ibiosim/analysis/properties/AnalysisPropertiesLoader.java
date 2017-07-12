@@ -41,18 +41,18 @@ public class AnalysisPropertiesLoader {
     AbstractTask task = sedml.getTaskWithId(taskId);
     if (task != null) {
       Simulation simulation = sedml.getSimulation(task.getSimulationReference());
-      setAlgorithm(simulation.getAlgorithm(), properties);
+      PropertiesUtil.setAlgorithm(simulation.getAlgorithm(), properties);
       SimulationProperties simProperties =  properties.getSimulationProperties();
       if (simulation instanceof UniformTimeCourse) {
         UniformTimeCourse utcSimulation = (UniformTimeCourse) simulation;
         String printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Print_Interval", null);
         if (printInterval != null)
         {
-          simProperties.setPrintInterval(parseDouble(printInterval));
+          simProperties.setPrintInterval(PropertiesUtil.parseDouble(printInterval));
         } else {
           printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Minimum_Print_Interval", null);
           if (printInterval != null) {
-            simProperties.setMinTimeStep(parseDouble(printInterval));
+            simProperties.setMinTimeStep(PropertiesUtil.parseDouble(printInterval));
           } else {
             simProperties.setNumSteps(utcSimulation.getNumberOfPoints());
           }
@@ -462,7 +462,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("ode.simulation.absolute.error"))
       {
-        simProperties.setAbsError(parseDouble(load.getProperty("ode.simulation.absolute.error")));
+        simProperties.setAbsError(PropertiesUtil.parseDouble(load.getProperty("ode.simulation.absolute.error")));
       }
       else
       {
@@ -470,7 +470,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("ode.simulation.relative.error"))
       {
-        simProperties.setRelError(parseDouble(load.getProperty("ode.simulation.relative.error")));
+        simProperties.setRelError(PropertiesUtil.parseDouble(load.getProperty("ode.simulation.relative.error")));
       }
       else
       {
@@ -478,7 +478,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.time.step"))
       {
-        simProperties.setTimeStep(parseDouble(load.getProperty("monte.carlo.simulation.time.step")));
+        simProperties.setTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.time.step")));
       }
       else
       {
@@ -486,7 +486,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.min.time.step"))
       {
-        simProperties.setMinTimeStep(parseDouble(load.getProperty("monte.carlo.simulation.min.time.step")));
+        simProperties.setMinTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.min.time.step")));
       }
       else
       {
@@ -494,7 +494,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.time.limit"))
       {
-        simProperties.setTimeLimit(parseDouble(load.getProperty("monte.carlo.simulation.time.limit")));
+        simProperties.setTimeLimit(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.time.limit")));
       }
       else
       {
@@ -502,7 +502,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("simulation.initial.time"))
       {
-        simProperties.setInitialTime(parseDouble(load.getProperty("simulation.initial.time")));
+        simProperties.setInitialTime(PropertiesUtil.parseDouble(load.getProperty("simulation.initial.time")));
       }
       else
       {
@@ -510,7 +510,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("simulation.output.start.time"))
       {
-        simProperties.setOutputStartTime(parseDouble(load.getProperty("simulation.output.start.time")));
+        simProperties.setOutputStartTime(PropertiesUtil.parseDouble(load.getProperty("simulation.output.start.time")));
       }
       else
       {
@@ -518,12 +518,12 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.print.interval"))
       {
-        simProperties.setPrintInterval(parseDouble(load.getProperty("monte.carlo.simulation.print.interval")));
+        simProperties.setPrintInterval(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.print.interval")));
 
       }
       else if (load.containsKey("monte.carlo.simulation.minimum.print.interval"))
       {
-        simProperties.setMinTimeStep(parseDouble(load.getProperty("monte.carlo.simulation.minimum.print.interval")));
+        simProperties.setMinTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.minimum.print.interval")));
 
       }
       else if (load.containsKey("monte.carlo.simulation.number.steps"))
@@ -781,15 +781,15 @@ public class AnalysisPropertiesLoader {
 
       if (load.containsKey("reb2sac.rapid.equilibrium.condition.1"))
       {
-        advProperties.setRap1(parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.1")));
+        advProperties.setRap1(PropertiesUtil.parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.1")));
       }
       if (load.containsKey("reb2sac.rapid.equilibrium.condition.2"))
       {
-        advProperties.setRap2(parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.2")));
+        advProperties.setRap2(PropertiesUtil.parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.2")));
       }
       if (load.containsKey("reb2sac.qssa.condition.1"))
       {
-        advProperties.setQss(parseDouble(load.getProperty("reb2sac.qssa.condition.1")));
+        advProperties.setQss(PropertiesUtil.parseDouble(load.getProperty("reb2sac.qssa.condition.1")));
       }
       if (load.containsKey("reb2sac.operator.max.concentration.threshold"))
       {
@@ -797,7 +797,7 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
       {
-        advProperties.setStoichAmp(parseDouble(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value")));
+        advProperties.setStoichAmp(PropertiesUtil.parseDouble(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value")));
       }
       if (load.containsKey("reb2sac.iSSA.number.paths"))
       {
@@ -854,113 +854,7 @@ public class AnalysisPropertiesLoader {
 
   }
 
-  private static void setAlgorithm(Algorithm algorithm, AnalysisProperties analysisProperties)
-  {
-    String kisaoId = algorithm.getKisaoID();
-    KisaoTerm kt = KisaoOntology.getInstance().getTermById(kisaoId);
-    SimulationProperties simProperties = analysisProperties.getSimulationProperties();
-    String method = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "method", null);
-    if (kisaoId.equals(GlobalConstants.KISAO_EULER)) {
-      analysisProperties.setOde();
-      analysisProperties.setSim("euler");
-    }
-    else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
-    {
-      analysisProperties.setOde();
-      analysisProperties.setSim("rkf45");
-      if (method!=null) {
-        analysisProperties.setSim(method);
-      }
-    } else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
-      analysisProperties.setOde();
-      analysisProperties.setSim("rk8pd");
-    } else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE) ||
-        kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
-      analysisProperties.setSsa();
-      analysisProperties.setSim("gillespie");
-      if (method!=null) {
-        analysisProperties.setSim(method);
-      }
-    } else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
-      analysisProperties.setSsa();
-      analysisProperties.setSim("SSA-CR (Dynamic)");
-    }
-    else if (kisaoId.equals(GlobalConstants.KISAO_FBA))
-    {
-      analysisProperties.setFba();
-    } else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
-      if (method!=null) {
-        if (method.equals("Model")) {
-          analysisProperties.setSbml();
-        } else if (method.equals("Network")) {
-          analysisProperties.setDot();
-        } else if (method.equals("Browser")) {
-          analysisProperties.setXhtml();
-        } else {
-          analysisProperties.setMarkov();
-          if (method!=null) {
-            analysisProperties.setSim(method);
-          }
-        }
-      }
-    } else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
-      analysisProperties.setOde();
-      analysisProperties.setSim("rkf45");
-    }
-    else
-    {
-      analysisProperties.setSsa();
-      analysisProperties.setSim("gillespie");
-    }
-    String abstraction = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "abstraction", null);
-    if (abstraction!=null) {
-      if (abstraction.equals("Expand Reactions")) {
-        analysisProperties.setExpand();
-      } else if (abstraction.equals("Reaction-based")) {
-        analysisProperties.setAbs();
-      } else if (abstraction.equals("State-based")) {
-        analysisProperties.setNary();
-      } else {
-        analysisProperties.setNone();
-      }
-    } else {
-      analysisProperties.setNone();
-    }
-    for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
-      if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
-        simProperties.setMinTimeStep(parseDouble(ap.getValue()));
-      }
-      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_MAXIMUM_STEP_SIZE))
-      {
-        simProperties.setMaxTimeStep(parseDouble(ap.getValue()));
-      }
-      else if (ap.getKisaoID().equals(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE))
-      {
-        simProperties.setAbsError(parseDouble(ap.getValue()));
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_RELATIVE_TOLERANCE)) {
-        simProperties.setRelError(parseDouble(ap.getValue()));
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
-        simProperties.setRndSeed(Long.parseLong(ap.getValue()));
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
-        simProperties.setRun(Integer.parseInt(ap.getValue()));
-      }
-    }
-  }
   
-  private static double parseDouble(String num)
-  {
-    if(num.equals("inf"))
-    {
-      return Double.POSITIVE_INFINITY;
-    }
-    else if(num.equals("-inf"))
-    {
-      return Double.NEGATIVE_INFINITY;
-    }
-    else
-    {
-      return Double.parseDouble(num);
-    }
-  }
+
 
 }
