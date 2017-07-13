@@ -276,26 +276,22 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument mergeSBML(String filename) {
-		try {
-			if (document == null) {
-				if (sbmlDocument.equals("")) {
-					return outputSBML(filename);
-				}
-
-				SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
-				// checkConsistancy(document);
-				currentDocument = document;
-				return outputSBML(filename, document);
+	public SBMLDocument mergeSBML(String filename) throws XMLStreamException, IOException {
+		if (document == null) {
+			if (sbmlDocument.equals("")) {
+				return outputSBML(filename);
 			}
+			
+			SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
+			// checkConsistancy(document);
 			currentDocument = document;
 			return outputSBML(filename, document);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
-		}
+		currentDocument = document;
+		return outputSBML(filename, document);
 	}
 	
 	/**
