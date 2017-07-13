@@ -207,7 +207,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		String filePath = sbolFilePaths.iterator().next();
 
 		SBOLDocument workingDoc = readSBOLFile(filePath);
-		
+		workingDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+
 		if (e.getActionCommand().equals("associateSBOL")) 
 		{
 			if (sbolURIs.size() > 0) 
