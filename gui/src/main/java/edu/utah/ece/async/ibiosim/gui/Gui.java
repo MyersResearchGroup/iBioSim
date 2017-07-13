@@ -6357,7 +6357,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 */
 	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign)
 	{
-		try {
+		try 
+		{
 			if(chosenDesign != null)
 			{
 				String selectedRepo = getSelectedRepo();
