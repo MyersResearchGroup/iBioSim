@@ -5508,6 +5508,15 @@ public class BioModel extends Observable{
 				SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel);
 				CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
+				
+				// TODO: hack to make sure metaId is unique
+				String newMetaId = md.getMetaId();
+				while (SBMLutilities.getElementByMetaId(documentComp, newMetaId)!=null) {
+					newMetaId += "_";
+				}
+				md.unsetMetaId();
+				SBMLutilities.setMetaId(md, newMetaId);
+				
 				String id = subDocument.getModel().getId();
 				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
 				for (int j = 0; j < elements.size(); j++) {

@@ -228,6 +228,7 @@ public class BioGraph extends mxGraph {
 	}
 
 	private static void addReferenceGlyph(Layout layout,mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
+		if (cell.getSource()==null || cell.getTarget()==null) return;
 		if (generalGlyph.getListOfReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId)==null) {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
