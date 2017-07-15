@@ -1792,8 +1792,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 				SBMLDocument d = network.getSBML();
 				network.markAbstractable();
-				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml",
-						d);
+				try {
+					network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml",
+							d);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				}
 			} else {
 				SBMLWriter writer = new SBMLWriter();
 				PrintStream p;

@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -212,8 +213,10 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument outputSBML(String filename) {
+	public SBMLDocument outputSBML(String filename) throws XMLStreamException, IOException {
 		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
@@ -223,52 +226,47 @@ public class GeneticNetwork extends Observable {
 		return outputSBML(filename, document);
 	}
 
-	public SBMLDocument outputSBML(String filename, SBMLDocument document) {
-		try {
-			Model m = document.getModel();
-			SBMLWriter writer = new SBMLWriter();
-			
-			printSpecies(document);
-			if (!operatorAbstraction) {
-				if (promoters.size()>0) {
-					printPromoters(document);
-					printRNAP(document);
-				}
-			}
-			printDecay(document);
-			printPromoterProduction(document);
-			if (!operatorAbstraction)
-				printPromoterBinding(document);
-			printComplexBinding(document);
-			
-			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
+	public SBMLDocument outputSBML(String filename, SBMLDocument document) throws XMLStreamException, IOException {
+		Model m = document.getModel();
+		SBMLWriter writer = new SBMLWriter();
 
-			//m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
-			m.setId(new File(filename).getName().replace(".xml", ""));			
-			m.setVolumeUnits("litre");
-			m.setSubstanceUnits("mole");
-//			if (property != null && !property.equals("")) {
-//				ArrayList<String> species = new ArrayList<String>();
-//				ArrayList<Object[]> levels = new ArrayList<Object[]>();
-//				for (String spec : properties.getSpecies()) {
-//					species.add(spec);
-//					levels.add(new Object[0]);
-//				}
-//				MutableString prop = new MutableString(property);
-//				LPN lpn = properties.convertToLHPN(species, levels, prop);
-//				property = prop.getString();
-//				Translator.generateSBMLConstraints(document, property, lpn);
-//			}
-			reformatArrayContent(properties, document, filename);
-			p.print(writer.writeSBMLToString(document));
-			p.close();
-			// TODO: temporarily removed
-			//SBMLutilities.check(filename, document, false, false);
-			return document;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
+		printSpecies(document);
+		if (!operatorAbstraction) {
+			if (promoters.size()>0) {
+				printPromoters(document);
+				printRNAP(document);
+			}
 		}
+		printDecay(document);
+		printPromoterProduction(document);
+		if (!operatorAbstraction)
+			printPromoterBinding(document);
+		printComplexBinding(document);
+
+		PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
+
+		//m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
+		m.setId(new File(filename).getName().replace(".xml", ""));			
+		m.setVolumeUnits("litre");
+		m.setSubstanceUnits("mole");
+		//			if (property != null && !property.equals("")) {
+		//				ArrayList<String> species = new ArrayList<String>();
+		//				ArrayList<Object[]> levels = new ArrayList<Object[]>();
+		//				for (String spec : properties.getSpecies()) {
+		//					species.add(spec);
+		//					levels.add(new Object[0]);
+		//				}
+		//				MutableString prop = new MutableString(property);
+		//				LPN lpn = properties.convertToLHPN(species, levels, prop);
+		//				property = prop.getString();
+		//				Translator.generateSBMLConstraints(document, property, lpn);
+		//			}
+		reformatArrayContent(properties, document, filename);
+		p.print(writer.writeSBMLToString(document));
+		p.close();
+		// TODO: temporarily removed
+		//SBMLutilities.check(filename, document, false, false);
+		return document;
 	}
 
 	/**
@@ -299,8 +297,10 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument mergeSBML(String filename, SBMLDocument document) {
+	public SBMLDocument mergeSBML(String filename, SBMLDocument document) throws XMLStreamException, IOException {
 		//try {
 		currentDocument = document;
 		return outputSBML(filename, document);
