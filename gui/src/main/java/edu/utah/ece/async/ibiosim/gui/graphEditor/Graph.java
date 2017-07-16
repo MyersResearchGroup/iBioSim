@@ -5621,7 +5621,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				DataGenerator dataGen = SEDMLutilities.getDataGenerator(sedml,id,name,dataSet,taskIdStr,"species",null);
 				DataGenerator xdg = SEDMLutilities.getDataGenerator(sedml,graphSpecies.get(graphed.get(i).getXNumber()),
 						graphSpecies.get(graphed.get(i).getXNumber()),dataSet,taskIdStr,"species",null);
-				Curve curve = new Curve("c_"+plotId+"_"+id+"_"+taskIdStr+"_"+dataSet,name,
+				String cleanTaskIdStr = taskIdStr.replaceAll("[^a-zA-Z0-9_]", "_");
+				cleanTaskIdStr = cleanTaskIdStr.replace(" ", "_");
+				Curve curve = new Curve("c_"+plotId+"_"+id+"_"+cleanTaskIdStr+"_"+dataSet,name,
 						LogX.isSelected(),LogY.isSelected(),xdg.getId(),dataGen.getId());
 				
 				para = new Element("tsdGraph");

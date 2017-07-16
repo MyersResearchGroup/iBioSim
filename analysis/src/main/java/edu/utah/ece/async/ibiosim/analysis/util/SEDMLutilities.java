@@ -81,6 +81,8 @@ public class SEDMLutilities {
 	
 	public static DataGenerator getDataGenerator(SedML sedml,String variableId,String variableName,
 			String dataSet,String taskId,String type,String reactionId) {
+		String cleanTaskId = taskId.replaceAll("[^a-zA-Z0-9_]", "_");
+		cleanTaskId = cleanTaskId.replace(" ", "_");
 		SBMLSupport support = new SBMLSupport();
 		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
 			if (dataGenerator.getListOfVariables().size()!=1) continue;
@@ -98,7 +100,7 @@ public class SEDMLutilities {
 		String xpath = "";
 		Variable variable;
 		if (variableId.equals("time")) {
-			variable = new Variable(variableId+"_"+taskId+"_"+dataSet+"_var",variableName,taskId,VariableSymbol.TIME);
+			variable = new Variable(variableId+"_"+cleanTaskId+"_"+dataSet+"_var",variableName,taskId,VariableSymbol.TIME);
 		} else {
 			if (type.equals("compartment")) {
 				xpath = support.getXPathForCompartment(variableId);
@@ -113,14 +115,14 @@ public class SEDMLutilities {
 			} else if (type.equals("product")) {
 				xpath = getXPathForProduct(reactionId,variableId);
 			}
-			variable = new Variable(variableId+"_"+taskId+"_"+dataSet+"_var",variableName,taskId,xpath);
+			variable = new Variable(variableId+"_"+cleanTaskId+"_"+dataSet+"_var",variableName,taskId,xpath);
 		}
-		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+taskId+"_"+dataSet+"_dg");
+		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+cleanTaskId+"_"+dataSet+"_dg");
 		if (dataGen != null) {
 			sedml.removeDataGenerator(dataGen);
 		}
-		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+taskId+"_"+dataSet+"_var");
-		dataGen = new DataGenerator(variableId+"_"+taskId+"_"+dataSet+"_dg",variableId,math);
+		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+cleanTaskId+"_"+dataSet+"_var");
+		dataGen = new DataGenerator(variableId+"_"+cleanTaskId+"_"+dataSet+"_dg",variableId,math);
 		dataGen.addVariable(variable);
 		if (!dataSet.equals("")) {
 			Element para = new Element("dataSet");
