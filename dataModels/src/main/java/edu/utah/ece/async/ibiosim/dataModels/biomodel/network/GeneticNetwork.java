@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -181,7 +180,7 @@ public class GeneticNetwork extends Observable {
 		properties = gcm;
 	}
 	
-	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions, String property) {
+	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions) {
 		properties = gcm;
 		for (String abstractionOption : gcmAbstractions) {
 			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
@@ -189,7 +188,6 @@ public class GeneticNetwork extends Observable {
 			else if (abstractionOption.equals("operator-site-reduction-abstraction"))
 				operatorAbstraction = true;
 		}
-		this.property = property;
 	}
 	
 	public void setSBMLFile(String file) {
@@ -335,13 +333,13 @@ public class GeneticNetwork extends Observable {
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
 			if (Krnap[0] >= 0) {
-				kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
-						GeneticNetwork.getMoleTimeParameter(2)));
+				Utility.Parameter(kl, GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
+						GeneticNetwork.getMoleTimeParameter(2));
 				if (Krnap.length == 2) {
-					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
-							GeneticNetwork.getMoleTimeParameter(1)));
+					Utility.Parameter(kl,GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
+							GeneticNetwork.getMoleTimeParameter(1));
 				} else {
-					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
+					Utility.Parameter(kl,GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1));
 				}
 			}
 			kl.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
@@ -614,11 +612,11 @@ public class GeneticNetwork extends Observable {
 				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 				if (p.getActivators().size() > 0) {
 					r.setId("R_basal_production_" + p.getId());
-					kl.addLocalParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
+					Utility.Parameter(kl,kBasalString, p.getKbasal(), getMoleTimeParameter(1));
 					kl.setMath(SBMLutilities.myParseFormula(kBasalString + "*" + p.getId() + "_RNAP"));
 				} else {
 					r.setId("R_constitutive_production_" + p.getId());
-					kl.addLocalParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
+					Utility.Parameter(kl,kOcString, p.getKoc(), getMoleTimeParameter(1));
 					kl.setMath(SBMLutilities.myParseFormula(kOcString + "*" + p.getId() + "_RNAP"));
 				}
 				Utility.addReaction(document, r);
@@ -1012,8 +1010,6 @@ public class GeneticNetwork extends Observable {
 	private String kBasalString = GlobalConstants.KBASAL_STRING;
 	
 	private String kOcString = GlobalConstants.OCR_STRING;
-	
-	private String property;
 
 	private final Message message = new Message();
 	

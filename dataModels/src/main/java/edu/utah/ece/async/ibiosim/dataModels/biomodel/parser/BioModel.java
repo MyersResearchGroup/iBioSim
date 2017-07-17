@@ -4324,7 +4324,7 @@ public class BioModel extends Observable{
 				j.setId("j");
 				
 				//parameter: id="kecd" value=(usually 0.005) units="u_1_second_n1" (inverse seconds)
-				kl.addLocalParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
+				Utility.Parameter(kl, decayString, decayRate, decayUnitString);
 				
 				//formula: kecd * species
 				kl.setMath(SBMLutilities.myParseFormula(decayExpression));

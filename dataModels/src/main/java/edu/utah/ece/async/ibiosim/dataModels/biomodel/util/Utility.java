@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
@@ -116,19 +117,17 @@ public class Utility {
 		return sr;
 	}
 	
-	public static LocalParameter Parameter(String id, double value, String units) {
-		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
-		p.setId(id);
+	public static void Parameter(KineticLaw kl, String id, double value, String units) {
+		if (kl.getLocalParameter(id)!=null) return;
+		LocalParameter p = kl.createLocalParameter(id);
 		p.setValue(value);
 		p.setUnits(units);
-		return p;
 	}
 	
-	public static LocalParameter Parameter(String id, double value) {
-		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
-		p.setId(id);
+	public static void Parameter(KineticLaw kl, String id, double value) {
+		if (kl.getLocalParameter(id)!=null) return;
+		LocalParameter p = kl.createLocalParameter(id);
 		p.setValue(value);
-		return p;
 	}
 	
 	public static Species makeSpecies(String id, String compartment, double amount, double concentration) {

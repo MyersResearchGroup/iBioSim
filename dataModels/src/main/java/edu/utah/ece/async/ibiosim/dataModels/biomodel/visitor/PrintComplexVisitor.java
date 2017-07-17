@@ -96,19 +96,19 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			stoich += infl.getCoop();
 			r.addReactant(Utility.SpeciesReference(partId, infl.getCoop()));
 			String nId = coopString + "__" + partId + "_" + specie.getId();
-			kl.addLocalParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
+			Utility.Parameter(kl, nId, infl.getCoop(), "dimensionless");
 			ncSum = ncSum + nId + "+";
 			compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
 		}
 //		}	
 		if (stoich == 1)
-			kl.addLocalParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1)));
+			Utility.Parameter(kl, kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1));
 		else if (stoich >= 2) {
-			kl.addLocalParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			Utility.Parameter(kl, kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(2));
 			if (stoich > 2)
-				kl.addLocalParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
+				Utility.Parameter(kl, kcompId, kcomp, GeneticNetwork.getMoleParameter(2));
 		}
-		kl.addLocalParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich)));
 		Utility.addReaction(document, r);
 	}

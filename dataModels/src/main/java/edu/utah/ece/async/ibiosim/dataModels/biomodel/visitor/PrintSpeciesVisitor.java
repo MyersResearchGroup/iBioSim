@@ -110,7 +110,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter("kp", specie.getKo()));
+		Utility.Parameter(kl, "kp", specie.getKo());
 		kl.setMath(SBMLutilities.myParseFormula("kp"));
 		Utility.addReaction(document, r);		
 	}
@@ -144,8 +144,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter("kp", Double.parseDouble(parameters
-					.getParameter((GlobalConstants.OCR_STRING)))));	
+		Utility.Parameter(kl, "kp", Double.parseDouble(parameters
+					.getParameter((GlobalConstants.OCR_STRING))));	
 		kl.setMath(SBMLutilities.myParseFormula("kp"));
 		Utility.addReaction(document, r);	
 	}

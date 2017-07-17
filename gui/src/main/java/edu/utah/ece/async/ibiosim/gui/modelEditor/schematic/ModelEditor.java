@@ -1786,7 +1786,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (network == null)
 					return false;
 				if (analysisView != null)
-					network.loadProperties(biomodel, analysisView.getGcmAbstractions(), analysisView.getProperty());
+					network.loadProperties(biomodel, analysisView.getGcmAbstractions());
 				else
 					network.loadProperties(biomodel);
 
