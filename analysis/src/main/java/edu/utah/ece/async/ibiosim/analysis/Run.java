@@ -1,7 +1,5 @@
 package edu.utah.ece.async.ibiosim.analysis;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -541,7 +539,6 @@ public class Run extends Observable implements ActionListener
     }
     else
     {
-      Simulator.expandArrays(SBMLFileName, properties.getAdvancedProperties().getStoichAmp());
       message.setLog("Executing:\n" + command + "\n");
       this.notifyObservers(message);
 

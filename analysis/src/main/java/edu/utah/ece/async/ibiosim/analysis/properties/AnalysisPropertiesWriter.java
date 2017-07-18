@@ -101,11 +101,11 @@ public class AnalysisPropertiesWriter {
       }
     }
 
-    properties.setProperty(reb2sac_rapid_equil_1, "" + analysisProperties.getAdvancedProperties().getRap1());
-    properties.setProperty(reb2sac_rapid_equil_2, "" + analysisProperties.getAdvancedProperties().getRap2());
-    properties.setProperty(reb2sac_qssa_1, "" + analysisProperties.getAdvancedProperties().getQss());
-    properties.setProperty(reb2sac_max_operator_threshold, "" + analysisProperties.getAdvancedProperties().getCon());
-    properties.setProperty(reb2sac_diff_stoich_ampl, "" + analysisProperties.getAdvancedProperties().getStoichAmp());
+    properties.setProperty(reb2sac_rapid_equil_1, String.valueOf(analysisProperties.getAdvancedProperties().getRap1()));
+    properties.setProperty(reb2sac_rapid_equil_2, String.valueOf(analysisProperties.getAdvancedProperties().getRap2()));
+    properties.setProperty(reb2sac_qssa_1, String.valueOf(analysisProperties.getAdvancedProperties().getQss()));
+    properties.setProperty(reb2sac_max_operator_threshold, String.valueOf(analysisProperties.getAdvancedProperties().getCon()));
+    properties.setProperty(reb2sac_diff_stoich_ampl, String.valueOf(analysisProperties.getAdvancedProperties().getStoichAmp()));
     if(analysisProperties.getSimulationProperties().getGenStats() != null)
     {
       properties.setProperty(reb2sac_stats, analysisProperties.getSimulationProperties().getGenStats());
@@ -175,7 +175,7 @@ public class AnalysisPropertiesWriter {
     else if (analysisProperties.isSsa())
     {
       properties.setProperty(reb2sac_simulation, "monteCarlo");
-      properties.setProperty(reb2sac_issa_paths, "" + analysisProperties.getIncrementalProperties().getNumPaths());
+      properties.setProperty(reb2sac_issa_paths, String.valueOf(analysisProperties.getIncrementalProperties().getNumPaths()));
       if (analysisProperties.getIncrementalProperties().isMpde())
       {
         properties.setProperty(reb2sac_issa_type, "mpde");
@@ -223,20 +223,20 @@ public class AnalysisPropertiesWriter {
     }
     if (!analysisProperties.isSsa())
     {
-      properties.setProperty(sim_init_time, "" + analysisProperties.getSimulationProperties().getInitialTime());
-      properties.setProperty(sim_out_time, "" + analysisProperties.getSimulationProperties().getOutputStartTime());
-      properties.setProperty(ode_time_limit, "" + analysisProperties.getSimulationProperties().getTimeLimit());
+      properties.setProperty(sim_init_time, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getInitialTime()));
+      properties.setProperty(sim_out_time,  PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getOutputStartTime()));
+      properties.setProperty(ode_time_limit, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeLimit()));
       if (analysisProperties.isPrintInterval())
       {
-        properties.setProperty(ode_print_interval , "" + analysisProperties.getSimulationProperties().getPrintInterval());
+        properties.setProperty(ode_print_interval , PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getPrintInterval()));
       }
       else if (analysisProperties.isMinPrintInterval())
       {
-        properties.setProperty(ode_min_print_interval, "" + analysisProperties.getSimulationProperties().getPrintInterval());
+        properties.setProperty(ode_min_print_interval, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getPrintInterval()));
       }
       else
       {
-        properties.setProperty(ode_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getPrintInterval()));
+        properties.setProperty(ode_number_steps, String.valueOf(((int) analysisProperties.getSimulationProperties().getPrintInterval())));
       }
       if (analysisProperties.getSimulationProperties().getTimeStep() == Double.MAX_VALUE)
       {
@@ -244,27 +244,27 @@ public class AnalysisPropertiesWriter {
       }
       else
       {
-        properties.setProperty(ode_time_step, "" + analysisProperties.getSimulationProperties().getTimeStep());
+        properties.setProperty(ode_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeStep()));
       }
-      properties.setProperty(ode_min_time_step, "" + analysisProperties.getSimulationProperties().getMinTimeStep());
-      properties.setProperty(ode_abs_error, "" + analysisProperties.getSimulationProperties().getAbsError());
-      properties.setProperty(ode_rel_error, "" + analysisProperties.getSimulationProperties().getRelError());
+      properties.setProperty(ode_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
+      properties.setProperty(ode_abs_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getAbsError()));
+      properties.setProperty(ode_rel_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getRelError()));
       properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
-      properties.setProperty(mc_seed, "" + analysisProperties.getSimulationProperties().getRndSeed());
-      properties.setProperty(mc_runs, "" + analysisProperties.getSimulationProperties().getRun());
+      properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
+      properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
     }
     if (!analysisProperties.isOde())
     {
-      properties.setProperty(sim_init_time, "" + analysisProperties.getSimulationProperties().getInitialTime());
-      properties.setProperty(sim_out_time, "" + analysisProperties.getSimulationProperties().getOutputStartTime());
-      properties.setProperty(mc_time_limit, "" + analysisProperties.getSimulationProperties().getTimeLimit());
+      properties.setProperty(sim_init_time, PropertiesUtil.parseDouble( analysisProperties.getSimulationProperties().getInitialTime()));
+      properties.setProperty(sim_out_time, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getOutputStartTime()));
+      properties.setProperty(mc_time_limit, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeLimit()));
       if (analysisProperties.isPrintInterval())
       {
-        properties.setProperty(mc_print_interval , "" + analysisProperties.getSimulationProperties().getPrintInterval());
+        properties.setProperty(mc_print_interval , PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getPrintInterval()));
       }
       else if (analysisProperties.isMinPrintInterval())
       {
-        properties.setProperty(mc_min_print_interval, "" + analysisProperties.getSimulationProperties().getPrintInterval());
+        properties.setProperty(mc_min_print_interval, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getPrintInterval()));
       }
       else
       {
@@ -276,11 +276,11 @@ public class AnalysisPropertiesWriter {
       }
       else
       {
-        properties.setProperty(mc_time_step, "" + analysisProperties.getSimulationProperties().getTimeStep());
+        properties.setProperty(mc_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeStep()));
       }
-      properties.setProperty(mc_min_time_step, "" + analysisProperties.getSimulationProperties().getMinTimeStep());
-      properties.setProperty(mc_seed, "" + analysisProperties.getSimulationProperties().getRndSeed());
-      properties.setProperty(mc_runs, "" + analysisProperties.getSimulationProperties().getRun());
+      properties.setProperty(mc_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
+      properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
+      properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
       properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
     }
     properties.setProperty(sim_run_term , "constraint");

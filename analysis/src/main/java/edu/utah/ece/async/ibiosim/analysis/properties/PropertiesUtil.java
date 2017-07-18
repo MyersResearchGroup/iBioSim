@@ -195,7 +195,7 @@ public class PropertiesUtil {
     }
   }
   
-  static double parseDouble(String num)
+  public static double parseDouble(String num)
   {
     if(num.equals("inf"))
     {
@@ -208,6 +208,22 @@ public class PropertiesUtil {
     else
     {
       return Double.parseDouble(num);
+    }
+  }
+  
+  public static String parseDouble(double num)
+  {
+    if(num == Double.POSITIVE_INFINITY)
+    {
+      return "inf";
+    }
+    else if(num == Double.NEGATIVE_INFINITY)
+    {
+      return "-inf";
+    }
+    else
+    {
+      return String.valueOf(num);
     }
   }
 

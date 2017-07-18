@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -83,9 +85,11 @@ import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
+import edu.utah.ece.async.ibiosim.analysis.properties.PropertiesUtil;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -112,7 +116,7 @@ import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener
+public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener, Observer
 {
 
   private static final long serialVersionUID  = 3181014495993143825L;
@@ -906,6 +910,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       runTime = timeLimit;
     }
     Run runProgram = new Run(properties);
+    runProgram.addObserver(this);
     cancel.addActionListener(runProgram);
     gui.getExitButton().addActionListener(runProgram);
     if (monteCarlo.isSelected() || ODE.isSelected())
@@ -1932,12 +1937,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     if(properties.isPrintInterval())
     {
       intervalLabel.setSelectedItem("Print Interval");
-      interval.setText(String.valueOf(properties.getSimulationProperties().getPrintInterval()));
+      interval.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getPrintInterval()));
     }
     else if (properties.isMinPrintInterval())
     {
       intervalLabel.setSelectedItem("Minimum Print Interval");
-      interval.setText(String.valueOf(properties.getSimulationProperties().getMinTimeStep()));
+      interval.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
     }
     else
     {
@@ -1945,19 +1950,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       interval.setText(String.valueOf(properties.getSimulationProperties().getNumSteps()));
     }
     
-    initialTimeField.setText(String.valueOf(properties.getSimulationProperties().getInitialTime()));
+    initialTimeField.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getInitialTime()));
 
-    outputStartTimeField.setText(String.valueOf(properties.getSimulationProperties().getOutputStartTime()));
+    outputStartTimeField.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getOutputStartTime()));
 
-    limit.setText(String.valueOf(properties.getSimulationProperties().getTimeLimit()));
+    limit.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getTimeLimit()));
 
-    absErr.setText(String.valueOf(properties.getSimulationProperties().getAbsError()));
+    absErr.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getAbsError()));
 
-    relErr.setText(String.valueOf(properties.getSimulationProperties().getRelError()));
+    relErr.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getRelError()));
 
-    step.setText(String.valueOf(properties.getSimulationProperties().getTimeStep()));
+    step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getTimeStep()));
 
-    minStep.setText(String.valueOf(properties.getSimulationProperties().getMinTimeStep()));
+    minStep.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
 
     simulators.setSelectedItem(properties.getSim());
 
@@ -3306,6 +3311,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       System.out.println("ACTION");
     }
+  }
+
+  @Override
+  public void update(Observable o, Object arg) {
+    Message message = (Message) arg;
+
+    if (message.isConsole()) {
+      System.out.println(message.getMessage());
+    } else if (message.isErrorDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+    } else if (message.isDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.PLAIN_MESSAGE);
+    } else if (message.isLog()) {
+      log.addText(message.getMessage());
+    } 
   }
 
 }

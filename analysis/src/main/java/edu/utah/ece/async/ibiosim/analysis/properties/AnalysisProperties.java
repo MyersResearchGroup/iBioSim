@@ -47,7 +47,7 @@ public final class AnalysisProperties {
 	  this.gui = isGui;
 	  
 	  this.fileStem = "";
-	  this.filename = root + File.separator + modelFile;
+	  this.filename = root + File.separator + id + File.separator + modelFile;
 	  this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
 	  this.outDir = root + File.separator + id;
 	  this.method = SimMethod.ODE;
