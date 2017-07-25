@@ -203,77 +203,6 @@ public class SBOLUtility
 		}
 	}
 
-	// Creates SBOL document in which every DNA component is accessible from the top level
-	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) throws SBOLValidationException 
-	{
-		SBOLDocument flattenedDoc = new SBOLDocument();
-		Set<String> topURIs = new HashSet<String>();
-		for (TopLevel sbolObj : sbolDoc.getTopLevels())
-		{
-			if (sbolObj instanceof ComponentDefinition) 
-				flattenDNAComponent((ComponentDefinition) sbolObj, flattenedDoc, topURIs);
-			else if (sbolObj instanceof Collection) 
-			{
-				flattenedDoc.createCopy(sbolObj);
-				for (TopLevel dnac : ((Collection) sbolObj).getMembers())
-					flattenDNAComponent((ComponentDefinition)dnac, flattenedDoc, topURIs);
-			}
-		}
-		return flattenedDoc;
-	}
-
-	// Replaces all DNA components of the merging URI with the given DNA component
-	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
-	// multiple data structures of the same URI
-	/*	public static void mergeDNAComponent(URI mergingURI, ComponentDefinition mergingDnac, SBOLDocument sbolDoc) 
-	{
-//		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) flattenSBOLDocument(sbolDoc);
-//		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
-//		replaceSubComponents(mergingDnac.getAnnotations(), flattenedResolver);
-		SBOLDOC = new SBOLDocument();
-		for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
-			SBOLDOC.createCopy(c);
-
-		replaceSubComponents(mergingDnac.getSequenceAnnotations());
-
-//		List<DnaComponent> intersections = intersectDNAComponent(mergingURI, sbolDoc);
-		List<ComponentDefinition> intersections = intersectDNAComponent(mergingURI, sbolDoc);
-		for (ComponentDefinition intersectedDnac : intersections) {
-			if (intersectedDnac.getIdentity().equals(mergingURI)) 
-			{
-				sbolDoc.removeContent(intersectedDnac);
-				sbolDoc.addContent(mergingDnac);
-			} 
-			else {
-				List<SequenceAnnotation> intersectedAnnos = new LinkedList<SequenceAnnotation>();
-				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
-					DnaComponent subDnac = anno.getSubComponent();
-					if (subDnac != null && subDnac.getURI().toString().equals(mergingURI.toString())) 
-						intersectedAnnos.add(anno);
-				}
-				for (SequenceAnnotation intersectedAnno : intersectedAnnos)
-					intersectedAnno.setSubComponent(mergingDnac);
-				DnaSequence intersectedSeq = intersectedDnac.getDnaSequence();
-				String nucleotides = "";
-				int position = 0;
-				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
-					String subNucleotides;
-					if (anno.getStrand() != null && 
-							anno.getStrand().getSymbol().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-						subNucleotides = ((DnaSequenceImpl) anno.getSubComponent().getDnaSequence()).getReverseComplementaryNucleotides();
-					else
-						subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
-					nucleotides = nucleotides + subNucleotides;
-					anno.setBioStart(position + 1);
-					position = position + subNucleotides.length();
-					anno.setBioEnd(position);
-				}
-				intersectedSeq.setNucleotides(nucleotides);
-			}
-		}
-	}
-	 */
-
 	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
 	// and DNA sequences of composite components using the deleted components
 	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) throws SBOLValidationException {
@@ -369,120 +298,6 @@ public class SBOLUtility
 	}
 
 
-
-	//	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
-	//		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
-	//		dnaComps.add(dnaComp);
-	//		return loadDNAComponentTypes(dnaComps);
-	//	}
-
-	//	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
-	//		List<String> types = new LinkedList<String>();
-	//		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
-	//			if (lowestComp.getTypes().size() > 0) {
-	//				types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
-	//			}
-	//		return types;
-	//	}
-
-	public static List<SequenceAnnotation> orderSequenceAnnotations(Set<SequenceAnnotation> unsorted) {
-		List<SequenceAnnotation> sorted = new LinkedList<SequenceAnnotation>();
-		//TODO: Consider using fuction from libSBOLj library to order sequenceAnnotations
-
-		for (SequenceAnnotation anno : unsorted)
-			for (int i = 0; i <= sorted.size(); i++)
-			{
-				if (i == sorted.size() ) 
-				{
-					sorted.add(i, anno);
-					i = sorted.size();
-				} 
-				else 
-				{
-
-					for(Location location : anno.getLocations())
-					{
-						if(location instanceof Range)
-						{
-							//Assume that each SeqAnnot. has one location and that it is a Range?
-							Range anno_range = (Range) location;
-							Range sorted_range = (Range) sorted.get(i).getLocations().iterator().next();
-
-							if(anno_range.getStart() <= sorted_range.getStart())
-							{
-								sorted.add(i, anno);
-								i = sorted.size();
-							}
-							break; 
-						}
-					}
-
-
-				}
-			}
-		return sorted;
-	}
-
-	//	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp, String strand) {
-	//		List<String> types = new LinkedList<String>();
-	//		if (dnaComp.getAnnotations().size() == 0 && dnaComp.getTypes().size() > 0) {
-	//			types.add(strand);
-	//			types.add(convertURIToSOType(dnaComp.getTypes().iterator().next()));
-	//		} else {
-	//			List<SequenceAnnotation> annos = sortSequenceAnnotations(dnaComp.getAnnotations());
-	//			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-	//			int minusIndex = 0;
-	//			for (SequenceAnnotation anno : annos) {
-	//				String subStrand;
-	//				if (anno.getStrand() == null) {
-	//					subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-	//				} else
-	//					subStrand = anno.getStrand().getSymbol();
-	//				List<String> nextTypes;
-	//				if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-	//					if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-	//						nextTypes = loadDNAComponentTypes(anno.getSubComponent(), 
-	//								GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
-	//					else 
-	//						nextTypes = loadDNAComponentTypes(anno.getSubComponent(), strand);
-	//				else
-	//					nextTypes = loadDNAComponentTypes(anno.getSubComponent(), subStrand);
-	//				if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
-	//					if (!subStrand.equals(prevSubStrand))
-	//						minusIndex = types.size();
-	//					types.addAll(minusIndex, nextTypes);
-	//				} else
-	//					types.addAll(nextTypes);
-	//				prevSubStrand = subStrand;
-	//			}
-	//		}
-	//		return types;
-	//	}
-	//	
-	//	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
-	//		return loadDNAComponentTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
-	//	}
-	//
-	//	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
-	//		List<String> types = new LinkedList<String>();
-	//		for (DnaComponent dnaComp : dnaComps) {
-	//			types.addAll(loadDNAComponentTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND));
-	//		}
-	//		return types;
-	//	}
-	//	
-	//	public static List<String> loadNodeTypes(AssemblyNode assemblyNode) {
-	//		return loadDNAComponentTypes(assemblyNode.getDNAComponents());
-	//	}
-	//	
-	//	public static List<String> loadNodeTypes(List<AssemblyNode> assemblyNodes) {
-	//		List<String> types = new LinkedList<String>();
-	//		for (AssemblyNode assemblyNode : assemblyNodes)
-	//			types.addAll(loadNodeTypes(assemblyNode));
-	//		return types;
-	//	}
-	//	
-
 	public static List<URI> loadDNAComponentURIs(List<ComponentDefinition> dnaComps) {
 		List<URI> uris = new LinkedList<URI>();
 		for (ComponentDefinition lowestComp : loadLowestSubComponents(dnaComps))
@@ -490,17 +305,6 @@ public class SBOLUtility
 		return uris;
 	}
 
-
-	//	public static List<URI> loadNodeURIs(AssemblyNode assemblyNode) {
-	//		return loadDNAComponentURIs(assemblyNode.getDNAComponents());
-	//	}
-	//	
-	//	public static List<URI> loadNodeURIs(List<AssemblyNode> assemblyNodes) {
-	//		List<URI> uris = new LinkedList<URI>();
-	//		for (AssemblyNode assemblyNode : assemblyNodes)
-	//			uris.addAll(loadNodeURIs(assemblyNode));
-	//		return uris;
-	//	}
 
 	public static List<ComponentDefinition> loadLowestSubComponents(List<ComponentDefinition> dnaComps) {
 		List<ComponentDefinition> subComps = new LinkedList<ComponentDefinition>();
@@ -517,20 +321,7 @@ public class SBOLUtility
 		return subComps;
 	}
 
-	//	public static List<DnaComponent> filterDNAComponents(List<DnaComponent> dnaComps, Set<String> soFilterTypes) {
-	//		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
-	//		List<DnaComponent> tempComps = new LinkedList<DnaComponent>(dnaComps);
-	//		while (tempComps.size() > 0) {
-	//			DnaComponent tempComp = tempComps.remove(0);
-	//			if (tempComp.getTypes().size() > 0 && soFilterTypes.contains(convertURIToSOTerm(tempComp.getTypes().iterator().next())))
-	//				subComps.add(tempComp);
-	//			if (tempComp.getAnnotations().size() > 0)
-	//				for (SequenceAnnotation anno : tempComp.getAnnotations())
-	//					tempComps.add(anno.getSubComponent());
-	//		}
-	//		return subComps;
-	//	}
-
+	
 	public static List<ComponentDefinition> filterDNAComponents(List<ComponentDefinition> dnaComps, Set<URI> soFilterNums) {
 		List<ComponentDefinition> filteredComps = new LinkedList<ComponentDefinition>();
 		for (ComponentDefinition dnaComp : dnaComps) {
@@ -544,49 +335,6 @@ public class SBOLUtility
 		return filteredComps;
 	}
 
-	//	public static boolean compareDNAComponents(List<DnaComponent> dnaComps1, List<DnaComponent> dnaComps2) {
-	//		if (dnaComps1.size() == dnaComps2.size()) {
-	//			for (int i = 0; i < dnaComps1.size(); i++)
-	//				if (!dnaComps1.get(i).equals(dnaComps2.get(i)))
-	//					return false;
-	//			return true;
-	//		}
-	//		return false;
-	//	}
-	//	
-	//	public static boolean compareDNAComponents(Set<DnaComponent> dnaComps1, Set<DnaComponent> dnaComps2) {
-	//		for (DnaComponent dnaComp1 : dnaComps1) {
-	//			Iterator<DnaComponent> compIterator2 = dnaComps2.iterator();
-	//			boolean match = false;
-	//			while (compIterator2.hasNext() && !match)
-	//				match = dnaComp1.equals(compIterator2.next());
-	//			if (!match)
-	//				return false;
-	//		}
-	//		if (dnaComps1.size() == dnaComps2.size())
-	//			return true;
-	//		for (DnaComponent dnaComp2 : dnaComps2) {
-	//			Iterator<DnaComponent> compIterator1 = dnaComps1.iterator();
-	//			boolean match = false;
-	//			while (compIterator1.hasNext() && !match)
-	//				match = dnaComp2.equals(compIterator1.next());
-	//			if (!match)
-	//				return false;
-	//		}
-	//		return true;	
-	//	}
-	//	
-	//	public static boolean shareDNAComponent(Set<DnaComponent> dnaComps1, Set<DnaComponent> dnaComps2) {
-	//		if (dnaComps1.size() == 0 || dnaComps2.size() == 0)
-	//			return false;
-	//		for (DnaComponent dnaComp1 : dnaComps1) {
-	//			for (DnaComponent dnaComp2 : dnaComps2)
-	//				if (dnaComp1.equals(dnaComp2))
-	//					return true;
-	//		}
-	//		return false;	
-	//	}
-
 	public static int countNucleotides(List<ComponentDefinition> dnaComps) {
 		int nucleotideCount = 0;
 		for (ComponentDefinition dnaComp : dnaComps) {
@@ -595,62 +343,6 @@ public class SBOLUtility
 				nucleotideCount += sequence.getElements().length();
 		} 
 		return nucleotideCount;
-	}
-
-	// Converts global constant SBOL type to corresponding set of SO types
-	public static Set<URI> soSynonyms(String sbolType) {
-		SequenceOntology so = new SequenceOntology();
-		URI sbolTypeURI = so.getURIbyName(sbolType);
-		if (sbolTypeURI==null) {
-			return new HashSet<URI>();
-		}
-		return so.getDescendantURIsOf(so.getURIbyName(sbolType));
-	}
-
-	//	public static String convertURIToSOType(URI uri) {
-	//		String temp = uri.toString();
-	//		if (temp.equals(SequenceOntology.PROMOTER.toString()))
-	//			return "promoter";
-	//		else if (temp.equals(SequenceOntology.type("SO_0001203").toString()))
-	//			return "RNA polymerase promoter";
-	//		else if (temp.equals(SequenceOntology.type("SO_0000139").toString()))
-	//			return "ribosome entry site";
-	//		else if (temp.equals(SequenceOntology.CDS.toString()))
-	//			return "coding sequence";
-	//		else if (temp.equals(SequenceOntology.TERMINATOR.toString()))
-	//			return "terminator";
-	//		else if (temp.equals(SequenceOntology.type("SO_0000614").toString()))
-	//			return "bacterial terminator";
-	//		else if (temp.equals(SequenceOntology.type("SO_0000804").toString()))
-	//			return "engineered region";
-	//		else
-	//			return "N/A";
-	//	}
-
-	public static String convertURIToTypeString(URI uri)
-	{
-		if (uri.equals(ComponentDefinition.DNA)) {
-			return "DNA";
-		} else if (uri.equals(ComponentDefinition.RNA)) {
-			return "RNA";
-		} else if (uri.equals(ComponentDefinition.PROTEIN)) {
-			return "protein";
-		} else if (uri.equals(ComponentDefinition.SMALL_MOLECULE)) {
-			return "small molecule";
-		} else if (uri.equals(ComponentDefinition.COMPLEX)) {
-			return "complex";
-		} else if (uri.equals(ComponentDefinition.EFFECTOR)) {
-			return "effector";
-		} 
-		return uri.toString();
-	}
-
-	public static String convertURIToSOTerm(URI uri) 
-	{
-		SequenceOntology so = new SequenceOntology();
-		String role = so.getName(uri);
-		if (role!=null) return role;
-		return uri.toString();
 	}
 
 
@@ -677,21 +369,6 @@ public class SBOLUtility
 		}
 		return null;
 	}
-
-	//	public static String soTypeToGrammarTerminal(String soType) {
-	//		if (soType.equals("promoter") || soType.equals("RNA polymerase promoter"))
-	//			return "p";
-	//		else if (soType.equals("ribosome entry site"))
-	//			return "r";
-	//		else if (soType.equals("coding sequence"))
-	//			return "c";
-	//		else if (soType.equals("terminator") || soType.equals("bacterial terminator"))
-	//			return "t";
-	//		else if (soType.equals("engineered region"))
-	//			return "e";
-	//		else
-	//			return "x";
-	//	}
 
 	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
 		Properties synthProps = new Properties();

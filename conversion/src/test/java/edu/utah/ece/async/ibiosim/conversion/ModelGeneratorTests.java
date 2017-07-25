@@ -84,9 +84,7 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 				{
 					if(funcComp.getDisplayId().equals("BO_11410") || funcComp.getDisplayId().equals("BO_10845"))
 					{
-						Assert.assertTrue(funcComp.getDirection().equals(DirectionType.IN) 
-								|| funcComp.getDirection().equals(DirectionType.OUT)
-								|| funcComp.getDirection().equals(DirectionType.NONE));
+						Assert.assertTrue(funcComp.getDirection().equals(DirectionType.INOUT));
 					}
 				}
 			}

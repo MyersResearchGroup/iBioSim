@@ -602,40 +602,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	// /**
-	// * Save the current iBioSim project as SBOL.
-	// */
-	// public void saveAsSBOL2()
-	// {
-	// try {
-	// String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
-	// HashSet<String> sbolFiles =
-	// biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-	//
-	// SBML2SBOL.convert_SBML2SBOL(biosim.getSBOLDocument(), path,
-	// biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-	// sbolFiles, defaultURIprefix);
-	//
-	//
-	// } catch (SBOLValidationException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (FileNotFoundException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (SBOLConversionException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (XMLStreamException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// biosim.writeSBOLDocument();
-	// }
-
 	/**
 	 * Export the current model into the specified file format.
 	 * 
