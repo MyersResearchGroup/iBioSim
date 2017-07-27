@@ -66,6 +66,8 @@ import org.sbolstandard.core2.TopLevel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types;
@@ -366,27 +368,33 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	 * Get the SBOL part design that the user has selected from the Design/Parts table and return it part selected
 	 * in a new SBOLDocument.
 	 */
-	public SBOLDocument getSelection() {
-		try 
+	public SBOLDocument getSelection()
+	{
+		SBOLDocument outputDoc = new SBOLDocument();
+
+		for(int r : table.getSelectedRows())
 		{
-			SBOLDocument outputDoc = new SBOLDocument();
-			
-			for(int r : table.getSelectedRows())
+			int row = table.convertRowIndexToModel(r);
+			TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
+			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
+			try 
 			{
-				int row = table.convertRowIndexToModel(r);
-				TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
-				outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
-				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
+				SBOLUtility.copyAllTopLevels(sbolDesigns, outputDoc);
+			} 
+			catch (SBOLException e) 
+			{
+				JOptionPane.showMessageDialog(null, e.getMessage());
+				e.printStackTrace();
 			}
-			
-			return outputDoc;
-		} 
-		catch (SBOLValidationException e) 
-		{
-			JOptionPane.showMessageDialog(null, "This TopLevel SBOL object cannot be imported: " + e.getMessage());
-			e.printStackTrace();
-			return null;
+			catch (SBOLValidationException e) 
+			{
+				JOptionPane.showMessageDialog(null, "This TopLevel SBOL object cannot be imported: " + e.getMessage());
+				e.printStackTrace();
+
+			}
 		}
+
+		return outputDoc;
 	}
 	
 	

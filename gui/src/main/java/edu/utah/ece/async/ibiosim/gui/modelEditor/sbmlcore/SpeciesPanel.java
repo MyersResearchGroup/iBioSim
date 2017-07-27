@@ -918,11 +918,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					{
 						species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
 					}
-					 
-
-					
-				} else 
+				} 
+				else 
+				{
 					AnnotationUtility.removeSBOLAnnotation(species);
+				}
 			}
 			
 			try {

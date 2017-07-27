@@ -32,12 +32,13 @@ import javax.swing.JOptionPane;
 import org.sbolstandard.core2.*;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 /**
+ * This class is reserved for managing SBOL data.
  * 
- *
- * @author Nicholas Roehner
  * @author Tramy Nguyen
+ * @author Nicholas Roehner
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -103,6 +104,80 @@ public class SBOLUtility
 	{
 		SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
 		
+	}
+	
+	/**
+	 * Copy all top level objects from the source SBOLDocument to the target SBOLDocument.
+	 * @param sourceDoc - The SBOLDocument to copy the top level objects from
+	 * @param targetDoc - The SBOLDocument to copy the top level objects into
+	 * @throws SBOLValidationException - Unable to perform createCopy from libSBOLj
+	 * @throws SBOLException - SBOL contents not equal when performing SBOL equals method was called.
+	 */
+	public static void copyAllTopLevels(SBOLDocument sourceDoc, SBOLDocument targetDoc) throws SBOLValidationException, SBOLException
+	{
+		for(TopLevel topLevObj : sourceDoc.getTopLevels())
+		{
+			if(topLevObj instanceof Sequence)
+			{
+				Sequence libSeq = targetDoc.getSequence(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libSeq, topLevObj);
+			}
+			else if(topLevObj instanceof ComponentDefinition)
+			{
+				ComponentDefinition libCD = targetDoc.getComponentDefinition(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libCD, topLevObj);
+			}
+			else if(topLevObj instanceof ModuleDefinition)
+			{
+				ModuleDefinition libMD = targetDoc.getModuleDefinition(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libMD, topLevObj);
+			}
+			else if(topLevObj instanceof org.sbolstandard.core2.Model)
+			{
+				org.sbolstandard.core2.Model libModel = targetDoc.getModel(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libModel, topLevObj);
+			}
+			else if(topLevObj instanceof GenericTopLevel)
+			{
+				GenericTopLevel libGTL = targetDoc.getGenericTopLevel(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libGTL, topLevObj);
+			}
+			else if(topLevObj instanceof org.sbolstandard.core2.Collection)
+			{
+				org.sbolstandard.core2.Collection libColl = targetDoc.getCollection(topLevObj.getIdentity());
+				copySBOLObj(targetDoc, libColl, topLevObj);
+			}
+		}
+	}
+	
+	/**
+	 * Copy the given SBOL object to the SBOL library document. If the given SBOL object already exist in the 
+	 * SBOL library document but have differing content, then an error is thrown. If the given SBOL object doesn't
+	 * exist within the SBOL library document, then it will be added.
+	 * 
+	 * @param targetSBOLDoc - The SBOL library document.
+	 * @param targetTopLevelObj - The Top Level SBOL library object to compare to the TopLevel SBOL object to be added. 
+	 * @param sourceTopLevObj - The given TopLevel SBOL object to be added to the SBOL library document.
+	 * @throws SBOLValidationException - Unable to perform createCopy from libSBOLj
+	 * @throws SBOLException - SBOL contents not equal when performing SBOL equals method was called.
+	 */
+	private static void copySBOLObj(SBOLDocument targetSBOLDoc, TopLevel targetTopLevelObj, TopLevel sourceTopLevObj) throws SBOLValidationException, SBOLException
+	{
+		if(targetTopLevelObj == null)
+		{
+			targetSBOLDoc.createCopy(sourceTopLevObj); 
+		}
+		else
+		{
+			//If the library SBOL obj isn't the same as the vpr SBOL object, report to the user 
+			//that this model had SBOL objects with same SBOL id but diff. content. 
+			if(!targetTopLevelObj.equals(sourceTopLevObj))
+			{
+				throw new SBOLException("The target SBOL file with this TopLevel Identity: " + targetTopLevelObj.getIdentity() +
+						"does not match the content of the source SBOL TopLevel Identity: " + sourceTopLevObj.getIdentity(), 
+						"SBOL Content Not Equal");
+			}
+		}
 	}
 
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present

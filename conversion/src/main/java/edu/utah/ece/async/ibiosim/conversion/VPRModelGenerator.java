@@ -53,6 +53,7 @@ public class VPRModelGenerator {
 	{ 
 		//"https://synbiohub.org/sparql"
 		String endpoint = selectedRepo + "/sparql";
+		System.out.println(endpoint);
 		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;

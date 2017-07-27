@@ -184,6 +184,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.analysisView.Run;
@@ -6371,41 +6372,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
 				//update SBOL library file with newly generated components that vpr model generator created.
 				SBOLDocument libSBOLDoc = getSBOLDocument();
-				for(TopLevel vprTopLevObj : chosenDesign.getTopLevels())
-				{
-					if(vprTopLevObj instanceof Sequence)
-					{
-						Sequence libSeq = libSBOLDoc.getSequence(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libSeq, vprTopLevObj);
-					}
-					else if(vprTopLevObj instanceof ComponentDefinition)
-					{
-						ComponentDefinition libCD = libSBOLDoc.getComponentDefinition(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libCD, vprTopLevObj);
-					}
-					else if(vprTopLevObj instanceof ModuleDefinition)
-					{
-						ModuleDefinition libMD = libSBOLDoc.getModuleDefinition(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libMD, vprTopLevObj);
-					}
-					else if(vprTopLevObj instanceof org.sbolstandard.core2.Model)
-					{
-						org.sbolstandard.core2.Model libModel = libSBOLDoc.getModel(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libModel, vprTopLevObj);
-					}
-					else if(vprTopLevObj instanceof GenericTopLevel)
-					{
-						GenericTopLevel libGTL = libSBOLDoc.getGenericTopLevel(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libGTL, vprTopLevObj);
-					}
-					else if(vprTopLevObj instanceof org.sbolstandard.core2.Collection)
-					{
-						org.sbolstandard.core2.Collection libColl = libSBOLDoc.getCollection(vprTopLevObj.getIdentity());
-						copySBOLObj(libSBOLDoc, libColl, vprTopLevObj);
-					}
-				}
-				
+				SBOLUtility.copyAllTopLevels(chosenDesign, libSBOLDoc);
 				generateSBMLFromSBOL(chosenDesign, tree.getFile());
+				
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
 		} 
@@ -6439,48 +6408,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
 					JOptionPane.ERROR_MESSAGE);
 		}	
+		catch (SBOLException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
 	}
 	
-	/**
-	 * Copy the given SBOL object to the SBOL library document. If the given SBOL object already exist in the 
-	 * SBOL library document but have differing content, then an error is thrown. If the given SBOL object doesn't
-	 * exist within the SBOL library document, then it will be added.
-	 * 
-	 * @param libSBOLDoc - The SBOL library document.
-	 * @param libTopLevelObj - The Top Level SBOL library object to compare to the TopLevel SBOL object to be added. 
-	 * @param givenTopLevObj - The given TopLevel SBOL object to be added to the SBOL library document.
-	 */
-	private void copySBOLObj(SBOLDocument libSBOLDoc, TopLevel libTopLevelObj, TopLevel givenTopLevObj)
-	{
-		if(libTopLevelObj == null)
-		{
-			try 
-			{
-				libSBOLDoc.createCopy(givenTopLevObj); 
-			} 
-			catch (SBOLValidationException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, 
-						"SBOL Validation error occurred when performing createCopy() from an SBOL object to the SBOL library document. \n" + e.toString(), 
-						"SBOL Valdiation Error",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			//If the library SBOL obj isn't the same as the vpr SBOL object, report to the user 
-			//that this model had SBOL objects with same SBOL id but diff. content. 
-			if(!libTopLevelObj.equals(givenTopLevObj))
-			{
-				JOptionPane.showMessageDialog(Gui.frame, 
-						"The SBOL library file with this TopLevel Identity: " + libTopLevelObj.getIdentity() +
-						"does not match the content of the VPR SBOL TopLevel Identity: " + givenTopLevObj.getIdentity(), 
-						"SBOL Content Not Equal",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
 	
 	/**
 	 * Retrieve the URL of the selected synbiohub repository that the user has selected from the repository dialog.
