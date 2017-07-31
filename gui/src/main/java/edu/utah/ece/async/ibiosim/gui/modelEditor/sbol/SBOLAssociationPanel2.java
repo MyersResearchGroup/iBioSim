@@ -185,7 +185,10 @@ public class SBOLAssociationPanel2 extends JPanel implements ActionListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
+			catch (SBOLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		if (sbolFilePaths.size() == 0) {

@@ -62,7 +62,7 @@ public class SBOLUtility
 	{
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
-		SBOLReader.setURIPrefix(defaultURIPrefix + fileName);
+		SBOLReader.setURIPrefix(defaultURIPrefix);
 		SBOLDocument sbolDoc = SBOLReader.read(filePath);
 		if(sbolDoc == null)
 		{
