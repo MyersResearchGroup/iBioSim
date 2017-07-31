@@ -132,7 +132,7 @@ public class VPRModelGenerator {
 		{
 			SBOLReader.setURIPrefix(sbolURIPre);
 			inputSBOL = SBOLReader.read(file);
-			outputSBOL = generateModel(sbolURIPre, inputSBOL);
+			outputSBOL = generateModel(selectedRepo, inputSBOL);
 			if(!noOutput)
 			{
 				if(outputFileName.isEmpty())
@@ -141,7 +141,7 @@ public class VPRModelGenerator {
 				}
 				else
 				{
-					outputSBOL.write(outputFileName, SBOLDocument.RDF);
+					outputSBOL.write(outputFileName+".xml", SBOLDocument.RDF);
 				}
 			}
 			else

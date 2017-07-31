@@ -2,6 +2,7 @@ package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.junit.Test;
 import org.sbolstandard.core2.DirectionType;
@@ -50,14 +51,14 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 	}
 	
 	@Test
-	public void test_file()
+	public void test_cmd()
 	{
 		String fileName = "inverterExample"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		String selectedRepo = "https://synbiohub.org";
 		String uriPrefix = "http://www.async.ece.utah.edu/";
 		
-		String[] cmdArgs = {"-u", uriPrefix, "-r", selectedRepo, inputfile};
+		String[] cmdArgs = {"-u", uriPrefix, "-r", selectedRepo, inputfile, "-o", sbolDir+fileName+"_ibiosim_output"};
 		edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.main(cmdArgs);
 	}
 	
@@ -65,11 +66,10 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 	public void test_port()
 	{
 		String fileName = "inverterExample"; 
-		String inputfile = sbolDir + fileName + ".xml";
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String selectedRepo = "https://synbiohub.org";
 		
-		SBOLDocument inSBOL = readSBOLFile(inputfile);
+		SBOLDocument inSBOL = readSBOLFile(sbolDir + fileName + ".xml");
+		SBOLDocument goldenSBOL = readSBOLFile(sbolDir + fileName + "_output.xml");
 		if(inSBOL == null)
 		{
 			System.err.println("ERROR: Invalid SBOL file.");
@@ -78,16 +78,16 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 		try 
 		{
 			SBOLDocument generatedSBOL = edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.generateModel(selectedRepo, inSBOL);
-			for(ModuleDefinition modDef : generatedSBOL.getModuleDefinitions())
-			{
-				for(FunctionalComponent funcComp : modDef.getFunctionalComponents())
-				{
-					if(funcComp.getDisplayId().equals("BO_11410") || funcComp.getDisplayId().equals("BO_10845"))
-					{
-						Assert.assertTrue(funcComp.getDirection().equals(DirectionType.INOUT));
-					}
-				}
-			}
+			Assert.assertTrue(goldenSBOL.equals(generatedSBOL));
+			ModuleDefinition design1 = generatedSBOL.getModuleDefinition("design1_module", "1");
+			Assert.assertTrue(design1.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
+			
+			ModuleDefinition design2 = generatedSBOL.getModuleDefinition("design2_module", "1");
+			Assert.assertTrue(design2.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
+			
+			ModuleDefinition topModel = generatedSBOL.getModuleDefinition(URI.create("https://synbiohub.org/public/bsu/design1_design2_module"));
+			Assert.assertTrue(topModel.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
+			Assert.assertTrue(topModel.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
 		} 
 		catch (SBOLValidationException e) 
 		{
