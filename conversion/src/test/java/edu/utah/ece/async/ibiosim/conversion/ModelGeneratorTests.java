@@ -53,6 +53,7 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 	@Test
 	public void test_cmd()
 	{
+		/* Test if VPR model generation can be run from command line */
 		String fileName = "inverterExample"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		String selectedRepo = "https://synbiohub.org";
