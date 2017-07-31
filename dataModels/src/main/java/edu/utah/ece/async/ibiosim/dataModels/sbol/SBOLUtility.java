@@ -35,7 +35,11 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 /**
- * This class is reserved for managing SBOL data.
+ * This class is a utility class reserved for managing SBOL data.
+ * This class has functions that will allow you to:
+ * - load SBOL files
+ * - perform copy SBOL contents from one SBOLDocument to another SBOLDocument
+ * 
  * 
  * @author Tramy Nguyen
  * @author Nicholas Roehner
