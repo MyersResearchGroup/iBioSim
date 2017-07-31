@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
@@ -45,6 +46,32 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 public class SBOLUtility 
 {
 	private static SBOLDocument SBOLDOC; 
+	
+	/**
+	 * Get all the SBOL files from the given directory.
+	 * 
+	 * @param externalSBOLPath - The directory the get the SBOL files from
+	 * @return All SBOL files located in the given SBOL directory.
+	 */
+	public static HashSet<String> getSBOLFilesFromPath(String externalSBOLPath)
+	{
+		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
+		//Note: this is an optional field. User provided sbol path to read in
+		File fileDir = new File(externalSBOLPath);
+		File[] sbolFiles =  fileDir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return (name.toLowerCase().endsWith(".rdf") || 
+						name.toLowerCase().endsWith(".sbol") || 
+						name.toLowerCase().endsWith(".xml"));
+			}
+		});
+
+		for(File f : sbolFiles)
+		{
+			ref_sbolInputFilePath.add(f.getAbsolutePath());
+		}
+		return ref_sbolInputFilePath;
+	}
 
 	/**
 	 * Read in the given SBOL file.

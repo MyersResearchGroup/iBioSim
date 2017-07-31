@@ -303,20 +303,7 @@ public class Converter {
 		/* Note: Initialize any optional variables that are required for conversion, validation, or file diff.*/
 		if(externalSBOLPath != null && !externalSBOLPath.isEmpty())
 		{
-			//Note: this is an optional field. User provided sbol path to read in
-			File fileDir = new File(externalSBOLPath);
-			File[] sbolFiles =  fileDir.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return (name.toLowerCase().endsWith(".rdf") || 
-							name.toLowerCase().endsWith(".sbol") || 
-							name.toLowerCase().endsWith(".xml"));
-				}
-			});
-
-			for(File f : sbolFiles)
-			{
-				ref_sbolInputFilePath.add(f.getAbsolutePath());
-			}
+			ref_sbolInputFilePath = SBOLUtility.getSBOLFilesFromPath(externalSBOLPath);
 		}
 		
 		//If the output directory is empty, get the path from the output file name that the user has specified
