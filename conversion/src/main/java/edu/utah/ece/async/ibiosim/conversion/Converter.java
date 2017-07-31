@@ -38,6 +38,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 /**
  * Command line for:
@@ -402,11 +404,9 @@ public class Converter {
 						showDetail, noOutput);
 				if(!isDiffFile)
 				{
-					SBOLDocument sbolDoc;
 					try 
 					{	
-						SBOLReader.setURIPrefix(URIPrefix);
-						sbolDoc = SBOLReader.read(new FileInputStream(fullInputFileName));
+						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
 						if(!topLevelURIStr.isEmpty())
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
@@ -423,22 +423,35 @@ public class Converter {
 							} 
 						}
 					}
-					catch (FileNotFoundException e) {
+					catch (FileNotFoundException e) 
+					{
 						System.err.println("ERROR:  Unable to locate file");
 						e.printStackTrace();
-					} catch (SBOLValidationException e) {
+					} 
+					catch (SBOLValidationException e) 
+					{
 						System.err.println("ERROR: Invalid SBOL file");
 						e.printStackTrace();
-					} catch (IOException e) {
+					} 
+					catch (IOException e) 
+					{
 						System.err.println("ERROR: Unable to read or write file");
 						e.printStackTrace();
-					} catch (SBOLConversionException e) {
+					} 
+					catch (SBOLConversionException e) 
+					{
 						System.err.println("ERROR: Unable to perform SBOL conversion");
 						e.printStackTrace();
-					} catch (XMLStreamException e) {
+					} 
+					catch (XMLStreamException e) 
+					{
 						System.err.println("ERROR: Invalid XML file");
 						e.printStackTrace();
-					} //end of last catch
+					} 
+					catch (SBOLException e) 
+					{
+						System.err.println(e.getMessage());
+					}
 				}
 			} //end of isSBOL input
 		}//end of is not a directory check
@@ -469,7 +482,7 @@ public class Converter {
 		String xmlProlog = "?xml";
 		String sbmlText = "sbml";
 
-		/* NOTE: Becuse we are reading the xml file as a general file, the BufferedReader will not understand xml syntax.
+		/* NOTE: Because we are reading the xml file as a general file, the BufferedReader will not understand xml syntax.
 		 * Therefore, we must account for corner cases:
 		 * - there can be new lines in arbitrary places.
 		 * - there can be comments before reaching the root node.
@@ -514,7 +527,8 @@ public class Converter {
 	}
 	
 	/**
-	 * Export a list of BioModels to SBML files. 
+	 * Export a list of BioModels to SBML files.
+	 *  
 	 * @param models - The list of BioModels
 	 * @param outputDir - The output directory to save the BioModels in
 	 * @param outputFileName - The output file name if there was only one BioModel to export
@@ -623,12 +637,17 @@ public class Converter {
 		//Multiple SBML output
 		for (BioModel model : models)
 		{
-			try {
+			try 
+			{
 				model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-			} catch (XMLStreamException e) {
+			} 
+			catch (XMLStreamException e) 
+			{
 				System.err.println("ERROR: Invalid XML file");
 				e.printStackTrace();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) 
+			{
 				System.err.println("ERROR: Unable to write file to SBML.");
 				e.printStackTrace();
 			}

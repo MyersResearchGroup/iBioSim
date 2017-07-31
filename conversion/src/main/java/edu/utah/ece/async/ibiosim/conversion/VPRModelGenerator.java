@@ -52,7 +52,6 @@ public class VPRModelGenerator {
 	{ 
 		//"https://synbiohub.org/sparql"
 		String endpoint = selectedRepo + "/sparql";
-		System.out.println(endpoint);
 		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
@@ -122,7 +121,7 @@ public class VPRModelGenerator {
 		if(sbolURIPre.isEmpty())
 		{
 			//Default SBOL uri prefix if user didn't provide one.
-			sbolURIPre = "http://www.async.ece.utah.edu";
+			sbolURIPre = "http://www.async.ece.utah.edu/";
 		}
 		
 		try 

@@ -62,8 +62,8 @@ public class SBOLUtility
 	{
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
-		SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
-		SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+		SBOLReader.setURIPrefix(defaultURIPrefix + fileName);
+		SBOLDocument sbolDoc = SBOLReader.read(filePath);
 		if(sbolDoc == null)
 		{
 			throw new SBOLException("ERROR: The input SBOL file produced a null SBOLDocument.", "Null SBOLDocument");

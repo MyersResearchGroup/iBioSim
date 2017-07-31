@@ -25,6 +25,7 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 	 * r3.xml - module_BO_11205_activates_BO_27654; module_BO_28532_encodes_BO_26966
 	 * r4.xml - Pro: BO_2685 RBS: BO_27789 CDS: BO_28531 T: BO_4261
 	 */
+	private String uriPrefix = "http://www.async.ece.utah.edu/";
 	
 	@Test
 	public void test_cmd()
@@ -33,7 +34,6 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 		String fileName = "inverterExample"; 
 		String inputfile = sbolDir + fileName + ".xml";
 		String selectedRepo = "https://synbiohub.org";
-		String uriPrefix = "http://www.async.ece.utah.edu";
 		
 		String[] cmdArgs = {"-u", uriPrefix, "-r", selectedRepo, inputfile, "-o", sbolDir+fileName+"_ibiosim_output"};
 		edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.main(cmdArgs);
@@ -43,7 +43,6 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 	public void test_port()
 	{
 		String selectedRepo = "https://synbiohub.org";
-		String uriPrefix = "http://www.async.ece.utah.edu";
 		
 		try {
 			SBOLDocument inSBOL = SBOLUtility.loadSBOLFile(sbolDir + "inverterExample.xml", uriPrefix);
