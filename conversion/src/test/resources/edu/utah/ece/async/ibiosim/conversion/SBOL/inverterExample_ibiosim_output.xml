@@ -5,6 +5,16 @@
     <sbol:displayId>design1_module</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design1_module/design1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_module/design1"/>
+        <sbol:displayId>design1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design1/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design1_module/BO_11410/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_module/BO_11410"/>
         <sbol:displayId>BO_11410</sbol:displayId>
@@ -22,16 +32,6 @@
         <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_10845/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design1_module/design1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_module/design1"/>
-        <sbol:displayId>design1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design1/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -116,16 +116,6 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design2_module/BO_10845/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2_module/BO_10845"/>
-        <sbol:displayId>BO_10845</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_10845/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design2_module/design2/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2_module/design2"/>
         <sbol:displayId>design2</sbol:displayId>
@@ -133,6 +123,16 @@
         <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design2/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.org/public/bsu/design2_module/BO_10845/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2_module/BO_10845"/>
+        <sbol:displayId>BO_10845</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_10845/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -224,44 +224,10 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:module>
-      <sbol:Module rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub"/>
-        <sbol:displayId>design1_design2_module_design1_module_sub</sbol:displayId>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design1_module/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_11410_BO_11410">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_11410_BO_11410"/>
-            <sbol:displayId>design1_design2_module_design1_module_sub_BO_11410_BO_11410</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design1_module/BO_11410/1"/>
-            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_11410"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_10845_BO_10845">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_10845_BO_10845"/>
-            <sbol:displayId>design1_design2_module_design1_module_sub_BO_10845_BO_10845</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design1_module/BO_10845/1"/>
-            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_10845"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
       <sbol:Module rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub"/>
         <sbol:displayId>design1_design2_module_design2_module_sub</sbol:displayId>
         <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design2_module/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_11410_BO_11410">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_11410_BO_11410"/>
-            <sbol:displayId>design1_design2_module_design2_module_sub_BO_11410_BO_11410</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design2_module/BO_11410/1"/>
-            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_11410"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
         <sbol:mapsTo>
           <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_10845_BO_10845">
             <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_10845_BO_10845"/>
@@ -271,57 +237,49 @@
             <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_10845"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_11410_BO_11410">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design2_module_sub/design1_design2_module_design2_module_sub_BO_11410_BO_11410"/>
+            <sbol:displayId>design1_design2_module_design2_module_sub_BO_11410_BO_11410</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design2_module/BO_11410/1"/>
+            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_11410"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub"/>
+        <sbol:displayId>design1_design2_module_design1_module_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/design1_module/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_10845_BO_10845">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_10845_BO_10845"/>
+            <sbol:displayId>design1_design2_module_design1_module_sub_BO_10845_BO_10845</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design1_module/BO_10845/1"/>
+            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_10845"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_11410_BO_11410">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/design1_design2_module_design1_module_sub/design1_design2_module_design1_module_sub_BO_11410_BO_11410"/>
+            <sbol:displayId>design1_design2_module_design1_module_sub_BO_11410_BO_11410</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.org/public/bsu/design1_module/BO_11410/1"/>
+            <sbol:local rdf:resource="https://synbiohub.org/public/bsu/design1_design2_module/BO_11410"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
       </sbol:Module>
     </sbol:module>
   </sbol:ModuleDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_27661/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_27661"/>
-    <sbol:displayId>BO_27661</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_27783/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_27783"/>
-    <sbol:displayId>BO_27783</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_4257/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_4257"/>
-    <sbol:displayId>BO_4257</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_11410/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_11410"/>
-    <sbol:displayId>BO_11410</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>GltC</dcterms:title>
-    <rdfs:label>BSU18460</rdfs:label>
-    <ns6:OBI_0002110>10.1145/2631921</ns6:OBI_0002110>
-    <rdfs:label>GltC</rdfs:label>
-    <ns6:OBI_0001617>23571273</ns6:OBI_0001617>
-    <ns6:OBI_0001617>27110921</ns6:OBI_0001617>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/design1/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1"/>
     <sbol:displayId>design1</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design1/BO_27661C1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1/BO_27661C1"/>
-        <sbol:displayId>BO_27661C1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_27661/1"/>
-      </sbol:Component>
-    </sbol:component>
     <sbol:component>
       <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design1/BO_27783C2/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1/BO_27783C2"/>
@@ -338,6 +296,15 @@
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_4257/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design1/BO_27661C1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design1/BO_27661C1"/>
+        <sbol:displayId>BO_27661C1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_27661/1"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
@@ -380,6 +347,27 @@
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
   </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_27661/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_27661"/>
+    <sbol:displayId>BO_27661</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_27783/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_27783"/>
+    <sbol:displayId>BO_27783</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_4257/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_4257"/>
+    <sbol:displayId>BO_4257</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/design2/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2"/>
     <sbol:displayId>design2</sbol:displayId>
@@ -387,12 +375,12 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design2/BO_27632C1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2/BO_27632C1"/>
-        <sbol:displayId>BO_27632C1</sbol:displayId>
+      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design2/BO_4257C4/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2/BO_4257C4"/>
+        <sbol:displayId>BO_4257C4</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_27632/1"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_4257/1"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
@@ -405,21 +393,21 @@
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design2/BO_4257C4/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2/BO_4257C4"/>
-        <sbol:displayId>BO_4257C4</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_4257/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
       <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design2/BO_27783C2/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2/BO_27783C2"/>
         <sbol:displayId>BO_27783C2</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_27783/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.org/public/bsu/design2/BO_27632C1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/design2/BO_27632C1"/>
+        <sbol:displayId>BO_27632C1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.org/public/bsu/BO_27632/1"/>
       </sbol:Component>
     </sbol:component>
     <sbol:sequenceConstraint>
@@ -452,6 +440,18 @@
         <sbol:object rdf:resource="https://synbiohub.org/public/bsu/design2/BO_27783C2/1"/>
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_11410/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_11410"/>
+    <sbol:displayId>BO_11410</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>GltC</dcterms:title>
+    <rdfs:label>BSU18460</rdfs:label>
+    <ns6:OBI_0002110>10.1145/2631921</ns6:OBI_0002110>
+    <rdfs:label>GltC</rdfs:label>
+    <ns6:OBI_0001617>23571273</ns6:OBI_0001617>
+    <ns6:OBI_0001617>27110921</ns6:OBI_0001617>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.org/public/bsu/BO_32077/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.org/public/bsu/BO_32077"/>

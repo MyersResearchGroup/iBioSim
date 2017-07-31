@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.prefs.Preferences;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -47,57 +46,29 @@ public class SBOLUtility
 {
 	private static SBOLDocument SBOLDOC; 
 
-	public static SBOLDocument loadSBOLFiles(HashSet<String> sbolFilePaths, String defaultURIPrefix) {
-		SBOLDocument sbolDoc = new SBOLDocument();
-		Preferences biosimrc = Preferences.userRoot();
-
-		for (String filePath : sbolFilePaths) 
-		{
-			File f = new File(filePath);
-			String fileName = f.getName().replace(".sbol", "");
-			sbolDoc.setDefaultURIprefix(defaultURIPrefix + "/" + fileName);
-			SBOLReader.setDropObjectsWithDuplicateURIs(true);
-			SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
-			try
-			{
-				String sbolRDF = filePath.replace(".sbol", ".rdf");
-				SBOLReader.setKeepGoing(false);
-				SBOLDocument newSbolDoc = SBOLReader.read(sbolRDF);
-				for(ComponentDefinition c : newSbolDoc.getComponentDefinitions())
-				{
-					sbolDoc.createCopy(c);
-				}
-			}
-			catch (Throwable e)
-			{
-				e.printStackTrace();
-			}
-
-		}
-		return sbolDoc;
-	}
-
-
 	/**
-	 * Return the SBOLDocument parsed by the given file
-	 * @param filePath
-	 * @return
-	 * @throws SBOLConversionException 
-	 * @throws IOException 
-	 * @throws SBOLValidationException 
-	 * @throws FileNotFoundException 
+	 * Read in the given SBOL file.
+	 * 
+	 * @param filePath - Full path to the given SBOL file.
+	 * @param defaultURIPrefix - The default URI prefix to set the SBOL document when reading in the SBOL file.
+	 * @return The SBOLDocument that was created from the SBOL file.
+	 * @throws FileNotFoundException - File could not be found.
+	 * @throws SBOLValidationException - Invalid SBOL file.
+	 * @throws IOException - Unable to read in the input file.
+	 * @throws SBOLConversionException - Unable to perform internal SBOL conversion from libSBOLj library.
+	 * @throws SBOLException - Null SBOLDocument
 	 */
-	public static SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
+	public static SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException, SBOLException 
 	{
-		SBOLDocument sbolDoc = null; 
-
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
-		Preferences biosimrc = Preferences.userRoot();
 		SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
-		sbolDoc = SBOLReader.read(new FileInputStream(filePath));
-
-		return sbolDoc; 
+		SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(filePath));
+		if(sbolDoc == null)
+		{
+			throw new SBOLException("ERROR: The input SBOL file produced a null SBOLDocument.", "Null SBOLDocument");
+		}
+		return sbolDoc;
 	}
 
 	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 

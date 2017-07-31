@@ -14,16 +14,15 @@
 package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import uk.ac.ncl.ico2s.VPRException;
 import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
@@ -123,16 +122,13 @@ public class VPRModelGenerator {
 		if(sbolURIPre.isEmpty())
 		{
 			//Default SBOL uri prefix if user didn't provide one.
-			sbolURIPre = "http://www.async.ece.utah.edu/";
+			sbolURIPre = "http://www.async.ece.utah.edu";
 		}
 		
-		File file = new File(fullInputFileName);
-		SBOLDocument inputSBOL, outputSBOL = null;
 		try 
 		{
-			SBOLReader.setURIPrefix(sbolURIPre);
-			inputSBOL = SBOLReader.read(file);
-			outputSBOL = generateModel(selectedRepo, inputSBOL);
+			SBOLDocument inputSBOL = SBOLUtility.loadSBOLFile(fullInputFileName, sbolURIPre);
+			SBOLDocument outputSBOL = generateModel(selectedRepo, inputSBOL);
 			if(!noOutput)
 			{
 				if(outputFileName.isEmpty())
@@ -173,6 +169,10 @@ public class VPRModelGenerator {
 		{
 			System.err.println("ERROR: This SBOL file has contents that can't perform VPR model generation.");
 			e.printStackTrace();
+		} 
+		catch (SBOLException e) 
+		{
+			System.err.println(e.getMessage());
 		}
 		
 		
