@@ -37,6 +37,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,6 +46,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -339,7 +341,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
-	protected SBOLDocument			sbolDocument		= null;
+	protected SBOLDocument			libSBOLDoc		= null;
 
 	public void OSXSetup() {
 		Application app = Application.getApplication();
@@ -356,8 +358,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				EditPreferences editPreferences = new EditPreferences(frame, async);
 				editPreferences.preferences();
 				tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
-				if (sbolDocument != null) {
-					sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+				if (libSBOLDoc != null) {
+					libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 				}
 			}
 		});
@@ -1452,9 +1454,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			sedmlDocument = new SEDMLDocument(1, 2);
 			writeSEDMLDocument();
 
-			sbolDocument = new SBOLDocument();
-			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			libSBOLDoc = new SBOLDocument();
+			libSBOLDoc.setCreateDefaults(true);
+			libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			writeSBOLDocument();
 
 			refresh();
@@ -2924,8 +2926,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			EditPreferences editPreferences = new EditPreferences(frame, async);
 			editPreferences.preferences();
 			tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
-			if (sbolDocument != null) {
-				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			if (libSBOLDoc != null) {
+				libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			}
 		} else if (e.getSource() == clearRecent) {
 			removeAllRecentProjects();
@@ -4704,7 +4706,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 */
 	public SBOLDocument getSBOLDocument() {
 		readSBOLDocument();
-		return sbolDocument;
+		return libSBOLDoc;
 	}
 
 	/**
@@ -4714,7 +4716,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 * @return True if the SBOLDocument is not null. False otherwise.
 	 */
 	public boolean isSetSBOLDocument() {
-		return this.sbolDocument != null ? true : false;
+		return this.libSBOLDoc != null ? true : false;
 	}
 
 	/**
@@ -4729,17 +4731,17 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		File sbolFile = new File(sbolFilename);
 		if (sbolFile.exists()) {
 			try {
-				sbolDocument = SBOLReader.read(sbolFilename);
-				sbolDocument.setCreateDefaults(true);
-				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+				libSBOLDoc = SBOLReader.read(sbolFilename);
+				libSBOLDoc.setCreateDefaults(true);
+				libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			sbolDocument = new SBOLDocument();
-			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			libSBOLDoc = new SBOLDocument();
+			libSBOLDoc.setCreateDefaults(true);
+			libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
 			writeSBOLDocument();
 		}
 	}
@@ -4751,7 +4753,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	public void writeSBOLDocument() {
 		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
 		try {
-			sbolDocument.write(sbolFilename);
+			libSBOLDoc.write(sbolFilename);
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame, "Unable to write SBOL file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -6353,6 +6355,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	
 	/**
 	 * Perform VPR Model generator from the given SBOLDocument.
+	 * @param filePath - The directory where the SBOL file is located.
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
 	 * @param chosenDesign - The chosen design that the user would like to perform VPR Model Generation from.
 	 */
@@ -6371,10 +6374,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
 				//update SBOL library file with newly generated components that vpr model generator created.
-				SBOLDocument libSBOLDoc = getSBOLDocument();
 				SBOLUtility.copyAllTopLevels(chosenDesign, libSBOLDoc);
-				generateSBMLFromSBOL(chosenDesign, tree.getFile());
-				
+				generateSBMLFromSBOL(chosenDesign, filePath);
+				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
 		} 
