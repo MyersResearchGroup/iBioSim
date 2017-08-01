@@ -1577,7 +1577,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					root = projDir;
 					currentProjectId = GlobalConstants.getFilename(root);
 					readSEDMLDocument();
-					readSBOLDocument();
+					readLibSBOLDocument();
 					refresh();
 					addToTree(currentProjectId + ".sbol");
 					tab.removeAll();
@@ -2580,7 +2580,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			} else if (comp instanceof SBOLDesignerPlugin) {
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
-					readSBOLDocument();
+					readLibSBOLDocument();
 					log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2692,7 +2692,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				((SBOLDesignerPlugin) comp).setFileName(newName);
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
-					readSBOLDocument();
+					readLibSBOLDocument();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -2884,7 +2884,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				log.addText("Saving SBOL file: " + ((SBOLDesignerPlugin) comp).getFileName() + "\n");
 				try {
 					((SBOLDesignerPlugin) comp).saveSBOL();
-					readSBOLDocument();
+					readLibSBOLDocument();
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -3412,37 +3412,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					}
 					System.gc();
 					if (fullPath.endsWith(".xml")) {
-						// This code removes generated SBOL from SBOL file when
-						// SBML file is deleted
-						// Not really necessary
-						// SBMLDocument document =
-						// SBMLutilities.readSBML(fullPath);
-						// List<URI> sbolURIs = new LinkedList<URI>();
-						// AnnotationUtility.parseSBOLAnnotation(document.getModel(),
-						// sbolURIs);
-						// Iterator<URI> sbolIterator = sbolURIs.iterator();
-						// while (sbolIterator != null &&
-						// sbolIterator.hasNext())
-						// {
-						// URI sbolURI = sbolIterator.next();
-						// if (sbolURI.toString().endsWith("iBioSim"))
-						// {
-						// sbolIterator = null;
-						// for (String filePath :
-						// getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION))
-						// {
-						// SBOLDocument sbolDoc =
-						// SBOLUtility2.loadSBOLFile(filePath);
-						// try {
-						// SBOLUtility2.deleteDNAComponent(sbolURI, sbolDoc);
-						// }
-						// catch (SBOLValidationException e) {
-						// e.printStackTrace();
-						// }
-						// SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
-						// }
-						// }
-						// }
 						new File(fullPath.replace(".xml", ".gcm")).delete();
 					}
 					new File(fullPath).delete();
@@ -4705,7 +4674,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 * @return The current SBOLDocument.
 	 */
 	public SBOLDocument getSBOLDocument() {
-		readSBOLDocument();
+		readLibSBOLDocument();
 		return libSBOLDoc;
 	}
 
@@ -4726,19 +4695,51 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	 * with the current iBioSim workspace project name.
 	 * 
 	 */
-	protected void readSBOLDocument() {
+	protected void readLibSBOLDocument() {
 		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
 		File sbolFile = new File(sbolFilename);
-		if (sbolFile.exists()) {
-			try {
-				libSBOLDoc = SBOLReader.read(sbolFilename);
-				libSBOLDoc.setCreateDefaults(true);
-				libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		} else {
+		if (sbolFile.exists()) 
+		{
+				try 
+				{
+					libSBOLDoc = SBOLUtility.loadSBOLFile(sbolFilename, EditPreferences.getDefaultUriPrefix());
+					libSBOLDoc.setCreateDefaults(true);
+				} 
+				catch (FileNotFoundException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "File cannot be found when loading iBioSim's SBOL library file: " + sbolFilename, 
+							"File Not Found",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (SBOLException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, 
+							e.getMessage(), e.getTitle(), 
+							JOptionPane.ERROR_MESSAGE);
+				} 
+				catch (SBOLValidationException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + sbolFilename + " is invalid.", "Invalid SBOL",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (IOException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to read iBioSim's SBOL library file: " + sbolFilename, 
+							"I/O Exception",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (SBOLConversionException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to perform SBOLConversion when reading this file: " + sbolFilename, 
+							"SBOL Conversion Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+		} 
+		else 
+		{
 			libSBOLDoc = new SBOLDocument();
 			libSBOLDoc.setCreateDefaults(true);
 			libSBOLDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
@@ -5131,7 +5132,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		return true;
 	}
 
-	private void importSBOLFile(String filename) {
+	private void importSBOLFile(String filename) 
+	{
 		try {
 			File sbolFile = new File(filename.trim());
 			SBOLReader.setKeepGoing(true);
@@ -7037,7 +7039,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					if (value == YES_OPTION) {
 						try {
 							editor.saveSBOL();
-							readSBOLDocument();
+							readLibSBOLDocument();
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
 									JOptionPane.ERROR_MESSAGE);
@@ -7051,7 +7053,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					} else if (value == YES_TO_ALL_OPTION) {
 						try {
 							editor.saveSBOL();
-							readSBOLDocument();
+							readLibSBOLDocument();
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
 									JOptionPane.ERROR_MESSAGE);
@@ -7064,7 +7066,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				} else if (autosave == 1) {
 					try {
 						editor.saveSBOL();
-						readSBOLDocument();
+						readLibSBOLDocument();
 					} catch (Exception e) {
 						JOptionPane.showMessageDialog(frame, "Error Saving SBOL File.", "Error",
 								JOptionPane.ERROR_MESSAGE);

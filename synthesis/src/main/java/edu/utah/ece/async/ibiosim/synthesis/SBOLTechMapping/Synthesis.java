@@ -34,6 +34,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
@@ -59,11 +60,11 @@ public class Synthesis
 	}
 
 
-	public void createSBOLGraph(File fileName, boolean isLibraryFile)
+	public void createSBOLGraph(String fileName, boolean isLibraryFile, String defaultURIPrefix)
 	{
 		try
 		{
-			SBOLDocument sbolDoc = SBOLReader.read(fileName);
+			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fileName, defaultURIPrefix);
 			for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 			{
 				SBOLGraph sbolGraph = new SBOLGraph();

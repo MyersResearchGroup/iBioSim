@@ -549,9 +549,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
-		catch (SBOLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		catch (SBOLException e1) 
+		{
+			JOptionPane.showMessageDialog(getParent(), 
+					e1.getMessage(), e1.getTitle(), 
+					JOptionPane.ERROR_MESSAGE);
 		}
 		return doc;
 	}
