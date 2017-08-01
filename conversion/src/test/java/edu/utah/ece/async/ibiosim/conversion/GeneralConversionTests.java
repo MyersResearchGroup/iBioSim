@@ -14,8 +14,6 @@
 package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
@@ -28,6 +26,8 @@ import org.junit.Test;
  */
 public class GeneralConversionTests extends ConversionAbstractTests {
 	
+	private String uriPrefix = "http://www.async.ece.utah.edu/";
+	
 	@Test
 	public void test_validation(){
 		/* test validation on a valid sbol file. */
@@ -35,7 +35,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbolDir + fileName + ".xml";
 		
 		//Options
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String selectedMod = "http://sbols.org/CRISPR_Example/CRPb_characterization_Circuit/1.0.0";
 		
 		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-s", selectedMod};
@@ -51,8 +50,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String inputfile = sbolDir + fileName + ".xml";
 		String inputfile2 = sbolDir + fileName2 + ".xml";
 		
-		String uriPrefix = "http://www.async.ece.utah.edu/";
-		
 		String[] converter_cmdArgs = {"-no", inputfile, "-p", uriPrefix, "-e", inputfile2, "-mf", "mainfileRes" , "-cf", "secondFileRes"};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
@@ -66,7 +63,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outFile =  sbol2sbml_outputDir + fileName + "_out2";
 		
 		//Options
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputLang = "SBML";	
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-esf", "-p", uriPrefix, inputfile, "-oDir", sbol2sbml_outputDir, "-o", outFile};
@@ -81,7 +77,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outFile =  sbol2sbml_outputDir + fileName + "_out2";
 		
 		//Options
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputLang = "SBML";	
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-rsbol", sbolDir, "-p", uriPrefix, inputfile, "-o", outFile};
@@ -97,7 +92,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		
 		//Options
 		String outputLang = "GenBank";
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
@@ -112,7 +106,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		
 		//Options
 		String outputLang = "SBOL2";
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputFile = sbml2sbol_outputDir + fileName + "_out";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-p", uriPrefix, inputfile, "-o", outputFile};
@@ -128,7 +121,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		
 		//Options
 		String outputLang = "SBOL2";
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputFile = sbml2sbol_outputDir + fileName + "_out";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-rsbml", sbmlDir, "-p", uriPrefix, inputfile, "-o", outputFile};
@@ -144,7 +136,6 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		
 		//Options
 		String outputLang = "SBOL2";
-		String uriPrefix = "http://www.async.ece.utah.edu/";
 		String outputFile = sbml2sbol_outputDir + fileName + "_out";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-rsbml", sbmlDir, "-p", uriPrefix, inputfile, "-o", outputFile};

@@ -40,6 +40,7 @@ import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
@@ -207,8 +208,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		String filePath = sbolFilePaths.iterator().next();
 
 		SBOLDocument workingDoc = readSBOLFile(filePath);
-		workingDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
-
 		if (e.getActionCommand().equals("associateSBOL")) 
 		{
 			if (sbolURIs.size() > 0) 
@@ -511,6 +510,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	
 	/**
 	 * Read the given SBOLDocument from the specified filePath.
+	 * 
 	 * @param filePath - The location to read the SBOLDocument.
 	 * @return The SBOLDocument that was read in. 
 	 */
@@ -548,6 +548,12 @@ public class SBOLField2 extends JPanel implements ActionListener {
 					"SBOL Conversion Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+		}
+		catch (SBOLException e1) 
+		{
+			JOptionPane.showMessageDialog(getParent(), 
+					e1.getMessage(), e1.getTitle(), 
+					JOptionPane.ERROR_MESSAGE);
 		}
 		return doc;
 	}

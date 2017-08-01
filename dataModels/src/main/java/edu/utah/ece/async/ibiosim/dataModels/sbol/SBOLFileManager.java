@@ -214,37 +214,7 @@ public class SBOLFileManager {
 		SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
 	}
 	
-//	public static void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
-//		SBOLDocument sbolDoc;
-//		File exportFile = new File(exportFilePath);
-//		if (exportFile.exists()) {
-//			sbolDoc = SBOLUtility.loadSBOLFile(exportFilePath);
-//			if (sbolDoc != null) {
-//				for (DnaComponent dnaComp : dnaComps)
-//					SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
-//				SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
-//			}
-//		} else {
-//			sbolDoc = SBOLFactory.createDocument();
-//			for (DnaComponent dnaComp : dnaComps)
-//				SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
-//			try {
-//				exportFile.createNewFile();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
-//		}
-//	}
-//	
-//	public void deleteDNAComponent(URI deletingURI) {
-//		for (String sbolFilePath : fileDocMap.keySet()) {
-//			SBOLDocument sbolDoc = fileDocMap.get(sbolFilePath);
-//			SBOLUtility.deleteDNAComponent(deletingURI, sbolDoc);
-//			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
-//		}
-//	}
-	
+
 	public Set<String> getSBOLFilePaths() {
 		return fileDocMap.keySet();
 	}
