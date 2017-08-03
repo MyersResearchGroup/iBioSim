@@ -1,18 +1,1150 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/AND_pipaH">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH"/>
-    <sbol:displayId>AND_pipaH</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/AND_pexsC">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC"/>
+    <sbol:displayId>AND_pexsC</sbol:displayId>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pipaH/ipgC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/ipgC"/>
-        <sbol:displayId>ipgC</sbol:displayId>
-        <dcterms:title>ipgC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH__ipgC"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
+        <sbol:displayId>exsDA</sbol:displayId>
+        <dcterms:title>exsDA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsDA"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
+        <sbol:displayId>exsC_exsDA</sbol:displayId>
+        <dcterms:title>exsC_exsDA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsC_exsDA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
+        <sbol:displayId>pexsC</sbol:displayId>
+        <dcterms:title>pexsC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__pexsC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
+        <sbol:displayId>exsC</sbol:displayId>
+        <dcterms:title>exsC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/invF">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
+        <sbol:displayId>invF</sbol:displayId>
+        <dcterms:title>invF</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__invF"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF"/>
+        <sbol:displayId>pexsC_prod_invF</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/pexsC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/pexsC"/>
+            <sbol:displayId>pexsC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/invF">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/invF"/>
+            <sbol:displayId>invF</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC"/>
+        <sbol:displayId>exsC_exsDA_act_pexsC</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/exsC_exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/exsC_exsDA"/>
+            <sbol:displayId>exsC_exsDA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/pexsC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/pexsC"/>
+            <sbol:displayId>pexsC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA"/>
+        <sbol:displayId>Complex_exsC_exsDA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC_exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC_exsDA"/>
+            <sbol:displayId>exsC_exsDA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC"/>
+            <sbol:displayId>exsC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsDA"/>
+            <sbol:displayId>exsDA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/AND_pexsC_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Main">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main"/>
+    <sbol:displayId>Main</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/_3OC6">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/_3OC6"/>
+        <sbol:displayId>_3OC6</sbol:displayId>
+        <dcterms:title>_3OC6</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main___3OC6"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/IPTG">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/IPTG"/>
+        <sbol:displayId>IPTG</sbol:displayId>
+        <dcterms:title>IPTG</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__IPTG"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/rfp">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/rfp"/>
+        <sbol:displayId>rfp</sbol:displayId>
+        <dcterms:title>rfp</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__rfp"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
+        <sbol:displayId>exsDA</sbol:displayId>
+        <dcterms:title>exsDA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__exsDA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/mxiE">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
+        <sbol:displayId>mxiE</sbol:displayId>
+        <dcterms:title>mxiE</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__mxiE"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/exsC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
+        <sbol:displayId>exsC</sbol:displayId>
+        <dcterms:title>exsC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__exsC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/aTc">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/aTc"/>
+        <sbol:displayId>aTc</sbol:displayId>
+        <dcterms:title>aTc</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__aTc"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/ipgC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
+        <sbol:displayId>ipgC</sbol:displayId>
+        <dcterms:title>ipgC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__ipgC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/sicA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
+        <sbol:displayId>sicA</sbol:displayId>
+        <dcterms:title>sicA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__sicA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/invF">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
+        <sbol:displayId>invF</sbol:displayId>
+        <dcterms:title>invF</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__invF"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/Ara">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/Ara"/>
+        <sbol:displayId>Ara</sbol:displayId>
+        <dcterms:title>Ara</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__Ara"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Main_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C6">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6"/>
+        <sbol:displayId>C6</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/exsDA"/>
+            <sbol:displayId>exsDA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/invF">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/invF"/>
+            <sbol:displayId>invF</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/exsC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/exsC"/>
+            <sbol:displayId>exsC</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C3">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3"/>
+        <sbol:displayId>C3</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C3/exsC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3/exsC"/>
+            <sbol:displayId>exsC</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/exsC"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C3/_3OC6">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3/_3OC6"/>
+            <sbol:displayId>_3OC6</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/_3OC6"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C2">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2"/>
+        <sbol:displayId>C2</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C2/IPTG">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2/IPTG"/>
+            <sbol:displayId>IPTG</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/IPTG"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C2/mxiE">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2/mxiE"/>
+            <sbol:displayId>mxiE</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C4">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4"/>
+        <sbol:displayId>C4</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C4/aTc">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4/aTc"/>
+            <sbol:displayId>aTc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/aTc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C4/exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4/exsDA"/>
+            <sbol:displayId>exsDA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C7">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7"/>
+        <sbol:displayId>C7</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/rfp">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/rfp"/>
+            <sbol:displayId>rfp</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/rfp"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/rfp"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/invF">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/invF"/>
+            <sbol:displayId>invF</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/invF"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/sicA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/sicA"/>
+            <sbol:displayId>sicA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/sicA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1"/>
+        <sbol:displayId>C1</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C1/ipgC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1/ipgC"/>
+            <sbol:displayId>ipgC</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C1/Ara">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1/Ara"/>
+            <sbol:displayId>Ara</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/Ara"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C5">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5"/>
+        <sbol:displayId>C5</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/ipgC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/ipgC"/>
+            <sbol:displayId>ipgC</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/ipgC"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/mxiE">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/mxiE"/>
+            <sbol:displayId>mxiE</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/mxiE"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/sicA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/sicA"/>
+            <sbol:displayId>sicA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/sicA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_Ara">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara"/>
+    <sbol:displayId>Sensor_Ara</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA"/>
+        <sbol:displayId>pBAD_mRNA</sbol:displayId>
+        <dcterms:title>pBAD_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__pBAD_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
+        <sbol:displayId>Ara_araC</sbol:displayId>
+        <dcterms:title>Ara_araC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__Ara_araC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
+        <sbol:displayId>Ara</sbol:displayId>
+        <dcterms:title>Ara</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__Ara"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA"/>
+        <sbol:displayId>P0_mRNA</sbol:displayId>
+        <dcterms:title>P0_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__P0_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
+        <sbol:displayId>pBAD</sbol:displayId>
+        <dcterms:title>pBAD</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__pBAD"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/araC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
+        <sbol:displayId>araC</sbol:displayId>
+        <dcterms:title>araC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__araC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/ipgC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
+        <sbol:displayId>ipgC</sbol:displayId>
+        <dcterms:title>ipgC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__ipgC"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
+        <sbol:displayId>P0</sbol:displayId>
+        <dcterms:title>P0</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__P0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD"/>
+        <sbol:displayId>Ara_araC_act_pBAD</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/Ara_araC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/Ara_araC"/>
+            <sbol:displayId>Ara_araC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/pBAD">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/pBAD"/>
+            <sbol:displayId>pBAD</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC"/>
+        <sbol:displayId>P0_prod_araC</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/araC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/araC"/>
+            <sbol:displayId>araC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA"/>
+        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0_mRNA"/>
+            <sbol:displayId>P0_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA"/>
+        <sbol:displayId>pBAD_prod_pBAD_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD"/>
+            <sbol:displayId>pBAD</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD_mRNA"/>
+            <sbol:displayId>pBAD_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC"/>
+        <sbol:displayId>Complex_Ara_araC</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara_araC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara_araC"/>
+            <sbol:displayId>Ara_araC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/araC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/araC"/>
+            <sbol:displayId>araC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara"/>
+            <sbol:displayId>Ara</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC"/>
+        <sbol:displayId>pBAD_prod_ipgC</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/ipgC">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/ipgC"/>
+            <sbol:displayId>ipgC</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/pBAD">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/pBAD"/>
+            <sbol:displayId>pBAD</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG"/>
+    <sbol:displayId>Sensor_IPTG</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
+        <sbol:displayId>IPTG</sbol:displayId>
+        <dcterms:title>IPTG</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__IPTG"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
+        <sbol:displayId>pTac</sbol:displayId>
+        <dcterms:title>pTac</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__pTac"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
+        <sbol:displayId>mxiE</sbol:displayId>
+        <dcterms:title>mxiE</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__mxiE"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
+        <sbol:displayId>ITPG_lacI</sbol:displayId>
+        <dcterms:title>ITPG_lacI</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__ITPG_lacI"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA"/>
+        <sbol:displayId>P0_mRNA</sbol:displayId>
+        <dcterms:title>P0_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__P0_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/lacI">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
+        <sbol:displayId>lacI</sbol:displayId>
+        <dcterms:title>lacI</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__lacI"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
+        <sbol:displayId>P0</sbol:displayId>
+        <dcterms:title>P0</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__P0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA"/>
+        <sbol:displayId>pTac_mRNA</sbol:displayId>
+        <dcterms:title>pTac_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__pTac_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE"/>
+        <sbol:displayId>pTac_prod_mxiE</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/pTac">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/pTac"/>
+            <sbol:displayId>pTac</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/mxiE">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/mxiE"/>
+            <sbol:displayId>mxiE</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA"/>
+        <sbol:displayId>pTac_prod_pTac_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac"/>
+            <sbol:displayId>pTac</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac_mRNA"/>
+            <sbol:displayId>pTac_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI"/>
+        <sbol:displayId>Complex_ITPG_lacI</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/IPTG">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/IPTG"/>
+            <sbol:displayId>IPTG</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/ITPG_lacI">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/ITPG_lacI"/>
+            <sbol:displayId>ITPG_lacI</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/lacI">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/lacI"/>
+            <sbol:displayId>lacI</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI"/>
+        <sbol:displayId>P0_prod_lacI</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/lacI">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/lacI"/>
+            <sbol:displayId>lacI</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac"/>
+        <sbol:displayId>ITPG_lacI_act_pTac</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/pTac">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/pTac"/>
+            <sbol:displayId>pTac</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/ITPG_lacI">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/ITPG_lacI"/>
+            <sbol:displayId>ITPG_lacI</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA"/>
+        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0_mRNA"/>
+            <sbol:displayId>P0_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_aTc">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc"/>
+    <sbol:displayId>Sensor_aTc</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
+        <sbol:displayId>exsDA</sbol:displayId>
+        <dcterms:title>exsDA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__exsDA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA"/>
+        <sbol:displayId>P0_mRNA</sbol:displayId>
+        <dcterms:title>P0_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__P0_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
+        <sbol:displayId>aTc_tetR</sbol:displayId>
+        <dcterms:title>aTc_tetR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__aTc_tetR"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
+        <sbol:displayId>pTet</sbol:displayId>
+        <dcterms:title>pTet</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__pTet"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA"/>
+        <sbol:displayId>pTet_mRNA</sbol:displayId>
+        <dcterms:title>pTet_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__pTet_mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
+        <sbol:displayId>aTc</sbol:displayId>
+        <dcterms:title>aTc</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__aTc"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/tetR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
+        <sbol:displayId>tetR</sbol:displayId>
+        <dcterms:title>tetR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__tetR"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
+        <sbol:displayId>P0</sbol:displayId>
+        <dcterms:title>P0</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__P0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA"/>
+        <sbol:displayId>pTet_prod_pTet_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet_mRNA"/>
+            <sbol:displayId>pTet_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet"/>
+            <sbol:displayId>pTet</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA"/>
+        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0_mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0_mRNA"/>
+            <sbol:displayId>P0_mRNA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR"/>
+        <sbol:displayId>Complex_aTc_tetR</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc"/>
+            <sbol:displayId>aTc</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc_tetR">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc_tetR"/>
+            <sbol:displayId>aTc_tetR</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/tetR">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/tetR"/>
+            <sbol:displayId>tetR</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet"/>
+        <sbol:displayId>aTc_tetR_act_pTet</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/aTc_tetR">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/aTc_tetR"/>
+            <sbol:displayId>aTc_tetR</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/pTet">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/pTet"/>
+            <sbol:displayId>pTet</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR"/>
+        <sbol:displayId>P0_prod_tetR</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/tetR">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/tetR"/>
+            <sbol:displayId>tetR</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/P0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA"/>
+        <sbol:displayId>pTet_prod_exsDA</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/exsDA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/exsDA"/>
+            <sbol:displayId>exsDA</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/pTet">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/pTet"/>
+            <sbol:displayId>pTet</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/AND_pipaH">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH"/>
+    <sbol:displayId>AND_pipaH</sbol:displayId>
     <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pipaH/mxiE">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/mxiE"/>
@@ -24,13 +1156,13 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pipaH/sicA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/sicA"/>
-        <sbol:displayId>sicA</sbol:displayId>
-        <dcterms:title>sicA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH__sicA"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pipaH/ipgC">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/ipgC"/>
+        <sbol:displayId>ipgC</sbol:displayId>
+        <dcterms:title>ipgC</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH__ipgC"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -51,6 +1183,16 @@
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH__ipgC_mxiE"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pipaH/sicA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/sicA"/>
+        <sbol:displayId>sicA</sbol:displayId>
+        <dcterms:title>sicA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH__sicA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -136,26 +1278,6 @@
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA"/>
     <sbol:displayId>AND_psicA</sbol:displayId>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/rfp">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/rfp"/>
-        <sbol:displayId>rfp</sbol:displayId>
-        <dcterms:title>rfp</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA__rfp"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/psicA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/psicA"/>
-        <sbol:displayId>psicA</sbol:displayId>
-        <dcterms:title>psicA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA__psicA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/sicA_invF">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/sicA_invF"/>
         <sbol:displayId>sicA_invF</sbol:displayId>
@@ -176,6 +1298,16 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/psicA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/psicA"/>
+        <sbol:displayId>psicA</sbol:displayId>
+        <dcterms:title>psicA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA__psicA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/invF">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/invF"/>
         <sbol:displayId>invF</sbol:displayId>
@@ -183,6 +1315,16 @@
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA__invF"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_psicA/rfp">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA/rfp"/>
+        <sbol:displayId>rfp</sbol:displayId>
+        <dcterms:title>rfp</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA__rfp"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -264,147 +1406,15 @@
     </sbol:interaction>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/AND_psicA_model"/>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/AND_pexsC">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC"/>
-    <sbol:displayId>AND_pexsC</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
-        <sbol:displayId>exsDA</sbol:displayId>
-        <dcterms:title>exsDA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsDA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
-        <sbol:displayId>exsC_exsDA</sbol:displayId>
-        <dcterms:title>exsC_exsDA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsC_exsDA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
-        <sbol:displayId>exsC</sbol:displayId>
-        <dcterms:title>exsC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__exsC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/invF">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
-        <sbol:displayId>invF</sbol:displayId>
-        <dcterms:title>invF</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__invF"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
-        <sbol:displayId>pexsC</sbol:displayId>
-        <dcterms:title>pexsC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC__pexsC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF"/>
-        <sbol:displayId>pexsC_prod_invF</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/pexsC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/pexsC"/>
-            <sbol:displayId>pexsC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/invF">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC_prod_invF/invF"/>
-            <sbol:displayId>invF</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC"/>
-        <sbol:displayId>exsC_exsDA_act_pexsC</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/exsC_exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/exsC_exsDA"/>
-            <sbol:displayId>exsC_exsDA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/pexsC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA_act_pexsC/pexsC"/>
-            <sbol:displayId>pexsC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/pexsC"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA"/>
-        <sbol:displayId>Complex_exsC_exsDA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC_exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC_exsDA"/>
-            <sbol:displayId>exsC_exsDA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC_exsDA"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsC"/>
-            <sbol:displayId>exsC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/Complex_exsC_exsDA/exsDA"/>
-            <sbol:displayId>exsDA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/AND_pexsC_model"/>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6"/>
     <sbol:displayId>Sensor_3OC6</sbol:displayId>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6_luxR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6_luxR"/>
-        <sbol:displayId>_3OC6_luxR</sbol:displayId>
-        <dcterms:title>_3OC6_luxR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6___3OC6_luxR"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/luxR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/luxR"/>
+        <sbol:displayId>luxR</sbol:displayId>
+        <dcterms:title>luxR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6__luxR"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -430,16 +1440,6 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/P0">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/P0"/>
-        <sbol:displayId>P0</sbol:displayId>
-        <dcterms:title>P0</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6__P0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/exsC">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/exsC"/>
         <sbol:displayId>exsC</sbol:displayId>
@@ -450,11 +1450,21 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/luxR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/luxR"/>
-        <sbol:displayId>luxR</sbol:displayId>
-        <dcterms:title>luxR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6__luxR"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/P0">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/P0"/>
+        <sbol:displayId>P0</sbol:displayId>
+        <dcterms:title>P0</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6__P0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6_luxR">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6_luxR"/>
+        <sbol:displayId>_3OC6_luxR</sbol:displayId>
+        <dcterms:title>_3OC6_luxR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6___3OC6_luxR"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -626,1016 +1636,6 @@
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6_model"/>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_Ara">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara"/>
-    <sbol:displayId>Sensor_Ara</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
-        <sbol:displayId>Ara</sbol:displayId>
-        <dcterms:title>Ara</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__Ara"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
-        <sbol:displayId>P0</sbol:displayId>
-        <dcterms:title>P0</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__P0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
-        <sbol:displayId>pBAD</sbol:displayId>
-        <dcterms:title>pBAD</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__pBAD"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA"/>
-        <sbol:displayId>pBAD_mRNA</sbol:displayId>
-        <dcterms:title>pBAD_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__pBAD_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA"/>
-        <sbol:displayId>P0_mRNA</sbol:displayId>
-        <dcterms:title>P0_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__P0_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/araC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
-        <sbol:displayId>araC</sbol:displayId>
-        <dcterms:title>araC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__araC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
-        <sbol:displayId>Ara_araC</sbol:displayId>
-        <dcterms:title>Ara_araC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__Ara_araC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/ipgC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
-        <sbol:displayId>ipgC</sbol:displayId>
-        <dcterms:title>ipgC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara__ipgC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD"/>
-        <sbol:displayId>Ara_araC_act_pBAD</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/Ara_araC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/Ara_araC"/>
-            <sbol:displayId>Ara_araC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/pBAD">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC_act_pBAD/pBAD"/>
-            <sbol:displayId>pBAD</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC"/>
-        <sbol:displayId>P0_prod_araC</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/araC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/araC"/>
-            <sbol:displayId>araC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_araC/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA"/>
-        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_prod_P0_mRNA/P0_mRNA"/>
-            <sbol:displayId>P0_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/P0_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA"/>
-        <sbol:displayId>pBAD_prod_pBAD_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD"/>
-            <sbol:displayId>pBAD</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_pBAD_mRNA/pBAD_mRNA"/>
-            <sbol:displayId>pBAD_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC"/>
-        <sbol:displayId>Complex_Ara_araC</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara_araC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara_araC"/>
-            <sbol:displayId>Ara_araC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara_araC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/araC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/araC"/>
-            <sbol:displayId>araC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/araC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Complex_Ara_araC/Ara"/>
-            <sbol:displayId>Ara</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC"/>
-        <sbol:displayId>pBAD_prod_ipgC</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/ipgC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/ipgC"/>
-            <sbol:displayId>ipgC</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/pBAD">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD_prod_ipgC/pBAD"/>
-            <sbol:displayId>pBAD</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/pBAD"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara_model"/>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_aTc">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc"/>
-    <sbol:displayId>Sensor_aTc</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
-        <sbol:displayId>P0</sbol:displayId>
-        <dcterms:title>P0</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__P0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
-        <sbol:displayId>aTc</sbol:displayId>
-        <dcterms:title>aTc</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__aTc"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/tetR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
-        <sbol:displayId>tetR</sbol:displayId>
-        <dcterms:title>tetR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__tetR"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA"/>
-        <sbol:displayId>P0_mRNA</sbol:displayId>
-        <dcterms:title>P0_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__P0_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
-        <sbol:displayId>exsDA</sbol:displayId>
-        <dcterms:title>exsDA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__exsDA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
-        <sbol:displayId>aTc_tetR</sbol:displayId>
-        <dcterms:title>aTc_tetR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__aTc_tetR"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
-        <sbol:displayId>pTet</sbol:displayId>
-        <dcterms:title>pTet</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__pTet"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA"/>
-        <sbol:displayId>pTet_mRNA</sbol:displayId>
-        <dcterms:title>pTet_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc__pTet_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA"/>
-        <sbol:displayId>pTet_prod_pTet_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet_mRNA"/>
-            <sbol:displayId>pTet_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_pTet_mRNA/pTet"/>
-            <sbol:displayId>pTet</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA"/>
-        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_P0_mRNA/P0_mRNA"/>
-            <sbol:displayId>P0_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR"/>
-        <sbol:displayId>Complex_aTc_tetR</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc"/>
-            <sbol:displayId>aTc</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc_tetR">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/aTc_tetR"/>
-            <sbol:displayId>aTc_tetR</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/tetR">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/Complex_aTc_tetR/tetR"/>
-            <sbol:displayId>tetR</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet"/>
-        <sbol:displayId>aTc_tetR_act_pTet</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/aTc_tetR">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/aTc_tetR"/>
-            <sbol:displayId>aTc_tetR</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/pTet">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc_tetR_act_pTet/pTet"/>
-            <sbol:displayId>pTet</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR"/>
-        <sbol:displayId>P0_prod_tetR</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/tetR">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/tetR"/>
-            <sbol:displayId>tetR</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/tetR"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0_prod_tetR/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA"/>
-        <sbol:displayId>pTet_prod_exsDA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/exsDA"/>
-            <sbol:displayId>exsDA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/pTet">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet_prod_exsDA/pTet"/>
-            <sbol:displayId>pTet</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/pTet"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc_model"/>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Main">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main"/>
-    <sbol:displayId>Main</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/exsDA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
-        <sbol:displayId>exsDA</sbol:displayId>
-        <dcterms:title>exsDA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__exsDA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/_3OC6">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/_3OC6"/>
-        <sbol:displayId>_3OC6</sbol:displayId>
-        <dcterms:title>_3OC6</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main___3OC6"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/exsC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
-        <sbol:displayId>exsC</sbol:displayId>
-        <dcterms:title>exsC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__exsC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/ipgC">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
-        <sbol:displayId>ipgC</sbol:displayId>
-        <dcterms:title>ipgC</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__ipgC"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/aTc">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/aTc"/>
-        <sbol:displayId>aTc</sbol:displayId>
-        <dcterms:title>aTc</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__aTc"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/invF">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
-        <sbol:displayId>invF</sbol:displayId>
-        <dcterms:title>invF</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__invF"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/mxiE">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
-        <sbol:displayId>mxiE</sbol:displayId>
-        <dcterms:title>mxiE</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__mxiE"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/Ara">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/Ara"/>
-        <sbol:displayId>Ara</sbol:displayId>
-        <dcterms:title>Ara</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__Ara"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/IPTG">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/IPTG"/>
-        <sbol:displayId>IPTG</sbol:displayId>
-        <dcterms:title>IPTG</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__IPTG"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/sicA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
-        <sbol:displayId>sicA</sbol:displayId>
-        <dcterms:title>sicA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__sicA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Main/rfp">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/rfp"/>
-        <sbol:displayId>rfp</sbol:displayId>
-        <dcterms:title>rfp</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Main__rfp"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Main_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C3">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3"/>
-        <sbol:displayId>C3</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C3/_3OC6">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3/_3OC6"/>
-            <sbol:displayId>_3OC6</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/_3OC6"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/_3OC6"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C3/exsC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C3/exsC"/>
-            <sbol:displayId>exsC</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_3OC6/exsC"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C4">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4"/>
-        <sbol:displayId>C4</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C4/aTc">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4/aTc"/>
-            <sbol:displayId>aTc</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/aTc"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/aTc"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C4/exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C4/exsDA"/>
-            <sbol:displayId>exsDA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_aTc/exsDA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C7">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7"/>
-        <sbol:displayId>C7</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_psicA"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/sicA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/sicA"/>
-            <sbol:displayId>sicA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/sicA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/invF">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/invF"/>
-            <sbol:displayId>invF</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/invF"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C7/rfp">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C7/rfp"/>
-            <sbol:displayId>rfp</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_psicA/rfp"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/rfp"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C6">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6"/>
-        <sbol:displayId>C6</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pexsC"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/invF">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/invF"/>
-            <sbol:displayId>invF</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/invF"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/invF"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/exsDA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/exsDA"/>
-            <sbol:displayId>exsDA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsDA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsDA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C6/exsC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C6/exsC"/>
-            <sbol:displayId>exsC</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pexsC/exsC"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/exsC"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C2">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2"/>
-        <sbol:displayId>C2</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C2/mxiE">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2/mxiE"/>
-            <sbol:displayId>mxiE</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C2/IPTG">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C2/IPTG"/>
-            <sbol:displayId>IPTG</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/IPTG"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C5">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5"/>
-        <sbol:displayId>C5</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/AND_pipaH"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/sicA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/sicA"/>
-            <sbol:displayId>sicA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/sicA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/sicA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/mxiE">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/mxiE"/>
-            <sbol:displayId>mxiE</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/mxiE"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/mxiE"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C5/ipgC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C5/ipgC"/>
-            <sbol:displayId>ipgC</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/AND_pipaH/ipgC"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/Main/C1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1"/>
-        <sbol:displayId>C1</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C1/Ara">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1/Ara"/>
-            <sbol:displayId>Ara</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/Ara"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/Ara"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/Main/C1/ipgC">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Main/C1/ipgC"/>
-            <sbol:displayId>ipgC</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/Sensor_Ara/ipgC"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/Main/ipgC"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG"/>
-    <sbol:displayId>Sensor_IPTG</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA"/>
-        <sbol:displayId>pTac_mRNA</sbol:displayId>
-        <dcterms:title>pTac_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__pTac_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
-        <sbol:displayId>IPTG</sbol:displayId>
-        <dcterms:title>IPTG</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__IPTG"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
-        <sbol:displayId>ITPG_lacI</sbol:displayId>
-        <dcterms:title>ITPG_lacI</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__ITPG_lacI"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/lacI">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
-        <sbol:displayId>lacI</sbol:displayId>
-        <dcterms:title>lacI</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__lacI"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
-        <sbol:displayId>P0</sbol:displayId>
-        <dcterms:title>P0</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__P0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
-        <sbol:displayId>pTac</sbol:displayId>
-        <dcterms:title>pTac</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__pTac"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
-        <sbol:displayId>mxiE</sbol:displayId>
-        <dcterms:title>mxiE</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__mxiE"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA"/>
-        <sbol:displayId>P0_mRNA</sbol:displayId>
-        <dcterms:title>P0_mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG__P0_mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE"/>
-        <sbol:displayId>pTac_prod_mxiE</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/pTac">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/pTac"/>
-            <sbol:displayId>pTac</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/mxiE">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_mxiE/mxiE"/>
-            <sbol:displayId>mxiE</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/mxiE"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA"/>
-        <sbol:displayId>pTac_prod_pTac_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac"/>
-            <sbol:displayId>pTac</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_prod_pTac_mRNA/pTac_mRNA"/>
-            <sbol:displayId>pTac_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI"/>
-        <sbol:displayId>Complex_ITPG_lacI</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/IPTG">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/IPTG"/>
-            <sbol:displayId>IPTG</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/IPTG"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/ITPG_lacI">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/ITPG_lacI"/>
-            <sbol:displayId>ITPG_lacI</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/lacI">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/Complex_ITPG_lacI/lacI"/>
-            <sbol:displayId>lacI</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI"/>
-        <sbol:displayId>P0_prod_lacI</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/lacI">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_lacI/lacI"/>
-            <sbol:displayId>lacI</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/lacI"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac"/>
-        <sbol:displayId>ITPG_lacI_act_pTac</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/pTac">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/pTac"/>
-            <sbol:displayId>pTac</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/pTac"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/ITPG_lacI">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI_act_pTac/ITPG_lacI"/>
-            <sbol:displayId>ITPG_lacI</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/ITPG_lacI"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA"/>
-        <sbol:displayId>P0_prod_P0_mRNA</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0_mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0_mRNA"/>
-            <sbol:displayId>P0_mRNA</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_mRNA"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0_prod_P0_mRNA/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG/P0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/Sensor_IPTG_model"/>
   </sbol:ModuleDefinition>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/AND_psicA_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND_psicA_model"/>

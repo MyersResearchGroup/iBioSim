@@ -139,9 +139,12 @@ public class SBMLutilities
 	 * @param noOutput - True if no output file is to be produced. False otherwise. 
 	 * @param sbmlOut - True if the user want to write the BioModel to an SBML file. False otherwise.
 	 * @param singleSBMLOutput - True if the user want to the list of BioModels into one SBML file rather than multiple files. False otherwise.
+	 * @throws XMLStreamException Invalid XML file
+	 * @throws SBMLException SBML Exception occurred when exporting BioModels to an SBML file
+	 * @throws IOException Unable to write file to SBML.
 	 */
-	public static void saveSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
-			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput)
+	public static void exportSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
+			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput) throws SBMLException, XMLStreamException, IOException
 	{
 		// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
 		// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
@@ -177,84 +180,52 @@ public class SBMLutilities
 	 * @param target - The BioModel to be exported
 	 * @param outputDir - The directory to store the exported BioModel
 	 * @param outputFileName - The output file name
+	 * @throws IOException Unable to write file to SBML.
+	 * @throws XMLStreamException Invalid XML file.
 	 */
-	public static void exportSingleSBMLFile(BioModel target, String outputDir, String outputFileName)
+	public static void exportSingleSBMLFile(BioModel target, String outputDir, String outputFileName) throws XMLStreamException, IOException
 	{
-		try 
+		target.exportSingleFile(outputDir + File.separator + outputFileName + ".xml"); 
+		File fileDir = new File(outputDir);
+		File[] files = fileDir.listFiles();
+		for(File f : files)
 		{
-			target.exportSingleFile(outputDir + File.separator + outputFileName + ".xml"); 
-			File fileDir = new File(outputDir);
-			File[] files = fileDir.listFiles();
-			for(File f : files)
+			if(f.isFile())
 			{
-				if(f.isFile())
+				String fileName = f.getName();
+				if(fileName.endsWith(".xml") && !fileName.equals(outputFileName + ".xml"))
 				{
-					String fileName = f.getName();
-					if(fileName.endsWith(".xml") && !fileName.equals(outputFileName + ".xml"))
-					{
-						f.delete();
-					}
+					f.delete();
 				}
 			}
-		} 
-		catch (XMLStreamException e) 
-		{
-			System.err.println("ERROR: Invalid XML file.");
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			System.err.println("ERROR: Unable to write file to SBML.");
-			e.printStackTrace();
 		}
 	}
 	
 	/**
 	 * Print the BioModel to the console
 	 * @param target - The BioModel to be printed to the console.
+	 * @throws XMLStreamException Invalid XML file
+	 * @throws SBMLException SBML Exception occurred when exporting BioModels to an SBML file
 	 */
-	public static void printSBMLModel(BioModel target)
+	public static void printSBMLModel(BioModel target) throws SBMLException, XMLStreamException
 	{
-		try 
-		{
-			SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
-		} 
-		catch (SBMLException e) 
-		{
-			System.err.println("ERROR: SBML Exception occurred when exporting BioModels to an SBML file");
-			e.printStackTrace();
-		} 
-		catch (XMLStreamException e) 
-		{
-			System.err.println("ERROR: Invalid XML file");
-			e.printStackTrace();
-		}
+		SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
 	}
 	
 	/**
 	 * Export a list of BioModels to the specified output directory.
 	 * @param models - The list of BioModels
 	 * @param outputDir - The output directory to store the SBML files
+	 * @throws IOException  Unable to write file to SBML.
+	 * @throws XMLStreamException Invalid XML file
 	 */
-	public static void exportMultSBMLFile(List<BioModel> models, String outputDir)
+	public static void exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException
 	{
 		//Multiple SBML output
 		for (BioModel model : models)
 		{
-			try 
-			{
-				model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-			} 
-			catch (XMLStreamException e) 
-			{
-				System.err.println("ERROR: Invalid XML file");
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				System.err.println("ERROR: Unable to write file to SBML.");
-				e.printStackTrace();
-			}
+
+			model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 		}	
 	}
 	
@@ -324,8 +295,6 @@ public class SBMLutilities
 		list.add(0,"(unspecified)");
 		return list.toArray();
 	}
-
-	
 	
 	public static int getModelSize(SBMLDocument doc) {
 		int size = 0;

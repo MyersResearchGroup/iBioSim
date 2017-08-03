@@ -391,7 +391,7 @@ public class Converter {
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
 							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-							SBMLutilities.saveSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
+							SBMLutilities.exportSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
 						} 
 						else
 						{
@@ -399,7 +399,7 @@ public class Converter {
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
 								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-								SBMLutilities.saveSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
+								SBMLutilities.exportSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
 					}

@@ -81,7 +81,7 @@ public class SBOLUtility
 	 * Read in the given SBOL file.
 	 * 
 	 * @param filePath - Full path to the given SBOL file.
-	 * @param defaultURIPrefix - The default URI prefix to set the SBOL document when reading in the SBOL file.
+	 * @param defaultURIPrefix - The default URI prefix to set the SBOL document when reading in the SBOL file. User is also allowed to pass in an empty string if no URI prefix is set. 
 	 * @return The SBOLDocument that was created from the SBOL file.
 	 * @throws FileNotFoundException - File could not be found.
 	 * @throws SBOLValidationException - Invalid SBOL file.
@@ -93,7 +93,10 @@ public class SBOLUtility
 	{
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
-		SBOLReader.setURIPrefix(defaultURIPrefix);
+		if(!defaultURIPrefix.isEmpty())
+		{
+			SBOLReader.setURIPrefix(defaultURIPrefix);
+		}
 		SBOLDocument sbolDoc = SBOLReader.read(filePath);
 		if(sbolDoc == null)
 		{
