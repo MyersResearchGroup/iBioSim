@@ -380,8 +380,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 
 		case 1: // Generic Part
 			ComponentDefinition cd = Parts.GENERIC.createComponentDefinition(workingDoc);
-
 			setAssociatedSBOL(filePath, workingDoc, cd);
+			editSBOL(filePath, workingDoc);
 			break;
 
 		case JOptionPane.CLOSED_OPTION:
