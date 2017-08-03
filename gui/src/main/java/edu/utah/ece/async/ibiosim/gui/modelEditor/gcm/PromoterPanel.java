@@ -544,9 +544,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 						JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
 					
-//					promoter.setId(sbolField.getSBOLObjID());
-//					promoter.setName(sbolField.getSBOLObjName()); 
-//					promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
 				} else
 					AnnotationUtility.removeSBOLAnnotation(promoter);
 

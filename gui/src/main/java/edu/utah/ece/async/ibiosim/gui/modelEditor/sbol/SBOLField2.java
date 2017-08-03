@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.jsbml.SBase;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -63,7 +62,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 public class SBOLField2 extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private int styleOption;
+	private int styleOption; //The number of columns to create for the UI components.
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
@@ -289,7 +288,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private void updateSBMLFieldsFromSBOL(TopLevel sbolObj)
 	{
 		associateObjID = sbolObj.getDisplayId();
-		
 		associateObjName = sbolObj.getName();
 		
 		/*

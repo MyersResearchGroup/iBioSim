@@ -889,7 +889,57 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				if (sbolField.getSBOLURIs().size() > 0) {
+				if (sbolField.getSBOLURIs().size() > 0) 
+				{
+					if(sbolField.isSBOLSBOSet() && (sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT)))
+					{
+						/*
+						 * The user has annotated a promoter to the SBML species. We will need to remove this species
+						 * and create a SBML promoter. This will allow the user to correctly edit their annotated 
+						 * part as an SBML promoter rather than a SBML species with a promoter SBO type.
+						 */
+						// create a new promoter so that all the fields are set properly.
+						String id ; //TODO: modify to mouse position
+						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
+						{
+							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
+							
+							// annotate the new promoter 
+							SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), 
+									sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+							sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+									sbolField.getSBOLURIs().iterator().next()); 
+							if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
+							{
+								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+							}
+							
+							try 
+							{
+								bioModel.changePromoterId(id, sbolField.getSBOLObjID());
+								if(sbolField.isSBOLNameSet())
+								{
+									promoter.setName(sbolField.getSBOLObjName());
+								}
+								if(sbolField.isSBOLSBOSet())
+								{
+									promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+								}
+							} 
+							catch (BioSimException e) 
+							{
+								JOptionPane.showMessageDialog(Gui.frame, 
+										"Unable to set promoter fields", 
+										"Unable to change promoter's id.", 
+										JOptionPane.ERROR_MESSAGE);
+							}
+							// remove the old species to indicate it was transformed into a promoter
+							modelEditor.removeSpecies(species.getId());
+							modelEditor.refresh();
+							return true; //handling species annotation successful.
+						}
+					}
+					
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
@@ -902,10 +952,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					{
 					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 					}
-					
 
 					//Update iBioSim species id, name and SBO term from the annotated SBOL element
-					// TODO: these are causing null pointer exceptions
 					if(sbolField.isSBOLIDSet())
 					{
 						newSpeciesID = sbolField.getSBOLObjID();
@@ -985,6 +1033,28 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		return true;
 	}
+	
+	private void setSBOLAnnotation(SBase promoter)
+	{
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), 
+				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+				sbolField.getSBOLURIs().iterator().next()); 
+		if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+		}
+		
+		if(sbolField.isSBOLNameSet())
+		{
+			promoter.setName(sbolField.getSBOLObjName());
+		}
+		if(sbolField.isSBOLSBOSet())
+		{
+			promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+		}
+	}
+	
 
 	public String updates() {
 		
