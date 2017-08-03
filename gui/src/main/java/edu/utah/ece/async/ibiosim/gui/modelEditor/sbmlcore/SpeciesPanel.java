@@ -925,7 +925,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			try {
+			try 
+			{
+				/*
+				 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
+				 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
+				 * To resolve this, make the SBML id unique.
+				 */
+				String tempId = newSpeciesID;
+				while(bioModel.isSIdInUse(tempId))
+				{
+					tempId = tempId + "_";
+				}
+				newSpeciesID = tempId;
 				bioModel.changeSpeciesId(selected, newSpeciesID);
 			} catch (BioSimException e1) {
 				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
