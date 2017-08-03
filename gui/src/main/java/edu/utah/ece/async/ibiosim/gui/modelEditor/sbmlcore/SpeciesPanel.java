@@ -905,32 +905,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
 							
 							// annotate the new promoter 
-							SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), 
-									sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-							sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
-									sbolField.getSBOLURIs().iterator().next()); 
-							if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
-							{
-								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-							}
-							
+							setSBOLAnnotation(promoter);
 							try 
 							{
-								bioModel.changePromoterId(id, sbolField.getSBOLObjID());
-								if(sbolField.isSBOLNameSet())
-								{
-									promoter.setName(sbolField.getSBOLObjName());
-								}
-								if(sbolField.isSBOLSBOSet())
-								{
-									promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-								}
+								bioModel.changePromoterId(id, getUniqueSBMLId(sbolField.getSBOLObjID()));
 							} 
 							catch (BioSimException e) 
 							{
-								JOptionPane.showMessageDialog(Gui.frame, 
-										"Unable to set promoter fields", 
-										"Unable to change promoter's id.", 
+								JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
 										JOptionPane.ERROR_MESSAGE);
 							}
 							// remove the old species to indicate it was transformed into a promoter
@@ -943,29 +925,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
-							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-					sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
-							sbolField.getSBOLURIs().iterator().next()); 
-					
-					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
-					{
-					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-					}
-
-					//Update iBioSim species id, name and SBO term from the annotated SBOL element
-					if(sbolField.isSBOLIDSet())
-					{
-						newSpeciesID = sbolField.getSBOLObjID();
-					}
-					if(sbolField.isSBOLNameSet())
-					{
-						species.setName(sbolField.getSBOLObjName());
-					}
-					if(sbolField.isSBOLSBOSet())
-					{
-						species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-					}
+					setSBOLAnnotation(species);
 				} 
 				else 
 				{
@@ -980,16 +940,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
 				 * To resolve this, make the SBML id unique.
 				 */
-				String tempId = newSpeciesID;
-				while(bioModel.isSIdInUse(tempId))
-				{
-					tempId = tempId + "_";
-				}
-				newSpeciesID = tempId;
-				bioModel.changeSpeciesId(selected, newSpeciesID);
-			} catch (BioSimException e1) {
-				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
+				bioModel.changeSpeciesId(selected, getUniqueSBMLId(newSpeciesID));
+			} 
+			catch (BioSimException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+						JOptionPane.ERROR_MESSAGE);
 			}
 			((DefaultListModel) components.getModel()).clear();
 
@@ -1034,27 +990,46 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
-	private void setSBOLAnnotation(SBase promoter)
+	/**
+	 * Perform annotation on the SBML element with the SBOL object that was selected from SBOL association.
+	 * @param sbmlElement - The SBML element to set the SBOL annotation on.
+	 */
+	private void setSBOLAnnotation(SBase sbmlElement)
 	{
-		SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), 
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlElement.getMetaId(), 
 				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
 				sbolField.getSBOLURIs().iterator().next()); 
-		if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
+		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
 		{
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
 		}
 		
 		if(sbolField.isSBOLNameSet())
 		{
-			promoter.setName(sbolField.getSBOLObjName());
+			sbmlElement.setName(sbolField.getSBOLObjName());
 		}
 		if(sbolField.isSBOLSBOSet())
 		{
-			promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+			sbmlElement.setSBOTerm(sbolField.getSBOLObjSBOTerm());
 		}
 	}
 	
+	/**
+	 * Check to see if the given SBML id is unique within the BioModel. If the given id is not unique, then a unique
+	 * id will be generated. 
+	 * @param currentId - The SBML id to check if it is unique or not.
+	 * @return The unique id that was generated 
+	 */
+	private String getUniqueSBMLId(String currentId)
+	{
+		String newId = currentId;
+		while(bioModel.isSIdInUse(newId))
+		{
+			newId = newId + "_";
+		}
+		return newId;
+	}
 
 	public String updates() {
 		
