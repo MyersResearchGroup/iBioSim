@@ -901,14 +901,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						// create a new promoter so that all the fields are set properly.
 						String id ; //TODO: modify to mouse position
 						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
-						{
+						{ 
 							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
 							
 							// annotate the new promoter 
 							setSBOLAnnotation(promoter);
 							try 
 							{
-								bioModel.changePromoterId(id, getUniqueSBMLId(sbolField.getSBOLObjID()));
+								bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
 							} 
 							catch (BioSimException e) 
 							{
@@ -940,7 +940,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
 				 * To resolve this, make the SBML id unique.
 				 */
-				bioModel.changeSpeciesId(selected, getUniqueSBMLId(newSpeciesID));
+				bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
 			} 
 			catch (BioSimException e) 
 			{
@@ -1015,21 +1015,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	/**
-	 * Check to see if the given SBML id is unique within the BioModel. If the given id is not unique, then a unique
-	 * id will be generated. 
-	 * @param currentId - The SBML id to check if it is unique or not.
-	 * @return The unique id that was generated 
-	 */
-	private String getUniqueSBMLId(String currentId)
-	{
-		String newId = currentId;
-		while(bioModel.isSIdInUse(newId))
-		{
-			newId = newId + "_";
-		}
-		return newId;
-	}
+	
 
 	public String updates() {
 		

@@ -287,6 +287,24 @@ public class SBMLutilities
 		return false;
 	}
 	
+	/**
+	 * Check to see if the given SBML id is unique within the BioModel. If the given id is not unique, then a unique
+	 * id will be generated. 
+	 * 
+	 * @param currentId - The SBML id to check if it is unique or not.
+	 * @param bioModel - The BioModel to check for unique SBML IDs.
+	 * @return The unique id that was generated 
+	 */
+	public static String getUniqueSBMLId(String currentId, BioModel bioModel)
+	{
+		String newId = currentId;
+		while(bioModel.isSIdInUse(newId))
+		{
+			newId = newId + "_";
+		}
+		return newId;
+	}
+	
 	public static final Object[] getSortedListOfSBOTerms(String parent) {
 		Set<String> SBOTerms = SBMLutilities.sbo.getDescendantNamesOf(parent);
 		ArrayList<String> list = new ArrayList<String>();
