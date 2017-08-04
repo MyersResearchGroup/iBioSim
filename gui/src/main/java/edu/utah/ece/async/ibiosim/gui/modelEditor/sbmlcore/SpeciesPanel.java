@@ -1014,7 +1014,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				sbolField.getSBOLURIs().iterator().next()); 
 		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
 		{
-			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", 
+					"Invalid XML in SBML file", 
+					JOptionPane.ERROR_MESSAGE); 
 		}
 		
 		if(sbolField.isSBOLNameSet())

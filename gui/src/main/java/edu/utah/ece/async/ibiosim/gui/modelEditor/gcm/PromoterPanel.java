@@ -522,39 +522,20 @@ public class PromoterPanel extends JPanel implements ActionListener {
 				{
 					if(sbolField.isSBOLSBOSet() && !sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT))
 					{
-						JOptionPane.showMessageDialog(Gui.frame, "Prohibited SBOL Annotation Type", 
+						JOptionPane.showMessageDialog(Gui.frame, 
 								"You are not allowed to annotate a promoter that does not have SBOL component type DNA.", 
+								"Prohibited SBOL Annotation Type",
 								JOptionPane.WARNING_MESSAGE); 
-						
 					}
 					else
 					{
 						if (!production.isSetMetaId() || production.getMetaId().equals(""))
 							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
 									bioModel.getMetaIDIndex());
-
-						SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), 
-								sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-						sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
-								sbolField.getSBOLURIs().iterator().next()); 
-						if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
-						{
-							JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", 
-									"Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", 
-									JOptionPane.ERROR_MESSAGE); 
-						}
-
-						if(sbolField.isSBOLNameSet())
-						{
-							promoter.setName(sbolField.getSBOLObjName());
-						}
-						if(sbolField.isSBOLSBOSet())
-						{
-							promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-						}
 						try 
 						{
 							bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
+							setSBOLAnnotation(promoter);
 						} 
 						catch (BioSimException e) 
 						{
@@ -591,6 +572,34 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			return true;
 		}
 		return true;
+	}
+	
+	/**
+	 * Perform annotation on the SBML element with the SBOL object that was selected from SBOL association.
+	 * @param sbmlElement - The SBML element to set the SBOL annotation on.
+	 */
+	private void setSBOLAnnotation(SBase sbmlElement)
+	{
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlElement.getMetaId(), 
+				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+				sbolField.getSBOLURIs().iterator().next()); 
+		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
+		{
+			JOptionPane.showMessageDialog(Gui.frame,  
+					"Error occurred while annotating SBML element "  + sbmlElement.getId() + " with SBOL.", 
+					"Invalid XML in SBML file",
+					JOptionPane.ERROR_MESSAGE); 
+		}
+		
+		if(sbolField.isSBOLNameSet())
+		{
+			sbmlElement.setName(sbolField.getSBOLObjName());
+		}
+		if(sbolField.isSBOLSBOSet())
+		{
+			sbmlElement.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+		}
 	}
 	
 	public String updates() {
