@@ -920,12 +920,37 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							modelEditor.refresh();
 							return true; //handling species annotation successful.
 						}
+						else
+						{
+							JOptionPane.showMessageDialog(Gui.frame, 
+									"Unable to create SBML element", 
+									"Null pointer was encountered when creating a promoter.", 
+									JOptionPane.ERROR_MESSAGE);
+						}
 					}
 					
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
-					setSBOLAnnotation(species);
+					try 
+					{
+						/*
+						 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
+						 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
+						 * To resolve this, make the SBML id unique.
+						 */
+						if(sbolField.isSBOLIDSet())
+						{
+							newSpeciesID = sbolField.getSBOLObjID();
+							bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
+							setSBOLAnnotation(species);
+						}
+					} 
+					catch (BioSimException e) 
+					{
+						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+								JOptionPane.ERROR_MESSAGE);
+					}
 				} 
 				else 
 				{
@@ -933,20 +958,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			try 
-			{
-				/*
-				 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
-				 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
-				 * To resolve this, make the SBML id unique.
-				 */
-				bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
-			} 
-			catch (BioSimException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-						JOptionPane.ERROR_MESSAGE);
-			}
+			
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
