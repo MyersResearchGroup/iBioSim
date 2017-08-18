@@ -702,9 +702,9 @@ public class Utils {
   {
 	 
 	// TODO: added to turn off checking until libsbml bug is found
-	//if (true) {
-	//	return true;
-	//}
+	if (true) {
+		return true;
+	}
   	String message = "";
   	long numErrors = 0;
   	Preferences biosimrc = Preferences.userRoot();
