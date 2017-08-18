@@ -6345,7 +6345,6 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		else if(s.isSBOLDesigner())
 		{
 			openSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), currentDoc.getDefaultURIprefix());
-			
 		}
 	}
 	

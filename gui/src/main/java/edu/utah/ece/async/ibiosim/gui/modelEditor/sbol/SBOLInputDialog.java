@@ -379,13 +379,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
 			try 
 			{
-				SBOLUtility.copyAllTopLevels(sbolDesigns, outputDoc);
+				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
 			} 
-			catch (SBOLException e) 
-			{
-				JOptionPane.showMessageDialog(null, e.getMessage());
-				e.printStackTrace();
-			}
 			catch (SBOLValidationException e) 
 			{
 				JOptionPane.showMessageDialog(null, "This TopLevel SBOL object cannot be imported: " + e.getMessage());
