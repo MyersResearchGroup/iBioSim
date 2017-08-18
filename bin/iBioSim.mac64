@@ -3,11 +3,6 @@ cd -- "$(dirname "$0")"
 if [ -z "$BIOSIM" ]; then
     export BIOSIM=$PWD/..
 fi  
-source $BIOSIM/bin/detect-java.sh
-if [ -z "$JAVA_HOME" ]; then
-    echo "Must install Java JDK Version 1.7 or later"
-    exit
-fi
 export PATH=$BIOSIM/bin:/usr/local/lib:$PATH
 
 export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH

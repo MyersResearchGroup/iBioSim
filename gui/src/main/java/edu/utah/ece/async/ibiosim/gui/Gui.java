@@ -8964,14 +8964,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != -1) {
 				SBMLutilities.reb2sacFound = false;
-				System.out.println("ERROR: " + reb2sacExecutable + " not found.");
+				System.out.println("ERROR: " + reb2sacExecutable + " not functional.");
 			}
 		} catch (IOException e) {
 			SBMLutilities.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + " reb2sac not found.");
+			System.out.println("ERROR: " + reb2sacExecutable + " not found.");
 		} catch (InterruptedException e) {
 			SBMLutilities.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + "reb2sac not found.");
+			System.out.println("ERROR: " + reb2sacExecutable + " throws exception.");
 		}
 		exitValue = 1;
 		try {
@@ -9009,14 +9009,14 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 				SBMLutilities.geneNetFound = false;
-				System.out.println("ERROR: " + geneNetExecutable + " not found.");
+				System.out.println("ERROR: " + geneNetExecutable + " not functional.");
 			}
 		} catch (IOException e) {
 			SBMLutilities.geneNetFound = false;
 			System.out.println("ERROR: " + geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
 			SBMLutilities.geneNetFound = false;
-			System.out.println("ERROR: " + geneNetExecutable + " not found.");
+			System.out.println("ERROR: " + geneNetExecutable + " throws exception.");
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}

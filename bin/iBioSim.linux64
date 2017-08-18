@@ -1,10 +1,5 @@
 #!/bin/bash
 #
-source detect-java.sh
-if [ -z "$JAVA_HOME" ]; then
-    echo "Must install Java JDK Version 1.7 or later"
-    exit
-fi
 if [ -z "$BIOSIM" ]; then
     export BIOSIM=$PWD/..
 fi  
