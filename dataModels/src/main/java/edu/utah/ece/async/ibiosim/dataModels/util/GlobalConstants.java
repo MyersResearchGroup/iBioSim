@@ -287,6 +287,7 @@ public class GlobalConstants {
 	public static final String KISAO_RELATIVE_TOLERANCE = "KISAO:0000209";
 	public static final String KISAO_SEED = "KISAO:0000488";
 	public static final String KISAO_SAMPLES = "KISAO:0000326";
+	public static final String KISAO_NUMBER_OF_RUNS = "KISAO:0000498";
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";

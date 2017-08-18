@@ -1901,7 +1901,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     algorithm.addAlgorithmParameter(ap);
     ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,seed.getText());
     algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_SAMPLES,runs.getText());
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_NUMBER_OF_RUNS,runs.getText());
     algorithm.addAlgorithmParameter(ap);
     return algorithm;
   }
@@ -2000,7 +2000,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
         relErr.setText(ap.getValue());
       } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
         seed.setText(ap.getValue());
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
+      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)||
+    		  ap.getKisaoID().equals(GlobalConstants.KISAO_NUMBER_OF_RUNS)) {
         runs.setText(ap.getValue());
       }
     }
