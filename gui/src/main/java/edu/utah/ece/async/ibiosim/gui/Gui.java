@@ -4839,7 +4839,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		// read the archive stored in `archiveFile`
 		CombineArchive ca;
 		try {
-			ca = new CombineArchive (archiveFile);
+			ca = new CombineArchive (archiveFile, true);
 		}
 		catch (JDOMException | ParseException | CombineArchiveException e) {
 			// TODO Auto-generated catch block
@@ -4856,6 +4856,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sbml")) {
+				System.out.println("ImportSBML: " + entry.getFileName());
 				importSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
 			}
 		}
@@ -4863,6 +4864,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sbol")) {
+				System.out.println("ImportSBOL: " + entry.getFileName());
 				importSBOLFile(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
 			}
 		}
@@ -4870,6 +4872,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sed-ml")) {
+				System.out.println("ImportSED-ML: " + entry.getFileName());
 				importSEDMLFile(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath ());
 			}
 		}
