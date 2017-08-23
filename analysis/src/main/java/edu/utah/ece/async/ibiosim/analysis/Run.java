@@ -77,7 +77,9 @@ public class Run extends Observable implements ActionListener
 
     String modelFile = properties.getModelFile();
     String filename = properties.getFilename();
-
+    
+    work = new File(properties.getDirectory());
+    
     if (properties.isNary() && properties.isGui() && (properties.isSsa() || properties.isXhtml() || properties.isDot()))
     {
       exitValue =  executeNary();

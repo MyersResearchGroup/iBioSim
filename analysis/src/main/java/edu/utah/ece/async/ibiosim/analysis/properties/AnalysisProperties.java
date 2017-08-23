@@ -46,10 +46,11 @@ public final class AnalysisProperties {
 	  this.root = root;
 	  this.gui = isGui;
 	  
+	  this.directory = root + File.separator + id;
 	  this.fileStem = "";
-	  this.filename = root + File.separator + id + File.separator + modelFile;
+	  this.filename = directory + File.separator + modelFile;
 	  this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
-	  this.outDir = root + File.separator + id;
+	  this.outDir = directory;
 	  this.method = SimMethod.ODE;
 	  this.abs = AbstractionMethod.NONE;
 	  this.userInterval = UserInterval.PRINT_INTERVAL;
