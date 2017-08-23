@@ -134,7 +134,7 @@ public class Run extends Observable implements ActionListener
 
     }
 
-    //updateReb2SacProgress(runTime);
+    //updateReb2SacProgress();
     time2 = System.nanoTime();
     displayError(exitValue);
 
