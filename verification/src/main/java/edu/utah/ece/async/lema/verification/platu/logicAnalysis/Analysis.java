@@ -28,6 +28,7 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
@@ -69,7 +70,7 @@ import java.util.Iterator;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Analysis extends Observable{
+public class Analysis extends CoreObservable{
 
 	private LinkedList<Transition> traceCex;
 	protected Mdd mddMgr = null;

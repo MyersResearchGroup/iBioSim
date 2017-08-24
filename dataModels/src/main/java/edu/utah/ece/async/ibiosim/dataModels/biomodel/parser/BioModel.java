@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -90,6 +89,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 
 /**
@@ -100,7 +100,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class BioModel extends Observable{
+public class BioModel extends CoreObservable{
 
 	private String filename = null;
 

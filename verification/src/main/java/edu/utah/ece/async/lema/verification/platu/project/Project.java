@@ -32,6 +32,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
 import edu.utah.ece.async.lema.verification.platu.logicAnalysis.Analysis;
@@ -61,7 +62,7 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Project {
+public class Project extends CoreObservable{
 
 	protected String label;
 	
@@ -77,7 +78,6 @@ public class Project {
 	
 	protected CompositionalAnalysis analysis = null;
 	
-	private Observer observer;
   	
 	public Project() {
 		this.label = "";
@@ -265,7 +265,7 @@ public class Project {
 //		}
 
 		Analysis dfsStateExploration = new Analysis(sgArray);
-		dfsStateExploration.addObserver(observer);
+		dfsStateExploration.addObservable(this);
 		if (!Options.getMarkovianModelFlag()) {
 			if (Options.getPOR().toLowerCase().equals("off")) {
 				// DFS state exploration without any state reduction.
@@ -577,9 +577,5 @@ public class Project {
         	System.exit(1);
         }
     }
-    
-    public void setObserver(Observer observer)
-    {
-      this.observer = observer;
-    }
+
 }

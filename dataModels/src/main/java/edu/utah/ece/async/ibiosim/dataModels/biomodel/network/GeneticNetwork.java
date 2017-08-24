@@ -55,6 +55,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintRepressionBin
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintSpeciesVisitor;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * This class represents a genetic network
@@ -64,7 +65,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class GeneticNetwork extends Observable {
+public class GeneticNetwork extends CoreObservable 
+{
 	
 	//private String separator;
 	

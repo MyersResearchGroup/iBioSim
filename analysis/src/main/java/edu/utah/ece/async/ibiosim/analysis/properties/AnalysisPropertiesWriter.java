@@ -71,10 +71,10 @@ public class AnalysisPropertiesWriter {
         properties.setProperty(reb2sac_abstraction_3 + (i + 1), analysisProperties.getAdvancedProperties().getPostAbs().get(i));
       }
     }
-
+    
     if(analysisProperties.getSimulationProperties().getPrinter_id() != null)
     {
-      properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
+      properties.setProperty(reb2sac_simulation, analysisProperties.getSimulationProperties().getPrinter_id());
     }
     if(analysisProperties.getSimulationProperties() != null)
     {

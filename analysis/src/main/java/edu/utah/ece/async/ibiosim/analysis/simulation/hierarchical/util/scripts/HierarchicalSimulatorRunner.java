@@ -25,6 +25,7 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -55,7 +56,8 @@ public class HierarchicalSimulatorRunner
 	static String				selectedSimulator	= "";
 	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
 	static String				quantityType		= "amount";
-
+	static AnalysisProperties properties;
+	
 	/**
 	 * @param args
 	 *            %d = args[0] = path to cases %n = args[1] = case id %o =
@@ -128,7 +130,7 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0, 0);
+				simulator.simulate(properties);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
@@ -184,12 +186,11 @@ public class HierarchicalSimulatorRunner
 					double t2 = System.currentTimeMillis();
 					System.out.println("Flattening time: " + (t2 - t1) / 1000);
 
-					simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0,
-							0);
+					simulator.simulate(properties);
 				}
 				else
 				{
-					simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0, 0);
+					simulator.simulate(properties);
 				}
 
 			}

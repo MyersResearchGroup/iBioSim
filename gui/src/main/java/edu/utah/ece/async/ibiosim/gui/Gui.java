@@ -183,6 +183,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
@@ -223,7 +224,7 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
  *         Contributors </a>
  * @version %I%
  */
-public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
+public class Gui implements BioObserver, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
 	public static JFrame frame; // Frame where components of the GUI are displayed
 	protected JMenuBar menuBar;
@@ -4517,6 +4518,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
 		AnalysisView analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root, simName, modelFileName);
+		analysisView.addObserver(this);
 		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", analysisView.getAdvanced());
@@ -8757,6 +8759,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		simTab.addMouseListener(this);
 		AnalysisView analysisView;
 		analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root, analysisName, modelFileName);
+		analysisView.addObserver(this);
 		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", analysisView.getAdvanced());
@@ -8766,6 +8769,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					analysisName,
 					root + File.separator + analysisName + File.separator + analysisName + ".sim",
 					analysisView, false, false);
+			modelEditor.addObserver(this);
 			analysisView.setModelEditor(modelEditor);
 			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), sedmlDocument,
 					analysisName);
@@ -10179,21 +10183,20 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		return true;
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		Message message = (Message) arg;
-
-		if (message.isConsole()) {
-			System.out.println(message.getMessage());
-		} else if (message.isErrorDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-		} else if (message.isDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (message.isLog()) {
-			log.addText(message.getMessage());
-		}
-	}
+  @Override
+  public void update(Message message) {
+    if (message.isConsole()) {
+      System.out.println(message.getMessage());
+    } else if (message.isErrorDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+    } else if (message.isDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.PLAIN_MESSAGE);
+    } else if (message.isLog()) {
+      log.addText(message.getMessage());
+    }
+    
+  }
 
 }

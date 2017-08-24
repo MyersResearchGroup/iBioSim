@@ -143,6 +143,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
@@ -162,7 +163,7 @@ import edu.utah.ece.async.lema.verification.lpn.LPN;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Graph extends JPanel implements ActionListener, MouseListener, ChartProgressListener, Observer {
+public class Graph extends PanelObservable implements ActionListener, MouseListener, ChartProgressListener {
 
 	private static final long serialVersionUID = 4350596002373546900L;
 
@@ -285,6 +286,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public Graph(AnalysisView analysisView, String printer_track_quantity, String label, String printer_id, String outDir, String time, Gui biomodelsim,
 			String open, Log log, String graphName, boolean timeSeries, boolean learnGraph) {
 		// If does not exist then set to null, so won't try to open.
+	  super();
 		if (open!=null && !(new File(open).exists())) open = null;
 		lock = new ReentrantLock(true);
 		lock2 = new ReentrantLock(true);
@@ -8733,7 +8735,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		    }
 		    else if (background.endsWith(".lpn")) {
 		      LPN lhpn = new LPN();
-		      lhpn.addObserver(this);
+		      lhpn.addObservable(this);
 		      lhpn.load(background);
 		      /*
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
@@ -8895,28 +8897,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chartTheme.apply(chart);
 	}
 
-  @Override
-  public void update(Observable o, Object arg) {
-    Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    else if(message.isLog())
-    {
-      log.addText(message.getMessage());
-    }
-    
-  }
 }
 
 class IconNodeRenderer extends DefaultTreeCellRenderer {

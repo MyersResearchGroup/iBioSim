@@ -107,6 +107,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
@@ -162,7 +163,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
  *         Contributors </a>
  * @version %I%
  */
-public class ModelEditor extends JPanel implements ActionListener, MouseListener, ChangeListener, Observer {
+public class ModelEditor extends PanelObservable implements ActionListener, MouseListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -264,7 +265,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			filename = refFile;
 		}
 		biomodel = new BioModel(path);
-		biomodel.addObserver(this);
+		biomodel.addObservable(this);
 		if (filename != null) {
 			biomodel.load(path + File.separator + filename);
 			this.filename = filename;
@@ -3511,23 +3512,5 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		lpn.save(filename);
 		return true;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		Message message = (Message) arg;
-
-		if (message.isConsole()) {
-			System.out.println(message.getMessage());
-		} else if (message.isErrorDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-		} else if (message.isDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (message.isLog()) {
-			log.addText(message.getMessage());
-		}
-
 	}
 }

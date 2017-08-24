@@ -34,6 +34,7 @@ import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph;
 import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph.Property;
 import edu.utah.ece.async.ibiosim.analysis.properties.AdvancedProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.Simulator;
@@ -45,11 +46,12 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
 
-public class Run extends Observable implements ActionListener
+public class Run extends CoreObservable implements ActionListener
 {
 
   private final AnalysisProperties properties;
@@ -466,6 +468,7 @@ public class Run extends Observable implements ActionListener
     String command = null;
     String[] env = Executables.envp;
 
+    JProgressBar progress = null;
     String sim = properties.getSim();
 
 
@@ -535,7 +538,7 @@ public class Run extends Observable implements ActionListener
 
     if(runJava)
     {
-      //dynSim.simulate(SBMLFileName, root, outDir + File.separator, timeLimit, timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, reactionAbstraction,  initialTime, outputStartTime);
+      dynSim.simulate(properties);
 
       new File(properties.getRoot() + File.separator + "running").delete();
     }

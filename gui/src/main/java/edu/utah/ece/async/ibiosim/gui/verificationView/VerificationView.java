@@ -69,6 +69,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
@@ -97,7 +98,7 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class VerificationView extends JPanel implements ActionListener, Runnable, Observer {
+public class VerificationView extends PanelObservable implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -1201,7 +1202,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				//				}			
 				//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
 				Project untimed_dfs = new Project(selectedLPNs);				
-				untimed_dfs.setObserver(this);
+				//untimed_dfs.setObserver(this);
+				
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
@@ -3206,25 +3208,5 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		}
 		return true;		
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
-    Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    
-    
-  }
   
 }

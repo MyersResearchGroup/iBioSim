@@ -25,7 +25,7 @@ public class PropertiesConstants {
 	public static final String reb2sac_issa_type = "reb2sac.iSSA.type";
 	public static final String reb2sac_issa_adaptive = "reb2sac.iSSA.adaptive";
 	
-
+	public static final String selected_sim = "selected.simulator";
 	public static final String sim_printer = "simulation.printer";
 	public static final String sim_tracking_quantity = "simulation.printer.tracking.quantity";
 	public static final String sim_init_time = "simulation.initial.time";

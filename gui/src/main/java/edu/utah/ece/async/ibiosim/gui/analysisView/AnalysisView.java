@@ -92,6 +92,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
@@ -102,7 +103,6 @@ import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
-import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
 /**
  * This class creates a GUI for analysis. It implements the ActionListener
@@ -116,7 +116,7 @@ import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class AnalysisView extends JPanel implements ActionListener, Runnable, MouseListener, Observer
+public class AnalysisView extends PanelObservable implements ActionListener, Runnable, MouseListener
 {
 
   private static final long serialVersionUID  = 3181014495993143825L;
@@ -140,7 +140,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   // Description of simulator method
   private JLabel        description, explanation;
 
-  private JComboBox     simulators;                                 
+  private JComboBox<String>     simulators;                                 
   private JLabel        simulatorsLabel;                                    
 
 
@@ -464,7 +464,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   /* Set the default simulation options from the preferences */
   private void setDefaultOptions()
   {
-
+    
     if (biosimrc.get("biosim.sim.abs", "").equals("None"))
     {
       noAbstraction.doClick();
@@ -509,19 +509,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       sbml.doClick();
       simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-      sbml.doClick();
     }
     else if (biosimrc.get("biosim.sim.type", "").equals("Network"))
     {
       dot.doClick();
       simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-      dot.doClick();
     }
     else
     {
       xhtml.doClick();
       simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-      xhtml.doClick();
     }
   }
 
@@ -561,7 +558,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     explanation = new JLabel("Description Of Selected Simulator:     ");
     description = new JLabel("");
     simulatorsLabel = new JLabel("Possible Simulators/Analyzers:");
-    simulators = new JComboBox();
+    simulators = new JComboBox<String>();
     // simulators.setSelectedItem("rkf45");
     simulators.addActionListener(this);
     initialTimeLabel = new JLabel("Initial Time:");
@@ -910,7 +907,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
       runTime = timeLimit;
     }
     Run runProgram = new Run(properties);
-    runProgram.addObserver(this);
+    runProgram.addObservable(this);
     cancel.addActionListener(runProgram);
     gui.getExitButton().addActionListener(runProgram);
     if (monteCarlo.isSelected() || ODE.isSelected())
@@ -1023,7 +1020,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
   public boolean save()
   {
 
-    String simName = properties.getSim();
+    String simName = (String) simulators.getSelectedItem();
+    properties.setSim(simName);
     String root = properties.getRoot();
     String outDir = properties.getOutDir();
     String propName = properties.getPropertiesName();
@@ -1963,8 +1961,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getTimeStep()));
 
     minStep.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
-
-    simulators.setSelectedItem(properties.getSim());
+    
+    if(properties.getSim() != null)
+    {
+      simulators.setSelectedItem(properties.getSim());
+    }
 
     fileStem.setText(properties.getFileStem());
     
@@ -3311,23 +3312,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
     {
       System.out.println("ACTION");
     }
-  }
-
-  @Override
-  public void update(Observable o, Object arg) {
-    Message message = (Message) arg;
-
-    if (message.isConsole()) {
-      System.out.println(message.getMessage());
-    } else if (message.isErrorDialog()) {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-    } else if (message.isDialog()) {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-          JOptionPane.PLAIN_MESSAGE);
-    } else if (message.isLog()) {
-      log.addText(message.getMessage());
-    } 
   }
 
 }
