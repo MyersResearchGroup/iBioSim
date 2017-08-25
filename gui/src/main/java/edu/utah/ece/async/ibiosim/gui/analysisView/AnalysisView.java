@@ -135,7 +135,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private JLabel          initialTimeLabel, outputStartTimeLabel, limitLabel, minStepLabel, stepLabel, relErrorLabel, errorLabel, seedLabel, runsLabel;
 
   private JTextField interval;
-  private JComboBox     intervalLabel;
+  private JComboBox<String>     intervalLabel;
 
   // Description of simulator method
   private JLabel        description, explanation;
@@ -155,12 +155,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   // iSSA
   private JRadioButton    mpde, meanPath, medianPath;
   private JRadioButton    adaptive, nonAdaptive;
-  private JComboBox     bifurcation;
+  private JComboBox<String>     bifurcation;
   private JLabel iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
   // Abstraction
   private JPanel        advanced;
-  private JList       preAbs, loopAbs, postAbs;
+  private JList<String>       preAbs, loopAbs, postAbs;
   private JLabel        preAbsLabel, loopAbsLabel, postAbsLabel;
   private JButton       addPreAbs, rmPreAbs, editPreAbs;
   private JButton       addLoopAbs, rmLoopAbs, editLoopAbs;
@@ -169,7 +169,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private JTextField      rapid1, rapid2, qssa, maxCon, diffStoichAmp;  
   private JLabel        rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;                                                       // sbml
 
-  private JComboBox     transientProperties, subTaskList;
+  private JComboBox<String>     transientProperties, subTaskList;
 
   private final Gui     gui;                                                            // reference                                                      // simulation
 
@@ -246,7 +246,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     JTextField taskId = new JTextField(simName);
     taskId.setEditable(false);
     fileStem = new JTextField("", 15);
-    subTaskList = new JComboBox();
+    subTaskList = new JComboBox<String>();
     subTaskList.addItem("(none)");
 
 
@@ -568,7 +568,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     limitLabel = new JLabel("Time Limit:");
     limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 15);
     String[] intervalChoices = { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
-    intervalLabel = new JComboBox(intervalChoices);
+    intervalLabel = new JComboBox<String>(intervalChoices);
     intervalLabel.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
     interval = new JTextField(biosimrc.get("biosim.sim.interval", ""), 15);
     minStepLabel = new JLabel("Minimum Time Step:");
@@ -616,7 +616,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         {
           props[i + 1] = getProps[i];
         }
-        transientProperties = new JComboBox(props);
+        transientProperties = new JComboBox<String>(props);
         transientProperties.setPreferredSize(new Dimension(5, 10));
         inputHolderLeft.add(prop);
         inputHolderRight.add(transientProperties);
@@ -665,9 +665,9 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private void createAdvancedOptionsTab()
   {
     Preferences biosimrc = Preferences.userRoot();
-    preAbs = new JList();
-    loopAbs = new JList();
-    postAbs = new JList();
+    preAbs = new JList<String>();
+    loopAbs = new JList<String>();
+    postAbs = new JList<String>();
     preAbsLabel = new JLabel("Preprocess abstraction methods:");
     loopAbsLabel = new JLabel("Main loop abstraction methods:");
     postAbsLabel = new JLabel("Postprocess abstraction methods:");
@@ -794,7 +794,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     iSSAAdaptive.add(nonAdaptive);
     iSSAAdaptiveLabel = new JLabel("iSSA Adaptive:");
 
-    bifurcation = new JComboBox(options);
+    bifurcation = new JComboBox<String>(options);
     bifurcationLabel = new JLabel("Number of Paths to Follow with iSSA:");
 
     maxConLabel.setEnabled(false);
@@ -1582,10 +1582,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   public ArrayList<String> getGcmAbstractions()
   {
     ArrayList<String> gcmAbsList = new ArrayList<String>();
-    ListModel preAbsList = preAbs.getModel();
+    ListModel<String> preAbsList = preAbs.getModel();
     for (int i = 0; i < preAbsList.getSize(); i++)
     {
-      String abstractionOption = (String) preAbsList.getElementAt(i);
+      String abstractionOption = preAbsList.getElementAt(i);
       if (abstractionOption.equals("complex-formation-and-sequestering-abstraction") || abstractionOption.equals("operator-site-reduction-abstraction"))
       {
         gcmAbsList.add(abstractionOption);
@@ -1597,7 +1597,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   // Reports if any reb2sac abstraction options are selected
   public boolean reb2sacAbstraction()
   {
-    ListModel preAbsList = preAbs.getModel();
+    ListModel<String> preAbsList = preAbs.getModel();
     for (int i = 0; i < preAbsList.getSize(); i++)
     {
       String abstractionOption = (String) preAbsList.getElementAt(i);
@@ -1606,12 +1606,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         return true;
       }
     }
-    ListModel loopAbsList = loopAbs.getModel();
+    ListModel<String> loopAbsList = loopAbs.getModel();
     if (loopAbsList.getSize() > 0)
     {
       return true;
     }
-    ListModel postAbsList = postAbs.getModel();
+    ListModel<String> postAbsList = postAbs.getModel();
     if (postAbsList.getSize() > 0)
     {
       return true;
@@ -2314,7 +2314,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     markov.setEnabled(false);
     enableAbstractionOptions(false, false);
     ArrayList<String> getLists = new ArrayList<String>();
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     preAbs.setListData(objects);
     loopAbs.setListData(objects);
     getLists = new ArrayList<String>();
@@ -2327,7 +2327,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     {
       getLists.add("kinetic-law-constants-simplifier");
     }
-    objects = getLists.toArray();
+    objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     if (markov.isSelected())
     {
@@ -2364,10 +2364,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     ArrayList<String> getLists = new ArrayList<String>();
     getLists.add("complex-formation-and-sequestering-abstraction");
     getLists.add("operator-site-reduction-abstraction");
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     preAbs.setListData(objects);
     getLists = new ArrayList<String>();
-    objects = getLists.toArray();
+    objects = getLists.toArray(new String[getLists.size()]);
     loopAbs.setListData(objects);
     getLists = new ArrayList<String>();
     if (monteCarlo.isSelected())
@@ -2379,7 +2379,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     {
       getLists.add("kinetic-law-constants-simplifier");
     }
-    objects = getLists.toArray();
+    objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     if (markov.isSelected())
     {
@@ -2436,7 +2436,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     stateAbstraction.setEnabled(false);
     fileStem.setText("");
     ArrayList<String> getLists = new ArrayList<String>();
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     append.setEnabled(false);
     concentrations.setEnabled(false);
@@ -2638,7 +2638,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     fileStem.setText("");
     ArrayList<String> getLists = new ArrayList<String>();
     // getLists.add("kinetic-law-constants-simplifier");
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     append.setEnabled(false);
     concentrations.setEnabled(false);
@@ -2697,7 +2697,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     }
     ArrayList<String> getLists = new ArrayList<String>();
     // getLists.add("kinetic-law-constants-simplifier");
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     append.setEnabled(false);
     concentrations.setEnabled(false);
@@ -2766,7 +2766,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       getLists.add("distribute-transformer");
       getLists.add("reversible-to-irreversible-transformer");
       getLists.add("kinetic-law-constants-simplifier");
-      Object[] objects = getLists.toArray();
+      String[] objects = getLists.toArray(new String[getLists.size()]);
       postAbs.setListData(objects);
     }
     append.setEnabled(true);
@@ -2828,7 +2828,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     }
     ArrayList<String> getLists = new ArrayList<String>();
     getLists.add("kinetic-law-constants-simplifier");
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     append.setEnabled(true);
     concentrations.setEnabled(true);
@@ -2858,13 +2858,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     ArrayList<String> getLists = new ArrayList<String>();
     getLists.add("complex-formation-and-sequestering-abstraction");
     getLists.add("operator-site-reduction-abstraction");
-    Object[] objects = getLists.toArray();
+    String[] objects = getLists.toArray(new String[getLists.size()]);
     preAbs.setListData(objects);
     getLists = new ArrayList<String>();
-    objects = getLists.toArray();
+    objects = getLists.toArray(new String[getLists.size()]);
     loopAbs.setListData(objects);
     getLists = new ArrayList<String>();
-    objects = getLists.toArray();
+    objects = getLists.toArray(new String[getLists.size()]);
     postAbs.setListData(objects);
     if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && !fba.isSelected())
     {
@@ -2940,7 +2940,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private void addAbstractionMethod(ActionEvent e)
   {
     JPanel addAbsPanel = new JPanel(new BorderLayout());
-    JComboBox absList = new JComboBox();
+    JComboBox<String> absList = new JComboBox<String>();
     if (e.getSource() == addPreAbs)
     {
       absList.addItem("complex-formation-and-sequestering-abstraction");
