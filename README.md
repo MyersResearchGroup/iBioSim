@@ -51,7 +51,10 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. You can install different features by following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
-2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
+2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project with the following names:
+      * Windows: ```reb2sac.exe``` ```GeneNet.exe``` 
+      * Mac OS X: ```reb2sac.mac64``` ```GeneNet.mac64``` 
+      * Linux: ```reb2sac.linux64``` ```GeneNet.linux64``` 
 
 ## [Optional] Setting up iBioSim in Eclipse
 ### Importing iBioSim to Eclipse
