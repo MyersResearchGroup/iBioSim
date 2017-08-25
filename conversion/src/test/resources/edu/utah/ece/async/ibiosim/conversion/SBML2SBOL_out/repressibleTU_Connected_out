@@ -1,513 +1,91 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model"/>
-    <sbol:displayId>BO_10845repressesBO_2685_model</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_27783_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model"/>
+    <sbol:displayId>BO_27783_model</sbol:displayId>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_27783_model/mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
         <sbol:displayId>mRNA</sbol:displayId>
         <dcterms:title>mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__mRNA"/>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model__mRNA"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
-        <sbol:displayId>promoter</sbol:displayId>
-        <dcterms:title>promoter</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__promoter"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
-        <sbol:displayId>activator</sbol:displayId>
-        <dcterms:title>activator</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__activator"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt"/>
-        <sbol:displayId>prt</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/activator">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/activator"/>
-            <sbol:displayId>activator</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/mRNA"/>
-            <sbol:displayId>mRNA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/promoter">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/promoter"/>
-            <sbol:displayId>promoter</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/tu_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
-    <sbol:displayId>tu_model</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2"/>
-        <sbol:displayId>BO_27783C2</sbol:displayId>
-        <dcterms:title>BO_27783C2</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_27783C2"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
-        <sbol:displayId>BO_2685C1</sbol:displayId>
-        <dcterms:title>BO_2685C1</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_2685C1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3"/>
-        <sbol:displayId>BO_32077C3</sbol:displayId>
-        <dcterms:title>BO_32077C3</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_32077C3"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
-        <sbol:displayId>BO_10845</sbol:displayId>
-        <dcterms:title>BO_10845</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_10845"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/SigmaA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/SigmaA"/>
-        <sbol:displayId>SigmaA</sbol:displayId>
-        <dcterms:title>SigmaA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__SigmaA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
-        <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
-        <dcterms:title>mrnaBO_2685C1</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__mrnaBO_2685C1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/tu_model_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1"/>
-        <sbol:displayId>BO_32077C3_model_BO_2685C1</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_32077C3">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_32077C3"/>
-            <sbol:displayId>BO_32077C3</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/cds"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_10845">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_10845"/>
-            <sbol:displayId>BO_10845</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model"/>
-        <sbol:displayId>BO_10845repressesBO_2685_BO_2685C1_model</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_2685C1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_2685C1"/>
-            <sbol:displayId>BO_2685C1</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_10845">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_10845"/>
-            <sbol:displayId>BO_10845</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/mrnaBO_2685C1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/mrnaBO_2685C1"/>
-            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1"/>
-        <sbol:displayId>BO_27783C2_model_BO_2685C1</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/mrnaBO_2685C1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/mrnaBO_2685C1"/>
-            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/BO_27783C2">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/BO_27783C2"/>
-            <sbol:displayId>BO_27783C2</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model"/>
-        <sbol:displayId>BO_2685C1_model</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/SigmaA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/SigmaA"/>
-            <sbol:displayId>SigmaA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/SigmaA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/mrnaBO_2685C1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/mrnaBO_2685C1"/>
-            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/BO_2685C1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/BO_2685C1"/>
-            <sbol:displayId>BO_2685C1</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/cds_template">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template"/>
-    <sbol:displayId>cds_template</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/cds_template/protein">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
-        <sbol:displayId>protein</sbol:displayId>
-        <dcterms:title>protein</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/cds_template__protein"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/cds_template/translation">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/translation"/>
-        <sbol:displayId>translation</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000176"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/cds_template/translation/protein_p0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/translation/protein_p0"/>
-            <sbol:displayId>protein_p0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/cds_template_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation"/>
-        <sbol:displayId>cdsproduct_degradation</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation/protein">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation/protein"/>
-            <sbol:displayId>protein</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/rbs_template">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template"/>
-    <sbol:displayId>rbs_template</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/rbs_template/rbs">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template/rbs"/>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rbs">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
         <sbol:displayId>rbs</sbol:displayId>
         <dcterms:title>rbs</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template__rbs"/>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model__rbs"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/rbs_template/mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template/mRNA"/>
-        <sbol:displayId>mRNA</sbol:displayId>
-        <dcterms:title>mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template__mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/rbs_template_model"/>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/promoterrepression_template">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template"/>
-    <sbol:displayId>promoterrepression_template</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/promoter">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
-        <sbol:displayId>promoter</sbol:displayId>
-        <dcterms:title>promoter</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__promoter"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/mRNA"/>
-        <sbol:displayId>mRNA</sbol:displayId>
-        <dcterms:title>mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/activator">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
-        <sbol:displayId>activator</sbol:displayId>
-        <dcterms:title>activator</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__activator"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor"/>
-        <sbol:displayId>promoterRepressor</sbol:displayId>
-        <dcterms:title>promoterRepressor</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__promoterRepressor"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template_model"/>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_27783_model_model"/>
     <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding"/>
-        <sbol:displayId>binding</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/binding_template"/>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt"/>
+        <sbol:displayId>rt</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template"/>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/activator">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/activator"/>
-            <sbol:displayId>activator</sbol:displayId>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt/rbs">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt/rbs"/>
+            <sbol:displayId>rbs</sbol:displayId>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/species2"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/rbs_template/rbs"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoterRepressor">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoterRepressor"/>
-            <sbol:displayId>promoterRepressor</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/complex"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoter">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoter"/>
-            <sbol:displayId>promoter</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/species1"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected"/>
-    <sbol:displayId>repressibleTU_Connected</sbol:displayId>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model"/>
-        <sbol:displayId>tu_model</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/degradation_template">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
-    <sbol:displayId>degradation_template</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/degradation_template/species">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
-        <sbol:displayId>species</sbol:displayId>
-        <dcterms:title>species</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template__species"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/degradation_template/degradation">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/degradation"/>
-        <sbol:displayId>degradation</sbol:displayId>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000176"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/degradation_template/degradation/species_r0">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/degradation/species_r0"/>
-            <sbol:displayId>species_r0</sbol:displayId>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/degradation_template_model"/>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_2685_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model"/>
-    <sbol:displayId>BO_2685_model</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/BO_2685">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
-        <sbol:displayId>BO_2685</sbol:displayId>
-        <dcterms:title>BO_2685</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__BO_2685"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/SigmaA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
-        <sbol:displayId>SigmaA</sbol:displayId>
-        <dcterms:title>SigmaA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__SigmaA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
-        <sbol:displayId>mRNA</sbol:displayId>
-        <dcterms:title>mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_2685_model_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt"/>
-        <sbol:displayId>pt</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoter_template"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/mRNA"/>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt/mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt/mRNA"/>
             <sbol:displayId>mRNA</sbol:displayId>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/rbs_template/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_32077_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/>
+    <sbol:displayId>BO_32077_model</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_32077_model/protein">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
+        <sbol:displayId>protein</sbol:displayId>
+        <dcterms:title>protein</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model__protein"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_32077_model/cds">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/cds"/>
+        <sbol:displayId>cds</sbol:displayId>
+        <dcterms:title>cds</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model__cds"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_32077_model_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_32077_model/ct">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/ct"/>
+        <sbol:displayId>ct</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/cds_template"/>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/SigmaA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/SigmaA"/>
-            <sbol:displayId>SigmaA</sbol:displayId>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_32077_model/ct/protein">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/ct/protein"/>
+            <sbol:displayId>protein</sbol:displayId>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/sigmaFactor"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/BO_2685">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/BO_2685"/>
-            <sbol:displayId>BO_2685</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/promoter"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
       </sbol:Module>
@@ -516,16 +94,6 @@
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/binding_template">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/binding_template"/>
     <sbol:displayId>binding_template</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/binding_template/complex">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/binding_template/complex"/>
-        <sbol:displayId>complex</sbol:displayId>
-        <dcterms:title>complex</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/binding_template__complex"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
     <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/binding_template/species1">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/binding_template/species1"/>
@@ -542,6 +110,16 @@
         <sbol:displayId>species2</sbol:displayId>
         <dcterms:title>species2</dcterms:title>
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/binding_template__species2"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/binding_template/complex">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/binding_template/complex"/>
+        <sbol:displayId>complex</sbol:displayId>
+        <dcterms:title>complex</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/binding_template__complex"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
@@ -610,6 +188,158 @@
     </sbol:interaction>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/binding_template_model"/>
   </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_2685_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model"/>
+    <sbol:displayId>BO_2685_model</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
+        <sbol:displayId>mRNA</sbol:displayId>
+        <dcterms:title>mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/BO_2685">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
+        <sbol:displayId>BO_2685</sbol:displayId>
+        <dcterms:title>BO_2685</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__BO_2685"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_2685_model/SigmaA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
+        <sbol:displayId>SigmaA</sbol:displayId>
+        <dcterms:title>SigmaA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model__SigmaA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_2685_model_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt"/>
+        <sbol:displayId>pt</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoter_template"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/BO_2685">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/BO_2685"/>
+            <sbol:displayId>BO_2685</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/promoter"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/SigmaA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/SigmaA"/>
+            <sbol:displayId>SigmaA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/sigmaFactor"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_2685_model/pt/mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/pt/mRNA"/>
+            <sbol:displayId>mRNA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoter_template/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/rbs_template">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template"/>
+    <sbol:displayId>rbs_template</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/rbs_template/rbs">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template/rbs"/>
+        <sbol:displayId>rbs</sbol:displayId>
+        <dcterms:title>rbs</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template__rbs"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/rbs_template/mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/rbs_template/mRNA"/>
+        <sbol:displayId>mRNA</sbol:displayId>
+        <dcterms:title>mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template__mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/rbs_template_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected"/>
+    <sbol:displayId>repressibleTU_Connected</sbol:displayId>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/repressibleTU_Connected/tu_model"/>
+        <sbol:displayId>tu_model</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/cds_template">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template"/>
+    <sbol:displayId>cds_template</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/cds_template/protein">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
+        <sbol:displayId>protein</sbol:displayId>
+        <dcterms:title>protein</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/cds_template__protein"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/cds_template/translation">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/translation"/>
+        <sbol:displayId>translation</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000176"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/cds_template/translation/protein_p0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/translation/protein_p0"/>
+            <sbol:displayId>protein_p0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/cds_template_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation"/>
+        <sbol:displayId>cdsproduct_degradation</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation/protein">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/cds_template/cdsproduct_degradation/protein"/>
+            <sbol:displayId>protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/promoter_template">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template"/>
     <sbol:displayId>promoter_template</sbol:displayId>
@@ -645,22 +375,6 @@
     </sbol:functionalComponent>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/promoter_template_model"/>
     <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/promoter_template/mrna_degradation">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template/mrna_degradation"/>
-        <sbol:displayId>mrna_degradation</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoter_template/mrna_degradation/mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template/mrna_degradation/mRNA"/>
-            <sbol:displayId>mRNA</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoter_template/mRNA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
       <sbol:Module rdf:about="http://www.async.ece.utah.edu/promoter_template/transcription">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template/transcription"/>
         <sbol:displayId>transcription</sbol:displayId>
@@ -694,93 +408,18 @@
         </sbol:mapsTo>
       </sbol:Module>
     </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_32077_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/>
-    <sbol:displayId>BO_32077_model</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_32077_model/protein">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
-        <sbol:displayId>protein</sbol:displayId>
-        <dcterms:title>protein</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model__protein"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_32077_model/cds">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/cds"/>
-        <sbol:displayId>cds</sbol:displayId>
-        <dcterms:title>cds</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model__cds"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_32077_model_model"/>
     <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_32077_model/ct">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/ct"/>
-        <sbol:displayId>ct</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/cds_template"/>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/promoter_template/mrna_degradation">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template/mrna_degradation"/>
+        <sbol:displayId>mrna_degradation</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_32077_model/ct/protein">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/ct/protein"/>
-            <sbol:displayId>protein</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/cds_template/protein"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_27783_model">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model"/>
-    <sbol:displayId>BO_27783_model</sbol:displayId>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_27783_model/mRNA">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
-        <sbol:displayId>mRNA</sbol:displayId>
-        <dcterms:title>mRNA</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model__mRNA"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rbs">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
-        <sbol:displayId>rbs</sbol:displayId>
-        <dcterms:title>rbs</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model__rbs"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_27783_model_model"/>
-    <sbol:module>
-      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt"/>
-        <sbol:displayId>rt</sbol:displayId>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/rbs_template"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt/mRNA">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt/mRNA"/>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoter_template/mrna_degradation/mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoter_template/mrna_degradation/mRNA"/>
             <sbol:displayId>mRNA</sbol:displayId>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/rbs_template/mRNA"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_27783_model/rt/rbs">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rt/rbs"/>
-            <sbol:displayId>rbs</sbol:displayId>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/rbs_template/rbs"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoter_template/mRNA"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
       </sbol:Module>
@@ -859,6 +498,367 @@
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/transcription_template_model"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/promoterrepression_template">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template"/>
+    <sbol:displayId>promoterrepression_template</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/mRNA"/>
+        <sbol:displayId>mRNA</sbol:displayId>
+        <dcterms:title>mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/promoter">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
+        <sbol:displayId>promoter</sbol:displayId>
+        <dcterms:title>promoter</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__promoter"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor"/>
+        <sbol:displayId>promoterRepressor</sbol:displayId>
+        <dcterms:title>promoterRepressor</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__promoterRepressor"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/activator">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
+        <sbol:displayId>activator</sbol:displayId>
+        <dcterms:title>activator</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template__activator"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding"/>
+        <sbol:displayId>binding</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/binding_template"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoterRepressor">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoterRepressor"/>
+            <sbol:displayId>promoterRepressor</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/complex"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoterRepressor"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/activator">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/activator"/>
+            <sbol:displayId>activator</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/species2"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoter">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/binding/promoter"/>
+            <sbol:displayId>promoter</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/binding_template/species1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/tu_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model"/>
+    <sbol:displayId>tu_model</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
+        <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
+        <dcterms:title>mrnaBO_2685C1</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__mrnaBO_2685C1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
+        <sbol:displayId>BO_10845</sbol:displayId>
+        <dcterms:title>BO_10845</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_10845"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/SigmaA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/SigmaA"/>
+        <sbol:displayId>SigmaA</sbol:displayId>
+        <dcterms:title>SigmaA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__SigmaA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
+        <sbol:displayId>BO_2685C1</sbol:displayId>
+        <dcterms:title>BO_2685C1</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_2685C1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2"/>
+        <sbol:displayId>BO_27783C2</sbol:displayId>
+        <dcterms:title>BO_27783C2</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_27783C2"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3"/>
+        <sbol:displayId>BO_32077C3</sbol:displayId>
+        <dcterms:title>BO_32077C3</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/tu_model__BO_32077C3"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/tu_model_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1"/>
+        <sbol:displayId>BO_27783C2_model_BO_2685C1</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_27783_model"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/mrnaBO_2685C1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/mrnaBO_2685C1"/>
+            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/BO_27783C2">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2_model_BO_2685C1/BO_27783C2"/>
+            <sbol:displayId>BO_27783C2</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_27783_model/rbs"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_27783C2"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model"/>
+        <sbol:displayId>BO_2685C1_model</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_2685_model"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/SigmaA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/SigmaA"/>
+            <sbol:displayId>SigmaA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/SigmaA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/SigmaA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/BO_2685C1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/BO_2685C1"/>
+            <sbol:displayId>BO_2685C1</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/BO_2685"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/mrnaBO_2685C1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1_model/mrnaBO_2685C1"/>
+            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_2685_model/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1"/>
+        <sbol:displayId>BO_32077C3_model_BO_2685C1</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_32077_model"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_32077C3">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_32077C3"/>
+            <sbol:displayId>BO_32077C3</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/cds"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_10845">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_32077C3_model_BO_2685C1/BO_10845"/>
+            <sbol:displayId>BO_10845</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_32077_model/protein"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model"/>
+        <sbol:displayId>BO_10845repressesBO_2685_BO_2685C1_model</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_2685C1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_2685C1"/>
+            <sbol:displayId>BO_2685C1</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_2685C1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/mrnaBO_2685C1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/mrnaBO_2685C1"/>
+            <sbol:displayId>mrnaBO_2685C1</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/mrnaBO_2685C1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_10845">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845repressesBO_2685_BO_2685C1_model/BO_10845"/>
+            <sbol:displayId>BO_10845</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/tu_model/BO_10845"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model"/>
+    <sbol:displayId>BO_10845repressesBO_2685_model</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
+        <sbol:displayId>activator</sbol:displayId>
+        <dcterms:title>activator</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__activator"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
+        <sbol:displayId>promoter</sbol:displayId>
+        <dcterms:title>promoter</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__promoter"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
+        <sbol:displayId>mRNA</sbol:displayId>
+        <dcterms:title>mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model__mRNA"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model_model"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt"/>
+        <sbol:displayId>prt</sbol:displayId>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/activator">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/activator"/>
+            <sbol:displayId>activator</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/activator"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/activator"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/mRNA">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/mRNA"/>
+            <sbol:displayId>mRNA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/mRNA"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/mRNA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/promoter">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/prt/promoter"/>
+            <sbol:displayId>promoter</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/promoterrepression_template/promoter"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/BO_10845repressesBO_2685_model/promoter"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/degradation_template">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template"/>
+    <sbol:displayId>degradation_template</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/degradation_template/species">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
+        <sbol:displayId>species</sbol:displayId>
+        <dcterms:title>species</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/degradation_template__species"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/degradation_template/degradation">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/degradation"/>
+        <sbol:displayId>degradation</sbol:displayId>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000176"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/degradation_template/degradation/species_r0">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/degradation_template/degradation/species_r0"/>
+            <sbol:displayId>species_r0</sbol:displayId>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/degradation_template/species"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/degradation_template_model"/>
   </sbol:ModuleDefinition>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/transcription_template_model">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/transcription_template_model"/>

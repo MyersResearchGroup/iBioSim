@@ -63,6 +63,10 @@ public class AnnotationUtility {
 		return true;
 	}
 	
+	/**
+	 * Remove the following SBOL annotation associated to the given SBML element. 
+	 * @param sbmlObject - The SBML element that has the annotated SBOL object.
+	 */
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
 		try {
 			String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();

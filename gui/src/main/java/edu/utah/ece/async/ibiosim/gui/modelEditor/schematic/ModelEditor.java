@@ -603,40 +603,6 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 	}
 
-	// /**
-	// * Save the current iBioSim project as SBOL.
-	// */
-	// public void saveAsSBOL2()
-	// {
-	// try {
-	// String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
-	// HashSet<String> sbolFiles =
-	// biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-	//
-	// SBML2SBOL.convert_SBML2SBOL(biosim.getSBOLDocument(), path,
-	// biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-	// sbolFiles, defaultURIprefix);
-	//
-	//
-	// } catch (SBOLValidationException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (FileNotFoundException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (SBOLConversionException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (XMLStreamException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// biosim.writeSBOLDocument();
-	// }
-
 	/**
 	 * Export the current model into the specified file format.
 	 * 
@@ -1787,14 +1753,26 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				if (network == null)
 					return false;
 				if (analysisView != null)
-					network.loadProperties(biomodel, analysisView.getGcmAbstractions(), analysisView.getProperty());
+					network.loadProperties(biomodel, analysisView.getGcmAbstractions());
 				else
 					network.loadProperties(biomodel);
 
 				SBMLDocument d = network.getSBML();
 				network.markAbstractable();
-				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml",
-						d);
+				try {
+					network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml",
+							d);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				}
 			} else {
 				SBMLWriter writer = new SBMLWriter();
 				PrintStream p;

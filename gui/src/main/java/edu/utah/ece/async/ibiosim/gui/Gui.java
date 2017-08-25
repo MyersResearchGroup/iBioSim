@@ -184,6 +184,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
@@ -3410,37 +3411,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					}
 					System.gc();
 					if (fullPath.endsWith(".xml")) {
-						// This code removes generated SBOL from SBOL file when
-						// SBML file is deleted
-						// Not really necessary
-						// SBMLDocument document =
-						// SBMLutilities.readSBML(fullPath);
-						// List<URI> sbolURIs = new LinkedList<URI>();
-						// AnnotationUtility.parseSBOLAnnotation(document.getModel(),
-						// sbolURIs);
-						// Iterator<URI> sbolIterator = sbolURIs.iterator();
-						// while (sbolIterator != null &&
-						// sbolIterator.hasNext())
-						// {
-						// URI sbolURI = sbolIterator.next();
-						// if (sbolURI.toString().endsWith("iBioSim"))
-						// {
-						// sbolIterator = null;
-						// for (String filePath :
-						// getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION))
-						// {
-						// SBOLDocument sbolDoc =
-						// SBOLUtility2.loadSBOLFile(filePath);
-						// try {
-						// SBOLUtility2.deleteDNAComponent(sbolURI, sbolDoc);
-						// }
-						// catch (SBOLValidationException e) {
-						// e.printStackTrace();
-						// }
-						// SBOLUtility2.writeSBOLDocument(filePath, sbolDoc);
-						// }
-						// }
-						// }
 						new File(fullPath.replace(".xml", ".gcm")).delete();
 					}
 					new File(fullPath).delete();
@@ -4729,16 +4699,48 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected void readSBOLDocument() {
 		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
 		File sbolFile = new File(sbolFilename);
-		if (sbolFile.exists()) {
-			try {
-				sbolDocument = SBOLReader.read(sbolFilename);
-				sbolDocument.setCreateDefaults(true);
-				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to open project's SBOL library.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		} else {
+		if (sbolFile.exists()) 
+		{
+				try 
+				{
+					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, EditPreferences.getDefaultUriPrefix());
+					sbolDocument.setCreateDefaults(true);
+				} 
+				catch (FileNotFoundException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "File cannot be found when loading iBioSim's SBOL library file: " + sbolFilename, 
+							"File Not Found",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (SBOLException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, 
+							e.getMessage(), e.getTitle(), 
+							JOptionPane.ERROR_MESSAGE);
+				} 
+				catch (SBOLValidationException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + sbolFilename + " is invalid.", "Invalid SBOL",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (IOException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to read iBioSim's SBOL library file: " + sbolFilename, 
+							"I/O Exception",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				} 
+				catch (SBOLConversionException e) 
+				{
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to perform SBOLConversion when reading this file: " + sbolFilename, 
+							"SBOL Conversion Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+		} 
+		else 
+		{
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
 			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
@@ -4843,7 +4845,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		// read the archive stored in `archiveFile`
 		CombineArchive ca;
 		try {
-			ca = new CombineArchive (archiveFile);
+			ca = new CombineArchive (archiveFile, true);
 		}
 		catch (JDOMException | ParseException | CombineArchiveException e) {
 			// TODO Auto-generated catch block
@@ -4860,6 +4862,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sbml")) {
+				System.out.println("ImportSBML: " + entry.getFileName());
 				importSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
 			}
 		}
@@ -4867,6 +4870,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sbol")) {
+				System.out.println("ImportSBOL: " + entry.getFileName());
 				importSBOLFile(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
 			}
 		}
@@ -4874,6 +4878,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sed-ml")) {
+				System.out.println("ImportSED-ML: " + entry.getFileName());
 				importSEDMLFile(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath ());
 			}
 		}
@@ -5131,7 +5136,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return true;
 	}
 
-	private void importSBOLFile(String filename) {
+	private void importSBOLFile(String filename) 
+	{
 		try {
 			File sbolFile = new File(filename.trim());
 			SBOLReader.setKeepGoing(true);
@@ -6302,7 +6308,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-
 	/**
 	 * Bring up an SBOL dialog window that will ask the user to select an SBOL design/part that was loaded from
 	 * the library SBOL document stored in iBioSim's project. Once a SBOL design/part has been selected from the 
@@ -6318,8 +6323,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			return;
 		}
 		
-		// Open up the SBOL design/part dialog 
-		SBOLInputDialog s = new SBOLInputDialog(mainPanel, currentDoc);
+		String fileName = currentProjectId + ".sbol";
+		String filePath = root + File.separator;
+		
+		//Open up the SBOL design/part dialog 
+		SBOLInputDialog s = new SBOLInputDialog(mainPanel, this, filePath, fileName, currentDoc);
 		if(s.getInput() == null)
 		{
 			return;
@@ -6331,7 +6339,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			JOptionPane.showMessageDialog(Gui.frame, "You need to select at least one design to run VPR Model Generator or open SBOLDesigner. Try again.", 
 					"No Design Selected",
 					JOptionPane.INFORMATION_MESSAGE);
-			s = new SBOLInputDialog(mainPanel, currentDoc);
+			s = new SBOLInputDialog(mainPanel, this, filePath, fileName, currentDoc);
 			if(s.getInput() == null)
 			{
 				return;
@@ -6339,8 +6347,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			chosenDesign = s.getSelection();
 		}
 		
-		String fileName = currentProjectId + ".sbol";
-		String filePath = root + File.separator;
 		if(s.isVPRGenerator())
 		{
 			runVPRGenerator(filePath, fileName, chosenDesign);
@@ -6348,18 +6354,20 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		else if(s.isSBOLDesigner())
 		{
 			openSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), currentDoc.getDefaultURIprefix());
-			
 		}
 	}
 	
+	
 	/**
 	 * Perform VPR Model generator from the given SBOLDocument.
+	 * @param filePath - The directory where the SBOL file is located.
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
-	 * @param chosenDesign - The chosen design, stored within an SBOLDocument, that the user would like to perform VPR Model Generation from.
+	 * @param chosenDesign - The chosen design that the user would like to perform VPR Model Generation from.
 	 */
 	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign)
 	{
-		try {
+		try 
+		{
 			if(chosenDesign != null)
 			{
 				String selectedRepo = getSelectedRepo();
@@ -6371,8 +6379,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
 				//update SBOL library file with newly generated components that vpr model generator created.
-				chosenDesign.write(filePath + fileName);
-				generateSBMLFromSBOL(chosenDesign, tree.getFile());
+				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
+				generateSBMLFromSBOL(chosenDesign, filePath);
+				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
 		} 
@@ -6406,7 +6415,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to perform VPR Model Generation on this SBOL file: " + fileName + ".", "Unable to Perform VPR Model Generation",
 					JOptionPane.ERROR_MESSAGE);
 		}	
+		catch (SBOLException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
 	}
+	
 	
 	/**
 	 * Retrieve the URL of the selected synbiohub repository that the user has selected from the repository dialog.
@@ -6443,13 +6459,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	
 	/**
-	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found from the given SBOLDocument.
+	 * Create an SBOLDesigner instance for every root ComponentDefinition that is found in the given SBOLDocument.
 	 * @param filePath - The location where the given file is located.
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
 	 * @param chosenDesigns - The selected SBOL design/part that the user wants to open in SBOLDesigner.
 	 * @param docURIPrefix - The default URI prefix of the given SBOLDocument "chosenDesign" is set to.
 	 */
-	private void openSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
+	public void openSBOLDesigner(String filePath, String fileName, Set<ComponentDefinition> chosenDesigns, String docURIPrefix)
 	{
 		try 
 		{
@@ -6536,6 +6552,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	/**
+	 * Convert SBOL to SBML.
+	 * @param inputSBOLDoc - The SBOLDocument to convert to SBML
+	 * @param filePath - The file location where the SBOL document is located.
+	 * @return The number of SBML models that was converted from SBOL. 
+	 */
 	private int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
 		int numGeneratedSBML = 0;
 		try {
@@ -8956,6 +8978,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				exitValue = reb2sac.waitFor();
 			}
 			if (exitValue != 255 && exitValue != -1) {
+
 				Executables.reb2sacFound = false;
 				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
 			}
@@ -8964,7 +8987,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			System.out.println("ERROR: " + Executables.reb2sacExecutable + " reb2sac not found.");
 		} catch (InterruptedException e) {
 		  Executables.reb2sacFound = false;
-			System.out.println("ERROR: " + Executables.reb2sacExecutable + "reb2sac not found.");
+      System.out.println("ERROR: " + Executables.reb2sacExecutable + " throws exception.");
+
 		}
 		exitValue = 1;
 		try {
@@ -9002,7 +9026,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 			  Executables.geneNetFound = false;
-				System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
+				System.out.println("ERROR: " + Executables.geneNetExecutable + " not functional.");
+
 			}
 		} catch (IOException e) {
 
@@ -9010,7 +9035,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
 		  Executables.geneNetFound = false;
-			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
+			System.out.println("ERROR: " + Executables.geneNetExecutable + " throws exception..");
+
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}

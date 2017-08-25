@@ -13,14 +13,16 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
-import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import uk.ac.ncl.ico2s.VPRException;
 import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
@@ -48,11 +50,144 @@ public class VPRModelGenerator {
 	 */
 	public static SBOLDocument generateModel(String selectedRepo, SBOLDocument generatedModel) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{ 
-		//"http://synbiohub.org/sparql"
+		//"https://synbiohub.org/sparql"
 		String endpoint = selectedRepo + "/sparql";
 		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
+		
+	}
+	
+	public static void main(String[] args) 
+	{
+		//-----REQUIRED FIELD-----
+		String fullInputFileName = ""; //input file name
+		String selectedRepo = ""; //-r
+
+		//-----OPTIONAL FIELD-----
+		boolean noOutput = false; //-no
+		String outputFileName = ""; //-o
+		String sbolURIPre = ""; //-u
+		
+		int index = 0;
+
+		for(; index< args.length; index++)
+		{
+			String flag = args[index];
+			switch(flag)
+			{
+			case "-no":
+				noOutput = true;
+				break;
+			case "-o":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				outputFileName = args[++index];
+				break;
+			case "-r":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				selectedRepo = args[++index];
+				break;
+			case "-u":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				sbolURIPre = args[++index];
+				break;
+			default:
+				fullInputFileName = args[index];
+			}
+		}
+		
+		if(fullInputFileName.isEmpty())
+		{
+			System.err.println("You must provide the full input file path as this is a required filed.");
+			usage();
+			return;
+		}
+		if(selectedRepo.isEmpty())
+		{
+			System.err.println("You must provide the synbiohub repository instance to perform model generation on as this is a required filed.");
+			usage();
+			return;
+		}
+		
+		if(sbolURIPre.isEmpty())
+		{
+			//Default SBOL uri prefix if user didn't provide one.
+			sbolURIPre = "http://www.async.ece.utah.edu/";
+		}
+		
+		try 
+		{
+			SBOLDocument inputSBOL = SBOLUtility.loadSBOLFile(fullInputFileName, sbolURIPre);
+			SBOLDocument outputSBOL = generateModel(selectedRepo, inputSBOL);
+			if(!noOutput)
+			{
+				if(outputFileName.isEmpty())
+				{
+					outputSBOL.write(new ByteArrayOutputStream());
+				}
+				else
+				{
+					outputSBOL.write(outputFileName+".xml", SBOLDocument.RDF);
+				}
+			}
+			else
+			{
+				outputSBOL.write(new ByteArrayOutputStream());
+			}
+		} 
+		catch (SBOLValidationException e) 
+		{
+			System.err.println("ERROR: Invalid SBOL file.");
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			System.err.println("ERROR: Unable to read file.");
+			e.printStackTrace();
+		} 
+		catch (SBOLConversionException e) 
+		{
+			System.err.println("ERROR: Unable to perform internal SBOL conversion from libSBOLj library.");
+			e.printStackTrace();
+		} 
+		catch (VPRException e) 
+		{
+			System.err.println("ERROR: Unable to Perform VPR Model Generation");
+			e.printStackTrace();
+		} 
+		catch (VPRTripleStoreException e) 
+		{
+			System.err.println("ERROR: This SBOL file has contents that can't perform VPR model generation.");
+			e.printStackTrace();
+		} 
+		catch (SBOLException e) 
+		{
+			System.err.println(e.getMessage());
+		}
+		
+		
+		
+	}
+	
+	private static void usage() 
+	{
+		System.err.println("VPR Model Generation");
+		System.err.println("Required:");
+		System.err.println("<inputFile> full path of input file");
+		System.err.println("\t-r  The specified synbiohub repository the user wants VPR model generator to connect to.");
+		System.err.println("Options:");
+		System.err.println("\t-o  Specifies the full path of the output file produced from VPR model generator.");
+		System.err.println("\t-no  Indicate no output file to be generated.");
+		System.err.println("\t-p  	The SBOL uri prefix to be set when reading in the specified SBOL file.");
 		
 	}
 

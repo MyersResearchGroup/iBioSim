@@ -13,6 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 
+import java.awt.event.MouseAdapter;
 import java.util.List;
 import org.sbolstandard.core2.TopLevel;
 
@@ -53,4 +54,5 @@ public class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
 			throw new IndexOutOfBoundsException();
 		}
 	}
+
 }

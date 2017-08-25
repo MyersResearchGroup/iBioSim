@@ -40,6 +40,8 @@ import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
@@ -60,7 +62,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 public class SBOLField2 extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private int styleOption;
+	private int styleOption; //The number of columns to create for the UI components.
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
@@ -69,6 +71,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private ModelEditor modelEditor; 
 	private URI removedBioSimURI;
 	
+	//SBOL object fields that are being associated
 	private String associateObjID, associateObjName, associatedObjSBO;
 	
 	private String sbolType;
@@ -79,13 +82,13 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private boolean isModelPanelField;
 	
 	/**
-	 * 
+	 * Constructor to give access to SBOL association.
 	 * @param sbolURIs - The URI of the SBOL object identity to be annotated
 	 * @param sbolStrand - The SBOL sequence to be annotated to the SBOL object.
 	 * @param sbolType - The SBOL object type that the user want to annotate the SBML element with. 
-	 * @param modelEditor
+	 * @param modelEditor - To get access to SBOL library file.
 	 * @param styleOption - Specify 2 or 3 to indicate how many columns the GUI will occupy to insert the SBOL Association add/edit and remove buttons.
-	 * @param isModelPanelField
+	 * @param isModelPanelField - 
 	 */
 	public SBOLField2(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor modelEditor, int styleOption,
 			boolean isModelPanelField) {
@@ -95,7 +98,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		this.sbolType = sbolType;
 		setSBOLAssociate_Type(sbolType);
 		constructField(modelEditor, styleOption, isModelPanelField);
-		
 	}
 	
 	/**
@@ -207,7 +209,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		String filePath = sbolFilePaths.iterator().next();
 
 		SBOLDocument workingDoc = readSBOLFile(filePath);
-
 		if (e.getActionCommand().equals("associateSBOL")) 
 		{
 			if (sbolURIs.size() > 0) 
@@ -287,7 +288,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private void updateSBMLFieldsFromSBOL(TopLevel sbolObj)
 	{
 		associateObjID = sbolObj.getDisplayId();
-		
 		associateObjName = sbolObj.getName();
 		
 		/*
@@ -378,8 +378,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 
 		case 1: // Generic Part
 			ComponentDefinition cd = Parts.GENERIC.createComponentDefinition(workingDoc);
-
 			setAssociatedSBOL(filePath, workingDoc, cd);
+			editSBOL(filePath, workingDoc);
 			break;
 
 		case JOptionPane.CLOSED_OPTION:
@@ -457,10 +457,17 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	{
 		TopLevel removeSBOLObj = getAssociatedSBOL_Obj(filePath, workingDoc);
 		sbolURIs.remove(removeSBOLObj.getIdentity());
-		//TODO: Determine how to update the SBML fields here
-		try {
+		try 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Warning! You are about to remove the following SBOL component from this SBML element: \n"
+					+ "SBOL id: " + removeSBOLObj.getIdentity() + "\n"
+					+ "SBOL displayId: " + removeSBOLObj.getDisplayId() + "\n"
+					+ "SBOL name: " + removeSBOLObj.getName());
+
 			deleteRemovedBioSimComponent();
-		} catch (SBOLValidationException e) {
+		} 
+		catch (SBOLValidationException e) 
+		{
 			JOptionPane.showMessageDialog(getParent(), "Unable to remove SBOL parts for SBOL Association: " + filePath, "SBOL Validation Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
@@ -510,6 +517,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	
 	/**
 	 * Read the given SBOLDocument from the specified filePath.
+	 * 
 	 * @param filePath - The location to read the SBOLDocument.
 	 * @return The SBOLDocument that was read in. 
 	 */
@@ -547,6 +555,12 @@ public class SBOLField2 extends JPanel implements ActionListener {
 					"SBOL Conversion Error",
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+		}
+		catch (SBOLException e1) 
+		{
+			JOptionPane.showMessageDialog(getParent(), 
+					e1.getMessage(), e1.getTitle(), 
+					JOptionPane.ERROR_MESSAGE);
 		}
 		return doc;
 	}

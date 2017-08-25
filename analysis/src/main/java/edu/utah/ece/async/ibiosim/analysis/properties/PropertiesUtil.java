@@ -93,11 +93,11 @@ public class PropertiesUtil {
     algorithm.addAlgorithmParameter(ap);
     ap = new AlgorithmParameter(GlobalConstants.KISAO_ABSOLUTE_TOLERANCE, String.valueOf(simProperties.getAbsError()));
     algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE,String.valueOf(simProperties.getRelError()));
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_RELATIVE_TOLERANCE, String.valueOf(simProperties.getRelError()));
     algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED,String.valueOf(simProperties.getRndSeed()));
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED, String.valueOf(simProperties.getRndSeed()));
     algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_SAMPLES,String.valueOf(simProperties.getRun()));
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_NUMBER_OF_RUNS, String.valueOf(simProperties.getRun()));
     algorithm.addAlgorithmParameter(ap);
     return algorithm;
   }
@@ -189,7 +189,8 @@ public class PropertiesUtil {
         properties.getSimulationProperties().setRelError(PropertiesUtil.parseDouble(ap.getValue()));
       } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SEED)) {
         properties.getSimulationProperties().setRndSeed(Long.parseLong(ap.getValue()));
-      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)) {
+      } else if (ap.getKisaoID().equals(GlobalConstants.KISAO_SAMPLES)||
+                 ap.getKisaoID().equals(GlobalConstants.KISAO_NUMBER_OF_RUNS)) {
         properties.getSimulationProperties().setRun(Integer.parseInt(ap.getValue()));
       }
     }

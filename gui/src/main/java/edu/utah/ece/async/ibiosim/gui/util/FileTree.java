@@ -321,28 +321,21 @@ public class FileTree extends JPanel implements MouseListener {
 							SBOLReader.setDropObjectsWithDuplicateURIs(false);
 							gui.writeSBOLDocument();
 							new File(curPath + File.separator + sbolFile).delete();
-
-							//						if (!SBOLReader.getSBOLVersion(curPath + File.separator + sbolFile).endsWith(SBOLReader.SBOLVERSION2)) {
-							//							Preferences biosimrc = Preferences.userRoot();
-							//							SBOLReader.setKeepGoing(true);
-							//							SBOLReader.setURIPrefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-							//							SBOLDocument sbolDoc;
-							//							sbolDoc = SBOLReader.read(curPath + File.separator + sbolFile);
-							//							sbolDoc.setDefaultURIprefix(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE,""));
-							//							sbolDoc.write(curPath + File.separator + sbolFile);
-							//						}
 						}
 						catch (SBOLValidationException e) {
-							// TODO Auto-generated catch block
-							//e.printStackTrace();
+							JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + curPath + File.separator + sbolFile + " is invalid.", "Invalid SBOL",
+									JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
 						}
 						catch (IOException e) {
-							// TODO Auto-generated catch block
-							//e.printStackTrace();
+							JOptionPane.showMessageDialog(Gui.frame, "Unable to find this SBOL file at this location: " + curPath + File.separator + sbolFile + ".", "File Not Found",
+									JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
 						}
 						catch (SBOLConversionException e) {
-							// TODO Auto-generated catch block
-							//e.printStackTrace();
+							JOptionPane.showMessageDialog(Gui.frame, "The output SBOLDocument of the generated model was unable to convert to SBML", "SBOL to SBML Conversion Failed",
+									JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
 						}
 					}
 				}

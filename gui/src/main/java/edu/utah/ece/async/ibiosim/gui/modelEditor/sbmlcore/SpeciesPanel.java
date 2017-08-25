@@ -889,48 +889,76 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				if (sbolField.getSBOLURIs().size() > 0) {
+				if (sbolField.getSBOLURIs().size() > 0) 
+				{
+					if(sbolField.isSBOLSBOSet() && (sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT)))
+					{
+						/*
+						 * The user has annotated a promoter to the SBML species. We will need to remove this species
+						 * and create a SBML promoter. This will allow the user to correctly edit their annotated 
+						 * part as an SBML promoter rather than a SBML species with a promoter SBO type.
+						 */
+						// create a new promoter so that all the fields are set properly.
+						String id ; //TODO: modify to mouse position
+						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
+						{ 
+							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
+							
+							// annotate the new promoter 
+							setSBOLAnnotation(promoter);
+							try 
+							{
+								bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
+							} 
+							catch (BioSimException e) 
+							{
+								JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+										JOptionPane.ERROR_MESSAGE);
+							}
+							// remove the old species to indicate it was transformed into a promoter
+							modelEditor.removeSpecies(species.getId());
+							modelEditor.refresh();
+							return true; //handling species annotation successful.
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(Gui.frame, 
+									"Unable to create SBML element", 
+									"Null pointer was encountered when creating a promoter.", 
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
-							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-					sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
-							sbolField.getSBOLURIs().iterator().next()); 
-					
-					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
+					try 
 					{
-					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-					}
-					
-
-					//Update iBioSim species id, name and SBO term from the annotated SBOL element
-					// TODO: these are causing null pointer exceptions
-					if(sbolField.isSBOLIDSet())
+						/*
+						 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
+						 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
+						 * To resolve this, make the SBML id unique.
+						 */
+						if(sbolField.isSBOLIDSet())
+						{
+							newSpeciesID = sbolField.getSBOLObjID();
+							bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
+							setSBOLAnnotation(species);
+						}
+					} 
+					catch (BioSimException e) 
 					{
-						newSpeciesID = sbolField.getSBOLObjID();
+						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+								JOptionPane.ERROR_MESSAGE);
 					}
-					if(sbolField.isSBOLNameSet())
-					{
-						species.setName(sbolField.getSBOLObjName());
-					}
-					if(sbolField.isSBOLSBOSet())
-					{
-						species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-					}
-					 
-
-					
-				} else 
+				} 
+				else 
+				{
 					AnnotationUtility.removeSBOLAnnotation(species);
+				}
 			}
 			
-			try {
-				bioModel.changeSpeciesId(selected, newSpeciesID);
-			} catch (BioSimException e1) {
-				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
+			
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -973,6 +1001,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		return true;
 	}
+	
+	/**
+	 * Perform annotation on the SBML element with the SBOL object that was selected from SBOL association.
+	 * @param sbmlElement - The SBML element to set the SBOL annotation on.
+	 */
+	private void setSBOLAnnotation(SBase sbmlElement)
+	{
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlElement.getMetaId(), 
+				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+				sbolField.getSBOLURIs().iterator().next()); 
+		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
+		{
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", 
+					"Invalid XML in SBML file", 
+					JOptionPane.ERROR_MESSAGE); 
+		}
+		
+		if(sbolField.isSBOLNameSet())
+		{
+			sbmlElement.setName(sbolField.getSBOLObjName());
+		}
+		if(sbolField.isSBOLSBOSet())
+		{
+			sbmlElement.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+		}
+	}
+	
+	
 
 	public String updates() {
 		

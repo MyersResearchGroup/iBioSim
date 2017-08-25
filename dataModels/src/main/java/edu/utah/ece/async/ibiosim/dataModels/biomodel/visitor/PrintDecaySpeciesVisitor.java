@@ -98,7 +98,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			} else if (decay > 0 || decay==-1){
 				decayExpression = decayString + "*" + specie.getId();
 				if (decay > 0)
-					kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
+					Utility.Parameter(kl, decayString, decay, decayUnitString);
 				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 				Utility.addReaction(document, r);
@@ -135,7 +135,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay > 0)
-				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				Utility.Parameter(kl, decayString, decay, decayUnitString);
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
@@ -170,7 +170,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay > 0)
-				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				Utility.Parameter(kl, decayString, decay, decayUnitString);
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
@@ -230,7 +230,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (decay > 0 || decay == -1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay>0)
-				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				Utility.Parameter(kl, decayString, decay, decayUnitString);
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
