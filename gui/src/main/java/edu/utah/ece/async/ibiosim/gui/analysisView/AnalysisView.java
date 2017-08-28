@@ -850,7 +850,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
    * @throws XMLStreamException
    * @throws NumberFormatException
    */
-  public void run(String direct, boolean refresh)
+  public void run(boolean refresh)
   {
     if (!save())
     {
@@ -890,15 +890,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     JProgressBar progress = new JProgressBar(0, 100);
     final JButton cancel = new JButton("Cancel");
     JFrame running;
-    JLabel label;
-    if (!direct.equals("."))
-    {
-      label = new JLabel("Running " + simName + " " + direct);
-    }
-    else
-    {
-      label = new JLabel("Running " + simName);
-    }
+    JLabel label = new JLabel("Running " + simName);
     running = createProgressBar(label, progress, cancel);
     // int steps;
     double runTime = timeLimit * run;
@@ -929,13 +921,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       {
         lpnProperty = ((String) transientProperties.getSelectedItem());
       }
-    }
-    String simulationName = simName;
-    String directory = null;
-    if (!direct.equals("."))
-    {
-      simulationName = simName + File.separator + direct;
-      directory = direct;
     }
     try {
       exit = runProgram.execute();
@@ -980,8 +965,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   }
 
   public int getStartIndex(String outDir) {
-
-    String root = properties.getRoot();
     if (append.isSelected())
     {
       String[] searchForRunFiles = new File(outDir).list();
@@ -1022,8 +1005,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
     String simName = (String) simulators.getSelectedItem();
     properties.setSim(simName);
-    String root = properties.getRoot();
-    String outDir = properties.getOutDir();
     String propName = properties.getPropertiesName();
     try
     {
@@ -1562,14 +1543,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
       t1.setFilename(root + File.separator + simName + File.separator + stem + File.separator + modelFile.replace(".lpn", ".xml"));
       t1.outputSBML();
-      if (!stem.equals(""))
-      {
-        new AnalysisThread(this).start(stem, true);
-      }
-      else
-      {
-        new AnalysisThread(this).start(".", true);
-      }
+      new AnalysisThread(this).start(true);
     }
   }
 
@@ -1815,8 +1789,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   public void run()
   {
   }
-
-
 
   public String getProperty()
   {

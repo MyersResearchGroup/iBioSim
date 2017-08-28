@@ -29,6 +29,7 @@ public class SimulationProperties {
     rndSeed = 314159;
     printer_track_quantity = "amount";
     genStats = "false";
+    timeLimit = 100;
   }
   /**
    * @return the absError

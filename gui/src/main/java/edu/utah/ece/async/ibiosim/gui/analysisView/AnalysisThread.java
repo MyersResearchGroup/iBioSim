@@ -23,8 +23,6 @@ public class AnalysisThread extends Thread {
 
 	private AnalysisView analysisView;
 
-	private String directory;
-
 	private boolean refresh;
 
 	public AnalysisThread(AnalysisView analysisView) {
@@ -32,14 +30,13 @@ public class AnalysisThread extends Thread {
 		this.analysisView = analysisView;
 	}
 
-	public void start(String directory, boolean refresh) {
-		this.directory = directory;
+	public void start(boolean refresh) {
 		this.refresh = refresh;
 		super.start();
 	}
 
 	@Override
 	public void run() {
-		analysisView.run(directory, refresh);
+		analysisView.run(refresh);
 	}
 }

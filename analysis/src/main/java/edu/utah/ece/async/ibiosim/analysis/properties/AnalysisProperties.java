@@ -55,7 +55,7 @@ public final class AnalysisProperties {
 	  this.abs = AbstractionMethod.NONE;
 	  this.userInterval = UserInterval.PRINT_INTERVAL;
 	  this.command = "";
-	  
+	  this.sim = "Runge-Kutta-Fehlberg (Hierarchical)";
 	  this.advProperties = new AdvancedProperties();
 	  this.incProperties = new IncrementalProperties();
 	  this.simProperties = new SimulationProperties();

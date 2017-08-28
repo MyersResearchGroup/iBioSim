@@ -1152,9 +1152,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 											.replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
 							AnalysisThread thread = new AnalysisThread(analysisView);
-							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
-									.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
-									.replace(",", ""), false);
+							String simStem = stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
+                  .replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
+                  .replace(",", "");
+							thread.start(false);
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
 									.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
@@ -1171,9 +1172,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 												.mkdir();
 						createSBML(stem, sweep, analysisMethod);
 						AnalysisThread thread = new AnalysisThread(analysisView);
+						String simStem = 
+                stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+                .replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
 						thread.start(
-								stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""),
 								false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
@@ -1192,11 +1194,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					new File(path + File.separator + simName + File.separator + stem).mkdir();
 				}
 				if (createSBML(stem, ".", analysisMethod)) {
-					if (!stem.equals("")) {
-						new AnalysisThread(analysisView).start(stem, true);
-					} else {
-						new AnalysisThread(analysisView).start(".", true);
-					}
+						new AnalysisThread(analysisView).start(true);
 				}
 				// analysisView.emptyFrames();
 			}
