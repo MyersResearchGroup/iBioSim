@@ -21,6 +21,7 @@ public class SimulationProperties {
     run = 1;
     initialTime = 0;
     outputStartTime = 0;
+    maxTimeStep = Double.POSITIVE_INFINITY;
     minTimeStep = 0;
     printInterval = 1;
     timeStep = 1;
@@ -30,6 +31,7 @@ public class SimulationProperties {
     printer_track_quantity = "amount";
     genStats = "false";
     timeLimit = 100;
+    
   }
   /**
    * @return the absError

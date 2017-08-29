@@ -87,14 +87,14 @@ public class DynamicSimulation extends CoreObservable
       //				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
       //			}
 
-      String SBMLFileName = properties.getModelFile(), outputDirectory = properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
+      String SBMLFileName = properties.getFilename(), outputDirectory = properties.getDirectory(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
       double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
           initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
       long randomSeed = simProperties.getRndSeed();
       JProgressBar progress = null;
       JFrame running = null;
       String[] interestingSpecies = null;
-      int runs = simProperties.getNumSteps(), numSteps = simProperties.getNumSteps();
+      int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
 
       switch (simulatorType)
       {

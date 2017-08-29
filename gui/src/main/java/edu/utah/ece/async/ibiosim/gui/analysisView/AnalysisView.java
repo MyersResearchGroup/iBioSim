@@ -1119,7 +1119,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     if (step.getText().trim().equals("inf") && !simName.equals("euler"))
     {
       double timeStep = Double.MAX_VALUE;
-      properties.getSimulationProperties().setTimeStep(timeStep);
+      properties.getSimulationProperties().setMaxTimeStep(timeStep);
     }
     else if (step.getText().trim().equals("inf") && simName.equals("euler"))
     {
@@ -1136,6 +1136,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
           JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Positive Number into the Maximum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
           return false;
         } 
+        properties.getSimulationProperties().setMaxTimeStep(timeStep);
       }
       catch (Exception e1)
       {
@@ -1200,6 +1201,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
         return false;
       }
+      properties.getSimulationProperties().setRun(run);
     }
     catch (Exception e1)
     {
