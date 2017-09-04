@@ -1495,7 +1495,7 @@ public class BioGraph extends mxGraph {
 	 */
 	public void addGridCells() {
 		
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			int gridRows = bioModel.getGridTable().getNumRows();
 			int gridCols = bioModel.getGridTable().getNumCols();
@@ -3262,7 +3262,7 @@ public class BioGraph extends mxGraph {
 		
 		String style = "";
 		
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			if (compart) style = "GRIDCOMPARTMENT;";
 			else style = "GRIDCOMPONENT;";

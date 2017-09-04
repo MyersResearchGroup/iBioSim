@@ -102,6 +102,7 @@ import com.mxgraph.util.mxRectangle;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GridTable;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -289,9 +290,9 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolbar = new JToolBar();
 
 		//if the grid is enabled, change the toolbar
-		if (grid.isEnabled()) {
-
-			grid.syncGridGraph(graph);
+		if (bioModel.isGridEnabled()) {
+		  grid.createGrid("none");
+		  grid.syncGridGraph(graph);
 
 			//remove the previous toolbar (and add back the graph)
 			this.removeAll();
@@ -481,7 +482,7 @@ public class Schematic extends JPanel implements ActionListener {
 		boolean dropped;
 		
 		//if there's a grid, do a different panel than normal
-		if (grid.isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 
 			//the true is to indicate the dropping is happening on a grid
 			dropped = DropComponentPanel.dropComponent(modelEditor, bioModel, x, y, true);
@@ -916,12 +917,11 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void refresh() {
-		if (grid.isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			grid = modelEditor.getGrid();
 			
 			//the new grid pointer may not have an accurate enabled state
 			//so make sure it's set to true
-			grid.setEnabled(true);
 			grid.refreshComponents();
 		}
 		
@@ -978,7 +978,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					int offset = graphComponent.getVerticalScrollBar().getValue();				
 					Point scrollOffset = new Point(grid.getScrollOffset().x, offset);
@@ -995,7 +995,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					int offset = graphComponent.getHorizontalScrollBar().getValue();		
 					Point scrollOffset = new Point(offset, grid.getScrollOffset().y);
@@ -1014,7 +1014,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				Point location = event.getPoint();
 				
-				if (grid.isEnabled() && SwingUtilities.isLeftMouseButton(event)) {
+				if (bioModel.isGridEnabled() && SwingUtilities.isLeftMouseButton(event)) {
 						
 					grid.setMouseClickLocation(location);
 					drawGrid();
@@ -1028,7 +1028,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void mouseMoved(MouseEvent event) {
 				
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					Point location = event.getPoint();
 					
@@ -1060,14 +1060,14 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						graphComponent.zoomOut();
 						
-						if (grid.isEnabled())
+						if (bioModel.isGridEnabled())
 							grid.syncGridGraph(graph);
 					}
 					else {
 						
 						graphComponent.zoomIn();
 						
-						if (grid.isEnabled()) 
+						if (bioModel.isGridEnabled()) 
 							grid.syncGridGraph(graph);
 					}
 					
@@ -1204,7 +1204,7 @@ public class Schematic extends JPanel implements ActionListener {
 //					}
 				}
 				
-				if (grid.isEnabled())
+				if (bioModel.isGridEnabled())
 					drawGrid();
 			}
 		});
@@ -1251,7 +1251,7 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						//if there's a grid, only move cell to an open grid location
 						//only one cell at a time and you can't be in analysis view
-						if (grid.isEnabled() && cells.length == 1 && editable) {
+						if (bioModel.isGridEnabled() && cells.length == 1 && editable) {
 							
 							//see if the component/cell can be moved
 							Boolean moved = grid.moveNode(cell.getId(), cell.getGeometry().getCenterX(), 
@@ -1272,7 +1272,7 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						//if there's no grid, move the cell wherever
 						else {
-							if (!grid.isEnabled())
+							if (!bioModel.isGridEnabled())
 								graph.updateInternalPosition(cell,true);
 						}
 					}
@@ -1619,7 +1619,7 @@ public class Schematic extends JPanel implements ActionListener {
 				else if(type == GlobalConstants.COMPONENT){
 							
 					//if there's a grid, remove the component from the grid as well
-					if (grid.isEnabled()) {
+					if (bioModel.isGridEnabled()) {
 						
 						grid.eraseNode(cell.getId(), bioModel);
 						modelEditor.getSpeciesPanel().refreshSpeciesPanel(bioModel);
@@ -2843,7 +2843,7 @@ public class Schematic extends JPanel implements ActionListener {
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
 		mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
-		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this, cell, biosim);
+		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this, bioModel, cell, biosim);
 		
 		menu.show(graphComponent, pt.x, pt.y);
 
@@ -2889,7 +2889,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			super.paintComponent(g);
 			
-			if (grid.isEnabled()) {
+			if (bioModel.isGridEnabled()) {
 				
 				Component[] comps = this.getComponents();
 				int height = 0;

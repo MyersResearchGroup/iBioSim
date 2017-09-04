@@ -245,7 +245,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		this.elementsPanel = null;
 		this.getParams = new ArrayList<String>();
 		this.undoManager = new UndoManager();
-		this.grid = new Grid();
+		
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
@@ -270,6 +270,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			biomodel.load(path + File.separator + filename);
 			this.filename = filename;
 			this.modelId = filename.replace(".gcm", "").replace(".xml", "");
+			this.grid = new Grid(biomodel);
 		} else {
 			this.filename = "";
 		}
@@ -2101,9 +2102,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				parameterChanges, false);
 		reactionPanel = new Reactions(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges, this);
 		speciesPanel = new MySpecies(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges,
-				grid.isEnabled(), this);
+		  biomodel.isGridEnabled(), this);
 		parametersPanel = new Parameters(biomodel, this, paramsOnly, getParams, path + File.separator + file,
-				parameterChanges, (paramsOnly || !textBased) && !grid.isEnabled());
+				parameterChanges, (paramsOnly || !textBased) && !biomodel.isGridEnabled());
 		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
 		eventPanel = new Events(biosim, biomodel, this, textBased);
@@ -2165,7 +2166,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		} else {
 			modelPanel = schematic.getModelPanel();
 			tab.addTab("Schematic", schematic);
-			if (grid.isEnabled()) {
+			if (biomodel.isGridEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 				tab.addTab("Parameters", parametersPanel);
 			} else {
@@ -2744,7 +2745,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	}
 
 	public boolean isGridEditor() {
-		return grid.isEnabled();
+		return biomodel.isGridEnabled();
 	}
 
 	public void addCompartment() {
@@ -2855,7 +2856,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 		biomodel.loadDefaultEnclosingCompartment();
 		biomodel.loadGridSize();
-		buildGrid();
+    grid.createGrid(null);
 	}
 
 	public void setElementsPanel(ElementsPanel elementsPanel) {
@@ -3015,11 +3016,6 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 	public Grid getGrid() {
 		return grid;
-	}
-
-	public void buildGrid() {
-
-		grid.createGrid(biomodel, null);
 	}
 
 	public void makeUndoPoint() {

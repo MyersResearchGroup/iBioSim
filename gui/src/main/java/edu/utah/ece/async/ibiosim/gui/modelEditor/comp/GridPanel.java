@@ -201,10 +201,9 @@ public class GridPanel extends JPanel implements ActionListener {
 				//create the grid with these components
 				//these will be added to the GCM as well
 				Grid grid = modelEditor.getGrid();
-				grid.setEnabled(true);
 				gcm.getGridTable().setNumRows(rowCount);
 				gcm.getGridTable().setNumCols(colCount);
-				grid.createGrid(gcm, compGCMName);
+				grid.createGrid(compGCMName);
 				
 				return true;
 			} 

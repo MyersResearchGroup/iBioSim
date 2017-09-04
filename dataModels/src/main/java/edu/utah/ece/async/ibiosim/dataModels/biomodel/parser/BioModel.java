@@ -2642,6 +2642,7 @@ public class BioModel extends CoreObservable{
 			}
 		}
 		if (gridSize != null) {
+		  
 		  gridTable.setNumRows(gridSize[0]);
 		  gridTable.setNumCols(gridSize[1]);
 		} 
