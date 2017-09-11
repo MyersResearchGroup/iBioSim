@@ -31,6 +31,7 @@ public class SimulationProperties {
     printer_track_quantity = "amount";
     genStats = "false";
     timeLimit = 100;
+    intSpecies = new ArrayList<String>();
     
   }
   /**
@@ -235,13 +236,6 @@ public class SimulationProperties {
    */
   public List<String> getIntSpecies() {
     return intSpecies;
-  }
-  
-  /**
-   * @param intSpecies the intSpecies to set
-   */
-  public void setIntSpecies(List<String> intSpecies) {
-    this.intSpecies = intSpecies;
   }
   
   /**
