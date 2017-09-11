@@ -44,6 +44,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import edu.utah.ece.async.ibiosim.analysis.Run;
+
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
@@ -764,14 +766,19 @@ public class Nary_Run implements ActionListener, Runnable
 				}
 			}
 		}
-		runProgram.execute(filename, fba, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim,
-				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, biomodelsim,
-				simTab, root, progress, "", null, direct, initialTime, outputStartTime, timeLimit, timeLimit * run, modelFile,
-				abstPane, abstraction, null, null, absError, relError, timeStep, printInterval, run, rndSeed,
-				true, label, running);
-		running.setCursor(null);
-		running.dispose();
-		naryCancel.removeActionListener(runProgram);
+//		try {
+//      runProgram.execute(filename, fba, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim,
+//      		printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, biomodelsim,
+//      		simTab, root, progress, "", null, direct, initialTime, outputStartTime, timeLimit, timeLimit * run, modelFile,
+//      		abstPane, abstraction, null, null, absError, relError, timeStep, printInterval, run, rndSeed,
+//      		true, label, running);
+//
+//      running.setCursor(null);
+//      running.dispose();
+//      naryCancel.removeActionListener(runProgram);
+//    } catch (BioSimException e) {
+//      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+//    }
 	}
 
 	/**

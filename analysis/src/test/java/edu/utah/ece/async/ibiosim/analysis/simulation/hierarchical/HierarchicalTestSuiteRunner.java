@@ -37,6 +37,7 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
@@ -67,6 +68,8 @@ public class HierarchicalTestSuiteRunner
   static ArrayList<String>  interestingSpecies  = new ArrayList<String>();
   static String       quantityType    = "amount";
   static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule"));
+  static AnalysisProperties properties;
+  
   /**
    * @param args
    *            %d = args[0] = path to cases %n = args[1] = case id %o =
@@ -143,7 +146,7 @@ public class HierarchicalTestSuiteRunner
       try
       {
 
-        simulator.simulate(filename, root, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, null, printInterval, runs, null, null, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, false, null, null, 0, 0);
+        simulator.simulate(properties);
 
         TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
         tsdp.outputCSV(outputDirectory + testcase + ".csv");

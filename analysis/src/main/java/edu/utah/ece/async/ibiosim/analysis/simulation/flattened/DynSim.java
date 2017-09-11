@@ -25,6 +25,7 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -59,6 +60,7 @@ public class DynSim
 	// static String[] concSpecies = new String[0];
 	static String				quantityType		= "amount";
 
+  static AnalysisProperties properties;
 	/**
 	 * entry point for simulator-only execution
 	 * 
@@ -111,9 +113,6 @@ public class DynSim
 		String settingsFile = "";
 
 		String newFilename;
-		JLabel progressLabel = null;
-		JProgressBar progress = null;
-		JFrame running = null;
 		DynamicSimulation simulator = null;
 
 		if (testSuite)
@@ -125,6 +124,7 @@ public class DynSim
 			newFilename = outputDirectory + separator + testcase + "_flatten.xml";
 			readSettings(settingsFile);
 			printInterval = timeLimit / numSteps;
+			properties = new AnalysisProperties(testcase, testcase + "-sbml-l3v1.xml", args[0], false);
 			simulator = new DynamicSimulation(SimulationType.RK);
 		}
 		else
@@ -133,6 +133,8 @@ public class DynSim
 			filename = args[0];
 			outputDirectory = args[1];
 			settingsFile = args[2];
+			properties = new AnalysisProperties(testcase, testcase + "-sbml-l3v1.xml", args[0], false);
+      
 			newFilename = filename.replace(".xml", "_flatten.xml");
 			readProperties(settingsFile);
 
@@ -171,15 +173,14 @@ public class DynSim
 			System.out.println("Flattening time: " + (t2 - t1) / 1000);
 			if (testSuite)
 			{
-				simulator.simulate(filename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null, null, 0, 0);
+				simulator.simulate(properties);
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
 			}
 			else
 			{
-				simulator.simulate(newFilename, outputDirectory, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null, null, 0,
-						0);
+				simulator.simulate(properties);
 			}
 
 		}

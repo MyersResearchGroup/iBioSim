@@ -583,7 +583,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 			
 		//if there's a grid to set the appearance of
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			//loop through all grid locations and set appearances
 			for (int row = minRow; row < numRows + minRow; ++row) {

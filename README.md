@@ -31,7 +31,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.15.0/experimental/binaries/) libSBML for validation and flattening.
+5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.15.2-experimental/) libSBML for validation and flattening.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
 
 ## Installing iBioSim
@@ -51,7 +51,10 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. You can install different features by following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
-2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project.
+2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project with the following names:
+      * Windows: ```reb2sac.exe``` ```GeneNet.exe``` 
+      * Mac OS X: ```reb2sac.mac64``` ```GeneNet.mac64``` 
+      * Linux: ```reb2sac.linux64``` ```GeneNet.linux64``` 
 
 ## [Optional] Setting up iBioSim in Eclipse
 ### Importing iBioSim to Eclipse

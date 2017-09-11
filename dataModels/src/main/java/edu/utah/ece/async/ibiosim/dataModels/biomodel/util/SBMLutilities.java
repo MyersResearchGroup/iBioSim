@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
+import org.jlibsedml.SEDMLDocument;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
@@ -102,6 +103,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -5634,7 +5636,7 @@ public class SBMLutilities
 		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel)!=null &&
 				document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 			  SBMLutilities.message.setErrorDialog("Error Opening File", "Unable convert FBC model from Version 1 to Version 2.");
 				return null;
@@ -5677,7 +5679,7 @@ public class SBMLutilities
 
 		if (document.getLevel() < GlobalConstants.SBML_LEVEL || document.getVersion() < GlobalConstants.SBML_VERSION)
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 				SBMLWriter Xwriter = new SBMLWriter();
@@ -6237,7 +6239,73 @@ public class SBMLutilities
 	}
 
 
-  public static Boolean			libsbmlFound		= true;
-  public static Boolean			reb2sacFound		= true;
-  public static Boolean			geneNetFound		= true;
+  public static String createTimeString(long time1, long time2)
+  {
+    long minutes;
+    long hours;
+    long days;
+    double secs = ((time2 - time1) / 1000000000.0);
+    long seconds = ((time2 - time1) / 1000000000);
+    secs = secs - seconds;
+    minutes = seconds / 60;
+    secs = seconds % 60 + secs;
+    hours = minutes / 60;
+    minutes = minutes % 60;
+    days = hours / 24;
+    hours = hours % 60;
+    String time;
+    String dayLabel;
+    String hourLabel;
+    String minuteLabel;
+    String secondLabel;
+    if (days == 1)
+    {
+      dayLabel = " day ";
+    }
+    else
+    {
+      dayLabel = " days ";
+    }
+    if (hours == 1)
+    {
+      hourLabel = " hour ";
+    }
+    else
+    {
+      hourLabel = " hours ";
+    }
+    if (minutes == 1)
+    {
+      minuteLabel = " minute ";
+    }
+    else
+    {
+      minuteLabel = " minutes ";
+    }
+    if (seconds == 1)
+    {
+      secondLabel = " second";
+    }
+    else
+    {
+      secondLabel = " seconds";
+    }
+    if (days != 0)
+    {
+      time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+    }
+    else if (hours != 0)
+    {
+      time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+    }
+    else if (minutes != 0)
+    {
+      time = minutes + minuteLabel + secs + secondLabel;
+    }
+    else
+    {
+      time = secs + secondLabel;
+    }
+    return time;
+  }
 }

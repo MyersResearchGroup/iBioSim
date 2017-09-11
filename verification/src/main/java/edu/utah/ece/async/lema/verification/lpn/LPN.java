@@ -38,6 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.DualHashMap;
 import edu.utah.ece.async.lema.verification.platu.stategraph.StateGraph;
 import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.InequalityVariable;
@@ -50,7 +51,7 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class LPN extends Observable {
+public class LPN extends CoreObservable {
 
 	protected HashMap<String, Transition> transitions;
 

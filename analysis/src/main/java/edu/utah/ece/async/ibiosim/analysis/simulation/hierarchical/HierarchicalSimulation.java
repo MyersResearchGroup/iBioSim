@@ -669,7 +669,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     setCurrentRun(currentRun);
     try
     {
-      writer.init(getOutputDirectory() + "run-" + currentRun + ".tsd");
+      writer.init(getOutputDirectory() + File.separator + "run-" + currentRun + ".tsd");
     }
     catch (IOException e)
     {

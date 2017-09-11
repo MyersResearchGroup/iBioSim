@@ -51,6 +51,7 @@ import org.sbml.jsbml.text.parser.ParseException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 
 /**
@@ -59,7 +60,7 @@ import edu.utah.ece.async.lema.verification.lpn.ExprTree;
  * @author Zhen Zhang
  * 
  */
-public class Translator extends Observable {
+public class Translator extends CoreObservable {
 	private String filename;
 	private SBMLDocument document;
 	public static boolean isSteadyState = false;

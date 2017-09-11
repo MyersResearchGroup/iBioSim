@@ -368,7 +368,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String thresholdText = "";
 			boolean speciesMarked = false;
 			
-			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			List<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
 			
 			//look for the selected species among the already-interesting
 			//if it is interesting, populate the field with its data
@@ -740,18 +740,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
           
 					return false;
 				}
+				
 			}
 			newSpeciesID = dimID[0];
-
-			if (selected != null) {			
+			
+			if (selected != null) 
+			{			
 				
 				//check and add interesting species information
-				if (paramsOnly) {
-					if (!addInterestingSpecies())
-					return false;
+				if (paramsOnly) 
+				{
+					if (!addInterestingSpecies()) return false;
 				}
 				
-				if (!paramsOnly) {
+				if (!paramsOnly) 
+				{
+				  
 					InitialAssignments.removeInitialAssignment(bioModel, selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
@@ -764,6 +768,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
+
 					SBMLutilities.createDimensions(species, dimensionIds, dimID);
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					species.setBoundaryCondition(specBoundary.isSelected());
@@ -958,7 +963,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			
+			try {
+        bioModel.changeSpeciesId(selected, newSpeciesID);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, 
+          e.getMessage(), 
+          e.getTitle(), 
+          JOptionPane.ERROR_MESSAGE); 
+      }
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {

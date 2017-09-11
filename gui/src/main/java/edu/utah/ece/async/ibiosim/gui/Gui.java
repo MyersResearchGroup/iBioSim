@@ -168,6 +168,7 @@ import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
+import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
@@ -177,14 +178,15 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
-import edu.utah.ece.async.ibiosim.gui.analysisView.Run;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.learnView.DataManager;
 import edu.utah.ece.async.ibiosim.gui.learnView.LearnView;
@@ -223,7 +225,7 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
  *         Contributors </a>
  * @version %I%
  */
-public class Gui implements Observer, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
+public class Gui implements BioObserver, MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
 	public static JFrame frame; // Frame where components of the GUI are displayed
 	protected JMenuBar menuBar;
@@ -257,11 +259,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	protected JSplitPane topSplit;
 	protected JSplitPane mainSplit;
 
-	public static String reb2sacExecutable;
-
 	public static String[] envp;
 
-	public static String geneNetExecutable;
 
 	public Log log; // the
 	// log
@@ -376,7 +375,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 	public Gui(boolean lema, boolean atacs, boolean libsbmlFound) {
 		this.lema = lema;
 		this.atacs = atacs;
-		SBMLutilities.libsbmlFound = libsbmlFound;
+		Executables.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 		/*
@@ -2244,14 +2243,16 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
-						"tsd.printer", "amount", "false", GlobalConstants.splitPath(directory + theFile),
-						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
-						false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+				
+//				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+//						"tsd.printer", "amount", "false", (directory + theFile).split(GlobalConstants.separator),
+//						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
+//						false, false);
+
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						envp, work);
 				String error = "";
 				String output = "";
@@ -2417,14 +2418,15 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				dummy.setSelected(false);
 				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
-				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
-						"tsd.printer", "amount", "false", GlobalConstants.splitPath(directory + theFile),
-						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
-						false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
+
+//				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
+//						"tsd.printer", "amount", "false", GlobalConstants.splitPath(directory + theFile),
+//						"none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null, false,
+//						false, false);
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" + directory + out
 						+ ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec(reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
+				Process graph = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + out + ".dot " + theFile,
 						null, work);
 				String error = "";
 				String output = "";
@@ -2512,15 +2514,17 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				Run.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
-						new String[0], "tsd.printer", "amount", "false",
-						GlobalConstants.splitPath(directory + theFile), "none", frame, directory + theFile, 0.1,
-						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
-				log.addText("Executing:\n" + reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
+
+//				Run.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
+//						new String[0], "tsd.printer", "amount", "false",
+//						(directory + theFile).split(GlobalConstants.separator), "none", frame, directory + theFile, 0.1,
+//						0.1, 0.1, 15, 2.0, empty, empty, empty, null, false, false, false);
+
+				log.addText("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + directory + out
 						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec(
-						reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
+				  Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, envp, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -2605,7 +2609,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 						else if (component instanceof ModelEditor) {
 							((ModelEditor) component).saveParams(false, "", true, null);
 						} else if (component instanceof AnalysisView) {
-							((AnalysisView) component).save("");
+							((AnalysisView) component).save();
 						} else if (component instanceof MovieContainer) {
 							((MovieContainer) component).savePreferences();
 						}
@@ -4483,7 +4487,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		addToTree(simName);
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
-		AnalysisView analysisView = new AnalysisView(this, log, simTab, null, root, simName, modelFileName);
+		AnalysisView analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root, simName, modelFileName);
+		analysisView.addObserver(this);
 		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", analysisView.getAdvanced());
@@ -4500,24 +4505,25 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		simTab.addTab("Parameters", modelEditor);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
 		modelEditor.createSBML("", ".", "");
-		new AnalysisThread(analysisView).start(".", true);
+		new AnalysisThread(analysisView).start(true);
 		Graph tsdGraph;
 		if (new File(root + File.separator + simName + File.separator + simName + ".grf")
 				.exists()) {
 			tsdGraph = analysisView.createGraph(
-					root + File.separator + simName + File.separator + simName + ".grf");
+					root +File.separator + simName + File.separator + simName + ".grf", true);
+
 		} else {
-			tsdGraph = analysisView.createGraph(null);
+			tsdGraph = analysisView.createGraph(null,true);
 		}
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 		Graph probGraph;
 		if (new File(root + File.separator + simName + File.separator + simName + ".prb")
 				.exists()) {
-			probGraph = analysisView.createProbGraph(
-					root + File.separator + simName + File.separator + simName + ".prb");
+			probGraph = analysisView.createGraph(
+					root + File.separator + simName +File.separator + simName + ".prb", false);
 		} else {
-			probGraph = analysisView.createProbGraph(null);
+			probGraph = analysisView.createGraph(null, false);
 		}
 		simTab.addTab("Histogram", probGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
@@ -4773,7 +4779,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				long time1 = System.nanoTime();
 				sedmlDocument = Libsedml.readDocument(sedmlFile);
 				long time2 = System.nanoTime();
-				String time = Run.createTimeString(time1, time2);
+				String time = SBMLutilities.createTimeString(time1, time2);
 				System.out.println(time);
 			} catch (XMLException exception) {
 				JOptionPane.showMessageDialog(frame, "Unable to open project's SED-ML file.", "Error",
@@ -7163,19 +7169,19 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 												JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
 											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-											.save("");
+											.save();
 										} else if (value == CANCEL_OPTION) {
 											return 0;
 										} else if (value == YES_TO_ALL_OPTION) {
 											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-											.save("");
+											.save();
 											autosave = 1;
 										} else if (value == NO_TO_ALL_OPTION) {
 											autosave = 2;
 										}
 									} else if (autosave == 1) {
 										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-										.save("");
+										.save();
 									}
 								}
 							} else if (((JTabbedPane) tab.getComponentAt(index))
@@ -8774,7 +8780,8 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
 		AnalysisView analysisView;
-		analysisView = new AnalysisView(this, log, simTab, null, root, analysisName, modelFileName);
+		analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root, analysisName, modelFileName);
+		analysisView.addObserver(this);
 		simTab.addTab("Simulation Options", analysisView);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", analysisView.getAdvanced());
@@ -8784,6 +8791,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 					analysisName,
 					root + File.separator + analysisName + File.separator + analysisName + ".sim",
 					analysisView, false, false);
+			modelEditor.addObserver(this);
 			analysisView.setModelEditor(modelEditor);
 			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), sedmlDocument,
 					analysisName);
@@ -8794,10 +8802,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 			simTab.addTab("Parameters", modelEditor);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
 		}
-		Graph tsdGraph = analysisView.createGraph(fileName + File.separator + analysisName + ".grf");
+		Graph tsdGraph = analysisView.createGraph(fileName + File.separator + analysisName + ".grf", true);
+
 		simTab.addTab("TSD Graph", tsdGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-		Graph probGraph = analysisView.createProbGraph(fileName + File.separator + analysisName + ".prb");
+
+		Graph probGraph = analysisView.createGraph(fileName + File.separator + analysisName + ".prb", false);
+
 		simTab.addTab("Histogram", probGraph);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
 		addTab(analysisName, simTab, null);
@@ -8909,6 +8920,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				}
 			}
 		}
+		Executables.checkExecutables();
 		try {
 			System.loadLibrary("sbmlj");
 			// For extra safety, check that the jar file is in the classpath.
@@ -8928,13 +8940,13 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		int exitValue = 1;
 		try {
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				reb2sacExecutable = "reb2sac.linux64";
+			  Executables.reb2sacExecutable = "reb2sac.linux64";
 			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				reb2sacExecutable = "reb2sac.mac64";
+			  Executables.reb2sacExecutable = "reb2sac.mac64";
 			} else {
-				reb2sacExecutable = "reb2sac.exe";
+			  Executables.reb2sacExecutable = "reb2sac.exe";
 			}
-			ProcessBuilder ps = new ProcessBuilder(reb2sacExecutable, "");
+			ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
 				env.put("BIOSIM", System.getenv("BIOSIM"));
@@ -8966,26 +8978,28 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				exitValue = reb2sac.waitFor();
 			}
 			if (exitValue != 255 && exitValue != -1) {
-				SBMLutilities.reb2sacFound = false;
-				System.out.println("ERROR: " + reb2sacExecutable + " not functional.");
+
+				Executables.reb2sacFound = false;
+				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
 			}
 		} catch (IOException e) {
-			SBMLutilities.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + " not found.");
+		  Executables.reb2sacFound = false;
+			System.out.println("ERROR: " + Executables.reb2sacExecutable + " reb2sac not found.");
 		} catch (InterruptedException e) {
-			SBMLutilities.reb2sacFound = false;
-			System.out.println("ERROR: " + reb2sacExecutable + " throws exception.");
+		  Executables.reb2sacFound = false;
+      System.out.println("ERROR: " + Executables.reb2sacExecutable + " throws exception.");
+
 		}
 		exitValue = 1;
 		try {
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				geneNetExecutable = "GeneNet.linux64";
+			  Executables.geneNetExecutable = "GeneNet.linux64";
 			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				geneNetExecutable = "GeneNet.mac64";
+			  Executables.geneNetExecutable = "GeneNet.mac64";
 			} else {
-				geneNetExecutable = "GeneNet.exe";
+			  Executables.geneNetExecutable = "GeneNet.exe";
 			}
-			ProcessBuilder ps = new ProcessBuilder(geneNetExecutable, "");
+			ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
 				env.put("BIOSIM", System.getenv("BIOSIM"));
@@ -9011,37 +9025,20 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 				exitValue = geneNet.waitFor();
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
-				SBMLutilities.geneNetFound = false;
-				System.out.println("ERROR: " + geneNetExecutable + " not functional.");
+			  Executables.geneNetFound = false;
+				System.out.println("ERROR: " + Executables.geneNetExecutable + " not functional.");
+
 			}
 		} catch (IOException e) {
-			SBMLutilities.geneNetFound = false;
-			System.out.println("ERROR: " + geneNetExecutable + " not found.");
+
+		  Executables.geneNetFound = false;
+			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
-			SBMLutilities.geneNetFound = false;
-			System.out.println("ERROR: " + geneNetExecutable + " throws exception.");
+		  Executables.geneNetFound = false;
+			System.out.println("ERROR: " + Executables.geneNetExecutable + " throws exception..");
+
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
-	}
-
-	public static boolean isLibsbmlFound() {
-		return SBMLutilities.libsbmlFound;
-	}
-
-	public static boolean isReb2sacFound() {
-		return SBMLutilities.reb2sacFound;
-	}
-
-	public static String getReb2sacExecutable() {
-		return reb2sacExecutable;
-	}
-
-	public static boolean isGeneNetFound() {
-		return SBMLutilities.geneNetFound;
-	}
-
-	public static String getGeneNetExecutable() {
-		return geneNetExecutable;
 	}
 
 	public void refreshLearn(String learnName) {
@@ -10212,21 +10209,20 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		return true;
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		Message message = (Message) arg;
-
-		if (message.isConsole()) {
-			System.out.println(message.getMessage());
-		} else if (message.isErrorDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-		} else if (message.isDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (message.isLog()) {
-			log.addText(message.getMessage());
-		}
-	}
+  @Override
+  public void update(Message message) {
+    if (message.isConsole()) {
+      System.out.println(message.getMessage());
+    } else if (message.isErrorDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+    } else if (message.isDialog()) {
+      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
+          JOptionPane.PLAIN_MESSAGE);
+    } else if (message.isLog()) {
+      log.addText(message.getMessage());
+    }
+    
+  }
 
 }

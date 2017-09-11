@@ -120,7 +120,7 @@ public class HierarchicalFBASimulator extends HierarchicalSimulation
 		{
 		  VariableNode node = topmodel.getNode(name);
       double value = node.getValue(topmodel.getIndex());
-      if(Math.abs(value) < 1e-9)
+      if(Math.abs(value) < 1e-6)
       {
         value = 0;
       }

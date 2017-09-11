@@ -1009,6 +1009,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			modelEditor.makeUndoPoint();
 			return true;
 		}
+		else
+		{
+		  JOptionPane.showMessageDialog(Gui.frame, "The selected parameter is referenced by another object. Remove all references before deleting the object.", "Parameter is being used.", JOptionPane.INFORMATION_MESSAGE);
+		}
 		return false;
 	}
 

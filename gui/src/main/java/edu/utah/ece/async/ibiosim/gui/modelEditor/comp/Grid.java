@@ -64,7 +64,6 @@ public class Grid {
 	
 	//components on the grid
 	//private HashMap<String, Properties> components;
-	private BioModel bioModel;
 	
 	//map of row, col grid locations to the component at that location
 	private HashMap<Point, String> locToComponentMap;
@@ -81,7 +80,7 @@ public class Grid {
 	private double componentGeomWidth;
 	private double componentGeomHeight;
 	private double zoomAmount;
-	private boolean enabled;
+	private BioModel bioModel;
 	private boolean mouseClicked;
 	private boolean mouseReleased; //used for rubberband release
 	private Point scrollOffset; //for drawing when scrolled
@@ -107,9 +106,8 @@ public class Grid {
 	/**
 	 * default constructor
 	 */
-	public Grid() {
+	public Grid(BioModel bioModel) {
  
-		enabled = false;
 		mouseReleased = false;
 		verticalOffset = 0;
 		padding = 30;
@@ -131,7 +129,8 @@ public class Grid {
 		locToComponentMap = new HashMap<Point, String>();
 		componentIDToNodeMap = new HashMap<String, GridNode>();
 		graph = null;
-		gridTable = null;
+		this.gridTable = bioModel.getGridTable();
+		this.bioModel = bioModel;
 	}
 	
 	/**
@@ -142,37 +141,16 @@ public class Grid {
 	 * @param cols number of columns in the grid
 	 * @param components the components that are located on the grid
 	 */
-	public void createGrid(BioModel gcm, String compGCM) {
-		
+	public void createGrid(String compGCM) {
+	  
 		//if the grid size is 0 by 0, don't make it
 		if (gridTable == null || gridTable.getNumRows() <= 0 || gridTable.getNumCols() <= 0) {
 			
-			enabled = false; //should be false already, but whatever
 			return;
 		}
-		
-		gridTable = gcm.getGridTable();
-		enabled = true;
-		
-		//gcm.setIsWithinCompartment(true);
-		for(int row = 0; row < gridTable.getNumRows(); ++row) {
-			
-			grid.add(new ArrayList<GridNode>(gridTable.getNumCols()));
-			
-			for(int col = 0; col < gridTable.getNumCols(); ++col) {
-				
-				grid.get(row).add(new GridNode());
-				grid.get(row).get(col).setRow(row);
-				grid.get(row).get(col).setCol(col);
-				
-				//null signifies that the components are already in the GCM
-				if (compGCM != null)
-					addComponentToGCM(row, col, compGCM, gcm);
-			}
-		}
-		
-		this.bioModel = gcm;
-		
+	
+		changeGridSize(gridTable.getNumRows(), gridTable.getNumCols(),compGCM, bioModel);
+
 		updateGridRectangles();
 		updateRectToNodeMap();
 		updateLocToComponentMap();
@@ -667,8 +645,8 @@ public class Grid {
 	 */
 	public void changeGridSize(int rows, int cols, String compGCM, BioModel gcm) {
 		
-		int currentNumRows = this.gridTable.getNumRows();
-		int currentNumCols = this.gridTable.getNumCols();
+		int currentNumRows = grid.size();
+		int currentNumCols = grid.size() > 0 ? grid.get(0).size() : 0;
 		int newNumRows = rows;
 		int newNumCols = cols;
 		int numRowsToAdd = newNumRows - currentNumRows;
@@ -1125,20 +1103,6 @@ public class Grid {
 	
 	
 	//BORING GET/SET METHODS
-	
-	/**
-	 * @param enabled whether or not the grid is enabled
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	/**
-	 * @return whether or not the grid is enabled
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
 
 	/**
 	 * used for when there's a toolbar
@@ -1350,11 +1314,7 @@ public class Grid {
 	public void setGraph(BioGraph graph) {
 		this.graph = graph;
 	}
-	
-	public void setGridTable(GridTable gridTable)
-	{
-	  this.gridTable = gridTable;
-	}
+
 	
 	
 	//--------------

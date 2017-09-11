@@ -563,7 +563,6 @@ public class CoreSetup
       else if (rule.isRate())
       {
         RateRule rateRule = (RateRule) rule;
-        //TODO: fix
         if(rateRule.isSetMath())
         {
           ASTNode math = rateRule.getMath();

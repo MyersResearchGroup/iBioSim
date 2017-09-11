@@ -76,6 +76,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * 
@@ -85,7 +86,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class Simulator extends Observable implements ParentSimulator
+public abstract class Simulator extends CoreObservable implements ParentSimulator
 {
 
 	// SBML model

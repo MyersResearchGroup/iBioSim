@@ -39,6 +39,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.*;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.*;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
@@ -49,7 +50,7 @@ import edu.utah.ece.async.lema.verification.lpn.LPN;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener, Observer {
+public class DataManager extends PanelObservable implements ActionListener, TableModelListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -2669704247953218544L;
 
@@ -83,6 +84,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	public DataManager(String directory, Gui biosim) {
 		
+	  super();
+	  
 		this.biosim = biosim;
 		this.directory = directory;
 		this.lrnName = GlobalConstants.getFilename(directory);
@@ -1167,7 +1170,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			else if (background.contains(".lpn")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
 				LPN lhpn = new LPN();
-				lhpn.addObserver(this);
+				lhpn.addObservable(this);
 				// System.out.println(background);
 				try {
           lhpn.load(background);
@@ -1349,29 +1352,6 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 		}
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
- Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    else if(message.isLog())
-    {
-      biosim.log.addText(message.getMessage());
-    }
-    
-  }
 }
 
 class TableSorter extends TableMap {

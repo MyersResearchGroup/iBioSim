@@ -108,6 +108,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
@@ -162,7 +163,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
  *         Contributors </a>
  * @version %I%
  */
-public class ModelEditor extends JPanel implements ActionListener, MouseListener, ChangeListener, Observer {
+public class ModelEditor extends PanelObservable implements ActionListener, MouseListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -244,7 +245,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.elementsPanel = null;
 		this.getParams = new ArrayList<String>();
 		this.undoManager = new UndoManager();
-		this.grid = new Grid();
+		
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
@@ -264,11 +265,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			filename = refFile;
 		}
 		biomodel = new BioModel(path);
-		biomodel.addObserver(this);
+		biomodel.addObservable(this);
 		if (filename != null) {
 			biomodel.load(path + File.separator + filename);
 			this.filename = filename;
 			this.modelId = filename.replace(".gcm", "").replace(".xml", "");
+			this.grid = new Grid(biomodel);
 		} else {
 			this.filename = "";
 		}
@@ -1151,9 +1153,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 											.replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
 							AnalysisThread thread = new AnalysisThread(analysisView);
-							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
-									.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
-									.replace(",", ""), false);
+							String simStem = stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
+                  .replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
+                  .replace(",", "");
+							thread.start(false);
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
 									.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
@@ -1170,9 +1173,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 												.mkdir();
 						createSBML(stem, sweep, analysisMethod);
 						AnalysisThread thread = new AnalysisThread(analysisView);
+						String simStem = 
+                stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+                .replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
 						thread.start(
-								stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""),
 								false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
@@ -1191,11 +1195,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					new File(path + File.separator + simName + File.separator + stem).mkdir();
 				}
 				if (createSBML(stem, ".", analysisMethod)) {
-					if (!stem.equals("")) {
-						new AnalysisThread(analysisView).start(stem, true);
-					} else {
-						new AnalysisThread(analysisView).start(".", true);
-					}
+						new AnalysisThread(analysisView).start(true);
 				}
 				// analysisView.emptyFrames();
 			}
@@ -2102,9 +2102,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				parameterChanges, false);
 		reactionPanel = new Reactions(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges, this);
 		speciesPanel = new MySpecies(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges,
-				grid.isEnabled(), this);
+		  biomodel.isGridEnabled(), this);
 		parametersPanel = new Parameters(biomodel, this, paramsOnly, getParams, path + File.separator + file,
-				parameterChanges, (paramsOnly || !textBased) && !grid.isEnabled());
+				parameterChanges, (paramsOnly || !textBased) && !biomodel.isGridEnabled());
 		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
 		eventPanel = new Events(biosim, biomodel, this, textBased);
@@ -2166,7 +2166,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} else {
 			modelPanel = schematic.getModelPanel();
 			tab.addTab("Schematic", schematic);
-			if (grid.isEnabled()) {
+			if (biomodel.isGridEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 				tab.addTab("Parameters", parametersPanel);
 			} else {
@@ -2745,7 +2745,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public boolean isGridEditor() {
-		return grid.isEnabled();
+		return biomodel.isGridEnabled();
 	}
 
 	public void addCompartment() {
@@ -2856,7 +2856,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		biomodel.loadDefaultEnclosingCompartment();
 		biomodel.loadGridSize();
-		buildGrid();
+    grid.createGrid(null);
 	}
 
 	public void setElementsPanel(ElementsPanel elementsPanel) {
@@ -3016,11 +3016,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public Grid getGrid() {
 		return grid;
-	}
-
-	public void buildGrid() {
-
-		grid.createGrid(biomodel, null);
 	}
 
 	public void makeUndoPoint() {
@@ -3489,23 +3484,5 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		lpn.save(filename);
 		return true;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		Message message = (Message) arg;
-
-		if (message.isConsole()) {
-			System.out.println(message.getMessage());
-		} else if (message.isErrorDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-		} else if (message.isDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (message.isLog()) {
-			log.addText(message.getMessage());
-		}
-
 	}
 }

@@ -106,7 +106,7 @@ public class Abstraction extends LPN {
 				.contains(absProperty.xform21))
 				&& absProperty.getNormFactor() <= 0) {
 		  message.setErrorDialog("Invalid Normalization Factor", "Normalization factor must be a non-negative integer.\nDelay normalization will not be performed.");
-			this.notifyObservers(this);
+			this.notifyObservers(message);
 			normalize = false;
 		}
 		Integer i = 0;

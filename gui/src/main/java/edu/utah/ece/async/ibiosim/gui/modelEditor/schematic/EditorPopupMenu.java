@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxGraphActions;
 
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.comp.Grid;
@@ -45,7 +46,7 @@ public class EditorPopupMenu extends JPopupMenu
 	 * @param cell 
 	 * @param biosim 
 	 */
-	public EditorPopupMenu(Schematic editor, mxCell cell, Gui biosim) {
+	public EditorPopupMenu(Schematic editor, BioModel bioModel, mxCell cell, Gui biosim) {
 		
 		Grid grid = editor.getGrid();
 
@@ -58,7 +59,7 @@ public class EditorPopupMenu extends JPopupMenu
 			addSeparator();
 		}
 
-		if (grid.isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			add(new GridAction("Select All Locations", editor));
 			add(new GridAction("De-select All Locations", editor))

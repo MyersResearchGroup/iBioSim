@@ -71,6 +71,7 @@ import org.sbml.jsbml.SpeciesReference;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -265,7 +266,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 		thresholdPanel1.add(backgroundField);
 
 		JLabel methodsLabel = new JLabel("Learn Method:  ");
-		if (Gui.isGeneNetFound())
+		if (Executables.geneNetFound)
 		{
 			String[] methodNames = { "GeneNet", "GeneNet (Java)", "None" };
 			methods = new JComboBox(methodNames);
