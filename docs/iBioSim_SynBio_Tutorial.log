@@ -1,0 +1,1701 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  11 SEP 2017 09:52
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**iBioSim_SynBio_Tutorial
+(./iBioSim_SynBio_Tutorial.tex
+LaTeX2e <2017-04-15>
+Babel <3.10> and hyphenation patterns for 84 language(s) loaded.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/tools/indentfirst.sty
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/13 v1.2b Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2017/06/17 v1.0e Graphics/color driver for pdftex
+))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/epsfig.sty
+Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+\epsfxsize=\dimen105
+\epsfysize=\dimen106
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 147.
+)
+(./iBioSim_SynBio_Tutorial.aux)
+\openout1 = `iBioSim_SynBio_Tutorial.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+
+(/usr/local/texlive/2017/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count87
+\scratchdimen=\dimen107
+\scratchbox=\box26
+\nofMPsegments=\count88
+\nofMParguments=\count89
+\everyMPshowfont=\toks15
+\MPscratchCnt=\count90
+\MPscratchDim=\dimen108
+\MPnumerator=\count91
+\makeMPintoPDFobject=\count92
+\everyMPtoPDFconversion=\toks16
+) (/usr/local/texlive/2017/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2017/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+(/usr/local/texlive/2017/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2017/03/19 v0.25 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 16.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 16.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 16.
+
+[1
+
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(./iBioSim_SynBio_Tutorial.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 4.
+)
+\tf@toc=\write3
+\openout3 = `iBioSim_SynBio_Tutorial.toc'.
+
+ [1]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 48.
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 48.
+<screenshots/iBioSim.png, id=14, 1284.8pt x 803.0pt>
+File: screenshots/iBioSim.png Graphic file (type png)
+<use screenshots/iBioSim.png>
+Package pdftex.def Info: screenshots/iBioSim.png  used on input line 58. on inp
+ut line 58.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 58.
+ [2
+
+]
+Overfull \hbox (43.91225pt too wide) in paragraph at lines 69--70
+[]\OT1/cmr/m/n/10.95 To be-gin, first open iBioSim. In Mac ver-sions, the ex-e-
+cutable is lo-cated in iBioSim/bin/iBioSim.mac.64.
+ []
+
+File: screenshots/iBioSim.png Graphic file (type png)
+<use screenshots/iBioSim.png>
+Package pdftex.def Info: screenshots/iBioSim.png  used on input line 72. on inp
+ut line 72.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 72.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 72--73
+ [] 
+ []
+
+[3 <./screenshots/iBioSim.png>]
+<screenshots/project.png, id=25, 1284.8pt x 803.0pt>
+File: screenshots/project.png Graphic file (type png)
+<use screenshots/project.png>
+Package pdftex.def Info: screenshots/project.png  used on input line 78. on inp
+ut line 78.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 78.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 78--79
+ [] 
+ []
+
+[4]
+<screenshots/ProjectIdGT.png, id=29, 427.5975pt x 194.7275pt>
+File: screenshots/ProjectIdGT.png Graphic file (type png)
+<use screenshots/ProjectIdGT.png>
+Package pdftex.def Info: screenshots/ProjectIdGT.png  used on input line 84. on
+ input line 84.
+Package pdftex.def Info: Requested size: 213.39566pt x 97.17928pt on input line
+ 84.
+<screenshots/ProjectIdGT2.png, id=30, 717.68124pt x 591.20876pt>
+File: screenshots/ProjectIdGT2.png Graphic file (type png)
+<use screenshots/ProjectIdGT2.png>
+Package pdftex.def Info: screenshots/ProjectIdGT2.png  used on input line 90. o
+n input line 90.
+Package pdftex.def Info: Requested size: 312.9803pt x 257.83228pt on input line
+ 90.
+ [5 <./screenshots/project.png> <./screenshots/ProjectIdGT.png>]
+<screenshots/newPart.png, id=36, 1284.8pt x 803.0pt>
+File: screenshots/newPart.png Graphic file (type png)
+<use screenshots/newPart.png>
+Package pdftex.def Info: screenshots/newPart.png  used on input line 101. on in
+put line 101.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 101.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 101--102
+ [] 
+ []
+
+[6 <./screenshots/ProjectIdGT2.png>]
+<screenshots/PartIdGT.png, id=42, 295.1025pt x 150.5625pt>
+File: screenshots/PartIdGT.png Graphic file (type png)
+<use screenshots/PartIdGT.png>
+Package pdftex.def Info: screenshots/PartIdGT.png  used on input line 107. on i
+nput line 107.
+Package pdftex.def Info: Requested size: 213.39566pt x 108.87816pt on input lin
+e 107.
+<screenshots/PartPromoter.png, id=43, 1284.8pt x 803.0pt>
+File: screenshots/PartPromoter.png Graphic file (type png)
+<use screenshots/PartPromoter.png>
+Package pdftex.def Info: screenshots/PartPromoter.png  used on input line 113. 
+on input line 113.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 113.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 113--114
+ [] 
+ []
+
+[7 <./screenshots/newPart.png> <./screenshots/PartIdGT.png>]
+<screenshots/PartGene.png, id=49, 1284.8pt x 803.0pt>
+File: screenshots/PartGene.png Graphic file (type png)
+<use screenshots/PartGene.png>
+Package pdftex.def Info: screenshots/PartGene.png  used on input line 119. on i
+nput line 119.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 119.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 119--120
+ [] 
+ []
+
+<screenshots/PartGeneEditor.png, id=50, 549.05125pt x 505.89pt>
+File: screenshots/PartGeneEditor.png Graphic file (type png)
+<use screenshots/PartGeneEditor.png>
+Package pdftex.def Info: screenshots/PartGeneEditor.png  used on input line 123
+. on input line 123.
+Package pdftex.def Info: Requested size: 312.9803pt x 288.38344pt on input line
+ 123.
+[8 <./screenshots/PartPromoter.png> <./screenshots/PartGene.png>]
+<screenshots/PartTetRGene.png, id=56, 550.055pt x 507.8975pt>
+File: screenshots/PartTetRGene.png Graphic file (type png)
+<use screenshots/PartTetRGene.png>
+Package pdftex.def Info: screenshots/PartTetRGene.png  used on input line 129. 
+on input line 129.
+Package pdftex.def Info: Requested size: 312.9803pt x 289.00084pt on input line
+ 129.
+<screenshots/PartGFPGene.png, id=57, 550.055pt x 507.8975pt>
+File: screenshots/PartGFPGene.png Graphic file (type png)
+<use screenshots/PartGFPGene.png>
+Package pdftex.def Info: screenshots/PartGFPGene.png  used on input line 135. o
+n input line 135.
+Package pdftex.def Info: Requested size: 312.9803pt x 289.00084pt on input line
+ 135.
+ [9 <./screenshots/PartGeneEditor.png> <./screenshots/PartTetRGene.png>]
+<screenshots/PartTerminator.png, id=63, 1284.8pt x 803.0pt>
+File: screenshots/PartTerminator.png Graphic file (type png)
+<use screenshots/PartTerminator.png>
+Package pdftex.def Info: screenshots/PartTerminator.png  used on input line 141
+. on input line 141.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 141.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 141--142
+ [] 
+ []
+
+[10 <./screenshots/PartGFPGene.png>]
+<screenshots/PartFocusIn.png, id=68, 1284.8pt x 803.0pt>
+File: screenshots/PartFocusIn.png Graphic file (type png)
+<use screenshots/PartFocusIn.png>
+Package pdftex.def Info: screenshots/PartFocusIn.png  used on input line 147. o
+n input line 147.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 147.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 147--148
+ [] 
+ []
+
+[11 <./screenshots/PartTerminator.png> <./screenshots/PartFocusIn.png>]
+<screenshots/PartRBS.png, id=74, 1284.8pt x 803.0pt>
+File: screenshots/PartRBS.png Graphic file (type png)
+<use screenshots/PartRBS.png>
+Package pdftex.def Info: screenshots/PartRBS.png  used on input line 153. on in
+put line 153.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 153.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 153--154
+ [] 
+ []
+
+<screenshots/PartCDS.png, id=75, 1284.8pt x 803.0pt>
+File: screenshots/PartCDS.png Graphic file (type png)
+<use screenshots/PartCDS.png>
+Package pdftex.def Info: screenshots/PartCDS.png  used on input line 159. on in
+put line 159.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 159.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 159--160
+ [] 
+ []
+
+[12 <./screenshots/PartRBS.png>]
+<screenshots/PartSearchPartRegistry.png, id=81, 1284.8pt x 803.0pt>
+File: screenshots/PartSearchPartRegistry.png Graphic file (type png)
+<use screenshots/PartSearchPartRegistry.png>
+Package pdftex.def Info: screenshots/PartSearchPartRegistry.png  used on input 
+line 165. on input line 165.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 165.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 165--166
+ [] 
+ []
+
+[13 <./screenshots/PartCDS.png>]
+<screenshots/PartPartRegistry.png, id=86, 500.87125pt x 504.88625pt>
+File: screenshots/PartPartRegistry.png Graphic file (type png)
+<use screenshots/PartPartRegistry.png>
+Package pdftex.def Info: screenshots/PartPartRegistry.png  used on input line 1
+71. on input line 171.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 171.
+ [14 <./screenshots/PartSearchPartRegistry.png>]
+<screenshots/PartRBSTetR.png, id=91, 502.87875pt x 505.89pt>
+File: screenshots/PartRBSTetR.png Graphic file (type png)
+<use screenshots/PartRBSTetR.png>
+Package pdftex.def Info: screenshots/PartRBSTetR.png  used on input line 177. o
+n input line 177.
+Package pdftex.def Info: Requested size: 312.9803pt x 314.85275pt on input line
+ 177.
+ [15 <./screenshots/PartPartRegistry.png>]
+<screenshots/PartCDSTetR.png, id=96, 500.87125pt x 504.88625pt>
+File: screenshots/PartCDSTetR.png Graphic file (type png)
+<use screenshots/PartCDSTetR.png>
+Package pdftex.def Info: screenshots/PartCDSTetR.png  used on input line 183. o
+n input line 183.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 183.
+ [16 <./screenshots/PartRBSTetR.png>]
+<screenshots/PartFocusOut.png, id=101, 1284.8pt x 803.0pt>
+File: screenshots/PartFocusOut.png Graphic file (type png)
+<use screenshots/PartFocusOut.png>
+Package pdftex.def Info: screenshots/PartFocusOut.png  used on input line 189. 
+on input line 189.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 189.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 189--190
+ [] 
+ []
+
+[17 <./screenshots/PartCDSTetR.png>]
+<screenshots/PartGFPFocusIn.png, id=106, 1043.9pt x 551.05875pt>
+File: screenshots/PartGFPFocusIn.png Graphic file (type png)
+<use screenshots/PartGFPFocusIn.png>
+Package pdftex.def Info: screenshots/PartGFPFocusIn.png  used on input line 195
+. on input line 195.
+Package pdftex.def Info: Requested size: 455.24408pt x 240.31403pt on input lin
+e 195.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 195--196
+ [] 
+ []
+
+<screenshots/PartRBSGFP.png, id=107, 500.87125pt x 503.8825pt>
+File: screenshots/PartRBSGFP.png Graphic file (type png)
+<use screenshots/PartRBSGFP.png>
+Package pdftex.def Info: screenshots/PartRBSGFP.png  used on input line 201. on
+ input line 201.
+Package pdftex.def Info: Requested size: 312.9803pt x 314.87196pt on input line
+ 201.
+[18 <./screenshots/PartFocusOut.png> <./screenshots/PartGFPFocusIn.png>]
+<screenshots/PartCDSGFP.png, id=114, 502.87875pt x 505.89pt>
+File: screenshots/PartCDSGFP.png Graphic file (type png)
+<use screenshots/PartCDSGFP.png>
+Package pdftex.def Info: screenshots/PartCDSGFP.png  used on input line 207. on
+ input line 207.
+Package pdftex.def Info: Requested size: 312.9803pt x 314.85275pt on input line
+ 207.
+
+[19 <./screenshots/PartRBSGFP.png>]
+<screenshots/PartGFPGeneComplete.png, id=119, 1043.9pt x 551.05875pt>
+File: screenshots/PartGFPGeneComplete.png Graphic file (type png)
+<use screenshots/PartGFPGeneComplete.png>
+Package pdftex.def Info: screenshots/PartGFPGeneComplete.png  used on input lin
+e 211. on input line 211.
+Package pdftex.def Info: Requested size: 455.24408pt x 240.31403pt on input lin
+e 211.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 211--212
+ [] 
+ []
+
+<screenshots/PartLacIPromoter.png, id=120, 500.87125pt x 504.88625pt>
+File: screenshots/PartLacIPromoter.png Graphic file (type png)
+<use screenshots/PartLacIPromoter.png>
+Package pdftex.def Info: screenshots/PartLacIPromoter.png  used on input line 2
+17. on input line 217.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 217.
+[20 <./screenshots/PartCDSGFP.png> <./screenshots/PartGFPGeneComplete.png>]
+<screenshots/PartLacIComplete.png, id=126, 502.87875pt x 506.89375pt>
+File: screenshots/PartLacIComplete.png Graphic file (type png)
+<use screenshots/PartLacIComplete.png>
+Package pdftex.def Info: screenshots/PartLacIComplete.png  used on input line 2
+23. on input line 223.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.47746pt on input line
+ 223.
+
+[21 <./screenshots/PartLacIPromoter.png>]
+<screenshots/PartLacIComplete2.png, id=131, 1043.9pt x 550.055pt>
+File: screenshots/PartLacIComplete2.png Graphic file (type png)
+<use screenshots/PartLacIComplete2.png>
+Package pdftex.def Info: screenshots/PartLacIComplete2.png  used on input line 
+229. on input line 229.
+Package pdftex.def Info: Requested size: 455.24408pt x 239.8763pt on input line
+ 229.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 229--230
+ [] 
+ []
+
+[22 <./screenshots/PartLacIComplete.png>]
+<screenshots/PartSave.png, id=136, 984.67876pt x 169.63374pt>
+File: screenshots/PartSave.png Graphic file (type png)
+<use screenshots/PartSave.png>
+Package pdftex.def Info: screenshots/PartSave.png  used on input line 233. on i
+nput line 233.
+Package pdftex.def Info: Requested size: 455.24408pt x 78.42589pt on input line
+ 233.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 233--234
+ [] 
+ []
+
+<screenshots/PartIDTetR.png, id=137, 295.1025pt x 150.5625pt>
+File: screenshots/PartIDTetR.png Graphic file (type png)
+<use screenshots/PartIDTetR.png>
+Package pdftex.def Info: screenshots/PartIDTetR.png  used on input line 240. on
+ input line 240.
+Package pdftex.def Info: Requested size: 213.39566pt x 108.87816pt on input lin
+e 240.
+<screenshots/PartLacIGene.png, id=138, 549.05125pt x 505.89pt>
+File: screenshots/PartLacIGene.png Graphic file (type png)
+<use screenshots/PartLacIGene.png>
+Package pdftex.def Info: screenshots/PartLacIGene.png  used on input line 246. 
+on input line 246.
+Package pdftex.def Info: Requested size: 312.9803pt x 288.38344pt on input line
+ 246.
+[23 <./screenshots/PartLacIComplete2.png> <./screenshots/PartSave.png> <./scree
+nshots/PartIDTetR.png>]
+<screenshots/PartTetRAssembled.png, id=145, 1042.89626pt x 550.055pt>
+File: screenshots/PartTetRAssembled.png Graphic file (type png)
+<use screenshots/PartTetRAssembled.png>
+Package pdftex.def Info: screenshots/PartTetRAssembled.png  used on input line 
+252. on input line 252.
+Package pdftex.def Info: Requested size: 455.24408pt x 240.1113pt on input line
+ 252.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 252--253
+ [] 
+ []
+
+<screenshots/PartTetRLacIAssembled.png, id=146, 1043.9pt x 550.055pt>
+File: screenshots/PartTetRLacIAssembled.png Graphic file (type png)
+<use screenshots/PartTetRLacIAssembled.png>
+Package pdftex.def Info: screenshots/PartTetRLacIAssembled.png  used on input l
+ine 256. on input line 256.
+Package pdftex.def Info: Requested size: 455.24408pt x 239.8763pt on input line
+ 256.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 256--257
+ [] 
+ []
+
+[24 <./screenshots/PartLacIGene.png> <./screenshots/PartTetRAssembled.png>]
+<screenshots/PartTetRRBS.png, id=153, 500.87125pt x 504.88625pt>
+File: screenshots/PartTetRRBS.png Graphic file (type png)
+<use screenshots/PartTetRRBS.png>
+Package pdftex.def Info: screenshots/PartTetRRBS.png  used on input line 262. o
+n input line 262.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 262.
+
+[25 <./screenshots/PartTetRLacIAssembled.png> <./screenshots/PartTetRRBS.png>]
+<screenshots/PartLacICDS.png, id=159, 500.87125pt x 504.88625pt>
+File: screenshots/PartLacICDS.png Graphic file (type png)
+<use screenshots/PartLacICDS.png>
+Package pdftex.def Info: screenshots/PartLacICDS.png  used on input line 268. o
+n input line 268.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 268.
+<screenshots/PartLacIGeneComplete.png, id=160, 1043.9pt x 550.055pt>
+File: screenshots/PartLacIGeneComplete.png Graphic file (type png)
+<use screenshots/PartLacIGeneComplete.png>
+Package pdftex.def Info: screenshots/PartLacIGeneComplete.png  used on input li
+ne 272. on input line 272.
+Package pdftex.def Info: Requested size: 455.24408pt x 239.8763pt on input line
+ 272.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 272--273
+ [] 
+ []
+
+[26 <./screenshots/PartLacICDS.png> <./screenshots/PartLacIGeneComplete.png>]
+<screenshots/PartpTetPromoter.png, id=166, 500.87125pt x 504.88625pt>
+File: screenshots/PartpTetPromoter.png Graphic file (type png)
+<use screenshots/PartpTetPromoter.png>
+Package pdftex.def Info: screenshots/PartpTetPromoter.png  used on input line 2
+78. on input line 278.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 278.
+<screenshots/PartTetRTerminator.png, id=167, 500.87125pt x 504.88625pt>
+File: screenshots/PartTetRTerminator.png Graphic file (type png)
+<use screenshots/PartTetRTerminator.png>
+Package pdftex.def Info: screenshots/PartTetRTerminator.png  used on input line
+ 284. on input line 284.
+Package pdftex.def Info: Requested size: 312.9803pt x 315.49919pt on input line
+ 284.
+
+[27 <./screenshots/PartpTetPromoter.png>]
+<screenshots/PartTetRComplete.png, id=172, 1043.9pt x 550.055pt>
+File: screenshots/PartTetRComplete.png Graphic file (type png)
+<use screenshots/PartTetRComplete.png>
+Package pdftex.def Info: screenshots/PartTetRComplete.png  used on input line 2
+88. on input line 288.
+Package pdftex.def Info: Requested size: 455.24408pt x 239.8763pt on input line
+ 288.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 288--289
+ [] 
+ []
+
+File: screenshots/PartSave.png Graphic file (type png)
+<use screenshots/PartSave.png>
+Package pdftex.def Info: screenshots/PartSave.png  used on input line 294. on i
+nput line 294.
+Package pdftex.def Info: Requested size: 455.24408pt x 78.42589pt on input line
+ 294.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 294--295
+ [] 
+ []
+
+[28 <./screenshots/PartTetRTerminator.png> <./screenshots/PartTetRComplete.png>
+]
+<screenshots/newModel.png, id=178, 1284.8pt x 803.0pt>
+File: screenshots/newModel.png Graphic file (type png)
+<use screenshots/newModel.png>
+Package pdftex.def Info: screenshots/newModel.png  used on input line 311. on i
+nput line 311.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 311.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 311--312
+ [] 
+ []
+
+<screenshots/ModelIdGT.png, id=179, 296.10625pt x 150.5625pt>
+File: screenshots/ModelIdGT.png Graphic file (type png)
+<use screenshots/ModelIdGT.png>
+Package pdftex.def Info: screenshots/ModelIdGT.png  used on input line 317. on 
+input line 317.
+Package pdftex.def Info: Requested size: 213.39566pt x 108.50829pt on input lin
+e 317.
+[29 <./screenshots/newModel.png>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/add_s
+pecies_selected.png, id=184, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 320. on input l
+ine 320.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 3
+20.
+<screenshots/schematicGT.png, id=185, 1284.8pt x 803.0pt>
+File: screenshots/schematicGT.png Graphic file (type png)
+<use screenshots/schematicGT.png>
+Package pdftex.def Info: screenshots/schematicGT.png  used on input line 323. o
+n input line 323.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 323.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 323--324
+ [] 
+ []
+
+<"screenshots/Proteins Inserted".png, id=186, 1043.9pt x 554.07pt>
+File: "screenshots/Proteins Inserted".png Graphic file (type png)
+<use "screenshots/Proteins Inserted".png>
+Package pdftex.def Info: "screenshots/Proteins Inserted".png  used on input lin
+e 327. on input line 327.
+Package pdftex.def Info: Requested size: 455.24408pt x 241.62721pt on input lin
+e 327.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 327--328
+ [] 
+ []
+
+[30 <./screenshots/ModelIdGT.png> <../gui/src/main/resources/edu/utah/ece/async
+/ibiosim/gui/icons/modelview/add_species_selected.png> <./screenshots/schematic
+GT.png>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/selec
+t_mode_selected.png, id=194, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 330. on input l
+ine 330.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 3
+30.
+<"screenshots/Cursor Icon Selected".png, id=195, 1284.8pt x 803.0pt>
+File: "screenshots/Cursor Icon Selected".png Graphic file (type png)
+<use "screenshots/Cursor Icon Selected".png>
+Package pdftex.def Info: "screenshots/Cursor Icon Selected".png  used on input 
+line 333. on input line 333.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 333.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 333--334
+ [] 
+ []
+
+<screenshots/speciesGT.png, id=196, 815.045pt x 622.325pt>
+File: screenshots/speciesGT.png Graphic file (type png)
+<use screenshots/speciesGT.png>
+Package pdftex.def Info: screenshots/speciesGT.png  used on input line 337. on 
+input line 337.
+Package pdftex.def Info: Requested size: 312.9803pt x 238.97388pt on input line
+ 337.
+[31 <./screenshots/Proteins Inserted.png> <../gui/src/main/resources/edu/utah/e
+ce/async/ibiosim/gui/icons/modelview/select_mode_selected.png> <./screenshots/C
+ursor Icon Selected.png>]
+<"screenshots/LacI Inverter LacI".png, id=203, 815.045pt x 623.32875pt>
+File: "screenshots/LacI Inverter LacI".png Graphic file (type png)
+<use "screenshots/LacI Inverter LacI".png>
+Package pdftex.def Info: "screenshots/LacI Inverter LacI".png  used on input li
+ne 345. on input line 345.
+Package pdftex.def Info: Requested size: 312.9803pt x 239.35931pt on input line
+ 345.
+ [32 <./screenshots/speciesGT.png> <./screenshots/LacI Inverter LacI.png>]
+<"screenshots/LacI Inverter TetR".png, id=209, 817.0525pt x 620.3175pt>
+File: "screenshots/LacI Inverter TetR".png Graphic file (type png)
+<use "screenshots/LacI Inverter TetR".png>
+Package pdftex.def Info: "screenshots/LacI Inverter TetR".png  used on input li
+ne 354. on input line 354.
+Package pdftex.def Info: Requested size: 312.9803pt x 237.61615pt on input line
+ 354.
+<"screenshots/LacI Inverter GFP".png, id=210, 816.04875pt x 622.325pt>
+File: "screenshots/LacI Inverter GFP".png Graphic file (type png)
+<use "screenshots/LacI Inverter GFP".png>
+Package pdftex.def Info: "screenshots/LacI Inverter GFP".png  used on input lin
+e 362. on input line 362.
+Package pdftex.def Info: Requested size: 312.9803pt x 238.6795pt on input line 
+362.
+<"screenshots/LacI Inverter Species Inserted".png, id=211, 1045.9075pt x 555.07
+375pt>
+File: "screenshots/LacI Inverter Species Inserted".png Graphic file (type png)
+<use "screenshots/LacI Inverter Species Inserted".png>
+Package pdftex.def Info: "screenshots/LacI Inverter Species Inserted".png  used
+ on input line 366. on input line 366.
+Package pdftex.def Info: Requested size: 455.24408pt x 241.60757pt on input lin
+e 366.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 366--367
+ [] 
+ []
+
+[33 <./screenshots/LacI Inverter TetR.png> <./screenshots/LacI Inverter GFP.png
+>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/promo
+ter_mode_selected.png, id=217, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+promoter_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/p
+romoter_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/promoter_mode_selected.png  used on input line 369. on input
+ line 369.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 3
+69.
+<"screenshots/Promoter Icon Selected".png, id=218, 1284.8pt x 803.0pt>
+File: "screenshots/Promoter Icon Selected".png Graphic file (type png)
+<use "screenshots/Promoter Icon Selected".png>
+Package pdftex.def Info: "screenshots/Promoter Icon Selected".png  used on inpu
+t line 372. on input line 372.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 372.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 372--373
+ [] 
+ []
+
+<"screenshots/LacI Inverter Promoter Inserted".png, id=219, 1043.9pt x 554.07pt
+>
+File: "screenshots/LacI Inverter Promoter Inserted".png Graphic file (type png)
+
+<use "screenshots/LacI Inverter Promoter Inserted".png>
+Package pdftex.def Info: "screenshots/LacI Inverter Promoter Inserted".png  use
+d on input line 376. on input line 376.
+Package pdftex.def Info: Requested size: 455.24408pt x 241.62721pt on input lin
+e 376.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 376--377
+ [] 
+ []
+
+[34 <./screenshots/LacI Inverter Species Inserted.png> <../gui/src/main/resourc
+es/edu/utah/ece/async/ibiosim/gui/icons/modelview/promoter_mode_selected.png> <
+./screenshots/Promoter Icon Selected.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 379. on input l
+ine 379.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 3
+79.
+<screenshots/promoterGT.png, id=226, 840.13875pt x 478.78876pt>
+File: screenshots/promoterGT.png Graphic file (type png)
+<use screenshots/promoterGT.png>
+Package pdftex.def Info: screenshots/promoterGT.png  used on input line 382. on
+ input line 382.
+Package pdftex.def Info: Requested size: 312.9803pt x 178.36182pt on input line
+ 382.
+<"screenshots/LacI Inverter pLac".png, id=227, 841.1425pt x 477.785pt>
+File: "screenshots/LacI Inverter pLac".png Graphic file (type png)
+<use "screenshots/LacI Inverter pLac".png>
+Package pdftex.def Info: "screenshots/LacI Inverter pLac".png  used on input li
+ne 388. on input line 388.
+Package pdftex.def Info: Requested size: 312.9803pt x 177.77646pt on input line
+ 388.
+ [35 <./screenshots/LacI Inverter Promoter Inserted.png> <./screenshots/promote
+rGT.png>]
+<"screenshots/LacI Inverter Blank Associate SBOL".png, id=233, 322.20375pt x 31
+4.17375pt>
+File: "screenshots/LacI Inverter Blank Associate SBOL".png Graphic file (type p
+ng)
+<use "screenshots/LacI Inverter Blank Associate SBOL".png>
+Package pdftex.def Info: "screenshots/LacI Inverter Blank Associate SBOL".png  
+used on input line 394. on input line 394.
+Package pdftex.def Info: Requested size: 213.39566pt x 208.08398pt on input lin
+e 394.
+<"screenshots/SBOL Browser".png, id=234, 877.2775pt x 550.055pt>
+File: "screenshots/SBOL Browser".png Graphic file (type png)
+<use "screenshots/SBOL Browser".png>
+Package pdftex.def Info: "screenshots/SBOL Browser".png  used on input line 400
+. on input line 400.
+Package pdftex.def Info: Requested size: 312.9803pt x 196.2403pt on input line 
+400.
+ [36 <./screenshots/LacI Inverter pLac.png> <./screenshots/LacI Inverter Blank 
+Associate SBOL.png>]
+<"screenshots/SBOL Browser pLac".png, id=241, 876.27374pt x 550.055pt>
+File: "screenshots/SBOL Browser pLac".png Graphic file (type png)
+<use "screenshots/SBOL Browser pLac".png>
+Package pdftex.def Info: "screenshots/SBOL Browser pLac".png  used on input lin
+e 404. on input line 404.
+Package pdftex.def Info: Requested size: 312.9803pt x 196.4669pt on input line 
+404.
+<"screenshots/SBOL Association pLac".png, id=242, 321.2pt x 313.17pt>
+File: "screenshots/SBOL Association pLac".png Graphic file (type png)
+<use "screenshots/SBOL Association pLac".png>
+Package pdftex.def Info: "screenshots/SBOL Association pLac".png  used on input
+ line 410. on input line 410.
+Package pdftex.def Info: Requested size: 213.39566pt x 208.06429pt on input lin
+e 410.
+
+[37 <./screenshots/SBOL Browser.png> <./screenshots/SBOL Browser pLac.png>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/inhib
+ition_selected.png, id=248, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+inhibition_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/i
+nhibition_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/inhibition_selected.png  used on input line 413. on input li
+ne 413.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 4
+13.
+<screenshots/RepressionArc.png, id=249, 1284.8pt x 803.0pt>
+File: screenshots/RepressionArc.png Graphic file (type png)
+<use screenshots/RepressionArc.png>
+Package pdftex.def Info: screenshots/RepressionArc.png  used on input line 416.
+ on input line 416.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 416.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 416--417
+ [] 
+ []
+
+<"screenshots/Repression Arc Beginning".png, id=250, 1284.8pt x 803.0pt>
+File: "screenshots/Repression Arc Beginning".png Graphic file (type png)
+<use "screenshots/Repression Arc Beginning".png>
+Package pdftex.def Info: "screenshots/Repression Arc Beginning".png  used on in
+put line 422. on input line 422.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 422.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 422--423
+ [] 
+ []
+
+[38 <./screenshots/SBOL Association pLac.png> <../gui/src/main/resources/edu/ut
+ah/ece/async/ibiosim/gui/icons/modelview/inhibition_selected.png> <./screenshot
+s/RepressionArc.png>]
+<"screenshots/Repression Arc Target".png, id=257, 1284.8pt x 803.0pt>
+File: "screenshots/Repression Arc Target".png Graphic file (type png)
+<use "screenshots/Repression Arc Target".png>
+Package pdftex.def Info: "screenshots/Repression Arc Target".png  used on input
+ line 426. on input line 426.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 426.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 426--427
+ [] 
+ []
+
+<"screenshots/Repression Arc Complete".png, id=258, 1043.9pt x 555.07375pt>
+File: "screenshots/Repression Arc Complete".png Graphic file (type png)
+<use "screenshots/Repression Arc Complete".png>
+Package pdftex.def Info: "screenshots/Repression Arc Complete".png  used on inp
+ut line 430. on input line 430.
+Package pdftex.def Info: Requested size: 455.24408pt x 242.06494pt on input lin
+e 430.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 430--431
+ [] 
+ []
+
+[39 <./screenshots/Repression Arc Beginning.png> <./screenshots/Repression Arc 
+Target.png>]
+<"screenshots/LacI Inverter Complete".png, id=264, 1043.9pt x 555.07375pt>
+File: "screenshots/LacI Inverter Complete".png Graphic file (type png)
+<use "screenshots/LacI Inverter Complete".png>
+Package pdftex.def Info: "screenshots/LacI Inverter Complete".png  used on inpu
+t line 436. on input line 436.
+Package pdftex.def Info: Requested size: 455.24408pt x 242.06494pt on input lin
+e 436.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 436--437
+ [] 
+ []
+
+<screenshots/ModelTetRId.png, id=265, 297.11pt x 152.57pt>
+File: screenshots/ModelTetRId.png Graphic file (type png)
+<use screenshots/ModelTetRId.png>
+Package pdftex.def Info: screenshots/ModelTetRId.png  used on input line 443. o
+n input line 443.
+Package pdftex.def Info: Requested size: 213.39566pt x 109.58723pt on input lin
+e 443.
+[40 <./screenshots/Repression Arc Complete.png> <./screenshots/LacI Inverter Co
+mplete.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 446. on input l
+ine 446.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 4
+46.
+<screenshots/TetRInverterSpecies.png, id=271, 1043.9pt x 555.07375pt>
+File: screenshots/TetRInverterSpecies.png Graphic file (type png)
+<use screenshots/TetRInverterSpecies.png>
+Package pdftex.def Info: screenshots/TetRInverterSpecies.png  used on input lin
+e 449. on input line 449.
+Package pdftex.def Info: Requested size: 455.24408pt x 242.06494pt on input lin
+e 449.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 449--450
+ [] 
+ []
+
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 452. on input l
+ine 452.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 4
+52.
+<screenshots/TetRInverterTetR.png, id=272, 815.045pt x 622.325pt>
+File: screenshots/TetRInverterTetR.png Graphic file (type png)
+<use screenshots/TetRInverterTetR.png>
+Package pdftex.def Info: screenshots/TetRInverterTetR.png  used on input line 4
+55. on input line 455.
+Package pdftex.def Info: Requested size: 312.9803pt x 238.97388pt on input line
+ 455.
+[41 <./screenshots/ModelTetRId.png> <./screenshots/TetRInverterSpecies.png>]
+<screenshots/TetRInverterLacI.png, id=278, 815.045pt x 622.325pt>
+File: screenshots/TetRInverterLacI.png Graphic file (type png)
+<use screenshots/TetRInverterLacI.png>
+Package pdftex.def Info: screenshots/TetRInverterLacI.png  used on input line 4
+61. on input line 461.
+Package pdftex.def Info: Requested size: 312.9803pt x 238.97388pt on input line
+ 461.
+<screenshots/TetRInverterPromoter.png, id=279, 1044.90375pt x 554.07pt>
+File: screenshots/TetRInverterPromoter.png Graphic file (type png)
+<use screenshots/TetRInverterPromoter.png>
+Package pdftex.def Info: screenshots/TetRInverterPromoter.png  used on input li
+ne 467. on input line 467.
+Package pdftex.def Info: Requested size: 455.24408pt x 241.39896pt on input lin
+e 467.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 467--468
+ [] 
+ []
+
+[42 <./screenshots/TetRInverterTetR.png> <./screenshots/TetRInverterLacI.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 470. on input l
+ine 470.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 4
+70.
+<screenshots/TetRInverterpTet.png, id=286, 840.13875pt x 478.78876pt>
+File: screenshots/TetRInverterpTet.png Graphic file (type png)
+<use screenshots/TetRInverterpTet.png>
+Package pdftex.def Info: screenshots/TetRInverterpTet.png  used on input line 4
+73. on input line 473.
+Package pdftex.def Info: Requested size: 312.9803pt x 178.36182pt on input line
+ 473.
+<screenshots/TetRInverterSBOL.png, id=287, 323.2075pt x 314.17375pt>
+File: screenshots/TetRInverterSBOL.png Graphic file (type png)
+<use screenshots/TetRInverterSBOL.png>
+Package pdftex.def Info: screenshots/TetRInverterSBOL.png  used on input line 4
+79. on input line 479.
+Package pdftex.def Info: Requested size: 213.39566pt x 207.432pt on input line 
+479.
+
+[43 <./screenshots/TetRInverterPromoter.png> <./screenshots/TetRInverterpTet.pn
+g>]
+<screenshots/TetRInverterSBOLBrowser.png, id=293, 876.27374pt x 550.055pt>
+File: screenshots/TetRInverterSBOLBrowser.png Graphic file (type png)
+<use screenshots/TetRInverterSBOLBrowser.png>
+Package pdftex.def Info: screenshots/TetRInverterSBOLBrowser.png  used on input
+ line 485. on input line 485.
+Package pdftex.def Info: Requested size: 312.9803pt x 196.4669pt on input line 
+485.
+<screenshots/TetRInverterStuffInserted.png, id=294, 1043.9pt x 555.07375pt>
+File: screenshots/TetRInverterStuffInserted.png Graphic file (type png)
+<use screenshots/TetRInverterStuffInserted.png>
+Package pdftex.def Info: screenshots/TetRInverterStuffInserted.png  used on inp
+ut line 491. on input line 491.
+Package pdftex.def Info: Requested size: 455.24408pt x 242.06494pt on input lin
+e 491.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 491--492
+ [] 
+ []
+
+[44 <./screenshots/TetRInverterSBOL.png> <./screenshots/TetRInverterSBOLBrowser
+.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+inhibition_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/i
+nhibition_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/inhibition_selected.png  used on input line 494. on input li
+ne 494.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 4
+94.
+<screenshots/TetRInverterComplete.png, id=300, 1043.9pt x 554.07pt>
+File: screenshots/TetRInverterComplete.png Graphic file (type png)
+<use screenshots/TetRInverterComplete.png>
+Package pdftex.def Info: screenshots/TetRInverterComplete.png  used on input li
+ne 497. on input line 497.
+Package pdftex.def Info: Requested size: 455.24408pt x 241.62721pt on input lin
+e 497.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 497--498
+ [] 
+ []
+
+<screenshots/GeneticToggleID.png, id=301, 295.1025pt x 150.5625pt>
+File: screenshots/GeneticToggleID.png Graphic file (type png)
+<use screenshots/GeneticToggleID.png>
+Package pdftex.def Info: screenshots/GeneticToggleID.png  used on input line 50
+4. on input line 504.
+Package pdftex.def Info: Requested size: 213.39566pt x 108.87816pt on input lin
+e 504.
+[45 <./screenshots/TetRInverterStuffInserted.png> <./screenshots/TetRInverterCo
+mplete.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 507. on input l
+ine 507.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+07.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 511. on input l
+ine 511.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+11.
+<screenshots/GeneticToggleThree.png, id=307, 1043.9pt x 555.07375pt>
+File: screenshots/GeneticToggleThree.png Graphic file (type png)
+<use screenshots/GeneticToggleThree.png>
+Package pdftex.def Info: screenshots/GeneticToggleThree.png  used on input line
+ 514. on input line 514.
+Package pdftex.def Info: Requested size: 455.24408pt x 242.06494pt on input lin
+e 514.
+
+Overfull \hbox (12.86415pt too wide) in paragraph at lines 514--515
+ [] 
+ []
+
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 517. on input l
+ine 517.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+17.
+<screenshots/GTLacI.png, id=308, 817.0525pt x 623.32875pt>
+File: screenshots/GTLacI.png Graphic file (type png)
+<use screenshots/GTLacI.png>
+Package pdftex.def Info: screenshots/GTLacI.png  used on input line 520. on inp
+ut line 520.
+Package pdftex.def Info: Requested size: 312.9803pt x 238.76962pt on input line
+ 520.
+[46 <./screenshots/GeneticToggleID.png> <./screenshots/GeneticToggleThree.png>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/add_c
+omponent_selected.png, id=314, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_component_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_component_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_component_selected.png  used on input line 527. on input
+ line 527.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+27.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 536. on input l
+ine 536.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+36.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 537. on input l
+ine 537.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+37.
+[47 <./screenshots/GTLacI.png> <../gui/src/main/resources/edu/utah/ece/async/ib
+iosim/gui/icons/modelview/add_component_selected.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 544. on input l
+ine 544.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+44.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 545. on input l
+ine 545.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+45.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/bio_a
+ctivation_selected.png, id=320, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+bio_activation_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/b
+io_activation_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/bio_activation_selected.png  used on input line 550. on inpu
+t line 550.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+50.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 552. on input l
+ine 552.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+52.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/event
+_mode_selected.png, id=321, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+event_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/e
+vent_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/event_mode_selected.png  used on input line 554. on input li
+ne 554.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 5
+54.
+ [48 <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+bio_activation_selected.png>] [49 <../gui/src/main/resources/edu/utah/ece/async
+/ibiosim/gui/icons/modelview/event_mode_selected.png>]
+File: screenshots/newModel.png Graphic file (type png)
+<use screenshots/newModel.png>
+Package pdftex.def Info: screenshots/newModel.png  used on input line 590. on i
+nput line 590.
+Package pdftex.def Info: Requested size: 227.62204pt x 142.25475pt on input lin
+e 590.
+File: screenshots/ModelIdGT.png Graphic file (type png)
+<use screenshots/ModelIdGT.png>
+Package pdftex.def Info: screenshots/ModelIdGT.png  used on input line 594. on 
+input line 594.
+Package pdftex.def Info: Requested size: 419.71925pt x 213.39566pt on input lin
+e 594.
+ [50]
+File: screenshots/schematicGT.png Graphic file (type png)
+<use screenshots/schematicGT.png>
+Package pdftex.def Info: screenshots/schematicGT.png  used on input line 598. o
+n input line 598.
+Package pdftex.def Info: Requested size: 455.24408pt x 284.52174pt on input lin
+e 598.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_species_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_species_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_species_selected.png  used on input line 601. on input l
+ine 601.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+01.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 602. on input l
+ine 602.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+02.
+ [51]
+File: screenshots/speciesGT.png Graphic file (type png)
+<use screenshots/speciesGT.png>
+Package pdftex.def Info: screenshots/speciesGT.png  used on input line 607. on 
+input line 607.
+Package pdftex.def Info: Requested size: 455.24408pt x 347.5975pt on input line
+ 607.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+promoter_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/p
+romoter_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/promoter_mode_selected.png  used on input line 622. on input
+ line 622.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+22.
+File: screenshots/promoterGT.png Graphic file (type png)
+<use screenshots/promoterGT.png>
+Package pdftex.def Info: screenshots/promoterGT.png  used on input line 625. on
+ input line 625.
+Package pdftex.def Info: Requested size: 455.24408pt x 259.44067pt on input lin
+e 625.
+ [52]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+inhibition_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/i
+nhibition_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/inhibition_selected.png  used on input line 629. on input li
+ne 629.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+29.
+<screenshots/repressionGT.png, id=341, 1115.16624pt x 559.08875pt>
+File: screenshots/repressionGT.png Graphic file (type png)
+<use screenshots/repressionGT.png>
+Package pdftex.def Info: screenshots/repressionGT.png  used on input line 633. 
+on input line 633.
+Package pdftex.def Info: Requested size: 455.24408pt x 228.22974pt on input lin
+e 633.
+<screenshots/productionGT.png, id=342, 1117.17375pt x 557.08125pt>
+File: screenshots/productionGT.png Graphic file (type png)
+<use screenshots/productionGT.png>
+Package pdftex.def Info: screenshots/productionGT.png  used on input line 639. 
+on input line 639.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.01073pt on input lin
+e 639.
+ [53 <./screenshots/repressionGT.png>]
+<screenshots/importSBOL.png, id=346, 306.14375pt x 400.49625pt>
+File: screenshots/importSBOL.png Graphic file (type png)
+<use screenshots/importSBOL.png>
+Package pdftex.def Info: screenshots/importSBOL.png  used on input line 645. on
+ input line 645.
+Package pdftex.def Info: Requested size: 170.71652pt x 223.32915pt on input lin
+e 645.
+<screenshots/ModelEditorGT.png, id=347, 1117.17375pt x 562.1pt>
+File: screenshots/ModelEditorGT.png Graphic file (type png)
+<use screenshots/ModelEditorGT.png>
+Package pdftex.def Info: screenshots/ModelEditorGT.png  used on input line 651.
+ on input line 651.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.05588pt on input lin
+e 651.
+ [54 <./screenshots/productionGT.png> <./screenshots/importSBOL.png>]
+<screenshots/SBOLBrowserGT.png, id=352, 1117.17375pt x 554.07pt>
+File: screenshots/SBOLBrowserGT.png Graphic file (type png)
+<use screenshots/SBOLBrowserGT.png>
+Package pdftex.def Info: screenshots/SBOLBrowserGT.png  used on input line 657.
+ on input line 657.
+Package pdftex.def Info: Requested size: 455.24408pt x 225.78365pt on input lin
+e 657.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png, id=35
+3, 15.05624pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png G
+raphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/save.png  used on input line 660. on input line 660.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 66
+0.
+<screenshots/SBOLAssociationGT.png, id=354, 1115.16624pt x 553.06625pt>
+File: screenshots/SBOLAssociationGT.png Graphic file (type png)
+<use screenshots/SBOLAssociationGT.png>
+Package pdftex.def Info: screenshots/SBOLAssociationGT.png  used on input line 
+663. on input line 663.
+Package pdftex.def Info: Requested size: 455.24408pt x 225.77126pt on input lin
+e 663.
+
+[55 <./screenshots/ModelEditorGT.png> <./screenshots/SBOLBrowserGT.png> <../gui
+/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+inhibition_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/i
+nhibition_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/inhibition_selected.png  used on input line 666. on input li
+ne 666.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+66.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png G
+raphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/save.png  used on input line 666. on input line 666.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 66
+6.
+<screenshots/implicitPromoterGT.png, id=359, 1117.17375pt x 560.0925pt>
+File: screenshots/implicitPromoterGT.png Graphic file (type png)
+<use screenshots/implicitPromoterGT.png>
+Package pdftex.def Info: screenshots/implicitPromoterGT.png  used on input line
+ 669. on input line 669.
+Package pdftex.def Info: Requested size: 455.24408pt x 228.23781pt on input lin
+e 669.
+ [56 <./screenshots/SBOLAssociationGT.png> <./screenshots/implicitPromoterGT.pn
+g>]
+<screenshots/compartmentGT.png, id=363, 1119.18124pt x 568.1225pt>
+File: screenshots/compartmentGT.png Graphic file (type png)
+<use screenshots/compartmentGT.png>
+Package pdftex.def Info: screenshots/compartmentGT.png  used on input line 676.
+ on input line 676.
+Package pdftex.def Info: Requested size: 455.24408pt x 231.09393pt on input lin
+e 676.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+add_component_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/a
+dd_component_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/add_component_selected.png  used on input line 679. on input
+ line 679.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+79.
+<screenshots/subModelGT.png, id=364, 1115.16624pt x 560.0925pt>
+File: screenshots/subModelGT.png Graphic file (type png)
+<use screenshots/subModelGT.png>
+Package pdftex.def Info: screenshots/subModelGT.png  used on input line 682. on
+ input line 682.
+Package pdftex.def Info: Requested size: 455.24408pt x 228.63948pt on input lin
+e 682.
+ [57 <./screenshots/compartmentGT.png> <./screenshots/subModelGT.png>]
+<screenshots/addConnectionGT.png, id=368, 1117.17375pt x 558.085pt>
+File: screenshots/addConnectionGT.png Graphic file (type png)
+<use screenshots/addConnectionGT.png>
+Package pdftex.def Info: screenshots/addConnectionGT.png  used on input line 68
+8. on input line 688.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.41975pt on input lin
+e 688.
+<screenshots/compSBOLDesc.png, id=369, 1111.15125pt x 556.0775pt>
+File: screenshots/compSBOLDesc.png Graphic file (type png)
+<use screenshots/compSBOLDesc.png>
+Package pdftex.def Info: screenshots/compSBOLDesc.png  used on input line 694. 
+on input line 694.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.83203pt on input lin
+e 694.
+ [58 <./screenshots/addConnectionGT.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+bio_activation_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/b
+io_activation_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/bio_activation_selected.png  used on input line 697. on inpu
+t line 697.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+97.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+select_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/s
+elect_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/select_mode_selected.png  used on input line 698. on input l
+ine 698.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 6
+98.
+<screenshots/complexGT.png, id=373, 1119.18124pt x 559.08875pt>
+File: screenshots/complexGT.png Graphic file (type png)
+<use screenshots/complexGT.png>
+Package pdftex.def Info: screenshots/complexGT.png  used on input line 702. on 
+input line 702.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.4193pt on input line
+ 702.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+event_mode_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/e
+vent_mode_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/event_mode_selected.png  used on input line 705. on input li
+ne 705.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 7
+05.
+ [59 <./screenshots/compSBOLDesc.png> <./screenshots/complexGT.png>]
+<screenshots/eventGT.png, id=377, 1112.155pt x 635.37375pt>
+File: screenshots/eventGT.png Graphic file (type png)
+<use screenshots/eventGT.png>
+Package pdftex.def Info: screenshots/eventGT.png  used on input line 708. on in
+put line 708.
+Package pdftex.def Info: Requested size: 455.24408pt x 260.07834pt on input lin
+e 708.
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png G
+raphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/save.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/save.png  used on input line 711. on input line 711.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 71
+1.
+<screenshots/saveGT.png, id=378, 1116.17pt x 559.08875pt>
+File: screenshots/saveGT.png Graphic file (type png)
+<use screenshots/saveGT.png>
+Package pdftex.def Info: screenshots/saveGT.png  used on input line 714. on inp
+ut line 714.
+Package pdftex.def Info: Requested size: 455.24408pt x 228.03352pt on input lin
+e 714.
+ [60 <./screenshots/eventGT.png>]
+<screenshots/SBOLBrowserGT2.png, id=383, 1115.16624pt x 558.085pt>
+File: screenshots/SBOLBrowserGT2.png Graphic file (type png)
+<use screenshots/SBOLBrowserGT2.png>
+Package pdftex.def Info: screenshots/SBOLBrowserGT2.png  used on input line 722
+. on input line 722.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.81999pt on input lin
+e 722.
+ [61 <./screenshots/saveGT.png> <./screenshots/SBOLBrowserGT2.png>]
+<screenshots/createAnalysisViewGT.png, id=387, 305.14pt x 229.85875pt>
+File: screenshots/createAnalysisViewGT.png Graphic file (type png)
+<use screenshots/createAnalysisViewGT.png>
+Package pdftex.def Info: screenshots/createAnalysisViewGT.png  used on input li
+ne 730. on input line 730.
+Package pdftex.def Info: Requested size: 226.63814pt x 170.71652pt on input lin
+e 730.
+<screenshots/analysisViewGT.png, id=388, 1114.1625pt x 561.09625pt>
+File: screenshots/analysisViewGT.png Graphic file (type png)
+<use screenshots/analysisViewGT.png>
+Package pdftex.def Info: screenshots/analysisViewGT.png  used on input line 731
+. on input line 731.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.25471pt on input lin
+e 731.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.jpg, i
+d=389, 15.05624pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.j
+pg Graphic file (type jpg)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.jp
+g>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/run-icon.jpg  used on input line 734. on input line 734.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 73
+4.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/choos
+e_layout_selected.png, id=390, 14.30344pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+choose_layout_selected.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/c
+hoose_layout_selected.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/choose_layout_selected.png  used on input line 734. on input
+ line 734.
+Package pdftex.def Info: Requested size: 14.30339pt x 15.0562pt on input line 7
+34.
+ [62 <./screenshots/createAnalysisViewGT.png> <./screenshots/analysisViewGT.png
+> <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.jpg>
+]
+<screenshots/viewNetworkGT.png, id=394, 1074.0125pt x 718.685pt>
+File: screenshots/viewNetworkGT.png Graphic file (type png)
+<use screenshots/viewNetworkGT.png>
+Package pdftex.def Info: screenshots/viewNetworkGT.png  used on input line 737.
+ on input line 737.
+Package pdftex.def Info: Requested size: 455.24408pt x 304.63106pt on input lin
+e 737.
+<screenshots/viewBrowserGT.png, id=395, 834.11626pt x 590.205pt>
+File: screenshots/viewBrowserGT.png Graphic file (type png)
+<use screenshots/viewBrowserGT.png>
+Package pdftex.def Info: screenshots/viewBrowserGT.png  used on input line 741.
+ on input line 741.
+Package pdftex.def Info: Requested size: 455.24408pt x 322.12814pt on input lin
+e 741.
+ [63 <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+choose_layout_selected.png> <./screenshots/viewNetworkGT.png>]
+<screenshots/reactionModelGT.png, id=400, 1114.1625pt x 563.10374pt>
+File: screenshots/reactionModelGT.png Graphic file (type png)
+<use screenshots/reactionModelGT.png>
+Package pdftex.def Info: screenshots/reactionModelGT.png  used on input line 74
+5. on input line 745.
+Package pdftex.def Info: Requested size: 455.24408pt x 230.07495pt on input lin
+e 745.
+<screenshots/reactionModelAbsGT.png, id=401, 1115.16624pt x 560.0925pt>
+File: screenshots/reactionModelAbsGT.png Graphic file (type png)
+<use screenshots/reactionModelAbsGT.png>
+Package pdftex.def Info: screenshots/reactionModelAbsGT.png  used on input line
+ 751. on input line 751.
+Package pdftex.def Info: Requested size: 455.24408pt x 228.63948pt on input lin
+e 751.
+ [64 <./screenshots/viewBrowserGT.png> <./screenshots/reactionModelGT.png>]
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.j
+pg Graphic file (type jpg)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/run-icon.jp
+g>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/run-icon.jpg  used on input line 754. on input line 754.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 75
+4.
+<screenshots/odeSimGT.png, id=405, 1115.16624pt x 564.1075pt>
+File: screenshots/odeSimGT.png Graphic file (type png)
+<use screenshots/odeSimGT.png>
+Package pdftex.def Info: screenshots/odeSimGT.png  used on input line 760. on i
+nput line 760.
+Package pdftex.def Info: Requested size: 455.24408pt x 230.27847pt on input lin
+e 760.
+<screenshots/odeResultsGT.png, id=406, 1271.75125pt x 722.7pt>
+File: screenshots/odeResultsGT.png Graphic file (type png)
+<use screenshots/odeResultsGT.png>
+Package pdftex.def Info: screenshots/odeResultsGT.png  used on input line 761. 
+on input line 761.
+Package pdftex.def Info: Requested size: 455.24408pt x 258.70514pt on input lin
+e 761.
+ [65 <./screenshots/reactionModelAbsGT.png> <./screenshots/odeSimGT.png>]
+<screenshots/odeSimResultsGT.png, id=410, 1114.1625pt x 564.1075pt>
+File: screenshots/odeSimResultsGT.png Graphic file (type png)
+<use screenshots/odeSimResultsGT.png>
+Package pdftex.def Info: screenshots/odeSimResultsGT.png  used on input line 76
+2. on input line 762.
+Package pdftex.def Info: Requested size: 455.24408pt x 230.48506pt on input lin
+e 762.
+ [66 <./screenshots/odeResultsGT.png> <./screenshots/odeSimResultsGT.png>]
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/export.jpg, id=
+415, 15.05624pt x 15.05624pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/export.jpg
+ Graphic file (type jpg)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/export.jpg>
+
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/export.jpg  used on input line 776. on input line 776.
+Package pdftex.def Info: Requested size: 15.0562pt x 15.0562pt on input line 77
+6.
+<screenshots/exportTSD.png, id=416, 715.67375pt x 448.67625pt>
+File: screenshots/exportTSD.png Graphic file (type png)
+<use screenshots/exportTSD.png>
+Package pdftex.def Info: screenshots/exportTSD.png  used on input line 779. on 
+input line 779.
+Package pdftex.def Info: Requested size: 272.29738pt x 170.71652pt on input lin
+e 779.
+<screenshots/ssaSimGT.png, id=417, 1117.17375pt x 563.10374pt>
+File: screenshots/ssaSimGT.png Graphic file (type png)
+<use screenshots/ssaSimGT.png>
+Package pdftex.def Info: screenshots/ssaSimGT.png  used on input line 785. on i
+nput line 785.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.46489pt on input lin
+e 785.
+<screenshots/ssaResultsGT.png, id=418, 1270.7475pt x 723.70375pt>
+File: screenshots/ssaResultsGT.png Graphic file (type png)
+<use screenshots/ssaResultsGT.png>
+Package pdftex.def Info: screenshots/ssaResultsGT.png  used on input line 786. 
+on input line 786.
+Package pdftex.def Info: Requested size: 455.24408pt x 259.26323pt on input lin
+e 786.
+ [67 <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/export.jpg
+> <./screenshots/exportTSD.png> <./screenshots/ssaSimGT.png>]
+<screenshots/ssaSimResultsGT.png, id=422, 1116.17pt x 565.11125pt>
+File: screenshots/ssaSimResultsGT.png Graphic file (type png)
+<use screenshots/ssaSimResultsGT.png>
+Package pdftex.def Info: screenshots/ssaSimResultsGT.png  used on input line 78
+7. on input line 787.
+Package pdftex.def Info: Requested size: 455.24408pt x 230.4899pt on input line
+ 787.
+<screenshots/chooseSimGT.png, id=423, 1119.18124pt x 568.1225pt>
+File: screenshots/chooseSimGT.png Graphic file (type png)
+<use screenshots/chooseSimGT.png>
+Package pdftex.def Info: screenshots/chooseSimGT.png  used on input line 793. o
+n input line 793.
+Package pdftex.def Info: Requested size: 455.24408pt x 231.09393pt on input lin
+e 793.
+ [68 <./screenshots/ssaResultsGT.png> <./screenshots/ssaSimResultsGT.png>]
+<screenshots/editSpeciesAppearanceGT.png, id=427, 1092.08pt x 387.4475pt>
+File: screenshots/editSpeciesAppearanceGT.png Graphic file (type png)
+<use screenshots/editSpeciesAppearanceGT.png>
+Package pdftex.def Info: screenshots/editSpeciesAppearanceGT.png  used on input
+ line 798. on input line 798.
+Package pdftex.def Info: Requested size: 455.24408pt x 161.50897pt on input lin
+e 798.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/movie
+/single_step.png, id=428, 21.07875pt x 20.075pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+movie/single_step.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/m
+ovie/single_step.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/movie/single_step.png  used on input line 801. on input line
+ 801.
+Package pdftex.def Info: Requested size: 21.07867pt x 20.07494pt on input line 
+801.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/movie
+/play.png, id=429, 20.075pt x 20.075pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+movie/play.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/m
+ovie/play.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/movie/play.png  used on input line 801. on input line 801.
+Package pdftex.def Info: Requested size: 20.07494pt x 20.07494pt on input line 
+801.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/movie
+/pause.png, id=430, 21.07875pt x 20.075pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+movie/pause.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/m
+ovie/pause.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/movie/pause.png  used on input line 801. on input line 801.
+Package pdftex.def Info: Requested size: 21.07867pt x 20.07494pt on input line 
+801.
+<../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/movie
+/rewind.png, id=431, 21.07875pt x 20.075pt>
+File: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/
+movie/rewind.png Graphic file (type png)
+<use ../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/m
+ovie/rewind.png>
+Package pdftex.def Info: ../gui/src/main/resources/edu/utah/ece/async/ibiosim/g
+ui/icons/modelview/movie/rewind.png  used on input line 801. on input line 801.
+
+Package pdftex.def Info: Requested size: 21.07867pt x 20.07494pt on input line 
+801.
+<screenshots/movieViewGT.png, id=432, 1118.1775pt x 559.08875pt>
+File: screenshots/movieViewGT.png Graphic file (type png)
+<use screenshots/movieViewGT.png>
+Package pdftex.def Info: screenshots/movieViewGT.png  used on input line 804. o
+n input line 804.
+Package pdftex.def Info: Requested size: 455.24408pt x 227.62404pt on input lin
+e 804.
+ [69 <./screenshots/chooseSimGT.png> <./screenshots/editSpeciesAppearanceGT.png
+> <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/modelview/mov
+ie/single_step.png> <../gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/i
+cons/modelview/movie/play.png> <../gui/src/main/resources/edu/utah/ece/async/ib
+iosim/gui/icons/modelview/movie/pause.png> <../gui/src/main/resources/edu/utah/
+ece/async/ibiosim/gui/icons/modelview/movie/rewind.png>]
+<screenshots/createGridGT.png, id=440, 263.98625pt x 264.99pt>
+File: screenshots/createGridGT.png Graphic file (type png)
+<use screenshots/createGridGT.png>
+Package pdftex.def Info: screenshots/createGridGT.png  used on input line 814. 
+on input line 814.
+Package pdftex.def Info: Requested size: 170.71652pt x 171.36403pt on input lin
+e 814.
+<screenshots/gridModelGT.png, id=441, 1117.17375pt x 564.1075pt>
+File: screenshots/gridModelGT.png Graphic file (type png)
+<use screenshots/gridModelGT.png>
+Package pdftex.def Info: screenshots/gridModelGT.png  used on input line 820. o
+n input line 820.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.87392pt on input lin
+e 820.
+ [70 <./screenshots/movieViewGT.png> <./screenshots/createGridGT.png>]
+<screenshots/gridSimGT.png, id=445, 1117.17375pt x 562.1pt>
+File: screenshots/gridSimGT.png Graphic file (type png)
+<use screenshots/gridSimGT.png>
+Package pdftex.def Info: screenshots/gridSimGT.png  used on input line 826. on 
+input line 826.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.05588pt on input lin
+e 826.
+<screenshots/compAppearancesGT.png, id=446, 1111.15125pt x 560.0925pt>
+File: screenshots/compAppearancesGT.png Graphic file (type png)
+<use screenshots/compAppearancesGT.png>
+Package pdftex.def Info: screenshots/compAppearancesGT.png  used on input line 
+832. on input line 832.
+Package pdftex.def Info: Requested size: 455.24408pt x 229.47702pt on input lin
+e 832.
+ [71 <./screenshots/gridModelGT.png> <./screenshots/gridSimGT.png>]
+<screenshots/gridSimResultsGT.png, id=450, 1114.1625pt x 565.11125pt>
+File: screenshots/gridSimResultsGT.png Graphic file (type png)
+<use screenshots/gridSimResultsGT.png>
+Package pdftex.def Info: screenshots/gridSimResultsGT.png  used on input line 8
+36. on input line 836.
+Package pdftex.def Info: Requested size: 455.24408pt x 230.89517pt on input lin
+e 836.
+ [72 <./screenshots/compAppearancesGT.png> <./screenshots/gridSimResultsGT.png>
+] (./iBioSim_SynBio_Tutorial.aux) ) 
+Here is how much of TeX's memory you used:
+ 2188 strings out of 492995
+ 46938 string characters out of 6132704
+ 81418 words of memory out of 5000000
+ 5597 multiletter control sequences out of 15000+600000
+ 9325 words of font info for 33 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 41i,6n,25p,1623b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2017/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2017/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr17.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmti10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmtt10.pfb>
+Output written on iBioSim_SynBio_Tutorial.pdf (73 pages, 12775656 bytes).
+PDF statistics:
+ 485 PDF objects out of 1000 (max. 8388607)
+ 189 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 626 words of extra memory for PDF output out of 10000 (max. 10000000)
+

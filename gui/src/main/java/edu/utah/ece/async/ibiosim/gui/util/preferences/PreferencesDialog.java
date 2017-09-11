@@ -53,7 +53,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 
 	private static final PreferencesTab[] TABS = { UserInfoTab.INSTANCE, RegistryPreferencesTab.INSTANCE,
 			GeneralPreferencesTab.INSTANCE, PartEditorPreferencesTab.INSTANCE, ModelEditorPreferencesTab.INSTANCE, 
-			ModelPreferencesTab.INSTANCE, AnalysisPreferencesTab.INSTANCE, LearnPreferencesTab.INSTANCE 
+			ModelPreferencesTab.INSTANCE, AnalysisPreferencesTab.INSTANCE, LearnPreferencesTab.INSTANCE, SynthesisPreferencesTab.INSTANCE  
 			/**
 			 * SOMappingTab.INSTANCE,
 			 * VersioningPreferencesTab.INSTANCE

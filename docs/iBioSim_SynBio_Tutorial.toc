@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Project Management}{3}
+\contentsline {section}{\numberline {3}Part Editor}{6}
+\contentsline {subsection}{\numberline {3.1}LacI Inverter Gene}{6}
+\contentsline {subsection}{\numberline {3.2}TetR Inverter Gene}{23}
+\contentsline {section}{\numberline {4}Model Editor}{29}
+\contentsline {subsection}{\numberline {4.1}LacI Inverter}{29}
+\contentsline {subsection}{\numberline {4.2}TetR Inverter}{40}
+\contentsline {subsection}{\numberline {4.3}Genetic Toggle Switch Model}{45}
+\contentsline {section}{\numberline {5}SBOL Browser}{61}
+\contentsline {section}{\numberline {6}Analysis Tool}{62}
+\contentsline {section}{\numberline {7}Grid Models}{70}

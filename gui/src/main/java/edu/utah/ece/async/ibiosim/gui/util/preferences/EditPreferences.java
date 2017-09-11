@@ -83,11 +83,6 @@ public class EditPreferences {
 	private JTextField REVERSE_MEMDIFF_VALUE;
 	private JTextField KECDIFF_VALUE;
 	
-	private JTextField regexField;
-	private JComboBox validationBox;
-	private JComboBox assemblyBox;
-	private JComboBox warningBox;
-	
 	private JTextField initialTime;
 	private JTextField outputStartTime;
 	private JTextField limit;
@@ -633,82 +628,6 @@ public class EditPreferences {
 		return modelPrefsFinal;
 	}
 
-	private JPanel SBOLPreferences(Preferences biosimrc) {	
-		// assembly preferences
-		JPanel assemblyLabels = new JPanel(new GridLayout(4, 1));
-		assemblyLabels.add(new JLabel("Assemble Complete Genetic Construct"));
-		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
-		assemblyLabels.add(new JLabel("Validate Assembled Constructs"));
-		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
-		
-		JPanel assemblyFields = new JPanel(new GridLayout(4 ,1));
-		String regex = SBOLUtility.convertRegexSOTermsToNumbers(
-				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
-		regexField = new JTextField(regex, 15);
-		assemblyBox = new JComboBox(new String[]{"True", "False"});
-		assemblyBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, ""));
-		assemblyBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (assemblyBox.getSelectedIndex() == 0) {
-					regexField.setEnabled(true);
-					validationBox.setSelectedIndex(0);
-					validationBox.setEnabled(true);
-					warningBox.setSelectedIndex(0);
-					warningBox.setEnabled(true);
-				} else {
-					regexField.setEnabled(false);
-					validationBox.setSelectedIndex(1);
-					validationBox.setEnabled(false);
-					warningBox.setSelectedIndex(1);
-					warningBox.setEnabled(false);
-				}
-			}
-		});
-		validationBox = new JComboBox(new String[]{"True", "False"});
-		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
-		validationBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (validationBox.getSelectedIndex() == 0) {
-					warningBox.setSelectedIndex(0);
-					warningBox.setEnabled(true);
-					warningBox.setSelectedIndex(1);
-				} else {
-					warningBox.setSelectedIndex(1);
-					warningBox.setSelectedIndex(1);
-					warningBox.setEnabled(false);
-				}
-			}
-		});
-		warningBox = new JComboBox(new String[]{"True", "False"});
-		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
-		assemblyFields.add(assemblyBox);
-		assemblyFields.add(regexField);
-		assemblyFields.add(validationBox);
-		assemblyFields.add(warningBox);
-		
-		JButton restoreDefaultsButton = new JButton("Restore Defaults");
-		restoreDefaultsButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
-				assemblyBox.setSelectedItem(GlobalConstants.CONSTRUCT_ASSEMBLY_DEFAULT);
-				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
-				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
-			}
-		});	
-		
-		// create assembly preferences panel
-		JPanel assemblyPrefsPane = new JPanel(new GridLayout(1, 2));
-		assemblyPrefsPane.add(assemblyLabels);
-		assemblyPrefsPane.add(assemblyFields);
-		JPanel assemblyPrefsTop = new JPanel(new BorderLayout());
-		assemblyPrefsTop.add(assemblyPrefsPane,"North");
-		assemblyPrefsTop.add(restoreDefaultsButton,"South");
-		return assemblyPrefsTop;
-	}
-
 	private JPanel analysisPreferences(Preferences biosimrc) {	
 		// analysis preferences
 		String[] choices = { "None", "Expand Reactions", "Reaction-based", "State-based" };
@@ -1091,31 +1010,6 @@ public class EditPreferences {
 		return problem;
 	}
 	
-	private boolean saveSBOLPreferences(Preferences biosimrc) {
-		boolean problem = false;
-		if (!regexField.getText().trim().equals(""))
-			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, regexField.getText().trim());
-		else {
-			JOptionPane.showMessageDialog(Gui.frame, "Validation regex cannot be blank.", 
-					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			regexField.setText(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
-			problem = true;
-		}
-		if (assemblyBox.getSelectedItem().equals("True"))
-			biosimrc.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "True");
-		else
-			biosimrc.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False");
-		if (validationBox.getSelectedItem().equals("True"))
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "True");
-		else
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "False");
-		if (warningBox.getSelectedItem().equals("True"))
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "True");
-		else
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "False");
-		return problem;
-	}
-	
 	// builds the edit>preferences panel
 	public void preferences() {
 		Preferences biosimrc = Preferences.userRoot();
@@ -1134,7 +1028,6 @@ public class EditPreferences {
 		JPanel generalPrefs = generalPreferences(biosimrc);
 		JPanel schematicPrefs = schematicPreferences(biosimrc);
 		JPanel modelPrefs = modelPreferences(biosimrc);
-		JPanel assemblyPrefs = SBOLPreferences(biosimrc);
 		JPanel analysisPrefs = analysisPreferences(biosimrc);
 
 		// create tabs
@@ -1143,7 +1036,6 @@ public class EditPreferences {
 		if (async) prefTabs.addTab("Schematic Preferences", schematicPrefs);
 		if (async) prefTabs.addTab("Model Preferences", modelPrefs);
 		if (async) prefTabs.addTab("Analysis Preferences", analysisPrefs);
-		if (!async) prefTabs.addTab("SBOL Preferences", assemblyPrefs);
 
 		boolean problem;
 		int value;
@@ -1159,7 +1051,6 @@ public class EditPreferences {
 				if (async) problem = saveSchematicPreferences(biosimrc);
 				if (async && !problem) problem = saveModelPreferences(biosimrc);
 				if (async && !problem) problem = saveAnalysisPreferences(biosimrc);
-				if (async && !problem) problem = saveSBOLPreferences(biosimrc);
 				try {
 					biosimrc.sync();
 				}
