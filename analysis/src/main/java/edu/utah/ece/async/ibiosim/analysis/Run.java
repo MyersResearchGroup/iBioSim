@@ -762,25 +762,23 @@ public class Run extends CoreObservable implements ActionListener
 
   private int executeXhtml() throws IOException, InterruptedException
   {
-    String filename = properties.getFilename();
-
-    String modelFile = properties.getModelFile();
-    String out = modelFile.replace(".xml", "");
-    String directory = properties.getDirectory();
+    String outFullPath = properties.getFilename().replaceAll(".xml", ".xhtml");
+    String outName = properties.getModelFile().replace(".xml", ".xhtml");
 
     int exitValue = 0;
-    Simulator.expandArrays(filename, 1);
+    Simulator.expandArrays(outFullPath, 1);
 
-    message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + filename);
-
-
-    reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + out + ".xhtml " + modelFile, Executables.envp, work);
+    String command = Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + outName + " " + properties.getFilename();
+    message.setLog("Executing:\n" + command);
+    reb2sac = exec.exec(command, Executables.envp, work);
 
     Preferences biosimrc = Preferences.userRoot();
     String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
-    message.setLog("Executing:\n" + xhtmlCmd + " " + directory + out + ".xhtml");
+    command = xhtmlCmd + " " + outFullPath;
+    
+    message.setLog("Executing:\n" + command);
     this.notifyObservers(message);
-    exec.exec(xhtmlCmd + " " + out + ".xhtml", null, work);
+    exec.exec(command, null, work);
 
     if (reb2sac != null)
     {
