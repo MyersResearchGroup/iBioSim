@@ -700,21 +700,20 @@ public class Run extends CoreObservable implements ActionListener
   private int executeDot() throws IOException, InterruptedException, BioSimException
   {
     int exitValue= 255;
-    String directory = null;
-    String out = null;
+    String out = properties.getModelFile().replace(".xml", ".dot");
     String outputFileName = properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".dot";
     if (properties.isNary())
     {
       LPN lhpnFile = new LPN();
-      lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".lpn");
-      lhpnFile.printDot(properties.getRoot() + File.separator + outputFileName);
+      lhpnFile.load(properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".lpn");
+      lhpnFile.printDot(outputFileName);
       exitValue = 0;
     }
     else if (properties.getFilename().contains(".lpn"))
     {
       LPN lhpnFile = new LPN();
       try {
-        lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename());
+        lhpnFile.load(properties.getFilename());
       } catch (BioSimException e) {
         e.printStackTrace();
       }
@@ -722,36 +721,36 @@ public class Run extends CoreObservable implements ActionListener
       {
         Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
         abst.abstractSTG(false);
-        abst.printDot(properties.getRoot() + File.separator + properties.getSim() + outputFileName);
+        abst.printDot(properties.getRoot() + File.separator + properties.getSim() + File.separator + properties.getModelFile());
       }
       else
       {
-        lhpnFile.printDot(properties.getRoot() + File.separator + properties.getSim() + File.separator + outputFileName);
+        lhpnFile.printDot(properties.getRoot() + File.separator + properties.getSim() + File.separator + properties.getModelFile());
       }
       exitValue = 0;
     }
     else
     {
-      message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=dot --out=" +  outputFileName+ " " + properties.getFilename());
+      String command = Executables.reb2sacExecutable + " --target.encoding=dot --out=" +  out + " " + properties.getFilename();
+      message.setLog("Executing:\n" + command);
       this.notifyObservers(message);
-      reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=dot --out=" + outputFileName + " " + properties.getFilename(), Executables.envp, work);
+      reb2sac = exec.exec(command, Executables.envp, work);
     }
 
 
-    message.setLog("Executing:\ndotty " + directory + out + ".dot");
-    this.notifyObservers(message);
-    if (System.getProperty("os.name").contentEquals("Linux"))
+    String command;
+    if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
     {
-      exec.exec("dotty " + out + ".dot", null, work);
-    }
-    else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-    {
-      exec.exec("open " + out + ".dot", null, work);
+      command = "open " + outputFileName;
     }
     else
     {
-      exec.exec("dotty " + out + ".dot", null, work);
+      command = "dotty " + outputFileName;
     }
+
+    exec.exec(command);
+    message.setLog("Executing:\n" + command);
+    this.notifyObservers(message);
 
     if (reb2sac != null)
     {
