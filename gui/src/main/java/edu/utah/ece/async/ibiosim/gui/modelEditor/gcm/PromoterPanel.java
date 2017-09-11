@@ -517,6 +517,18 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort,idDims);
 
 			if (!paramsOnly) {
+				// rename all the influences that use this promoter if name was changed
+				if (selected != null && oldName != null && !oldName.equals(id)) {
+					try {
+						bioModel.changePromoterId(oldName, id);
+					} catch (BioSimException e) {
+						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+								JOptionPane.ERROR_MESSAGE);
+					}
+					this.secondToLastUsedPromoter = oldName;
+					promoterNameChange = true;
+				}
+
 				// Add SBOL annotation to promoter
 				if (sbolField.getSBOLURIs().size() > 0) 
 				{
@@ -547,17 +559,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 				} else
 					AnnotationUtility.removeSBOLAnnotation(promoter);
 
-				// rename all the influences that use this promoter if name was changed
-				if (selected != null && oldName != null && !oldName.equals(id)) {
-					try {
-						bioModel.changePromoterId(oldName, id);
-					} catch (BioSimException e) {
-						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-								JOptionPane.ERROR_MESSAGE);
-					}
-					this.secondToLastUsedPromoter = oldName;
-					promoterNameChange = true;
-				}
 				bioModel.createDirPort(promoter.getId(),speciesType);
 				this.lastUsedPromoter = id;
 			}
