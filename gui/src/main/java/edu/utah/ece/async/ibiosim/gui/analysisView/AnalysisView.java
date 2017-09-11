@@ -962,6 +962,14 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         ((Graph) gui.getTab().getComponentAt(i)).refresh();
       }
     }
+    
+    for(int i = 0; i < simTab.getTabCount(); i++)
+    {
+      if (simTab.getComponentAt(i) instanceof Graph)
+      {
+        ((Graph) simTab.getComponentAt(i)).refresh();
+      }
+    }
   }
 
   public int getStartIndex(String outDir) {
