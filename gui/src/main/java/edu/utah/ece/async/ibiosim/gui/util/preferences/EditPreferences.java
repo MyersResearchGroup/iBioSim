@@ -43,9 +43,7 @@ import com.mxgraph.util.mxConstants;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.CompatibilityFixer;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.gui.Gui;
-import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 
 /**
  * 
@@ -85,7 +83,6 @@ public class EditPreferences {
 	private JTextField REVERSE_MEMDIFF_VALUE;
 	private JTextField KECDIFF_VALUE;
 	
-	private JTextField uriField;
 	private JTextField regexField;
 	private JComboBox validationBox;
 	private JComboBox assemblyBox;
@@ -110,20 +107,6 @@ public class EditPreferences {
 	private JComboBox sim;
 	private JComboBox abs;
 	private JComboBox type;
-	
-	private JTextField tn;
-	private JTextField tj;
-	private JTextField ti;
-	private JComboBox bins;
-	private JComboBox equaldata;
-	private JComboBox autolevels;
-	private JTextField ta;
-	private JTextField tr;
-	private JTextField tm;
-	private JTextField tt;
-	private JComboBox debug;
-	private JComboBox succpred;
-	private JComboBox findbaseprob;
 	
 	private boolean async;
 	
@@ -649,23 +632,16 @@ public class EditPreferences {
 		modelPrefsFinal.add(restoreModel,"South");
 		return modelPrefsFinal;
 	}
-	
-	public static String getDefaultUriPrefix() {
-		Preferences biosimrc = Preferences.userRoot();
-		return biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
-	}
-	
+
 	private JPanel SBOLPreferences(Preferences biosimrc) {	
 		// assembly preferences
-		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
-		assemblyLabels.add(new JLabel("Namespace"));
+		JPanel assemblyLabels = new JPanel(new GridLayout(4, 1));
 		assemblyLabels.add(new JLabel("Assemble Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
 		assemblyLabels.add(new JLabel("Validate Assembled Constructs"));
 		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
 		
-		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
-		uriField = new JTextField(EditPreferences.getDefaultUriPrefix(),15);
+		JPanel assemblyFields = new JPanel(new GridLayout(4 ,1));
 		String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 				biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 		regexField = new JTextField(regex, 15);
@@ -707,7 +683,6 @@ public class EditPreferences {
 		});
 		warningBox = new JComboBox(new String[]{"True", "False"});
 		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
-		assemblyFields.add(uriField);
 		assemblyFields.add(assemblyBox);
 		assemblyFields.add(regexField);
 		assemblyFields.add(validationBox);
@@ -717,7 +692,6 @@ public class EditPreferences {
 		restoreDefaultsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				uriField.setText(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
 				assemblyBox.setSelectedItem(GlobalConstants.CONSTRUCT_ASSEMBLY_DEFAULT);
 				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
@@ -948,94 +922,6 @@ public class EditPreferences {
 		return analysisPrefsFinal;
 	}
 	
-	private JPanel learnPreferences(Preferences biosimrc) {
-		// learning preferences
-		tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
-		tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
-		ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
-		String[] choices = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-		bins = new JComboBox(choices);
-		bins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
-		choices = new String[] { "Equal Data Per Bins", "Equal Spacing Of Bins" };
-		equaldata = new JComboBox(choices);
-		equaldata.setSelectedItem(biosimrc.get("biosim.learn.equaldata", ""));
-		choices = new String[] { "Auto", "User" };
-		autolevels = new JComboBox(choices);
-		autolevels.setSelectedItem(biosimrc.get("biosim.learn.autolevels", ""));
-		ta = new JTextField(biosimrc.get("biosim.learn.ta", ""));
-		tr = new JTextField(biosimrc.get("biosim.learn.tr", ""));
-		tm = new JTextField(biosimrc.get("biosim.learn.tm", ""));
-		tt = new JTextField(biosimrc.get("biosim.learn.tt", ""));
-		choices = new String[] { "0", "1", "2", "3" };
-		debug = new JComboBox(choices);
-		debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
-		choices = new String[] { "Successors", "Predecessors", "Both" };
-		succpred = new JComboBox(choices);
-		succpred.setSelectedItem(biosimrc.get("biosim.learn.succpred", ""));
-		choices = new String[] { "True", "False" };
-		findbaseprob = new JComboBox(choices);
-		findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
-
-		JPanel learnLabels = new JPanel(new GridLayout(13, 1));
-		learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
-		learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
-		learnLabels.add(new JLabel("Score For Empty Influence Vector (Ti):"));
-		learnLabels.add(new JLabel("Number Of Bins:"));
-		learnLabels.add(new JLabel("Divide Bins:"));
-		learnLabels.add(new JLabel("Generate Levels:"));
-		learnLabels.add(new JLabel("Ratio For Activation (Ta):"));
-		learnLabels.add(new JLabel("Ratio For Repression (Tr):"));
-		learnLabels.add(new JLabel("Merge Influence Vectors Delta (Tm):"));
-		learnLabels.add(new JLabel("Relax Thresholds Delta (Tt):"));
-		learnLabels.add(new JLabel("Debug Level:"));
-		learnLabels.add(new JLabel("Successors Or Predecessors:"));
-		learnLabels.add(new JLabel("Basic FindBaseProb:"));
-
-		JPanel learnFields = new JPanel(new GridLayout(13, 1));
-		learnFields.add(tn);
-		learnFields.add(tj);
-		learnFields.add(ti);
-		learnFields.add(bins);
-		learnFields.add(equaldata);
-		learnFields.add(autolevels);
-		learnFields.add(ta);
-		learnFields.add(tr);
-		learnFields.add(tm);
-		learnFields.add(tt);
-		learnFields.add(debug);
-		learnFields.add(succpred);
-		learnFields.add(findbaseprob);
-		
-		JButton restoreLearn = new JButton("Restore Defaults");
-		restoreLearn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				tn.setText("2");
-				tj.setText("2");
-				ti.setText("0.5");
-				bins.setSelectedItem("4");
-				equaldata.setSelectedItem("Equal Data Per Bins");
-				autolevels.setSelectedItem("Auto");
-				ta.setText("1.15");
-				tr.setText("0.75");
-				tm.setText("0.0");
-				tt.setText("0.025");
-				debug.setSelectedItem("0");
-				succpred.setSelectedItem("Successors");
-				findbaseprob.setSelectedItem("False");
-			}
-		});	
-		
-		// create learning preferences panel
-		JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
-		learnPrefs.add(learnLabels);
-		learnPrefs.add(learnFields);
-		JPanel learnPrefsFinal = new JPanel(new BorderLayout());
-		learnPrefsFinal.add(learnPrefs,"North");
-		learnPrefsFinal.add(restoreLearn,"South");
-		return learnPrefsFinal;
-	}
-	
 	private void saveGeneralPreferences (Preferences biosimrc) {
 		biosimrc.put("lema.verification.command", verCmd.getText().trim());
 		biosimrc.put("lema.general.viewer", viewerField.getText().trim());
@@ -1205,48 +1091,8 @@ public class EditPreferences {
 		return problem;
 	}
 	
-	private boolean saveLearnPreferences(Preferences biosimrc) {
-		boolean problem = false;
-		biosimrc.put("biosim.learn.bins", (String) bins.getSelectedItem());
-		biosimrc.put("biosim.learn.equaldata", (String) equaldata.getSelectedItem());
-		biosimrc.put("biosim.learn.autolevels", (String) autolevels.getSelectedItem());
-		biosimrc.put("biosim.learn.debug", (String) debug.getSelectedItem());
-		biosimrc.put("biosim.learn.succpred", (String) succpred.getSelectedItem());
-		biosimrc.put("biosim.learn.findbaseprob", (String) findbaseprob.getSelectedItem());
-		try {
-			Integer.parseInt(tn.getText().trim());
-			biosimrc.put("biosim.learn.tn", tn.getText().trim());
-			Integer.parseInt(tj.getText().trim());
-			biosimrc.put("biosim.learn.tj", tj.getText().trim());
-			Double.parseDouble(ti.getText().trim());
-			biosimrc.put("biosim.learn.ti", ti.getText().trim());
-			Double.parseDouble(ta.getText().trim());
-			biosimrc.put("biosim.learn.ta", ta.getText().trim());
-			Double.parseDouble(tr.getText().trim());
-			biosimrc.put("biosim.learn.tr", tr.getText().trim());
-			Double.parseDouble(tm.getText().trim());
-			biosimrc.put("biosim.learn.tm", tm.getText().trim());
-			Double.parseDouble(tt.getText().trim());
-			biosimrc.put("biosim.learn.tt", tt.getText().trim());
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Numeric learn preference given non-numeric value.", 
-					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			problem = true;		
-		}
-		return problem;
-	}
-	
 	private boolean saveSBOLPreferences(Preferences biosimrc) {
 		boolean problem = false;
-		if (!uriField.getText().trim().equals("")) {
-			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, uriField.getText().trim());
-		} else {
-			JOptionPane.showMessageDialog(Gui.frame, "URI authority cannot be blank.", 
-					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			uriField.setText(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""));
-			problem = true;
-		}
 		if (!regexField.getText().trim().equals(""))
 			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, regexField.getText().trim());
 		else {
@@ -1290,16 +1136,14 @@ public class EditPreferences {
 		JPanel modelPrefs = modelPreferences(biosimrc);
 		JPanel assemblyPrefs = SBOLPreferences(biosimrc);
 		JPanel analysisPrefs = analysisPreferences(biosimrc);
-		JPanel learnPrefs = learnPreferences(biosimrc);
 
 		// create tabs
 		JTabbedPane prefTabs = new JTabbedPane();
 		if (async) prefTabs.addTab("General Preferences", generalPrefs);
-		prefTabs.addTab("Schematic Preferences", schematicPrefs);
-		prefTabs.addTab("Model Preferences", modelPrefs);
-		prefTabs.addTab("Analysis Preferences", analysisPrefs);
+		if (async) prefTabs.addTab("Schematic Preferences", schematicPrefs);
+		if (async) prefTabs.addTab("Model Preferences", modelPrefs);
+		if (async) prefTabs.addTab("Analysis Preferences", analysisPrefs);
 		if (!async) prefTabs.addTab("SBOL Preferences", assemblyPrefs);
-		if (!async) prefTabs.addTab("Learn Preferences", learnPrefs);
 
 		boolean problem;
 		int value;
@@ -1311,12 +1155,11 @@ public class EditPreferences {
 
 			// if user hits "save", store and/or check new data
 			if (value == JOptionPane.YES_OPTION) {
-				saveGeneralPreferences(biosimrc);
-				problem = saveSchematicPreferences(biosimrc);
-				if (!problem) problem = saveModelPreferences(biosimrc);
-				if (!problem) problem = saveAnalysisPreferences(biosimrc);
-				if (!problem) problem = saveLearnPreferences(biosimrc);
-				if (!problem) problem = saveSBOLPreferences(biosimrc);
+				if (async) saveGeneralPreferences(biosimrc);
+				if (async) problem = saveSchematicPreferences(biosimrc);
+				if (async && !problem) problem = saveModelPreferences(biosimrc);
+				if (async && !problem) problem = saveAnalysisPreferences(biosimrc);
+				if (async && !problem) problem = saveSBOLPreferences(biosimrc);
 				try {
 					biosimrc.sync();
 				}
@@ -1508,9 +1351,6 @@ public class EditPreferences {
 		}
 		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("")) {
 			biosimrc.put("biosim.learn.findbaseprob", "False");
-		}
-		if (biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 		}
 		if (biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, "").equals("")) {
 			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);

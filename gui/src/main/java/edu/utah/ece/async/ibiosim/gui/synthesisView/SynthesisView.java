@@ -51,11 +51,11 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 
@@ -378,7 +378,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					for (String fileID : new File(libFilePath).list())
 						if (fileID.endsWith(".sbol"))
 							sbolFilePaths.add(libFilePath + separator + fileID);
-				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, EditPreferences.getDefaultUriPrefix());
+				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 				//		boolean flatImport = libFilePaths.size() > 1;

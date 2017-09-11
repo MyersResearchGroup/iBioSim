@@ -103,6 +103,7 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -137,7 +138,6 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.Runnable;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.UndoManager;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.Assembler2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.AssemblyGraph2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.SequenceTypeValidator;
@@ -466,13 +466,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL2() throws SBOLValidationException {
 		try {
 			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel,
-					Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), ""));
+					Preferences.userRoot().get(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), ""));
 			if (identityManager.containsBioSimURI()) {
 				AssemblyGraph2 assemblyGraph = new AssemblyGraph2(biomodel);
 				if (assemblyGraph.containsSBOL()) {
 					SBOLFileManager fileManager = new SBOLFileManager(
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),
-							EditPreferences.getDefaultUriPrefix());
+							IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
@@ -480,10 +480,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);
 
 						SBOLDocument tempSbolDoc = new SBOLDocument();
-						tempSbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+						tempSbolDoc.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 						ComponentDefinition assembledComp = assembler.assembleDNAComponent(tempSbolDoc,
-								EditPreferences.getDefaultUriPrefix());
+								IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 						ComponentDefinition new_assembledComp = null;
 						if (assembledComp != null) {
 							// NOTE: Check to see if the SBOL annotation could
@@ -501,11 +501,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									String version = "1.0";
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0], version);
+												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 										//
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0], version);
+												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 
 									}
 									new_assembledComp.setTypes(assembledComp.getTypes());
@@ -518,7 +518,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											EditPreferences.getDefaultUriPrefix(), described_CompDef[0] + "_seq",
+											IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											version);
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -527,11 +527,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									Double compDef_version = Double.parseDouble(retrievedCompDef.getVersion()) + 1;
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(
-												retrievedCompDef, EditPreferences.getDefaultUriPrefix(),
+												retrievedCompDef, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(),
 												described_CompDef[0], compDef_version.toString());
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0],
+												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0],
 												compDef_version.toString());
 
 									}
@@ -546,7 +546,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											EditPreferences.getDefaultUriPrefix(), described_CompDef[0] + "_seq",
+											IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											compDef_version.toString());
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -617,7 +617,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			SBOLDocument sbolOut = new SBOLDocument();
 			SBML2SBOL.convert_SBML2SBOL(sbolOut, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
+					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 			if (biosimrc.get("biosim.general.export_dir", "").equals(""))
 				lastFilePath = null;
@@ -693,7 +693,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
+			String defaultURIprefix = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
@@ -732,7 +732,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
+			String defaultURIprefix = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);

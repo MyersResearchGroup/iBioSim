@@ -61,6 +61,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 
 /**
  * Perform conversion from SBML to SBOL. 
@@ -753,7 +754,7 @@ public class SBML2SBOL {
 			if(sbolURIPre == null || sbolURIPre.isEmpty()){
 				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
 				Preferences biosimrc = Preferences.userRoot();
-				sbolURIPre = biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+				sbolURIPre = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
 			}
 
 			SBMLDocument sbmlDoc = null;

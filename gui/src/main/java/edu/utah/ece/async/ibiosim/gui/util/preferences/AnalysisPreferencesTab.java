@@ -1,33 +1,48 @@
 package edu.utah.ece.async.ibiosim.gui.util.preferences;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
+import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog.PreferencesTab;
-import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
 import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
 
 public enum AnalysisPreferencesTab implements PreferencesTab {
 	INSTANCE;
 
 	// askUser is 0, overwrite is 1, and keep is 2
-	private JRadioButton seqAskUser = new JRadioButton("Ask", IBioSimPreferences.INSTANCE.getSeqBehavior() == 0);
-	private JRadioButton seqOverwrite = new JRadioButton("Overwrite",
-			IBioSimPreferences.INSTANCE.getSeqBehavior() == 1);
-	private JRadioButton seqKeep = new JRadioButton("Keep", IBioSimPreferences.INSTANCE.getSeqBehavior() == 2);
-
-	// show name is 0, show displayId is 1
-	private JRadioButton showName = new JRadioButton("Show name when set",
-			IBioSimPreferences.INSTANCE.getNameDisplayIdBehavior() == 0);
-	private JRadioButton showDisplayId = new JRadioButton("Show displayId",
-			IBioSimPreferences.INSTANCE.getNameDisplayIdBehavior() == 1);
+	private JTextField initialTime;
+	private JTextField outputStartTime;
+	private JTextField limit;
+	private JTextField interval;
+	private JTextField minStep;
+	private JTextField step;
+	private JTextField error;
+	private JTextField relError;
+	private JTextField seed;
+	private JTextField runs;
+	private JTextField rapid1;
+	private JTextField rapid2;
+	private JTextField qssa;
+	private JTextField concentration;
+	private JComboBox useInterval;
+	private JTextField simCommand;
+	private JComboBox sim;
+	private JComboBox abs;
+	private JComboBox type;
 
 	@Override
 	public String getTitle() {
@@ -46,49 +61,268 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 
 	@Override
 	public Component getComponent() {
-		JLabel impliedSequence = new JLabel(
-				"<html>Every time the implied sequence is shorter than the original <br>sequence, would you like to overwrite or keep the original sequence?</html>");
-		ButtonGroup seqGroup = new ButtonGroup();
-		seqGroup.add(seqAskUser);
-		seqGroup.add(seqOverwrite);
-		seqGroup.add(seqKeep);
+		// analysis preferences
+		String[] choices = { "None", "Expand Reactions", "Reaction-based", "State-based" };
+		simCommand = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.command"));
+		abs = new JComboBox(choices);
+		abs.setSelectedItem(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.abs"));
 
-		JLabel showNameOrDisplayId = new JLabel("<html>Always show displayId or always show name when set?</html>");
-		ButtonGroup nameDisplayIdGroup = new ButtonGroup();
-		nameDisplayIdGroup.add(showName);
-		nameDisplayIdGroup.add(showDisplayId);
+		if (!abs.getSelectedItem().equals("State-based")) {
+			choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
+		}
+		else {
+			choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser", "LPN" };
+		}
 
+		type = new JComboBox(choices);
+		type.setSelectedItem(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.type"));
+
+		if (type.getSelectedItem().equals("ODE")) {
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45", "Runge-Kutta-Fehlberg" };
+		}
+		else if (type.getSelectedItem().equals("Monte Carlo")) {
+			choices = new String[] { "gillespie", "SSA-Hierarchical", "SSA-Direct", "SSA-CR", "iSSA", "interactive", "emc-sim", "bunker", "nmc"};
+		}
+		else if (type.getSelectedItem().equals("Markov")) {
+			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "prism", "atacs",
+					"ctmc-transient" };
+		}
+		else {
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+		}
+
+		sim = new JComboBox(choices);
+		sim.setSelectedItem(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.sim"));
+		abs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!abs.getSelectedItem().equals("State-based")) {
+					Object o = type.getSelectedItem();
+					type.removeAllItems();
+					type.addItem("ODE");
+					type.addItem("Monte Carlo");
+					type.addItem("Model");
+					type.addItem("Network");
+					type.addItem("Browser");
+					type.setSelectedItem(o);
+				}
+				else {
+					Object o = type.getSelectedItem();
+					type.removeAllItems();
+					type.addItem("Monte Carlo");
+					type.addItem("Markov");
+					type.addItem("Model");
+					type.addItem("Network");
+					type.addItem("Browser");
+					type.addItem("LPN");
+					type.setSelectedItem(o);
+				}
+			}
+		});
+
+		type.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (type.getSelectedItem() == null) {
+				}
+				else if (type.getSelectedItem().equals("ODE")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("euler");
+					sim.addItem("gear1");
+					sim.addItem("gear2");
+					sim.addItem("rk4imp");
+					sim.addItem("rk8pd");
+					sim.addItem("rkf45");
+					sim.addItem("Runge-Kutta-Fehlberg");
+					sim.setSelectedIndex(5);
+					sim.setSelectedItem(o);
+				}
+				else if (type.getSelectedItem().equals("Monte Carlo")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("gillespie");
+					sim.addItem("SSA-Hierarchical");
+					sim.addItem("SSA-Direct");
+					sim.addItem("SSA-CR");
+					sim.addItem("interactive");
+					sim.addItem("iSSA");
+					sim.addItem("emc-sim");
+					sim.addItem("bunker");
+					sim.addItem("nmc");
+					sim.setSelectedItem(o);
+				}
+				else if (type.getSelectedItem().equals("Markov")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("steady-state-markov-chain-analysis");
+					sim.addItem("transient-markov-chain-analysis");
+					sim.addItem("reachability-analysis");
+					sim.addItem("prism");
+					sim.addItem("atacs");
+					sim.addItem("ctmc-transient");
+					sim.setSelectedItem(o);
+				}
+				else {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("euler");
+					sim.addItem("gear1");
+					sim.addItem("gear2");
+					sim.addItem("rk4imp");
+					sim.addItem("rk8pd");
+					sim.addItem("rkf45");
+					sim.setSelectedIndex(5);
+					sim.setSelectedItem(o);
+				}
+			}
+		});
+
+		initialTime = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.initial.time"));
+		outputStartTime = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.output.start.time"));
+		limit = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.limit"));
+		interval = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.interval"));
+		minStep = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.min.step"));
+		step = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.step"));
+		error = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.error"));
+		relError = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.relative.error"));
+		seed = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.seed"));
+		runs = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.runs"));
+		rapid1 = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.rapid1"));
+		rapid2 = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.rapid2"));
+		qssa = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.qssa"));
+		concentration = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.concentration"));
+		
+		choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
+		useInterval = new JComboBox(choices);
+		useInterval.setSelectedItem(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.useInterval"));
+
+		JPanel analysisLabels = new JPanel(new GridLayout(18, 1));
+		analysisLabels.add(new JLabel("Simulation Command:"));
+		analysisLabels.add(new JLabel("Abstraction:"));
+		analysisLabels.add(new JLabel("Simulation Type:"));
+		analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
+		analysisLabels.add(new JLabel("Initial Time:"));
+		analysisLabels.add(new JLabel("Output Start Time:"));
+		analysisLabels.add(new JLabel("Time Limit:"));
+		analysisLabels.add(useInterval);
+		analysisLabels.add(new JLabel("Minimum Time Step:"));
+		analysisLabels.add(new JLabel("Maximum Time Step:"));
+		analysisLabels.add(new JLabel("Absolute Error:"));
+		analysisLabels.add(new JLabel("Relative Error:"));
+		analysisLabels.add(new JLabel("Random Seed:"));
+		analysisLabels.add(new JLabel("Runs:"));
+		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
+		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
+		analysisLabels.add(new JLabel("QSSA Condition:"));
+		analysisLabels.add(new JLabel("Max Concentration Threshold:"));
+
+		JPanel analysisFields = new JPanel(new GridLayout(18, 1));
+		analysisFields.add(simCommand);
+		analysisFields.add(abs);
+		analysisFields.add(type);
+		analysisFields.add(sim);
+		analysisFields.add(initialTime);
+		analysisFields.add(outputStartTime);
+		analysisFields.add(limit);
+		analysisFields.add(interval);
+		analysisFields.add(minStep);
+		analysisFields.add(step);
+		analysisFields.add(error);
+		analysisFields.add(relError);
+		analysisFields.add(seed);
+		analysisFields.add(runs);
+		analysisFields.add(rapid1);
+		analysisFields.add(rapid2);
+		analysisFields.add(qssa);
+		analysisFields.add(concentration);
+		
+		JButton restoreAn = new JButton("Restore Defaults");
+		restoreAn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				simCommand.setText("");
+				abs.setSelectedItem("None");
+				type.setSelectedItem("ODE");
+				sim.setSelectedItem("rkf45");
+				initialTime.setText("0.0");
+				outputStartTime.setText("0.0");
+				limit.setText("100.0");
+				useInterval.setSelectedItem("Print Interval");
+				interval.setText("1.0");
+				step.setText("inf");
+				minStep.setText("0");
+				error.setText("1.0E-9");
+				relError.setText("0.0");
+				seed.setText("314159");
+				runs.setText("1");
+				rapid1.setText("0.1");
+				rapid2.setText("0.1");
+				qssa.setText("0.1");
+				concentration.setText("15");
+			}
+		});	
+
+		// create analysis preferences panel
+		JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
+		analysisPrefs.add(analysisLabels);
+		analysisPrefs.add(analysisFields);
+		JPanel analysisPrefsFinal = new JPanel(new BorderLayout());
+		analysisPrefsFinal.add(analysisPrefs,"North");
+		analysisPrefsFinal.add(restoreAn,"South");
+		
 		FormBuilder builder = new FormBuilder();
-		builder.add("", impliedSequence);
-		builder.add("", seqAskUser);
-		builder.add("", seqOverwrite);
-		builder.add("", seqKeep);
-		builder.add("", showNameOrDisplayId);
-		builder.add("", showName);
-		builder.add("", showDisplayId);
+		builder.add("", analysisPrefsFinal);
 
 		return builder.build();
 	}
 
 	@Override
 	public void save() {
-		int seqBehavior = 0;
-		if (seqAskUser.isSelected()) {
-			seqBehavior = 0;
-		} else if (seqOverwrite.isSelected()) {
-			seqBehavior = 1;
-		} else if (seqKeep.isSelected()) {
-			seqBehavior = 2;
+		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.command", simCommand.getText().trim());
+		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.useInterval", (String) useInterval.getSelectedItem());
+		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.abs", (String) abs.getSelectedItem());
+		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.type", (String) type.getSelectedItem());
+		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.sim", (String) sim.getSelectedItem());
+		try {
+			Double.parseDouble(initialTime.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.initial.time", initialTime.getText().trim());
+			Double.parseDouble(outputStartTime.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.output.start.time", outputStartTime.getText().trim());
+			Double.parseDouble(limit.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.limit", limit.getText().trim());
+			Double.parseDouble(interval.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.interval", interval.getText().trim());
+			if (step.getText().trim().equals("inf")) {
+				IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.step", step.getText().trim());
+			}
+			else {
+				Double.parseDouble(step.getText().trim());
+				IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.step", step.getText().trim());
+			}
+			Double.parseDouble(minStep.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.min.sim.step", minStep.getText().trim());
+			Double.parseDouble(error.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.error", error.getText().trim());
+			Double.parseDouble(relError.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.relative.error", relError.getText().trim());
+			Long.parseLong(seed.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.seed", seed.getText().trim());
+			Integer.parseInt(runs.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.runs", runs.getText().trim());
+			Double.parseDouble(rapid1.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.rapid1", rapid1.getText().trim());
+			Double.parseDouble(rapid2.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.rapid2", rapid2.getText().trim());
+			Double.parseDouble(qssa.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.qssa", qssa.getText().trim());
+			Integer.parseInt(concentration.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.concentration", concentration.getText().trim());
 		}
-		IBioSimPreferences.INSTANCE.setSeqBehavior(seqBehavior);
-
-		int showNameOrDisplayId = 0;
-		if (showName.isSelected()) {
-			showNameOrDisplayId = 0;
-		} else if (showDisplayId.isSelected()) {
-			showNameOrDisplayId = 1;
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Numeric analysis preference given non-numeric value.", 
+					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
 		}
-		IBioSimPreferences.INSTANCE.setNameDisplayIdBehavior(showNameOrDisplayId);
 	}
 
 	@Override

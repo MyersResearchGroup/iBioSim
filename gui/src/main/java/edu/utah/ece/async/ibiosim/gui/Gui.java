@@ -350,11 +350,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pe) {
 				PreferencesDialog.showPreferences(frame);
-				EditPreferences editPreferences = new EditPreferences(frame, async);
-				editPreferences.preferences();
+				//EditPreferences editPreferences = new EditPreferences(frame, async);
+				//editPreferences.preferences();
 				tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 				if (sbolDocument != null) {
-					sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+					sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 				}
 			}
 		});
@@ -1451,7 +1451,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 			writeSBOLDocument();
 
 			refresh();
@@ -2918,11 +2918,11 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		// if the open project menu item is selected
 		else if (e.getSource() == pref) {
 			PreferencesDialog.showPreferences(frame);
-			EditPreferences editPreferences = new EditPreferences(frame, async);
-			editPreferences.preferences();
+			//EditPreferences editPreferences = new EditPreferences(frame, async);
+			//editPreferences.preferences();
 			tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 			if (sbolDocument != null) {
-				sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+				sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 			}
 		} else if (e.getSource() == clearRecent) {
 			removeAllRecentProjects();
@@ -4697,7 +4697,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 				try 
 				{
-					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, EditPreferences.getDefaultUriPrefix());
+					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 					sbolDocument.setCreateDefaults(true);
 				} 
 				catch (FileNotFoundException e) 
@@ -4737,7 +4737,7 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		{
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 			writeSBOLDocument();
 		}
 	}
@@ -5135,9 +5135,9 @@ public class Gui implements Observer, MouseListener, ActionListener, MouseMotion
 		try {
 			File sbolFile = new File(filename.trim());
 			SBOLReader.setKeepGoing(true);
-			SBOLReader.setURIPrefix(EditPreferences.getDefaultUriPrefix());
+			SBOLReader.setURIPrefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 			SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
-			sbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+			sbolDoc.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 			if (!checkSBOL(sbolDoc, false))
 				return;
 			log.addText("Importing " + sbolFile + " into the project's SBOL library.");

@@ -133,7 +133,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		contentPane.add(cards, BorderLayout.CENTER);
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 
-		setSize(600, 450);
+		setSize(720, 450);
 		setLocationRelativeTo(getOwner());
 	}
 

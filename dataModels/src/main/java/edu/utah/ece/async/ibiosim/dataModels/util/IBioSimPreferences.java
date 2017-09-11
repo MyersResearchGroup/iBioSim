@@ -15,6 +15,7 @@
 
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Infos;
@@ -241,7 +242,67 @@ public enum IBioSimPreferences {
 		this.prismCmd = prismCmd;
 		Preferences.userRoot().put("biosim.general.prism", prismCmd);
 	}
+	
+	private HashMap<String,String> schematicPreferences = new HashMap<String,String>();
+	
+	public String getSchematicPreference(String schematicPreference) {
+		if (schematicPreferences.get(schematicPreference) == null) {
+			schematicPreferences.put(schematicPreference, Preferences.userRoot().get(schematicPreference, ""));
+			// TODO: default?
+		}
+		return schematicPreferences.get(schematicPreference);
+	}
 
+	public void setSchematicPreference(String schematicPreference, String value) {
+		schematicPreferences.put(schematicPreference, value);
+		Preferences.userRoot().put(schematicPreference, value);
+	}
+	
+	private HashMap<String,String> modelPreferences = new HashMap<String,String>();
+	
+	public String getModelPreference(String modelPreference) {
+		if (modelPreferences.get(modelPreference) == null) {
+			modelPreferences.put(modelPreference, Preferences.userRoot().get(modelPreference, ""));
+			// TODO: default?
+		}
+		return modelPreferences.get(modelPreference);
+	}
+
+	public void setModelPreference(String modelPreference, String value) {
+		modelPreferences.put(modelPreference, value);
+		Preferences.userRoot().put(modelPreference, value);
+	}
+	
+	private HashMap<String,String> analysisPreferences = new HashMap<String,String>();
+	
+	public String getAnalysisPreference(String analysisPreference) {
+		if (analysisPreferences.get(analysisPreference) == null) {
+			analysisPreferences.put(analysisPreference, Preferences.userRoot().get(analysisPreference, ""));
+			// TODO: default?
+		}
+		return analysisPreferences.get(analysisPreference);
+	}
+
+	public void setAnalysisPreference(String analysisPreference, String value) {
+		analysisPreferences.put(analysisPreference, value);
+		Preferences.userRoot().put(analysisPreference, value);
+	}
+	
+	private HashMap<String,String> learnPreferences = new HashMap<String,String>();
+	
+	public String getLearnPreference(String learnPreference) {
+		if (learnPreferences.get(learnPreference) == null) {
+			learnPreferences.put(learnPreference, Preferences.userRoot().get(learnPreference, ""));
+			// TODO: default?
+		}
+		return learnPreferences.get(learnPreference);
+	}
+
+	public void setLearnPreference(String learnPreference, String value) {
+		learnPreferences.put(learnPreference, value);
+		Preferences.userRoot().put(learnPreference, value);
+	}
+	
 	private Boolean enableBranching = null;
 	private Boolean enableVersioning = null;
 	
