@@ -257,13 +257,65 @@ public enum IBioSimPreferences {
 		schematicPreferences.put(schematicPreference, value);
 		Preferences.userRoot().put(schematicPreference, value);
 	}
-	
+
 	private HashMap<String,String> modelPreferences = new HashMap<String,String>();
-	
+
 	public String getModelPreference(String modelPreference) {
 		if (modelPreferences.get(modelPreference) == null) {
 			modelPreferences.put(modelPreference, Preferences.userRoot().get(modelPreference, ""));
-			// TODO: default?
+			if (modelPreferences.get(modelPreference).equals("")) {
+				if (modelPreferences.get("biosim.gcm.KREP_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KREP_VALUE", ".5");
+				}
+				if (modelPreferences.get("biosim.gcm.KACT_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KACT_VALUE", ".0033");
+				}
+				if (modelPreferences.get("biosim.gcm.PROMOTER_COUNT_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.PROMOTER_COUNT_VALUE", "2");
+				}
+				if (modelPreferences.get("biosim.gcm.KBASAL_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KBASAL_VALUE", ".0001");
+				}
+				if (modelPreferences.get("biosim.gcm.OCR_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.OCR_VALUE", ".05");
+				}
+				if (modelPreferences.get("biosim.gcm.KDECAY_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KDECAY_VALUE", ".0075");
+				}
+				if (modelPreferences.get("biosim.gcm.KECDECAY_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KECDECAY_VALUE", ".005");
+				}
+				if (modelPreferences.get("biosim.gcm.RNAP_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.RNAP_VALUE", "30");
+				}
+				if (modelPreferences.get("biosim.gcm.RNAP_BINDING_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.RNAP_BINDING_VALUE", ".033");
+				}
+				if (modelPreferences.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "1");
+				}
+				if (modelPreferences.get("biosim.gcm.STOICHIOMETRY_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
+				}
+				if (modelPreferences.get("biosim.gcm.KCOMPLEX_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KCOMPLEX_VALUE", "0.05");
+				}
+				if (modelPreferences.get("biosim.gcm.COOPERATIVITY_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.COOPERATIVITY_VALUE", "2");
+				}
+				if (modelPreferences.get("biosim.gcm.ACTIVED_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.ACTIVED_VALUE", ".25");
+				}
+				if (modelPreferences.get("biosim.gcm.FORWARD_MEMDIFF_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", "1.0");
+				}
+				if (modelPreferences.get("biosim.gcm.REVERSE_MEMDIFF_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.REVERSE_MEMDIFF_VALUE", "0.01");
+				}
+				if (modelPreferences.get("biosim.gcm.KECDIFF_VALUE").equals("")) {
+					modelPreferences.put("biosim.gcm.KECDIFF_VALUE", "1.0");
+				}
+			}
 		}
 		return modelPreferences.get(modelPreference);
 	}
@@ -272,13 +324,68 @@ public enum IBioSimPreferences {
 		modelPreferences.put(modelPreference, value);
 		Preferences.userRoot().put(modelPreference, value);
 	}
-	
+
 	private HashMap<String,String> analysisPreferences = new HashMap<String,String>();
-	
+
 	public String getAnalysisPreference(String analysisPreference) {
 		if (analysisPreferences.get(analysisPreference) == null) {
 			analysisPreferences.put(analysisPreference, Preferences.userRoot().get(analysisPreference, ""));
-			// TODO: default?
+			if (analysisPreferences.get(analysisPreference).equals("")) {
+				if (analysisPreferences.get("biosim.sim.abs").equals("")) {
+					analysisPreferences.put("biosim.sim.abs", "None");
+				}
+				if (analysisPreferences.get("biosim.sim.type").equals("")) {
+					analysisPreferences.put("biosim.sim.type", "ODE");
+				}
+				if (analysisPreferences.get("biosim.sim.sim").equals("")) {
+					analysisPreferences.put("biosim.sim.sim", "rkf45");
+				}
+				if (analysisPreferences.get("biosim.sim.initial.time").equals("")) {
+					analysisPreferences.put("biosim.sim.initial.time", "0.0");
+				}
+				if (analysisPreferences.get("biosim.sim.output.start.time").equals("")) {
+					analysisPreferences.put("biosim.sim.output.start.time", "0.0");
+				}
+				if (analysisPreferences.get("biosim.sim.limit").equals("")) {
+					analysisPreferences.put("biosim.sim.limit", "100.0");
+				}
+				if (analysisPreferences.get("biosim.sim.useInterval").equals("")) {
+					analysisPreferences.put("biosim.sim.useInterval", "Print Interval");
+				}
+				if (analysisPreferences.get("biosim.sim.interval").equals("")) {
+					analysisPreferences.put("biosim.sim.interval", "1.0");
+				}
+				if (analysisPreferences.get("biosim.sim.step").equals("")) {
+					analysisPreferences.put("biosim.sim.step", "inf");
+				}
+				if (analysisPreferences.get("biosim.sim.min.step").equals("")) {
+					analysisPreferences.put("biosim.sim.min.step", "0");
+				}
+				if (analysisPreferences.get("biosim.sim.error").equals("")) {
+					analysisPreferences.put("biosim.sim.error", "1.0E-9");
+				}
+				if (analysisPreferences.get("biosim.sim.relative.error").equals("")) {
+					analysisPreferences.put("biosim.sim.relative.error", "0.0");
+				}
+				if (analysisPreferences.get("biosim.sim.seed").equals("")) {
+					analysisPreferences.put("biosim.sim.seed", "314159");
+				}
+				if (analysisPreferences.get("biosim.sim.runs").equals("")) {
+					analysisPreferences.put("biosim.sim.runs", "1");
+				}
+				if (analysisPreferences.get("biosim.sim.rapid1").equals("")) {
+					analysisPreferences.put("biosim.sim.rapid1", "0.1");
+				}
+				if (analysisPreferences.get("biosim.sim.rapid2").equals("")) {
+					analysisPreferences.put("biosim.sim.rapid2", "0.1");
+				}
+				if (analysisPreferences.get("biosim.sim.qssa").equals("")) {
+					analysisPreferences.put("biosim.sim.qssa", "0.1");
+				}
+				if (analysisPreferences.get("biosim.sim.concentration").equals("")) {
+					analysisPreferences.put("biosim.sim.concentration", "15");
+				}
+			}
 		}
 		return analysisPreferences.get(analysisPreference);
 	}
@@ -287,13 +394,53 @@ public enum IBioSimPreferences {
 		analysisPreferences.put(analysisPreference, value);
 		Preferences.userRoot().put(analysisPreference, value);
 	}
-	
+
 	private HashMap<String,String> learnPreferences = new HashMap<String,String>();
-	
+
 	public String getLearnPreference(String learnPreference) {
 		if (learnPreferences.get(learnPreference) == null) {
 			learnPreferences.put(learnPreference, Preferences.userRoot().get(learnPreference, ""));
-			// TODO: default?
+			if (learnPreferences.get(learnPreference).equals("")) {
+				if (learnPreferences.get("biosim.learn.tn").equals("")) {
+					learnPreferences.put("biosim.learn.tn", "2");
+				}
+				if (learnPreferences.get("biosim.learn.tj").equals("")) {
+					learnPreferences.put("biosim.learn.tj", "2");
+				}
+				if (learnPreferences.get("biosim.learn.ti").equals("")) {
+					learnPreferences.put("biosim.learn.ti", "0.5");
+				}
+				if (learnPreferences.get("biosim.learn.bins").equals("")) {
+					learnPreferences.put("biosim.learn.bins", "4");
+				}
+				if (learnPreferences.get("biosim.learn.equaldata").equals("")) {
+					learnPreferences.put("biosim.learn.equaldata", "Equal Data Per Bins");
+				}
+				if (learnPreferences.get("biosim.learn.autolevels").equals("")) {
+					learnPreferences.put("biosim.learn.autolevels", "Auto");
+				}
+				if (learnPreferences.get("biosim.learn.ta").equals("")) {
+					learnPreferences.put("biosim.learn.ta", "1.15");
+				}
+				if (learnPreferences.get("biosim.learn.tr").equals("")) {
+					learnPreferences.put("biosim.learn.tr", "0.75");
+				}
+				if (learnPreferences.get("biosim.learn.tm").equals("")) {
+					learnPreferences.put("biosim.learn.tm", "0.0");
+				}
+				if (learnPreferences.get("biosim.learn.tt").equals("")) {
+					learnPreferences.put("biosim.learn.tt", "0.025");
+				}
+				if (learnPreferences.get("biosim.learn.debug").equals("")) {
+					learnPreferences.put("biosim.learn.debug", "0");
+				}
+				if (learnPreferences.get("biosim.learn.succpred").equals("")) {
+					learnPreferences.put("biosim.learn.succpred", "Successors");
+				}
+				if (learnPreferences.get("biosim.learn.findbaseprob").equals("")) {
+					learnPreferences.put("biosim.learn.findbaseprob", "False");
+				}
+			}
 		}
 		return learnPreferences.get(learnPreference);
 	}
@@ -302,10 +449,10 @@ public enum IBioSimPreferences {
 		learnPreferences.put(learnPreference, value);
 		Preferences.userRoot().put(learnPreference, value);
 	}
-	
+
 	private Boolean enableBranching = null;
 	private Boolean enableVersioning = null;
-	
+
 	public boolean isBranchingEnabled() {
 		if (enableBranching == null) {
 			Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("versioning");

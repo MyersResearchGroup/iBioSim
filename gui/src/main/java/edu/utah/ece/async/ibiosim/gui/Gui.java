@@ -58,8 +58,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -168,7 +166,6 @@ import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
-import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
@@ -201,7 +198,6 @@ import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 //import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
@@ -1166,9 +1162,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this, lema, atacs, false);
-
-		EditPreferences editPreferences = new EditPreferences(frame, async);
-		editPreferences.setDefaultPreferences();
 		tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 
 		log = new Log();
@@ -2241,7 +2234,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				// new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
 				
 //				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
@@ -2416,7 +2408,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				// new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				JList empty = new JList();
 				// JRadioButton emptyButton = new JRadioButton();
 
 //				Run.createProperties(0, 0, 0, "Print Interval", 1, 1, 1, 1, 0, directory, 314159, 1, 1, new String[0],
@@ -2512,7 +2503,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			try {
 				// new Run(null);
 				JCheckBox dummy = new JCheckBox();
-				JList empty = new JList();
 				dummy.setSelected(false);
 
 //				Run.createProperties(0, 0, 0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, 0, directory, 314159L, 1, 1,
