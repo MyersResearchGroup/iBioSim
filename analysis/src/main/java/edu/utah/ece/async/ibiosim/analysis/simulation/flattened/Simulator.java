@@ -4382,7 +4382,7 @@ public abstract class Simulator extends AbstractSimulator
 			for (int run = 1; run <= numRuns; ++run)
 			{
 
-				DTSDParser dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				DTSDParser dtsdParser = new DTSDParser(outputDirectory + File.separator + "run-" + run + ".dtsd");
 				speciesSet.addAll(dtsdParser.getSpecies());
 			}
 
@@ -4402,13 +4402,13 @@ public abstract class Simulator extends AbstractSimulator
 			if (dynamicBoolean == true)
 			{
 
-				dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				dtsdParser = new DTSDParser(outputDirectory + File.separator + "run-" + run + ".dtsd");
 				// allSpecies = dtsdParser.getSpecies();
 				runStatistics = dtsdParser.getHashMap(allSpecies);
 			}
 			else
 			{
-				tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd", false);
+				tsdParser = new TSDParser(outputDirectory + File.separator + "run-" + run + ".tsd", false);
 				allSpecies = tsdParser.getSpecies();
 				runStatistics = tsdParser.getHashMap();
 			}
@@ -6021,7 +6021,7 @@ public abstract class Simulator extends AbstractSimulator
 				extension = ".dtsd";
 			}
 
-			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + extension);
+			TSDWriter = new FileWriter(outputDirectory + File.separator + "run-" + currentRun + extension);
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
 
