@@ -26,7 +26,6 @@ public class Message {
   {
       ERROR,
       DIALOG,
-      PROGRESS,
       LOG,
       CONSOLE,
       CANCEL,
@@ -44,12 +43,6 @@ public class Message {
     this.type = MessageType.NONE;
   }
   
-  public void setProgress(int value)
-  {
-    this.type = MessageType.PROGRESS;
-    this.value = value;
-    this.message = null;
-  }
   
   public void setErrorDialog(String title, String message)
   {
@@ -92,11 +85,6 @@ public class Message {
     return this.type == MessageType.DIALOG;
   }
   
-  public boolean isProgress()
-  {
-    return this.type == MessageType.PROGRESS;
-  }
-  
   public boolean isLog()
   {
     return this.type == MessageType.LOG;
@@ -136,6 +124,7 @@ public class Message {
   public void setString(String string)
   {
     this.type = MessageType.NONE;
+    this.title = null;
     this.message = string;
   }
   

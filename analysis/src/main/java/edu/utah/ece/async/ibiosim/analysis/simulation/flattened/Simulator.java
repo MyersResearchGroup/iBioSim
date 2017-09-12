@@ -32,11 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.PriorityQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
@@ -227,7 +224,6 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 	protected double										timeLimit;
 	protected double										maxTimeStep;
 	protected double										minTimeStep;
-	protected JProgressBar									progress;
 	protected double										printInterval;
 	protected int											currentRun;
 	protected String										outputDirectory;
@@ -259,8 +255,6 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 	protected int											totalCount									= 0;
 	protected int											memCount									= 0;
 
-	protected JFrame										running										= null;
-
 	PsRandom												prng										= new PsRandom();
 
 	
@@ -278,7 +272,7 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 	 * @param printInterval
 	 * @param initializationTime
 	 */
-	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)
+	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, Long initializationTime, double stoichAmpValue, String[] interestingSpecies, String quantityType)
 	{
 
 		long initTime1 = System.nanoTime();
@@ -287,10 +281,8 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 		this.timeLimit = timeLimit;
 		this.maxTimeStep = maxTimeStep;
 		this.minTimeStep = minTimeStep;
-		this.progress = progress;
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
-		this.running = running;
 		this.interestingSpecies.clear();
 
 		for (int i = 0; i < interestingSpecies.length; ++i)

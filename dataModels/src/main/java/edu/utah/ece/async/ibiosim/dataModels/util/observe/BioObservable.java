@@ -12,6 +12,7 @@ public interface BioObservable
       REQUEST_DOUBLE,
       REQUEST_STRING,
       REQUEST_OVERWRITE,
+      REQUEST_PROGRESS,
       ADD_FILE
   };
   

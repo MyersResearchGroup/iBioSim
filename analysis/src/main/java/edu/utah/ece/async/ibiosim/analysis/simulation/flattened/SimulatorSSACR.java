@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
@@ -72,10 +70,10 @@ public class SimulatorSSACR extends Simulator
 	private double						currentStep;
 	private double						numSteps;
 
-	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) throws IOException
+	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, String quantityType) throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
 //
@@ -1269,9 +1267,9 @@ public class SimulatorSSACR extends Simulator
 			currentStep++;
 			printTime = (currentStep * timeLimit / numSteps);
 
-			running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
+			//running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
 			// update progress bar
-			progress.setValue((int) ((currentTime / timeLimit) * 100.0));
+			//progress.setValue((int) ((currentTime / timeLimit) * 100.0));
 
 		}
 

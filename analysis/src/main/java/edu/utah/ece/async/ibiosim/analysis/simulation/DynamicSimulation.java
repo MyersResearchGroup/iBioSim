@@ -13,14 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
-import java.awt.Dimension;
 import java.io.IOException;
-import java.util.Observable;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
@@ -71,40 +65,25 @@ public class DynamicSimulation extends CoreObservable
 
   public void simulate(AnalysisProperties properties)
   {
-    String progressText = "";
     SimulationProperties simProperties = properties.getSimulationProperties();
-    //		if (progressLabel != null)
-    //		{
-    //			progressText = progressLabel.getText();
-    //			statisticsFlag = simProperties.getGenStats();
-    //		}
+
     try
     {
-
-      //			if (progressLabel != null)
-      //			{
-      //				progressLabel.setText("Generating Model . . .");
-      //				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
-      //			}
 
       String SBMLFileName = properties.getFilename(), outputDirectory = properties.getDirectory(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
       double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
           initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
       long randomSeed = simProperties.getRndSeed();
-      JProgressBar progress = null;
-      JFrame running = null;
       String[] interestingSpecies = null;
       int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
 
       switch (simulatorType)
       {
       case CR:
-        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-
+        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
         break;
       case DIRECT:
-        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-
+        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
         break;
       case HIERARCHICAL_DIRECT:
         simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
@@ -129,7 +108,6 @@ public class DynamicSimulation extends CoreObservable
 
       Runtime runtime = Runtime.getRuntime();
       double mb = 1024 * 1024;
-      // int count = 0, total = 0;
       for (int run = 1; run <= runs; ++run)
       {
 
@@ -138,20 +116,9 @@ public class DynamicSimulation extends CoreObservable
           break;
         }
 
-//        if (progressLabel != null && running != null)
-//        {
-//          progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run + ")");
-//          running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
-//        }
         if (simulator != null)
         {
           simulator.simulate();
-          // count += ((HierarchicalSSADirectSimulator)
-          // simulator).getTopLevelValue("counter");
-          // total += ((HierarchicalSSADirectSimulator)
-          // simulator).getTopLevelValue("n")
-          // * ((HierarchicalSSADirectSimulator)
-          // simulator).getTopLevelValue("n");
           if ((runs - run) >= 1)
           {
             simulator.setupForNewRun(run + 1);
@@ -172,12 +139,6 @@ public class DynamicSimulation extends CoreObservable
 
         if (cancelFlag == false && statisticsFlag == true)
         {
-//          if (progressLabel != null && running != null)
-//          {
-//
-//            progressLabel.setText("Generating Statistics . . .");
-//            running.setMinimumSize(new Dimension(200, 100));
-//          }
 
           if (simulator != null)
           {
@@ -185,19 +146,6 @@ public class DynamicSimulation extends CoreObservable
           }
 
         }
-        //    if (simTab != null)
-        //    {
-        //      for (int i = 0; i < simTab.getComponentCount(); i++)
-        //      {
-        //        if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-        //        {
-        //          if (simTab.getComponentAt(i) instanceof Graph)
-        //          {
-        //            ((Graph) simTab.getComponentAt(i)).refresh();
-        //          }
-        //        }
-        //      }
-        //    }
       }
     }
     catch (IOException e)

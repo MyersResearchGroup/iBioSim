@@ -170,6 +170,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private JTextField      rapid1, rapid2, qssa, maxCon, diffStoichAmp;  
   private JLabel        rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;                                                       // sbml
 
+  // Progress Ba
+  private JProgressBar progress;
+  private JButton progressCancel;
+  private JLabel progressLabel;
+  
   private JComboBox<String>     transientProperties, subTaskList;
 
   private final Gui     gui;                                                            // reference                                                      // simulation
@@ -888,20 +893,14 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         }
       }
     }
-    JProgressBar progress = new JProgressBar(0, 100);
-    final JButton cancel = new JButton("Cancel");
-    JFrame running;
-    JLabel label = new JLabel("Running " + simName);
-    running = createProgressBar(label, progress, cancel);
-    // int steps;
-    double runTime = timeLimit * run;
-    if (simulators.getSelectedItem().equals("iSSA"))
-    {
-      runTime = timeLimit;
-    }
+    progress = new JProgressBar(0, 100);
+    progressCancel = new JButton("Cancel");
+    progressLabel = new JLabel("Running " + simName);
+    
+    JFrame running = createProgressBar(progressLabel, progress, progressCancel);
     Run runProgram = new Run(properties);
     runProgram.addObservable(this);
-    cancel.addActionListener(runProgram);
+    progressCancel.addActionListener(runProgram);
     gui.getExitButton().addActionListener(runProgram);
     if (monteCarlo.isSelected() || ODE.isSelected())
     {
@@ -3352,6 +3351,16 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
       
       return true;
+    }
+    
+    if(type == RequestType.REQUEST_PROGRESS)
+    {
+      int progressValue = message.getValue();
+      if(progress != null)
+      {
+        this.progress.setValue(progressValue);
+        return true;
+      }
     }
     
     return false;

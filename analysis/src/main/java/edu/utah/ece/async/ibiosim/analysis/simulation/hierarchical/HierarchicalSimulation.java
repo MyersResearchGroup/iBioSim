@@ -23,8 +23,6 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
@@ -77,8 +75,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private boolean             printConcentrations;
   private HashSet<String>         printConcentrationSpecies;
   private double              printInterval;
-  private JProgressBar          progress;
-  private JFrame              running;
   private String              SBMLFileName;
   private boolean             sbmlHasErrorsFlag;
   private boolean             stoichAmpBoolean;
@@ -192,12 +188,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.timeLimit = copy.timeLimit;
     this.maxTimeStep = copy.maxTimeStep;
     this.minTimeStep = copy.minTimeStep;
-    this.progress = copy.progress;
     this.printInterval = copy.printInterval;
     this.printTime = copy.printTime;
     this.rootDirectory = copy.rootDirectory;
     this.outputDirectory = copy.outputDirectory;
-    this.running = copy.running;
     this.printConcentrationSpecies = copy.printConcentrationSpecies;
     this.interestingSpecies = copy.interestingSpecies;
     this.document = copy.document;
@@ -327,22 +321,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public double getPrintInterval()
   {
     return printInterval;
-  }
-
-  /**
-   * @return the progress
-   */
-  public JProgressBar getProgress()
-  {
-    return progress;
-  }
-
-  /**
-   * @return the running
-   */
-  public JFrame getRunning()
-  {
-    return running;
   }
 
   /**
@@ -497,24 +475,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public void setPrintInterval(double printInterval)
   {
     this.printInterval = printInterval;
-  }
-
-  /**
-   * @param progress
-   *            the progress to set
-   */
-  public void setProgress(JProgressBar progress)
-  {
-    this.progress = progress;
-  }
-
-  /**
-   * @param running
-   *            the running to set
-   */
-  public void setRunning(JFrame running)
-  {
-    this.running = running;
   }
 
   /**
@@ -743,11 +703,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
 
       printTime.setValue(getRoundedDouble(printTime.getValue() + getPrintInterval()));
-
-      if (getRunning() != null)
-      {
-        getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
-      }
     }
   }
 

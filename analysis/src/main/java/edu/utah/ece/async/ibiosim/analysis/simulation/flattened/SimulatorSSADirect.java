@@ -16,8 +16,6 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.flattened;
 import java.io.IOException;
 import java.util.HashSet;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
@@ -43,11 +41,11 @@ public class SimulatorSSADirect extends Simulator
 	private double		currentStep;
 	private double		numSteps;
 
-	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)
+	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, String quantityType)
 			throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
 	}
@@ -404,12 +402,7 @@ public class SimulatorSSADirect extends Simulator
 			currentStep++;
 			printTime = (currentStep * timeLimit / numSteps);
 
-			if (running != null && progress != null)
-			{
-				running.setTitle("Progress (" + (int) ((currentTime / timeLimit) * 100.0) + "%)");
-				// update progress bar
-				progress.setValue((int) ((currentTime / timeLimit) * 100.0));
-			}
+
 
 		}
 

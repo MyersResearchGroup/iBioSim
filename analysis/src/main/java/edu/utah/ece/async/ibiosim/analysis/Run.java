@@ -551,6 +551,8 @@ public class Run extends CoreObservable implements ActionListener
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);
+      updateReb2SacProgress();
+      
       exitValue = reb2sac.waitFor();
     }   
     return exitValue;
@@ -1015,6 +1017,79 @@ public class Run extends CoreObservable implements ActionListener
       }
     }
   }
+  
+  private void updateReb2SacProgress() throws IOException
+  {
+    String error = "";
+    try
+    {
+      double runTime = properties.getSimulationProperties().getRun() * properties.getSimulationProperties().getTimeLimit();
+      InputStream reb = reb2sac.getInputStream();
+      InputStreamReader isr = new InputStreamReader(reb);
+      BufferedReader br = new BufferedReader(isr);
+      String line;
+      double time = 0;
+      double oldTime = 0;
+      int runNum = 0;
+      int prog = 0;
+      while ((line = br.readLine()) != null)
+      {
+        try
+        {
+          if (line.contains("Time"))
+          {
+            time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
+            if (oldTime > time)
+            {
+              runNum++;
+            }
+            oldTime = time;
+            time += (runNum * properties.getSimulationProperties().getTimeLimit());
+            double d = ((time * 100) / runTime);
+            String s = d + "";
+            double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s.length()));
+            if (decimal >= 0.5)
+            {
+              prog = (int) (Math.ceil(d));
+            }
+            else
+            {
+              prog = (int) (d);
+            }
+          }
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        this.message.setInteger(prog);
+        parent.send(RequestType.REQUEST_PROGRESS, message);
+      }
+      InputStream reb2 = reb2sac.getErrorStream();
+      int read = reb2.read();
+      while (read != -1)
+      {
+        error += (char) read;
+        read = reb2.read();
+      }
+      br.close();
+      isr.close();
+      reb.close();
+      reb2.close();
+    }
+    catch (Exception e)
+    {
+      // e.printStackTrace();
+    }
+    
+    if (!error.equals(""))
+    {
+      message.setLog("Errors:\n" + error);
+      this.notifyObservers(message);
+    }
+    
+  }
+  
   private void viewStateGraph(String filename, String theFile, String directory, StateGraph sg)
   {
     String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
