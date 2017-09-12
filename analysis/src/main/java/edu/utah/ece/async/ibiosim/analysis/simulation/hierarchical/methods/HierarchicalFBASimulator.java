@@ -35,7 +35,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.Hierarc
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalFBASimulator extends HierarchicalSimulation
+class HierarchicalFBASimulator extends HierarchicalSimulation
 {
 
 	private FluxBalanceAnalysis		fba;

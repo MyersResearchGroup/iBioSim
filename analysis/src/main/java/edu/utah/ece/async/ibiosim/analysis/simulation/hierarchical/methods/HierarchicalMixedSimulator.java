@@ -58,6 +58,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	{
 		if (!isInitialized)
 		{
+		  currProgress = 0;
+      
 			setCurrentTime(0);
 			this.wrapper = new VectorWrapper(initValues); 
 

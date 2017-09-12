@@ -13,15 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Properties;
-import java.util.Scanner;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
@@ -34,7 +27,6 @@ import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph;
 import edu.utah.ece.async.ibiosim.analysis.markov.StateGraph.Property;
 import edu.utah.ece.async.ibiosim.analysis.properties.AdvancedProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
-import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.Simulator;
@@ -42,14 +34,10 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
-import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -252,7 +240,6 @@ public class Run extends CoreObservable implements ActionListener
     String root = properties.getRoot();
     String filename = properties.getFilename();
     String sim = properties.getSim();
-    JProgressBar progress = null;
     if (properties.getFilename().contains(".lpn"))
     {
       lhpnFile = new LPN();
@@ -297,7 +284,7 @@ public class Run extends CoreObservable implements ActionListener
     }
     sg = new StateGraph(lhpnFile);
 
-    BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
+    BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, null);
     buildStateGraph.start();
     buildStateGraph.join();
     message.setLog("Number of states found: " + sg.getNumberOfStates());
@@ -318,7 +305,7 @@ public class Run extends CoreObservable implements ActionListener
       if (!sg.getStop())
       {
         message.setLog("Performing steady state Markov chain analysis.");
-        PerformSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerformSteadyStateMarkovAnalysisThread(sg, progress);
+        PerformSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerformSteadyStateMarkovAnalysisThread(sg, null);
         if (filename.contains(".lpn"))
         {
           performMarkovAnalysis.start(properties.getSimulationProperties().getAbsError(), null);
@@ -365,7 +352,7 @@ public class Run extends CoreObservable implements ActionListener
       {
         message.setLog("Performing transient Markov chain analysis with uniformization.");
         this.notifyObservers(message);
-        PerformTransientMarkovAnalysisThread performMarkovAnalysis = new PerformTransientMarkovAnalysisThread(sg, progress);
+        PerformTransientMarkovAnalysisThread performMarkovAnalysis = new PerformTransientMarkovAnalysisThread(sg, null);
         if (prop != null)
         {
           String[] condition;
@@ -415,7 +402,6 @@ public class Run extends CoreObservable implements ActionListener
     String simName = properties.getSim();
     String root = properties.getRoot();
     String lpnProperty = properties.getVerificationProperties().getLpnProperty();
-    boolean abstraction;
     String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
     ArrayList<String> specs = new ArrayList<String>();
     ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -470,8 +456,6 @@ public class Run extends CoreObservable implements ActionListener
     String SBMLFileName = properties.getFilename();
     String command = null;
     String[] env = Executables.envp;
-
-    JProgressBar progress = null;
     String sim = properties.getSim();
 
 
@@ -479,38 +463,47 @@ public class Run extends CoreObservable implements ActionListener
     if (sim.equals("SSA-CR (Dynamic)"))
     {
       dynSim = new DynamicSimulation(SimulationType.CR);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("SSA-Direct (Dynamic)"))
     {
       dynSim = new DynamicSimulation(SimulationType.DIRECT);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("SSA-Direct (Flatten)"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("SSA-Direct (Hierarchical)"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_DIRECT);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("Mixed-Hierarchical"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_MIXED);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("Hybrid-Hierarchical"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_HYBRID);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("Runge-Kutta-Fehlberg (Dynamic)"))
     {
       dynSim = new DynamicSimulation(SimulationType.RK);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("Runge-Kutta-Fehlberg (Hierarchical)"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("Runge-Kutta-Fehlberg (Flatten)"))
     {
       dynSim = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
+      dynSim.addObservable(this);
     }
     else if (sim.equals("atacs"))
     {
@@ -1139,6 +1132,17 @@ public class Run extends CoreObservable implements ActionListener
     {
       sg.stop();
     }
+  }
+  
+  @Override
+  public boolean send(RequestType type, Message message)
+  {
+    if(type == RequestType.REQUEST_PROGRESS)
+    {
+      return parent.send(type, message);
+    }
+   
+    return false;
   }
   
 }

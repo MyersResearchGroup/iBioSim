@@ -152,6 +152,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   public void initialize(long randomSeed, int runNumber)
       throws IOException, XMLStreamException {
     if (!isInitialized) {
+      currProgress = 0;
       setCurrentTime(getInitialTime());
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
       de = new DifferentialEquations();

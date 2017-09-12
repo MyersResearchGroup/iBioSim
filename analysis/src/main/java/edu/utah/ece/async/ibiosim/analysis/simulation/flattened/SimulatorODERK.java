@@ -51,11 +51,11 @@ public class SimulatorODERK extends Simulator
 	double						relativeError;
 	double						absoluteError;
 
-	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, int numSteps, double relError, double absError,
+	public SimulatorODERK(String SBMLFileName, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, int numSteps, double relError, double absError,
 			String quantityType) throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, 0.0, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
 
 		this.numSteps = numSteps;
 		relativeError = relError;
@@ -68,6 +68,7 @@ public class SimulatorODERK extends Simulator
 	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 
+    currProgress = 0;
 		setupArrays();
 		setupSpecies();
 		setupParameters();

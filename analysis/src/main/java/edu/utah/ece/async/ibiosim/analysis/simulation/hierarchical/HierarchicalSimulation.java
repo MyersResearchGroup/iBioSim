@@ -29,6 +29,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
@@ -43,7 +44,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.Hierarc
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 
 /**
@@ -53,7 +57,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class HierarchicalSimulation implements ParentSimulator
+public abstract class HierarchicalSimulation extends AbstractSimulator
 {
 
   final private int SBML_LEVEL    = 3;
@@ -102,7 +106,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
 
   private HierarchicalWriter writer;
 
-
+  protected double currProgress, maxProgress;
+  
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
     String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
   {
@@ -125,6 +130,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
     }
 
+    this.maxProgress = timeLimit * runs;
 
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
@@ -702,7 +708,11 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         e.printStackTrace();
       }
 
+      currProgress += getPrintInterval();
       printTime.setValue(getRoundedDouble(printTime.getValue() + getPrintInterval()));
+
+      message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
+      parent.send(RequestType.REQUEST_PROGRESS, message);
     }
   }
 

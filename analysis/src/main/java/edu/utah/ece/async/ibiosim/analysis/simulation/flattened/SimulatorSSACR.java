@@ -70,10 +70,10 @@ public class SimulatorSSACR extends Simulator
 	private double						currentStep;
 	private double						numSteps;
 
-	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, String quantityType) throws IOException
+	public SimulatorSSACR(String SBMLFileName, String outputDirectory, int runs,  double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, String quantityType) throws IOException
 	{
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, initializationTime, stoichAmpValue, interestingSpecies, quantityType);
 
 		initialize(randomSeed, 1);
 //

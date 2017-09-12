@@ -69,6 +69,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   {
     if (!isInitialized)
     {
+      currProgress = 0;
+      
       setCurrentTime(getInitialTime());
       ModelSetup.setupModels(this, ModelType.HSSA);
       computeFixedPoint();

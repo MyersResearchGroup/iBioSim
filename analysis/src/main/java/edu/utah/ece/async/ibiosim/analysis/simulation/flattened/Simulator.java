@@ -65,6 +65,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -74,6 +75,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
  * 
@@ -83,7 +85,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class Simulator extends CoreObservable implements ParentSimulator
+public abstract class Simulator extends AbstractSimulator
 {
 
 	// SBML model
@@ -257,9 +259,8 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 
 	PsRandom												prng										= new PsRandom();
 
-	
-	protected final Message message = new Message();
-	
+  protected double currProgress, maxProgress;
+  
 	/**
 	 * does lots of initialization
 	 * 
@@ -272,11 +273,11 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 	 * @param printInterval
 	 * @param initializationTime
 	 */
-	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, Long initializationTime, double stoichAmpValue, String[] interestingSpecies, String quantityType)
+	public Simulator(String SBMLFileName, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, Long initializationTime, double stoichAmpValue, String[] interestingSpecies, String quantityType)
 	{
 
 		long initTime1 = System.nanoTime();
-
+		this.maxProgress = timeLimit * runs;
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
 		this.maxTimeStep = maxTimeStep;
@@ -4197,6 +4198,7 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 
 		String commaSpace = "";
 
+    
 		// dynamic printing requires re-printing the species values each time
 		// step
 		if (dynamicBoolean == true)
@@ -4347,6 +4349,12 @@ public abstract class Simulator extends CoreObservable implements ParentSimulato
 
 		bufferedTSDWriter.write(")");
 		bufferedTSDWriter.flush();
+		
+
+    currProgress += printInterval;
+    message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
+    parent.send(RequestType.REQUEST_PROGRESS, message);
+    
 	}
 
 	/**

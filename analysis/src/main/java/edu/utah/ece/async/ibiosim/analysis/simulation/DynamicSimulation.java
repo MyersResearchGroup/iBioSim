@@ -19,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorODERK;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorSSACR;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorSSADirect;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
@@ -27,6 +28,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.Hiera
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
  * 
@@ -44,7 +46,7 @@ public class DynamicSimulation extends CoreObservable
   private final Message message;
 
   // the simulator object
-  private ParentSimulator			simulator;
+  private AbstractSimulator			simulator;
   private boolean					cancelFlag;
   private boolean					statisticsFlag;
 
@@ -74,29 +76,41 @@ public class DynamicSimulation extends CoreObservable
       double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
           initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
       long randomSeed = simProperties.getRndSeed();
-      String[] interestingSpecies = null;
+      String[] interestingSpecies = simProperties.getIntSpecies().toArray(new String[simProperties.getIntSpecies().size()]);
       int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
-
+      if(numSteps == 0)
+      {
+        numSteps = (int)(timeLimit/printInterval);
+      }
       switch (simulatorType)
       {
+      case RK:
+        
+        simulator = new SimulatorODERK(SBMLFileName,  outputDirectory,  runs,  timeLimit,  maxTimeStep,  randomSeed,  printInterval,  stoichAmpValue, interestingSpecies,  numSteps,  relError,  absError, quantityType);
+        simulator.addObservable(this);
+        break;
       case CR:
-        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator.addObservable(this);
         break;
       case DIRECT:
-        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator.addObservable(this);
         break;
       case HIERARCHICAL_DIRECT:
         simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
-
+        simulator.addObservable(this);
         break;
       case HIERARCHICAL_RK:
         simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType, initialTime,
           outputStartTime);
+        simulator.addObservable(this);
         break;
       case HIERARCHICAL_HYBRID:
         break;
       case HIERARCHICAL_MIXED:
         simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime);
+        simulator.addObservable(this);
         break;
       default:
         message.setLog("The simulation selection was invalid.");
@@ -104,10 +118,10 @@ public class DynamicSimulation extends CoreObservable
         return;
       }
       
-      double val1 = System.currentTimeMillis();
+      //double val1 = System.currentTimeMillis();
 
-      Runtime runtime = Runtime.getRuntime();
-      double mb = 1024 * 1024;
+      //Runtime runtime = Runtime.getRuntime();
+      //double mb = 1024 * 1024;
       for (int run = 1; run <= runs; ++run)
       {
 
@@ -124,18 +138,15 @@ public class DynamicSimulation extends CoreObservable
             simulator.setupForNewRun(run + 1);
           }
         }
-        
         System.gc();
-        double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-        double val2 = System.currentTimeMillis();
+        //double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+        ///double val2 = System.currentTimeMillis();
 
-        simulator = null;
-        System.gc();
         System.runFinalization();
 
 
-        message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
-        notifyObservers(message);
+        //message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
+        //notifyObservers(message);
 
         if (cancelFlag == false && statisticsFlag == true)
         {
@@ -186,6 +197,12 @@ public class DynamicSimulation extends CoreObservable
       message.setCancel();
       notifyObservers(message);
     }
+  }
+  
+  @Override
+  public boolean send(RequestType type, Message message)
+  {
+    return parent.send(type, message);
   }
 
 
