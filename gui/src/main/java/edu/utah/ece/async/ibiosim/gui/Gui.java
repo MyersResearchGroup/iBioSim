@@ -6769,22 +6769,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	public void deleteDir(File dir) {
-		int count = 0;
-		do {
-			File[] list = dir.listFiles();
-			System.gc();
-			for (int i = 0; i < list.length; i++) {
-				if (list[i].isDirectory()) {
-					deleteDir(list[i]);
-				} else {
-					list[i].delete();
-				}
-			}
-			count++;
-		} while (!dir.delete() && count != 100);
-		if (count == 100) {
-			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+	  if(!edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.deleteDir(dir))
+    {
+	    JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
 	}
 
 	/**

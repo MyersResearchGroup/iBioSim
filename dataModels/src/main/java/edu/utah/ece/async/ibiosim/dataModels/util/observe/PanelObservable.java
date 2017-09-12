@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 public abstract class PanelObservable extends JPanel implements BioObservable
 {
@@ -15,7 +16,7 @@ public abstract class PanelObservable extends JPanel implements BioObservable
    * 
    */
   private static final long serialVersionUID = -5440615594726032780L;
-  private BioObservable parent;
+  protected BioObservable parent;
   private List<BioObserver> listOfObservers;
 
   public PanelObservable(BorderLayout layout)
@@ -50,5 +51,9 @@ public abstract class PanelObservable extends JPanel implements BioObservable
       bioObserver.update(message);
     }
   }
+  
+  public boolean request(RequestType type,Message message){return false;}
+
+  public boolean send(RequestType type, Message message){return false;}
 
 }

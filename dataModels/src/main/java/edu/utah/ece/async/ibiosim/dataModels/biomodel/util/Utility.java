@@ -270,6 +270,26 @@ public class Utility {
 		return result;
 
 	}
+
+	public static boolean deleteDir(File dir) {
+    int count = 0;
+    do {
+      File[] list = dir.listFiles();
+      System.gc();
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].isDirectory()) {
+          deleteDir(list[i]);
+        } else {
+          list[i].delete();
+        }
+      }
+      count++;
+    } while (!dir.delete() && count != 100);
+    if (count == 100) {
+      return false;
+    }
+    return true;
+  }
 	
 	public static String[] getTSDFiles(String folder) {
 		File allFiles = new File(folder);

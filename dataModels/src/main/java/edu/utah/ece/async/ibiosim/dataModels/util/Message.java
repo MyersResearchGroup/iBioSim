@@ -37,6 +37,7 @@ public class Message {
   private String message;
   private String title;
   private int value;
+  private boolean bool;
   
   public Message()
   {
@@ -130,5 +131,28 @@ public class Message {
   public String getTitle()
   {
     return title;
+  }
+  
+  public void setString(String string)
+  {
+    this.type = MessageType.NONE;
+    this.message = string;
+  }
+  
+  public void setInteger(int value)
+  {
+    this.type = MessageType.NONE;
+    this.value = value;
+  }
+  
+  public void setBoolean(boolean bool)
+  {
+    this.type = MessageType.NONE;
+    this.bool = bool;
+  }
+  
+  public boolean getBoolean()
+  {
+    return bool;
   }
 }

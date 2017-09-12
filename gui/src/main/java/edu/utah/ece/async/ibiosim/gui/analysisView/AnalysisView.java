@@ -93,6 +93,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
@@ -3295,5 +3296,64 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       System.out.println("ACTION");
     }
   }
+  
+  @Override
+  public boolean request(RequestType type, Message message)
+  {
+    if(type == RequestType.REQUEST_STRING)
+    {
+      String sbmlName = JOptionPane.showInputDialog(this, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
+      message.setString(sbmlName);
+      return true;
+    }
+    else if(type == RequestType.REQUEST_OVERWRITE)
+    {
+      final Object[] options = { "Overwrite", "Cancel" };
+      int value = JOptionPane.showOptionDialog(this, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+      if (value == JOptionPane.YES_OPTION)
+      {
+        message.setBoolean(true);
+      }
+      else
+      {
+        message.setBoolean(false);
+      }
+      return true;
+    }
+    return false;
+  }
 
+  @Override
+  public boolean send(RequestType type, Message message)
+  {
+    if(type == RequestType.ADD_FILE)
+    {
+      String sbmlName = message.getMessage();
+      if (sbmlName != null && !sbmlName.trim().equals(""))
+      {
+        if (!gui.updateOpenModelEditor(sbmlName))
+        {
+          try
+          {
+            ModelEditor gcm = new ModelEditor(properties.getRoot() + File.separator, sbmlName, gui, log, false, null, null, null, false, false);
+            gui.addTab(sbmlName, gcm, "Model Editor");
+            gui.addToTree(sbmlName);
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          gui.getTab().setSelectedIndex(gui.getTab(sbmlName));
+        }
+        gui.enableTabMenu(gui.getTab().getSelectedIndex());
+      }
+      
+      return true;
+    }
+    
+    return false;
+  }
 }

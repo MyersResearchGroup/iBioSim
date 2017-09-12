@@ -40,13 +40,16 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.Simulati
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.Simulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -144,7 +147,7 @@ public class Run extends CoreObservable implements ActionListener
     String time = SBMLutilities.createTimeString(time1, time2);
 
 
-    message.setLog("Total Simulation Time: " + time + " for " + properties.getSim() + "\n\n");
+    message.setLog("Total Simulation Time: " + time + "\n\n");
     this.notifyObservers(message);
     return exitValue;
   }
@@ -795,14 +798,50 @@ public class Run extends CoreObservable implements ActionListener
     String root = properties.getRoot();
     String modelFile = properties.getModelFile();
     String simName = properties.getSim();
-    String sbmlName = properties.getOptionalProperties().getNewFilename();
-
+    
+    if(!parent.request(RequestType.REQUEST_STRING, message))
+    {
+      return exitValue;
+    }
+    String sbmlName = message.getMessage();
+    
     if (sbmlName != null && !sbmlName.trim().equals(""))
     {
       sbmlName = sbmlName.trim();
       if (!sbmlName.endsWith(".xml"))
       {
         sbmlName += ".xml";
+      }
+      
+      File f = new File(root + File.separator + sbmlName);
+      if (f.exists())
+      {
+        if(!parent.request(RequestType.REQUEST_OVERWRITE, message))
+        {
+          return exitValue;
+        }
+        
+        boolean option = message.getBoolean();
+        
+        if(option)
+        {
+          File dir = new File(root + File.separator + sbmlName);
+          if (dir.isDirectory())
+          {
+            Utility.deleteDir(dir);
+          }
+          else
+          {
+            System.gc();
+            dir.delete();
+          }
+          
+        }
+        else
+        {
+          new File(properties.getDirectory() + File.separator + "running").delete();
+          return 0;
+        }
       }
       if (modelFile.contains(".lpn"))
       {
@@ -924,7 +963,14 @@ public class Run extends CoreObservable implements ActionListener
         }
       }
     }
+    else
+    {
+      return exitValue;
+    }
 
+    message.setString(sbmlName);
+    parent.send(RequestType.ADD_FILE, message);
+    
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
@@ -936,6 +982,7 @@ public class Run extends CoreObservable implements ActionListener
   private boolean reb2sacAbstraction()
   {
     AdvancedProperties advProperties = properties.getAdvancedProperties();
+    
     
     for (String abstractionOption : advProperties.getPreAbs())
     {
@@ -1018,5 +1065,5 @@ public class Run extends CoreObservable implements ActionListener
       sg.stop();
     }
   }
-
+  
 }

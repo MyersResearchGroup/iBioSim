@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdvancedProperties {
@@ -23,6 +24,10 @@ public class AdvancedProperties {
     qss = 0.1;
     con = 15;
     stoichAmp = 1.0;
+    preAbs = new ArrayList<String>(0);
+    loopAbs = new ArrayList<String>(0);
+    postAbs = new ArrayList<String>(0);
+    
   }
   
   /**

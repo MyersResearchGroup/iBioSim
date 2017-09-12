@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 public abstract class CoreObservable implements BioObservable
 {
 
-  private BioObservable parent;
+  protected BioObservable parent;
   private List<BioObserver> listOfObservers;
 
   public CoreObservable()
@@ -37,5 +38,7 @@ public abstract class CoreObservable implements BioObservable
       bioObserver.update(message);
     }
   }
+  public boolean request(RequestType type, Message message){return false;}
 
+  public boolean send(RequestType type, Message message) {return false;}
 }
