@@ -902,18 +902,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     runProgram.addObservable(this);
     progressCancel.addActionListener(runProgram);
     gui.getExitButton().addActionListener(runProgram);
-    if (monteCarlo.isSelected() || ODE.isSelected())
-    {
-      File[] files = new File(outDir).listFiles();
-      for (File f : files)
-      {
-        if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
-        {
-          f.delete();
-        }
-      }
-      updateTSDGraph(refresh);
-    }
+    
     int exit;
     String lpnProperty = "";
     if (transientProperties != null)
@@ -951,6 +940,20 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     running.setCursor(null);
     running.dispose();
     gui.getExitButton().removeActionListener(runProgram);
+    
+    if (monteCarlo.isSelected() || ODE.isSelected())
+    {
+      File[] files = new File(outDir).listFiles();
+      for (File f : files)
+      {
+        if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance."))
+        {
+          f.delete();
+        }
+      }
+      updateTSDGraph(refresh);
+    }
+    
     if (append.isSelected())
     {
       Random rnd = new Random();
