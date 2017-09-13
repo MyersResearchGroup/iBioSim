@@ -38,6 +38,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.DynamicSimulation.SimulationType;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
@@ -52,21 +53,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-
-  static double       timeLimit     = 5.0;
-  static double       relativeError   = 1e-6;
-  static double       absoluteError   = 1e-9;
-  static int          numSteps;
-  static double       maxTimeStep     = Double.POSITIVE_INFINITY;
-  static double       minTimeStep     = 0.0;
-  static long         randomSeed      = 0;
-  static double       printInterval   = 0;
-  static int          runs        = 1;
-  static double       stoichAmpValue    = 1.0;
-  static boolean        genStats      = false;
-  static String       selectedSimulator = "";
-  static ArrayList<String>  interestingSpecies  = new ArrayList<String>();
-  static String       quantityType    = "amount";
   static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule"));
   static AnalysisProperties properties;
   
@@ -86,6 +72,8 @@ public class HierarchicalTestSuiteRunner
 
     DynamicSimulation simulator = null;
 
+    properties = new AnalysisProperties("", "", "" , false);
+    
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
 
     //    String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
@@ -100,20 +88,25 @@ public class HierarchicalTestSuiteRunner
     //    }
 
     int start = 1;
-    int end = 1778;
+    int end = 1;
+    
     for(; start <= end; start++ )
     {
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
+      String root = args[0];
+      properties.setRoot(root);
 
-      String root = args[0] + separator + testcase + separator;
-
-      String filename = root + testcase + "-sbml-l3v1.xml";
+      properties.setId(testcase);
+      
+      properties.setModelFile(testcase + "-sbml-l3v1.xml");
+      String filename = properties.getFilename();
       File file = new File(filename);
       if(!file.exists())
       {
-        filename = root + testcase + "-sbml-l3v2.xml";
+        properties.setModelFile(testcase + "-sbml-l3v2.xml");
+        filename = properties.getFilename();
         file = new File(filename);
         if(!file.exists())
         {
@@ -122,25 +115,21 @@ public class HierarchicalTestSuiteRunner
         }
       }
 
-      if(!filter(root, testcase))
+      if(!filter(properties.getDirectory(), testcase))
       {
         continue;
       }
 
+      
       String outputDirectory = args[1];
 
+      properties.setOutDir(outputDirectory);
+      
       String settingsFile = args[0] + separator + testcase + separator + testcase + "-settings.txt";
 
       simulator = new DynamicSimulation(SimulationType.HIERARCHICAL_RK);
 
       readSettings(settingsFile);
-
-      if (printInterval == 0)
-      {
-        printInterval = timeLimit / numSteps;
-      }
-
-      String[] intSpecies = interestingSpecies.toArray(new String[interestingSpecies.size()]);
 
 
       try
@@ -150,7 +139,7 @@ public class HierarchicalTestSuiteRunner
 
         TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
         tsdp.outputCSV(outputDirectory + testcase + ".csv");
-        if(!checkResults(root, outputDirectory, testcase))
+        if(!checkResults(properties.getDirectory(), outputDirectory, testcase))
         {
           System.out.println("Case " + testcase + " is failing...");
         }
@@ -209,25 +198,37 @@ public class HierarchicalTestSuiteRunner
   private static void readSettings(String filename)
   {
 
+    
     File f = new File(filename);
-    Properties properties = new Properties();
+    Properties p = new Properties();
     FileInputStream in;
 
     try
     {
       in = new FileInputStream(f);
-      properties.load(in);
-      timeLimit = Double.valueOf(properties.getProperty("duration")) - Double.valueOf(properties.getProperty("start"));
-      relativeError = Double.valueOf(properties.getProperty("relative"));
-      absoluteError = Double.valueOf(properties.getProperty("absolute"));
-      numSteps = Integer.valueOf(properties.getProperty("steps"));
-
-      for (String intSpecies : properties.getProperty("variables").replaceAll(" ", "").split(","))
+      p.load(in);
+      SimulationProperties simProperties= properties.getSimulationProperties();
+      
+      double timeLimit = Double.valueOf(p.getProperty("duration")) - Double.valueOf(p.getProperty("start"));
+      double relativeError = Double.valueOf(p.getProperty("relative"));
+      double absoluteError = Double.valueOf(p.getProperty("absolute"));
+      int numSteps = Integer.valueOf(p.getProperty("steps"));
+      
+      
+      simProperties.setTimeLimit(timeLimit);
+      simProperties.setRelError(relativeError);
+      simProperties.setAbsError(absoluteError);
+      simProperties.setNumSteps(numSteps);
+      
+      for (String intSpecies : p.getProperty("variables").replaceAll(" ", "").split(","))
       {
-        interestingSpecies.add(intSpecies);
+        simProperties.addIntSpecies(intSpecies);
       }
 
-      quantityType = properties.getProperty("concentration");
+      String quantityType = p.getProperty("concentration");
+      simProperties.setPrinter_track_quantity(quantityType);
+      double printInterval = timeLimit / numSteps;
+      simProperties.setPrintInterval(printInterval);
     }
     catch (Exception e)
     {
@@ -308,6 +309,8 @@ public class HierarchicalTestSuiteRunner
 
     boolean compare(DataTable cmp)
     {
+      double absoluteError = properties.getSimulationProperties().getAbsError();
+      double relativeError = properties.getSimulationProperties().getRelError();
       for(int i = 0; i < elements.size(); i++)
       {
         String element = elements.get(i);

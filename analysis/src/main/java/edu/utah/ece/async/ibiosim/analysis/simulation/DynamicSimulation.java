@@ -72,7 +72,7 @@ public class DynamicSimulation extends CoreObservable
     try
     {
 
-      String SBMLFileName = properties.getFilename(), outputDirectory = properties.getDirectory(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
+      String SBMLFileName = properties.getFilename(), outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
       double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
           initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
       long randomSeed = simProperties.getRndSeed();
@@ -202,7 +202,11 @@ public class DynamicSimulation extends CoreObservable
   @Override
   public boolean send(RequestType type, Message message)
   {
-    return parent.send(type, message);
+    if(parent != null)
+    {
+      return parent.send(type, message);
+    }
+    return true;
   }
 
 

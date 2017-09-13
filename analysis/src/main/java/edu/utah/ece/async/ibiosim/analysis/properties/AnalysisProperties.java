@@ -404,6 +404,8 @@ public final class AnalysisProperties {
    * @param id the id to set
    */
   public void setId(String id) {
+    this.directory = root + File.separator + id;
+    this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
     this.id = id;
   }
 
@@ -413,6 +415,9 @@ public final class AnalysisProperties {
    */
   public void setRoot(String root) {
     this.root = root;
+    this.directory = root + File.separator + id;
+    this.filename = directory + File.separator + modelFile;
+    this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
   }
 
   
@@ -434,6 +439,8 @@ public final class AnalysisProperties {
    * @param modelFile the modelFile to set
    */
   public void setModelFile(String modelFile) {
+    this.filename = directory + File.separator + modelFile;
+    this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
     this.modelFile = modelFile;
   }
 
