@@ -16,25 +16,15 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
 
-import org.sbml.jsbml.Model;
 
 /**
  * 

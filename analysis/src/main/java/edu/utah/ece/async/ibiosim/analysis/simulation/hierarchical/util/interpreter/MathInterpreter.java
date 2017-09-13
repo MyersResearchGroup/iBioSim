@@ -126,7 +126,7 @@ public final class MathInterpreter
        {
          ASTNode arg = func.getArgument(i);
          ASTNode child = math.getChild(i);
-         HierarchicalNode parseArg = parseASTNode(child,  args, variableToNodes, dimensionNodes);
+         HierarchicalNode parseArg = parseASTNode(child,  new HashMap<String, HierarchicalNode>(), variableToNodes, dimensionNodes);
          
          args.put(arg.getName(), parseArg);
        }

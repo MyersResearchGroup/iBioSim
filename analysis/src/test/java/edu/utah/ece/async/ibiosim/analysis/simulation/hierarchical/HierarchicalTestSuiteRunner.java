@@ -88,7 +88,7 @@ public class HierarchicalTestSuiteRunner
     //    }
 
     int start = 1;
-    int end = 1;
+    int end = 1778;
     
     for(; start <= end; start++ )
     {
