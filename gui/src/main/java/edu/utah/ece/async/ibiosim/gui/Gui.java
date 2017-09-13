@@ -562,8 +562,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importRsg = new JMenuItem("Reduced State Graph");
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
-		exportSBOL1 = new JMenuItem("SBOL 1.1");
-		exportSBOL2 = new JMenuItem("SBOL 2.0");
+		exportSBOL1 = new JMenuItem("SBOL 1");
+		exportSBOL2 = new JMenuItem("SBOL 2");
 		exportSynBioHub = new JMenuItem("SynBioHub");
 		exportGenBank = new JMenuItem("GenBank");
 		exportFasta = new JMenuItem("Fasta");
@@ -1015,18 +1015,18 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			// importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
+		exportMenu.add(exportSBML);
+		exportMenu.add(exportFlatSBML);
+		exportMenu.add(exportSBOL1);
+		exportMenu.add(exportSBOL2);
+		exportMenu.add(exportGenBank);
+		exportMenu.add(exportFasta);
 		exportMenu.add(exportDataMenu);
 		exportMenu.add(exportImageMenu);
 		exportMenu.add(exportMovieMenu);
-		exportMenu.add(exportFlatSBML);
-		exportMenu.add(exportSBML);
-		exportMenu.add(exportSBOL1);
-		exportMenu.add(exportSBOL2);
-		exportMenu.add(exportSynBioHub);
-		exportMenu.add(exportGenBank);
-		exportMenu.add(exportFasta);
 		// Removed for now since not working
 		exportMenu.add(exportArchive);
+		exportMenu.add(exportSynBioHub);
 
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
