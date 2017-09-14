@@ -1,6 +1,7 @@
 /dist/
 /target/
 jsbml.log
+bin/iBioSim.jar
 **/.DS_Store
 **/.classpath
 .settings/
