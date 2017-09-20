@@ -112,9 +112,6 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 						frontends.removeFrontend(r.getLocation());
 					}
 					frontends.addFrontend(r.getLocation(), frontend);
-					for (SynBioHubFrontend fe : frontends.getFrontends()) {
-						System.out.println(fe);
-					}
 					break;
 				case RESTORE:
 					model.restoreDefaults();

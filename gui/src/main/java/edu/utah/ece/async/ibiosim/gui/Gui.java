@@ -199,6 +199,7 @@ import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 //import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
@@ -1159,6 +1160,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		SBMLLevelVersion = "L3V1";
 		GlobalConstants.SBML_LEVEL = 3;
 		GlobalConstants.SBML_VERSION = 1;
+		
+		// TODO: temp hack, needs fixing
+		EditPreferences editPreferences = new EditPreferences(frame, false);
+		editPreferences.setDefaultPreferences();
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
