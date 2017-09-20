@@ -145,7 +145,7 @@ import edu.utah.ece.async.ibiosim.synthesis.assembly.SequenceTypeValidator;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
-import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadNewDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
 
@@ -431,7 +431,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			if (check) {
 				// saveSBOL(true);
 			} else {
-				if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
+				//if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
+				// TODO: Removed assembly for now
+				if (false) {
 					try {
 						saveSBOL2();
 					} catch (SBOLValidationException e) {
@@ -712,7 +714,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 
 		// Show the UploadDialog
-		UploadDialog ud = new UploadDialog(getParent(), registry, uploadDoc);
+		UploadNewDialog ud = new UploadNewDialog(getParent(), registry, uploadDoc);
 	}
 
 	/**

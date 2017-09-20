@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -38,12 +39,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
-import edu.utah.ece.async.ibiosim.gui.ResourceManager;
+import org.synbiohub.frontend.SynBioHubFrontend;
+
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog.PreferencesTab;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryAddDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryLoginDialog;
 
 public enum RegistryPreferencesTab implements PreferencesTab {
 	INSTANCE;
@@ -60,7 +64,7 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 
 	@Override
 	public Icon getIcon() {
-		return ResourceManager.getImageIcon("registry.png");
+		return new ImageIcon(Images.getActionImage("registry.png"));
 	}
 
 	@Override
@@ -85,6 +89,29 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 					int row = table.convertRowIndexToModel(table.getSelectedRow());
 					model.remove(row);
 					Registries.get().save();
+					break;
+				case LOGIN:
+					row = table.convertRowIndexToModel(table.getSelectedRow());
+					Registry r = model.getComponent(row);
+
+					if (r.isPath()) {
+						JOptionPane.showMessageDialog(getComponent(),
+								"It appears this registry is not a SynBioHub instance.  SynBioHub urls start with https://");
+						break;
+					}
+
+					RegistryLoginDialog loginDialog = new RegistryLoginDialog(getComponent(), r.getLocation(),
+							r.getUriPrefix());
+					SynBioHubFrontend frontend = loginDialog.getSynBioHubFrontend();
+					if (frontend == null) {
+						break;
+					}
+
+					SynBioHubFrontends frontends = new SynBioHubFrontends();
+					if (frontends.hasFrontend(r.getLocation())) {
+						frontends.removeFrontend(r.getLocation());
+					}
+					frontends.addFrontend(r.getLocation(), frontend);
 					break;
 				case RESTORE:
 					model.restoreDefaults();
@@ -122,6 +149,11 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 		removeButton.addActionListener(listener);
 		removeButton.setEnabled(false);
 
+		final JButton loginButton = new JButton("Login");
+		loginButton.setActionCommand(Action.LOGIN.toString());
+		loginButton.addActionListener(listener);
+		loginButton.setEnabled(true);
+
 		final JButton restoreButton = new JButton("Restore defaults");
 		restoreButton.setActionCommand(Action.RESTORE.toString());
 		restoreButton.addActionListener(listener);
@@ -136,6 +168,7 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 			}
 		});
 
+		// TODO: what is this for?
 		//OldInputDialog.setWidthAsPercentages(table, 0.2, 0.2, 0.6);
 
 		TableRowSorter<RegistryTableModel> sorter = new TableRowSorter<RegistryTableModel>(tableModel);
@@ -160,6 +193,7 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 		buttonPane.add(addButton);
 		buttonPane.add(editButton);
 		buttonPane.add(removeButton);
+		buttonPane.add(loginButton);
 		buttonPane.add(Box.createHorizontalGlue());
 		buttonPane.add(restoreButton);
 
@@ -179,7 +213,7 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 	}
 
 	private static enum Action {
-		ADD, REMOVE, RESTORE, EDIT
+		ADD, REMOVE, LOGIN, RESTORE, EDIT
 	}
 
 	private static class RegistryTableModel extends AbstractTableModel {

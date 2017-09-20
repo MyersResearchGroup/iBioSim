@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.ProcessBuilder.Redirect;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -198,6 +199,7 @@ import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 //import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
@@ -327,7 +329,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	protected static final String atacsVersion = "6.1";
 
-	protected static final String		iBioSimVersion		= "2.9.6";	
+	protected static final String		iBioSimVersion		= "3.0.0-beta";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
@@ -1158,6 +1160,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		SBMLLevelVersion = "L3V1";
 		GlobalConstants.SBML_LEVEL = 3;
 		GlobalConstants.SBML_VERSION = 1;
+		
+		// TODO: temp hack, needs fixing
+		EditPreferences editPreferences = new EditPreferences(frame, false);
+		editPreferences.setDefaultPreferences();
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
@@ -8950,7 +8956,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				envp[i] = envVar + "=" + env.get(envVar);
 				i++;
 			}
-			ps.redirectErrorStream(true);
+
+			//ps.redirectOutput(Redirect.INHERIT);
+			ps.redirectError(Redirect.INHERIT);
+			//ps.redirectErrorStream(true);
+			
 			Process reb2sac = ps.start();
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
@@ -8958,14 +8968,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (exitValue != 255 && exitValue != -1) {
 
 				Executables.reb2sacFound = false;
-				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
+				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
 			}
 		} catch (IOException e) {
 		  Executables.reb2sacFound = false;
-			System.out.println("ERROR: " + Executables.reb2sacExecutable + " reb2sac not found.");
+			System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
 		} catch (InterruptedException e) {
 		  Executables.reb2sacFound = false;
-      System.out.println("ERROR: " + Executables.reb2sacExecutable + " throws exception.");
+		  System.out.println("ERROR: " + Executables.reb2sacExecutable + " throws exception.");
 
 		}
 		exitValue = 1;
@@ -8997,14 +9007,16 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (System.getenv("PATH") != null) {
 				env.put("PATH", System.getenv("PATH"));
 			}
-			ps.redirectErrorStream(true);
+			//ps.redirectOutput(Redirect.INHERIT);
+			ps.redirectError(Redirect.INHERIT);
+			//ps.redirectErrorStream(true);
 			Process geneNet = ps.start();
 			if (geneNet != null) {
 				exitValue = geneNet.waitFor();
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 			  Executables.geneNetFound = false;
-				System.out.println("ERROR: " + Executables.geneNetExecutable + " not functional.");
+				System.out.println("ERROR: " + Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
 
 			}
 		} catch (IOException e) {
