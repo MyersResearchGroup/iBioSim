@@ -41,13 +41,11 @@ import javax.swing.table.TableRowSorter;
 
 import org.synbiohub.frontend.SynBioHubFrontend;
 
-import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog.PreferencesTab;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
-import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.OldInputDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryAddDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryLoginDialog;
 
@@ -114,6 +112,9 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 						frontends.removeFrontend(r.getLocation());
 					}
 					frontends.addFrontend(r.getLocation(), frontend);
+					for (SynBioHubFrontend fe : frontends.getFrontends()) {
+						System.out.println(fe);
+					}
 					break;
 				case RESTORE:
 					model.restoreDefaults();
@@ -170,6 +171,7 @@ public enum RegistryPreferencesTab implements PreferencesTab {
 			}
 		});
 
+		// TODO: what is this for?
 		//OldInputDialog.setWidthAsPercentages(table, 0.2, 0.2, 0.6);
 
 		TableRowSorter<RegistryTableModel> sorter = new TableRowSorter<RegistryTableModel>(tableModel);
