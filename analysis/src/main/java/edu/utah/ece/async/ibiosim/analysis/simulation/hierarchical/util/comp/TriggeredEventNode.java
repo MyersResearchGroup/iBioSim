@@ -86,26 +86,18 @@ public class TriggeredEventNode
         }
       }
 
-      if (parent.isUseTriggerValue())
+      if (!parent.isUseTriggerValue())
       {
-        if(assignmentValues != null)
-        {
-          for (int i = 0; i < parent.getEventAssignments().size(); i++)
-          {
-            FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
-            VariableNode variable = eventAssignmentNode.getVariable();
-            variable.setValue(index, assignmentValues[i]);
-          }
-        }
+         setAssignmentValues(parent.computeEventAssignmentValues(index, time));
       }
-      else
+      
+      if(assignmentValues != null)
       {
-        if(parent.getEventAssignments() != null)
+        for (int i = 0; i < parent.getEventAssignments().size(); i++)
         {
-          for(FunctionNode node : parent.getEventAssignments())
-          {
-            node.computeFunction(index);
-          } 
+          FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
+          VariableNode variable = eventAssignmentNode.getVariable();
+          variable.setValue(index, assignmentValues[i]);
         }
       }
     }

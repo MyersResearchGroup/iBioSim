@@ -769,7 +769,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
           TriggeredEventNode triggered = new TriggeredEventNode(index, event);
           triggered.setPriority(event.evaluatePriority(index));
           triggered.setFireTime(currentTime.getValue() + event.evaluateFireTime(index));
-          triggered.setAssignmentValues(event.computeEventAssignmentValues(index, currentTime.getValue()));
+          if(event.isUseTriggerValue())
+          {
+            triggered.setAssignmentValues(event.computeEventAssignmentValues(index, currentTime.getValue()));
+          }
           triggeredEventList.add(triggered);
           if(!event.isPersistent())
           {
