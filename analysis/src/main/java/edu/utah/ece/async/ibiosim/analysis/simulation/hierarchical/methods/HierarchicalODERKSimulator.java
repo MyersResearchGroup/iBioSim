@@ -34,10 +34,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Reaction
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
@@ -131,7 +131,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
         10000);
       triggeredEventList =
-          new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+          new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
       computeEvents();
     }
   }
@@ -165,7 +165,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
         odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
           10000);
         triggeredEventList =
-            new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+            new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
         computeEvents();
       }
       if (!isSingleStep) {
@@ -255,10 +255,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getEvents()) {
-          if (!event.isEnabled(index)) {
             if (event.isTriggeredAtTime(t, index)) {
               returnValue = value;
-            }
           }
         }
       }
@@ -273,6 +271,16 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       vectorWrapper.setValues(y);
       vectorWrapper.setRates(null);
       computeAssignmentRules();
+      for (HierarchicalModel modelstate : modules) {
+        int index = modelstate.getIndex();
+        for (EventNode event : modelstate.getEvents()) {
+            if(event.getMaxDisabledTime(index) > t)
+            {
+              event.setMaxDisabledTime(index, t);
+            }
+        }
+      }
+
       computeEvents();
       return EventHandler.Action.STOP;
     }

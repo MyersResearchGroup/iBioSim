@@ -30,7 +30,6 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
@@ -41,13 +40,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Reaction
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 
 /**
@@ -91,7 +87,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
 
   protected final ArrayList<Double> initValues;
   protected double            initTotalPropensity;
-  protected PriorityQueue<EventState>    triggeredEventList;
+  protected PriorityQueue<TriggeredEventNode>    triggeredEventList;
   protected boolean           isInitialized;
 
   protected boolean hasEvents;
@@ -107,7 +103,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   private HierarchicalWriter writer;
 
   protected double currProgress, maxProgress;
-  
+
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
     String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
   {
@@ -146,7 +142,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.initValues = new ArrayList<Double>();
 
     this.writer = new HierarchicalTSDWriter();
-    this.addPrintVariable("time", printTime.getState());
+    this.addPrintVariable("time", printTime, 0, false);
 
     this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
@@ -224,9 +220,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     modules.add(modelstate);
   }
 
-  public void addPrintVariable(String id, HierarchicalState state)
+  public void addPrintVariable(String id, HierarchicalNode node, int index, boolean isConcentration)
   {
-    writer.addVariable(id, state);
+    writer.addVariable(id, node, index, isConcentration);
   }
 
   public List<HierarchicalModel> getListOfHierarchicalModels()
@@ -744,24 +740,47 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     }
   }
 
+  protected void reevaluatePriorities()
+  {
+    PriorityQueue<TriggeredEventNode> tmp = new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
+    while (triggeredEventList != null && !triggeredEventList.isEmpty())
+    {
+      TriggeredEventNode eventState = triggeredEventList.poll();
+      EventNode event = eventState.getParent();
+      int index = eventState.getIndex();
+      event.evaluatePriority(index);
+      tmp.add(eventState);
+    }
+    triggeredEventList = tmp;
+  }
+
+
   protected void checkEvents()
   {
     for(HierarchicalModel model : modules)
     {
+      int index = model.getIndex();
       for (EventNode event : model.getEvents())
       {
-        if(!event.isEnabled(model.getIndex()))
+        if(event.isTriggeredAtTime(currentTime.getValue(), index))
         {
-          event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
-          if(event.computeEnabled(model.getIndex(), currentTime.getValue()))
+          event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
+          event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
+          TriggeredEventNode triggered = new TriggeredEventNode(index, event);
+          triggered.setPriority(event.evaluatePriority(index));
+          triggered.setFireTime(currentTime.getValue() + event.evaluateFireTime(index));
+          triggered.setAssignmentValues(event.computeEventAssignmentValues(index, currentTime.getValue()));
+          triggeredEventList.add(triggered);
+          if(!event.isPersistent())
           {
-            triggeredEventList.add(event.getEventState(model.getIndex()));
+            event.addTriggeredEvent(index, triggered);
           }
         }
+
       }
     }
   }
-  
+
   protected void computeEvents()
   {
     boolean changed = true;
@@ -770,18 +789,18 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     while (changed)
     {
       changed = false;
-      
+
       checkEvents();
 
-      while (triggeredEventList != null && !triggeredEventList.isEmpty())
+      if (triggeredEventList != null && !triggeredEventList.isEmpty())
       {
-        EventState eventState = triggeredEventList.peek();
-        EventNode event = eventState.getParent();
+        TriggeredEventNode eventState = triggeredEventList.peek();
         int index = eventState.getIndex();
-        if (event.getFireTime(index) <= time)
+        if (eventState.getFireTime() <= time)
         {
           triggeredEventList.poll();
-          event.fireEvent(index, time);
+          eventState.fireEvent(index, time);
+          reevaluatePriorities();
           changed = true;
         }
         else
@@ -825,7 +844,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
             changed = changed | node.computeFunction(modelstate.getIndex());
           }
         }
-        
+
         if(modelstate.getInitConcentration() != null)
         {
           for(FunctionNode node : modelstate.getInitConcentration())

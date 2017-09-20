@@ -26,9 +26,9 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNod
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
@@ -82,7 +82,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       totalPropensity.computeFunction(0);
       if (hasEvents)
       {
-        triggeredEventList = new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+        triggeredEventList =
+            new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
         computeEvents();
       }
 

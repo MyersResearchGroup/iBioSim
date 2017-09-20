@@ -47,7 +47,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Variable
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
@@ -113,14 +112,14 @@ public class CoreSetup
         node.getState().addState(modelstate.getIndex(), 0);
         if(sim.getInterestingSpecies() == null)
         {
-          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
         }
       }
 
 
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
-        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
 
@@ -227,8 +226,8 @@ public class CoreSetup
         HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
 
         EventNode node = modelstate.addEvent(triggerNode);
-        EventState state = node.addEventState(index);
-
+        node.addEventState(index);
+        
         boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
         boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
         boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
@@ -237,10 +236,10 @@ public class CoreSetup
 
         if (!initValue)
         {
-          state.setMaxDisabledTime(0);
+          node.setMaxDisabledTime(index, 0);
           if (node.computeTrigger(modelstate.getIndex()))
           {
-            state.setMinEnabledTime(0);
+            node.setMinEnabledTime(index, 0);
           }
         }
 
@@ -354,13 +353,13 @@ public class CoreSetup
         node.getState().addState(modelstate.getIndex(), 0);
         if(sim.getInterestingSpecies() == null)
         {
-          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
         }
       }
 
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
-        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
       node.setValue(modelstate.getIndex(), parameter.getValue());
@@ -405,11 +404,9 @@ public class CoreSetup
       {
         speciesReferenceNode.setIsVariableConstant(false);
         modelstate.addVariable(speciesReferenceNode );
-      }
-      else
-      {
-        modelstate.addMappingNode(product.getId(), speciesReferenceNode);
-      }			
+      }	
+
+      modelstate.addMappingNode(product.getId(), speciesReferenceNode);
     }
     species.addODERate(reaction, speciesReferenceNode);
 
@@ -453,10 +450,8 @@ public class CoreSetup
         speciesReferenceNode.setIsVariableConstant(false);
         modelstate.addVariable(speciesReferenceNode );
       }
-      else
-      {
-        modelstate.addMappingNode(reactant.getId(), speciesReferenceNode);
-      }
+
+      modelstate.addMappingNode(reactant.getId(), speciesReferenceNode);
     }
     species.subtractODERate(reaction, speciesReferenceNode);
 
@@ -516,7 +511,7 @@ public class CoreSetup
           String printVariable = container.getPrefix() + localParameter.getId();
           if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
           {
-            sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+            sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
           }
         }
         if (kineticLaw.isSetMath())
@@ -609,6 +604,7 @@ public class CoreSetup
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
     SpeciesNode node;
+    boolean isConcentration = false;
     for (Species species : model.getListOfSpecies())
     {
 
@@ -631,6 +627,10 @@ public class CoreSetup
         continue;
       }
       String printVariable = container.getPrefix() + species.getId();
+      if(sim.getPrintConcentrationSpecies().contains(printVariable))
+      {
+        isConcentration = true;
+      }
       
       if(species.getConstant())
       {
@@ -641,16 +641,18 @@ public class CoreSetup
         node.createState(type, wrapper);
         modelstate.addVariable(node);
         node.getState().addState(modelstate.getIndex(), 0);
+        
+        
         if(sim.getInterestingSpecies() == null)
         {
-          sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+          sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
         }
       }
 
 
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
-        sim.addPrintVariable(printVariable, node.getState().getState(modelstate.getIndex()));
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
 
       node.setBoundaryCondition(species.getBoundaryCondition());

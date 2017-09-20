@@ -35,19 +35,6 @@ public class SparseState extends TreeState
   }
   
   @Override
-  public double getStateValue()
-  {
-    return value;
-  }
-
-  @Override
-  public void setStateValue(double value)
-  {
-    this.value = value;
-
-  }
-
-  @Override
   public void addState(int index, double value)
   {
     mapOfStates.put(index, new ValueState(value));

@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
@@ -33,14 +35,15 @@ public abstract class HierarchicalWriter {
 
   protected BufferedWriter bufferedWriter;
   
-  protected List<HierarchicalState> listOfStates;
+  protected List<WriterNode> listOfStates;
   
   protected FileWriter            writer;
   
   protected boolean isSet;
+  
   public HierarchicalWriter()
   {
-    listOfStates = new ArrayList<HierarchicalState>();
+    listOfStates = new ArrayList<WriterNode>();
     isSet = false;
   }
   
@@ -48,9 +51,45 @@ public abstract class HierarchicalWriter {
   
   public abstract void print() throws IOException;
   
-  public abstract void addVariable(String id, HierarchicalState state);
+  public abstract void addVariable(String id, HierarchicalNode node, int index,  boolean isConcentration);
   
   public abstract void close() throws IOException;
+  
+  protected void addNode(HierarchicalNode node, int index, boolean isConcentration)
+  {
+    listOfStates.add(new WriterNode(node, index, isConcentration));
+  }
+  
+  protected class WriterNode
+  {
+    private HierarchicalNode node;
+    private int index;
+    private boolean isConcentration;
+    
+    public WriterNode(HierarchicalNode node, int index, boolean isConcentration)
+    {
+      this.node = node;
+      this.index = index;
+      this.isConcentration = isConcentration;
+    }
+    
+    public String toString()
+    {
+      double value = 0;
+      if(isConcentration && node.isSpecies())
+      {
+        SpeciesNode species = (SpeciesNode) node;
+        value = species.getConcentration(index);
+      }
+      else
+      {
+        value = node.getValue(index);
+      }
+      
+      return String.valueOf(value);
+    }
+  }
+
 }
 
 

@@ -36,18 +36,6 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public double getStateValue()
-  {
-    return value;
-  }
-
-  @Override
-  public void setStateValue(double value)
-  {
-    this.value = value;
-  }
-
-  @Override
   public void addState(int index, double value)
   {
     // can't have children

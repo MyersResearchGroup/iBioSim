@@ -24,109 +24,108 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 public class SpeciesNode extends VariableNode
 {
 
-	private VariableNode		compartment;
-	private HierarchicalNode	odeRate;
-	private SpeciesTemplate speciesTemplates;
-	
-	public SpeciesNode(String name)
-	{
-		super(name);
-		this.isSpecies = true;
-	}
+  private VariableNode		compartment;
+  private HierarchicalNode	odeRate;
+  private SpeciesTemplate speciesTemplates;
 
-	public SpeciesNode(SpeciesNode copy)
-	{
-		this(copy.name);
-		this.compartment = copy.compartment;
-	}
+  public SpeciesNode(String name)
+  {
+    super(name);
+    this.isSpecies = true;
+  }
 
-	public void setCompartment(VariableNode compartment)
-	{
-		this.compartment = compartment;
-	}
+  public SpeciesNode(SpeciesNode copy)
+  {
+    this(copy.name);
+    this.compartment = copy.compartment;
+  }
 
-	public VariableNode getCompartment()
-	{
-		return compartment;
-	}
+  public void setCompartment(VariableNode compartment)
+  {
+    this.compartment = compartment;
+  }
 
-	public double getConcentration(int index)
-	{
-		return this.getValue(index) / compartment.getValue(index);
-	}
+  public VariableNode getCompartment()
+  {
+    return compartment;
+  }
 
-	public void createSpeciesTemplate()
-	{
-	    speciesTemplates = new SpeciesTemplate();
-	}
-	
-	public boolean isBoundaryCondition()
-	{
-		return speciesTemplates.isBoundary;
-	}
+  public double getConcentration(int index)
+  {
+    return this.getValue(index) / compartment.getValue(index);
+  }
 
-	public void setBoundaryCondition(boolean isBoundary)
-	{
-	    speciesTemplates.isBoundary = isBoundary;
-	}
+  public void createSpeciesTemplate()
+  {
+    speciesTemplates = new SpeciesTemplate();
+  }
 
-	public boolean hasOnlySubstance()
-	{
-		  return speciesTemplates.hasOnlySubstance;
-	}
+  public boolean isBoundaryCondition()
+  {
+    return speciesTemplates.isBoundary;
+  }
 
-	public void setHasOnlySubstance(boolean substance)
-	{
-	  speciesTemplates.hasOnlySubstance = substance;
-	}
+  public void setBoundaryCondition(boolean isBoundary)
+  {
+    speciesTemplates.isBoundary = isBoundary;
+  }
 
-	public HierarchicalNode getODERate()
-	{
-		return odeRate;
-	}
+  public boolean hasOnlySubstance()
+  {
+    return speciesTemplates.hasOnlySubstance;
+  }
 
-	public void addODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode)
-	{
-		if (odeRate == null)
-		{
-			odeRate = new HierarchicalNode(Type.PLUS);
-		}
+  public void setHasOnlySubstance(boolean substance)
+  {
+    speciesTemplates.hasOnlySubstance = substance;
+  }
 
-		HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
-		reactionRate.addChild(reactionNode);
-		reactionRate.addChild(specRefNode);
-		odeRate.addChild(reactionRate);
-	}
+  public HierarchicalNode getODERate()
+  {
+    return odeRate;
+  }
 
-	public void subtractODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode)
-	{
-		if (odeRate == null)
-		{
-			odeRate = new HierarchicalNode(Type.PLUS);
-		}
+  public void addODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode)
+  {
+    if (odeRate == null)
+    {
+      odeRate = new HierarchicalNode(Type.PLUS);
+    }
 
-		HierarchicalNode sub = new HierarchicalNode(Type.MINUS);
+    HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
+    reactionRate.addChild(reactionNode);
+    reactionRate.addChild(specRefNode);
+    odeRate.addChild(reactionRate);
+  }
 
-		HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
+  public void subtractODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode)
+  {
+    if (odeRate == null)
+    {
+      odeRate = new HierarchicalNode(Type.PLUS);
+    }
 
-		reactionRate.addChild(reactionNode);
+    HierarchicalNode sub = new HierarchicalNode(Type.MINUS);
 
-		reactionRate.addChild(specRefNode);
+    HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
 
-		sub.addChild(reactionRate);
+    reactionRate.addChild(reactionNode);
 
-		odeRate.addChild(sub);
-	}
+    reactionRate.addChild(specRefNode);
 
-	@Override
-	public double computeRateOfChange(int index)
-	{
-	  double rate = 0;
-	  if (rateRule != null)
-		{
-			rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-			
-			if (!speciesTemplates.hasOnlySubstance)
+    sub.addChild(reactionRate);
+
+    odeRate.addChild(sub);
+  }
+
+  @Override
+  public double computeRateOfChange(int index)
+  {
+    double rate = 0;
+    if (rateRule != null)
+    {
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
+      if (!speciesTemplates.hasOnlySubstance)
       {
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
@@ -139,38 +138,27 @@ public class SpeciesNode extends VariableNode
           rate = rate * compartment.getValue(index);
         }
       }
-			else if (odeRate != null && !speciesTemplates.isBoundary)
-	    {
-	      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
-	    }
-			state.setRateValue(rate);
-			return rate;
+    }
+    else if (odeRate != null && !speciesTemplates.isBoundary)
+    {
+      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
+    }
 
-		}
-		else if (odeRate != null && !speciesTemplates.isBoundary)
-		{
-			rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
-			state.setRateValue(rate);
-		}
-		return rate;
-	}
+    state.setRateValue(rate);
+    return rate;
+  }
 
-	@Override
-	public SpeciesNode clone()
-	{
-		return new SpeciesNode(this);
-	}
+  @Override
+  public SpeciesNode clone()
+  {
+    return new SpeciesNode(this);
+  }
 
-	public void setODERate(HierarchicalNode odeRate)
-	{
-		this.odeRate = odeRate;
-	}
-	
-	private class SpeciesTemplate
-	{
+  private class SpeciesTemplate
+  {
 
-	  boolean       isBoundary;
-	  boolean       hasOnlySubstance;
-	  
-	}
+    boolean       isBoundary;
+    boolean       hasOnlySubstance;
+
+  }
 }

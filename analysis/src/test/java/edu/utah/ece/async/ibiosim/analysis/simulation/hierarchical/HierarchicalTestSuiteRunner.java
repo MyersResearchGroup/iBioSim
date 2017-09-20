@@ -53,8 +53,9 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule"));
+  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor"));
   static AnalysisProperties properties;
+  static boolean verbose = false;
   
   /**
    * @param args
@@ -63,14 +64,14 @@ public class HierarchicalTestSuiteRunner
    */
   public static void main(String[] args)
   {
-
+    
     if (args.length != 2)
     {
       System.out.println("Need two arguments: path to test cases and output path");
       return;
     }
 
-    DynamicSimulation simulator = null;
+    DynamicSimulation simulator;
 
     properties = new AnalysisProperties("", "", "" , false);
     
@@ -88,10 +89,15 @@ public class HierarchicalTestSuiteRunner
     //    }
 
     int start = 1;
-    int end = 1778;
+    int end = 1000;
+
+    int unsupported = 0;
+    int total = end - start + 1;
+    ArrayList<String> failCases = new ArrayList<String>();
     
     for(; start <= end; start++ )
     {
+      simulator = null;
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
@@ -110,13 +116,18 @@ public class HierarchicalTestSuiteRunner
         file = new File(filename);
         if(!file.exists())
         {
-          System.out.println("Does not have L3V1 or L3V2 version.");
+          unsupported++;
+          if(verbose)
+          {
+            System.out.println("Does not have L3V1 or L3V2 version.");
+          }
           continue;
         }
       }
 
       if(!filter(properties.getDirectory(), testcase))
       {
+        unsupported++;
         continue;
       }
 
@@ -141,16 +152,29 @@ public class HierarchicalTestSuiteRunner
         tsdp.outputCSV(outputDirectory + testcase + ".csv");
         if(!checkResults(properties.getDirectory(), outputDirectory, testcase))
         {
+          failCases.add(testcase);
           System.out.println("Case " + testcase + " is failing...");
         }
+        
       }
       catch (Exception e1)
       {
         e1.printStackTrace();
+        failCases.add(testcase);
+        System.out.println("Case " + testcase + " is failing...");
       }
     }
 
-
+    System.out.println("Results:");
+    System.out.println("Pass: " + (total - unsupported - failCases.size()));
+    System.out.println("Fail: " + failCases.size());
+    System.out.println("Unsupported: " + unsupported);
+    System.out.println("Total: " + total);
+    System.out.println("Fix:");
+    for(String s : failCases)
+    {
+      System.out.print( " " + s);
+    }
   }
 
 
@@ -172,12 +196,32 @@ public class HierarchicalTestSuiteRunner
           {
             if(unsupportedTags.contains(tag))
             {
-              System.out.println("Does not support " + tag);
+              if(verbose)
+              {
+                System.out.println("Does not support " + tag);
+              }
               return false;
             }
           }
-          return true;
         }
+        
+        if(line.startsWith("testTags: "))
+        {
+          line = line.substring(10, line.length()).replace(" ","");
+          String[] tags = line.split(",");
+          for(String tag : tags)
+          {
+            if(unsupportedTags.contains(tag))
+            {
+              if(verbose)
+              {
+                System.out.println("Does not support " + tag);
+              }
+              return false;
+            }
+          }
+        }
+        
       }
 
     } 
@@ -192,7 +236,7 @@ public class HierarchicalTestSuiteRunner
         scanner.close();
       }
     }
-    return false;
+    return true;
   }
 
   private static void readSettings(String filename)
@@ -219,7 +263,7 @@ public class HierarchicalTestSuiteRunner
       simProperties.setRelError(relativeError);
       simProperties.setAbsError(absoluteError);
       simProperties.setNumSteps(numSteps);
-      
+      simProperties.getIntSpecies().clear();
       for (String intSpecies : p.getProperty("variables").replaceAll(" ", "").split(","))
       {
         simProperties.addIntSpecies(intSpecies);

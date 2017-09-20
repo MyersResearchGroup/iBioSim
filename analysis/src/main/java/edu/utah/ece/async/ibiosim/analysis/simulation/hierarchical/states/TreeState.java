@@ -24,6 +24,8 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  */
 public abstract class TreeState extends HierarchicalState{
   
+  protected HierarchicalState multiplier;
+  
   @Override
   public double getStateValue(int index) {
     if(!containsChild(index))
@@ -56,7 +58,7 @@ public abstract class TreeState extends HierarchicalState{
   {
     return false;
   }
-  
+ 
   protected abstract boolean containsChild(int index);
  
 }
