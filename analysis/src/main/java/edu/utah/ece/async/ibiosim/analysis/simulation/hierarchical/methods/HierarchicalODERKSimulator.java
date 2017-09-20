@@ -252,6 +252,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
       vectorWrapper.setRates(null);
+      computeAssignmentRules();
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getEvents()) {

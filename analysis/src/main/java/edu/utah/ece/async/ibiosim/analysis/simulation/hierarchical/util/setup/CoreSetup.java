@@ -96,6 +96,10 @@ public class CoreSetup
         modelstate.addMappingNode(compartmentID, node);
       }
       ReplacementSetup.setupReplacement(compartment, node, container);
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
+      }
       if (modelstate.isDeletedBySId(compartmentID))
       {
         continue;
@@ -117,10 +121,7 @@ public class CoreSetup
       }
 
 
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
-      {
-        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
-      }
+
 
 
       if (Double.isNaN(compartment.getSize()))
@@ -337,6 +338,12 @@ public class CoreSetup
         modelstate.addMappingNode(parameter.getId(), node);
       }
       ReplacementSetup.setupReplacement(parameter, node, container);
+      
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
+      }
+      
       if (modelstate.isDeletedBySId(parameter.getId()))
       {
         continue;
@@ -355,11 +362,6 @@ public class CoreSetup
         {
           sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
         }
-      }
-
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
-      {
-        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
       node.setValue(modelstate.getIndex(), parameter.getValue());
@@ -604,11 +606,18 @@ public class CoreSetup
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
     SpeciesNode node;
-    boolean isConcentration = false;
+    boolean isConcentration =false;
     for (Species species : model.getListOfSpecies())
     {
 
+      String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
+
+      if(sim.getPrintConcentrationSpecies().contains(printVariable))
+      {
+        isConcentration = true;
+      }
+      
       if(node == null)
       {
         node = new SpeciesNode(species.getId());
@@ -618,6 +627,11 @@ public class CoreSetup
       }
       
       ReplacementSetup.setupReplacement(species, node, container);
+      
+      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      {
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
+      }
       if (modelstate.isDeletedBySId(species.getId()))
       {
         continue;
@@ -625,11 +639,6 @@ public class CoreSetup
       if (ArraysSetup.checkArray(species))
       {
         continue;
-      }
-      String printVariable = container.getPrefix() + species.getId();
-      if(sim.getPrintConcentrationSpecies().contains(printVariable))
-      {
-        isConcentration = true;
       }
       
       if(species.getConstant())
@@ -650,10 +659,7 @@ public class CoreSetup
       }
 
 
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
-      {
-        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
-      }
+
 
       node.setBoundaryCondition(species.getBoundaryCondition());
       node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());

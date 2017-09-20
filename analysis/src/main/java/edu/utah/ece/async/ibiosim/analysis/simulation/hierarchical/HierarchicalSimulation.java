@@ -748,7 +748,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
       TriggeredEventNode eventState = triggeredEventList.poll();
       EventNode event = eventState.getParent();
       int index = eventState.getIndex();
-      event.evaluatePriority(index);
+      eventState.setPriority(event.evaluatePriority(index));
       tmp.add(eventState);
     }
     triggeredEventList = tmp;

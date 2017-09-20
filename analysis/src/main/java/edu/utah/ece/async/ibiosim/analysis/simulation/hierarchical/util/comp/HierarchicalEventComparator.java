@@ -49,7 +49,7 @@ public class HierarchicalEventComparator implements Comparator<TriggeredEventNod
 			}
 			else
 			{
-				return Math.random() > 0.5 ? 1 : -1;
+				return Math.random() >= 0.5 ? 1 : -1;
 			}
 
 		}

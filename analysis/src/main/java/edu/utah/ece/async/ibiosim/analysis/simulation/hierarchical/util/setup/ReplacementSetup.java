@@ -178,7 +178,8 @@ public class ReplacementSetup
 				SBaseRef ref = element.getSBaseRef();
 				while (ref.isSetSBaseRef())
 				{
-					sub = sub.getSubmodel(element.getIdRef());
+					sub = sub.getSubmodel(ref.getIdRef());
+					ref = ref.getSBaseRef();
 				}
 
 				String subId = ref.getIdRef();

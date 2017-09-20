@@ -95,7 +95,7 @@ public  class ModelContainer
 	{
 	  if(parent != null)
 	  {
-	    this.prefix = hierarchicalModel.getID() + "__" + parent.prefix;
+	    this.prefix =  parent.prefix + hierarchicalModel.getID() + "__";
 	  }
 	  else
 	  {
