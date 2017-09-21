@@ -481,11 +481,11 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.time.step"))
       {
-        simProperties.setTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.time.step")));
+        simProperties.setMaxTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.time.step")));
       }
       else
       {
-        simProperties.setTimeStep(Double.POSITIVE_INFINITY);
+        simProperties.setMaxTimeStep(Double.POSITIVE_INFINITY);
       }
       if (load.containsKey("monte.carlo.simulation.min.time.step"))
       {

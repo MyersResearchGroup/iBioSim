@@ -7,7 +7,7 @@ public class SimulationProperties {
 
 
   private int         numSteps, run;
-  private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, timeStep, absError, relError;
+  private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, absError, relError;
   
   private String        printer_id, printer_track_quantity,genStats;
  
@@ -24,7 +24,6 @@ public class SimulationProperties {
     maxTimeStep = Double.POSITIVE_INFINITY;
     minTimeStep = 0;
     printInterval = 1;
-    timeStep = 1;
     absError = 1e-9;
     relError = 1e-9;
     rndSeed = 314159;
@@ -108,12 +107,7 @@ public class SimulationProperties {
   public double getTimeLimit() {
     return timeLimit;
   }
-  /**
-   * @return the timeStep
-   */
-  public double getTimeStep() {
-    return timeStep;
-  }
+
   
   /**
    * @return the run
@@ -203,13 +197,7 @@ public class SimulationProperties {
   public void setTimeLimit(double timeLimit) {
     this.timeLimit = timeLimit;
   }
-  /**
-   * @param timeStep the timeStep to set
-   */
-  public void setTimeStep(double timeStep) {
-    this.timeStep = timeStep;
-  }
-  
+
   
   public int getNumSteps() {
     return numSteps;

@@ -236,13 +236,13 @@ public class AnalysisPropertiesWriter {
       {
         properties.setProperty(ode_number_steps, String.valueOf(((int) analysisProperties.getSimulationProperties().getPrintInterval())));
       }
-      if (analysisProperties.getSimulationProperties().getTimeStep() == Double.MAX_VALUE)
+      if (analysisProperties.getSimulationProperties().getMaxTimeStep() == Double.MAX_VALUE)
       {
         properties.setProperty(ode_time_step, "inf");
       }
       else
       {
-        properties.setProperty(ode_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeStep()));
+        properties.setProperty(ode_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMaxTimeStep()));
       }
       properties.setProperty(ode_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
       properties.setProperty(ode_abs_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getAbsError()));
@@ -268,13 +268,13 @@ public class AnalysisPropertiesWriter {
       {
         properties.setProperty(mc_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getPrintInterval()));
       }
-      if (analysisProperties.getSimulationProperties().getTimeStep() == Double.MAX_VALUE)
+      if (analysisProperties.getSimulationProperties().getMaxTimeStep() == Double.MAX_VALUE)
       {
         properties.setProperty(mc_time_step, "inf");
       }
       else
       {
-        properties.setProperty(mc_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getTimeStep()));
+        properties.setProperty(mc_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMaxTimeStep()));
       }
       properties.setProperty(mc_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
       properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));

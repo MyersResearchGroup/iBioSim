@@ -1944,7 +1944,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
     relErr.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getRelError()));
 
-    step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getTimeStep()));
+    step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMaxTimeStep()));
 
     minStep.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
    

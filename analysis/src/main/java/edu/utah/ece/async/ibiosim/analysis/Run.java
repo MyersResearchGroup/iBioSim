@@ -368,12 +368,12 @@ public class Run extends CoreObservable implements ActionListener
             condition[0] = "true";
             globallyTrue = true;
           }
-          performMarkovAnalysis.start(properties.getSimulationProperties().getTimeLimit(), properties.getSimulationProperties().getTimeStep(), properties.getSimulationProperties().getPrintInterval(), properties.getSimulationProperties().getAbsError(), condition, globallyTrue);
+          performMarkovAnalysis.start(properties.getSimulationProperties().getTimeLimit(), properties.getSimulationProperties().getMaxTimeStep(), properties.getSimulationProperties().getPrintInterval(), properties.getSimulationProperties().getAbsError(), condition, globallyTrue);
 
         }
         else
         {
-          performMarkovAnalysis.start(properties.getSimulationProperties().getTimeLimit(), properties.getSimulationProperties().getTimeStep(), properties.getSimulationProperties().getPrintInterval(), properties.getSimulationProperties().getAbsError(), null, false);
+          performMarkovAnalysis.start(properties.getSimulationProperties().getTimeLimit(), properties.getSimulationProperties().getMaxTimeStep(), properties.getSimulationProperties().getPrintInterval(), properties.getSimulationProperties().getAbsError(), null, false);
         }
         performMarkovAnalysis.join();
         if (!sg.getStop())
