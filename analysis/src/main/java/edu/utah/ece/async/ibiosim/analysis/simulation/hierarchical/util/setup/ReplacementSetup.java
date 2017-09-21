@@ -228,10 +228,11 @@ public class ReplacementSetup
 			if (element.isSetSBaseRef())
 			{
 				SBaseRef ref = element.getSBaseRef();
-				while (ref.isSetSBaseRef())
-				{
-					sub = sub.getSubmodel(element.getIdRef());
-				}
+        while (ref.isSetSBaseRef())
+        {
+          sub = sub.getSubmodel(ref.getIdRef());
+          ref = ref.getSBaseRef();
+        }
 
 				String subId = ref.getIdRef();
 				if(node != null)
@@ -280,7 +281,8 @@ public class ReplacementSetup
         SBaseRef ref = element.getSBaseRef();
         while (ref.isSetSBaseRef())
         {
-          sub = sub.getSubmodel(element.getMetaIdRef());
+          sub = sub.getSubmodel(ref.getMetaIdRef());
+          ref = ref.getSBaseRef();
         }
 
         String subId = ref.getMetaIdRef();
@@ -323,7 +325,8 @@ public class ReplacementSetup
         SBaseRef ref = element.getSBaseRef();
         while (ref.isSetSBaseRef())
         {
-          sub = sub.getSubmodel(element.getIdRef());
+          sub = sub.getSubmodel(ref.getMetaIdRef());
+          ref = ref.getSBaseRef();
         }
 
         String subId = ref.getMetaIdRef();

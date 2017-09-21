@@ -459,10 +459,7 @@ public class AnalysisPropertiesLoader {
       {
         properties.setNary();
       }
-      if (load.containsKey("selected.simulator"))
-      {
-        properties.setSim(load.getProperty("selected.simulator"));
-      }
+
       if (load.containsKey("file.stem"))
       {
       }

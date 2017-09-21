@@ -12,7 +12,6 @@ import org.jlibsedml.Algorithm;
 import org.jlibsedml.Annotation;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Model;
-import org.jlibsedml.OneStep;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Simulation;
@@ -22,7 +21,6 @@ import org.jlibsedml.UniformTimeCourse;
 import org.jlibsedml.Variable;
 import org.jlibsedml.VariableSymbol;
 
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 import static edu.utah.ece.async.ibiosim.analysis.properties.PropertiesConstants.*;

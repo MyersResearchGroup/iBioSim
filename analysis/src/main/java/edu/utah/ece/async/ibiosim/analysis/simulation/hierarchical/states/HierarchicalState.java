@@ -59,5 +59,6 @@ public abstract class HierarchicalState
   public abstract HierarchicalState getState(int index);
 
   public abstract boolean isSetRate();
+ 
 
 }

@@ -1947,11 +1947,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getTimeStep()));
 
     minStep.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
-    
-    if(properties.getSim() != null)
-    {
-      simulators.setSelectedItem(properties.getSim());
-    }
+   
 
     fileStem.setText(properties.getFileStem());
     
@@ -2747,6 +2743,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       simulators.addItem("nmc");
       simulators.setSelectedItem("gillespie");
     }
+    
+    if(properties.getSim() != null)
+    {
+      simulators.setSelectedItem(properties.getSim());
+    }
+    
     if (!stateAbstraction.isSelected())
     {
       ArrayList<String> getLists = new ArrayList<String>();
@@ -2812,6 +2814,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       simulators.addItem("rk8pd");
       simulators.addItem("rkf45");
       simulators.setSelectedItem("rkf45");
+    }
+    if(properties.getSim() != null)
+    {
+      simulators.setSelectedItem(properties.getSim());
     }
     ArrayList<String> getLists = new ArrayList<String>();
     getLists.add("kinetic-law-constants-simplifier");

@@ -34,7 +34,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class HierarchicalNode extends AbstractHierarchicalNode
 {
-
   private List<HierarchicalNode>  children;
   private ArrayNode       arrayNode;
   protected HierarchicalState   state;

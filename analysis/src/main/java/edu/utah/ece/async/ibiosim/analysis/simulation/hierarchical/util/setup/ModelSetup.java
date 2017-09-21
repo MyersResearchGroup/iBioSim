@@ -162,6 +162,7 @@ public class ModelSetup
       type = StateType.VECTOR;
     }
     
+    
     for(ModelContainer container : listOfContainers)
     {
       ReplacementSetup.setupDeletion(container);

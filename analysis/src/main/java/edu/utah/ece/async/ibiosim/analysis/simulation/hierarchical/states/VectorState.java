@@ -104,5 +104,4 @@ public class VectorState extends HierarchicalState{
   public boolean isSetRate() {
     return vectorState.isSet() && vectorState.getRates() != null;
   }
-
 }

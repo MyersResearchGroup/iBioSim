@@ -88,8 +88,8 @@ public class HierarchicalTestSuiteRunner
     //      }
     //    }
 
-    int start = 1132;
-    int end = 1132;
+    int start = 1;
+    int end = 1140;
 
     int unsupported = 0;
     int total = end - start + 1;

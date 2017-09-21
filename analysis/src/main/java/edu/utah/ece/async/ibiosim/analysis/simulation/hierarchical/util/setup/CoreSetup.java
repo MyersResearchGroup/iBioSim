@@ -111,18 +111,15 @@ public class CoreSetup
       }
       else
       {
+        int index = modelstate.getIndex();
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        node.getState().addState(modelstate.getIndex(), 0);
+        node.getState().addState(index, 0);
         if(sim.getInterestingSpecies() == null)
         {
           sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
         }
       }
-
-
-
-
 
       if (Double.isNaN(compartment.getSize()))
       {
@@ -171,9 +168,9 @@ public class CoreSetup
         HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());  
         modelstate.addConstraint(id, constraintNode);
       }
-      
 
-      
+
+
     }
 
   }
@@ -228,7 +225,7 @@ public class CoreSetup
 
         EventNode node = modelstate.addEvent(triggerNode);
         node.addEventState(index);
-        
+
         boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
         boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
         boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
@@ -338,12 +335,12 @@ public class CoreSetup
         modelstate.addMappingNode(parameter.getId(), node);
       }
       ReplacementSetup.setupReplacement(parameter, node, container);
-      
+
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
-      
+
       if (modelstate.isDeletedBySId(parameter.getId()))
       {
         continue;
@@ -355,9 +352,10 @@ public class CoreSetup
       }
       else
       {
+        int index = modelstate.getIndex();
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        node.getState().addState(modelstate.getIndex(), 0);
+        node.getState().addState(index, 0);
         if(sim.getInterestingSpecies() == null)
         {
           sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
@@ -617,7 +615,7 @@ public class CoreSetup
       {
         isConcentration = true;
       }
-      
+
       if(node == null)
       {
         node = new SpeciesNode(species.getId());
@@ -625,9 +623,9 @@ public class CoreSetup
 
         modelstate.addMappingNode(species.getId(), node);
       }
-      
+
       ReplacementSetup.setupReplacement(species, node, container);
-      
+
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
@@ -640,18 +638,18 @@ public class CoreSetup
       {
         continue;
       }
-      
+
       if(species.getConstant())
       {
         node.createState(StateType.SCALAR, wrapper);
       }
       else
       {
+        int index = modelstate.getIndex();
         node.createState(type, wrapper);
         modelstate.addVariable(node);
-        node.getState().addState(modelstate.getIndex(), 0);
-        
-        
+        node.getState().addState(index, 0);
+
         if(sim.getInterestingSpecies() == null)
         {
           sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
