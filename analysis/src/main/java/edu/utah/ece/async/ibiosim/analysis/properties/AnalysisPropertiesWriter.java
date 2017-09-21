@@ -297,6 +297,7 @@ public class AnalysisPropertiesWriter {
     int numberOfSteps;
     String fileStem = properties.getFileStem();
     String simName = properties.getSim();
+    
     if (properties.isNumSteps())
     {
       numberOfSteps = properties.getSimulationProperties().getNumSteps();
@@ -310,6 +311,7 @@ public class AnalysisPropertiesWriter {
     if (!fileStem.trim().equals("")) {
       taskId = properties.getId() + "__" + fileStem.trim();
     }
+    
     AbstractTask task = sedml.getTaskWithId(taskId);
     Simulation simulation = sedml.getSimulation(taskId+"_sim");
     if (simulation != null) {

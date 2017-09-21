@@ -1459,7 +1459,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem", JOptionPane.ERROR_MESSAGE);
         return;
       }
-      stem += fileStem.getText().trim();
+      stem = fileStem.getText().trim();
+      properties.setFileStem(stem);
     }
     for (int i = 0; i < gui.getTab().getTabCount(); i++)
     {

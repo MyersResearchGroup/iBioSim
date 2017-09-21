@@ -451,6 +451,7 @@ public final class AnalysisProperties {
 
   
   public void setFileStem(String fileStem) {
+    this.outDir = this.outDir + File.separator + fileStem;
     this.fileStem = fileStem;
   }
   
