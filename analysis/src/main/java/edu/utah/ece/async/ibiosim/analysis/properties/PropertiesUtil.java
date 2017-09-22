@@ -46,7 +46,12 @@ public class PropertiesUtil {
       {
         algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
       }
-      if (sim.contains("Hierarchical"))
+
+      else if(sim.contains("Mixed"))
+      {
+        algorithm = new Algorithm(GlobalConstants.KISAO_DFBA);
+      }
+      else if (sim.contains("Hierarchical"))
       {
         algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
       }
@@ -136,7 +141,13 @@ public class PropertiesUtil {
     else if (kisaoId.equals(GlobalConstants.KISAO_FBA))
     {
       properties.setFba();
-    } else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
+    } 
+    else if (kisaoId.equals(GlobalConstants.KISAO_DFBA))
+    {
+      properties.setSsa();
+      properties.setSim("Mixed-Hierarchical");
+    }
+    else if (kisaoId.equals(GlobalConstants.KISAO_GENERIC)) {
       if (method!=null) {
         if (method.equals("Model")) {
           properties.setSbml();
@@ -151,7 +162,8 @@ public class PropertiesUtil {
           }
         }
       }
-    } else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
+    } 
+    else if (kt==null || kt.is_a(KisaoOntology.ALGORITHM_WITH_DETERMINISTIC_RULES)) {
       properties.setOde();
       properties.setSim("rkf45");
     }
