@@ -10,21 +10,15 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 
 import org.jlibsedml.AbstractTask;
-import org.jlibsedml.Algorithm;
-import org.jlibsedml.AlgorithmParameter;
 import org.jlibsedml.OneStep;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.modelsupport.KisaoOntology;
-import org.jlibsedml.modelsupport.KisaoTerm;
 
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
 public class AnalysisPropertiesLoader {
@@ -38,6 +32,15 @@ public class AnalysisPropertiesLoader {
     if (subTask!=null && !subTask.equals("")) {
       taskId = taskId + "__" + subTask;
     }
+    
+    for (AbstractTask task : sedml.getTasks())
+    {
+      String prefix = simName+"__";
+      if (task.getId().startsWith(prefix)) {
+       properties.addTask(task.getId().substring(prefix.length()));
+      }
+    }
+    
     AbstractTask task = sedml.getTaskWithId(taskId);
     if (task != null) {
       Simulation simulation = sedml.getSimulation(task.getSimulationReference());

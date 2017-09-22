@@ -228,17 +228,16 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     this.simTab = simTab;
     this.SedMLDoc = SedMLDoc;
 
-    String  sbmlFile = root + File.separator + modelFile;
     if(abstractionPanel != null)
     {
       this.properties.getVerificationProperties().setAbsProperty(abstractionPanel.getAbstractionProperty());  
     }
     
 
-    if (modelFile.endsWith(".lpn"))
-    {
-      sbmlFile = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
-    }
+//    if (modelFile.endsWith(".lpn"))
+//    {
+//      sbmlFile = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
+//    }
 
     //    String sbmlProp = root + File.separator + simName + File.separator + modelFile.replace(".lpn", ".xml");
     //    interestingSpecies = new ArrayList<String>();
@@ -1461,7 +1460,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
       stem = fileStem.getText().trim();
       properties.setFileStem(stem);
+      properties.addTask(stem);
     }
+    else
+    {
+      properties.unsetFileStem();
+    }
+    
     for (int i = 0; i < gui.getTab().getTabCount(); i++)
     {
       if (modelEditor != null)
@@ -2098,6 +2103,14 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     else if (properties.isLhpn())
     {
       enableSbmlDotAndXhtml();
+    }
+    
+    if(properties.getListOfTasks().size() > 0)
+    {
+      for(String task : properties.getListOfTasks())
+      {
+        subTaskList.addItem(task);
+      }
     }
     
 //    if (load.containsKey("selected.property"))
