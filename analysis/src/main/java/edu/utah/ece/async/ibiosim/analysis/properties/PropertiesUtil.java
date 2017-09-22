@@ -49,7 +49,7 @@ public class PropertiesUtil {
 
       else if(sim.contains("Mixed"))
       {
-        algorithm = new Algorithm(GlobalConstants.KISAO_DFBA);
+        algorithm = new Algorithm(GlobalConstants.KISAO_DFBA_SOA);
       }
       else if (sim.contains("Hierarchical"))
       {
@@ -142,7 +142,7 @@ public class PropertiesUtil {
     {
       properties.setFba();
     } 
-    else if (kisaoId.equals(GlobalConstants.KISAO_DFBA))
+    else if (kisaoId.equals(GlobalConstants.KISAO_DFBA_SOA))
     {
       properties.setSsa();
       properties.setSim("Mixed-Hierarchical");

@@ -288,9 +288,9 @@ public class GlobalConstants {
 	public static final String KISAO_SAMPLES = "KISAO:0000326";
 	public static final String KISAO_NUMBER_OF_RUNS = "KISAO:0000498";
 	public static final String KISAO_DFBA = "KISAO_0000499";
-	public static final String KISAO_SOA = "KISAO_0000500";
-	public static final String KISAO_DOA = "KISAO_0000501 ";
-	public static final String KISAO_DA = "KISAO_0000501 ";
+	public static final String KISAO_DFBA_SOA = "KISAO_0000500";
+	public static final String KISAO_DFBA_DOA = "KISAO_0000501 ";
+	public static final String KISAO_DFBA_DA = "KISAO_0000501 ";
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
