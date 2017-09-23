@@ -358,16 +358,6 @@ public class AnalysisPropertiesWriter {
     dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
     dataGen.addVariable(variable);
     sedml.addDataGenerator(dataGen);
-
-    //TODO: write this
-    //	    for (int i = 0; i < simTab.getComponentCount(); i++)
-    //	    {
-    //	      if (simTab.getComponentAt(i) instanceof Graph)
-    //	      {
-    //	        ((Graph) simTab.getComponentAt(i)).saveSEDML(sedmlDoc,simName,null);
-    //	      }
-    //	    }
-    //	    gui.writeSEDMLDocument();
   }
 
 

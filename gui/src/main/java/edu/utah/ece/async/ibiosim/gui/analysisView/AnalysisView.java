@@ -292,6 +292,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     try {
       AnalysisPropertiesLoader.loadPropertiesFile(properties);
       AnalysisPropertiesLoader.loadSEDML(SedMLDoc, "", properties);
+      if(properties.getListOfTasks().size() > 0)
+      {
+        for(String task : properties.getListOfTasks())
+        {
+          subTaskList.addItem(task);
+        }
+      }
       loadPropertiesFile();
     } catch (IOException e) {
       e.printStackTrace();
@@ -1353,7 +1360,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
     try {
       AnalysisPropertiesWriter.createProperties(properties);
-
       AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
     } catch (IOException e1) {
       e1.printStackTrace();
@@ -1460,7 +1466,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
       stem = fileStem.getText().trim();
       properties.setFileStem(stem);
-      properties.addTask(stem);
+      if(!properties.getListOfTasks().contains(stem))
+      {
+        properties.addTask(stem);
+        subTaskList.addItem(stem);
+      }
+      subTaskList.setSelectedItem(stem);
     }
     else
     {
@@ -2103,14 +2114,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     else if (properties.isLhpn())
     {
       enableSbmlDotAndXhtml();
-    }
-    
-    if(properties.getListOfTasks().size() > 0)
-    {
-      for(String task : properties.getListOfTasks())
-      {
-        subTaskList.addItem(task);
-      }
     }
     
 //    if (load.containsKey("selected.property"))
@@ -3434,9 +3437,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       String subTask = "";
       if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
         subTask = (String)subTaskList.getSelectedItem();
+        properties.setFileStem(subTask);
+        fileStem.setText(subTask);
       }
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      //AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
       AnalysisPropertiesLoader.loadSEDML(SedMLDoc, subTask, properties);
+      loadPropertiesFile();
     }
     else if (e.getSource() == noAbstraction || e.getSource() == expandReactions)
     {
