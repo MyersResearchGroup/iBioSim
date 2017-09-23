@@ -544,16 +544,17 @@ public class PromoterPanel extends JPanel implements ActionListener {
 						if (!production.isSetMetaId() || production.getMetaId().equals(""))
 							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
 									bioModel.getMetaIDIndex());
-						try 
-						{
-							bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
-							setSBOLAnnotation(promoter);
-						} 
-						catch (BioSimException e) 
-						{
-							JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-									JOptionPane.ERROR_MESSAGE);
-						}
+						//try 
+						//{
+							// TODO: removed this since changing id based on SBOL field could cause name conflicts
+							//bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
+						setSBOLAnnotation(promoter);
+						//} 
+						//catch (BioSimException e) 
+						//{
+						//	JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+						//			JOptionPane.ERROR_MESSAGE);
+						//}
 					}
 
 				} else
