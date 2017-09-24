@@ -911,15 +911,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							
 							// annotate the new promoter 
 							setSBOLAnnotation(promoter);
-							try 
-							{
-								bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
-							} 
-							catch (BioSimException e) 
-							{
-								JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-										JOptionPane.ERROR_MESSAGE);
-							}
+							// TODO: remvoed this as changing id can cause conflicts
+//							try 
+//							{
+//								bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
+//							} 
+//							catch (BioSimException e) 
+//							{
+//								JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+//										JOptionPane.ERROR_MESSAGE);
+//							}
 							// remove the old species to indicate it was transformed into a promoter
 							modelEditor.removeSpecies(species.getId());
 							modelEditor.refresh();
@@ -937,8 +938,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
-					try 
-					{
+					//try 
+					//{
 						/*
 						 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
 						 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
@@ -946,16 +947,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						 */
 						if(sbolField.isSBOLIDSet())
 						{
-							newSpeciesID = sbolField.getSBOLObjID();
-							bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
+							// TODO: removed this as it can cause id conflicts
+							//newSpeciesID = sbolField.getSBOLObjID();
+							//bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
 							setSBOLAnnotation(species);
 						}
-					} 
-					catch (BioSimException e) 
-					{
-						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-								JOptionPane.ERROR_MESSAGE);
-					}
+					//} 
+					//catch (BioSimException e) 
+					//{
+					//	JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+					//			JOptionPane.ERROR_MESSAGE);
+					//}
 				} 
 				else 
 				{

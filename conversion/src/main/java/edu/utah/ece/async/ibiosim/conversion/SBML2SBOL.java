@@ -73,7 +73,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
  */
 public class SBML2SBOL {
 
-	private static String VERSION = "";
+	private static String VERSION = "1";
 
 	
 	/**
@@ -182,7 +182,7 @@ public class SBML2SBOL {
 		
 		sbolModel = sbolDoc.createModel(model.getId() + "_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
 
-		String identityStr  = model.getId();
+		String identityStr  = model.getId() + "_md";
 		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(identityStr, VERSION);
 		if (moduleDef!=null) {
 			sbolDoc.removeModuleDefinition(moduleDef);
@@ -632,7 +632,7 @@ public class SBML2SBOL {
 					}	
 				}	
 				
-				Module m = moduleDef.createModule(subModelId, subModel.getId(), VERSION);
+				Module m = moduleDef.createModule(subModelId, subModel.getId()+"_md", VERSION);
 
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{

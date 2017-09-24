@@ -2209,19 +2209,20 @@ public class BioModel extends CoreObservable{
 		if (promoter != null) 
 			promoter.setId(newId);
 		Reaction production = getProductionReaction(oldId);
-		if (production.getId().contains(GlobalConstants.PRODUCTION)) 
-			if (newId.contains("__")) {
-				production.setId(GlobalConstants.PRODUCTION + "_" 
-						+ newId.substring(newId.lastIndexOf("__") + 2));
-			} else {
-				production.setId(GlobalConstants.PRODUCTION + "_" + newId);
+		if (production != null) {
+			if (production.getId().contains(GlobalConstants.PRODUCTION)) 
+				if (newId.contains("__")) {
+					production.setId(GlobalConstants.PRODUCTION + "_" 
+							+ newId.substring(newId.lastIndexOf("__") + 2));
+				} else {
+					production.setId(GlobalConstants.PRODUCTION + "_" + newId);
+				}
+			SpeciesReference product = production.getProductForSpecies(oldId+"_mRNA");
+			if (product!=null) {
+				sbml.getModel().getSpecies(oldId+"_mRNA").setId(newId+"_mRNA");
+				product.setSpecies(newId+"_mRNA");
 			}
-		SpeciesReference product = production.getProductForSpecies(oldId+"_mRNA");
-		if (product!=null) {
-			sbml.getModel().getSpecies(oldId+"_mRNA").setId(newId+"_mRNA");
-			product.setSpecies(newId+"_mRNA");
 		}
-
 		Layout layout = getLayout();
 		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+oldId)!=null) {
 			SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+oldId);
