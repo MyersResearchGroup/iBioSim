@@ -58,6 +58,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.xml.stream.XMLStreamException;
 
 import org.jdom.Element;
@@ -253,6 +255,38 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     JTextField taskId = new JTextField(simName);
     taskId.setEditable(false);
     fileStem = new JTextField("", 15);
+    fileStem.getDocument().addDocumentListener(new DocumentListener()
+      {
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+          check();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+          check();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+        }
+        
+        private void check()
+        {
+          String stem = fileStem.getText();
+          
+          if(properties.getListOfTasks().contains(stem))
+          {
+            subTaskList.setSelectedItem(stem);
+          }
+          else
+          {
+            subTaskList.setSelectedItem("(none)");
+          }
+        }
+      
+      });
     subTaskList = new JComboBox<String>();
     subTaskList.addItem("(none)");
 
