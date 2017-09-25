@@ -174,13 +174,14 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private JTextField      rapid1, rapid2, qssa, maxCon, diffStoichAmp;  
   private JLabel        rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;                                                       // sbml
 
-  // Progress Ba
+  // Progress Bar
   private JProgressBar progress;
   private JButton progressCancel;
   private JLabel progressLabel;
   
   private JComboBox<String>     transientProperties, subTaskList;
-
+  private static final String none = "(none)";
+  
   private final Gui     gui;                                                            // reference                                                      // simulation
 
   private final Log     log;                                                            // the
@@ -255,43 +256,9 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     JTextField taskId = new JTextField(simName);
     taskId.setEditable(false);
     fileStem = new JTextField("", 15);
-    fileStem.getDocument().addDocumentListener(new DocumentListener()
-      {
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-          check();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-          check();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-        }
-        
-        private void check()
-        {
-          String stem = fileStem.getText();
-          
-          if(properties.getListOfTasks().contains(stem))
-          {
-            subTaskList.setSelectedItem(stem);
-          }
-          else
-          {
-            subTaskList.setSelectedItem("(none)");
-          }
-        }
-      
-      });
+   
     subTaskList = new JComboBox<String>();
     subTaskList.addItem("(none)");
-
-
-
 
     JLabel modelFileLabel = new JLabel("Model File:");
 
@@ -1056,7 +1023,24 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   {
 
     String simName = (String) simulators.getSelectedItem();
+    String stem = fileStem.getText();
     properties.setSim(simName);
+    properties.setFileStem(fileStem.getText());
+    
+    if (!stem.equals("")) 
+    {
+      new File(properties.getDirectory()).mkdir();
+      if(!properties.getListOfTasks().contains(stem))
+      {
+        subTaskList.addItem(stem);
+        subTaskList.setSelectedItem(stem);
+      }
+    }
+    else
+    {
+      subTaskList.setSelectedItem(none);
+    }
+    
     String propName = properties.getPropertiesName();
     try
     {
@@ -1465,12 +1449,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
   public Graph createGraph(String open, boolean regularGraph)
   {
-    String root = properties.getRoot();
     String simName = properties.getId();
 
-    String outDir = root + File.separator + simName;
-    String printer_id;
-    printer_id = "tsd.printer";
+    String outDir = properties.getDirectory();
+    String printer_id = "tsd.printer";
     String printer_track_quantity = "amount";
     if (concentrations.isSelected())
     {
@@ -1483,8 +1465,6 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   {
     boolean ignoreSweep = false;
     String modelFile = properties.getModelFile();
-    String root = properties.getRoot();
-    String simName = properties.getSim();
 
     if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected())
     {
@@ -1568,20 +1548,20 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       {
         try {
           LPN lhpnFile = new LPN();
-          lhpnFile.load(root + File.separator + modelFile);
+          lhpnFile.load(properties.getFilename());
           Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
           abst.abstractSTG(false);
-          abst.save(root + File.separator + simName + File.separator + modelFile);
+          abst.save(properties.getDirectory() + File.separator + modelFile);
 
           if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
           {
 
-            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+            t1.convertLPN2SBML(properties.getDirectory() + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
 
           }
           else
           {
-            t1.convertLPN2SBML(root + File.separator + simName + File.separator + modelFile, "");
+            t1.convertLPN2SBML(properties.getDirectory() + File.separator + modelFile, "");
           }
         } catch (BioSimException e) {
           // TODO Auto-generated catch block
@@ -1595,18 +1575,18 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         try {
           if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none"))
           {
-            t1.convertLPN2SBML(root + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
+            t1.convertLPN2SBML(properties.getRoot() + File.separator + modelFile, ((String) transientProperties.getSelectedItem()));
           }
           else
           {
-            t1.convertLPN2SBML(root + File.separator + modelFile, "");
+            t1.convertLPN2SBML(properties.getRoot() + File.separator + modelFile, "");
           }
         } catch (BioSimException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
-      t1.setFilename(root + File.separator + simName + File.separator + stem + File.separator + modelFile.replace(".lpn", ".xml"));
+      t1.setFilename(properties.getDirectory() + File.separator + modelFile.replace(".lpn", ".xml"));
       t1.outputSBML();
       new AnalysisThread(this).start(true);
     }
@@ -1883,18 +1863,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   
   public String getSimID()
   {
-    return fileStem.getText().trim();
+    return  properties.getFileStem();
   }
 
   public String getSimPath()
   {
-    String root = properties.getRoot();
-    String simName = properties.getId();
-    if (!fileStem.getText().trim().equals(""))
-    {
-      return root + File.separator + simName + File.separator + fileStem.getText().trim();
-    }
-    return root + File.separator + simName;
+    
+    return properties.getDirectory();
   }
 
   public String getSimName()

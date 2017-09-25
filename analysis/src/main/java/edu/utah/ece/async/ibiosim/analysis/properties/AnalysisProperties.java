@@ -464,6 +464,8 @@ public final class AnalysisProperties {
   public void setFileStem(String fileStem) {
     this.outDir = fileStem;
     this.fileStem = fileStem;
+    this.directory = root + File.separator + id + File.separator + fileStem ;
+    this.filename = directory + File.separator + modelFile;
     this.propertiesFile = root + File.separator + id + File.separator + fileStem + File.separator + modelFile.replace(".xml", ".properties");
   }
   

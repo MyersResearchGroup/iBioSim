@@ -1193,9 +1193,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				}
 				new ConstraintTermThread(analysisView).start(threads, dirs, levelOne, stem);
 			} else {
-				if (!stem.equals("")) {
-					new File(path + File.separator + simName + File.separator + stem).mkdir();
-				}
+//				if (!stem.equals("")) {
+//					new File(path + File.separator + simName + File.separator + stem).mkdir();
+//				}
 				if (createSBML(stem, ".", analysisMethod)) {
 						new AnalysisThread(analysisView).start(true);
 				}

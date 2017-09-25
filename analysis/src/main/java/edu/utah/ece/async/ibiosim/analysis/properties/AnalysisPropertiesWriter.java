@@ -297,7 +297,8 @@ public class AnalysisPropertiesWriter {
     properties.setProperty(sim_run_term , "constraint");
 
 
-    FileOutputStream store = new FileOutputStream(new File(analysisProperties.getPropertiesName()));
+    File file = new File(analysisProperties.getPropertiesName());
+    FileOutputStream store = new FileOutputStream(file);
     properties.store(store, analysisProperties.getId() + " Properties");
     store.close();
   }
