@@ -1026,20 +1026,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     String stem = fileStem.getText();
     properties.setSim(simName);
     properties.setFileStem(fileStem.getText());
-    
-    if (!stem.equals("")) 
-    {
-      new File(properties.getDirectory()).mkdir();
-      if(!properties.getListOfTasks().contains(stem))
-      {
-        subTaskList.addItem(stem);
-        subTaskList.setSelectedItem(stem);
-      }
-    }
-    else
-    {
-      subTaskList.setSelectedItem(none);
-    }
+   
     
     String propName = properties.getPropertiesName();
     try
@@ -1377,8 +1364,26 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     properties.getIncrementalProperties().setNumPaths(numPaths);
 
     try {
-      AnalysisPropertiesWriter.createProperties(properties);
+
       AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      
+      if (!stem.equals("")) 
+      {
+        new File(properties.getDirectory()).mkdir();
+      }
+
+      AnalysisPropertiesWriter.createProperties(properties);
+      
+      if(stem.equals(""))
+      {
+        properties.unsetFileStem();
+      }
+      else if(!properties.getListOfTasks().contains(stem))
+      {
+        properties.addTask(stem);
+        subTaskList.addItem(stem);
+        subTaskList.setSelectedItem(stem);
+      }
     } catch (IOException e1) {
       e1.printStackTrace();
     }
