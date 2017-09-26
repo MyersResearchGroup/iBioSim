@@ -1374,15 +1374,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
       AnalysisPropertiesWriter.createProperties(properties);
       
-      if(stem.equals(""))
-      {
-        properties.unsetFileStem();
-      }
-      else if(!properties.getListOfTasks().contains(stem))
+      if(!stem.equals("") && !properties.getListOfTasks().contains(stem))
       {
         properties.addTask(stem);
         subTaskList.addItem(stem);
-        subTaskList.setSelectedItem(stem);
       }
     } catch (IOException e1) {
       e1.printStackTrace();
@@ -1484,19 +1479,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
         return;
       }
       stem = fileStem.getText().trim();
-      properties.setFileStem(stem);
-      if(!properties.getListOfTasks().contains(stem))
-      {
-        properties.addTask(stem);
-        subTaskList.addItem(stem);
-      }
-      subTaskList.setSelectedItem(stem);
     }
-    else
-    {
-      properties.unsetFileStem();
-    }
-    
     for (int i = 0; i < gui.getTab().getTabCount(); i++)
     {
       if (modelEditor != null)
@@ -3451,9 +3434,9 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       String subTask = "";
       if (!((String)subTaskList.getSelectedItem()).equals("(none)")) {
         subTask = (String)subTaskList.getSelectedItem();
-        properties.setFileStem(subTask);
-        fileStem.setText(subTask);
       }
+      properties.setFileStem(subTask);
+      fileStem.setText(subTask);
       //AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
       AnalysisPropertiesLoader.loadSEDML(SedMLDoc, subTask, properties);
       loadPropertiesFile();

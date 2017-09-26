@@ -462,21 +462,21 @@ public final class AnalysisProperties {
    * @param fileStem
    */
   public void setFileStem(String fileStem) {
-    this.outDir = fileStem;
-    this.fileStem = fileStem;
-    this.directory = root + File.separator + id + File.separator + fileStem ;
-    this.filename = directory + File.separator + modelFile;
-    this.propertiesFile = root + File.separator + id + File.separator + fileStem + File.separator + modelFile.replace(".xml", ".properties");
-  }
-  
-  /**
-   * 
-   */
-  public void unsetFileStem()
-  {
-    this.outDir = ".";
-    this.fileStem = "";
-    this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
+    if(fileStem.equals(""))
+    {
+      this.fileStem = "";
+      this.directory = root + File.separator + id;
+      this.filename = directory + File.separator + modelFile;
+      this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
+    }
+    else
+    {
+      this.fileStem = fileStem;
+      this.directory = root + File.separator + id + File.separator + fileStem ;
+      this.filename = directory + File.separator + modelFile;
+      this.propertiesFile = root + File.separator + id + File.separator + fileStem + File.separator + modelFile.replace(".xml", ".properties");
+    }
+   
   }
 
   /**
