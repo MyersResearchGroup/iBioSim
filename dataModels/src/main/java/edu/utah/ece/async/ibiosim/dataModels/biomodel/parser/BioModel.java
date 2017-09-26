@@ -6501,6 +6501,7 @@ public class BioModel extends CoreObservable{
 			s = s.replace(" " + origVar + ")", " " + newVar + ")");
 			s = s.replace(" " + origVar + "^", " " + newVar + "^");
 			s = s.replace("^" + origVar + ")", "^" + newVar + ")");
+			s = s.replace("^" + origVar + " ", "^" + newVar + " ");
 		} while (s != olds);
 		return s.trim();
 	}

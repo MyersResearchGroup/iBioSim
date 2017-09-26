@@ -1958,8 +1958,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
     relErr.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getRelError()));
 
-    step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMaxTimeStep()));
-
+    if (properties.getSimulationProperties().getMaxTimeStep() == Double.MAX_VALUE) {
+    	step.setText("inf");
+    } else {
+    	step.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMaxTimeStep()));
+    }
     minStep.setText(PropertiesUtil.parseDouble(properties.getSimulationProperties().getMinTimeStep()));
    
 
