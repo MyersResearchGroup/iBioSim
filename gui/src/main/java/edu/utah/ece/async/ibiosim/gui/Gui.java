@@ -4500,7 +4500,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		addModelViewTab(analysisView, simTab, modelEditor);
 		simTab.addTab("Parameters", modelEditor);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
-		modelEditor.createSBML("", ".", "");
+		modelEditor.createSBML("", ".", analysisView.getSim());
 		new AnalysisThread(analysisView).start(true);
 		Graph tsdGraph;
 		if (new File(root + File.separator + simName + File.separator + simName + ".grf")

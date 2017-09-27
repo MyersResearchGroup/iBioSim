@@ -1854,9 +1854,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     return  properties.getFileStem();
   }
 
+  public String getSim()
+  {
+    return properties.getSim();
+  }
+  
   public String getSimPath()
   {
-    
     return properties.getDirectory();
   }
 
