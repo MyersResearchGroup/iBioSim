@@ -39,7 +39,7 @@ public abstract class TreeState extends HierarchicalState{
   public void setStateValue(int index, double value) {
     if(!containsChild(index))
     {
-      addState(index);
+      addState(index, null);
     }
     getState(index).setStateValue(value);
   }

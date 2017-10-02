@@ -58,7 +58,7 @@ public class VectorState extends HierarchicalState{
   }
 
   @Override
-  public void addState(int index) {
+  public void addState(int index, HierarchicalState state ) {
   }
 
   @Override
@@ -103,5 +103,10 @@ public class VectorState extends HierarchicalState{
   @Override
   public boolean isSetRate() {
     return vectorState.isSet() && vectorState.getRates() != null;
+  }
+
+  @Override
+  public void copyState(int from, int to) {
+   
   }
 }

@@ -153,7 +153,7 @@ public class ModelSetup
 
   private static void initializeModelStates(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
   {
-    StateType type = StateType.SPARSE;
+    StateType type = StateType.SCALAR;
 
     boolean isSSA = modelType == ModelType.HSSA;
     

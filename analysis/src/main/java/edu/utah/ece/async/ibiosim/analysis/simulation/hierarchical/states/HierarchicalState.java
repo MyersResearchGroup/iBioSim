@@ -52,7 +52,7 @@ public abstract class HierarchicalState
   public abstract void setStateValue(int index, double value);
   
 
-  public abstract void addState(int index);
+  public abstract void addState(int index, HierarchicalState state );
 
   public abstract void addState(int index, double value);
 
@@ -60,5 +60,6 @@ public abstract class HierarchicalState
 
   public abstract boolean isSetRate();
  
+  public abstract void copyState(int from, int to);
 
 }

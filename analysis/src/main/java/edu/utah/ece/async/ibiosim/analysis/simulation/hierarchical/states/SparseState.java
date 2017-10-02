@@ -47,9 +47,9 @@ public class SparseState extends TreeState
   }
 
   @Override
-  public void addState(int index)
+  public void addState(int index, HierarchicalState state )
   {
-    mapOfStates.put(index, new SparseState());
+    mapOfStates.put(index, state);
   }
   
   @Override
@@ -68,6 +68,12 @@ public class SparseState extends TreeState
   @Override
   protected boolean containsChild(int index) {
     return mapOfStates.containsKey(index);
+  }
+
+  @Override
+  public void copyState(int from, int to) {
+    mapOfStates.put(to, mapOfStates.get(from));
+    
   }
 
 }

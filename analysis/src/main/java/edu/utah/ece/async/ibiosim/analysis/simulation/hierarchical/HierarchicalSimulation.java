@@ -84,7 +84,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   private SBMLDocument          document;
   private String              abstraction;
   private int               totalRuns;
-
   protected final ArrayList<Double> initValues;
   protected double            initTotalPropensity;
   protected PriorityQueue<TriggeredEventNode>    triggeredEventList;
@@ -95,7 +94,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
-  final private SimType         type;
+
   protected List<HierarchicalModel>     modules;
   protected FunctionNode        totalPropensity;
   private double              initialTime, outputStartTime;
@@ -104,6 +103,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
 
   protected double currProgress, maxProgress;
 
+  final private SimType         type;
+  final private StateType atomicType;
+  final private StateType parentType;
+  
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
     String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
   {
@@ -117,6 +120,17 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.rootDirectory = rootDirectory;
     this.outputDirectory = outputDirectory;
     this.printConcentrationSpecies = new HashSet<String>();
+    
+    this.parentType = StateType.SPARSE;
+    if(type == SimType.HODE)
+    {
+      this.atomicType = StateType.VECTOR;
+    }
+    else
+    {
+      this.atomicType = StateType.SCALAR; 
+    }
+    
     if(interestingSpecies != null && interestingSpecies.length > 0)
     {
       this.interestingSpecies = new HashSet<String>();
@@ -127,7 +141,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     }
 
     this.maxProgress = timeLimit * runs;
-
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
     this.type = type;
@@ -138,9 +151,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.randomNumberGenerator = new Random(randomSeed);
     this.initialTime = initialTime;
     this.outputStartTime = outputStartTime;
-
     this.initValues = new ArrayList<Double>();
-
     this.writer = new HierarchicalTSDWriter();
     this.addPrintVariable("time", printTime, 0, false);
 
@@ -206,6 +217,8 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.randomNumberGenerator = copy.randomNumberGenerator;
     this.initValues = copy.initValues;
     this.hasEvents = copy.hasEvents;
+    this.atomicType = copy.atomicType;
+    this.parentType = copy.parentType;
     //this.totalPropensity = copy.totalPropensity;
   }
 
@@ -620,8 +633,17 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.topmodel = topmodel;
   }
 
+  public StateType getAtomicType()
+  {
+    return this.atomicType;
+  }
+  
+  public StateType getCollectionType()
+  {
+    return this.parentType;
+  }
 
-  public SimType getType()
+  public SimType getSimType()
   {
     return type;
   }
