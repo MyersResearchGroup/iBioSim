@@ -130,8 +130,8 @@ public class SpeciesNode extends VariableNode
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
         {
-          rate = rate * compartment.getValue(index);
-          rate = rate + getValue(index) / compartment.getValue(index) * compartmentChange;
+          double c = compartment.getValue(index);
+          rate = rate * c + getValue(index)  * compartmentChange / (c*c);
         }
         else
         {
@@ -144,7 +144,7 @@ public class SpeciesNode extends VariableNode
       rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
 
-    state.setRateValue(rate);
+    state.setRateValue(index, rate);
     return rate;
   }
 

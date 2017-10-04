@@ -42,9 +42,9 @@ public abstract class HierarchicalState
     this.value = value;
   }
   
-  public abstract void setRateValue(double value);
+  public abstract void setRateValue(int index, double value);
   
-  public abstract double getRateValue();
+  public abstract double getRateValue(int index);
  
 
   public abstract double getStateValue(int index);
@@ -58,7 +58,7 @@ public abstract class HierarchicalState
 
   public abstract HierarchicalState getState(int index);
 
-  public abstract boolean isSetRate();
+  public abstract boolean isSetRate(int index);
  
   public abstract void copyState(int from, int to);
 
