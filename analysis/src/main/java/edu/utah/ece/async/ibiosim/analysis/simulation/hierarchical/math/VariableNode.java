@@ -89,7 +89,7 @@ public class VariableNode extends HierarchicalNode
     if (rateRule != null)
     {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      state.setRateValue(rate);
+      state.getState(index).setRateValue(rate);
     }
     return rate;
   }

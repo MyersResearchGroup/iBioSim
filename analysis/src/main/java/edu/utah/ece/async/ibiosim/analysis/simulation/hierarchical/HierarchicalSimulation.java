@@ -144,7 +144,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
     this.type = type;
-    this.topmodel = new HierarchicalModel("topmodel");
+    this.topmodel = new HierarchicalModel("topmodel", 0);
     this.currentTime = new VariableNode("_time", StateType.SCALAR);
     this.hasEvents = false;
     this.currentRun = 1;
@@ -793,7 +793,13 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
           triggered.setFireTime(currentTime.getValue() + event.evaluateFireTime(index));
           if(event.isUseTriggerValue())
           {
-            triggered.setAssignmentValues(event.computeEventAssignmentValues(index, currentTime.getValue()));
+            double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getValue());
+            
+            if(eventAssignments != null)
+            {
+              triggered.setAssignmentValues(eventAssignments);  
+            }
+            
           }
           triggeredEventList.add(triggered);
           if(!event.isPersistent())

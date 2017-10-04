@@ -64,7 +64,7 @@ public class ReplacementSetup
 						{
 							if (sub.containsSubmodel(deletion.getIdRef()))
 							{
-								sub = top.getSubmodel(deletion.getIdRef());
+								sub = sub.getSubmodel(deletion.getIdRef());
 							}
 							if (deletion.isSetSBaseRef())
 							{
@@ -123,7 +123,7 @@ public class ReplacementSetup
 		}
 	}
 
-  static void setupReplacement(HierarchicalSimulation sim, SBase sbase, ModelContainer container)
+  static void setupReplacement(HierarchicalSimulation sim, SBase sbase, String id, ModelContainer container)
   {
     CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 
@@ -131,14 +131,15 @@ public class ReplacementSetup
     {
       if (sbasePlugin.isSetReplacedBy())
       {
-        //setupReplacedBy(sbasePlugin.getReplacedBy(), container);
+        ReplacedBy replacedBy = sbasePlugin.getReplacedBy();
+        setupReplacedElement(sim, id, replacedBy.getSubmodelRef(), replacedBy, container, false);
       }
 
       if (sbasePlugin.isSetListOfReplacedElements())
       {
         for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
         {
-          setupReplacedElement(element, container);
+          setupReplacedElement(sim, id,element.getSubmodelRef(), element, container, false);
         }
       }
     }
@@ -210,9 +211,8 @@ public class ReplacementSetup
 	}
 
 	
-	private static void setupReplacedElement(ReplacedElement element, ModelContainer container)
+	private static void setupReplacedElement(HierarchicalSimulation sim, String id, String subModelId, SBaseRef element, ModelContainer container, boolean isReplacedBy)
   {
-    String subModelId = element.getSubmodelRef();
     HierarchicalModel top = container.getHierarchicalModel();
     HierarchicalModel sub = top.getSubmodel(subModelId);
     CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
@@ -238,17 +238,28 @@ public class ReplacementSetup
       else
       {
         String subId = element.getIdRef();
-        sub.addDeletedByMetaId(subId);
+        sub.addDeletedBySid(subId);
       }
     }
     else if (element.isSetMetaIdRef())
     {
-      String subId = element.getMetaIdRef();
-      sub.addDeletedByMetaId(subId);
+      if(isReplacedBy)
+      {
+        top.addDeletedByMetaId(id);
+      }
+      else
+      {
+        String subId = element.getMetaIdRef();
+        sub.addDeletedByMetaId(subId);
+      }
     }
     else if (element.isSetPortRef())
     {
       Port port = compModel.getListOfPorts().get(element.getPortRef());
+      if(isReplacedBy)
+      {
+        top.addDeletedByMetaId(id);
+      }
       String subId = port.getMetaIdRef();
       sub.addDeletedByMetaId(subId);
     }

@@ -73,12 +73,6 @@ public final class HierarchicalModel
 	private FunctionNode  propensity;
 
 	private Map<String, HierarchicalModel>	idToSubmodel;
-	
-	
-	public HierarchicalModel(String submodelID)
-	{
-		this(submodelID, 0);
-	}
 
 	public HierarchicalModel(String submodelID, int index)
 	{

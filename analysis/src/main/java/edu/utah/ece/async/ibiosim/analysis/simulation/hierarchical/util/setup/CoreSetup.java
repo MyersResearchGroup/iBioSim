@@ -140,27 +140,18 @@ public class CoreSetup
   private static void setupConstraints(HierarchicalSimulation sim, ModelContainer container)
   {
 
-    int count = 0;
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
     for (Constraint constraint : model.getListOfConstraints())
     {
-      String id = null;
-      ReplacementSetup.setupReplacement(sim, constraint, container);
-      if (constraint.isSetMetaId())
-      {
-        if (modelstate.isDeletedByMetaId(constraint.getMetaId()))
-        {
-          continue;
-        }
 
-        id = constraint.getMetaId();
-      }
-      else
-      {
-        id = "constraint " + count++;
-      }
+      String id = constraint.isSetMetaId() ? constraint.getMetaId() : constraint.toString();
+      ReplacementSetup.setupReplacement(sim, constraint, id, container);
 
+      if (modelstate.isDeletedByMetaId(constraint.getMetaId()))
+      {
+        continue;
+      }
 
 
       ASTNode math = constraint.getMath();
@@ -182,18 +173,22 @@ public class CoreSetup
     HierarchicalModel modelstate = container.getHierarchicalModel();
     for (EventAssignment eventAssignment : event.getListOfEventAssignments())
     {
-
-      ReplacementSetup.setupReplacement(sim, eventAssignment, container);
+      String id = eventAssignment.isSetMetaId() ? eventAssignment.getMetaId() : eventAssignment.toString();
+      ReplacementSetup.setupReplacement(sim, eventAssignment, id, container);
       if (eventAssignment.isSetMetaId() && modelstate.isDeletedByMetaId(eventAssignment.getMetaId()) || !eventAssignment.isSetMath())
       {
         continue;
       }
 
-      ASTNode math = eventAssignment.getMath();
-      HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
-      VariableNode variable = modelstate.getNode(eventAssignment.getVariable());
-      FunctionNode eventAssignmentNode = new FunctionNode(variable, assignmentNode);
-      eventNode.addEventAssignment(eventAssignmentNode);
+      if(eventAssignment.isSetMath())
+      {
+        ASTNode math = eventAssignment.getMath();
+        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
+        VariableNode variable = modelstate.getNode(eventAssignment.getVariable());
+        FunctionNode eventAssignmentNode = new FunctionNode(variable, assignmentNode);
+        eventNode.addEventAssignment(eventAssignmentNode);
+      }
+      
     }
   }
 
@@ -209,7 +204,8 @@ public class CoreSetup
     for (Event event : model.getListOfEvents())
     {
 
-      ReplacementSetup.setupReplacement(sim, event, container);
+      String id = event.isSetId() ? event.getId() : event.isSetMetaId() ? event.getMetaId() : event.toString();
+      ReplacementSetup.setupReplacement(sim, event, id, container);
 
       if (modelstate.isDeletedBySId(event.getId()))
       {
@@ -281,12 +277,14 @@ public class CoreSetup
     HierarchicalModel modelstate = container.getHierarchicalModel();
     for (InitialAssignment initAssignment : model.getListOfInitialAssignments())
     {
-      ReplacementSetup.setupReplacement(sim, initAssignment, container);
+      String id = initAssignment.isSetMetaId() ? initAssignment.getMetaId() : initAssignment.toString();
+      ReplacementSetup.setupReplacement(sim, initAssignment, id, container);
 
       if (initAssignment.isSetMetaId() && modelstate.isDeletedByMetaId(initAssignment.getMetaId()))
       {
         continue;
       }
+      
       String variable = initAssignment.getVariable();
       VariableNode variableNode = modelstate.getNode(variable);
 
@@ -370,7 +368,9 @@ public class CoreSetup
   private static void setupProduct(HierarchicalSimulation sim, ModelContainer container, ReactionNode reaction, String productID, SpeciesReference product, VectorWrapper wrapper)
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
-    ReplacementSetup.setupReplacement(sim, product, container);
+    String id = product.isSetMetaId() ? product.getMetaId() : product.toString();
+    
+    ReplacementSetup.setupReplacement(sim, product, id, container);
     if (product.isSetId() && modelstate.isDeletedBySId(product.getId()))
     {
       return;
@@ -415,7 +415,9 @@ public class CoreSetup
   private static void setupReactant(HierarchicalSimulation sim, ModelContainer container, ReactionNode reaction, String reactantID, SpeciesReference reactant, VectorWrapper wrapper)
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
-    ReplacementSetup.setupReplacement(sim, reactant, container);
+    String id = reactant.isSetMetaId() ? reactant.getMetaId() : reactant.toString();
+    
+    ReplacementSetup.setupReplacement(sim, reactant,id, container);
     if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
     {
       return;
@@ -464,15 +466,17 @@ public class CoreSetup
     boolean split = modelstate.getModelType() == ModelType.HSSA;
     for (Reaction reaction : model.getListOfReactions())
     {
+
+      ReplacementSetup.setupReplacement(sim, reaction, wrapper, false, container);
+
       ReactionNode reactionNode = (ReactionNode) modelstate.getNode(reaction.getId());
+      
       if(reactionNode == null)
       {
         reactionNode = modelstate.addReaction(reaction.getId());
         reactionNode.addReactionState(modelstate.getIndex());
         reactionNode.createState(sim.getAtomicType(), wrapper);
-        modelstate.insertPropensity(reactionNode);
       }
-      ReplacementSetup.setupReplacement(sim, reaction, container);
       if (modelstate.isDeletedBySId(reaction.getId()))
       {
         continue;
@@ -482,6 +486,7 @@ public class CoreSetup
         continue;
       }
 
+      modelstate.insertPropensity(reactionNode);
       reactionNode.setValue(modelstate.getIndex(), 0);
       for (SpeciesReference reactant : reaction.getListOfReactants())
       {
@@ -539,8 +544,9 @@ public class CoreSetup
     Map<String, VariableNode> variableToNodes = modelstate.getVariableToNodeMap();
     for (Rule rule : model.getListOfRules())
     {
-      ReplacementSetup.setupReplacement(sim, rule, container);
-      if (rule.isSetMetaId() && modelstate.isDeletedByMetaId(rule.getMetaId()) || !rule.isSetMath())
+      String id = rule.isSetMetaId() ? rule.getMetaId() : rule.toString();
+      ReplacementSetup.setupReplacement(sim, rule, id, container);
+      if (modelstate.isDeletedByMetaId(rule.getMetaId()) || !rule.isSetMath())
       {
         continue;
       }

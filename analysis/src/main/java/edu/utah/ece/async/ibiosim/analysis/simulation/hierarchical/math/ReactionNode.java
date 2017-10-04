@@ -59,10 +59,6 @@ public class ReactionNode extends VariableNode
 	  reactionState.put(index, state);
 	  return state;
 	}
-	public List<SpeciesReferenceNode> getListOfReactants()
-	{
-		return reactants;
-	}
 
 	public void addReactant(SpeciesReferenceNode speciesRef)
 	{
@@ -103,16 +99,20 @@ public class ReactionNode extends VariableNode
 	public boolean computePropensity(int index)
 	{
 		double oldValue = getValue(index);
+		double newValue = 0;
 		if (forwardRate != null)
 		{
 			double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
-			setValue(index, forwardRateValue);
+			newValue = forwardRateValue + newValue;
 		}
 		if (reverseRate != null)
 		{
-			//TODO
+		  double reverseRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+		  newValue = reverseRateValue + newValue;
 		}
-		return oldValue != getValue(index);
+    setValue(index, newValue);
+    
+		return oldValue != newValue;
 	}
 
 	private void fireReaction(int index, boolean hasEnoughMolecules, List<SpeciesReferenceNode> reactants, List<SpeciesReferenceNode> products)
@@ -151,14 +151,14 @@ public class ReactionNode extends VariableNode
 	{
 		computeNotEnoughEnoughMolecules(index);
 		ReactionState state = reactionState.get(index);
-//		if (state.getForwardRateValue() >= threshold)
-//		{
+		if (state.getForwardRateValue() >= threshold)
+		{
 			fireReaction(index, state.hasEnoughMoleculesFd(), reactants, products);
-//		}
-//		else
-//		{
-//			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
-//		}
+		}
+		else
+		{
+			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
+		}
 	}
 
 	private void updateDependentReactions(int index, Set<ReactionNode> dependentReactions)
