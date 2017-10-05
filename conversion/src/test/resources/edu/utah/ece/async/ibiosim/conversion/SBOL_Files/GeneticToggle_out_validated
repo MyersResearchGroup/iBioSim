@@ -16,17 +16,6 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/TetR_Inverter_md/TetR/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter_md/TetR"/>
-        <sbol:displayId>TetR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>TetR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter__TetR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/TetR_Inverter_md/P0/1">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter_md/P0"/>
         <sbol:displayId>P0</sbol:displayId>
@@ -35,6 +24,17 @@
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter__P0/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/TetR_Inverter_md/TetR/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter_md/TetR"/>
+        <sbol:displayId>TetR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>TetR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter__TetR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -91,134 +91,6 @@
     </sbol:interaction>
     <sbol:model rdf:resource="http://www.async.ece.utah.edu/TetR_Inverter_model/1"/>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/1">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md"/>
-    <sbol:displayId>LacI_Inverter_md</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP"/>
-        <sbol:displayId>GFP</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>GFP</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__GFP/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR"/>
-        <sbol:displayId>TetR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>TetR</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__TetR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac"/>
-        <sbol:displayId>pLac</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>pLac</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__pLac/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI"/>
-        <sbol:displayId>LacI</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>LacI</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__LacI/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR"/>
-        <sbol:displayId>pLac_prod_TetR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/TetR/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/TetR"/>
-            <sbol:displayId>TetR</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/pLac/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/pLac"/>
-            <sbol:displayId>pLac</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac"/>
-        <sbol:displayId>LacI_rep_pLac</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/LacI/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/LacI"/>
-            <sbol:displayId>LacI</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/pLac/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/pLac"/>
-            <sbol:displayId>pLac</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP"/>
-        <sbol:displayId>pLac_prod_GFP</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/pLac/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/pLac"/>
-            <sbol:displayId>pLac</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/GFP/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/GFP"/>
-            <sbol:displayId>GFP</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_model/1"/>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/1">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md"/>
     <sbol:displayId>GeneticToggle_md</sbol:displayId>
@@ -235,23 +107,12 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/IPTG_LacI/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/IPTG_LacI"/>
-        <sbol:displayId>IPTG_LacI</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/LacI/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/LacI"/>
+        <sbol:displayId>LacI</sbol:displayId>
         <sbol:version>1</sbol:version>
-        <dcterms:title>IPTG_LacI</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__IPTG_LacI/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/aTc/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/aTc"/>
-        <sbol:displayId>aTc</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>aTc</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__aTc/1"/>
+        <dcterms:title>LacI</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__LacI/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -279,12 +140,23 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/LacI/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/LacI"/>
-        <sbol:displayId>LacI</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/IPTG_LacI/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/IPTG_LacI"/>
+        <sbol:displayId>IPTG_LacI</sbol:displayId>
         <sbol:version>1</sbol:version>
-        <dcterms:title>LacI</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__LacI/1"/>
+        <dcterms:title>IPTG_LacI</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__IPTG_LacI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/aTc/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/aTc"/>
+        <sbol:displayId>aTc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>aTc</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/GeneticToggle__aTc/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -491,13 +363,13 @@
         <sbol:version>1</sbol:version>
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/1"/>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/C1/TetR/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/C1/TetR"/>
-            <sbol:displayId>TetR</sbol:displayId>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/C1/GFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/C1/GFP"/>
+            <sbol:displayId>GFP</sbol:displayId>
             <sbol:version>1</sbol:version>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/TetR/1"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/GFP/1"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
         <sbol:mapsTo>
@@ -511,26 +383,146 @@
           </sbol:MapsTo>
         </sbol:mapsTo>
         <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/C1/GFP/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/C1/GFP"/>
-            <sbol:displayId>GFP</sbol:displayId>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/GeneticToggle_md/C1/TetR/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/C1/TetR"/>
+            <sbol:displayId>TetR</sbol:displayId>
             <sbol:version>1</sbol:version>
             <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1"/>
-            <sbol:local rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/GFP/1"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_md/TetR/1"/>
           </sbol:MapsTo>
         </sbol:mapsTo>
       </sbol:Module>
     </sbol:module>
   </sbol:ModuleDefinition>
-  <sbol:Model rdf:about="http://www.async.ece.utah.edu/GeneticToggle_model/1">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_model"/>
-    <sbol:displayId>GeneticToggle_model</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md"/>
+    <sbol:displayId>LacI_Inverter_md</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbol:source rdf:resource="file:src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML/GeneticToggle.xml"/>
-    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
-    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
-  </sbol:Model>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP"/>
+        <sbol:displayId>GFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>GFP</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__GFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR"/>
+        <sbol:displayId>TetR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>TetR</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__TetR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI"/>
+        <sbol:displayId>LacI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>LacI</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__LacI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac"/>
+        <sbol:displayId>pLac</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>pLac</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter__pLac/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR"/>
+        <sbol:displayId>pLac_prod_TetR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/TetR/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/TetR"/>
+            <sbol:displayId>TetR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/TetR/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/pLac/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_TetR/pLac"/>
+            <sbol:displayId>pLac</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac"/>
+        <sbol:displayId>LacI_rep_pLac</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/LacI/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/LacI"/>
+            <sbol:displayId>LacI</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/pLac/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/LacI_rep_pLac/pLac"/>
+            <sbol:displayId>pLac</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP"/>
+        <sbol:displayId>pLac_prod_GFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/pLac/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/pLac"/>
+            <sbol:displayId>pLac</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/GFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/pLac_prod_GFP/GFP"/>
+            <sbol:displayId>GFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_md/GFP/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_model/1"/>
+  </sbol:ModuleDefinition>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/LacI_Inverter_model/1">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/LacI_Inverter_model"/>
     <sbol:displayId>LacI_Inverter_model</sbol:displayId>
@@ -544,6 +536,14 @@
     <sbol:displayId>TetR_Inverter_model</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:source rdf:resource="file:file:TetR_Inverter.xml"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
+  </sbol:Model>
+  <sbol:Model rdf:about="http://www.async.ece.utah.edu/GeneticToggle_model/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/GeneticToggle_model"/>
+    <sbol:displayId>GeneticToggle_model</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:source rdf:resource="file:src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/GeneticToggle.xml"/>
     <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
     <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
   </sbol:Model>
