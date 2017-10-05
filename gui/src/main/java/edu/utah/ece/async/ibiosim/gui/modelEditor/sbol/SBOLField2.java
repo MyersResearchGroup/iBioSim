@@ -72,7 +72,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	private URI removedBioSimURI;
 	
 	//SBOL object fields that are being associated
-	private String associateObjID, associateObjName, associatedObjSBO;
+	private String associateObjName, associatedObjSBO;
 	
 	private String sbolType;
 	boolean isComponentDefinition = false;
@@ -253,14 +253,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		return associatedObjSBO != null;
 	}
 	
-	/**
-	 * Get the associated SBOL objects displayID.
-	 * @return SBOL object displayID
-	 */
-	public String getSBOLObjID()
-	{
-		return associateObjID;
-	}
 	
 	/**
 	 * Get the associated SBOL object name.
@@ -287,7 +279,6 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	private void updateSBMLFieldsFromSBOL(TopLevel sbolObj)
 	{
-		associateObjID = sbolObj.getDisplayId();
 		associateObjName = sbolObj.getName();
 		
 		/*
