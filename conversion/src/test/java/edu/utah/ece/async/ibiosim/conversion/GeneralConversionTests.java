@@ -28,6 +28,8 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	
 	private String uriPrefix = "http://www.async.ece.utah.edu/";
 	
+	//TODO: Currently, providing URI prefix to validation method is failing most of the test cases that starts off with an SBOL file
+	
 	@Test
 	public void test_validation(){
 		/* test validation on a valid sbol file. */
@@ -43,13 +45,20 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	@Test
 	public void test_cmd_e(){
 		/* compare SBOL files with same content but with different file name*/
-		String fileName = "CRISPR_example"; 
-		String fileName2 = "meherGolden_RepressionModel";
+		String inputfile = sbolDir + "CRISPR_example.xml";
+		String inputfile2 = sbolDir + "meherGolden_RepressionModel.xml";
 		
-		String inputfile = sbolDir + fileName + ".xml";
-		String inputfile2 = sbolDir + fileName2 + ".xml";
+		String[] converter_cmdArgs = {"-no", "-p", uriPrefix, inputfile, "-e", inputfile2, "-mf", "mainfileRes" , "-cf", "secondFileRes"};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_e2(){
+		/* compare SBOL files with same content but with different file name*/
+		String inputfile = sbolDir + "CRISPR_example.xml";
+		String inputfile2 = sbolDir + "meherGolden_RepressionModel.xml";
 		
-		String[] converter_cmdArgs = {"-no", inputfile, "-p", uriPrefix, "-e", inputfile2, "-mf", "mainfileRes" , "-cf", "secondFileRes"};
+		String[] converter_cmdArgs = {"-no", inputfile, "-e", inputfile2};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 
