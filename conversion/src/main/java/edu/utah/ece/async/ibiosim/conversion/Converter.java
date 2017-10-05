@@ -269,7 +269,8 @@ public class Converter {
 		if(!fullInputFileName.isEmpty())
 		{
 			//find out what input file format is
-			try {
+			try 
+			{
 				if(SBMLutilities.isSBMLFile(fullInputFileName))
 				{
 					inputIsSBML = true;

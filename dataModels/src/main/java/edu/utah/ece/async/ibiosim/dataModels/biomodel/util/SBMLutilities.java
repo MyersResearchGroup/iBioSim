@@ -281,10 +281,16 @@ public class SBMLutilities
 			{
 				continue;
 			}
-			else
+			else if(builder != null)
 			{
 				builder.append((char) c);
 			}
+			else
+			{
+				//we have a non xml file
+				return false;
+			}
+			
 		}
 		return false;
 	}

@@ -88,12 +88,26 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		/* convert sbol2genbank*/
 		String fileName = "acoA_full"; 
 		String inputfile = sbolDir + fileName + ".xml";
-		String outFile = genBank_outputDir + fileName + "_out";
+		String outFile = genBankDir + fileName + "_out";
 		
 		//Options
 		String outputLang = "GenBank";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outFile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_genbank2(){
+		/* convert genbank2sbol*/
+		String fileName = "sequence1"; 
+		String inputfile = genBankDir + fileName + ".gb";
+		String outFile = sbolDir + fileName + "_out";
+		
+		//Options
+		String outputLang = "SBOL2";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, inputfile, "-o", outFile, "-p", uriPrefix};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	
