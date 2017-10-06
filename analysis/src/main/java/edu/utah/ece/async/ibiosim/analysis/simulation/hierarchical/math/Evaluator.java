@@ -707,15 +707,15 @@ public final class Evaluator
 
       return value;
     }
-    else if (node.isReaction())
-    {
-      ReactionNode reaction = (ReactionNode) node;
-
-      if (reaction.hasEnoughMoleculesFd(index))
-      {
-        return reaction.getValue(index);
-      }
-    }
+//    else if (node.isReaction())
+//    {
+//      ReactionNode reaction = (ReactionNode) node;
+//
+//      if (reaction.hasEnoughMoleculesFd(index))
+//      {
+//        return reaction.getValue(index);
+//      }
+//    }
     
     return node.getValue(index);
   }

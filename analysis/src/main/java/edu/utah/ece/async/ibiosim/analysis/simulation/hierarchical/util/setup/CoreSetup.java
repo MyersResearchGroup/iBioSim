@@ -45,6 +45,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesN
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesReferenceNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.VariableType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
@@ -63,7 +64,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
  */
 public class CoreSetup
 {
-
   
   static void initializeModel(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
   {
@@ -87,7 +87,7 @@ public class CoreSetup
     VariableNode node;
     for (Compartment compartment : model.getListOfCompartments())
     {
-      ReplacementSetup.setupReplacement(sim, compartment, wrapper,false, container);
+      ReplacementSetup.setupReplacement(sim, compartment, wrapper,VariableType.VARIABLE, container);
       
       String printVariable = container.getPrefix() + compartment.getId();
       String compartmentID = compartment.getId();
@@ -327,7 +327,7 @@ public class CoreSetup
     for (Parameter parameter : model.getListOfParameters())
     {
 
-      ReplacementSetup.setupReplacement(sim, parameter, wrapper,false, container);
+      ReplacementSetup.setupReplacement(sim, parameter, wrapper,VariableType.VARIABLE, container);
       
       node = modelstate.getNode(parameter.getId());
       String printVariable = container.getPrefix() + parameter.getId();
@@ -339,11 +339,7 @@ public class CoreSetup
         int index = modelstate.getIndex();
         node.createState(sim.getAtomicType(), wrapper);
         node.getState().addState(index, 0);
-        
-        if(sim.getInterestingSpecies() == null)
-        {
-          sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
-        }
+       
       }
 
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
@@ -351,6 +347,11 @@ public class CoreSetup
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
+      if(sim.getInterestingSpecies() == null)
+      {
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
+      }
+      
       if (modelstate.isDeletedBySId(parameter.getId()))
       {
         continue;
@@ -467,7 +468,7 @@ public class CoreSetup
     for (Reaction reaction : model.getListOfReactions())
     {
 
-      ReplacementSetup.setupReplacement(sim, reaction, wrapper, false, container);
+      ReplacementSetup.setupReplacement(sim, reaction, wrapper, VariableType.REACTION, container);
 
       ReactionNode reactionNode = (ReactionNode) modelstate.getNode(reaction.getId());
       
@@ -477,6 +478,13 @@ public class CoreSetup
         reactionNode.addReactionState(modelstate.getIndex());
         reactionNode.createState(sim.getAtomicType(), wrapper);
       }
+      if(sim.getInterestingSpecies() == null)
+      {
+
+        String printVariable = container.getPrefix() + reaction.getId();
+        sim.addPrintVariable(printVariable, reactionNode, modelstate.getIndex(), false);
+      }
+      
       if (modelstate.isDeletedBySId(reaction.getId()))
       {
         continue;
@@ -515,6 +523,10 @@ public class CoreSetup
 
           String printVariable = container.getPrefix() + localParameter.getId();
           if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+          {
+            sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
+          }
+          else
           {
             sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
           }
@@ -614,7 +626,7 @@ public class CoreSetup
     for (Species species : model.getListOfSpecies())
     {
 
-      ReplacementSetup.setupReplacement(sim, species, wrapper,true, container);
+      ReplacementSetup.setupReplacement(sim, species, wrapper,VariableType.SPECIES, container);
 
       String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
@@ -638,6 +650,12 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
+      
+      if(sim.getInterestingSpecies() == null)
+      {
+        sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
+      }
+      
       if (modelstate.isDeletedBySId(species.getId()))
       {
         continue;
@@ -646,11 +664,7 @@ public class CoreSetup
       if(!species.getConstant())
       {
         modelstate.addVariable(node);
-       
-        if(sim.getInterestingSpecies() == null)
-        {
-          sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
-        }
+      
       }
       
       node.setBoundaryCondition(species.getBoundaryCondition());

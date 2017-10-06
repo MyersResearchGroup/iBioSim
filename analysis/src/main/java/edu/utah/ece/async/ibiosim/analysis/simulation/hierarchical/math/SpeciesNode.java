@@ -31,12 +31,13 @@ public class SpeciesNode extends VariableNode
   public SpeciesNode(String name)
   {
     super(name);
-    this.isSpecies = true;
+
+    varType = VariableType.SPECIES;
   }
 
   public SpeciesNode(SpeciesNode copy)
   {
-    this(copy.name);
+    super(copy);
     this.compartment = copy.compartment;
   }
 

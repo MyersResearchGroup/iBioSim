@@ -26,6 +26,8 @@ import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.VariableType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
@@ -146,7 +148,7 @@ public class ReplacementSetup
 
   }
   
-	static void setupReplacement(HierarchicalSimulation sim, AbstractNamedSBase sbase, VectorWrapper wrapper, boolean isSpecies, ModelContainer container)
+	static void setupReplacement(HierarchicalSimulation sim, AbstractNamedSBase sbase, VectorWrapper wrapper, VariableType varType , ModelContainer container)
 	{
 		CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 		String id = sbase.getId();
@@ -157,7 +159,7 @@ public class ReplacementSetup
 			{
 			  ReplacedBy replacedBy = sbasePlugin.getReplacedBy();
 			  String subModelId = replacedBy.getSubmodelRef();
-			  setupReplacedElement(sim, subModelId, replacedBy, id, container,  wrapper, isSpecies, true);
+			  setupReplacedElement(sim, subModelId, replacedBy, id, container,  wrapper, varType, true);
 			}
 
 			if (sbasePlugin.isSetListOfReplacedElements())
@@ -165,14 +167,14 @@ public class ReplacementSetup
 				for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
 				{
 	        String subModelId = element.getSubmodelRef();
-	        setupReplacedElement(sim, subModelId, element, id, container, wrapper, isSpecies, false);
+	        setupReplacedElement(sim, subModelId, element, id, container, wrapper, varType, false);
 				}
 			}
 		}
 
 	}
 
-	private static void setupReplacedElement(HierarchicalSimulation sim, String subModelId, SBaseRef element, String id, ModelContainer container, VectorWrapper wrapper, boolean isSpecies, boolean isReplacedBy)
+	private static void setupReplacedElement(HierarchicalSimulation sim, String subModelId, SBaseRef element, String id, ModelContainer container, VectorWrapper wrapper, VariableType varType, boolean isReplacedBy)
 	{
 		HierarchicalModel top = container.getHierarchicalModel();
 		HierarchicalModel sub = top.getSubmodel(subModelId);
@@ -194,19 +196,19 @@ public class ReplacementSetup
 				}
 
 				String subId = ref.getIdRef();
-				performReplacement(sim, id,  top,  subId,  sub,   wrapper, isSpecies, isReplacedBy);
+				performReplacement(sim, id,  top,  subId,  sub,   wrapper, varType, isReplacedBy);
 			}
 			else
 			{
 				String subId = element.getIdRef();
-				performReplacement(sim, id,  top,  subId,  sub,  wrapper, isSpecies, isReplacedBy);
+				performReplacement(sim, id,  top,  subId,  sub,  wrapper, varType, isReplacedBy);
 			}
 		}
 		else if (element.isSetPortRef())
 		{
 			Port port = compModel.getListOfPorts().get(element.getPortRef());
 			String subId = port.getIdRef();
-			performReplacement(sim, id,  top,  subId,  sub,   wrapper, isSpecies, isReplacedBy);
+			performReplacement(sim, id,  top,  subId,  sub,   wrapper, varType, isReplacedBy);
 		}
 	}
 
@@ -265,7 +267,7 @@ public class ReplacementSetup
     }
   }
   
-	private static void performReplacement(HierarchicalSimulation sim, String id, HierarchicalModel top, String subId, HierarchicalModel sub, VectorWrapper wrapper, boolean isSpecies, boolean isReplacedBy)
+	private static void performReplacement(HierarchicalSimulation sim, String id, HierarchicalModel top, String subId, HierarchicalModel sub, VectorWrapper wrapper, VariableType varType, boolean isReplacedBy)
 	{
 	  boolean hasTopNode = top.containsNode(id);
 	  boolean hasSubNode = sub.containsNode(subId);
@@ -274,12 +276,18 @@ public class ReplacementSetup
 	  
 	  if(!hasTopNode && !hasSubNode)
 	  {
-	    if(isSpecies)
+	    if(varType == VariableType.SPECIES)
 	    {
 	      node = new SpeciesNode(id);
 	      ((SpeciesNode)node).createSpeciesTemplate();
 	    }
-	    else
+	    else if(varType == VariableType.REACTION)
+	    {
+	      node = new ReactionNode(id);
+	     ((ReactionNode) node).addReactionState(top.getIndex());
+	     ((ReactionNode) node).copyReactionState(top.getIndex(), sub.getIndex());
+	    }
+	    else if(varType == VariableType.VARIABLE)
 	    {
 	      node = new VariableNode(id);
 	    }
@@ -305,12 +313,20 @@ public class ReplacementSetup
       node = sub.getNode(subId);
       top.addMappingNode(id, node);
       node.getState().copyState(sub.getIndex(), top.getIndex());
+      if(varType == VariableType.REACTION)
+      {
+       ((ReactionNode) node).copyReactionState(sub.getIndex(), top.getIndex());
+      }
     }
 	  else
 	  {
 	    node = top.getNode(id);
       sub.addMappingNode(subId, node);
       node.getState().copyState(top.getIndex(), sub.getIndex());
+      if(varType == VariableType.REACTION)
+      {
+       ((ReactionNode) node).copyReactionState(top.getIndex(), sub.getIndex());
+      }
 	  }
 	  
     if(isReplacedBy)

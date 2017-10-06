@@ -43,22 +43,29 @@ public class ReactionNode extends VariableNode
 	public ReactionNode(String name)
 	{
 		super(name);
-		isReaction = true;
+		varType = VariableType.REACTION;
 		reactionState = new HashMap<Integer, ReactionState>();
 	}
 
 	public ReactionNode(ReactionNode copy)
 	{
 		super(copy);
-		isReaction = true;
 	}
 
-	public ReactionState addReactionState(int index)
+	public void addReactionState(int index)
 	{
 	  ReactionState state = new ReactionState();
 	  reactionState.put(index, state);
-	  return state;
 	}
+	
+	 public void copyReactionState(int from, int to)
+	  {
+	    ReactionState state = reactionState.get(from);
+	    if(state != null)
+	    {
+	      reactionState.put(to, state);
+	    }
+	  }
 
 	public void addReactant(SpeciesReferenceNode speciesRef)
 	{
@@ -242,6 +249,6 @@ public class ReactionNode extends VariableNode
 	}
 	
 	 public boolean hasEnoughMoleculesFd(int index) {
-	    return reactionState.get(index).hasEnoughMoleculesFd();
+	   return reactionState.get(index).hasEnoughMoleculesFd();
 	  }
 }

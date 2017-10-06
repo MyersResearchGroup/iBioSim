@@ -29,7 +29,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class VariableNode extends HierarchicalNode
 {
-
+  
   protected boolean			isVariableConstant;
   protected boolean hasRule;
   protected boolean hasInitRule;

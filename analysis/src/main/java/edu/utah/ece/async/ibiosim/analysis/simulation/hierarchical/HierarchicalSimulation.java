@@ -122,7 +122,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.printConcentrationSpecies = new HashSet<String>();
     
     this.parentType = StateType.SPARSE;
-    if(type == SimType.HODE)
+    if(type == SimType.HODE || type == SimType.MIXED)
     {
       this.atomicType = StateType.VECTOR;
     }
