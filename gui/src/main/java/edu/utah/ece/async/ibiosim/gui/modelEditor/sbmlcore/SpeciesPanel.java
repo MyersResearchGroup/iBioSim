@@ -900,8 +900,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					{
 						/*
 						 * The user has annotated a promoter to the SBML species. We will need to remove this species
-						 * and create a SBML promoter. This will allow the user to correctly edit their annotated 
-						 * part as an SBML promoter rather than a SBML species with a promoter SBO type.
+						 * and create an SBML promoter. This will allow the user to correctly edit their annotated 
+						 * part as an SBML promoter rather than an SBML species with a promoter SBO type.
 						 */
 						// create a new promoter so that all the fields are set properly.
 						String id ; //TODO: modify to mouse position
@@ -911,16 +911,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							
 							// annotate the new promoter 
 							setSBOLAnnotation(promoter);
-							// TODO: remvoed this as changing id can cause conflicts
-//							try 
-//							{
-//								bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
-//							} 
-//							catch (BioSimException e) 
-//							{
-//								JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-//										JOptionPane.ERROR_MESSAGE);
-//							}
+							
 							// remove the old species to indicate it was transformed into a promoter
 							modelEditor.removeSpecies(species.getId());
 							modelEditor.refresh();
@@ -928,9 +919,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						}
 						else
 						{
-							JOptionPane.showMessageDialog(Gui.frame, 
-									"Unable to create SBML element", 
+							JOptionPane.showMessageDialog(Gui.frame,  
 									"Null pointer was encountered when creating a promoter.", 
+									"Unable to create SBML element",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -938,26 +929,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					if (!species.isSetMetaId() || species.getMetaId().equals(""))
 						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
 								bioModel.getMetaIDIndex());
-					//try 
-					//{
-						/*
-						 * After SBOLAnnotation is performed, the id of the SBOL object will be set to the SBML element's id.
-						 * When this happen, SBML id could conflict if you annotate multiple SBML element with the same SBOL object.
-						 * To resolve this, make the SBML id unique.
-						 */
-						if(sbolField.isSBOLIDSet())
-						{
-							// TODO: removed this as it can cause id conflicts
-							//newSpeciesID = sbolField.getSBOLObjID();
-							//bioModel.changeSpeciesId(selected, SBMLutilities.getUniqueSBMLId(newSpeciesID, bioModel));
-							setSBOLAnnotation(species);
-						}
-					//} 
-					//catch (BioSimException e) 
-					//{
-					//	JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
-					//			JOptionPane.ERROR_MESSAGE);
-					//}
+					
+					//Set SBOL annotation to SBML species
+					setSBOLAnnotation(species);
 				} 
 				else 
 				{
