@@ -34,7 +34,6 @@ public abstract class ConversionAbstractTests {
 	
 	//output dir
 	protected String genBankDir = conversionResourceDir + "GenBank_Files/";
-	
 	protected String sbmlDir = conversionResourceDir + "SBML_Files/";
 	protected String sbolDir = conversionResourceDir + "SBOL_Files/";
 

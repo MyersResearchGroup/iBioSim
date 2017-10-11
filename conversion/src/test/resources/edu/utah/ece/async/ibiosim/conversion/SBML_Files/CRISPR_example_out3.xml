@@ -420,21 +420,21 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template/target_gene/1.0.0">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template/target_gene"/>
-        <sbol:displayId>target_gene</sbol:displayId>
-        <sbol:version>1.0.0</sbol:version>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/target_gene"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template/target/1.0.0">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template/target"/>
         <sbol:displayId>target</sbol:displayId>
         <sbol:version>1.0.0</sbol:version>
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/target"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template/target_gene/1.0.0">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template/target_gene"/>
+        <sbol:displayId>target_gene</sbol:displayId>
+        <sbol:version>1.0.0</sbol:version>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/target_gene"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
