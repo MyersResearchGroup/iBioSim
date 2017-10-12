@@ -90,7 +90,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		//Options
 		String outputLang = "SBML";	
 		
-		String[] converter_cmdArgs = {"-no", "-l", outputLang, sbolDir, "-p", uriPrefix, inputfile};
+		String[] converter_cmdArgs = {"-no", "-l", outputLang, "-p", uriPrefix, inputfile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	
@@ -158,6 +158,18 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		String outputFile = sbolDir + "CRPb_characterization_Circuit_output.xml";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-rsbml", sbmlDir, "-p", uriPrefix, inputfile, "-o", outputFile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbml4() throws IOException{
+		/* convert sbol2sbml and print to console*/
+		String inputfile = sbolDir + "INV0_output.xml";
+		
+		//Options
+		String outputLang = "SBML";	
+		
+		String[] converter_cmdArgs = {"-l", outputLang,inputfile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
 	}
 	

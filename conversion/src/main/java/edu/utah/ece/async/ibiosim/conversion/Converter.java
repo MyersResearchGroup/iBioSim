@@ -13,7 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -304,6 +303,11 @@ public class Converter {
 			ref_sbolInputFilePath = SBOLUtility.getSBOLFilesFromPath(externalSBOLPath);
 		}
 		
+		if(genBankOut == false && fastaOut == false && sbolV1out == false && sbolV2out == false && sbmlOut == false)
+		{
+			isValidation = true;
+		}
+		
 		//If the output directory is empty, get the path from the output file name that the user has specified
 		// since we assume that the user will always provide the full path for the output file name.
 		String outFileName = "";
@@ -316,11 +320,12 @@ public class Converter {
 				outputDir = outputFilePath.getParent();
 			}
 		}
-		
-		if(genBankOut == false && fastaOut == false && sbolV1out == false && sbolV2out == false && sbmlOut == false)
+		if(outFileName.isEmpty() && !noOutput && !isValidation && !isDiffFile)
 		{
-			isValidation = true;
+			System.err.println("ERROR: Unless result is indicated to print to console, you must provide an output file name to perform any form of conversion.");
+			usage();
 		}
+		
 		
 		File file = new File(fullInputFileName); 
 		boolean isDirectory = file.isDirectory();
