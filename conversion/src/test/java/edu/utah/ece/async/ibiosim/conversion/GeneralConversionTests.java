@@ -83,6 +83,18 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	}
 	
 	@Test
+	public void test_cmd_l_sbml3() throws IOException{
+		/* convert sbol2sbml and print to console*/
+		String inputfile = sbolDir + "INV0_output.xml";
+		
+		//Options
+		String outputLang = "SBML";	
+		
+		String[] converter_cmdArgs = {"-no", "-l", outputLang, sbolDir, "-p", uriPrefix, inputfile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
 	public void test_cmd_l_genbank(){
 		/* convert sbol2genbank*/
 		String inputfile = sbolDir + "acoA_full.xml";
@@ -116,7 +128,7 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 		
 		//Options
 		String outputLang = "SBOL2";
-		String outputFile = sbolDir +"INV0_output.xml";
+		String outputFile = sbolDir +"INV0_output";
 		
 		String[] converter_cmdArgs = {"-l", outputLang, "-p", uriPrefix, inputfile, "-o", outputFile};
 		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
@@ -124,6 +136,19 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	
 	@Test
 	public void test_cmd_l_sbol2()
+	{
+		/* convert sbml2sbol and print result to console*/
+		String inputfile = sbmlDir + "INV0.xml";
+		
+		//Options
+		String outputLang = "SBOL2";
+		
+		String[] converter_cmdArgs = {"-no", "-l", outputLang, "-p", uriPrefix, inputfile};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+	}
+	
+	@Test
+	public void test_cmd_l_sbol3()
 	{
 		/* convert sbml2sbol with external SBML files using -rsbml*/
 		String inputfile = sbmlDir + "CRPb_characterization_Circuit.xml";
