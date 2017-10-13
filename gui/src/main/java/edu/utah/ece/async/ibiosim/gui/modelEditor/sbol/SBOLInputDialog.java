@@ -303,11 +303,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		//Get information for main design layout and load them up
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootComponentDefinitions());
 		}
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showModDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootModuleDefinitions());
 		}
@@ -459,6 +459,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		else if (!showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			CDsToDisplay = sbolDesigns.getComponentDefinitions();
+			System.out.println("Total sbolLib: " + sbolDesigns.getComponentDefinitions().size());
 		}
 		else
 		{
@@ -467,6 +468,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		
 		List<ComponentDefinition> components = SBOLUtils.getCDOfRole(CDsToDisplay, part);
 		components = SBOLUtils.getCDOfType(components, (Types) typeSelection.getSelectedItem());
+		System.out.println("Total retreived: " + components.size());
 		return components;
 	}
 	
