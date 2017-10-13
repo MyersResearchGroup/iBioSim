@@ -60,8 +60,9 @@ import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 
 /**
- * 
+ * This is the UI implementation to perform technology mapping.
  *
+ * @author Tramy Nguyen
  * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
@@ -70,18 +71,19 @@ import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 public class SynthesisView extends JTabbedPane implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = 1L;
-	private String synthID;
-	private String separator;
-	private String rootFilePath;
-	private Log log;
+	private String synthID; // ID of synthesis file
+	private String separator; 
+	private String rootFilePath; // Path to the iBioSim project
+	
+	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
-	private Properties synthProps;
+	private Properties synthProps; // Stores fields needed for SBML (Nic's) technology mapping in a property file
 	private JTextField specText;
 	private List<String> libFilePaths;
-	private JList libList;
+	private JList<String> libList; // The path to all the gate library files.
+	
 	private JScrollPane libScroll;
-	private JButton addLibButton;
-	private JButton removeLibButton;
+	private JButton addLibButton, removeLibButton;
 	private JComboBox methodBox;
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
@@ -89,18 +91,34 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JRadioButton select_SBMLTechMap;
 	private JRadioButton select_SBOLTechMap;
 
-	public SynthesisView(String synthID, String separator, String rootFilePath, Log log) {
+	/**
+	 * Constructor to create the technology mapping for the UI.
+	 * 
+	 * @param synthID - ID of synthesis file
+	 * @param separator - Separator used for specifying path
+	 * @param rootFilePath - Path to the iBioSim project
+	 * @param log - Log file used in each iBioSim project
+	 */
+	public SynthesisView(String synthID, String separator, String rootFilePath, Log log) 
+	{
 		this.synthID = synthID;
 		this.separator = separator;
 		this.rootFilePath = rootFilePath;
 		this.log = log;
-		new File(rootFilePath + separator + synthID).mkdir();
-		JPanel optionsPanel = constructOptionsPanel();
-		addTab("Synthesis Options", optionsPanel);
-		getComponentAt(getComponents().length - 1).setName("Synthesis Options"); 
+		
+		new File(rootFilePath + separator + synthID).mkdir(); // Create the synthesis directory
+		JPanel optionsPanel = constructOptionsPanel(); // Create the UI for the synthesis view
+		addTab("Synthesis Options", optionsPanel); // Create a tab in the iBioSim workspace for technology mapping
+		getComponentAt(getComponents().length - 1).setName("Synthesis Options"); // Set the title of the technology mapping tab.
 	}
 
-	private JPanel constructOptionsPanel() {
+	/**
+	 * Create all panels to be displayed in the Synthesis View needed for performing technology mapping.
+	 * 
+	 * @return The complete panel for Synthesis View 
+	 */
+	private JPanel constructOptionsPanel() 
+	{
 		JPanel topPanel = new JPanel();
 		JPanel optionsPanel = new JPanel(new BorderLayout());
 		JPanel specLibPanel = constructSpecLibPanel();
@@ -111,7 +129,13 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return topPanel;
 	}
 
-	private JPanel constructSpecLibPanel() {
+	/**
+	 * Construct the technology mapping library gate panel for users to upload the library file(s).
+	 * 
+	 * @return The library file panel that was constructed for technology mapping.
+	 */
+	private JPanel constructSpecLibPanel() 
+	{
 		JPanel specLibPanel = new JPanel();
 		JLabel libLabel = new JLabel("Library Files: ");
 		JPanel inputPanel = constructSpecLibInputPanel();
@@ -120,7 +144,13 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return specLibPanel;
 	}
 
-	private JPanel constructSpecLibInputPanel() {
+	/**
+	 * Construct the scrolling text box where the names of the gate library files are loaded in.
+	 * 
+	 * @return The panel of the scrolling text box to store the gate library files
+	 */
+	private JPanel constructSpecLibInputPanel() 
+	{
 		JPanel inputPanel = new JPanel(new BorderLayout());
 		JPanel specPanel = constructSpecPanel();
 		libScroll = new JScrollPane();
@@ -132,6 +162,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return inputPanel;
 	}
 
+	/**
+	 * Create the specification panel for technology mapping.
+	 * @return The specification panel.
+	 */
 	private JPanel constructSpecPanel() {
 		JPanel specPanel = new JPanel();
 		JLabel specLabel = new JLabel("Specification File:");
@@ -142,6 +176,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return specPanel;
 	}
 
+	/**
+	 * Create buttons to add and remove gate library files.
+	 * @return the button panel for the gate library
+	 */
 	private JPanel constructLibButtonPanel() {
 		JPanel buttonPanel = new JPanel();
 		addLibButton = new JButton("Add");
@@ -154,10 +192,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	/**
-	 * Create a Synthesis View Dialog 
-	 * @return
+	 * Create the supported technology mapping algorithms panel.
+	 * @return The technology mapping algorithms panel
 	 */
-	private JPanel constructMethodPanel() {
+	private JPanel constructMethodPanel() 
+	{
 		JPanel topPanel = new JPanel();
 		JPanel methodPanel = new JPanel(new BorderLayout());
 		JPanel labelPanel = constructMethodLabelPanel();
@@ -172,7 +211,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	/**
 	 * Set up technology mapping buttons on Synthesis View for user to select
-	 * @return
+	 * @return the technology mapping option panel.
 	 */
 	private JPanel constructTechnologyMappingOptions(){
 		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
@@ -188,7 +227,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	/**
 	 * Set method label in Synthesis View
-	 * @return
+	 * @return The label panel for the synthesis method.
 	 */
 	private JPanel constructMethodLabelPanel() {
 		JPanel labelPanel = new JPanel(new GridLayout(2, 1));
@@ -200,7 +239,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	/**
 	 * Set method input that user selected from Synthesis View
-	 * @return
+	 * @return The method panel
 	 */
 	private JPanel constructMethodInputPanel() {
 		JPanel inputPanel = new JPanel(new GridLayout(2, 1));
@@ -214,8 +253,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	/**
-	 * Load up Synthesis View Window
-	 * @param specFileID
+	 * Load default fields for Synthesis View Window
+	 * @param specFileID - ID of specification file.
 	 */
 	public void loadDefaultSynthesisProperties(String specFileID) {
 		synthProps = createDefaultSynthesisProperties(specFileID);
@@ -224,11 +263,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	/**
-	 * Set default fields in Synthesis View Window
-	 * @param specFileID
-	 * @return
+	 * Get default fields to set the Synthesis View panel.
+	 * @param specFileID - Synthesis View id
+	 * @return 
 	 */
-	private static Properties createDefaultSynthesisProperties(String specFileID) {
+	private static Properties createDefaultSynthesisProperties(String specFileID) 
+	{
 		Properties synthProps = new Properties();
 		Preferences prefs = Preferences.userRoot();
 		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileID);
@@ -242,19 +282,34 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return synthProps;
 	}
 
+	/**
+	 * Save the fields needed for SBML (Nic's) Technology mapping in the property file
+	 */
 	private void saveSynthesisProperties() 
 	{
 		String propFilePath = rootFilePath + separator + synthID + separator + synthID 
 				+ GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION;
 		log.addText("Creating properties file:\n" + propFilePath + "\n");
-		try {
+		try 
+		{
 			FileOutputStream propStreamOut = new FileOutputStream(new File(propFilePath));
 			synthProps.store(propStreamOut, synthID + " SBOL Synthesis Properties");
 			propStreamOut.close();
-		} catch (FileNotFoundException e) {
+		} 
+		catch (FileNotFoundException e) 
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Unable to write SBML Technology Mapping property file to the specified " + propFilePath + ".",
+					"File Not Created",
+					JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Unable to create SBML Technology Mapping property file.",
+					"File Not Created",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -263,6 +318,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		loadSynthesisOptions();
 	}
 
+	/**
+	 * Load fields stored in property file to the Synthesis View panel.
+	 */
 	private void loadSynthesisOptions() 
 	{
 		specText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
@@ -270,7 +328,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		for (String libFilePath : synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(","))
 			if (libFilePath.length() > 0)
 				libFilePaths.add(libFilePath);
-		libList = new JList();
+		libList = new JList<String>();
 		updateLibraryFiles();
 		libScroll.setViewportView(libList);
 		methodBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY));
@@ -352,6 +410,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	//			}
 	//	}
 
+	/**
+	 * Retrieve the path for all the gate library files and store them in the global variable liblist.
+	 */
 	private void updateLibraryFiles() 
 	{
 		//NOTE: go through all file path in libFilePaths and add to libList

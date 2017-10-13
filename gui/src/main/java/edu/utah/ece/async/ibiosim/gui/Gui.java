@@ -8245,18 +8245,26 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	/**
+	 * Create a synthesis tab to perform technology mapping in the iBioSim workspace
+	 */
 	private void createSBOLSynthesisView() {
 		String specFileID = GlobalConstants.getFilename(tree.getFile());
 		String defaultSynthID = specFileID.replace(".xml", "");
 		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
 				"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
-		if (synthID != null) {
-			if (synthID.length() == 0) {
+		if (synthID != null) 
+		{
+			if (synthID.length() == 0) 
+			{
 				synthID = defaultSynthID;
-			} else {
+			} 
+			else 
+			{
 				synthID = synthID.trim();
 			}
-			if (overwrite(root + File.separator + synthID, synthID)) {
+			if (overwrite(root + File.separator + synthID, synthID)) 
+			{
 				SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
@@ -9852,6 +9860,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return true;
 	}
 
+	/**
+	 * Check if the given name for the file to be created and the path of the file already exist within the iBioSim 
+	 * project workspace. If the file name exist, the user will be ask to overwrite the existing file. 
+	 * 
+	 * @param fullPath - The full path of the file to be created.
+	 * @param name - The name of the file to be created
+	 * @return True if the method complete successfully. Otherwise, false is returned if the user did not want to overwrite the existing file
+	 */
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			String[] views = canDelete(name);
