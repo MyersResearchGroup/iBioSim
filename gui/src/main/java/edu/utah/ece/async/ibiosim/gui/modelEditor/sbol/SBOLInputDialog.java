@@ -256,13 +256,24 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+					TopLevel deletedObject = null;
+					
 					int[] rows = table.getSelectedRows();
 					for (int row : rows) {
 						row = table.convertRowIndexToModel(row);
 						TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
 						sbolDesigns.removeTopLevel(comp);
+						
+						deletedObject = comp;
 					}
 					File file = SBOLUtils.setupFile();
+					
+					JOptionPane.showMessageDialog(Gui.frame, "Warning! You are about to remove the following SBOL component from the SBOL library file: \n"
+							+ "SBOL library file at: " + file.getAbsolutePath() + "\n"
+							+ "SBOL id: " + deletedObject.getIdentity() + "\n"
+							+ "SBOL displayId: " + deletedObject.getDisplayId() + "\n"
+							+ "SBOL name: " + deletedObject.getName());
+					
 					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
