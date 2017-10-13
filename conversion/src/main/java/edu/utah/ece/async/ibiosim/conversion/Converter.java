@@ -310,17 +310,37 @@ public class Converter {
 		
 		//If the output directory is empty, get the path from the output file name that the user has specified
 		// since we assume that the user will always provide the full path for the output file name.
-		String outFileName = "";
 		if(!outputFileName.isEmpty())
 		{
-			File outputFilePath = new File(outputFileName);
-			outFileName = outputFilePath.getName();
+			String tempFile = outputFileName;
+			File outputFilePath = new File(tempFile);
+	
 			if(outputDir.isEmpty())
 			{
-				outputDir = outputFilePath.getParent();
+				outputFileName = outputFilePath.getName();
+				String tempDir = outputFilePath.getParent();
+				if(tempDir == null)
+				{
+					System.err.println("ERROR: We require that your output file must be provided as a full path (i.e. location/of/outputFile.xml)");
+					usage();
+				}
+				else
+				{
+					outputDir = outputFilePath.getParent();
+				}
+			}
+			else
+			{
+				//The user specified both the output directory and an output file so 
+				//update the output file name and leave the output directory as is.
+				outputFileName = outputFilePath.getName();
 			}
 		}
-		if(outFileName.isEmpty() && !noOutput && !isValidation && !isDiffFile)
+		else if(outputFileName.isEmpty() && !outputDir.isEmpty())
+		{
+			outputFileName = "default_iBioSimOutput";
+		}
+		else if(outputFileName.isEmpty() && !noOutput && !isValidation && !isDiffFile)
 		{
 			System.err.println("ERROR: Unless result is indicated to print to console, you must provide an output file name to perform any form of conversion.");
 			usage();
@@ -418,7 +438,7 @@ public class Converter {
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
 							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-							SBMLutilities.exportSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
+							SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 						} 
 						else
 						{
@@ -426,7 +446,7 @@ public class Converter {
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
 								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-								SBMLutilities.exportSBMLModels(models, outputDir, outFileName, noOutput, sbmlOut, singleSBMLOutput);
+								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
 					}
@@ -468,7 +488,7 @@ public class Converter {
 			{
 				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outFileName, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
 						showDetail, noOutput);
 			}
 		}
