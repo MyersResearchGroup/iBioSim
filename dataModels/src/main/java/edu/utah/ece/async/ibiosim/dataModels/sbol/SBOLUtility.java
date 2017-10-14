@@ -450,19 +450,27 @@ public class SBOLUtility
 		return null;
 	}
 
-	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
+	/**
+	 * Retrieve property file for synthesis view 
+	 * 
+	 * @param synthFilePath - Path to property file for synthesis view
+	 * @param separator - a separator to handle directory
+	 * @param frame - the UI frame that this synthesis view is operating on.
+	 * @return The property file for synthesis view
+	 * @throws IOException - Synthesis specification property is missing.
+	 */
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) throws IOException {
 		Properties synthProps = new Properties();
 		for (String synthFileID : new File(synthFilePath).list())
-			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-				try {
+		{
+			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) 
+			{
 					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
 					synthProps.load(propStreamIn);
 					propStreamIn.close();
 					return synthProps;
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-				}
 			}	
+		}
 		return synthProps;
 	}
 

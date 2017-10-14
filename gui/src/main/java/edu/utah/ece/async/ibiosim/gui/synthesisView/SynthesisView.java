@@ -263,8 +263,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	/**
-	 * Get default fields to set the Synthesis View panel.
-	 * @param specFileID - Synthesis View id
+	 * Get default fields to set the Synthesis View panel by storing the fields in a property file.
+	 * @param specFileID - ID of specification file
 	 * @return 
 	 */
 	private static Properties createDefaultSynthesisProperties(String specFileID) 
@@ -336,13 +336,20 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) 
+	{
 		if (e.getSource() == addLibButton)
+		{
 			addLibraryFile(libList.getSelectedIndex());
+		}
 		else if (e.getSource() == removeLibButton)
+		{
 			removeLibraryFiles(libList.getSelectedIndices());
+		}
 		else if (e.getSource() == methodBox)
+		{
 			toggleMethodSettings();
+		}
 		else if(e.getSource() == select_SBMLTechMap)
 		{
 			if(select_SBMLTechMap.isSelected())
@@ -376,16 +383,28 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			numSolnsText.setText("1");
 	}
 
+	/**
+	 * 
+	 * @param addIndex - The index location that was returned from file browser dialog to retrieve gate library file.
+	 */
 	private void addLibraryFile(int addIndex) 
 	{
+		//Go to the directory where this iBioSim project is located.
 		File startDirectory = new File(Preferences.userRoot().get("biosim.general.project_dir", ""));
+		
+		//Retrieve the user's selected directory where the library of gates are stored.
 		String libFilePath = Utility.browse(frame, startDirectory, null, 
 				JFileChooser.DIRECTORIES_ONLY, "Open", -1);
-		if (libFilePath.length() > 0 && !libFilePaths.contains(libFilePath)) {
+		if (libFilePath.length() > 0 && !libFilePaths.contains(libFilePath)) 
+		{
 			if (addIndex >= 0)
+			{
 				libFilePaths.add(addIndex, libFilePath);
+			}
 			else
+			{
 				libFilePaths.add(libFilePath);
+			}
 			updateLibraryFiles();
 		}
 	}
@@ -429,36 +448,59 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	}
 
-	public List<String> run(String synthFilePath) {
-		//NOTE: find all .sbol files and create an sbol document to its corresponding .sbol file.
+	/**
+	 * Perform SBML Technology Mapping
+	 * @param synthFilePath - Path to the synthesis file attached to the specification SBML document to perform technology mapping
+	 * @return
+	 */
+	public List<String> run(String synthFilePath) 
+	{
 		if(select_SBMLTechMap.isSelected())
 		{
-			try{
+			try
+			{
+				//Find all .sbol files and create an SBOLDocument to its corresponding .sbol file.
 				Set<String> sbolFilePaths = new HashSet<String>();
 				for (String libFilePath : libFilePaths) 
+				{
 					for (String fileID : new File(libFilePath).list())
+					{
 						if (fileID.endsWith(".sbol"))
+						{
 							sbolFilePaths.add(libFilePath + separator + fileID);
+						}
+					}
+				}
 				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
-				//		boolean flatImport = libFilePaths.size() > 1;
-				//NOTE: find .xml files and create a bioModel for each file and load them to the synthesis graph library
-				//		This is where the loading of the SBML library takes place
+				//boolean flatImport = libFilePaths.size() > 1;
+				
+				/* Find .xml files for the available library of gates and create a bioModel for each file then load 
+				 * them to the synthesis graph library.
+				 * This is where the loading of the SBML library takes place. 
+				 */
 				for (String libFilePath : libFilePaths) 
+				{
 					for (String gateFileID : new File(libFilePath).list()) 
-						if (gateFileID.endsWith(".xml")) {
+					{
+						if (gateFileID.endsWith(".xml")) 
+						{
 							BioModel gateModel = new BioModel(libFilePath);
-							try {
+							try 
+							{
 								gateModel.load(gateFileID);
-							} catch (XMLStreamException e) {
+							} 
+							catch (XMLStreamException e) 
+							{
 								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 								e.printStackTrace();
 							}
 							graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
 						}
-
-				//Note: load synthProps that has synthesis.spec as property into the biomodel
+					}
+				}
+				//Load synthProps that has synthesis.spec as property into the biomodel
 				BioModel specModel = new BioModel(rootFilePath); 
 				try {
 					specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
@@ -477,22 +519,30 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
 				return solutionFileIDs;
 			}
-			catch (SBOLValidationException e) {
+			catch (SBOLValidationException e) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;
-			} catch (SBOLException e) {
+			} 
+			catch (SBOLException e) 
+			{
 				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 						e.getTitle(), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
-			} catch (FileNotFoundException e) {
+			} 
+			catch (FileNotFoundException e) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) 
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SBOLConversionException e) {
+			} 
+			catch (SBOLConversionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

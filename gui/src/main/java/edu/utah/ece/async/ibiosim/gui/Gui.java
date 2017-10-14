@@ -8273,15 +8273,27 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	/**
+	 * Open up the Synthesis View and load up the fields that were stored in the property file 
+	 */
 	private void openSBOLSynthesisView() {
-		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator,
-				frame);
-		if (synthProps != null) {
-			String synthID = GlobalConstants.getFilename(tree.getFile());
-			SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
-			synthView.loadSynthesisProperties(synthProps);
-			addTab(synthID, synthView, null);
+		//Properties synthProps;
+		try 
+		{
+			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
+			if (synthProps != null) {
+				String synthID = GlobalConstants.getFilename(tree.getFile());
+				SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
+				synthView.loadSynthesisProperties(synthProps);
+				addTab(synthID, synthView, null);
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
 	protected void createAnalysisView(String modelFile) throws Exception {
@@ -10020,20 +10032,34 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					} catch (Exception e) {
 						check = "";
 					}
-				} else if (new File(
-						root + File.separator + s + File.separator + s + ".sbolsynth.properties")
-						.exists()) {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
-							root + File.separator + s, File.separator, Gui.frame);
-					if (synthProps != null) {
-						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
-							check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-						} else {
-							JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
-									"Missing Property", JOptionPane.ERROR_MESSAGE);
+				} 
+				else if (new File(root + File.separator + s + File.separator + s + ".sbolsynth.properties").exists()) 
+				{
+					try 
+					{
+						Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
+								root + File.separator + s, File.separator, Gui.frame);
+						if (synthProps != null) 
+						{
+							if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) 
+							{
+								check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+							} 
+							else 
+							{
+								JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
+										"Missing Property", JOptionPane.ERROR_MESSAGE);
+							}
+						} 
+						else 
+						{
+							check = "";
 						}
-					} else {
-						check = "";
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				check = check.replace(".gcm", ".xml");
