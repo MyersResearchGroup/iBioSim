@@ -160,6 +160,35 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	}
 	
 	@Test
+	public void test_cmd_l_sbol4()
+	{
+		/* convert SBOL1 to SBOL2 files*/
+		String inputfile1 = sbolDir + "lib_size_25.xml";
+		String inputfile2 = sbolDir + "synTest_50.xml";
+		String inputfile3 = sbolDir + "synTest_100.xml";
+		String inputfile4 = sbolDir + "synTest_200.xml";
+		
+		//Options
+		String outputLang = "SBOL2";
+		String outputFile1 = sbolDir + "lib_size_25_SBOL2.xml";
+		String outputFile2 = sbolDir + "synTest_50_SBOL2.xml";
+		String outputFile3 = sbolDir + "synTest_100_SBOL2.xml";
+		String outputFile4 = sbolDir + "synTest_200_SBOL2.xml";
+		
+		String[] converter_cmdArgs = {"-l", outputLang, "-p", uriPrefix, inputfile1, "-o", outputFile1};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+		
+		String[] converter_cmdArgs2 = {"-l", outputLang, "-p", uriPrefix, inputfile2, "-o", outputFile2};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs2);
+		
+		String[] converter_cmdArgs3 = {"-l", outputLang, "-p", uriPrefix, inputfile3, "-o", outputFile3};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs3);
+		
+		String[] converter_cmdArgs4 = {"-l", outputLang, "-p", uriPrefix, inputfile4, "-o", outputFile4};
+		edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs4);
+	}
+	
+	@Test
 	public void test_cmd_l_sbml4() throws IOException{
 		/* convert sbol2sbml and store result in output directory without an output file provided*/
 		String inputfile = sbolDir + "repressibleTU_Connected.xml";
