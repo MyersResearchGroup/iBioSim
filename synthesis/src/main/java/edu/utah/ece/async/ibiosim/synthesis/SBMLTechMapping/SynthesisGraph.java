@@ -70,7 +70,7 @@ public class SynthesisGraph {
 		
 		//NOTE: create reaction graph from the sbml model and return all nodes that makes up transcription and complex formation reaction
 		Set<SynthesisNode> nodes = constructGraph(sbmlModel, fileManager); 
-		decomposeGraph(nodes); //Decompose graph to NOT and NOR gates
+		decomposeGraph(nodes); //Decompose graph to NOT or NOR gate
 		output = identifyOutput(nodes); //figure out the output node for each gate
 		paths = buildPaths(getOutput()); 
 	}

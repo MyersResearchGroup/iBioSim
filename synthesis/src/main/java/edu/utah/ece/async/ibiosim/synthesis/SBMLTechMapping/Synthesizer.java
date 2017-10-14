@@ -37,7 +37,7 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 
 /**
- * 
+ * The class where SBML technology mapping matching and covering process is performed.
  *
  * @author Nicholas Roehner
  * @author Chris Myers
@@ -45,9 +45,9 @@ import org.sbml.jsbml.Species;
  * @version %I%
  */
 public class Synthesizer {
-	private SynthesisMatcher matcher;
-	private boolean exhaustive;
-	private int solutionCap;
+	private SynthesisMatcher matcher; //Store the library of gates that could match to the specification
+	private boolean exhaustive; 
+	private int solutionCap; //Store the number of solutions the user want to perform
 	//private int greedCount = 0;
 	
 	public Synthesizer(Set<SynthesisGraph> graphLibrary, Properties synthProps) {
@@ -76,7 +76,7 @@ public class Synthesizer {
 //		System.out.println("Run took " + time + " s.");
 //		System.out.println("Solution is " + solution + ".");
 //		System.out.println("Solution cost is " + solutionCost + ".");
-
+		
 		return solutions;
 	}
 	

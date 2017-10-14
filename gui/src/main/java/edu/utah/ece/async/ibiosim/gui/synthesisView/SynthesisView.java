@@ -445,7 +445,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	@Override
 	public void run() { 
-
+		
 	}
 
 	/**
@@ -502,20 +502,22 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				}
 				//Load synthProps that has synthesis.spec as property into the biomodel
 				BioModel specModel = new BioModel(rootFilePath); 
-				try {
+				try 
+				{
 					specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
 				}
-				catch (XMLStreamException e) {
+				catch (XMLStreamException e) 
+				{
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				} 
-				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
+				
+				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); 
 
-				//NOTE: set up library to match with the given biomodel
 				Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 				List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
 				List<String> solutionFileIDs;
-				//		try {
+				
 				solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
 				return solutionFileIDs;
 			}
@@ -527,7 +529,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			} 
 			catch (SBOLException e) 
 			{
-				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
 						e.getTitle(), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
