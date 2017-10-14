@@ -345,7 +345,7 @@ public class Converter {
 			System.err.println("ERROR: Unless result is indicated to print to console, you must provide an output file name to perform any form of conversion.");
 			usage();
 		}
-		
+		String fullPathOutput = outputDir + File.separator + outputFileName;
 		
 		File file = new File(fullInputFileName); 
 		boolean isDirectory = file.isDirectory();
@@ -382,10 +382,10 @@ public class Converter {
 						}
 						else
 						{
-							outSBOLDoc.write(outputFileName, SBOLDocument.RDF);
 							
-							String sbolVal_fileName = outputFileName;
-							String sbolVal_outFileName = outputFileName + "_validated";
+							outSBOLDoc.write(fullPathOutput, SBOLDocument.RDF);
+							String sbolVal_fileName = fullPathOutput;
+							String sbolVal_outFileName = fullPathOutput + "_validated";
 							
 							// Since the validator requires that the sbolVal_fileName is the full path of the input SBOL file, 
 							// this validator will only pass if the user indicated that the the output file name was provided.
@@ -425,7 +425,7 @@ public class Converter {
 				// call the validation method and then skip the rest. 
 				org.sbolstandard.core2.SBOLValidate.validate(fullInputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
 						showDetail, noOutput);
 				
 				//User wants to convert SBOL2SBML, printing to console or saving to sbml file is done in SBMLutilities.
@@ -488,7 +488,7 @@ public class Converter {
 			{
 				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, outputFileName, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
 						showDetail, noOutput);
 			}
 		}
