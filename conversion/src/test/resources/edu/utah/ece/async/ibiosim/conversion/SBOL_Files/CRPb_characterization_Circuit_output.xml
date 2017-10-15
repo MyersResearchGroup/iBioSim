@@ -1,0 +1,746 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md"/>
+    <sbol:displayId>CRISPR_Template_md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic"/>
+        <sbol:displayId>cas9_generic</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9_generic</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_generic/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex"/>
+        <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9_gRNA_complex</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic"/>
+        <sbol:displayId>gRNA_generic</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>gRNA_generic</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene"/>
+        <sbol:displayId>target_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>target_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target"/>
+        <sbol:displayId>target</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>target</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene"/>
+        <sbol:displayId>cas9_gRNA_complex_rep_target_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene"/>
+            <sbol:displayId>target_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex"/>
+            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target"/>
+        <sbol:displayId>target_gene_prod_target</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target"/>
+            <sbol:displayId>target</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene"/>
+            <sbol:displayId>target_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation"/>
+        <sbol:displayId>cas9_complex_formation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex"/>
+            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic"/>
+            <sbol:displayId>gRNA_generic</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic"/>
+            <sbol:displayId>cas9_generic</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_model/1"/>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md"/>
+    <sbol:displayId>CRPb_characterization_Circuit_md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene"/>
+        <sbol:displayId>mKate_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>mKate_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP"/>
+        <sbol:displayId>cas9m_BFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9m_BFP</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene"/>
+        <sbol:displayId>gRNA_b_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>gRNA_b_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16"/>
+        <sbol:displayId>Gal4VP16</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>Gal4VP16</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene"/>
+        <sbol:displayId>Gal4VP16_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>Gal4VP16_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b"/>
+        <sbol:displayId>gRNA_b</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>gRNA_b</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate"/>
+        <sbol:displayId>mKate</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>mKate</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene"/>
+        <sbol:displayId>EYFP_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>EYFP_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b"/>
+        <sbol:displayId>cas9m_BFP_gRNA_b</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9m_BFP_gRNA_b</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gRNA_b/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_mRNA/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_mRNA"/>
+        <sbol:displayId>EYFP_gene_mRNA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>EYFP_gene_mRNA</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene_mRNA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene"/>
+        <sbol:displayId>cas9m_BFP_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9m_BFP_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP"/>
+        <sbol:displayId>EYFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>EYFP</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_deg"/>
+        <sbol:displayId>cas9m_BFP_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_deg/cas9m_BFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_deg/cas9m_BFP"/>
+            <sbol:displayId>cas9m_BFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b_deg"/>
+        <sbol:displayId>cas9m_BFP_gRNA_b_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b_deg/cas9m_BFP_gRNA_b/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b_deg/cas9m_BFP_gRNA_b"/>
+            <sbol:displayId>cas9m_BFP_gRNA_b</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_deg"/>
+        <sbol:displayId>EYFP_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_deg/EYFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_deg/EYFP"/>
+            <sbol:displayId>EYFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b"/>
+        <sbol:displayId>gRNA_b_gene_prod_gRNA_b</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b/gRNA_b/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b/gRNA_b"/>
+            <sbol:displayId>gRNA_b</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b/gRNA_b_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene_prod_gRNA_b/gRNA_b_gene"/>
+            <sbol:displayId>gRNA_b_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_deg"/>
+        <sbol:displayId>gRNA_b_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_deg/gRNA_b/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b_deg/gRNA_b"/>
+            <sbol:displayId>gRNA_b</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate"/>
+        <sbol:displayId>mKate_gene_prod_mKate</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate/mKate_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate/mKate_gene"/>
+            <sbol:displayId>mKate_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate/mKate/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_gene_prod_mKate/mKate"/>
+            <sbol:displayId>mKate</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP"/>
+        <sbol:displayId>cas9m_BFP_gene_prod_cas9m_BFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP/cas9m_BFP_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP/cas9m_BFP_gene"/>
+            <sbol:displayId>cas9m_BFP_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP/cas9m_BFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gene_prod_cas9m_BFP/cas9m_BFP"/>
+            <sbol:displayId>cas9m_BFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16"/>
+        <sbol:displayId>Gal4VP16_gene_prod_Gal4VP16</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16/Gal4VP16/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16/Gal4VP16"/>
+            <sbol:displayId>Gal4VP16</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16/Gal4VP16_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene_prod_Gal4VP16/Gal4VP16_gene"/>
+            <sbol:displayId>Gal4VP16_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_deg"/>
+        <sbol:displayId>mKate_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_deg/mKate/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate_deg/mKate"/>
+            <sbol:displayId>mKate</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/mKate/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene"/>
+        <sbol:displayId>Gal4VP16_act_EYFP_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000170"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene/EYFP_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene/EYFP_gene"/>
+            <sbol:displayId>EYFP_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000643"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene/Gal4VP16/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_act_EYFP_gene/Gal4VP16"/>
+            <sbol:displayId>Gal4VP16</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000459"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA"/>
+        <sbol:displayId>EYFP_gene_prod_EYFP_gene_mRNA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA/EYFP_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA/EYFP_gene"/>
+            <sbol:displayId>EYFP_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA/EYFP_gene_mRNA/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_prod_EYFP_gene_mRNA/EYFP_gene_mRNA"/>
+            <sbol:displayId>EYFP_gene_mRNA</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene_mRNA/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_deg/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_deg"/>
+        <sbol:displayId>Gal4VP16_deg</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_deg/Gal4VP16/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16_deg/Gal4VP16"/>
+            <sbol:displayId>Gal4VP16</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/Gal4VP16/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_model/1"/>
+    <sbol:module>
+      <sbol:Module rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template"/>
+        <sbol:displayId>CRISPR_Template</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/EYFP_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/EYFP_gene"/>
+            <sbol:displayId>EYFP_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP_gene/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/EYFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/EYFP"/>
+            <sbol:displayId>EYFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/EYFP/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/gRNA_b/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/gRNA_b"/>
+            <sbol:displayId>gRNA_b</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/gRNA_b/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/cas9m_BFP/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/cas9m_BFP"/>
+            <sbol:displayId>cas9m_BFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/cas9m_BFP_gRNA_b/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/CRISPR_Template/cas9m_BFP_gRNA_b"/>
+            <sbol:displayId>cas9m_BFP_gRNA_b</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
+            <sbol:local rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/cas9m_BFP_gRNA_b/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:Model rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_model/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_model"/>
+    <sbol:displayId>CRISPR_Template_model</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:source rdf:resource="file:CRISPR_Template.xml"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
+  </sbol:Model>
+  <sbol:Model rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_model/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_model"/>
+    <sbol:displayId>CRPb_characterization_Circuit_model</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:source rdf:resource="file:src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/CRPb_characterization_Circuit.xml"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
+  </sbol:Model>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate"/>
+    <sbol:displayId>CRPb_characterization_Circuit__mKate</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>mKate</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gRNA_b/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gRNA_b"/>
+    <sbol:displayId>CRPb_characterization_Circuit__cas9m_BFP_gRNA_b</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>cas9m_BFP_gRNA_b</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Complex"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene"/>
+    <sbol:displayId>CRPb_characterization_Circuit__EYFP_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>EYFP_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template__target_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target_gene"/>
+    <sbol:displayId>CRISPR_Template__target_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>target_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b"/>
+    <sbol:displayId>CRPb_characterization_Circuit__gRNA_b</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>gRNA_b</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#RnaRegion"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16"/>
+    <sbol:displayId>CRPb_characterization_Circuit__Gal4VP16</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Gal4VP16</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__gRNA_b_gene"/>
+    <sbol:displayId>CRPb_characterization_Circuit__gRNA_b_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>gRNA_b_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP"/>
+    <sbol:displayId>CRPb_characterization_Circuit__EYFP</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>EYFP</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template__target/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target"/>
+    <sbol:displayId>CRISPR_Template__target</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>target</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP_gene"/>
+    <sbol:displayId>CRPb_characterization_Circuit__cas9m_BFP_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>cas9m_BFP_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__Gal4VP16_gene"/>
+    <sbol:displayId>CRPb_characterization_Circuit__Gal4VP16_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Gal4VP16_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__cas9m_BFP"/>
+    <sbol:displayId>CRPb_characterization_Circuit__cas9m_BFP</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>cas9m_BFP</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic"/>
+    <sbol:displayId>CRISPR_Template__gRNA_generic</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>gRNA_generic</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#RnaRegion"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene_mRNA/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__EYFP_gene_mRNA"/>
+    <sbol:displayId>CRPb_characterization_Circuit__EYFP_gene_mRNA</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>EYFP_gene_mRNA</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#RnaRegion"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate_gene/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit__mKate_gene"/>
+    <sbol:displayId>CRPb_characterization_Circuit__mKate_gene</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>mKate_gene</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template__cas9_generic/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_generic"/>
+    <sbol:displayId>CRISPR_Template__cas9_generic</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>cas9_generic</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex"/>
+    <sbol:displayId>CRISPR_Template__cas9_gRNA_complex</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>cas9_gRNA_complex</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Complex"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>
