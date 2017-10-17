@@ -62,7 +62,7 @@ public class DenseState extends TreeState
   }
 
   @Override
-  public void addState(int index)
+  public void addState(int index, HierarchicalState state )
   {
     if (listOfStates == null)
     {
@@ -71,7 +71,7 @@ public class DenseState extends TreeState
 
     while (index > listOfStates.size())
     {
-      listOfStates.add(new DenseState());
+      listOfStates.add(state);
     }
 
   }
@@ -96,6 +96,13 @@ public class DenseState extends TreeState
       return false;
     }
     return true;
+  }
+
+  @Override
+  public void copyState(int from, int to) {
+    addState(to - 1 , null);
+    listOfStates.add(listOfStates.get(from));
+    
   }
 
 

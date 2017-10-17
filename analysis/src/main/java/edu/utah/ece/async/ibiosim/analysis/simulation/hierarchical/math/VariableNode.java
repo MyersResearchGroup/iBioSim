@@ -29,7 +29,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class VariableNode extends HierarchicalNode
 {
-
+  
   protected boolean			isVariableConstant;
   protected boolean hasRule;
   protected boolean hasInitRule;
@@ -89,7 +89,7 @@ public class VariableNode extends HierarchicalNode
     if (rateRule != null)
     {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      state.setRateValue(rate);
+      state.setRateValue(index, rate);
     }
     return rate;
   }

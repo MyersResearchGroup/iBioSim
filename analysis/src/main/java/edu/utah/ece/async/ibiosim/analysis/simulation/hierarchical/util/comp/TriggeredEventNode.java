@@ -101,7 +101,12 @@ public class TriggeredEventNode
 
       if (!parent.isUseTriggerValue())
       {
-         setAssignmentValues(parent.computeEventAssignmentValues(index, time));
+        double[] eventAssignments = parent.computeEventAssignmentValues(index, time);
+        
+        if(eventAssignments != null)
+        {
+          setAssignmentValues(eventAssignments);  
+        }
       }
       
       if(assignmentValues != null)

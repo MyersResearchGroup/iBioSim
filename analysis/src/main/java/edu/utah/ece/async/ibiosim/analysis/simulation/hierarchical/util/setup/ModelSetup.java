@@ -76,7 +76,7 @@ public class ModelSetup
     SBMLDocument document = sim.getDocument();
     Model model = document.getModel();
     String rootPath = sim.getRootDirectory();
-    HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel");
+    HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
     sim.setTopmodel(hierarchicalModel);
     
     CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
@@ -86,7 +86,7 @@ public class ModelSetup
     //TODO: Map<String, ModelContainer> templateFromSource;
     
     unproc.push(new ModelContainer(model, hierarchicalModel, null));
-    
+    int count = 0;
     while(!unproc.isEmpty())
     {
       ModelContainer container = unproc.pop();
@@ -137,7 +137,7 @@ public class ModelSetup
 
           if (model != null)
           {
-            hierarchicalModel = new HierarchicalModel(submodel.getId());
+            hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
             unproc.push(new ModelContainer(model, hierarchicalModel, container));
           }
         }
@@ -153,7 +153,7 @@ public class ModelSetup
 
   private static void initializeModelStates(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
   {
-    StateType type = StateType.SPARSE;
+    StateType type = StateType.SCALAR;
 
     boolean isSSA = modelType == ModelType.HSSA;
     

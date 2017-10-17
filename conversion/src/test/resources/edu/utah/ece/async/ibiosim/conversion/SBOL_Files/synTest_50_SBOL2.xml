@@ -1,0 +1,1619 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR0_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR0_Pr"/>
+    <sbol:displayId>NOR0_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/RBS">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/RBS"/>
+    <sbol:displayId>RBS</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#RBS"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_RBS_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR7_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR7_Si2"/>
+    <sbol:displayId>OR7_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR7_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND0_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND0_Si2"/>
+    <sbol:displayId>NAND0_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND0_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND1_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND1_Si2"/>
+    <sbol:displayId>NAND1_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR3_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR3_Pr"/>
+    <sbol:displayId>NOR3_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR5_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR5_Si2"/>
+    <sbol:displayId>NOR5_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR5_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR2_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR2_Si2"/>
+    <sbol:displayId>NOR2_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR2_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES1_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES1_Pa"/>
+    <sbol:displayId>YES1_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES1_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES1_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES7_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES7_Pa"/>
+    <sbol:displayId>YES7_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES7_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES7_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES4_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES4_Pa"/>
+    <sbol:displayId>YES4_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES4_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES4_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND0_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND0_Si2"/>
+    <sbol:displayId>AND0_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND0_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR3_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR3_Si2"/>
+    <sbol:displayId>NOR3_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND2_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND2_Si2"/>
+    <sbol:displayId>NAND2_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND2_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR4_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR4_Si2"/>
+    <sbol:displayId>NOR4_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR4_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR5_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR5_Si2"/>
+    <sbol:displayId>OR5_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR5_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND1_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND1_Si2"/>
+    <sbol:displayId>AND1_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR4_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR4_Si"/>
+    <sbol:displayId>OR4_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR1_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR1_Si2"/>
+    <sbol:displayId>NOR1_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR1_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND3_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND3_Si2"/>
+    <sbol:displayId>NAND3_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND2_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND2_Pr"/>
+    <sbol:displayId>NAND2_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND2_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR5_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR5_Pa"/>
+    <sbol:displayId>OR5_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR5_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR6_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR6_Si2"/>
+    <sbol:displayId>NOR6_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR6_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND5_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND5_Pa"/>
+    <sbol:displayId>AND5_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV4_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV4_Pa"/>
+    <sbol:displayId>INV4_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV4_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV4_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND6_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND6_Pr"/>
+    <sbol:displayId>NAND6_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND1_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND1_Pa"/>
+    <sbol:displayId>AND1_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR2_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR2_Si2"/>
+    <sbol:displayId>OR2_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR2_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV2_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV2_Pa"/>
+    <sbol:displayId>INV2_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV2_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV2_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR3_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR3_Si2"/>
+    <sbol:displayId>OR3_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR3_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND3_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND3_Si2"/>
+    <sbol:displayId>AND3_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR2_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR2_Pr"/>
+    <sbol:displayId>NOR2_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR2_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND4_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND4_Pa"/>
+    <sbol:displayId>AND4_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND3_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND3_Pr"/>
+    <sbol:displayId>NAND3_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND2_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND2_Si2"/>
+    <sbol:displayId>AND2_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND2_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR0_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR0_Si"/>
+    <sbol:displayId>NOR0_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR7_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR7_Pa"/>
+    <sbol:displayId>OR7_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR7_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND1_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND1_Si"/>
+    <sbol:displayId>AND1_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV0_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_Si"/>
+    <sbol:displayId>INV0_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV0_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR1_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR1_Pr"/>
+    <sbol:displayId>NOR1_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR1_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND6_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND6_Si2"/>
+    <sbol:displayId>AND6_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV9_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV9_Si"/>
+    <sbol:displayId>INV9_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV9_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND5_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND5_Pr"/>
+    <sbol:displayId>NAND5_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND5_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR6_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR6_Si2"/>
+    <sbol:displayId>OR6_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR6_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND4_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND4_Pr"/>
+    <sbol:displayId>NAND4_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND2_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND2_Pa"/>
+    <sbol:displayId>AND2_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND2_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND1_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND1_Si"/>
+    <sbol:displayId>NAND1_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV1_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV1_Pa"/>
+    <sbol:displayId>INV1_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV1_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV1_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND6_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND6_Si2"/>
+    <sbol:displayId>NAND6_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND6_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND6_Pa"/>
+    <sbol:displayId>AND6_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR6_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR6_Pa"/>
+    <sbol:displayId>OR6_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR6_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND1_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND1_Pr"/>
+    <sbol:displayId>NAND1_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND3_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND3_Si"/>
+    <sbol:displayId>AND3_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV0_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_Pa"/>
+    <sbol:displayId>INV0_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV0_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV5_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV5_Si"/>
+    <sbol:displayId>INV5_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV5_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND3_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND3_Pa"/>
+    <sbol:displayId>AND3_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV8_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV8_Pa"/>
+    <sbol:displayId>INV8_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV8_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV8_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV3_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV3_Pa"/>
+    <sbol:displayId>INV3_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV3_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND0_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND0_Pa"/>
+    <sbol:displayId>AND0_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND0_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR0_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR0_Si2"/>
+    <sbol:displayId>OR0_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR0_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND3_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND3_Si"/>
+    <sbol:displayId>NAND3_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND7_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND7_Si2"/>
+    <sbol:displayId>AND7_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND7_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES5_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES5_Pa"/>
+    <sbol:displayId>YES5_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES5_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES5_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND5_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND5_Si2"/>
+    <sbol:displayId>AND5_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR4_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR4_Pr"/>
+    <sbol:displayId>NOR4_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR4_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES6_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES6_Pa"/>
+    <sbol:displayId>YES6_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES6_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES6_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND7_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND7_Si2"/>
+    <sbol:displayId>NAND7_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND7_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES3_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES3_Si"/>
+    <sbol:displayId>YES3_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES3_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND7_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND7_Pr"/>
+    <sbol:displayId>NAND7_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND7_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND4_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND4_Si"/>
+    <sbol:displayId>NAND4_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR0_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR0_Pa"/>
+    <sbol:displayId>OR0_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR0_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES0_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES0_Pa"/>
+    <sbol:displayId>YES0_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES0_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES0_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV9_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV9_Pa"/>
+    <sbol:displayId>INV9_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV9_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR3_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR3_Si"/>
+    <sbol:displayId>NOR3_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND4_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND4_Si2"/>
+    <sbol:displayId>AND4_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND5_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND5_Si2"/>
+    <sbol:displayId>NAND5_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND5_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR1_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR1_Pa"/>
+    <sbol:displayId>OR1_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR1_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV3_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV3_Si"/>
+    <sbol:displayId>INV3_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV3_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/TT">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/TT"/>
+    <sbol:displayId>TT</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#TT"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_TT_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND4_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND4_Si2"/>
+    <sbol:displayId>NAND4_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES2_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES2_Pa"/>
+    <sbol:displayId>YES2_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES2_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES2_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR5_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR5_Pr"/>
+    <sbol:displayId>NOR5_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR5_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR1_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR1_Si2"/>
+    <sbol:displayId>OR1_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR1_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV5_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV5_Pa"/>
+    <sbol:displayId>INV5_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV5_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR4_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR4_Pa"/>
+    <sbol:displayId>OR4_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND0_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND0_Pr"/>
+    <sbol:displayId>NAND0_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND0_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR6_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR6_Pr"/>
+    <sbol:displayId>NOR6_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR6_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/YES3_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/YES3_Pa"/>
+    <sbol:displayId>YES3_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES3_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND6_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND6_Si"/>
+    <sbol:displayId>AND6_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND4_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND4_Si"/>
+    <sbol:displayId>AND4_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND7_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND7_Pa"/>
+    <sbol:displayId>AND7_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND7_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR2_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR2_Pa"/>
+    <sbol:displayId>OR2_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR2_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NAND6_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NAND6_Si"/>
+    <sbol:displayId>NAND6_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV6_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV6_Pa"/>
+    <sbol:displayId>INV6_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV6_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV6_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR3_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR3_Pa"/>
+    <sbol:displayId>OR3_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR3_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/OR4_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/OR4_Si2"/>
+    <sbol:displayId>OR4_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV7_Pa">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV7_Pa"/>
+    <sbol:displayId>INV7_Pa</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV7_Pa"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV7_Pa_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR7_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR7_Si2"/>
+    <sbol:displayId>NOR7_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR7_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR7_Pr">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR7_Pr"/>
+    <sbol:displayId>NOR7_Pr</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR7_Pr"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Pr_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/NOR0_Si2">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/NOR0_Si2"/>
+    <sbol:displayId>NOR0_Si2</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Si2"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si2_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/AND5_Si">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/AND5_Si"/>
+    <sbol:displayId>AND5_Si</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Si"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:type rdf:resource="http://identifiers.org/so/SO:0000987"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si_seq"/>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV9_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV9_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND0_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND0_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND0_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND0_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND1_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV8_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV8_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV8_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV8_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR2_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR2_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR4_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND1_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND7_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND7_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES0_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES0_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES0_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES0_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR7_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR7_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND2_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND2_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR7_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR7_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND4_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND4_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND3_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR4_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR4_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND5_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR4_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR4_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR4_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND3_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV3_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV3_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND6_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR1_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR1_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR0_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR0_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV6_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV6_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV6_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV6_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND3_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR3_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR3_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR6_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR6_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND1_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR6_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR6_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR6_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND1_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR0_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES6_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES6_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES6_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES6_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_RBS_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_RBS_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_RBS_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#RBS_seq"/>
+    <sbol:elements>aaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR5_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR5_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES7_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES7_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES7_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES7_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV1_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV1_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV1_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV1_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND4_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND1_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND1_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND1_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR7_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR7_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR7_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES1_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES1_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES1_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES1_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV5_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV5_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND2_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND2_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND7_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND7_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND4_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND6_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND6_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES5_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES5_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES5_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES5_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV9_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV9_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV9_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR4_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND6_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND1_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND1_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND1_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR1_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR1_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR1_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND3_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV0_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV0_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND5_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR0_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR0_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR0_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR5_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR5_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES4_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES4_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES4_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES4_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND7_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND7_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND7_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR1_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR1_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND3_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND3_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND3_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND7_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND7_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND7_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES3_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES3_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND5_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND5_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR0_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR5_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR5_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR5_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND0_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND0_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND0_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND3_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND3_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND3_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR3_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR4_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR4_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR4_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND5_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND5_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND5_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR3_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR2_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR2_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR2_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND4_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND4_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND4_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR0_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR0_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR0_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV7_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV7_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV7_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV7_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV3_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV3_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV3_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR1_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR1_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR1_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR2_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR2_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV5_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV5_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV5_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND5_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND5_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND5_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR6_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR6_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR3_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR3_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR3_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND0_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND0_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND0_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NOR5_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NOR5_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NOR5_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV2_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV2_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV2_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV2_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND2_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND2_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND2_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR3_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR3_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR3_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR7_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR7_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR7_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Pr_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND4_Pr_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND4_Pr_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND4_Pr_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV4_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV4_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV4_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV4_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES2_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES2_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES2_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES2_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR6_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR6_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR6_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Si_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_YES3_Si_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_YES3_Si_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#YES3_Si_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_OR2_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_OR2_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#OR2_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_TT_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_TT_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_TT_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#TT_seq"/>
+    <sbol:elements>aaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_INV0_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_INV0_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#INV0_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si2_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_NAND6_Si2_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_NAND6_Si2_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#NAND6_Si2_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND6_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND6_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND6_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Pa_seq">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/www_async_ece_utah_edu_AND2_Pa_seq"/>
+    <sbol:displayId>www_async_ece_utah_edu_AND2_Pa_seq</sbol:displayId>
+    <prov:wasDerivedFrom rdf:resource="http://www.async.ece.utah.edu#AND2_Pa_seq"/>
+    <sbol:elements>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+</rdf:RDF>

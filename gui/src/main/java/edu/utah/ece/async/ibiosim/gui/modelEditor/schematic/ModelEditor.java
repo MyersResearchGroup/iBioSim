@@ -1726,7 +1726,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
-		if (analysisMethod != null && !analysisMethod.contains("Hierarchical")) {
+		if (analysisMethod != null && !analysisMethod.contains("Hierarchical") && !analysisMethod.contains("Mixed")) {
 			SBMLDocument sbml;
 			try {
 				sbml = biomodel.flattenModel(true);

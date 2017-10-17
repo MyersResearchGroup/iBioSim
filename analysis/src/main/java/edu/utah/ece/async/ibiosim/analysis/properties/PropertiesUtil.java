@@ -155,7 +155,7 @@ public class PropertiesUtil {
     {
       properties.setFba();
     } 
-    else if (kisaoId.equals(GlobalConstants.KISAO_DFBA_SOA))
+    else if (kisaoId.equals(GlobalConstants.KISAO_DFBA) || kisaoId.equals(GlobalConstants.KISAO_DFBA_SOA))
     {
       properties.setSsa();
       properties.setSim("Mixed-Hierarchical");

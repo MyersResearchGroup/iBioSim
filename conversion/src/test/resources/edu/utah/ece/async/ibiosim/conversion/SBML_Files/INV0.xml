@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
+  <model metaid="iBioSim1" id="INV0">
+    <listOfCompartments>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim2" sboTerm="SBO:0000590" id="Pa" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim4" id="Si" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim4">
+                <mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu#RBS"/>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu#INV0_Si"/>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu#TT"/>
+                  </rdf:Seq>
+                </mts:DNAComponents>
+              </rdf:Description>
+            </rdf:RDF>
+          </ModelToSBOL>
+        </annotation>
+      </species>
+      <species metaid="iBioSim5" id="So" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter id="ka" name="Activated production rate" value="0.25" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction metaid="iBioSim3" sboTerm="SBO:0000589" id="Production_Pa" reversible="false" fast="false" compartment="Cell">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu#INV0_Pa"/>
+                  </rdf:Seq>
+                </mts:DNAComponents>
+              </rdf:Description>
+            </rdf:RDF>
+          </ModelToSBOL>
+        </annotation>
+        <listOfProducts>
+          <speciesReference species="So" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="Pa"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="Si"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> Pa </ci>
+                <ci> ko </ci>
+                <apply>
+                  <divide/>
+                  <ci> ko_f </ci>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                  <ci> nr </ci>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> Si </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="0" layout:height="0"/>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__Pa" layout:species="Pa">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="20"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__Si" layout:species="Si">
+            <layout:boundingBox>
+              <layout:position layout:x="10" layout:y="10"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__So" layout:species="So">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__Pa" layout:text="Pa" layout:graphicalObject="Glyph__Pa">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="20"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__Si" layout:text="Si" layout:graphicalObject="Glyph__Si">
+            <layout:boundingBox>
+              <layout:position layout:x="10" layout:y="10"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__So" layout:text="So" layout:graphicalObject="Glyph__So">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <comp:listOfPorts>
+      <comp:port sboTerm="SBO:0000601" comp:idRef="Cell" comp:id="compartment__Cell"/>
+      <comp:port sboTerm="SBO:0000600" comp:idRef="Si" comp:id="input__Si"/>
+      <comp:port sboTerm="SBO:0000601" comp:idRef="So" comp:id="output__So"/>
+    </comp:listOfPorts>
+  </model>
+</sbml>

@@ -158,9 +158,10 @@ public class EventNode extends HierarchicalNode
   public double[] computeEventAssignmentValues(int index, double time)
   {
 
-    double[] assignmentValues = new double[eventAssignments.size()];
+    double[] assignmentValues = null;
     if(eventAssignments != null)
     {
+      assignmentValues = new double[eventAssignments.size()];
       for (int i = 0; i < eventAssignments.size(); i++)
       {
         FunctionNode eventAssignmentNode = eventAssignments.get(i);

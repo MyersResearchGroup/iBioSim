@@ -49,7 +49,7 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public void addState(int index)
+  public void addState(int index, HierarchicalState state )
   {
 
   }
@@ -70,18 +70,24 @@ public class ValueState extends HierarchicalState
   }
   
   @Override
-  public double getRateValue() {
+  public double getRateValue(int index) {
     return 0;
   }
 
   @Override
-  public boolean isSetRate()
+  public boolean isSetRate(int index)
   {
     return false;
   }
 
   @Override
-  public void setRateValue(double value) {
+  public void setRateValue(int index, double value) {
+  }
+
+  @Override
+  public void copyState(int from, int to) {
+    // TODO Auto-generated method stub
+    
   }
 
   

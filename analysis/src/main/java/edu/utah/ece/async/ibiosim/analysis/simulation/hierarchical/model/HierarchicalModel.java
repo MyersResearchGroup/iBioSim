@@ -73,12 +73,6 @@ public final class HierarchicalModel
 	private FunctionNode  propensity;
 
 	private Map<String, HierarchicalModel>	idToSubmodel;
-	
-	
-	public HierarchicalModel(String submodelID)
-	{
-		this(submodelID, 0);
-	}
 
 	public HierarchicalModel(String submodelID, int index)
 	{
@@ -199,6 +193,11 @@ public final class HierarchicalModel
 		idToNode.put(variable, node);
 	}
 
+	public boolean containsNode(String variable)
+  {
+    return idToNode.containsKey(variable);
+  }
+	
 	public VariableNode getNode(String variable)
 	{
 		return idToNode.get(variable);

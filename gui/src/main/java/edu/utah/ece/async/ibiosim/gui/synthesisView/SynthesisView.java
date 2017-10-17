@@ -60,8 +60,9 @@ import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 
 /**
+ * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
  * 
- *
+ * @author Tramy Nguyen
  * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>

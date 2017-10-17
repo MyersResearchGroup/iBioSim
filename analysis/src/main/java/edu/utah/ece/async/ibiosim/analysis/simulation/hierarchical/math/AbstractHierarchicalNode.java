@@ -28,23 +28,30 @@ public abstract class AbstractHierarchicalNode
       CONSTANT_E, CONSTANT_FALSE, CONSTANT_PI, CONSTRUCTOR_PIECE, CONSTRUCTOR_OTHERWISE, CONSTANT_TRUE, DIVIDE, FUNCTION, FUNCTION_ABS, FUNCTION_ARCCOS, FUNCTION_ARCCOSH, FUNCTION_ARCCOT, FUNCTION_ARCCOTH, FUNCTION_ARCCSC, FUNCTION_ARCCSCH, FUNCTION_ARCSEC, FUNCTION_ARCSECH, FUNCTION_ARCSIN, FUNCTION_ARCSINH, FUNCTION_ARCTAN, FUNCTION_ARCTANH, FUNCTION_CEILING, FUNCTION_COS, FUNCTION_COSH, FUNCTION_COT, FUNCTION_COTH, FUNCTION_CSC, FUNCTION_CSCH, FUNCTION_DELAY, FUNCTION_EXP, FUNCTION_FACTORIAL, FUNCTION_FLOOR, FUNCTION_LN, FUNCTION_LOG, FUNCTION_MAX, FUNCTION_MIN, FUNCTION_QUOTIENT, FUNCTION_PIECEWISE, FUNCTION_POWER, FUNCTION_RATEOF, FUNCTION_REM, FUNCTION_ROOT, FUNCTION_SEC, FUNCTION_SECH, FUNCTION_SELECTOR, FUNCTION_SIN, FUNCTION_SINH, FUNCTION_TAN, FUNCTION_TANH, LAMBDA, LOGICAL_AND, LOGICAL_IMPLIES, LOGICAL_NOT, LOGICAL_OR, LOGICAL_XOR, MINUS, NAME, NAME_AVOGADRO, NAME_TIME, NUMBER, PLUS, POWER, PRODUCT, QUALIFIER_BVAR, QUALIFIER_DEGREE, QUALIFIER_LOGBASE, RATIONAL, REAL_E, RELATIONAL_EQ, RELATIONAL_GEQ, RELATIONAL_GT, RELATIONAL_LEQ, RELATIONAL_LT, RELATIONAL_NEQ, SEMANTICS, SUM, TIMES, UNKNOWN, VECTOR;
     };
 
+    public static enum VariableType
+    {
+      SPECIES,
+      REACTION,
+      VARIABLE,
+      NONE
+    };
+    
     private Type          type;
 
     private String metaId;
-    protected boolean       isSpecies;
-    protected boolean       isReaction;
+    protected VariableType varType;
     
     
     public AbstractHierarchicalNode(Type type)
     {
       this.type = type;
+      varType = VariableType.NONE;
     }
 
     public AbstractHierarchicalNode(AbstractHierarchicalNode copy)
     {
       this.type = copy.type;
-      this.isSpecies = copy.isSpecies;
-      this.isReaction = copy.isReaction;
+      this.varType = VariableType.NONE;
     }
 
     /**
@@ -102,12 +109,12 @@ public abstract class AbstractHierarchicalNode
 
     public boolean isSpecies()
     {
-      return isSpecies;
+      return varType == VariableType.SPECIES;
     }
 
     public boolean isReaction()
     {
-      return isReaction;
+      return varType == VariableType.REACTION;
     }
     
     public void setMetaId(String metaId)

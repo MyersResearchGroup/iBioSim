@@ -243,7 +243,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     this.totalPropensity.computeFunction(0);
   }
 
-  public double computeNextTimeStep(double r1, double totalPropensity)
+  private double computeNextTimeStep(double r1, double totalPropensity)
   {
     return Math.log(1 / r1) / totalPropensity;
   }
