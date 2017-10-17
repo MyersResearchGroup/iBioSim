@@ -28,6 +28,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
 import org.sbml.jsbml.validator.SBMLValidator;
+import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -98,8 +99,15 @@ public class Validate
         document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, false);
         document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
       }
-  
-      long numberOfErrors = document.checkConsistency();
+
+      long numberOfErrors = 0; //document.checkConsistency();
+      if (!libsbml.LIBSBML_DOTTED_VERSION.equals("5.15.0")) {
+    	  numberOfErrors = document.checkConsistency();
+      } else {
+    	  numberOfErrors = document.checkConsistency();
+          System.out.println(libsbml.LIBSBML_DOTTED_VERSION);
+    	  System.out.println("ERROR: please update libsbml.");
+      }
       for (int i = 0; i < numberOfErrors; i++)
       {
         String error = document.getError(i).getMessage();
