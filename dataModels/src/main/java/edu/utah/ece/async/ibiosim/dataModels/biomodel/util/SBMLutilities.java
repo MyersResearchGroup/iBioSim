@@ -6118,7 +6118,7 @@ public class SBMLutilities
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
 			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + File.separator + extModel);
+			if (!subModel.load(root + File.separator + extModel)) continue;
 			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{

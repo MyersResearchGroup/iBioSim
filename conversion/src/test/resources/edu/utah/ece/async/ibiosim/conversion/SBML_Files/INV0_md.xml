@@ -11,8 +11,8 @@
     </annotation>
       <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
       <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
-      <comp:port comp:id="output__So" comp:idRef="So" sboTerm="SBO:0000601"/>
       <comp:port comp:id="input__Si" comp:idRef="Si" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="output__So" comp:idRef="So" sboTerm="SBO:0000601"/>
     </comp:listOfPorts>
     <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <layout:layout layout:id="iBioSim">
@@ -39,25 +39,11 @@
       <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="So" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Si" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
         <annotation>
           <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
               <rdf:Description rdf:about="#iBioSim2">
-                <mts:ComponentDefinitions>
-                  <rdf:Bag>
-                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
-                  <rdf:Bag>
-                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
-                  <rdf:Seq>
-                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
-        </annotation>
-            </species>
-      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Si" initialAmount="0" metaid="iBioSim3" sboTerm="SBO:0000252">
-        <annotation>
-          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
-            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
-              <rdf:Description rdf:about="#iBioSim3">
                 <mts:ComponentDefinitions>
                   <rdf:Bag>
                     <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Si/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
@@ -65,16 +51,30 @@
                     <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Si/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
         </annotation>
             </species>
-      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Pa" initialAmount="2" metaid="iBioSim4" sboTerm="SBO:0000590">
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Pa" initialAmount="2" metaid="iBioSim3" sboTerm="SBO:0000590">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="So" initialAmount="0" metaid="iBioSim4" sboTerm="SBO:0000252">
         <annotation>
           <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
               <rdf:Description rdf:about="#iBioSim4">
                 <mts:ComponentDefinitions>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
                   <rdf:Bag>
-                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                    <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
                   <rdf:Seq>
                     <rdf:li rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
         </annotation>

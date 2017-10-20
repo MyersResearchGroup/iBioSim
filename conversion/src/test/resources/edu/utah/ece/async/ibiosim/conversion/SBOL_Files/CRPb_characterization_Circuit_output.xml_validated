@@ -16,23 +16,23 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex"/>
-        <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>cas9_gRNA_complex</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic"/>
         <sbol:displayId>gRNA_generic</sbol:displayId>
         <sbol:version>1</sbol:version>
         <dcterms:title>gRNA_generic</dcterms:title>
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex"/>
+        <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9_gRNA_complex</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>

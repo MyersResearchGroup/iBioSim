@@ -67,6 +67,19 @@ public class GeneralConversionTests extends ConversionAbstractTests {
 	}
 	
 	@Test
+  public void test_cmd_l_sbml6() throws IOException{
+    /* convert sbol2sbml with exporting to single SBML file*/
+    String inputfile = sbolDir + "CRISPR_example.xml";
+    String outFile =  sbmlDir + "CRISPR_example_out4";
+    
+    //Options
+    String outputLang = "SBML"; 
+    
+    String[] converter_cmdArgs = {"-l", outputLang, "-esf", inputfile, "-o", outFile};
+    edu.utah.ece.async.ibiosim.conversion.Converter.main(converter_cmdArgs);
+  }
+	
+	@Test
 	public void test_cmd_l_sbml2() throws IOException{
 		/* convert sbol2sbml* with reference sbol files*/
 		

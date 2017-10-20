@@ -5,17 +5,6 @@
     <sbol:displayId>INV0_md</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/So/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/So"/>
-        <sbol:displayId>So</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>So</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/Si/1">
         <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si"/>
         <sbol:displayId>Si</sbol:displayId>
@@ -35,6 +24,17 @@
         <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/So/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/So"/>
+        <sbol:displayId>So</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>So</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>

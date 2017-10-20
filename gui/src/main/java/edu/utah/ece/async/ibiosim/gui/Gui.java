@@ -4859,6 +4859,24 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			// display some information about the archive
 			if (entry.getFormat().toString().contains("sbml")) {
 				System.out.println("ImportSBML: " + entry.getFileName());
+				try {
+					String fileName = entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath();
+					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
+					SBMLWriter writer = new SBMLWriter();
+					String[] file = GlobalConstants.splitPath(fileName.trim());
+					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		for (ArchiveEntry entry : ca.getEntries ())
+		{
+			// display some information about the archive
+			if (entry.getFormat().toString().contains("sbml")) {
+				System.out.println("ImportSBML: " + entry.getFileName());
 				importSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
 			}
 		}

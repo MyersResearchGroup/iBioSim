@@ -72,6 +72,7 @@ public class Converter {
 		System.err.println("\t-cf The name of the file that will be produced to hold the result of the second SBOL file, if SBOL file diff was selected.");
 		System.err.println("\t-d  display detailed error trace");
 		System.err.println("\t-e  The second SBOL file to compare to the main SBOL file.");
+		System.err.println("\t-esf  Export SBML hierarchical models in a single output file.");
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
 		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2). To output FASTA or GenBank, no SBOL default URI prefix is needed.");
@@ -336,10 +337,16 @@ public class Converter {
 				outputFileName = outputFilePath.getName();
 			}
 		}
-		else if(outputFileName.isEmpty() && !outputDir.isEmpty())
+		else if(outputFileName.isEmpty() && sbmlOut)
 		{
-			outputFileName = "default_iBioSimOutput";
+			outputFileName = "default_SBMLOutput";
+			noOutput = true;
 		}
+		else if(outputFileName.isEmpty() && sbolV2out)
+    {
+      outputFileName = "default_SBOLOutput";
+      noOutput = true;
+    }
 		else if(outputFileName.isEmpty() && !noOutput && !isValidation && !isDiffFile)
 		{
 			System.err.println("ERROR: Unless result is indicated to print to console, you must provide an output file name to perform any form of conversion.");
@@ -376,13 +383,6 @@ public class Converter {
 					}
 					else
 					{
-						if(outputFileName.isEmpty())
-						{
-							outSBOLDoc.write(System.out);
-						}
-						else
-						{
-							
 							outSBOLDoc.write(fullPathOutput, SBOLDocument.RDF);
 							String sbolVal_fileName = fullPathOutput;
 							String sbolVal_outFileName = fullPathOutput + "_validated";
@@ -394,7 +394,6 @@ public class Converter {
 									version, keepGoing, compareFile, compFileResult, mainFileResult, 
 									topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
 									showDetail, noOutput);
-						}
 					}
 					
 				} 
