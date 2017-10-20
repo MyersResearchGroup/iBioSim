@@ -42,6 +42,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Vector
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
  * 
@@ -85,7 +86,7 @@ public class ModelSetup
     List<ModelContainer> listOfContainers = new ArrayList<ModelContainer>();
     //TODO: Map<String, ModelContainer> templateFromSource;
     
-    unproc.push(new ModelContainer(model, hierarchicalModel, null));
+    unproc.push(new ModelContainer(model, hierarchicalModel, null, type));
     int count = 0;
     while(!unproc.isEmpty())
     {
@@ -138,7 +139,8 @@ public class ModelSetup
           if (model != null)
           {
             hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
-            unproc.push(new ModelContainer(model, hierarchicalModel, container));
+            
+            unproc.push(new ModelContainer(model, hierarchicalModel, container, type));
           }
         }
       }
@@ -166,6 +168,7 @@ public class ModelSetup
     for(ModelContainer container : listOfContainers)
     {
       ReplacementSetup.setupDeletion(container);
+      
       CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
     }
     

@@ -475,7 +475,6 @@ public class CoreSetup
       if(reactionNode == null)
       {
         reactionNode = modelstate.addReaction(reaction.getId());
-        reactionNode.addReactionState(modelstate.getIndex());
         reactionNode.createState(sim.getAtomicType(), wrapper);
       }
       if(sim.getInterestingSpecies() == null)
@@ -591,7 +590,6 @@ public class CoreSetup
   {
     HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode);
     reactionNode.setForwardRate(math);
-    //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
   }
 
   private static void setupSingleRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
@@ -601,15 +599,14 @@ public class CoreSetup
     {
       HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
       reactionNode.setForwardRate(math);
-      //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
     }
     else
     {
-      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode);
-      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null,modelstate.getVariableToNodeMap(), reactionNode);
+      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
       reactionNode.setForwardRate(forwardRate);
+      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
       reactionNode.setReverseRate(reverseRate);
-      //reactionNode.computeNotEnoughEnoughMolecules(modelstate.getIndex());
+      
     }
   }
 

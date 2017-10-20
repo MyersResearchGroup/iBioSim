@@ -53,7 +53,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor"));
+  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor", "VolumeConcentrationRates", "RandomEventExecution"));
   static AnalysisProperties properties;
   static boolean verbose = false;
   
@@ -89,7 +89,7 @@ public class HierarchicalTestSuiteRunner
     //    }
 
     int start = 1;
-    int end = 1140;
+    int end = 1778;
 
     int unsupported = 0;
     int total = end - start + 1;
@@ -257,7 +257,6 @@ public class HierarchicalTestSuiteRunner
       double relativeError = Double.valueOf(p.getProperty("relative"));
       double absoluteError = Double.valueOf(p.getProperty("absolute"));
       int numSteps = Integer.valueOf(p.getProperty("steps"));
-      
       
       simProperties.setTimeLimit(timeLimit);
       simProperties.setRelError(relativeError);

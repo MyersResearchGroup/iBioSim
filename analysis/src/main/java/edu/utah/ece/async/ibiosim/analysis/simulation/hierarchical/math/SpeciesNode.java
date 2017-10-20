@@ -119,6 +119,13 @@ public class SpeciesNode extends VariableNode
     odeRate.addChild(sub);
   }
 
+
+  @Override
+  public void setValue(int index, double value)
+  {
+    state.getState(index).setStateValue(value);
+  }
+
   @Override
   public double computeRateOfChange(int index)
   {
@@ -145,7 +152,6 @@ public class SpeciesNode extends VariableNode
       rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
 
-    state.setRateValue(index, rate);
     return rate;
   }
 

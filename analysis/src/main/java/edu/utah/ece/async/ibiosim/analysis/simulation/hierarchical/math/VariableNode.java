@@ -29,14 +29,14 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class VariableNode extends HierarchicalNode
 {
-  
+
   protected boolean			isVariableConstant;
   protected boolean hasRule;
   protected boolean hasInitRule;
-  
+
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
-  
+
   public VariableNode(String name)
   {
     super(Type.NAME);
@@ -81,6 +81,23 @@ public class VariableNode extends HierarchicalNode
     return isVariableConstant;
   }
 
+  @Override
+  public void setRateValue(int index, double value)
+  {
+    if(!isVariableConstant)
+    {
+      state.setRateValue(index, value);
+    }
+  }
+
+  @Override
+  public void setValue(int index, double value)
+  {
+    if(!isVariableConstant)
+    {
+      state.getState(index).setStateValue(value);
+    }
+  }
 
   @Override
   public double computeRateOfChange(int index)
@@ -126,7 +143,7 @@ public class VariableNode extends HierarchicalNode
   {
     return hasRule;
   }
-  
+
   public void setHasInitRule(boolean hasInitRule)
   {
     this.hasInitRule = hasInitRule;

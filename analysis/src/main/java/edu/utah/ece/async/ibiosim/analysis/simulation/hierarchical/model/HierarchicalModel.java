@@ -303,26 +303,7 @@ public final class HierarchicalModel
 		this.type = type;
 	}
 
-	public void setModelType(Model model)
-	{
-		if (model == null)
-		{
-			type = ModelType.NONE;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_FLUX_BALANCE)
-		{
-			type = ModelType.HFBA;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS)
-		{
-			type = ModelType.HODE;
-		}
-		else
-		{
-			type = ModelType.HSSA;
-		}
-	}
-
+	
 	public String getID()
 	{
 		return ID;

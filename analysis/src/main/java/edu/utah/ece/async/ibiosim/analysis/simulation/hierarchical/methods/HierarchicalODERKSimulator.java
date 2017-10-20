@@ -365,7 +365,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
         for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          node.computeRateOfChange(index);
+          node.setRateValue(index, node.computeRateOfChange(index));
         }
       }
 
