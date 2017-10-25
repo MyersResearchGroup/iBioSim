@@ -64,7 +64,17 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
  */
 public class CoreSetup
 {
-  
+ 
+  /**
+   * 
+   * @param sim
+   * @param container
+   * @param type
+   * @param time
+   * @param wrapper
+   * @param split
+   * @throws IOException
+   */
   static void initializeModel(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
   {
     container.getHierarchicalModel().addMappingNode("_time", time);
@@ -664,10 +674,15 @@ public class CoreSetup
       
       }
       
-      node.setBoundaryCondition(species.getBoundaryCondition());
-      node.setHasOnlySubstance(species.getHasOnlySubstanceUnits());
+      boolean isBoundary = species.getBoundaryCondition();
+      boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
+      
+      node.setBoundaryCondition(isBoundary);
+      node.setHasOnlySubstance(isOnlySubstance);
+      
       VariableNode compartment = modelstate.getNode(species.getCompartment());
       node.setCompartment(compartment);
+      
       if (species.isSetInitialAmount())
       {
         node.setValue(modelstate.getIndex(), species.getInitialAmount());
@@ -680,6 +695,7 @@ public class CoreSetup
         FunctionNode functionNode = new FunctionNode(node, initConcentration);
         modelstate.addInitConcentration(functionNode);
       }
+      
     }
   }
 }

@@ -149,7 +149,7 @@ public class SpeciesNode extends VariableNode
     }
     else if (odeRate != null && !speciesTemplates.isBoundary)
     {
-      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
+      rate = Evaluator.evaluateExpressionRecursive(odeRate, true, index);
     }
 
     return rate;

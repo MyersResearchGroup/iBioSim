@@ -42,11 +42,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.Hierarch
 public final class Evaluator
 {
 
-  public static double evaluateExpressionRecursive(HierarchicalNode node, int index)
-  {
-    return evaluateExpressionRecursive(node, true, index);
-  }
-
   /**
    * This is a math evaluator for HierarchicalNode objects in the context of
    * the hierarchical simulator.
@@ -690,34 +685,17 @@ public final class Evaluator
 
   private static double evaluateName(HierarchicalNode node, boolean checkSubstance, int index)
   {
+    double value = node.getValue(index);
+    
     if (node.isSpecies() && checkSubstance)
     {
       SpeciesNode species = (SpeciesNode) node;
-
-      double value = 0;
-
       if (!species.hasOnlySubstance())
       {
         value = species.getConcentration(index);
       }
-      else
-      {
-        value = species.getValue(index);
-      }
-
-      return value;
     }
-//    else if (node.isReaction())
-//    {
-//      ReactionNode reaction = (ReactionNode) node;
-//
-//      if (reaction.hasEnoughMoleculesFd(index))
-//      {
-//        return reaction.getValue(index);
-//      }
-//    }
-    
-    return node.getValue(index);
+    return value;
   }
 
   private static double evaluateOperator(HierarchicalNode node, boolean checkSubstance, int index)
