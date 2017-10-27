@@ -235,6 +235,23 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   public void printStatisticsTSD() {
     // TODO Auto-generated method stub
   }
+  
+  private void computeRates()
+  {
+
+    for (HierarchicalModel hierarchicalModel : modules) {
+      hierarchicalModel.computePropensities();
+    }
+    
+    for (HierarchicalModel hierarchicalModel : modules) {
+      int index = hierarchicalModel.getIndex();
+      for (VariableNode node : hierarchicalModel.getListOfVariables()) {
+        node.setRateValue(index, node.computeRateOfChange(index));
+      }
+    }
+
+    computeAssignmentRules();
+  }
 
   public class HierarchicalEventHandler implements EventHandler {
 
@@ -251,8 +268,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       double returnValue = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
-      vectorWrapper.setRates(null);
-      computeAssignmentRules();
+      computeRates();
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getEvents()) {
@@ -270,8 +286,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       value = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
-      vectorWrapper.setRates(null);
-      computeAssignmentRules();
+      computeRates();
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getEvents()) {
@@ -305,6 +320,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     @Override
     public double g(double t, double[] y) {
       currentTime.setValue(t);
+      computeRates();
       if (!triggeredEventList.isEmpty()) {
         if (triggeredEventList.peek().getFireTime() <= t) {
           return value;
@@ -319,8 +335,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       value = -value;
       currentTime.setValue(t);
       vectorWrapper.setValues(y);
-      vectorWrapper.setRates(null);
-      computeAssignmentRules();
+      computeRates();
       computeEvents();
       return EventHandler.Action.STOP;
     }
@@ -340,17 +355,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       return vectorWrapper.getSize();
     }
 
-
-    public void computeReactionPropensities() {
-      for (HierarchicalModel hierarchicalModel : modules) {
-        hierarchicalModel.computePropensities();
-      }
-    }
-
-
     @Override
     public void computeDerivatives(double t, double[] y, double[] yDot)
-        throws MaxCountExceededException, DimensionMismatchException {
+        throws MaxCountExceededException, DimensionMismatchException 
+    {
       
       if(Double.isNaN(t))
       {
@@ -360,16 +368,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       setCurrentTime(t);
       vectorWrapper.setValues(y);
       computeAssignmentRules();
-      computeReactionPropensities();
       vectorWrapper.setRates(yDot);
-      for (HierarchicalModel hierarchicalModel : modules) {
-        int index = hierarchicalModel.getIndex();
-        for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          node.setRateValue(index, node.computeRateOfChange(index));
-        }
-      }
-
-      computeAssignmentRules();
+      computeRates();
     }
+    
+
+    
   }
 }
