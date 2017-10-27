@@ -25,8 +25,8 @@ import javax.swing.JTextField;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog.PreferencesTab;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PreferencesDialog.PreferencesTab;
 import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
 
 public enum GeneralPreferencesTab implements PreferencesTab {
