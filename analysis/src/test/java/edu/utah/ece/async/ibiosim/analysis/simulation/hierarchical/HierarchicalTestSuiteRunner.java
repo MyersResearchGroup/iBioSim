@@ -89,7 +89,7 @@ public class HierarchicalTestSuiteRunner
     //    }
 
     int start = 1;
-    int end = 1778;
+    int end = 1780;
 
     int unsupported = 0;
     int total = end - start + 1;
@@ -101,10 +101,10 @@ public class HierarchicalTestSuiteRunner
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
-      String root = args[0];
+      String root = args[0] + File.separator + testcase;
       properties.setRoot(root);
 
-      properties.setId(testcase);
+      properties.setId("");
       
       properties.setModelFile(testcase + "-sbml-l3v1.xml");
       String filename = properties.getFilename();
