@@ -5758,7 +5758,7 @@ public class BioModel extends CoreObservable{
 				/* add an option to leave ports if the user has requested this */
 				props.addOption("leavePorts", !removeComp, "unused ports should be listed in the flattened model");
 				
-				props.addOption("abortIfUnflattenable", "none");
+				//props.addOption("abortIfUnflattenable", "none");
 				
 				props.addOption("performValidation", "false");
 				
