@@ -52,11 +52,11 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 public class Analysis {
 
 	private static void usage() {
-		System.err.println("Description:\n");
+		System.err.println("Description:");
 		System.err.println("\t This application is used to run various analysis methods.");
-		System.err.println("Usage:\n");
+		System.err.println("Usage:");
 		System.err.println("\t java -jar [-d directory] input.xml");
-		System.err.println("Required:\n");
+		System.err.println("Required:");
     System.err.println("\t A SED-ML file.");
 		System.err.println("Options:\n");
 		System.exit(1);
