@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -24,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLError;
+import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
@@ -40,21 +43,22 @@ public class Validate
   {
     return errorMessage.getMessage();
   }
-  
+
   /**
    * Checks consistency of the sbml file.
    */
   public static boolean validateDoc(String file, SBMLDocument doc, boolean overdeterminedOnly) throws IOException, SBMLException, XMLStreamException
   {
-  // TODO: added to turn off checking until libsbml bug is found
-  //if (true) {
-  //  return true;
-  //}
+    // TODO: added to turn off checking until libsbml bug is found
+    //if (true) {
+    //  return true;
+    //}
     String message = "";
     long numErrors = 0;
     Preferences biosimrc = Preferences.userRoot();
+    String validationMethod = biosimrc.get("biosim.general.validate", "");
     boolean warnings = biosimrc.get("biosim.general.warnings", "").equals("true");
-    if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Executables.libsbmlFound)
+    if (validationMethod.equals("libsbml") && Executables.libsbmlFound)
     {
       message += "Validation Problems Found by libsbml\n";
       org.sbml.libsbml.SBMLDocument document = null;
@@ -65,7 +69,7 @@ public class Validate
       }
       else
       {
-         document = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(doc));
+        document = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(doc));
       }
       if (document == null)
       {
@@ -102,11 +106,11 @@ public class Validate
 
       long numberOfErrors = 0; //document.checkConsistency();
       if (!libsbml.LIBSBML_DOTTED_VERSION.equals("5.15.0")) {
-    	  numberOfErrors = document.checkConsistency();
+        numberOfErrors = document.checkConsistency();
       } else {
-    	  numberOfErrors = document.checkConsistency();
-          System.out.println(libsbml.LIBSBML_DOTTED_VERSION);
-    	  System.out.println("ERROR: please update libsbml.");
+        numberOfErrors = document.checkConsistency();
+        System.out.println(libsbml.LIBSBML_DOTTED_VERSION);
+        System.out.println("ERROR: please update libsbml.");
       }
       for (int i = 0; i < numberOfErrors; i++)
       {
@@ -133,13 +137,27 @@ public class Validate
         }
       }
     }
+    else if(validationMethod.equals("jsbml"))
+    {
+      message += "Validation Problems Found by JSBML\n";
+      doc.checkConsistencyOffline();
+      List<SBMLError> listOfError = doc.getErrorLog().getValidationErrors();
+      for(SBMLError error : listOfError)
+      {
+        if(error.getMessage().length() > 0)
+        {
+          message += numErrors + ":" + error.getMessage() + "\n";
+          numErrors++;
+        }
+      }
+    }
     else
     {
       message += "Validation Problems Found by Webservice\n";
       SBMLDocument document = doc;
       if (document == null)
       {
-          document = SBMLutilities.readSBML(file);
+        document = SBMLutilities.readSBML(file);
       }
       if (overdeterminedOnly)
       {
@@ -193,13 +211,13 @@ public class Validate
         }
       }
     }
-  
+
     if (numErrors > 0)
     {
       errorMessage.setLog(message);
       return true;
     }
-    
+
     return false;
   }
 }

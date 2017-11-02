@@ -143,6 +143,7 @@ public enum IBioSimPreferences {
 	}
 	
 	private Boolean enableLibSBMLValidate = null;
+	private Boolean enableJSBMLValidate = null;
 	
 	public boolean isLibSBMLValidateEnabled() {
 		if (enableLibSBMLValidate == null) {
@@ -152,11 +153,27 @@ public enum IBioSimPreferences {
 		return enableLibSBMLValidate;
 	}
 
-	public void setLibSBMLValidateEnabled(boolean enableLibSBMLValidate) {
+	public boolean isJSBMLValidateEnabled() {
+    if (enableJSBMLValidate == null) {
+      enableJSBMLValidate = Preferences.userRoot().get("biosim.general.validate", "").equals("jsbml");
+    }
+
+    return enableJSBMLValidate;
+  }
+	
+	public void setValidateEnabled(boolean enableLibSBMLValidate, boolean enableJsbmlValidate) {
 		this.enableLibSBMLValidate = enableLibSBMLValidate;
-		if (enableLibSBMLValidate) {
+		this.enableJSBMLValidate = enableJsbmlValidate;
+		if (enableLibSBMLValidate) 
+		{
 			Preferences.userRoot().put("biosim.general.validate", "libsbml");
-		} else {
+		} 
+		if (enableJsbmlValidate) 
+    {
+      Preferences.userRoot().put("biosim.general.validate", "jsbml");
+    } 
+		else 
+		{
 			Preferences.userRoot().put("biosim.general.validate", "default");
 		}
 	}
