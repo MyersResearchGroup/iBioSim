@@ -43,11 +43,11 @@ public enum GeneralPreferencesTab implements PreferencesTab {
 			IBioSimPreferences.INSTANCE.isWarningsEnabled());	
 	
 
-  private JRadioButton libsbmlValidate = new JRadioButton("Use libsbml to Validate Models",
-      IBioSimPreferences.INSTANCE.isLibSBMLValidateEnabled());
-	private final JRadioButton jsbmlValidate = new JRadioButton("Use JSBML to Validate Models",
-    IBioSimPreferences.INSTANCE.isJSBMLValidateEnabled());
-	private final JRadioButton webValidate = new JRadioButton("Use Webservice to Validate Models",
+	private JRadioButton libsbmlValidate = new JRadioButton("Use libsbml to Validate Models",
+			IBioSimPreferences.INSTANCE.isLibSBMLValidateEnabled());
+	private JRadioButton jsbmlValidate = new JRadioButton("Use JSBML to Validate Models",
+			IBioSimPreferences.INSTANCE.isJSBMLValidateEnabled());
+	private JRadioButton webValidate = new JRadioButton("Use Webservice to Validate Models",
 	  !libsbmlValidate.isSelected() && !jsbmlValidate.isSelected());
   
 	private JLabel xhtmlCmdLabel = new JLabel("Browser Viewer Command");
