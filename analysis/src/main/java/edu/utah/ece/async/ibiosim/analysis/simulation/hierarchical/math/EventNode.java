@@ -140,7 +140,7 @@ public class EventNode extends HierarchicalNode
     double fireTime = 0;
     if (delayValue != null)
     {
-      fireTime = Evaluator.evaluateExpressionRecursive(delayValue, true, index);
+      fireTime = Evaluator.evaluateExpressionRecursive(delayValue, index);
     }
     return  fireTime;
   }
@@ -150,7 +150,7 @@ public class EventNode extends HierarchicalNode
     double priority = 0;
     if(priorityValue != null)
     {
-      priority =  Evaluator.evaluateExpressionRecursive(priorityValue, true, index);
+      priority =  Evaluator.evaluateExpressionRecursive(priorityValue, index);
     }
     return  priority;
   }
@@ -166,7 +166,7 @@ public class EventNode extends HierarchicalNode
       {
         FunctionNode eventAssignmentNode = eventAssignments.get(i);
         VariableNode variable = eventAssignmentNode.getVariable();
-        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, false, index);
+        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, index);
         if (variable.isSpecies())
         {
           SpeciesNode species = (SpeciesNode) variable;
@@ -185,7 +185,7 @@ public class EventNode extends HierarchicalNode
   public boolean computeTrigger(int index)
   {
 
-    double triggerResult = Evaluator.evaluateExpressionRecursive(this,true, index);
+    double triggerResult = Evaluator.evaluateExpressionRecursive(this,index);
     return triggerResult != 0;
   }
 

@@ -33,7 +33,9 @@ public class VariableNode extends HierarchicalNode
   protected boolean			isVariableConstant;
   protected boolean hasRule;
   protected boolean hasInitRule;
-
+  protected boolean hasAmountUnits;
+  protected boolean     isSetInitialValue;
+  
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
 
@@ -41,6 +43,7 @@ public class VariableNode extends HierarchicalNode
   {
     super(Type.NAME);
     this.name = name;
+    this.hasAmountUnits = true;
   }
 
   public VariableNode(String name, StateType type)
@@ -48,6 +51,7 @@ public class VariableNode extends HierarchicalNode
     super(Type.NAME);
     this.name = name;
     this.state = new ValueState();
+    this.hasAmountUnits = true;
   }
 
   public VariableNode(VariableNode copy)
@@ -55,6 +59,7 @@ public class VariableNode extends HierarchicalNode
     super(copy);
     this.name = copy.name;
     this.isVariableConstant = copy.isVariableConstant;
+    this.hasAmountUnits = copy.hasAmountUnits;
   }
 
   public List<ReactionNode> getReactionDependents()
@@ -105,7 +110,7 @@ public class VariableNode extends HierarchicalNode
     double rate = 0;
     if (rateRule != null)
     {
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
       state.setRateValue(index, rate);
     }
     return rate;
@@ -159,4 +164,25 @@ public class VariableNode extends HierarchicalNode
     this.name = name;
   }
 
+  public boolean hasAmountUnits()
+  {
+    return this.hasAmountUnits;
+  }
+  
+  public void setHasAmountUnits(boolean hasAmountUnits)
+  {
+    this.hasAmountUnits = hasAmountUnits;
+  }
+  
+  public void setIsSetInitialValue(boolean isSetInitialValue)
+  {
+    this.isSetInitialValue = isSetInitialValue;
+  }
+  
+  public boolean isSetInitialValue()
+  {
+    return this.isSetInitialValue;
+  }
+  
+  
 }

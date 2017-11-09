@@ -101,13 +101,13 @@ public class ReactionNode extends VariableNode
 
     if (forwardRate != null)
     {
-      double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, true, index);
+      double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
       newValue = forwardRateValue;
     }
 
     if (reverseRate != null)
     {
-      double reverseRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, true, index);
+      double reverseRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
       newValue = newValue + reverseRateValue;
     }
 
@@ -121,7 +121,7 @@ public class ReactionNode extends VariableNode
   public void fireReaction(int index, double threshold)
   {
 
-    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, true, index) > threshold;
+    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
     if(isForward)
     {
       if (computeNotEnoughEnoughMoleculesFd(index))

@@ -53,7 +53,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor", "VolumeConcentrationRates", "RandomEventExecution"));
+  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("comp:Submodel", "fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
   static AnalysisProperties properties;
   static boolean verbose = false;
   
@@ -76,20 +76,9 @@ public class HierarchicalTestSuiteRunner
     properties = new AnalysisProperties("", "", "" , false);
     
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
-
-    //    String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
-    //
-    //    for (String s : casesNeedToChangeTimeStep)
-    //    {
-    //      if (s.equals(testcase))
-    //      {
-    //        maxTimeStep = 0.001;
-    //        break;
-    //      }
-    //    }
-
-    int start = 1;
-    int end = 1780;
+    
+    int start = 1462;
+    int end = 1462;
 
     int unsupported = 0;
     int total = end - start + 1;

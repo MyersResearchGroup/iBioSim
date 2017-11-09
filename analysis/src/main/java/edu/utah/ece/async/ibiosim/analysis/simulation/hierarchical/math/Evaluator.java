@@ -45,18 +45,15 @@ public final class Evaluator
   /**
    * This is a math evaluator for HierarchicalNode objects in the context of
    * the hierarchical simulator.
-   * 
-   * @param checkSubstance
-   *            TODO
    * @param index
    *            TODO
    * 
    */
-  public static double evaluateExpressionRecursive(HierarchicalNode node, boolean checkSubstance, int index)
+  public static double evaluateExpressionRecursive(HierarchicalNode node, int index)
   {
     if (node.isBoolean())
     {
-      return evaluateBoolean(node, checkSubstance, index);
+      return evaluateBoolean(node, index);
     }
     else if (node.isConstant())
     {
@@ -68,22 +65,22 @@ public final class Evaluator
     }
     else if (node.isName())
     {
-      return evaluateName(node, checkSubstance, index);
+      return evaluateName(node, index);
     }
     else if (node.isOperator())
     {
-      return evaluateOperator(node, checkSubstance, index);
+      return evaluateOperator(node, index);
     }
     else
     {
-      return evaluateFunction(node, checkSubstance, index);
+      return evaluateFunction(node, index);
     }
   }
 
   /*
    * Evaluates boolean functions
    */
-  private static double evaluateBoolean(HierarchicalNode node, boolean checkSubstance, int index)
+  private static double evaluateBoolean(HierarchicalNode node, int index)
   {
     switch (node.getType())
     {
@@ -98,14 +95,14 @@ public final class Evaluator
     }
     case LOGICAL_NOT:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return value < 1 ? 1 : 0;
     }
     case LOGICAL_AND:
     {
       for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
       {
-        if(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) == 0)
+        if(evaluateExpressionRecursive(node.getChild(childIter), index) == 0)
         {
           return 0;
         }
@@ -115,15 +112,15 @@ public final class Evaluator
     }
     case LOGICAL_IMPLIES:
     {
-      double a = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-      double b = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      double a = evaluateExpressionRecursive(node.getChild(0), index);
+      double b = evaluateExpressionRecursive(node.getChild(1), index);
       return a < 1 || b > 0 ? 1 : 0;
     }
     case LOGICAL_OR:
     {
       for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
       {
-        if(evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) == 1)
+        if(evaluateExpressionRecursive(node.getChild(childIter), index) == 1)
         {
           return 1;
         }
@@ -135,11 +132,11 @@ public final class Evaluator
     case LOGICAL_XOR:
     {
 
-      boolean xorResult = (node.getNumOfChild() == 0) ? false : evaluateExpressionRecursive(node.getChild(0), checkSubstance, index) > 0;
+      boolean xorResult = (node.getNumOfChild() == 0) ? false : evaluateExpressionRecursive(node.getChild(0), index) > 0;
 
       for (int childIter = 1; childIter < node.getNumOfChild(); ++childIter)
       {
-        xorResult = xorResult ^ evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index) > 0;
+        xorResult = xorResult ^ evaluateExpressionRecursive(node.getChild(childIter), index) > 0;
       }
 
       return xorResult ? 1 : 0;
@@ -148,11 +145,11 @@ public final class Evaluator
     case RELATIONAL_EQ:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs != rhs)
         {
@@ -168,11 +165,11 @@ public final class Evaluator
     case RELATIONAL_NEQ:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs == rhs)
         {
@@ -187,11 +184,11 @@ public final class Evaluator
     case RELATIONAL_GEQ:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs < rhs)
         {
@@ -206,11 +203,11 @@ public final class Evaluator
     case RELATIONAL_LEQ:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs > rhs)
         {
@@ -225,11 +222,11 @@ public final class Evaluator
     case RELATIONAL_GT:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs <= rhs)
         {
@@ -244,11 +241,11 @@ public final class Evaluator
     case RELATIONAL_LT:
     {
       double lhs, rhs;
-      lhs = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      lhs = evaluateExpressionRecursive(node.getChild(0), index);
 
       for (int i = 1; i < node.getNumOfChild(); i++)
       {
-        rhs = evaluateExpressionRecursive(node.getChild(i), checkSubstance, index);
+        rhs = evaluateExpressionRecursive(node.getChild(i), index);
 
         if (lhs >= rhs)
         {
@@ -293,7 +290,7 @@ public final class Evaluator
     }
   }
 
-  private static double evaluateFunction(HierarchicalNode node, boolean checkSubstance, int index)
+  private static double evaluateFunction(HierarchicalNode node, int index)
   {
     switch (node.getType())
     {
@@ -303,8 +300,8 @@ public final class Evaluator
 
       if (nodeName.equals("uniform"))
       {
-        double leftChildValue = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double rightChildValue = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double leftChildValue = evaluateExpressionRecursive(node.getChild(0), index);
+        double rightChildValue = evaluateExpressionRecursive(node.getChild(1), index);
         double lowerBound = Math.min(leftChildValue, rightChildValue);
         double upperBound = Math.max(leftChildValue, rightChildValue);
         UniformRealDistribution distrib = new UniformRealDistribution(lowerBound, upperBound);
@@ -312,55 +309,55 @@ public final class Evaluator
       }
       else if (nodeName.equals("exponential"))
       {
-        double mean = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+        double mean = evaluateExpressionRecursive(node.getChild(0), index);
         ExponentialDistribution distrib = new ExponentialDistribution(mean);
         return distrib.sample();
       }
       else if (nodeName.equals("gamma"))
       {
-        double shape = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double scale = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double shape = evaluateExpressionRecursive(node.getChild(0), index);
+        double scale = evaluateExpressionRecursive(node.getChild(1), index);
 
         GammaDistribution distrib = new GammaDistribution(shape, scale);
         return distrib.sample();
       }
       else if (nodeName.equals("chisq"))
       {
-        double deg = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+        double deg = evaluateExpressionRecursive(node.getChild(0), index);
         ChiSquaredDistribution distrib = new ChiSquaredDistribution(deg);
         return distrib.sample();
       }
       else if (nodeName.equals("lognormal"))
       {
-        double scale = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double shape = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double scale = evaluateExpressionRecursive(node.getChild(0), index);
+        double shape = evaluateExpressionRecursive(node.getChild(1), index);
         LogNormalDistribution distrib = new LogNormalDistribution(scale, shape);
         return distrib.sample();
       }
       else if (nodeName.equals("laplace"))
       {
-        double mu = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double beta = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double mu = evaluateExpressionRecursive(node.getChild(0), index);
+        double beta = evaluateExpressionRecursive(node.getChild(1), index);
         LaplaceDistribution distrib = new LaplaceDistribution(mu, beta);
         return distrib.sample();
       }
       else if (nodeName.equals("cauchy"))
       {
-        double median = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double scale = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double median = evaluateExpressionRecursive(node.getChild(0), index);
+        double scale = evaluateExpressionRecursive(node.getChild(1), index);
         CauchyDistribution distrib = new CauchyDistribution(median, scale);
         return distrib.sample();
       }
       else if (nodeName.equals("poisson"))
       {
-        double p = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+        double p = evaluateExpressionRecursive(node.getChild(0), index);
         PoissonDistribution distrib = new PoissonDistribution(p);
         return distrib.sample();
       }
       else if (nodeName.equals("binomial"))
       {
-        int p = (int) evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double b = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        int p = (int) evaluateExpressionRecursive(node.getChild(0), index);
+        double b = evaluateExpressionRecursive(node.getChild(1), index);
         BinomialDistribution distrib = new BinomialDistribution(p, b);
         return distrib.sample();
       }
@@ -371,8 +368,8 @@ public final class Evaluator
       }
       else if (nodeName.equals("normal"))
       {
-        double mean = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-        double std = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+        double mean = evaluateExpressionRecursive(node.getChild(0), index);
+        double std = evaluateExpressionRecursive(node.getChild(1), index);
 
         NormalDistribution distrib = new NormalDistribution(mean, std);
         return distrib.sample();
@@ -385,79 +382,79 @@ public final class Evaluator
 
     case FUNCTION_ABS:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.abs(value);
     }
     case FUNCTION_ARCCOS:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.acos(value);
     }
     case FUNCTION_ARCSIN:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.asin(value);
     }
     case FUNCTION_ARCTAN:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.atan(value);
     }
     case FUNCTION_CEILING:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.ceil(value);
     }
     case FUNCTION_COS:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.cos(value);
     }
     case FUNCTION_COSH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.cosh(value);
     }
     case FUNCTION_EXP:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.exp(value);
     }
     case FUNCTION_FLOOR:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.floor(value);
     }
     case FUNCTION_LN:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.log(value);
     }
     case FUNCTION_LOG:
     {
-      double base = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-      double var = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      double base = evaluateExpressionRecursive(node.getChild(0), index);
+      double var = evaluateExpressionRecursive(node.getChild(1), index);
       double value = Math.log(var) / Math.log(base);
       return value;
     }
     case FUNCTION_SIN:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.sin(value);
     }
     case FUNCTION_SINH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.sinh(value);
     }
     case FUNCTION_TAN:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.tan(value);
     }
     case FUNCTION_TANH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       return Math.tanh(value);
     }
     case FUNCTION_PIECEWISE:
@@ -465,48 +462,48 @@ public final class Evaluator
 
       for (int childIter = 0; childIter < node.getNumOfChild() - 1; childIter += 2)
       {
-        boolean condition = evaluateExpressionRecursive(node.getChild(childIter + 1), checkSubstance, index) > 0;
+        boolean condition = evaluateExpressionRecursive(node.getChild(childIter + 1), index) > 0;
         if (condition)
         {
-          return evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+          return evaluateExpressionRecursive(node.getChild(childIter), index);
         }
 
       }
-      return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), checkSubstance, index);
+      return evaluateExpressionRecursive(node.getChild(node.getNumOfChild() - 1), index);
     }
     case FUNCTION_REM:
     {
-      double d0 = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-      double d1 = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      double d0 = evaluateExpressionRecursive(node.getChild(0), index);
+      double d1 = evaluateExpressionRecursive(node.getChild(1), index);
       int quo = (int) (d0/d1);
       return d0 - d1*quo;
     }
     case FUNCTION_ROOT:
     {
-      return FastMath.pow(evaluateExpressionRecursive(node.getChild(1), checkSubstance, index), 1 / evaluateExpressionRecursive(node.getChild(0), checkSubstance, index));
+      return FastMath.pow(evaluateExpressionRecursive(node.getChild(1), index), 1 / evaluateExpressionRecursive(node.getChild(0), index));
     }
     case FUNCTION_QUOTIENT:
     {
-      double d0 = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
-      double d1 = evaluateExpressionRecursive(node.getChild(1), checkSubstance, index);
+      double d0 = evaluateExpressionRecursive(node.getChild(0), index);
+      double d1 = evaluateExpressionRecursive(node.getChild(1), index);
       return (int) (d0/d1);
     }
     case FUNCTION_SEC:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 1 / Math.cos(value);
       return result;
     }
     case FUNCTION_SECH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 1 / Math.cosh(value);
       return result;
     }
     case FUNCTION_FACTORIAL:
     {
       HierarchicalNode leftChild = node.getChild(0);
-      int leftValue = (int) evaluateExpressionRecursive(leftChild, checkSubstance, index);
+      int leftValue = (int) evaluateExpressionRecursive(leftChild, index);
       double result = 1;
       while (leftValue > 0)
       {
@@ -518,25 +515,25 @@ public final class Evaluator
     }
     case FUNCTION_COT:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 1 / Math.tan(value);
       return result;
     }
     case FUNCTION_COTH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.sinh(value) / Math.cosh(value);
       return result;
     }
     case FUNCTION_CSC:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 1 / Math.sin(value);
       return result;
     }
     case FUNCTION_CSCH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 1 / Math.sinh(value);
       return result;
     }
@@ -547,57 +544,57 @@ public final class Evaluator
     }
     case FUNCTION_ARCTANH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 0.5 * (Math.log(value + 1) - Math.log(1 - value));
       return result;
     }
     case FUNCTION_ARCSINH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.log(value + Math.sqrt(value * value + 1));
       return result;
     }
     case FUNCTION_ARCCOSH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.log(value + Math.sqrt(value + 1) * Math.sqrt(value - 1));
       return result;
     }
     case FUNCTION_ARCCOT:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.atan(1 / value);
       return result;
     }
     case FUNCTION_ARCCOTH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = 0.5 * (Math.log(1 + 1 / value) - Math.log(1 - 1 / value));
       return result;
     }
     case FUNCTION_ARCCSC:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.asin(1 / value);
       return result;
     }
 
     case FUNCTION_ARCCSCH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.log(1 / value + Math.sqrt(1 / (value * value) + 1));
       return result;
     }
     case FUNCTION_ARCSEC:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.acos(1 / value);
       return result;
     }
 
     case FUNCTION_ARCSECH:
     {
-      double value = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double value = evaluateExpressionRecursive(node.getChild(0), index);
       double result = Math.log(1 / value + Math.sqrt(1 / value + 1) * Math.sqrt(1 / value - 1));
       return result;
     }
@@ -605,8 +602,8 @@ public final class Evaluator
     {
       HierarchicalNode leftChild = node.getChild(0);
       HierarchicalNode rightChild = node.getChild(1);
-      double leftValue = evaluateExpressionRecursive(leftChild, checkSubstance, index);
-      double rightValue = evaluateExpressionRecursive(rightChild, checkSubstance, index);
+      double leftValue = evaluateExpressionRecursive(leftChild, index);
+      double rightValue = evaluateExpressionRecursive(rightChild, index);
       double result = Math.pow(leftValue, rightValue);
       return result;
 
@@ -628,11 +625,11 @@ public final class Evaluator
         return Double.NaN;
       }
 
-      double min = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double min = evaluateExpressionRecursive(node.getChild(0), index);
       double tmp;
       for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
       {
-        tmp = evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        tmp = evaluateExpressionRecursive(node.getChild(childIter), index);
         if(tmp < min)
         {
           min = tmp;
@@ -647,11 +644,11 @@ public final class Evaluator
         return Double.NaN;
       }
 
-      double max = evaluateExpressionRecursive(node.getChild(0), checkSubstance, index);
+      double max = evaluateExpressionRecursive(node.getChild(0), index);
       double tmp;
       for (int childIter = 1; childIter < node.getNumOfChild(); childIter++)
       {
-        tmp = evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        tmp = evaluateExpressionRecursive(node.getChild(childIter), index);
         if(tmp > max)
         {
           max = tmp;
@@ -683,22 +680,13 @@ public final class Evaluator
     return node.getValue();
   }
 
-  private static double evaluateName(HierarchicalNode node, boolean checkSubstance, int index)
+  private static double evaluateName(HierarchicalNode node, int index)
   {
     double value = node.getValue(index);
-    
-    if (node.isSpecies() && checkSubstance)
-    {
-      SpeciesNode species = (SpeciesNode) node;
-      if (!species.hasOnlySubstance())
-      {
-        value = species.getConcentration(index);
-      }
-    }
     return value;
   }
 
-  private static double evaluateOperator(HierarchicalNode node, boolean checkSubstance, int index)
+  private static double evaluateOperator(HierarchicalNode node, int index)
   {
     double result;
     switch (node.getType())
@@ -710,7 +698,7 @@ public final class Evaluator
 
       for (int childIter = 0; childIter < node.getNumOfChild(); childIter++)
       {
-        result += evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        result += evaluateExpressionRecursive(node.getChild(childIter), index);
       }
 
       break;
@@ -720,7 +708,7 @@ public final class Evaluator
     {
       HierarchicalNode leftChild = node.getChild(0);
 
-      result = evaluateExpressionRecursive(leftChild, checkSubstance, index);
+      result = evaluateExpressionRecursive(leftChild, index);
 
       if (node.getNumOfChild() == 1)
       {
@@ -730,7 +718,7 @@ public final class Evaluator
       {
         for (int childIter = 1; childIter < node.getNumOfChild(); ++childIter)
         {
-          result -= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+          result -= evaluateExpressionRecursive(node.getChild(childIter), index);
         }
       }
       break;
@@ -743,7 +731,7 @@ public final class Evaluator
 
       for (int childIter = 0; childIter < node.getNumOfChild(); ++childIter)
       {
-        result *= evaluateExpressionRecursive(node.getChild(childIter), checkSubstance, index);
+        result *= evaluateExpressionRecursive(node.getChild(childIter), index);
       }
 
       break;
@@ -753,8 +741,8 @@ public final class Evaluator
     {
       HierarchicalNode leftChild = node.getChild(0);
       HierarchicalNode rightChild = node.getChild(1);
-      double leftValue = evaluateExpressionRecursive(leftChild, checkSubstance, index);
-      double rightValue = evaluateExpressionRecursive(rightChild, checkSubstance, index);
+      double leftValue = evaluateExpressionRecursive(leftChild, index);
+      double rightValue = evaluateExpressionRecursive(rightChild, index);
       result = leftValue / rightValue;
       break;
     }
@@ -762,8 +750,8 @@ public final class Evaluator
     {
       HierarchicalNode leftChild = node.getChild(0);
       HierarchicalNode rightChild = node.getChild(1);
-      double leftValue = evaluateExpressionRecursive(leftChild, checkSubstance, index);
-      double rightValue = evaluateExpressionRecursive(rightChild, checkSubstance, index);
+      double leftValue = evaluateExpressionRecursive(leftChild, index);
+      double rightValue = evaluateExpressionRecursive(rightChild, index);
       result = Math.pow(leftValue, rightValue);
       break;
 

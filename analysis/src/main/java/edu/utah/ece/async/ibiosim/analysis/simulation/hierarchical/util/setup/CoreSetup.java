@@ -53,6 +53,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter.InterpreterType;
 
 /**
  * 
@@ -64,7 +65,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
  */
 public class CoreSetup
 {
- 
+
   /**
    * 
    * @param sim
@@ -75,19 +76,21 @@ public class CoreSetup
    * @param split
    * @throws IOException
    */
-  static void initializeModel(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
+  static void initializeMath(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
+  {
+    setupEvents(sim, container);
+    setupConstraints(sim, container);
+    setupRules(sim, container);
+    setupInitialAssignments(sim, container);
+  }
+  
+  static void initializeVariables(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
   {
     container.getHierarchicalModel().addMappingNode("_time", time);
     setupParameters(sim, container, wrapper);
     setupCompartments(sim, container, wrapper);
     setupSpecies(sim, container, wrapper);
     setupReactions(sim, container, wrapper);
-    setupEvents(sim, container);
-    setupConstraints(sim, container);
-    setupRules(sim, container);
-    setupInitialAssignments(sim, container);
-    //ArraysSetup.linkDimensionSize(modelstate);
-    //ArraysSetup.expandArrays(modelstate);
   }
 
   private static void setupCompartments(HierarchicalSimulation sim, ModelContainer container, VectorWrapper wrapper)
@@ -98,14 +101,13 @@ public class CoreSetup
     for (Compartment compartment : model.getListOfCompartments())
     {
       ReplacementSetup.setupReplacement(sim, compartment, wrapper,VariableType.VARIABLE, container);
-      
+
       String printVariable = container.getPrefix() + compartment.getId();
       String compartmentID = compartment.getId();
       node = modelstate.getNode(compartmentID);
       if(node == null)
       {
         node = new VariableNode(compartmentID);
-
         modelstate.addMappingNode(compartmentID, node);
       }
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
@@ -140,6 +142,7 @@ public class CoreSetup
       else
       {
         node.setValue(modelstate.getIndex(), compartment.getSize());
+        node.setIsSetInitialValue(true);
       }
     }
   }
@@ -168,7 +171,7 @@ public class CoreSetup
 
       if(math != null)
       {
-        HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());  
+        HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER);  
         modelstate.addConstraint(id, constraintNode);
       }
 
@@ -189,16 +192,18 @@ public class CoreSetup
       {
         continue;
       }
-
+      
       if(eventAssignment.isSetMath())
       {
         ASTNode math = eventAssignment.getMath();
-        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
-        VariableNode variable = modelstate.getNode(eventAssignment.getVariable());
-        FunctionNode eventAssignmentNode = new FunctionNode(variable, assignmentNode);
+        VariableNode variableNode = modelstate.getNode(eventAssignment.getVariable());
+
+        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.ASSIGNMENT);
+
+        FunctionNode eventAssignmentNode = new FunctionNode(variableNode, assignmentNode);
         eventNode.addEventAssignment(eventAssignmentNode);
       }
-      
+
     }
   }
 
@@ -229,7 +234,7 @@ public class CoreSetup
 
         Trigger trigger = event.getTrigger();
         ASTNode triggerMath = trigger.getMath();
-        HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap);
+        HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap, InterpreterType.OTHER);
 
         EventNode node = modelstate.addEvent(triggerNode);
         node.addEventState(index);
@@ -256,7 +261,7 @@ public class CoreSetup
           if (!(priority.isSetMetaId() && modelstate.isDeletedByMetaId(priority.getMetaId())) && priority.isSetMath())
           {
             ASTNode math = priority.getMath();
-            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math,  variableToNodeMap);
+            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math,  variableToNodeMap, InterpreterType.OTHER);
             node.setPriorityValue(priorityNode);
           }
 
@@ -268,7 +273,7 @@ public class CoreSetup
           if (!(delay.isSetMetaId() && modelstate.isDeletedByMetaId(delay.getMetaId())) && delay.isSetMath())
           {
             ASTNode math = delay.getMath();
-            HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap);
+            HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap, InterpreterType.OTHER);
             node.setDelayValue(delayNode);
           }
         }
@@ -294,14 +299,14 @@ public class CoreSetup
       {
         continue;
       }
-      
-      String variable = initAssignment.getVariable();
-      VariableNode variableNode = modelstate.getNode(variable);
 
       if(initAssignment.isSetMath())
       {
+
+        String variable = initAssignment.getVariable();
+        VariableNode variableNode = modelstate.getNode(variable);
         ASTNode math = initAssignment.getMath();
-        HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap());
+        HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER);
 
         if (variableNode.isSpecies())
         {
@@ -338,7 +343,7 @@ public class CoreSetup
     {
 
       ReplacementSetup.setupReplacement(sim, parameter, wrapper,VariableType.VARIABLE, container);
-      
+
       node = modelstate.getNode(parameter.getId());
       String printVariable = container.getPrefix() + parameter.getId();
 
@@ -349,7 +354,7 @@ public class CoreSetup
         int index = modelstate.getIndex();
         node.createState(sim.getAtomicType(), wrapper);
         node.getState().addState(index, 0);
-       
+
       }
 
       if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
@@ -361,7 +366,7 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
-      
+
       if (modelstate.isDeletedBySId(parameter.getId()))
       {
         continue;
@@ -371,7 +376,13 @@ public class CoreSetup
       {
         modelstate.addVariable(node);
       }
-      node.setValue(modelstate.getIndex(), parameter.getValue());
+      
+      if(parameter.isSetValue())
+      {
+        node.setValue(modelstate.getIndex(), parameter.getValue());
+        node.setIsSetInitialValue(true);
+      }
+      
     }
   }
 
@@ -380,7 +391,7 @@ public class CoreSetup
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
     String id = product.isSetMetaId() ? product.getMetaId() : product.toString();
-    
+
     ReplacementSetup.setupReplacement(sim, product, id, container);
     if (product.isSetId() && modelstate.isDeletedBySId(product.getId()))
     {
@@ -427,7 +438,7 @@ public class CoreSetup
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
     String id = reactant.isSetMetaId() ? reactant.getMetaId() : reactant.toString();
-    
+
     ReplacementSetup.setupReplacement(sim, reactant,id, container);
     if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
     {
@@ -481,7 +492,7 @@ public class CoreSetup
       ReplacementSetup.setupReplacement(sim, reaction, wrapper, VariableType.REACTION, container);
 
       ReactionNode reactionNode = (ReactionNode) modelstate.getNode(reaction.getId());
-      
+
       if(reactionNode == null)
       {
         reactionNode = modelstate.addReaction(reaction.getId());
@@ -493,7 +504,7 @@ public class CoreSetup
         String printVariable = container.getPrefix() + reaction.getId();
         sim.addPrintVariable(printVariable, reactionNode, modelstate.getIndex(), false);
       }
-      
+
       if (modelstate.isDeletedBySId(reaction.getId()))
       {
         continue;
@@ -529,16 +540,6 @@ public class CoreSetup
           VariableNode node = new VariableNode(id, StateType.SCALAR);
           node.setValue(localParameter.getValue());
           reactionNode.addLocalParameter(id, node);
-
-          String printVariable = container.getPrefix() + localParameter.getId();
-          if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
-          {
-            sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
-          }
-          else
-          {
-            sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
-          }
         }
         if (kineticLaw.isSetMath())
         {
@@ -575,21 +576,25 @@ public class CoreSetup
       if (rule.isAssignment())
       {
         AssignmentRule assignRule = (AssignmentRule) rule;
-        ASTNode math = assignRule.getMath();
-        VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
-        HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode);
-        FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
-        modelstate.addAssignRule(node);
-        variableNode.setHasRule(true);
+        if(assignRule.isSetMath())
+        {
+          ASTNode math = assignRule.getMath();
+          VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
+          HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode, InterpreterType.ASSIGNMENT);
+          FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
+          modelstate.addAssignRule(node);
+          variableNode.setHasRule(true);
+        }
       }
       else if (rule.isRate())
       {
         RateRule rateRule = (RateRule) rule;
         if(rateRule.isSetMath())
         {
+
           ASTNode math = rateRule.getMath();
           VariableNode variableNode = variableToNodes.get(rateRule.getVariable());
-          HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes);
+          HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes, InterpreterType.RATE);
           variableNode.setRateRule(rateNode);
         }
       }
@@ -598,7 +603,7 @@ public class CoreSetup
 
   private static void setupSingleNonRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
   {
-    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode);
+    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode, InterpreterType.RATE);
     reactionNode.setForwardRate(math);
   }
 
@@ -607,16 +612,16 @@ public class CoreSetup
     ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
     if (splitMath == null)
     {
-      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
+      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
       reactionNode.setForwardRate(math);
     }
     else
     {
-      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
+      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
       reactionNode.setForwardRate(forwardRate);
-      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode);
+      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
       reactionNode.setReverseRate(reverseRate);
-      
+
     }
   }
 
@@ -637,7 +642,7 @@ public class CoreSetup
 
       String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
-      
+
       if(sim.getPrintConcentrationSpecies().contains(printVariable))
       {
         isConcentration = true;
@@ -657,12 +662,12 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
-      
+
       if(sim.getInterestingSpecies() == null)
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
-      
+
       if (modelstate.isDeletedBySId(species.getId()))
       {
         continue;
@@ -671,21 +676,22 @@ public class CoreSetup
       if(!species.getConstant())
       {
         modelstate.addVariable(node);
-      
+
       }
-      
+
       boolean isBoundary = species.getBoundaryCondition();
       boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
-      
+
       node.setBoundaryCondition(isBoundary);
       node.setHasOnlySubstance(isOnlySubstance);
-      
+
       VariableNode compartment = modelstate.getNode(species.getCompartment());
       node.setCompartment(compartment);
-      
+
       if (species.isSetInitialAmount())
       {
         node.setValue(modelstate.getIndex(), species.getInitialAmount());
+        node.setIsSetInitialValue(true);
       }
       else if (species.isSetInitialConcentration())
       {
@@ -694,8 +700,9 @@ public class CoreSetup
         initConcentration.addChild(compartment);
         FunctionNode functionNode = new FunctionNode(node, initConcentration);
         modelstate.addInitConcentration(functionNode);
+        node.setHasAmountUnits(false);
+        node.setIsSetInitialValue(true);
       }
-      
     }
   }
 }

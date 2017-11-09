@@ -70,7 +70,7 @@ public class SpeciesNode extends VariableNode
   {
     speciesTemplates.isBoundary = isBoundary;
   }
-
+  
   public boolean hasOnlySubstance()
   {
     return speciesTemplates.hasOnlySubstance;
@@ -132,8 +132,8 @@ public class SpeciesNode extends VariableNode
     double rate = 0;
     if (rateRule != null)
     {
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      if (!speciesTemplates.hasOnlySubstance)
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
+      if (!speciesTemplates.hasOnlySubstance )
       {
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
@@ -149,7 +149,7 @@ public class SpeciesNode extends VariableNode
     }
     else if (odeRate != null && !speciesTemplates.isBoundary)
     {
-      rate = Evaluator.evaluateExpressionRecursive(odeRate, true, index);
+      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
 
     return rate;

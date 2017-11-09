@@ -15,9 +15,6 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods;
 
 import java.io.IOException;
 import java.util.PriorityQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
@@ -28,14 +25,11 @@ import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
@@ -193,7 +187,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       // {
       // return;
       // }
-      nextEndTime = currentTime.getValue() + getMaxTimeStep();
+      nextEndTime = getRoundedDouble(currentTime.getValue() + getMaxTimeStep());
+      
       if (nextEndTime > printTime.getValue()) {
         nextEndTime = printTime.getValue();
       }
@@ -238,19 +233,26 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   
   private void computeRates()
   {
-
-    for (HierarchicalModel hierarchicalModel : modules) {
-      hierarchicalModel.computePropensities();
-    }
+    boolean hasChanged = true;
     
-    for (HierarchicalModel hierarchicalModel : modules) {
-      int index = hierarchicalModel.getIndex();
-      for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-        node.setRateValue(index, node.computeRateOfChange(index));
+    while(hasChanged)
+    {
+      hasChanged = false;
+      for (HierarchicalModel hierarchicalModel : modules) {
+        hasChanged |= hierarchicalModel.computePropensities();
       }
+      
+      for (HierarchicalModel hierarchicalModel : modules) {
+        int index = hierarchicalModel.getIndex();
+        for (VariableNode node : hierarchicalModel.getListOfVariables()) {
+          double oldValue = node.getRate(index);
+          node.setRateValue(index, node.computeRateOfChange(index));
+          double newValue = node.getRate(index);
+          hasChanged |= newValue != oldValue;
+        }
+      }
+      computeAssignmentRules();
     }
-
-    computeAssignmentRules();
   }
 
   public class HierarchicalEventHandler implements EventHandler {

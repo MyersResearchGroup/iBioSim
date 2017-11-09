@@ -168,8 +168,12 @@ public class ModelSetup
     for(ModelContainer container : listOfContainers)
     {
       ReplacementSetup.setupDeletion(container);
-      
-      CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
+      CoreSetup.initializeVariables(sim, container, type, time, wrapper, isSSA);
+    }
+    
+    for(ModelContainer container : listOfContainers)
+    {
+      CoreSetup.initializeMath(sim, container, type, time, wrapper, isSSA);
     }
     
     if(wrapper != null)

@@ -36,6 +36,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ArrayNod
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter.InterpreterType;
 
 /**
  * 
@@ -90,17 +91,17 @@ public class ArraysSetup
 			switch (type)
 			{
 			case EVENT:
-				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
+				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
 				eventNode = new EventNode(refObj);
 				eventNode.setArrayNode(arrayNode);
 				return eventNode;
 			case EVENTASSIGNMENT:
-				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
+				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
 				eventAssignNode = new FunctionNode(refObj);
 				eventAssignNode.setArrayNode(arrayNode);
 				return eventAssignNode;
 			default:
-				refObj = MathInterpreter.parseASTNode(math,  modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
+				refObj = MathInterpreter.parseASTNode(math,  modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
 				refObj.setArrayNode(arrayNode);
 				return refObj;
 			}
@@ -291,7 +292,7 @@ public class ArraysSetup
 		for (int i = maxIndex; i >= 0; i--)
 		{
 			Index index = plugin.getIndex(i, attribute);
-			HierarchicalNode indexMath = MathInterpreter.parseASTNode(index.getMath(), modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap());
+			HierarchicalNode indexMath = MathInterpreter.parseASTNode(index.getMath(), modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
 			selector.addChild(indexMath);
 		}
 

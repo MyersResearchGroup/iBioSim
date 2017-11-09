@@ -430,12 +430,19 @@ public final class HierarchicalModel
 		return false;
 	}
 	
-	public void computePropensities()
+	public boolean computePropensities()
 	{
+	  boolean hasChanged = false;
 	  for(ReactionNode node : reactions)
     {
+	    double oldValue = node.getValue(index);
       node.computePropensity(index);
+      double newValue = node.getValue(index);
+      
+      hasChanged = hasChanged | oldValue != newValue;
     }
+	  
+	  return hasChanged;
 	}
 
 	public void removeSubmodel(String id)
