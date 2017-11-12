@@ -41,6 +41,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 {
 
+  private double fbaTime;
 	private HierarchicalFBASimulator	fbaSim;
 	private HierarchicalODERKSimulator	odeSim;
 	private VectorWrapper wrapper;
@@ -59,7 +60,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		if (!isInitialized)
 		{
 		  currProgress = 0;
-      
 			setCurrentTime(0);
 			this.wrapper = new VectorWrapper(initValues); 
 
@@ -94,10 +94,18 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			}
 		}
 		double nextEndTime = currentTime.getValue(0);
-		while (currentTime.getValue() < timeLimit)
-		{
-			nextEndTime = currentTime.getValue() + getMaxTimeStep();
+    fbaTime = nextEndTime;
+		double dt = getTopLevelValue("dt");
 
+		while (nextEndTime < timeLimit)
+		{
+			nextEndTime = nextEndTime + getMaxTimeStep();
+
+			if(nextEndTime > fbaTime)
+			{
+			  nextEndTime = fbaTime;
+			}
+			
 			if (nextEndTime > printTime.getValue())
 			{
 				nextEndTime = printTime.getValue();
@@ -109,7 +117,13 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			}
 
 			odeSim.setTimeLimit(nextEndTime);
-			fbaSim.simulate();
+			
+			if(nextEndTime <= fbaTime)
+			{
+	      fbaSim.simulate();
+
+        fbaTime = nextEndTime + dt;
+			}
 
 			computeAssignmentRules();
 
@@ -134,6 +148,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	@Override
 	public void setupForNewRun(int newRun)
 	{
+	  fbaTime = 0;
 	}
 
 	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException

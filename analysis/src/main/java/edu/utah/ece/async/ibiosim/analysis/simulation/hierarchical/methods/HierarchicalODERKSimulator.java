@@ -109,7 +109,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     HierarchicalModel topmodel) throws IOException, XMLStreamException {
     super(sim);
     this.relativeError = 1e-6;
-    this.absoluteError = 1e-9;
+    this.absoluteError = 1e-6;
     this.odecalc = new HighamHall54Integrator(getMinTimeStep(),
       getMaxTimeStep(), absoluteError, relativeError);
     this.isInitialized = true;
