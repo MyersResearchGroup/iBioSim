@@ -148,9 +148,13 @@ public class HierarchicalTestSuiteRunner
       }
       catch (Exception e1)
       {
-        e1.printStackTrace();
         failCases.add(testcase);
         System.out.println("Case " + testcase + " is failing...");
+        System.out.println("Throwing exception");
+        if(verbose)
+        {
+          e1.printStackTrace();
+        }
       }
     }
 
@@ -251,6 +255,7 @@ public class HierarchicalTestSuiteRunner
       simProperties.setRelError(relativeError);
       simProperties.setAbsError(absoluteError);
       simProperties.setNumSteps(numSteps);
+      simProperties.setMaxTimeStep(0.005);
       simProperties.getIntSpecies().clear();
       for (String intSpecies : p.getProperty("variables").replaceAll(" ", "").split(","))
       {
