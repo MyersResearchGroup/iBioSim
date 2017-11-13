@@ -77,8 +77,8 @@ public class HierarchicalTestSuiteRunner
     
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
     
-    int start = 1462;
-    int end = 1462;
+    int start = 1;
+    int end = 1780;
 
     int unsupported = 0;
     int total = end - start + 1;
