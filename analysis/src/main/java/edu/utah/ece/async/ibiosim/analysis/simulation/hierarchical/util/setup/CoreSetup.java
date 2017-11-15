@@ -581,6 +581,7 @@ public class CoreSetup
           ASTNode math = assignRule.getMath();
           VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
           HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode, InterpreterType.ASSIGNMENT);
+          assignRuleNode = convertConcentrationUnits(variableNode, assignRuleNode);
           FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
           modelstate.addAssignRule(node);
           variableNode.setHasRule(true);
@@ -595,6 +596,7 @@ public class CoreSetup
           ASTNode math = rateRule.getMath();
           VariableNode variableNode = variableToNodes.get(rateRule.getVariable());
           HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes, InterpreterType.RATE);
+          rateNode = convertConcentrationUnits(variableNode, rateNode);
           variableNode.setRateRule(rateNode);
         }
       }
@@ -704,5 +706,23 @@ public class CoreSetup
         node.setIsSetInitialValue(true);
       }
     }
+  }
+  
+  private static HierarchicalNode convertConcentrationUnits(VariableNode var, HierarchicalNode math)
+  {
+    HierarchicalNode convert = math;
+    if(var.isSpecies())
+    {
+      SpeciesNode speciesNode = (SpeciesNode) var;
+      
+      if(!speciesNode.hasOnlySubstance())
+      {
+        convert = new HierarchicalNode(Type.TIMES);
+        convert.addChild(speciesNode.getCompartment());
+        convert.addChild(math);
+      }
+    }
+    
+    return convert;
   }
 }

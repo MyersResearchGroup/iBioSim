@@ -396,55 +396,53 @@ public final class MathInterpreter
 
           if(!species.hasOnlySubstance())
           {
-            if(type != InterpreterType.ASSIGNMENT)
-            {
-              node = new HierarchicalNode(Type.DIVIDE);
-              node.addChild(species);
-              node.addChild(species.getCompartment());
-            }
-            else if(type == InterpreterType.ASSIGNMENT)
-            {
-              if(parent != null)
-              {
-                if(parent.isSpecies())
-                {
-                  if( parent.isSetInitialValue())
-                  {
-                    if(!species.hasAmountUnits() && parent.hasAmountUnits())
-                    {
-                      node = new HierarchicalNode(Type.TIMES);
-                      node.addChild(species);
-                      node.addChild(species.getCompartment());
-                    }
-                    else if(species.hasAmountUnits() && !parent.hasAmountUnits())
-                    {
-                      node = new HierarchicalNode(Type.DIVIDE);
-                      node.addChild(species);
-                      node.addChild(species.getCompartment());
-                    }
-                  }
-                }
-                else
-                {
-                  if(!species.hasOnlySubstance() && !species.isBoundaryCondition())
-                  {
-                      node = new HierarchicalNode(Type.DIVIDE);
-                      node.addChild(species);
-                      node.addChild(species.getCompartment());
-                  }
-                }
-              }
-            }
-//            else if(type == InterpreterType.ASSIGNMENT && !species.hasAmountUnits())
-//            {
-//              if(parent != null && parent.isSetInitialValue())
-//              {
-//                node = new HierarchicalNode(Type.TIMES);
-//                node.addChild(species);
-//                node.addChild(species.getCompartment());
-//              }
-//            }
+            node = new HierarchicalNode(Type.DIVIDE);
+            node.addChild(species);
+            node.addChild(species.getCompartment());
           }
+
+          //          if(!species.hasOnlySubstance())
+          //          {
+          //            if(type != InterpreterType.ASSIGNMENT)
+          //            {
+          //              node = new HierarchicalNode(Type.DIVIDE);
+          //              node.addChild(species);
+          //              node.addChild(species.getCompartment());
+          //            }
+          //            else if(type == InterpreterType.ASSIGNMENT)
+          //            {
+          //              if(parent != null)
+          //              {
+          //                if(parent.isSpecies())
+          //                {
+          //                  if( parent.isSetInitialValue())
+          //                  {
+          //                    if(!species.hasAmountUnits() && parent.hasAmountUnits())
+          //                    {
+          //                      node = new HierarchicalNode(Type.TIMES);
+          //                      node.addChild(species);
+          //                      node.addChild(species.getCompartment());
+          //                    }
+          //                    else if(species.hasAmountUnits() && !parent.hasAmountUnits())
+          //                    {
+          //                      node = new HierarchicalNode(Type.DIVIDE);
+          //                      node.addChild(species);
+          //                      node.addChild(species.getCompartment());
+          //                    }
+          //                  }
+          //                }
+          //                else
+          //                {
+          //                  if(!species.hasOnlySubstance() && !species.isBoundaryCondition())
+          //                  {
+          //                      node = new HierarchicalNode(Type.DIVIDE);
+          //                      node.addChild(species);
+          //                      node.addChild(species.getCompartment());
+          //                  }
+          //                }
+          //              }
+          //            }
+          //          }
         }
       }
       break;

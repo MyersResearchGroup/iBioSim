@@ -139,11 +139,7 @@ public class SpeciesNode extends VariableNode
         if (compartmentChange != 0)
         {
           double c = compartment.getValue(index);
-          rate = rate * c + getValue(index)  * compartmentChange / (c*c);
-        }
-        else
-        {
-          rate = rate * compartment.getValue(index);
+          rate = rate + getValue(index)  * compartmentChange / c;
         }
       }
     }
