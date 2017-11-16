@@ -281,11 +281,28 @@ public final class MathInterpreter
       {
         node.addChild(rateOf);
       }
-      else
+      else if(rateOf.getType() == Type.DIVIDE)
       {
-        node.addChild(rateOf.getChild(0));
-        rateOf.getChildren().set(0, node);
-        node = rateOf;
+        if(rateOf.getChild(0).isName() && rateOf.getChild(1).isName())
+        {
+          VariableNode c1 = (VariableNode) rateOf.getChild(0);
+          VariableNode c2 = (VariableNode) rateOf.getChild(1);
+          
+          if(c2.getRateRule() != null)
+          {
+            rateOf = new HierarchicalNode(Type.DIVIDE);
+            rateOf.addChild(c1.getRateRule());
+            rateOf.addChild(c2);
+          }
+          else
+          {
+            node.addChild(c1);
+            rateOf = new HierarchicalNode(Type.DIVIDE);
+            rateOf.addChild(node);
+            rateOf.addChild(c2);
+          }
+          node = rateOf;
+        }
       }
       break;
     case FUNCTION_REM:

@@ -199,7 +199,7 @@ public class CoreSetup
         VariableNode variableNode = modelstate.getNode(eventAssignment.getVariable());
 
         HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.ASSIGNMENT);
-
+        assignmentNode = convertConcentrationUnits(variableNode, assignmentNode);
         FunctionNode eventAssignmentNode = new FunctionNode(variableNode, assignmentNode);
         eventNode.addEventAssignment(eventAssignmentNode);
       }
