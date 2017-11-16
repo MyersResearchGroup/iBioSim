@@ -40,7 +40,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 3. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ## Running iBioSim
-1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
+1. Build an executable jar for iBioSim by running ```mvn clean``` and then ```mvn install``` on the project root. 
 2. Copy ```gui/target/iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project and rename ```iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
 3. In the bin directory, run:
       * Windows: ```iBioSim.bat``` 
