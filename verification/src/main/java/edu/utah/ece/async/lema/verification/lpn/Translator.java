@@ -74,7 +74,7 @@ public class Translator extends CoreObservable {
 		
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-		document = new SBMLDocument(3,1);
+		document = new SBMLDocument(GlobalConstants.SBML_LEVEL,GlobalConstants.SBML_VERSION);
 		Model m = document.createModel(filename.replace(".xml", ""));
 		Compartment c = m.createCompartment();
 		c.setId("default");
@@ -729,7 +729,7 @@ public class Translator extends CoreObservable {
 		
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-		document = new SBMLDocument(3,1);
+		document = new SBMLDocument(GlobalConstants.SBML_LEVEL,GlobalConstants.SBML_VERSION);
 		String[] filenameSplit = GlobalConstants.splitPath(filename);
 		String modelId = filenameSplit[filenameSplit.length-1].replace(".xml","");
 		Model m = document.createModel(modelId);

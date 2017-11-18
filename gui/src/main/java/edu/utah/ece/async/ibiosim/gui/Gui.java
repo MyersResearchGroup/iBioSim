@@ -1157,9 +1157,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		openRecent.addSeparator();
 		openRecent.add(clearRecent);
-		SBMLLevelVersion = "L3V1";
-		GlobalConstants.SBML_LEVEL = 3;
-		GlobalConstants.SBML_VERSION = 1;
+		SBMLLevelVersion = "L3V2";
 		
 		// TODO: temp hack, needs fixing
 		EditPreferences editPreferences = new EditPreferences(frame, false);

@@ -596,7 +596,9 @@ public class SBMLutilities
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
-					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber") || splitLaw[i].equals("rateOf")
+					|| splitLaw[i].equals("quotient") || splitLaw[i].equals("rem") || splitLaw[i].equals("implies")	
+					|| splitLaw[i].equals("max") || splitLaw[i].equals("min")	
 					|| ((document.getLevel() > 2) && (splitLaw[i].equals("avogadro"))))
 			{
 			}
@@ -3475,7 +3477,7 @@ public class SBMLutilities
 		return deepCopy(math);
 	}
 
-	public static String myFormulaToStringInfix(ASTNode math)
+	private static String myFormulaToStringInfix(ASTNode math)
 	{
 		if (math.getType() == ASTNode.Type.CONSTANT_E)
 		{
@@ -4121,6 +4123,30 @@ public class SBMLutilities
 		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
 		{
 			return true;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_IMPLIES)
+		{
+			return true;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MIN)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MAX)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_QUOTIENT)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_REM)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_RATE_OF)
+		{
+			return false;
 		}
 		else if (math.getType() == ASTNode.Type.MINUS)
 		{
@@ -5691,7 +5717,7 @@ public class SBMLutilities
 			long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
 			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
-			numErrors = doc.checkL3v1Compatibility();
+			numErrors = doc.checkL3v2Compatibility();
 			if (numErrors > 0)
 			{
 				String message = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION

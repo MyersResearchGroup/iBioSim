@@ -20,10 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -116,7 +113,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	// fields
 
-	private JComboBox reacReverse, reacFast; // reaction reversible, fast combo
+	private JComboBox reacReverse; //, reacFast; // reaction reversible, fast combo
 
 	// boxes
 
@@ -419,9 +416,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String[] options = { "true", "false" };
 		reacReverse = new JComboBox(options);
 		reacReverse.setSelectedItem("false");
-		JLabel fast = new JLabel("Fast:");
-		reacFast = new JComboBox(options);
-		reacFast.setSelectedItem("false");
+		//JLabel fast = new JLabel("Fast:");
+		//reacFast = new JComboBox(options);
+		//reacFast.setSelectedItem("false");
 		Reaction copyReact = null;
 		JPanel param = new JPanel(new BorderLayout());
 		JPanel addParams = new JPanel();
@@ -709,8 +706,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		
 		reactionPanelNorth4.add(reverse);
 		reactionPanelNorth4.add(reacReverse);
-		reactionPanelNorth4.add(fast);
-		reactionPanelNorth4.add(reacFast);
+		//reactionPanelNorth4.add(fast);
+		//reactionPanelNorth4.add(reacFast);
 
 		reactionPanelNorth.add(reactionPanelNorth1);
 		reactionPanelNorth.add(reactionPanelNorth3);
@@ -753,12 +750,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				reacReverse.setSelectedItem("false");
 			}
+			/*
 			if (reac.getFast()) {
 				reacFast.setSelectedItem("true");
 			}
 			else {
 				reacFast.setSelectedItem("false");
 			}
+			*/
 			if (reac.isSetSBOTerm()) {
 				reactionSBO.setSelectedItem(SBMLutilities.sbo.getName(reac.getSBOTermID()));
 			}
@@ -772,7 +771,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -795,7 +794,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -822,7 +821,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -851,7 +850,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacID.setEditable(false);
 			reacName.setEditable(false);
 			reacReverse.setEnabled(false);
-			reacFast.setEnabled(false);
+			//reacFast.setEnabled(false);
 			reacAddParam.setEnabled(false);
 			reacRemoveParam.setEnabled(false);
 			addReactant.setEnabled(false);
@@ -1010,12 +1009,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.setSBOTerm(SBMLutilities.sbo.getId((String)reactionSBO.getSelectedItem()));
 					}
 					react.setCompartment((String) reactionComp.getSelectedItem());
+					/*
 					if (reacFast.getSelectedItem().equals("true")) {
 						react.setFast(true);
 					}
 					else {
 						react.setFast(false);
 					}
+					*/
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					Port port = bioModel.getPortByIdRef(val);
@@ -1131,12 +1132,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setReversible(false);
 					}
+					/*
 					if (reacFast.getSelectedItem().equals("true")) {
 						react.setFast(true);
 					}
 					else {
 						react.setFast(false);
 					}
+					*/
 					if (reactionSBO.getSelectedItem().equals("(unspecified)")) {
 						react.unsetSBOTerm();
 					} else {
@@ -1867,7 +1870,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (product.isSetId()) {
 				selectedID = product.getId();
 				productId.setText(product.getId());
-				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignmentBySymbol(selectedID);
 				if (init!=null) {
 					productStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 						
@@ -2738,7 +2741,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reactant.isSetId()) {
 				selectedID = reactant.getId();
 				reactantId.setText(reactant.getId());
-				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignmentBySymbol(selectedID);
 				if (init!=null) {
 					reactantStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 
