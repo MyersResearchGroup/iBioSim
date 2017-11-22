@@ -685,10 +685,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		kineticPanel.add(kineticButtons, "South");
 		JPanel reactionPanel = new JPanel(new BorderLayout());
 		JPanel reactionPanelNorth = new JPanel();
-		reactionPanelNorth.setLayout(new GridLayout(3, 1));
+		reactionPanelNorth.setLayout(new GridLayout(2, 1));
 		JPanel reactionPanelNorth1 = new JPanel();
 		JPanel reactionPanelNorth3 = new JPanel();
-		JPanel reactionPanelNorth4 = new JPanel();
 		CiIndex = new JTextField(20);
 		reactionPanelNorth1.add(id);
 		reactionPanelNorth1.add(reacID);
@@ -696,6 +695,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth1.add(reacName);
 		reactionPanelNorth1.add(onPortLabel);
 		reactionPanelNorth1.add(onPort);
+		reactionPanelNorth1.add(reverse);
+		reactionPanelNorth1.add(reacReverse);
 
 		reactionPanelNorth3.add(sboTermLabel);
 		reactionPanelNorth3.add(reactionSBO);
@@ -704,14 +705,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth3.add(new JLabel("Compartment Indices:"));
 		reactionPanelNorth3.add(CiIndex);
 		
-		reactionPanelNorth4.add(reverse);
-		reactionPanelNorth4.add(reacReverse);
 		//reactionPanelNorth4.add(fast);
 		//reactionPanelNorth4.add(reacFast);
 
 		reactionPanelNorth.add(reactionPanelNorth1);
 		reactionPanelNorth.add(reactionPanelNorth3);
-		reactionPanelNorth.add(reactionPanelNorth4);
 		
 		if (inSchematic) {
 			reactionPanel.add(reactionPanelNorth, "North");
@@ -897,11 +895,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				/*
 				else if ((changedReactants.size() == 0) && (changedProducts.size() == 0)) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have at least one reactant or product.", "No Reactants or Products",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				*/
 				else if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 					if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
@@ -943,8 +943,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				else {
 					// TODO: need to update for arrays
 					error = !isFluxBoundValid(bioModel.getSBMLDocument(),
-							kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
-					error = false;
+							kineticLaw.getText().replaceAll("\\s",""), reactionID,dimensionIds,dimID);
+					//error = false;
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1053,7 +1053,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						react.unsetKineticLaw();
-						error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+						error = !createReactionFluxBounds(reactionID,dimID,dimensionIds);
 					}
 
 					if (!error) {
@@ -1168,8 +1168,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						error = !isFluxBoundValid(bioModel.getSBMLDocument(),
-								kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
-						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+								kineticLaw.getText().replaceAll("\\s",""), reactionID,dimensionIds,dimID);
+						if (!error)	error = !createReactionFluxBounds(reactionID,dimID,dimensionIds);
 					}
 						
 					if (!error) {

@@ -238,7 +238,7 @@ public class Translator extends CoreObservable {
 
 				Reaction r = m.createReaction();
 				r.setReversible(false);
-				r.setFast(false);
+				//r.setFast(false);
 				r.setId("r" + counter);
 
 				//test En(t)

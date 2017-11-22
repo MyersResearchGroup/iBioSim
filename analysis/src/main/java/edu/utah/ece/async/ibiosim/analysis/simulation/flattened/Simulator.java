@@ -1909,7 +1909,7 @@ public abstract class Simulator extends AbstractSimulator
 						newReaction.setId(compartmentID + "__" + reactionID);
 						SBMLutilities.setMetaId(newReaction, compartmentID + "__" + reactionID);
 						newReaction.setReversible(true);
-						newReaction.setFast(false);
+						//newReaction.setFast(false);
 						newReaction.setCompartment(reaction.getCompartment());
 
 						// alter the kinetic law to so that it has the correct
@@ -2086,7 +2086,7 @@ public abstract class Simulator extends AbstractSimulator
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
-							newReaction.setFast(false);
+							//newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
 
 							// get the nodes to alter
@@ -4826,7 +4826,7 @@ public abstract class Simulator extends AbstractSimulator
 						newReaction.setId(compartmentID + "__" + reactionID);
 						SBMLutilities.setMetaId(newReaction, compartmentID + "__" + reactionID);
 						newReaction.setReversible(true);
-						newReaction.setFast(false);
+						//newReaction.setFast(false);
 						newReaction.setCompartment(reaction.getCompartment());
 
 						// alter the kinetic law to so that it has the correct
@@ -5003,7 +5003,7 @@ public abstract class Simulator extends AbstractSimulator
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
-							newReaction.setFast(false);
+							//newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
 
 							// get the nodes to alter

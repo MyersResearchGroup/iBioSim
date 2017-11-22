@@ -21,7 +21,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
@@ -331,7 +330,7 @@ public class GeneticNetwork extends CoreObservable
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
 			r.addProduct(Utility.SpeciesReference(p.getId() + "_RNAP", 1));
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
 			if (Krnap[0] >= 0) {
@@ -600,7 +599,7 @@ public class GeneticNetwork extends CoreObservable
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 			}
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			if (operatorAbstraction) {
 				r.setId("R_abstracted_production_" + p.getId());

@@ -27,8 +27,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
@@ -104,7 +102,6 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
-import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -3150,7 +3147,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 			r.setId(reactionId);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			ArrayList<String> CompChoices = new ArrayList<String>();
 			if (isModifier) {
 				ModifierSpeciesReference source = r.createModifier();
