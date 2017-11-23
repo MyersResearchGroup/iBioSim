@@ -46,6 +46,7 @@ import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Parts;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartEditDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 
@@ -517,7 +518,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		SBOLDocument doc = null;
 		try 
 		{
-			doc =  SBOLUtility.loadSBOLFile(filePath, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+			doc =  SBOLUtility.loadSBOLFile(filePath, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 		} 
 		catch (FileNotFoundException e) 
 		{

@@ -751,11 +751,11 @@ public class SBML2SBOL {
 				}
 			}
 
-			if(sbolURIPre == null || sbolURIPre.isEmpty()){
-				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
-				Preferences biosimrc = Preferences.userRoot();
-				sbolURIPre = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
-			}
+//			if(sbolURIPre == null || sbolURIPre.isEmpty()){
+//				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
+//				Preferences biosimrc = Preferences.userRoot();
+//				sbolURIPre = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
+//			}
 
 			SBMLDocument sbmlDoc = null;
 			try {
