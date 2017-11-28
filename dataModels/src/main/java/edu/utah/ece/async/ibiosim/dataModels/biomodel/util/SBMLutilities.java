@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -6239,7 +6240,72 @@ public class SBMLutilities
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param doc
+	 */
+	public static void removeUnusedNamespaces(SBMLDocument doc)
+	{
+	  
+	  boolean isCompSet = false;
+	  boolean isArraysSet = false;
+    boolean isFbcSet = false;
+    
+    LinkedList<SBase> queue = new LinkedList<SBase>();
+    queue.add(doc);
+    
+    while(!queue.isEmpty())
+    {
+      
+      SBase sbase = queue.pop();
+      
+      if(sbase.getExtension(ArraysConstants.shortLabel) != null)
+      {
+        isArraysSet = true;
+      }
+      
+      if(sbase.getExtension(CompConstants.shortLabel) != null)
+      {
+        isCompSet = true;
+      }
+      
+      if(sbase.getExtension(FBCConstants.shortLabel) != null)
+      {
+        isFbcSet = true;
+      }
+      
+      for (int i = sbase.getChildCount() - 1; i >= 0; i--) 
+      {
+        TreeNode node = sbase.getChildAt(i);
+        
+        if(node instanceof SBase)
+        {
+          queue.push((SBase) node);
+        }
 
+      }
+    }
+	  
+	  
+	  if(!isArraysSet)
+	  {
+	    doc.disablePackage(ArraysConstants.shortLabel);
+	    System.out.println("Remove arrays");
+	  }
+	  
+	  if(!isCompSet)
+    {
+      doc.disablePackage(CompConstants.shortLabel);
+      System.out.println("Remove comp");
+    }
+	  
+	  if(!isFbcSet)
+    {
+      doc.disablePackage(FBCConstants.shortLabel);
+      System.out.println("Remove fbc");
+    }
+	}
+	
   public static String createTimeString(long time1, long time2)
   {
     long minutes;
