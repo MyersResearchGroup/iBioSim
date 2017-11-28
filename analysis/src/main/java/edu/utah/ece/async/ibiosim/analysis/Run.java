@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -81,7 +82,6 @@ public class Run extends CoreObservable implements ActionListener
     int exitValue = 255;
     long time1, time2;
 
-    String modelFile = properties.getModelFile();
     String filename = properties.getFilename();
     
     work = new File(properties.getDirectory());
@@ -93,10 +93,10 @@ public class Run extends CoreObservable implements ActionListener
 
     if (properties.isNary() && !properties.isGui() && !properties.getSim().contains("markov-chain-analysis") && properties.getSimulationProperties().getRun() == 1)
     {
-      message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=nary-level " + filename);
+      message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=nary-level " + "\"" + filename + "\"");
       this.notifyObservers(message);
       time1 = System.nanoTime();
-      reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=nary-level " + modelFile, Executables.envp, work);
+      reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=nary-level " + "\"" + filename + "\"", Executables.envp, work);
     }
     else if (properties.isFba())
     {
@@ -467,7 +467,6 @@ public class Run extends CoreObservable implements ActionListener
   {
     int exitValue = 0;
     String SBMLFileName = properties.getFilename();
-    String command = null;
     String[] env = Executables.envp;
     String sim = properties.getSim();
 
@@ -530,18 +529,10 @@ public class Run extends CoreObservable implements ActionListener
     {
       exitValue = executeMarkov();
     }
-    else if (properties.getCommand().equals(""))
-    {
-      command = Executables.reb2sacExecutable + " --target.encoding=" + sim + " " + properties.getFilename();
-      Simulator.expandArrays(SBMLFileName, properties.getAdvancedProperties().getStoichAmp());
-      runJava = false;
-    }
     else
     {
-      command = properties.getCommand();
-      String fileStem = properties.getFilename().replaceAll(".xml", "").replaceAll(".sbml", "");;
-      command = command.replaceAll("filename", fileStem);
-      command = command.replaceAll("sim", sim);
+      
+      Simulator.expandArrays(SBMLFileName, properties.getAdvancedProperties().getStoichAmp());
       runJava = false;
     }
 
@@ -553,7 +544,9 @@ public class Run extends CoreObservable implements ActionListener
     }
     else
     {
-      message.setLog("Executing:\n" + command + "\n");
+      String[] command = properties.getReb2sacCommand();
+      
+      message.setLog("Executing:\n" + Arrays.toString(command) + "\n");
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);
@@ -568,14 +561,16 @@ public class Run extends CoreObservable implements ActionListener
   {
     int exitValue = 0;
 
-    String modelFile = properties.getModelFile();
-    message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=hse2 " + modelFile);
+    String[] command =  properties.getHse2Command();
+    
+    message.setLog("Executing:\n" +command);
+    reb2sac = exec.exec(command, Executables.envp, work);
 
-    reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=hse2 " + modelFile, Executables.envp, work);
-    message.setLog("Executing:\natacs -T0.000001 -oqoflhsgllvA " + properties.getFilename() + "out.hse");
+    command = properties.getAtacsCommand();
+    
+    message.setLog("Executing:\n" + command);
     this.notifyObservers(message);
-    exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
-
+    exec.exec(command, null, work);
 
     if (reb2sac != null)
     {
@@ -711,7 +706,7 @@ public class Run extends CoreObservable implements ActionListener
   private int executeDot() throws IOException, InterruptedException, BioSimException
   {
     int exitValue= 255;
-    String out = properties.getModelFile().replace(".xml", ".dot");
+    String[] command;
     String outputFileName = properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".dot";
     if (properties.isNary())
     {
@@ -742,59 +737,50 @@ public class Run extends CoreObservable implements ActionListener
     }
     else
     {
-      String command = Executables.reb2sacExecutable + " --target.encoding=dot --out=" +  out + " " + properties.getFilename();
+      command = properties.getDotCommand();
       message.setLog("Executing:\n" + command);
       this.notifyObservers(message);
       reb2sac = exec.exec(command, Executables.envp, work);
     }
 
-
-    String command;
-    if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-    {
-      command = "open " + outputFileName;
-    }
-    else
-    {
-      command = "dotty " + outputFileName;
-    }
-
-    exec.exec(command);
-    message.setLog("Executing:\n" + command);
-    this.notifyObservers(message);
-
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
+    
+    if(exitValue == 0)
+    {
+      command = properties.getOpenDotCommand();
 
+      exec.exec(command);
+      message.setLog("Executing:\n" + command);
+      this.notifyObservers(message);
+    }
+    
     return exitValue;
   }
 
   private int executeXhtml() throws IOException, InterruptedException
   {
-    String outFullPath = properties.getFilename().replaceAll(".xml", ".xhtml");
-    String outName = properties.getModelFile().replace(".xml", ".xhtml");
-
     int exitValue = 0;
-    Simulator.expandArrays(outFullPath, 1);
+    Simulator.expandArrays( properties.getFilename(), 1);
 
-    String command = Executables.reb2sacExecutable + " --target.encoding=xhtml --out=" + outName + " " + properties.getFilename();
+    String[] command = properties.getXhtmlCommand();
     message.setLog("Executing:\n" + command);
     reb2sac = exec.exec(command, Executables.envp, work);
 
-    Preferences biosimrc = Preferences.userRoot();
-    String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
-    command = xhtmlCmd + " " + outFullPath;
-    
-    message.setLog("Executing:\n" + command);
-    this.notifyObservers(message);
-    exec.exec(command, null, work);
 
     if (reb2sac != null)
     {
       exitValue = reb2sac.waitFor();
     }
+    
+    command = properties.getOpenBrowserCommand();
+    
+    message.setLog("Executing:\n" + command);
+    this.notifyObservers(message);
+    exec.exec(command, null, work);
+
 
     return exitValue;
   }
@@ -949,9 +935,10 @@ public class Run extends CoreObservable implements ActionListener
         String filename = properties.getFilename();
         if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
         {
-          message.setLog("Executing:\n" + Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + filename);
+          String[] command = properties.getSbmlCommand(sbmlName);
+          message.setLog("Executing:\n" + command);
           this.notifyObservers(message);
-          reb2sac = exec.exec(Executables.reb2sacExecutable + " --target.encoding=sbml --out=" + ".." + File.separator + sbmlName + " " + modelFile, Executables.envp, work);
+          reb2sac = exec.exec(command, Executables.envp, work);
         }
         else
         {
@@ -1096,6 +1083,7 @@ public class Run extends CoreObservable implements ActionListener
     
   }
   
+  //TODO:
   private void viewStateGraph(String filename, String theFile, String directory, StateGraph sg)
   {
     String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
