@@ -94,6 +94,10 @@ public class Run
 
       for (Species species : model.getListOfSpecies())
       {
+        if(species.isSetSBOTerm() && species.getSBOTerm() == 590)
+        {
+          continue;
+        }
         S.addInterestingSpecies(species.getId());
       }
     }
