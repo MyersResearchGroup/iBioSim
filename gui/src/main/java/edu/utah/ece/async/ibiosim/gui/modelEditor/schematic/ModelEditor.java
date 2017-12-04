@@ -775,7 +775,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null,
 				JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
-			System.out.println("exportPath="+exportPath);
+			//System.out.println("exportPath="+exportPath);
 			String dir = exportPath.substring(0, exportPath.lastIndexOf(File.separator));
 			biosimrc.put("biosim.general.export_dir", dir);
 			try {
