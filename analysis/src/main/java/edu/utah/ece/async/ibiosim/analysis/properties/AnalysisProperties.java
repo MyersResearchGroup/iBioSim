@@ -16,6 +16,9 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
+
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 
 public final class AnalysisProperties {
 
@@ -32,7 +35,12 @@ public final class AnalysisProperties {
     NONE, EXPAND, ABSTRACTION, NARY;
   }
 
-  private String filename, id, root, directory, outDir, modelFile, command, propertiesFile;
+  private String filename, id, root, directory, outDir, modelFile, propertiesFile;
+  private String        sim;
+  private String        simProp;
+  private String fileStem;
+  
+  
   private SimMethod method;
   private AbstractionMethod abs;
   private final AdvancedProperties advProperties;
@@ -41,13 +49,19 @@ public final class AnalysisProperties {
   private final VerificationProperties verifProperties;
   private final boolean gui;
 
-  private String				sim;
-  private String				simProp;
-  private String fileStem;
+  private final String[] hse2Command = new String[]{Executables.reb2sacExecutable, "--target.encoding=hse2", null};
+  private final String[] atacsCommand = new String[]{"atacs", "-T0.000001", "-oqoflhsgllvA", null, "out.hse"};
+  private final String[] sbmlCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=sbml", null, null};
+  private final String[] reb2sacCommand = new String[]{Executables.reb2sacExecutable, null,null };
+  private final String[] dotCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=dot",  null, null};
+  private final String[] xhtmlCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=xhtml", null, null};
+  private final String[] openBrowserCommand = new String[2];
+  private final String[] openDotCommand = new String[2];
+  private final String[] naryCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=nary-level", null};
   private List<String> tasks;
 
   private UserInterval userInterval;
-
+  
   public AnalysisProperties(String id, String modelFile, String root, boolean isGui)
   {
     this.id = id;
@@ -63,7 +77,6 @@ public final class AnalysisProperties {
     this.method = SimMethod.ODE;
     this.abs = AbstractionMethod.NONE;
     this.userInterval = UserInterval.PRINT_INTERVAL;
-    this.command = "";
     this.sim = "Runge-Kutta-Fehlberg (Hierarchical)";
     this.tasks = new ArrayList<String>();
     this.advProperties = new AdvancedProperties();
@@ -90,13 +103,6 @@ public final class AnalysisProperties {
   public VerificationProperties getVerificationProperties()
   {
     return verifProperties;
-  }
-
-  /**
-   * @return the command
-   */
-  public String getCommand() {
-    return command;
   }
 
 
@@ -247,14 +253,6 @@ public final class AnalysisProperties {
     this.abs = AbstractionMethod.ABSTRACTION;
   }
 
-
-
-  /**
-   * @param command the command to set
-   */
-  public void setCommand(String command) {
-    this.command = command;
-  }
 
   /**
    * 
@@ -505,5 +503,130 @@ public final class AnalysisProperties {
     tasks.add(task);
   }
 
+  /**
+   * 
+   * @return
+   */
+  public String[] getOpenDotCommand()
+  {
+    String out = filename.replace(".xml", ".dot");
+    
+    if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
+    {
+      openDotCommand[0] = "open";
+    }
+    else
+    {
+      openDotCommand[0] = "dotty";
+    }
+    
+    openDotCommand[1] = out;
+    
+    return openDotCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getOpenBrowserCommand()
+  {
+    String out = filename.replace(".xml", ".xhtml");
+    Preferences biosimrc = Preferences.userRoot();
+    String xhtmlCmd = biosimrc.get("biosim.general.browser", "");
+    
+    
+    openBrowserCommand[0] = xhtmlCmd;
+    openBrowserCommand[1] = out;
+    
+    return openBrowserCommand;
+  }
+  
+  /**
+   * 
+   * @param newName
+   * @return
+   */
+  public String[] getSbmlCommand(String newName)
+  {
+
+    String out = "--out=" + ".." + File.separator + newName;
+    
+    sbmlCommand[2] = out;
+    sbmlCommand[3] = filename;
+    
+    return sbmlCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getXhtmlCommand()
+  {
+
+    String out = "--out=" + modelFile.replace(".xml", ".xhtml");
+    
+    xhtmlCommand[2] = out;
+    xhtmlCommand[3] = filename;
+    
+    return xhtmlCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getDotCommand()
+  {
+
+    String out = "--out=" + modelFile.replace(".xml", ".dot");
+    
+    dotCommand[2] = out;
+    dotCommand[3] = filename;
+    
+    return dotCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getReb2sacCommand()
+  {
+    reb2sacCommand[1] = "--target.encoding=" + sim;
+    reb2sacCommand[2] = filename;
+    return reb2sacCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getHse2Command()
+  {
+    hse2Command[2] = filename;
+    return hse2Command;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getAtacsCommand()
+  {
+    atacsCommand[3] = filename;
+    return atacsCommand;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getNaryCommand()
+  {
+    naryCommand[2] = filename;
+    return naryCommand;
+  }
 
 }
