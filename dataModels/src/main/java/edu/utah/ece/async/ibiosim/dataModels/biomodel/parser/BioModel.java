@@ -2125,6 +2125,7 @@ public class BioModel extends CoreObservable{
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		try {
+		  //SBMLutilities.removeUnusedNamespaces(sbml);
 			writer.writeSBMLToFile(sbml, filename.replace(".gcm",".xml"));
 		}
 		catch (SBMLException e) {
@@ -5545,6 +5546,7 @@ public class BioModel extends CoreObservable{
 		SBMLDocument document = createSingleDocument();
 		SBMLWriter writer = new SBMLWriter();
 		try {
+		  SBMLutilities.removeUnusedNamespaces(document);
 			writer.writeSBMLToFile(document, exportFile);
 		} catch (SBMLException e) {
 			e.printStackTrace();
@@ -5583,6 +5585,7 @@ public class BioModel extends CoreObservable{
 				}
 			}
 		}
+	  
 		document.enablePackage(ArraysConstants.namespaceURI);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {

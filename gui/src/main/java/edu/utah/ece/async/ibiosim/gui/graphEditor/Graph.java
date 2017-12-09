@@ -1308,10 +1308,14 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 	 * Private method used to auto resize the graph.
 	 */
 	private void resize(XYSeriesCollection dataset) {
+	  
+	  
 		NumberFormat num = NumberFormat.getInstance();
 		num.setMaximumFractionDigits(4);
 		num.setGroupingUsed(false);
 		XYPlot plot = chart.getXYPlot();
+
+		
 		XYItemRenderer rend = plot.getRenderer();
 		double minY = Double.MAX_VALUE;
 		double maxY = (-1)*Double.MAX_VALUE;
@@ -1408,7 +1412,14 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 			else {
 				axis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 			}
-			axis.setRange(minX, maxX);
+			if(minX == maxX)
+			{
+			  axis.setRange(minX - (Math.abs(minX) * .1), maxX + (Math.abs(maxX) * .1));
+			}
+			else
+			{
+	      axis.setRange(minX, maxX);
+			}
 		}
 		axis.setAutoTickUnitSelection(true);
 		if (visibleLegend.isSelected()) {
