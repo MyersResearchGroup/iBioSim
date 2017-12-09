@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -6264,75 +6265,208 @@ public class SBMLutilities
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isCompUsed(SBase sbase)
+	{
+
+		if(sbase instanceof SBMLDocument)
+		{
+			CompSBMLDocumentPlugin plugin = (CompSBMLDocumentPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumModelDefinitions() > 0 || plugin.getNumExternalModelDefinitions() > 0);
+		}
+
+		if(sbase instanceof Model)
+		{
+			CompModelPlugin plugin = (CompModelPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumPorts() > 0 || plugin.getNumSubmodels() > 0);
+		}
+
+		if(sbase instanceof SBase)
+		{
+			CompSBasePlugin plugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumReplacedElements() > 0);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isFbcUsed(SBase sbase)
+	{
+
+		if(sbase instanceof Model)
+		{
+			FBCModelPlugin plugin = (FBCModelPlugin) sbase.getExtension(FBCConstants.shortLabel);
+
+			if(plugin != null)
+			{
+				if(plugin.getNumObjective() > 0)
+				{
+					return true;
+				}
+				plugin.unsetStrict();
+			}
+			return false;
+		}
+
+		if(sbase instanceof Reaction)
+		{
+			FBCReactionPlugin plugin = (FBCReactionPlugin) sbase.getExtension(FBCConstants.shortLabel);
+			return plugin != null && (plugin.getLowerFluxBound() != null || plugin.getUpperFluxBound() != null || plugin.getGeneProductAssociation() != null);
+		}
+		return false;
+	}
+
+	private static boolean isArraysUsed(SBase sbase)
+	{
+		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
+
+		if(plugin != null)
+		{
+			return plugin != null && (plugin.getNumDimensions() > 0 || plugin.getNumIndices() > 0);
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 */
+	public static void removeUnusedNamespaces(SBMLDocument doc)
+	{
+
+		boolean isCompSet = false;
+		boolean isArraysSet = false;
+		boolean isFbcSet = false;
+
+		LinkedList<SBase> queue = new LinkedList<SBase>();
+		queue.add(doc);
+
+		while(!queue.isEmpty())
+		{
+
+			SBase sbase = queue.pop();
+
+			if(!isArraysSet)
+			{
+				isArraysSet = isArraysUsed(sbase);
+			}
+
+			if(!isCompSet)
+			{
+				isCompSet =  isCompUsed(sbase);;
+			}
+
+			if(!isFbcSet)
+			{
+				isFbcSet =  isFbcUsed(sbase);
+			}
+
+			for (int i = sbase.getChildCount() - 1; i >= 0; i--) 
+			{
+				TreeNode node = sbase.getChildAt(i);
+
+				if(node instanceof SBase)
+				{
+					queue.push((SBase) node);
+				}
+
+			}
+		}
 
 
-  public static String createTimeString(long time1, long time2)
-  {
-    long minutes;
-    long hours;
-    long days;
-    double secs = ((time2 - time1) / 1000000000.0);
-    long seconds = ((time2 - time1) / 1000000000);
-    secs = secs - seconds;
-    minutes = seconds / 60;
-    secs = seconds % 60 + secs;
-    hours = minutes / 60;
-    minutes = minutes % 60;
-    days = hours / 24;
-    hours = hours % 60;
-    String time;
-    String dayLabel;
-    String hourLabel;
-    String minuteLabel;
-    String secondLabel;
-    if (days == 1)
-    {
-      dayLabel = " day ";
-    }
-    else
-    {
-      dayLabel = " days ";
-    }
-    if (hours == 1)
-    {
-      hourLabel = " hour ";
-    }
-    else
-    {
-      hourLabel = " hours ";
-    }
-    if (minutes == 1)
-    {
-      minuteLabel = " minute ";
-    }
-    else
-    {
-      minuteLabel = " minutes ";
-    }
-    if (seconds == 1)
-    {
-      secondLabel = " second";
-    }
-    else
-    {
-      secondLabel = " seconds";
-    }
-    if (days != 0)
-    {
-      time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-    }
-    else if (hours != 0)
-    {
-      time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-    }
-    else if (minutes != 0)
-    {
-      time = minutes + minuteLabel + secs + secondLabel;
-    }
-    else
-    {
-      time = secs + secondLabel;
-    }
-    return time;
-  }
+		if(!isArraysSet)
+		{
+			doc.disablePackage(ArraysConstants.shortLabel);
+		}
+
+		if(!isCompSet)
+		{
+			doc.disablePackage(CompConstants.shortLabel);
+		}
+
+		if(!isFbcSet)
+		{
+			doc.disablePackage(FBCConstants.shortLabel);
+		}
+	}
+
+	public static String createTimeString(long time1, long time2)
+	{
+		long minutes;
+		long hours;
+		long days;
+		double secs = ((time2 - time1) / 1000000000.0);
+		long seconds = ((time2 - time1) / 1000000000);
+		secs = secs - seconds;
+		minutes = seconds / 60;
+		secs = seconds % 60 + secs;
+		hours = minutes / 60;
+		minutes = minutes % 60;
+		days = hours / 24;
+		hours = hours % 60;
+		String time;
+		String dayLabel;
+		String hourLabel;
+		String minuteLabel;
+		String secondLabel;
+		if (days == 1)
+		{
+			dayLabel = " day ";
+		}
+		else
+		{
+			dayLabel = " days ";
+		}
+		if (hours == 1)
+		{
+			hourLabel = " hour ";
+		}
+		else
+		{
+			hourLabel = " hours ";
+		}
+		if (minutes == 1)
+		{
+			minuteLabel = " minute ";
+		}
+		else
+		{
+			minuteLabel = " minutes ";
+		}
+		if (seconds == 1)
+		{
+			secondLabel = " second";
+		}
+		else
+		{
+			secondLabel = " seconds";
+		}
+		if (days != 0)
+		{
+			time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (hours != 0)
+		{
+			time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (minutes != 0)
+		{
+			time = minutes + minuteLabel + secs + secondLabel;
+		}
+		else
+		{
+			time = secs + secondLabel;
+		}
+		return time;
+	}
 }
