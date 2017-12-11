@@ -58,6 +58,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
@@ -379,7 +380,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					for (String fileID : new File(libFilePath).list())
 						if (fileID.endsWith(".sbol"))
 							sbolFilePaths.add(libFilePath + separator + fileID);
-				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 				//		boolean flatImport = libFilePaths.size() > 1;

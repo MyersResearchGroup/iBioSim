@@ -108,7 +108,7 @@ public class Utility {
 		Reaction r = new Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId(id);
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		return r;
 	}
 

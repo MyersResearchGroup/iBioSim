@@ -75,7 +75,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
@@ -92,7 +92,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
@@ -109,7 +109,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
@@ -126,7 +126,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
@@ -143,7 +143,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(spec.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
@@ -161,7 +161,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));

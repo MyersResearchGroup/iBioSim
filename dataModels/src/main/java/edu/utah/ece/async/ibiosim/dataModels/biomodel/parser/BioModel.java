@@ -1036,7 +1036,7 @@ public class BioModel extends CoreObservable{
 			r.setId(id);
 			r.setSBOTerm(SBOid);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			String kLaw = "k";
 			for (String reactant : reactants.keySet()) {
 				SpeciesReference ref = r.createReactant();
@@ -1076,7 +1076,7 @@ public class BioModel extends CoreObservable{
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(s);
 			product.setStoichiometry(1);
@@ -1585,7 +1585,7 @@ public class BioModel extends CoreObservable{
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(true);
-			reaction.setFast(false);
+			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
 			reactant.setSpecies(s);
 			reactant.setStoichiometry(1);
@@ -1633,7 +1633,7 @@ public class BioModel extends CoreObservable{
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(s);
 			//double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
@@ -1713,7 +1713,7 @@ public class BioModel extends CoreObservable{
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(false);
-			reaction.setFast(false);
+			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
 			reactant.setSpecies(s);
 			reactant.setStoichiometry(1);
@@ -1776,7 +1776,7 @@ public class BioModel extends CoreObservable{
 			r.setCompartment(sbml.getModel().getSpecies(promoterId).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(promoterId);
 			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterId), modifier, "species");
@@ -4301,7 +4301,7 @@ public class BioModel extends CoreObservable{
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			
 			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
@@ -4403,7 +4403,7 @@ public class BioModel extends CoreObservable{
 				r.setCompartment(diffComp);
 				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 				r.setReversible(true);
-				r.setFast(false);
+				//r.setFast(false);
 
 				AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 				KineticLaw kl = r.createKineticLaw();
@@ -4456,7 +4456,7 @@ public class BioModel extends CoreObservable{
 			SBMLutilities.setMetaId(r, r.getId());
 			r.setCompartment(membraneDiffusionComp);
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			
 			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 			
@@ -4823,7 +4823,7 @@ public class BioModel extends CoreObservable{
 		r.setCompartment(compartment);
 		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),r,"compartment");
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		KineticLaw k = r.createKineticLaw();
 		LocalParameter p = k.createLocalParameter();
 		p.setId("kf");

@@ -86,7 +86,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 			r.setCompartment(compartment);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			kl = r.createKineticLaw();
 			String decayExpression = "";
 			if (complexAbstraction && specie.isSequesterable()) {
@@ -123,7 +123,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		String decayExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -158,7 +158,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		String decayExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -223,7 +223,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r = Utility.Reaction(GlobalConstants.DEGRADATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		String decayExpression = "";
 

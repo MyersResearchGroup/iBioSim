@@ -337,8 +337,8 @@ public class GlobalConstants {
 	public static final int DEFAULT_TEXT_HEIGHT = 10;
 	//public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
 	//public static final String		separator			= File.separator;
-	public static int				SBML_LEVEL			= 3;
-	public static int				SBML_VERSION		= 1;
+	public static final int	SBML_LEVEL			= 3;
+	public static final int	SBML_VERSION		= 2;
 	
 	public static String[] splitPath(String path) {
 		String[] subDirs = path.split(Pattern.quote(File.separator));

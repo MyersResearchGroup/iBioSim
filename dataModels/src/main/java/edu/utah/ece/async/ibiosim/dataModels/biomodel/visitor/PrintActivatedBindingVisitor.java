@@ -94,7 +94,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
@@ -131,7 +131,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
@@ -165,7 +165,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
@@ -199,7 +199,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
@@ -234,7 +234,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
@@ -269,7 +269,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
 			Utility.Parameter(kl, GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 

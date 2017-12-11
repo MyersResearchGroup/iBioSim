@@ -391,7 +391,12 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
 			try 
 			{
-				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
+				SBOLDocument copyDoc = sbolDesigns.createRecursiveCopy(comp);
+				for (TopLevel topLevel : copyDoc.getTopLevels()) {
+					if (outputDoc.getTopLevel(topLevel.getIdentity())==null) {
+						outputDoc.createCopy(topLevel);
+					} 
+				}
 			} 
 			catch (SBOLValidationException e) 
 			{
