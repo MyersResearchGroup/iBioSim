@@ -65,7 +65,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r = Utility.Reaction(GlobalConstants.COMPLEXATION + "_" + specie.getId());
 		r.setCompartment(compartment);
 		r.setReversible(true);
-		r.setFast(false);
+		//r.setFast(false);
 		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 		kl = r.createKineticLaw();
 		String kcompId = kcompString;

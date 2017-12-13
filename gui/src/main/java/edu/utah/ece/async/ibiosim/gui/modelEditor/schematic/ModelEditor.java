@@ -27,8 +27,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
@@ -104,7 +102,6 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
-import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -147,7 +144,8 @@ import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadNewDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
-import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -470,13 +468,13 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	public void saveSBOL2() throws SBOLValidationException {
 		try {
 			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel,
-					Preferences.userRoot().get(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), ""));
+					Preferences.userRoot().get(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), ""));
 			if (identityManager.containsBioSimURI()) {
 				AssemblyGraph2 assemblyGraph = new AssemblyGraph2(biomodel);
 				if (assemblyGraph.containsSBOL()) {
 					SBOLFileManager fileManager = new SBOLFileManager(
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),
-							IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+							SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
@@ -484,10 +482,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);
 
 						SBOLDocument tempSbolDoc = new SBOLDocument();
-						tempSbolDoc.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+						tempSbolDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 						ComponentDefinition assembledComp = assembler.assembleDNAComponent(tempSbolDoc,
-								IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+								SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 						ComponentDefinition new_assembledComp = null;
 						if (assembledComp != null) {
 							// NOTE: Check to see if the SBOL annotation could
@@ -505,11 +503,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 									String version = "1.0";
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 										//
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 
 									}
 									new_assembledComp.setTypes(assembledComp.getTypes());
@@ -522,7 +520,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
+											SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											version);
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -531,11 +529,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 									Double compDef_version = Double.parseDouble(retrievedCompDef.getVersion()) + 1;
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(
-												retrievedCompDef, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(),
+												retrievedCompDef, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(),
 												described_CompDef[0], compDef_version.toString());
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0],
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0],
 												compDef_version.toString());
 
 									}
@@ -550,7 +548,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
+											SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											compDef_version.toString());
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -621,7 +619,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 			SBOLDocument sbolOut = new SBOLDocument();
 			SBML2SBOL.convert_SBML2SBOL(sbolOut, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 			if (biosimrc.get("biosim.general.export_dir", "").equals(""))
 				lastFilePath = null;
@@ -697,7 +695,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
+			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
@@ -736,7 +734,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
+			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
@@ -3150,7 +3148,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 			r.setId(reactionId);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			ArrayList<String> CompChoices = new ArrayList<String>();
 			if (isModifier) {
 				ModifierSpeciesReference source = r.createModifier();

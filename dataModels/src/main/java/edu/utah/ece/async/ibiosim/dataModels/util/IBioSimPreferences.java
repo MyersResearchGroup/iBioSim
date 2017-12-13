@@ -26,41 +26,41 @@ public enum IBioSimPreferences {
 
 	private PersonInfo userInfo = null;
 
-	public PersonInfo getUserInfo() {
-		if (userInfo == null) {
-			Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
-			String name = prefs.get("name", "");
-			String email = prefs.get("email", "");
-			String uri = prefs.get("uri", "http://www.dummy.org");
-			userInfo = Infos.forPerson(uri, name, email);
-		}
-
-		return userInfo;
-	}
-
-	public void saveUserInfo(PersonInfo userInfo) {
-		this.userInfo = userInfo;
-
-		Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
-
-		try {
-			if (userInfo == null) {
-				prefs.removeNode();
-			} else {
-				prefs.put("uri", userInfo.getURI().toString());
-				prefs.put("name", userInfo.getName());
-				if (userInfo.getEmail() != null) {
-					prefs.put("email", userInfo.getEmail().toString());
-				} else {
-					prefs.put("email", "");
-				}
-			}
-
-			prefs.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public PersonInfo getUserInfo() {
+//		if (userInfo == null) {
+//			Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
+//			String name = prefs.get("name", "");
+//			String email = prefs.get("email", "");
+//			String uri = prefs.get("uri", "http://www.dummy.org");
+//			userInfo = Infos.forPerson(uri, name, email);
+//		}
+//
+//		return userInfo;
+//	}
+//
+//	public void saveUserInfo(PersonInfo userInfo) {
+//		this.userInfo = userInfo;
+//
+//		Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
+//
+//		try {
+//			if (userInfo == null) {
+//				prefs.removeNode();
+//			} else {
+//				prefs.put("uri", userInfo.getURI().toString());
+//				prefs.put("name", userInfo.getName());
+//				if (userInfo.getEmail() != null) {
+//					prefs.put("email", userInfo.getEmail().toString());
+//				} else {
+//					prefs.put("email", "");
+//				}
+//			}
+//
+//			prefs.flush();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public boolean getValidate() {
 		return false;
