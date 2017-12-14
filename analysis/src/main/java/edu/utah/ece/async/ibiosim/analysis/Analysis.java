@@ -34,12 +34,10 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * Command line method for running the analysis jar file.  
  * <p>
  * Requirements:
+ * </p>
  * <p>
  * inputfile
- * <p>
- * 
- * Options:
- * <p>
+ * </p>
  *
  *
  * @author Leandro Watanabe

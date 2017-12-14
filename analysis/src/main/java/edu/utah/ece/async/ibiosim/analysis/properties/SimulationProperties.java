@@ -29,7 +29,7 @@ public class SimulationProperties {
   private List<String>      intSpecies;
   
  
-  public SimulationProperties()
+  SimulationProperties()
   {
     run = 1;
     initialTime = 0;

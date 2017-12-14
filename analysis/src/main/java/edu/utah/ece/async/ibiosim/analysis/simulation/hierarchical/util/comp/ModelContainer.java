@@ -13,14 +13,13 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
@@ -30,6 +29,7 @@ public  class ModelContainer
 {
   private Model model;
   private HierarchicalModel hierarchicalModel;
+  private CompSBMLDocumentPlugin compDoc;
   private CompModelPlugin compModel;
   private ModelContainer parent;
   private Map<String, ModelContainer> children;
@@ -40,6 +40,12 @@ public  class ModelContainer
     this.model = model;
     this.hierarchicalModel = hierarchicalModel;
     this.compModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
+    
+    if(model.getSBMLDocument() != null)
+    {
+      compDoc = (CompSBMLDocumentPlugin) model.getSBMLDocument().getPlugin(CompConstants.namespaceURI);
+    }
+    
     this.parent = parent;
     setPrefix();
     addChild();
@@ -52,6 +58,10 @@ public  class ModelContainer
 
   public HierarchicalModel getHierarchicalModel() {
     return hierarchicalModel;
+  }
+  
+  public CompSBMLDocumentPlugin getCompDoc() {
+    return compDoc;
   }
 
   public ModelContainer getChild(String id)

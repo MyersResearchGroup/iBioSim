@@ -43,7 +43,7 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * Options:
  * <p>
  * -e: when specified, the program will run parameter estimation.
- * -l: when specified, parameter estimation will use the estimate the value of the paramaters in the list.
+ * -l: when specified, parameter estimation will use the estimate the value of the parameters in the list.
  * 
  * @author Leandro Watanabe
  * @author Tramy Nguyen

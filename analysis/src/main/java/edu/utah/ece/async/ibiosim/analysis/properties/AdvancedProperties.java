@@ -30,7 +30,10 @@ public class AdvancedProperties {
 
   private double stoichAmp;
   
-  public AdvancedProperties()
+  /**
+   * Constructor for AdvancedProperties. Not allowed to be created by classes other than {@link AnalysisProperties}.
+   */
+  AdvancedProperties()
   {
     rap1 = 0.1;
     rap2 = 0.1;
