@@ -71,11 +71,29 @@ public class Run extends CoreObservable implements ActionListener
 
   private File work;
 
+  /**
+   * The Run class is a wrapper for all of the analysis methods. The run configurations are
+   * specified by an {@link AnalysisProperties}, which describes the type of analysis to run
+   * and the simulation parameters.
+   * 
+   * @param properties - the analysis properties object that stores the simulation parameters.
+   */
   public Run(AnalysisProperties properties)
   {
     this.properties = properties;
   }
 
+  /**
+   * When Run is executed, it loads up the parameters from {@link AnalysisProperties} and performs
+   * analysis.
+   * 
+   * @return error code. Value 0 indicates a success run.
+   * 
+   * @throws IOException - io problem
+   * @throws XMLStreamException - problem with the XML processing.
+   * @throws InterruptedException - thred problem
+   * @throws BioSimException - something went wrong with the analysis
+   */
   public int execute() throws IOException, XMLStreamException, InterruptedException, BioSimException
   {
     Runtime exec = Runtime.getRuntime();
