@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -67,8 +66,6 @@ import org.sbolstandard.core2.TopLevel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
-import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types;
@@ -391,12 +388,15 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
 			try 
 			{
+				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
+				/*
 				SBOLDocument copyDoc = sbolDesigns.createRecursiveCopy(comp);
 				for (TopLevel topLevel : copyDoc.getTopLevels()) {
 					if (outputDoc.getTopLevel(topLevel.getIdentity())==null) {
 						outputDoc.createCopy(topLevel);
 					} 
 				}
+				*/
 			} 
 			catch (SBOLValidationException e) 
 			{
