@@ -53,7 +53,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("comp:Submodel", "fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
+  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
   static AnalysisProperties properties;
   static boolean verbose = false;
   
