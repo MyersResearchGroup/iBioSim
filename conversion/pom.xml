@@ -21,11 +21,11 @@
 						<id>install-vpr-data</id>
 						<phase>clean</phase>
 						<configuration>
-							<file>${basedir}/../lib/vpr.data-2.0.3.jar</file>
+							<file>${basedir}/../lib/vpr.data-2.0.4.jar</file>
 							<repositoryLayout>default</repositoryLayout>
 							<groupId>uk.ac.ncl.ico2s</groupId>
 							<artifactId>vpr-data</artifactId>
-							<version>2.0.3-SNAPSHOT</version>
+							<version>2.0.4-SNAPSHOT</version>
 							<packaging>jar</packaging>
 							<generatePom>true</generatePom>
 						</configuration>
@@ -37,11 +37,11 @@
 						<id>install-vpr-rdf-util</id>
 						<phase>clean</phase>
 						<configuration>
-							<file>${basedir}/../lib/vpr-rdf-util-2.0.3.jar</file>
+							<file>${basedir}/../lib/vpr-rdf-util-2.0.4.jar</file>
 							<repositoryLayout>default</repositoryLayout>
 							<groupId>uk.ac.ncl.intbio</groupId>
 							<artifactId>vpr-rdf-util</artifactId>
-							<version>2.0.3-SNAPSHOT</version>
+							<version>2.0.4-SNAPSHOT</version>
 							<packaging>jar</packaging>
 							<generatePom>true</generatePom>
 						</configuration>
@@ -53,11 +53,11 @@
 						<id>install-vpr-sbol-util</id>
 						<phase>clean</phase>
 						<configuration>
-							<file>${basedir}/../lib/vpr-sbol-util-2.0.3.jar</file>
+							<file>${basedir}/../lib/vpr-sbol-util-2.0.4.jar</file>
 							<repositoryLayout>default</repositoryLayout>
 							<groupId>uk.ac.ncl.intbio</groupId>
 							<artifactId>vpr-sbol-util</artifactId>
-							<version>2.0.3-SNAPSHOT</version>
+							<version>2.0.4-SNAPSHOT</version>
 							<packaging>jar</packaging>
 							<generatePom>true</generatePom>
 						</configuration>
@@ -125,17 +125,17 @@
 		<dependency>
 			<groupId>uk.ac.ncl.ico2s</groupId>
 			<artifactId>vpr-data</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>2.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.ncl.intbio</groupId>
 			<artifactId>vpr-rdf-util</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>2.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.ac.ncl.intbio</groupId>
 			<artifactId>vpr-sbol-util</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>2.0.4-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
