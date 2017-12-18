@@ -13,7 +13,16 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
-
+/**
+ * The incremental properties contains information associated with the advanced tab of
+ * an {@link AnalysisView} used for running iSSA.
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class IncrementalProperties {
 
   private boolean mpde, meanPath, medianPath, adaptive;
@@ -29,14 +38,18 @@ public class IncrementalProperties {
   }
   
   /**
-   * @return the numPaths
+   * Getter for number of paths that branches off at each increment.
+   * 
+   * @return the number of paths
    */
   public int getNumPaths() {
     return numPaths;
   }
   
   /**
-   * @return the adaptive
+   * Check whether the simulation has adaptive time-step.
+   * 
+   * @return if simulation uses adaptive time-step.
    */
   public boolean isAdaptive() {
     return adaptive;
@@ -44,20 +57,28 @@ public class IncrementalProperties {
   
   
   /**
-   * @return the medianPath
+   * Check if the selected simulation uses the median path method.
+   * 
+   * @return if simulation uses median path.
    */
-  public boolean isMedianPath() {
+  public boolean isMedianPath() 
+  {
     return medianPath;
   }
+  
   /**
-   * @return the meanPath
+   * Check if the selected simulation uses the mean path method.
+   * 
+   * @return if simulation uses mean path.
    */
   public boolean isMeanPath() {
     return meanPath;
   }
   
   /**
-   * @return the mpde
+   * Check if the simulation uses probability density function.
+   * 
+   * @return if simulation uses probability density function.
    */
   public boolean isMpde() {
     return mpde;
@@ -65,35 +86,45 @@ public class IncrementalProperties {
   
 
   /**
-   * @param adaptive the adaptive to set
+   * Setter for the adaptive flag.
+   * 
+   * @param true if simulation should have adaptive time-step.
    */
   public void setAdaptive(boolean adaptive) {
     this.adaptive = adaptive;
   }
   
   /**
-   * @param meanPath the meanPath to set
+   * Setter for the mean path flag.
+   * 
+   * @param true if simulation uses the mean path method.
    */
   public void setMeanPath(boolean meanPath) {
     this.meanPath = meanPath;
   }
   
   /**
-   * @param medianPath the medianPath to set
+   * Setter for the median path flag.
+   * 
+   * @param true if simulation uses the median path method.
    */
   public void setMedianPath(boolean medianPath) {
     this.medianPath = medianPath;
   }
   
   /**
-   * @param mpde the mpde to set
+   * Setter for the MPDE flag.
+   * 
+   * @param true if simulation uses probability density function.
    */
   public void setMpde(boolean mpde) {
     this.mpde = mpde;
   }
   
   /**
-   * @param numPaths the numPaths to set
+   * Setter for number of paths.
+   * 
+   * @param non-negative integer for the number of paths.
    */
   public void setNumPaths(int numPaths) {
     this.numPaths = numPaths;

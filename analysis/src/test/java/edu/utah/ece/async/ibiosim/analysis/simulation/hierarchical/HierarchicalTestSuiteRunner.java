@@ -65,7 +65,7 @@ public class HierarchicalTestSuiteRunner
   public static void main(String[] args)
   {
     
-    if (args.length != 2)
+    if (args.length < 2)
     {
       System.out.println("Need two arguments: path to test cases and output path");
       return;
@@ -83,6 +83,17 @@ public class HierarchicalTestSuiteRunner
     int unsupported = 0;
     int total = end - start + 1;
     ArrayList<String> failCases = new ArrayList<String>();
+    
+    if(args.length == 3)
+    {
+      start = Integer.parseInt(args[2]);
+      end = start;
+    }
+    else if(args.length == 4)
+    {
+      start = Integer.parseInt(args[2]);
+      end = Integer.parseInt(args[3]);
+    }
     
     for(; start <= end; start++ )
     {
