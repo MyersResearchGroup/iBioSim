@@ -25,6 +25,7 @@ import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
+ * A set of helper methods that are used when reading and writing properties files.
  * 
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -229,7 +230,7 @@ public class PropertiesUtil {
     }
   }
   
-  public static double parseDouble(String num)
+  static double parseDouble(String num)
   {
     if(num.equals("inf"))
     {
@@ -245,6 +246,13 @@ public class PropertiesUtil {
     }
   }
   
+  /**
+   * Parses a double to string. If the number is infinity, refer to it as "inf".
+   * 
+   * @param the number to be parsed.
+   * 
+   * @return the string for the given double.
+   */
   public static String parseDouble(double num)
   {
     if(num == Double.POSITIVE_INFINITY)

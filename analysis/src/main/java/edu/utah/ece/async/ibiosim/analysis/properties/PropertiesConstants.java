@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
 /**
+ * String constants corresponding to keys for parameter values.
  * 
  * @author Leandro Watanabe
  * @author Chris Myers

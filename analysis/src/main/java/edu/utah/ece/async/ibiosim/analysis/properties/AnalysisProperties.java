@@ -21,6 +21,15 @@ import java.util.prefs.Preferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 
 /**
+ * The AnalysisProperties class incorporates all of the necessary information to run analysis in iBioSim,
+ * where the different properties are separated in the following classes:
+ * 
+ * <ul>
+ * <li> {@link AdvancedProperties}: for abstraction parameters.</li>
+ * <li> {@link IncrementalProperties}: for parameters used in the incremental simulation methods.</li>
+ * <li> {@link SimulationProperties}: for simulation paramters.</li>
+ * <li> {@link VerificationProperties}: for verification parameters.</li>
+ * </ul>
  * 
  * @author Leandro Watanabe
  * @author Chris Myers
