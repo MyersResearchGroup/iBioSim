@@ -56,6 +56,16 @@ public class FluxBalanceAnalysis {
 	
 	private HashMap<String,Double> fluxes;
 	
+	/**
+	 * Constructor for flux balance analysis.
+	 * 
+	 * @param root - the root directory of the project
+	 * @param sbmlFileName - the name of the sbml document 
+	 * @param absError - absolute error for the flux balance analysis
+	 * 
+	 * @throws XMLStreamException - problem with the sbml document
+	 * @throws IOException - i/o problem
+	 */
 	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) throws XMLStreamException, IOException {
 		this.root = root;
 		this.absError = absError;
@@ -65,6 +75,12 @@ public class FluxBalanceAnalysis {
 		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
 	}
 	
+	/**
+	 * Constructor for flux balance analysis.
+	 * 
+	 * @param model - fbc model object
+	 * @param absError - absolute error for the flux balance analysis
+	 */
 	public FluxBalanceAnalysis(Model model,double absError) {
 		this.root = null;
 		this.absError = absError;
@@ -73,6 +89,14 @@ public class FluxBalanceAnalysis {
 		fbc = SBMLutilities.getFBCModelPlugin(model,true);
 	}
 	
+	/**
+	 * Transforms objective function vector to string.
+	 * 
+	 * @param objective - coefficients of reaction fluxes for the objective function.
+	 * @param reactionIndex - map of reaction id to vector index
+	 * 
+	 * @return a string for the objective function
+	 */
 	public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
 		String result = "";
 		for (String reaction : reactionIndex.keySet()) {
@@ -91,6 +115,11 @@ public class FluxBalanceAnalysis {
 		return result;
 	}
 	
+	/**
+	 * Performs flux balance analysis on the given FBC model.
+	 * 
+	 * @return error code for the FBA procedure.
+	 */
 	public int PerformFluxBalanceAnalysis(){
 		if (fbc == null) return -1;
 		if (fbc.getNumObjective()==0) return -11;
@@ -98,13 +127,7 @@ public class FluxBalanceAnalysis {
 
 		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
 		int kp = 0;
-//		for(int l = 0;l<fbc.getListOfFluxBounds().size();l++){
-//			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
-//				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
-//				kp++;
-//			}
-//		}
-		// Support for FBC Version 2
+		
 		for (int l = 0; l < model.getReactionCount(); l++) {
 			Reaction r = model.getReaction(l);
 			FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
@@ -129,39 +152,13 @@ public class FluxBalanceAnalysis {
 					objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 				}
 			}
-			//System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
-			//System.out.println("Subject to:");
 
 			double [] lowerBounds = new double[model.getReactionCount()];
 			double [] upperBounds = new double[model.getReactionCount()];
 			double minLb = LPPrimalDualMethod.DEFAULT_MIN_LOWER_BOUND;
 			double maxUb = LPPrimalDualMethod.DEFAULT_MAX_UPPER_BOUND;
 			int m = 0;
-//			for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
-//				FluxBound bound = fbc.getFluxBound(j);
-//				//double R [] = new double [reactionIndex.size()];
-//				double boundVal = bound.getValue();
-//				if (Double.isInfinite(boundVal) && boundVal > 0) boundVal = 10;
-//				if(bound.getOperation().equals(FluxBound.Operation.GREATER_EQUAL)){
-//					if (Double.isInfinite(boundVal)) boundVal = minLb;
-//					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal;
-//					//R[reactionIndex.get(bound.getReaction())]=1;
-//					//System.out.println("  " + vectorToString(R,reactionIndex) + " >= " + boundVal);
-//				}
-//				else if(bound.getOperation().equals(FluxBound.Operation.LESS_EQUAL)){
-//					if (Double.isInfinite(boundVal)) boundVal = maxUb;
-//					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal;
-//					//R[reactionIndex.get(bound.getReaction())]=1;
-//					//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
-//				} 
-//				else if(bound.getOperation().equals(FluxBound.Operation.EQUAL)){
-//					lowerBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
-//					upperBounds[reactionIndex.get(bound.getReaction())] = boundVal; 
-//					//R[reactionIndex.get(bound.getReaction())]=1;
-//					//System.out.println("  " + vectorToString(R,reactionIndex) + " == " + boundVal);
-//				}
-//			}
-			// Support for FBC Version 2
+
 			for (int l = 0; l < model.getReactionCount(); l++) {
 				Reaction r = model.getReaction(l);
 				FBCReactionPlugin rBounds = (FBCReactionPlugin)r.getExtension(FBCConstants.namespaceURI);
@@ -214,7 +211,6 @@ public class FluxBalanceAnalysis {
 
 			//optimization problem
 			LPOptimizationRequest or = new LPOptimizationRequest();
-			//or.setDumpProblem(true);
 			or.setC(objective);
 			or.setA(stoch);
 			or.setB(zero);
@@ -283,10 +279,20 @@ public class FluxBalanceAnalysis {
 		return -13;
 	}
 
+	/**
+	 * Getter for flux distribution.
+	 * 
+	 * @return Mapping of reaction ids to fluxes.
+	 */
 	public HashMap<String, Double> getFluxes() {
 		return fluxes;
 	}
 	
+	/**
+	 * Setter for flux bounds.
+	 * 
+	 * @param parameter values associated with bounds.
+	 */
 	public void setBoundParameters(HashMap<String,Double> bounds) {
 		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);

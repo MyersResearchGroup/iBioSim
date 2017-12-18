@@ -115,20 +115,18 @@ public final class MathInterpreter
       else
       {
         FunctionDefinition func = (FunctionDefinition) math.getVariable();
-        if(args == null)
-        {
-          args = new HashMap<String, HierarchicalNode>();
-        }
+
+        HashMap<String, HierarchicalNode> functArgs = new HashMap<String, HierarchicalNode>();
 
         for(int i = 0; i < func.getNumArguments(); i++)
         {
           ASTNode arg = func.getArgument(i);
           ASTNode child = math.getChild(i);
-          HierarchicalNode parseArg = parseASTNode(child,  new HashMap<String, HierarchicalNode>(), variableToNodes, dimensionNodes, null, type);
+          HierarchicalNode parseArg = parseASTNode(child,  args, variableToNodes, dimensionNodes, null, type);
 
-          args.put(arg.getName(), parseArg);
+          functArgs.put(arg.getName(), parseArg);
         }
-        node = parseASTNode(func.getBody(), args, null, dimensionNodes, parent, type);
+        node = parseASTNode(func.getBody(), functArgs, variableToNodes, dimensionNodes, parent, type);
       }
 
       break;
@@ -417,49 +415,6 @@ public final class MathInterpreter
             node.addChild(species);
             node.addChild(species.getCompartment());
           }
-
-          //          if(!species.hasOnlySubstance())
-          //          {
-          //            if(type != InterpreterType.ASSIGNMENT)
-          //            {
-          //              node = new HierarchicalNode(Type.DIVIDE);
-          //              node.addChild(species);
-          //              node.addChild(species.getCompartment());
-          //            }
-          //            else if(type == InterpreterType.ASSIGNMENT)
-          //            {
-          //              if(parent != null)
-          //              {
-          //                if(parent.isSpecies())
-          //                {
-          //                  if( parent.isSetInitialValue())
-          //                  {
-          //                    if(!species.hasAmountUnits() && parent.hasAmountUnits())
-          //                    {
-          //                      node = new HierarchicalNode(Type.TIMES);
-          //                      node.addChild(species);
-          //                      node.addChild(species.getCompartment());
-          //                    }
-          //                    else if(species.hasAmountUnits() && !parent.hasAmountUnits())
-          //                    {
-          //                      node = new HierarchicalNode(Type.DIVIDE);
-          //                      node.addChild(species);
-          //                      node.addChild(species.getCompartment());
-          //                    }
-          //                  }
-          //                }
-          //                else
-          //                {
-          //                  if(!species.hasOnlySubstance() && !species.isBoundaryCondition())
-          //                  {
-          //                      node = new HierarchicalNode(Type.DIVIDE);
-          //                      node.addChild(species);
-          //                      node.addChild(species.getCompartment());
-          //                  }
-          //                }
-          //              }
-          //            }
-          //          }
         }
       }
       break;
@@ -564,7 +519,6 @@ public final class MathInterpreter
       }
       break;
     case SEMANTICS:
-      //TODO:
       node = new HierarchicalNode(Type.SEMANTICS);
       break;
     case SUM:

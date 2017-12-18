@@ -27,6 +27,13 @@ public class VerificationProperties
   
   private ArrayList<String> abstractInteresting;
 
+  /**
+   * Empty constructor. Not allowed to be created by classes other than {@link AnalysisProperties}.
+   */
+  VerificationProperties()
+  {
+    
+  }
   
   /**
    * @return the constraintProperty

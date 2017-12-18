@@ -78,6 +78,7 @@ public class CoreSetup
    */
   static void initializeMath(HierarchicalSimulation sim, ModelContainer container, StateType type, VariableNode time, VectorWrapper wrapper,  boolean split) throws IOException
   {
+    setupReactions(sim, container, wrapper);
     setupEvents(sim, container);
     setupConstraints(sim, container);
     setupRules(sim, container);
@@ -90,7 +91,6 @@ public class CoreSetup
     setupParameters(sim, container, wrapper);
     setupCompartments(sim, container, wrapper);
     setupSpecies(sim, container, wrapper);
-    setupReactions(sim, container, wrapper);
   }
 
   private static void setupCompartments(HierarchicalSimulation sim, ModelContainer container, VectorWrapper wrapper)

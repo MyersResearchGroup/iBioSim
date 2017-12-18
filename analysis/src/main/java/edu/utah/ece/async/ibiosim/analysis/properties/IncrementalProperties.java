@@ -20,7 +20,14 @@ public class IncrementalProperties {
 
   private int numPaths;
   
-
+  /**
+   * Empty constructor. Not allowed to be created by classes other than {@link AnalysisProperties}.
+   */
+  IncrementalProperties()
+  {
+    
+  }
+  
   /**
    * @return the numPaths
    */
