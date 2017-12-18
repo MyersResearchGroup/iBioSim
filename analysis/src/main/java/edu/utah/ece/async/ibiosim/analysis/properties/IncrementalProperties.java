@@ -13,7 +13,14 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
-
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class IncrementalProperties {
 
   private boolean mpde, meanPath, medianPath, adaptive;

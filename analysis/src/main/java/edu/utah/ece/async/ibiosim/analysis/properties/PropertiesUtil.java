@@ -24,6 +24,14 @@ import org.jlibsedml.modelsupport.KisaoTerm;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class PropertiesUtil {
   
   static Algorithm getAlgorithm(AnalysisProperties properties)

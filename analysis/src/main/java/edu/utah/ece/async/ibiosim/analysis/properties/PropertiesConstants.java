@@ -13,6 +13,14 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class PropertiesConstants {
 
 	public static final String complex_formation_abstraction = "complex-formation-and-sequestering-abstraction";
