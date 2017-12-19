@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The advanced properties contains information associated with the advanced tab of
- * an {@link AnalysisView}, such as model abstraction parameters.
+ * The advanced properties contains information associated with model abstraction parameters.
  * 
  * @author Leandro Watanabe
  * @author Chris Myers
