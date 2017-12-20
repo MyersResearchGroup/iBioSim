@@ -37,12 +37,22 @@ import org.jlibsedml.VariableSymbol;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 import static edu.utah.ece.async.ibiosim.analysis.properties.PropertiesConstants.*;
+
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class AnalysisPropertiesWriter {
 
   /**
+   * Creates a Java properties file from a given {@link AnalysisProperties} object.
    * 
-   * @param analysisProperties
-   * @throws IOException
+   * @param analysisProperties - the object that is being exported to a properties file
+   * @throws IOException - if there is a problem writing the properties file.
    */
   public static void createProperties(AnalysisProperties analysisProperties) throws IOException
   {
@@ -297,13 +307,20 @@ public class AnalysisPropertiesWriter {
     properties.setProperty(sim_run_term , "constraint");
 
 
-    File file = new File(analysisProperties.getPropertiesName());
+    File file = new File(analysisProperties.getPropertiesFilename());
     FileOutputStream store = new FileOutputStream(file);
     properties.store(store, analysisProperties.getId() + " Properties");
     store.close();
   }
 
-  public static void saveSEDML(SEDMLDocument sedmlDoc, AnalysisProperties properties) {
+  /**
+   * Saves analysis properties from a {@link AnalysisProperties} object to a SED-ML object.
+   * 
+   * @param sedmlDoc - a given SED-ML object that the given {@link AnalysisProperties} is being loaded to. 
+   * @param properties - object containing the property values.
+   */
+  public static void saveSEDML(SEDMLDocument sedmlDoc, AnalysisProperties properties) 
+  {
     double initialTime = properties.getSimulationProperties().getInitialTime();
     double outputStartTime = properties.getSimulationProperties().getOutputStartTime();
     double timeLimit = properties.getSimulationProperties().getTimeLimit();

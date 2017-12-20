@@ -34,42 +34,65 @@ import org.jlibsedml.UniformTimeCourse;
 import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class AnalysisPropertiesLoader {
 
+  /**
+   * Load a given SED-ML task to an {@link AnalysisProperties}.
+   * 
+   * @param sedmlDoc - a SED-ML object
+   * @param subTask - the task id being loaded
+   * @param properties - the properties object that the SED-ML is being loaded to.
+   */
   public static void loadSEDML(SEDMLDocument sedmlDoc, String subTask, AnalysisProperties properties)
   {
     SedML sedml = sedmlDoc.getSedMLModel();
     String simName = properties.getId();
 
     String taskId = simName;
-    if (subTask!=null && !subTask.equals("")) {
+    if (subTask!=null && !subTask.equals("")) 
+    {
       taskId = taskId + "__" + subTask;
     }
     
     for (AbstractTask task : sedml.getTasks())
     {
       String prefix = simName+"__";
-      if (task.getId().startsWith(prefix)) {
+      if (task.getId().startsWith(prefix)) 
+      {
        properties.addTask(task.getId().substring(prefix.length()));
       }
     }
     
     AbstractTask task = sedml.getTaskWithId(taskId);
-    if (task != null) {
+    if (task != null) 
+    {
       Simulation simulation = sedml.getSimulation(task.getSimulationReference());
       PropertiesUtil.setAlgorithm(simulation.getAlgorithm(), properties);
       SimulationProperties simProperties =  properties.getSimulationProperties();
-      if (simulation instanceof UniformTimeCourse) {
+      if (simulation instanceof UniformTimeCourse) 
+      {
         UniformTimeCourse utcSimulation = (UniformTimeCourse) simulation;
         String printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Print_Interval", null);
         if (printInterval != null)
         {
           simProperties.setPrintInterval(PropertiesUtil.parseDouble(printInterval));
-        } else {
+        } 
+        else 
+        {
           printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Minimum_Print_Interval", null);
-          if (printInterval != null) {
+          if (printInterval != null) 
+          {
             simProperties.setMinTimeStep(PropertiesUtil.parseDouble(printInterval));
-          } else {
+          } else 
+          {
             simProperties.setNumSteps(utcSimulation.getNumberOfPoints());
           }
         }
@@ -88,8 +111,9 @@ public class AnalysisPropertiesLoader {
   }
 
   /**
-   * Loads the simulate options.
-   * @throws IOException 
+   * Loads a properties files to an {@link AnalysisProperties} object.
+   * 
+   * @throws IOException - if there is a problem when reading in the given property file.
    */
   public static void loadPropertiesFile(AnalysisProperties properties) throws IOException
   {

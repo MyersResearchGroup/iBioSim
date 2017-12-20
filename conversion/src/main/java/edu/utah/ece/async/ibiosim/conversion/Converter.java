@@ -390,7 +390,8 @@ public class Converter {
 							// Since the validator requires that the sbolVal_fileName is the full path of the input SBOL file, 
 							// this validator will only pass if the user indicated that the the output file name was provided.
 							// Else, if the user indicated that they want the result printed to the console, then no output file name was given
-							org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
+
+							org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI,
 									version, keepGoing, compareFile, compFileResult, mainFileResult, 
 									topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
 									showDetail, noOutput,true);
