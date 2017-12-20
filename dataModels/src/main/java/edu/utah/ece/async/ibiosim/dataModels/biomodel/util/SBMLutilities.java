@@ -5699,7 +5699,7 @@ public class SBMLutilities
 	public static SBMLDocument readSBML(String filename) throws XMLStreamException, IOException
 	{
 		SBMLDocument document = null;
-			document = SBMLReader.read(new File(filename));
+		document = SBMLReader.read(new File(filename));
 		if (document.getModel().isSetId())
 		{
 			document.getModel().setId(document.getModel().getId().replace(".", "_"));
