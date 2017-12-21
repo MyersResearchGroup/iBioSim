@@ -2123,6 +2123,7 @@ public class BioModel extends CoreObservable{
 		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
+    SBMLutilities.removeUnusedNamespaces(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		try {
 		  //SBMLutilities.removeUnusedNamespaces(sbml);
