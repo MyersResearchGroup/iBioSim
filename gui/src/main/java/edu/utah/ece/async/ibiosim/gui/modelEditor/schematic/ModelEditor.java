@@ -101,7 +101,6 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -726,11 +725,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	 * @param name
 	 * @param description
 	 * @param citations
-	 * @param keywords
 	 * @param ifExisting
 	 */
 	public void submitSBOL(String registry, String user, String password, String id, String version, String name,
-			String description, String citations, String keywords, String ifExisting) {
+			String description, String citations, boolean overwrite) {
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
@@ -753,7 +751,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		SynBioHubFrontend stack = new SynBioHubFrontend(registry);
 		try {
 			stack.login(user, password);
-			stack.submit(id, version, name, description, citations, keywords, ifExisting, uploadDoc);
+			stack.submit(id, version, name, description, citations, overwrite, uploadDoc);
 			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", "Submssion Successful",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (SynBioHubException e) {

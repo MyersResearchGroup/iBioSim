@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img  src="docs/media/iBioSim_horizontal.png">
+  <img  src="../docs/media/iBioSim_horizontal.png">
 </p>
 
 # iBioSim Analysis

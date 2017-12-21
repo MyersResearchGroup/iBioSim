@@ -390,10 +390,11 @@ public class Converter {
 							// Since the validator requires that the sbolVal_fileName is the full path of the input SBOL file, 
 							// this validator will only pass if the user indicated that the the output file name was provided.
 							// Else, if the user indicated that they want the result printed to the console, then no output file name was given
-							org.sbolstandard.core2.SBOLValidate.validate(sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
+
+							org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI,
 									version, keepGoing, compareFile, compFileResult, mainFileResult, 
 									topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
-									showDetail, noOutput);
+									showDetail, noOutput,true);
 					}
 					
 				} 
@@ -422,10 +423,10 @@ public class Converter {
 			{
 				// If the user want to diff between two SBOL file or only perform validation for a single SBOL file, 
 				// call the validation method and then skip the rest. 
-				org.sbolstandard.core2.SBOLValidate.validate(fullInputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
+				org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,fullInputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
 						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
-						showDetail, noOutput);
+						showDetail, noOutput, true);
 				
 				//User wants to convert SBOL2SBML, printing to console or saving to sbml file is done in SBMLutilities.
 				if(!isDiffFile && !isValidation)
@@ -485,10 +486,10 @@ public class Converter {
 		{
 			for (File eachFile : file.listFiles()) 
 			{
-				org.sbolstandard.core2.SBOLValidate.validate(eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
+				org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
 						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
-						showDetail, noOutput);
+						showDetail, noOutput,true);
 			}
 		}
 	} // end of method

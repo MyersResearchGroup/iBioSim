@@ -32,6 +32,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -614,7 +615,7 @@ public class SBML2SBOL {
 				Model subModel = null;
 				if (extModelRef!=null) {
 					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					SBMLDocument subDocument = SBMLutilities.readSBML(externalSBMLPath + File.separator + extModel);
+					SBMLDocument subDocument = SBMLReader.read(new File(externalSBMLPath + File.separator + extModel));
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
@@ -762,10 +763,10 @@ public class SBML2SBOL {
 				if(inputFilePath != null){
 					if (includeSBMLPath == null) {
 						//SBML file is relative. No external path was given for the input SBML file. 
-						sbmlDoc = SBMLutilities.readSBML(inputFilePath);
+						sbmlDoc = SBMLReader.read(new File(inputFilePath));
 					} 
 					else {
-						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + File.separator + inputFilePath);
+						sbmlDoc = SBMLReader.read(new File(includeSBMLPath + File.separator + inputFilePath));
 					}
 					SBOLDocument sbolDoc = new SBOLDocument();
 					SBML2SBOL.convert_SBML2SBOL(sbolDoc,includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);
