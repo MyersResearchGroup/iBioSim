@@ -70,7 +70,7 @@ public class SpeciesNode extends VariableNode
   {
     speciesTemplates.isBoundary = isBoundary;
   }
-
+  
   public boolean hasOnlySubstance()
   {
     return speciesTemplates.hasOnlySubstance;
@@ -119,24 +119,27 @@ public class SpeciesNode extends VariableNode
     odeRate.addChild(sub);
   }
 
+
+  @Override
+  public void setValue(int index, double value)
+  {
+    state.getState(index).setStateValue(value);
+  }
+
   @Override
   public double computeRateOfChange(int index)
   {
     double rate = 0;
     if (rateRule != null)
     {
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      if (!speciesTemplates.hasOnlySubstance)
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
+      if (!speciesTemplates.hasOnlySubstance )
       {
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
         {
           double c = compartment.getValue(index);
-          rate = rate * c + getValue(index)  * compartmentChange / (c*c);
-        }
-        else
-        {
-          rate = rate * compartment.getValue(index);
+          rate = rate + getValue(index)  * compartmentChange / c;
         }
       }
     }
@@ -145,7 +148,6 @@ public class SpeciesNode extends VariableNode
       rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
 
-    state.setRateValue(index, rate);
     return rate;
   }
 

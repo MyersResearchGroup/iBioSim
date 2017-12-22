@@ -53,7 +53,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  */
 public class HierarchicalTestSuiteRunner
 {
-  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor"));
+  static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
   static AnalysisProperties properties;
   static boolean verbose = false;
   
@@ -65,7 +65,7 @@ public class HierarchicalTestSuiteRunner
   public static void main(String[] args)
   {
     
-    if (args.length != 2)
+    if (args.length < 2)
     {
       System.out.println("Need two arguments: path to test cases and output path");
       return;
@@ -76,24 +76,24 @@ public class HierarchicalTestSuiteRunner
     properties = new AnalysisProperties("", "", "" , false);
     
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
-
-    //    String[] casesNeedToChangeTimeStep = new String[] { "00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274", "00400", "00460", "00276", "00278", "00279", "00870", "00872", "01159", "01160", "01161" };
-    //
-    //    for (String s : casesNeedToChangeTimeStep)
-    //    {
-    //      if (s.equals(testcase))
-    //      {
-    //        maxTimeStep = 0.001;
-    //        break;
-    //      }
-    //    }
-
+    
     int start = 1;
-    int end = 1140;
+    int end = 1780;
 
     int unsupported = 0;
     int total = end - start + 1;
     ArrayList<String> failCases = new ArrayList<String>();
+    
+    if(args.length == 3)
+    {
+      start = Integer.parseInt(args[2]);
+      end = start;
+    }
+    else if(args.length == 4)
+    {
+      start = Integer.parseInt(args[2]);
+      end = Integer.parseInt(args[3]);
+    }
     
     for(; start <= end; start++ )
     {
@@ -101,10 +101,10 @@ public class HierarchicalTestSuiteRunner
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
-      String root = args[0];
+      String root = args[0] + File.separator + testcase;
       properties.setRoot(root);
 
-      properties.setId(testcase);
+      properties.setId("");
       
       properties.setModelFile(testcase + "-sbml-l3v1.xml");
       String filename = properties.getFilename();
@@ -159,9 +159,13 @@ public class HierarchicalTestSuiteRunner
       }
       catch (Exception e1)
       {
-        e1.printStackTrace();
         failCases.add(testcase);
         System.out.println("Case " + testcase + " is failing...");
+        System.out.println("Throwing exception");
+        if(verbose)
+        {
+          e1.printStackTrace();
+        }
       }
     }
 
@@ -258,11 +262,11 @@ public class HierarchicalTestSuiteRunner
       double absoluteError = Double.valueOf(p.getProperty("absolute"));
       int numSteps = Integer.valueOf(p.getProperty("steps"));
       
-      
       simProperties.setTimeLimit(timeLimit);
       simProperties.setRelError(relativeError);
       simProperties.setAbsError(absoluteError);
       simProperties.setNumSteps(numSteps);
+      simProperties.setMaxTimeStep(0.005);
       simProperties.getIntSpecies().clear();
       for (String intSpecies : p.getProperty("variables").replaceAll(" ", "").split(","))
       {

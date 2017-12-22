@@ -156,6 +156,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
       r1 = getRandomNumberGenerator().nextDouble();
       r2 = getRandomNumberGenerator().nextDouble();
+      computePropensities();
       totalPropensity = getTotalPropensity();
       delta_t = computeNextTimeStep(r1, totalPropensity);
       nextReactionTime = currentTime.getValue(0) + delta_t;
@@ -230,7 +231,13 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
       computeEvents();
     }
+    
     computeAssignmentRules();
+    
+  }
+  
+  private void computePropensities()
+  {
     for(HierarchicalModel modelstate : this.getListOfHierarchicalModels())
     {
       for(ReactionNode node : modelstate.getReactions())

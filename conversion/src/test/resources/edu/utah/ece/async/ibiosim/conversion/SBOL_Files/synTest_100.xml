@@ -1,0 +1,1677 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:RDF xmlns="http://sbols.org/v1#" xmlns:ns2="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES10_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES10_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES10_Pa_seq">
+                <nucleotides>aaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR10_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR10_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR10_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR12_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR12_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR12_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES5_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES5_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES5_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR9_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR9_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR9_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR3_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR3_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR3_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND10_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND10_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND10_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND4_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND4_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND4_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR8_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR8_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR8_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND3_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND3_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND3_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV7_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV7_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV7_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR11_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR11_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR11_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND8_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND8_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND8_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR3_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR3_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR3_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND9_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND9_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND9_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND8_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND8_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND8_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR6_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR6_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR6_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR15_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR15_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR15_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV13_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV13_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV13_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND4_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND4_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND4_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR11_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR11_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR11_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND4_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND4_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND4_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND4_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND4_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND4_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR14_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR14_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR14_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV1_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV1_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV1_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES0_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>YES0_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES0_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND7_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND7_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND7_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR2_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR2_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR2_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR1_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR1_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR1_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND11_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND11_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND11_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND15_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND15_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND15_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR10_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR10_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR10_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND6_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND6_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND6_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR6_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR6_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR6_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND5_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND5_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND5_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV17_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV17_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV17_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND10_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND10_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND10_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND10_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND10_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND10_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR14_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR14_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR14_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR0_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR0_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR0_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV10_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV10_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV10_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND9_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND9_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND9_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND7_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND7_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND7_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES9_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES9_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES9_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND6_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND6_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND6_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND2_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND2_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND2_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR12_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR12_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR12_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV6_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV6_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV6_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR4_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR4_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR4_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND13_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND13_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND13_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV0_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV0_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV0_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR15_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR15_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR15_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR13_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR13_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR13_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND11_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND11_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND11_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES7_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES7_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES7_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR2_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR2_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR2_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND12_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND12_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND12_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV17_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV17_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV17_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR8_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR8_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR8_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR14_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR14_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR14_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND9_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND9_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND9_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR5_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR5_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR5_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR7_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR7_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR7_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND5_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND5_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND5_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV19_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV19_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV19_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES13_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>YES13_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES13_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR0_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR0_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR0_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV2_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV2_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV2_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR2_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR2_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR2_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR15_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR15_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR15_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR2_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR2_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR2_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR13_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR13_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR13_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND13_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND13_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND13_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND6_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND6_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND6_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR7_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR7_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR7_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND2_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND2_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND2_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV4_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV4_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV4_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR1_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR1_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR1_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND15_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND15_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND15_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR8_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR8_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR8_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR11_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR11_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR11_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND12_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND12_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND12_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR11_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR11_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR11_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES4_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES4_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES4_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND15_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND15_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND15_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV12_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV12_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV12_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND13_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND13_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND13_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV3_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV3_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV3_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV15_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV15_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV15_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV8_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV8_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV8_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES0_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES0_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES0_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR14_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR14_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR14_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR6_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR6_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR6_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV7_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV7_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV7_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND5_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND5_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND5_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES11_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES11_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES11_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND15_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND15_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND15_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND14_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND14_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND14_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND8_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND8_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND8_Pa_seq">
+                <nucleotides>a</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV16_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV16_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV16_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR3_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR3_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR3_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND0_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND0_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND0_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR5_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR5_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR5_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR5_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR5_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR5_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND7_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND7_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND7_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR1_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR1_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR1_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV11_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV11_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV11_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND0_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND0_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND0_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND12_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND12_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND12_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND14_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND14_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND14_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND1_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND1_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND1_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES14_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES14_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES14_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR10_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR10_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR10_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND5_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND5_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND5_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR13_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR13_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR13_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND10_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND10_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND10_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR9_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR9_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR9_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND3_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND3_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND3_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND14_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND14_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND14_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV2_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV2_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV2_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV18_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV18_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV18_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR1_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR1_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR1_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND1_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND1_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND1_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR12_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR12_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR12_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND1_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND1_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND1_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND14_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND14_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND14_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR9_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR9_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR9_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR5_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR5_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR5_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES2_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES2_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES2_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV5_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV5_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV5_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV14_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV14_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV14_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES8_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>YES8_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES8_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR10_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR10_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR10_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND2_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND2_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND2_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND1_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND1_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND1_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND8_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND8_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND8_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES8_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES8_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES8_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV5_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV5_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV5_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND11_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND11_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND11_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES3_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES3_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES3_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND8_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND8_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND8_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR13_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR13_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR13_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV12_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV12_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV12_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND5_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND5_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND5_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES1_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES1_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES1_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES15_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES15_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES15_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES6_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES6_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES6_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR15_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR15_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR15_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR3_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR3_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR3_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR9_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR9_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR9_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR4_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR4_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR4_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR0_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR0_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR0_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#RBS">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000139"/>
+        <displayId>RBS</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#RBS_seq">
+                <nucleotides>aaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND0_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND0_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND0_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND11_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND11_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND11_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND9_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND9_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND9_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND7_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND7_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND7_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND14_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND14_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND14_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND9_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND9_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND9_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR8_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR8_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR8_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND0_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND0_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND0_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR7_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR7_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR7_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV16_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV16_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV16_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND2_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND2_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND2_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND6_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND6_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND6_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND3_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND3_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND3_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#TT">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000141"/>
+        <displayId>TT</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#TT_seq">
+                <nucleotides>aaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR4_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR4_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR4_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR12_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR12_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR12_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR4_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR4_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR4_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR9_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NOR9_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR9_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV9_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>INV9_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV9_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND3_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND3_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND3_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND0_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND0_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND0_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR0_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR0_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR0_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND6_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>AND6_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND6_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES13_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES13_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES13_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#AND1_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>AND1_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#AND1_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NOR7_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NOR7_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NOR7_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#INV8_Si">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>INV8_Si</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#INV8_Si_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#YES12_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>YES12_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#YES12_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND13_Pr">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>NAND13_Pr</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND13_Pr_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND12_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND12_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND12_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#NAND11_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>NAND11_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#NAND11_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR6_Si2">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000316"/>
+        <displayId>OR6_Si2</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR6_Si2_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+    <DnaComponent ns2:about="http://www.async.ece.utah.edu#OR2_Pa">
+        <ns2:type ns2:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+        <displayId>OR2_Pa</displayId>
+        <dnaSequence>
+            <DnaSequence ns2:about="http://www.async.ece.utah.edu#OR2_Pa_seq">
+                <nucleotides>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</nucleotides>
+            </DnaSequence>
+        </dnaSequence>
+    </DnaComponent>
+</ns2:RDF>

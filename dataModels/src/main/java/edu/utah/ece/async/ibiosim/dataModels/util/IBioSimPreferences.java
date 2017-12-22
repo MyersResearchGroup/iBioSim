@@ -26,41 +26,41 @@ public enum IBioSimPreferences {
 
 	private PersonInfo userInfo = null;
 
-	public PersonInfo getUserInfo() {
-		if (userInfo == null) {
-			Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
-			String name = prefs.get("name", "");
-			String email = prefs.get("email", "");
-			String uri = prefs.get("uri", "http://www.dummy.org");
-			userInfo = Infos.forPerson(uri, name, email);
-		}
-
-		return userInfo;
-	}
-
-	public void saveUserInfo(PersonInfo userInfo) {
-		this.userInfo = userInfo;
-
-		Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
-
-		try {
-			if (userInfo == null) {
-				prefs.removeNode();
-			} else {
-				prefs.put("uri", userInfo.getURI().toString());
-				prefs.put("name", userInfo.getName());
-				if (userInfo.getEmail() != null) {
-					prefs.put("email", userInfo.getEmail().toString());
-				} else {
-					prefs.put("email", "");
-				}
-			}
-
-			prefs.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public PersonInfo getUserInfo() {
+//		if (userInfo == null) {
+//			Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
+//			String name = prefs.get("name", "");
+//			String email = prefs.get("email", "");
+//			String uri = prefs.get("uri", "http://www.dummy.org");
+//			userInfo = Infos.forPerson(uri, name, email);
+//		}
+//
+//		return userInfo;
+//	}
+//
+//	public void saveUserInfo(PersonInfo userInfo) {
+//		this.userInfo = userInfo;
+//
+//		Preferences prefs = Preferences.userNodeForPackage(IBioSimPreferences.class).node("user");
+//
+//		try {
+//			if (userInfo == null) {
+//				prefs.removeNode();
+//			} else {
+//				prefs.put("uri", userInfo.getURI().toString());
+//				prefs.put("name", userInfo.getName());
+//				if (userInfo.getEmail() != null) {
+//					prefs.put("email", userInfo.getEmail().toString());
+//				} else {
+//					prefs.put("email", "");
+//				}
+//			}
+//
+//			prefs.flush();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public boolean getValidate() {
 		return false;
@@ -143,6 +143,7 @@ public enum IBioSimPreferences {
 	}
 	
 	private Boolean enableLibSBMLValidate = null;
+	private Boolean enableJSBMLValidate = null;
 	
 	public boolean isLibSBMLValidateEnabled() {
 		if (enableLibSBMLValidate == null) {
@@ -152,11 +153,27 @@ public enum IBioSimPreferences {
 		return enableLibSBMLValidate;
 	}
 
-	public void setLibSBMLValidateEnabled(boolean enableLibSBMLValidate) {
+	public boolean isJSBMLValidateEnabled() {
+    if (enableJSBMLValidate == null) {
+      enableJSBMLValidate = Preferences.userRoot().get("biosim.general.validate", "").equals("jsbml");
+    }
+
+    return enableJSBMLValidate;
+  }
+	
+	public void setValidateEnabled(boolean enableLibSBMLValidate, boolean enableJsbmlValidate) {
 		this.enableLibSBMLValidate = enableLibSBMLValidate;
-		if (enableLibSBMLValidate) {
+		this.enableJSBMLValidate = enableJsbmlValidate;
+		if (enableLibSBMLValidate) 
+		{
 			Preferences.userRoot().put("biosim.general.validate", "libsbml");
-		} else {
+		} 
+		if (enableJsbmlValidate) 
+    {
+      Preferences.userRoot().put("biosim.general.validate", "jsbml");
+    } 
+		else 
+		{
 			Preferences.userRoot().put("biosim.general.validate", "default");
 		}
 	}

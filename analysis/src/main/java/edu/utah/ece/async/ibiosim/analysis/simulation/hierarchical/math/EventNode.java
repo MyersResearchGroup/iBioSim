@@ -165,17 +165,7 @@ public class EventNode extends HierarchicalNode
       for (int i = 0; i < eventAssignments.size(); i++)
       {
         FunctionNode eventAssignmentNode = eventAssignments.get(i);
-        VariableNode variable = eventAssignmentNode.getVariable();
-        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, false, index);
-        if (variable.isSpecies())
-        {
-          SpeciesNode species = (SpeciesNode) variable;
-          if (!species.hasOnlySubstance())
-          {
-            assignmentValues[i] = value * species.getCompartment().getValue(index);
-            continue;
-          }
-        }
+        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, index);
         assignmentValues[i] = value;
       }
     }
@@ -185,7 +175,7 @@ public class EventNode extends HierarchicalNode
   public boolean computeTrigger(int index)
   {
 
-    double triggerResult = Evaluator.evaluateExpressionRecursive(this, index);
+    double triggerResult = Evaluator.evaluateExpressionRecursive(this,index);
     return triggerResult != 0;
   }
 

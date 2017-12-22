@@ -31,7 +31,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.15.2-experimental/) libSBML for validation and flattening.
+5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.16.0/experimental/) libSBML for validation and flattening.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
 
 ## Installing iBioSim
@@ -40,7 +40,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 3. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ## Running iBioSim
-1. Build an executable jar for iBioSim by running ```mvn clean install``` on the project root. 
+1. Build an executable jar for iBioSim by running ```mvn clean``` and then ```mvn install``` on the project root. 
 2. Copy ```gui/target/iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to the bin directory of your iBioSim project and rename ```iBioSim-gui-3.0.0-SNAPSHOT-jar-with-dependencies.jar``` to ```iBioSim.jar```.
 3. In the bin directory, run:
       * Windows: ```iBioSim.bat``` 

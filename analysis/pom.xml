@@ -35,6 +35,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Build an executable JAR -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-converter</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>edu.utah.ece.async.ibiosim.analysis.Analysis</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

@@ -16,21 +16,31 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The advanced properties contains information associated with model abstraction parameters.
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class AdvancedProperties {
 
   private List<String> preAbs, loopAbs, postAbs;
   
-
   private double        qss;
   private double        rap1;
   private double        rap2;
-  
+  private double stoichAmp;
 
   private int         con;
 
-  private double stoichAmp;
   
-  public AdvancedProperties()
+  /**
+   * Constructor for AdvancedProperties. Not allowed to be created by classes other than {@link AnalysisProperties}.
+   */
+  AdvancedProperties()
   {
     rap1 = 0.1;
     rap2 = 0.1;
@@ -51,13 +61,18 @@ public class AdvancedProperties {
   }
   
   /**
-   * @return the postAbs
+   * Getter for post-abstractions methods.
+   * 
+   * @return list of post-abstraction methods.
    */
   public List<String> getPostAbs() {
     return postAbs;
   }
+  
   /**
-   * @return the preAbs
+   * Getter for pre-abstractions methods.
+   * 
+   * @return list of pre-abstraction methods.
    */
   public List<String> getPreAbs() {
     return preAbs;
@@ -65,47 +80,63 @@ public class AdvancedProperties {
   
 
   /**
-   * @return the qss
+   * Getter for quasi-steady state threshold.
+   * 
+   * @return quasi-steady state condition.
    */
   public double getQss() {
     return qss;
   }
+  
   /**
-   * @return the rap1
+   * Getter for rapid equilibrium 1 condition.
+   * 
+   * @return rapid equilibrium
    */
   public double getRap1() {
     return rap1;
   }
+  
   /**
-   * @return the rap2
+   * Getter for rapid equilibrium 2 condition.
+   *  
+   * @return rapid equilibrium
    */
   public double getRap2() {
     return rap2;
   }
   
   /**
-   * @return the stoichAmp
+   * Getter for stoichiometry amplication.
+   * 
+   * @return stoichiometry amplication
    */
   public double getStoichAmp() {
     return stoichAmp;
   }
   
   /**
-   * @param con the con to set
+   * Setter for maximum concentration threshold.
+   * 
+   * @param maximum concentration threshold
    */
   public void setCon(int con) {
     this.con = con;
   }
 
   /**
-   * @return the loopAbs
+   * Getter for loop abstraction.
+   * 
+   * @return list of loop abstraction methods
    */
   public List<String> getLoopAbs() {
     return loopAbs;
   }
   
   /**
-   * @param loopAbs the loopAbs to set
+   * Setter for loop abstraction.
+   * 
+   * @param list of loop abstraction methods
    */
   public void setLoopAbs(List<String> loopAbs) {
     this.loopAbs = loopAbs;
@@ -113,11 +144,14 @@ public class AdvancedProperties {
   
 
   /**
-   * @param postAbs the postAbs to set
+   * Setter for post abstraction methods.
+   * 
+   * @param list of post abstraction methods.
    */
   public void setPostAbs(List<String> postAbs) {
     this.postAbs = postAbs;
   }
+  
   /**
    * @param preAbs the preAbs to set
    */
@@ -126,26 +160,36 @@ public class AdvancedProperties {
   }
   
   /**
-   * @param qss the qss to set
+   * Setter for quasi-steady state threshold.
+   * 
+   * @param quasi-steady state condition
    */
   public void setQss(double qss) {
     this.qss = qss;
   }
+  
   /**
-   * @param rap1 the rap1 to set
+   * Setter for rapid equilibrium 1 condition.
+   * 
+   * @param rapid equilibrium
    */
   public void setRap1(double rap1) {
     this.rap1 = rap1;
   }
+  
   /**
-   * @param rap2 the rap2 to set
+   * Setter for rapid equilibrium 2 condition.
+   * 
+   * @param rapid equilibrium
    */
   public void setRap2(double rap2) {
     this.rap2 = rap2;
   }
   
   /**
-   * @param stoichAmp the stoichAmp to set
+   * Setter for stoichiometry amplication threshold.
+   * 
+   * @param stoichiometry amplication
    */
   public void setStoichAmp(double stoichAmp) {
     this.stoichAmp = stoichAmp;

@@ -160,6 +160,7 @@ import com.apple.eawt.QuitResponse;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import uk.ac.ncl.ico2s.VPRException;
@@ -351,7 +352,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				//editPreferences.preferences();
 				tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 				if (sbolDocument != null) {
-					sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+					sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 				}
 			}
 		});
@@ -1157,9 +1158,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		openRecent.addSeparator();
 		openRecent.add(clearRecent);
-		SBMLLevelVersion = "L3V1";
-		GlobalConstants.SBML_LEVEL = 3;
-		GlobalConstants.SBML_VERSION = 1;
+		SBMLLevelVersion = "L3V2";
 		
 		// TODO: temp hack, needs fixing
 		EditPreferences editPreferences = new EditPreferences(frame, false);
@@ -1268,7 +1267,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			name = new JLabel("iBioSim", SwingConstants.CENTER);
 			version = new JLabel("Version " + iBioSimVersion, SwingConstants.CENTER);
 			developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
-					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang";
+					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel";
 		}
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
@@ -1449,7 +1448,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+			sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			writeSBOLDocument();
 
 			refresh();
@@ -2922,7 +2921,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			//editPreferences.preferences();
 			tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
 			if (sbolDocument != null) {
-				sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+				sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			}
 		} else if (e.getSource() == clearRecent) {
 			removeAllRecentProjects();
@@ -4699,7 +4698,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 				try 
 				{
-					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					sbolDocument.setCreateDefaults(true);
 				} 
 				catch (FileNotFoundException e) 
@@ -4739,7 +4738,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 			sbolDocument = new SBOLDocument();
 			sbolDocument.setCreateDefaults(true);
-			sbolDocument.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+			sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			writeSBOLDocument();
 		}
 	}
@@ -4854,6 +4853,24 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				+ " meta data entries describing the archive.");
 
 		// iterate over all entries in the archive
+		for (ArchiveEntry entry : ca.getEntries ())
+		{
+			// display some information about the archive
+			if (entry.getFormat().toString().contains("sbml")) {
+				System.out.println("ImportSBML: " + entry.getFileName());
+				try {
+					String fileName = entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath();
+					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
+					SBMLWriter writer = new SBMLWriter();
+					String[] file = GlobalConstants.splitPath(fileName.trim());
+					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		for (ArchiveEntry entry : ca.getEntries ())
 		{
 			// display some information about the archive
@@ -5137,9 +5154,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		try {
 			File sbolFile = new File(filename.trim());
 			SBOLReader.setKeepGoing(true);
-			SBOLReader.setURIPrefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+			SBOLReader.setURIPrefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
-			sbolDoc.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+			sbolDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			if (!checkSBOL(sbolDoc, false))
 				return;
 			log.addText("Importing " + sbolFile + " into the project's SBOL library.");

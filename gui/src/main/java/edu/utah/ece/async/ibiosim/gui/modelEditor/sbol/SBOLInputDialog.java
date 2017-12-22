@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -67,8 +66,6 @@ import org.sbolstandard.core2.TopLevel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
-import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types;
@@ -256,13 +253,24 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+					TopLevel deletedObject = null;
+					
 					int[] rows = table.getSelectedRows();
 					for (int row : rows) {
 						row = table.convertRowIndexToModel(row);
 						TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
 						sbolDesigns.removeTopLevel(comp);
+						
+						deletedObject = comp;
 					}
 					File file = SBOLUtils.setupFile();
+					
+					JOptionPane.showMessageDialog(Gui.frame, "Warning! You are about to remove the following SBOL component from the SBOL library file: \n"
+							+ "SBOL library file at: " + file.getAbsolutePath() + "\n"
+							+ "SBOL id: " + deletedObject.getIdentity() + "\n"
+							+ "SBOL displayId: " + deletedObject.getDisplayId() + "\n"
+							+ "SBOL name: " + deletedObject.getName());
+					
 					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
@@ -292,11 +300,11 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		//Get information for main design layout and load them up
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootComponentDefinitions());
 		}
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showModDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootModuleDefinitions());
 		}
@@ -381,6 +389,14 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			try 
 			{
 				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
+				/*
+				SBOLDocument copyDoc = sbolDesigns.createRecursiveCopy(comp);
+				for (TopLevel topLevel : copyDoc.getTopLevels()) {
+					if (outputDoc.getTopLevel(topLevel.getIdentity())==null) {
+						outputDoc.createCopy(topLevel);
+					} 
+				}
+				*/
 			} 
 			catch (SBOLValidationException e) 
 			{
@@ -448,6 +464,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		else if (!showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			CDsToDisplay = sbolDesigns.getComponentDefinitions();
+			System.out.println("Total sbolLib: " + sbolDesigns.getComponentDefinitions().size());
 		}
 		else
 		{
@@ -456,6 +473,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		
 		List<ComponentDefinition> components = SBOLUtils.getCDOfRole(CDsToDisplay, part);
 		components = SBOLUtils.getCDOfType(components, (Types) typeSelection.getSelectedItem());
+		System.out.println("Total retreived: " + components.size());
 		return components;
 	}
 	

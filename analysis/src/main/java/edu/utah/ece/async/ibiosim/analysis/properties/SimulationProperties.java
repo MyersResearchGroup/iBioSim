@@ -16,20 +16,26 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The simulation properties contains information associated with the simulation options.
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public class SimulationProperties {
 
 
   private int         numSteps, run;
   private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, absError, relError;
-  
   private String        printer_id, printer_track_quantity,genStats;
- 
   private long        rndSeed;
-  
   private List<String>      intSpecies;
   
  
-  public SimulationProperties()
+  SimulationProperties()
   {
     run = 1;
     initialTime = 0;
@@ -47,67 +53,93 @@ public class SimulationProperties {
     
   }
   /**
-   * @return the absError
+   * Getter for absolute error.
+   * 
+   * @return the absolute error.
    */
   public double getAbsError() {
     return absError;
   }
   
   /**
-   * @return the initialTime
+   * Getter for initial simulation time.
+   * 
+   * @return the initial time.
    */
   public double getInitialTime() {
     return initialTime;
   }
+  
   /**
-   * @return the minTimeStep
+   * Getter for minimum time step.
+   * 
+   * @return the minimum time step.
    */
   public double getMinTimeStep() {
     return minTimeStep;
   }
+  
   /**
-   * @return the maxTimeStep
+   * Getter for maximum time step.
+   * 
+   * @return the maximum time step.
    */
   public double getMaxTimeStep() {
     return maxTimeStep;
   }
   
   /**
-   * @return the outputStartTime
+   * Getter for output start time.
+   * 
+   * @return the output start time.
    */
   public double getOutputStartTime() {
     return outputStartTime;
   }
   
   /**
-   * @return the printer_id
+   * Getter for printer id.
+   * 
+   * @return the printer id
    */
   public String getPrinter_id() {
     return printer_id;
   }
+  
   /**
-   * @return the printer_track_quantity
+   * Getter for printer track quantity (amount or concentration).
+   * 
+   * @return the printer quantity type.
    */
   public String getPrinter_track_quantity() {
     return printer_track_quantity;
   }
   
   /**
-   * @return the printInterval
+   * Getter for print interval.
+   * 
+   * @return the print interval
    */
-  public double getPrintInterval() {
+  public double getPrintInterval() 
+  {
     return printInterval;
   }
   
 
   /**
-   * @return the relError
+   * Getter for relative error.
+   * 
+   * @return the relative error.
    */
-  public double getRelError() {
+  public double getRelError() 
+  {
     return relError;
   }
+  
   /**
-   * @return the rndSeed
+   * Getter for random seed.
+   * 
+   * @return the random seed.
    */
   public long getRndSeed() {
     return rndSeed;
@@ -115,7 +147,9 @@ public class SimulationProperties {
   
 
   /**
-   * @return the timeLimit
+   * Getter for simulation time limit.
+   * 
+   * @return the simulation time limit.
    */
   public double getTimeLimit() {
     return timeLimit;
@@ -123,42 +157,54 @@ public class SimulationProperties {
 
   
   /**
-   * @return the run
+   * Getter for number of runs.
+   * 
+   * @return the number of runs.
    */
   public int getRun() {
     return run;
   }
   
   /**
-   * @param absError the absError to set
+   * Setter for absolute error.
+   * 
+   * @param a positive double corresponding to absolute error.
    */
   public void setAbsError(double absError) {
     this.absError = absError;
   }
   
   /**
-   * @param initialTime the initialTime to set
+   * Setter for initial simulation time.
+   * 
+   * @param non-negative double corresponding to the initial time.
    */
   public void setInitialTime(double initialTime) {
     this.initialTime = initialTime;
   }
   
   /**
-   * @param minTimeStep the minTimeStep to set
+   * Setter for minimum time step.
+   * 
+   * @param a positive double corresponding to the minimum time step.
    */
   public void setMinTimeStep(double minTimeStep) {
     this.minTimeStep = minTimeStep;
   }
   
   /**
-   * @param maxTimeStep the minTimeStep to set
+   * Setter for maximum time step.
+   * 
+   * @param a positive double corresponding to the maximum time step.
    */
   public void setMaxTimeStep(double maxTimeStep) {
     this.maxTimeStep = maxTimeStep;
   }
   
   /**
-   * @param outputStartTime the outputStartTime to set
+   * Setter for output start time, the time when simulation starts reporting results.
+   * 
+   * @param a non-negative double corresponding to the output start time.
    */
   public void setOutputStartTime(double outputStartTime) {
     this.outputStartTime = outputStartTime;
@@ -166,63 +212,88 @@ public class SimulationProperties {
   
 
   /**
-   * @param printer_id the printer_id to set
+   * Setter for printer id (tsd or null).
+   * 
+   * @param the printer id.
    */
   public void setPrinter_id(String printer_id) {
     this.printer_id = printer_id;
   }
+  
   /**
-   * @param printer_track_quantity the printer_track_quantity to set
+   * Setter for the track quantity.
+   * 
+   * @param the printer track quantity (amount or concentration).
    */
   public void setPrinter_track_quantity(String printer_track_quantity) {
     this.printer_track_quantity = printer_track_quantity;
   }
   
   /**
-   * @param printInterval the printInterval to set
+   * Setter for the print interval.
+   * 
+   * @param a positive double for the print interval.
    */
   public void setPrintInterval(double printInterval) {
     this.printInterval = printInterval;
   }
   
   /**
-   * @param relError the relError to set
+   * Setter for the relative error.
+   * 
+   * @param a positive double for the relative error.
    */
   public void setRelError(double relError) {
     this.relError = relError;
   }
+  
   /**
-   * @param rndSeed the rndSeed to set
+   * Setter for the random seed.
+   * 
+   * @param an arbitrary long to be used as the random seed.
    */
   public void setRndSeed(long rndSeed) {
     this.rndSeed = rndSeed;
   }
+  
   /**
-   * @param run the run to set
+   * Setter for the number of runs.
+   * 
+   * @param a positive integer corresponding to the number of runs.
    */
   public void setRun(int run) {
     this.run = run;
   }
   
   /**
-   * @param timeLimit the timeLimit to set
+   * Setter for the simulation time limit.
+   * 
+   * @param a positive double corresponding to the time limit.
    */
   public void setTimeLimit(double timeLimit) {
     this.timeLimit = timeLimit;
   }
 
-  
+  /**
+   * Getter for the number of steps.
+   * 
+   * @return the number of steps.
+   */
   public int getNumSteps() {
     return numSteps;
   }
 
-  
+  /**
+   * Setter for the number of steps.
+   * 
+   * @param a positive integer corresponding to the number of steps.
+   */
   public void setNumSteps(int numSteps) {
     this.numSteps = numSteps;
   }
   
   /**
-   * 
+   * Add interesting species that needs to be tracked when reporting results.
    */
   public void addIntSpecies(String species) {
     if(intSpecies==null)
@@ -233,21 +304,27 @@ public class SimulationProperties {
   }
   
   /**
-   * @return the intSpecies
+   * Getter for the list of species that need to have the results printed.
+   * 
+   * @return the list of interesting species
    */
   public List<String> getIntSpecies() {
     return intSpecies;
   }
   
   /**
-   * @return the genStats
+   * Getter for the generate statistics.
+   * 
+   * @return the flag for generate statistics.
    */
   public String getGenStats() {
     return genStats;
   }
   
   /**
-   * @param genStats the genStats to set
+   * Setter for generate statistics.
+   * 
+   * @param the flag that indicates whether to print statistics or not.
    */
   public void setGenStats(String genStats) {
     this.genStats = genStats;

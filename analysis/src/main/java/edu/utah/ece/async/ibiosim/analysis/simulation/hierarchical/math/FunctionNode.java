@@ -95,7 +95,7 @@ public class FunctionNode extends HierarchicalNode
     if(!(this.isInitialAssignment && variable.hasRule))
     {
       double oldValue = variable.getValue(index);
-      double newValue = Evaluator.evaluateExpressionRecursive(this, false, index);
+      double newValue = Evaluator.evaluateExpressionRecursive(this, index);
       variable.setValue(index, newValue);
       boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
       changed = !isNaN && oldValue != newValue;

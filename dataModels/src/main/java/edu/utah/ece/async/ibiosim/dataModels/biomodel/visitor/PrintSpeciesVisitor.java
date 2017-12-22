@@ -108,7 +108,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.addProduct(Utility.SpeciesReference(s.getId(), specie.getnp()));
 		
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, "kp", specie.getKo());
 		kl.setMath(SBMLutilities.myParseFormula("kp"));
@@ -142,7 +142,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
 		Utility.Parameter(kl, "kp", Double.parseDouble(parameters
 					.getParameter((GlobalConstants.OCR_STRING))));	

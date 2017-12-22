@@ -1028,7 +1028,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     properties.setFileStem(fileStem.getText());
    
     
-    String propName = properties.getPropertiesName();
+    String propName = properties.getPropertiesFilename();
     try
     {
       double initialTime = Double.parseDouble(initialTimeField.getText().trim());

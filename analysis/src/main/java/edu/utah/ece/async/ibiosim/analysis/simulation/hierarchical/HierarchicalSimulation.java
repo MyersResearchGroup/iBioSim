@@ -734,13 +734,16 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     }
   }
 
-  private double getRoundedDouble(double value)
+  protected double getRoundedDouble(double value)
   {
-    BigDecimal bd = new BigDecimal(value);
-    bd = bd.setScale(6, BigDecimal.ROUND_HALF_EVEN);
-    double newValue = bd.doubleValue();
-    bd = null;
-    return newValue;
+    if(Double.isFinite(value))
+    {
+      BigDecimal bd = new BigDecimal(value);
+      bd = bd.setScale(6, BigDecimal.ROUND_HALF_EVEN);
+      value = bd.doubleValue();
+      bd = null;
+    }
+    return value;
   }
 
 

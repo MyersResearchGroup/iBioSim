@@ -42,6 +42,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
  * 
@@ -175,7 +176,7 @@ public class SBOLDescriptorPanel2 extends JPanel implements ActionListener {
 					newName = newName.replace(".rdf", ".sbol");
 				
 				SBOLDocument newSBOLDoc = new SBOLDocument();
-				newSBOLDoc.setDefaultURIprefix(IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString());
+				newSBOLDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 				
 				String filePath =  identityManager.getBioModel().getPath() + File.separator + newName;
 				try

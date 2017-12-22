@@ -303,26 +303,7 @@ public final class HierarchicalModel
 		this.type = type;
 	}
 
-	public void setModelType(Model model)
-	{
-		if (model == null)
-		{
-			type = ModelType.NONE;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_FLUX_BALANCE)
-		{
-			type = ModelType.HFBA;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS)
-		{
-			type = ModelType.HODE;
-		}
-		else
-		{
-			type = ModelType.HSSA;
-		}
-	}
-
+	
 	public String getID()
 	{
 		return ID;
@@ -449,12 +430,19 @@ public final class HierarchicalModel
 		return false;
 	}
 	
-	public void computePropensities()
+	public boolean computePropensities()
 	{
+	  boolean hasChanged = false;
 	  for(ReactionNode node : reactions)
     {
+	    double oldValue = node.getValue(index);
       node.computePropensity(index);
+      double newValue = node.getValue(index);
+      
+      hasChanged = hasChanged | oldValue != newValue;
     }
+	  
+	  return hasChanged;
 	}
 
 	public void removeSubmodel(String id)

@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -596,7 +597,9 @@ public class SBMLutilities
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
-					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber") || splitLaw[i].equals("rateOf")
+					|| splitLaw[i].equals("quotient") || splitLaw[i].equals("rem") || splitLaw[i].equals("implies")	
+					|| splitLaw[i].equals("max") || splitLaw[i].equals("min")	
 					|| ((document.getLevel() > 2) && (splitLaw[i].equals("avogadro"))))
 			{
 			}
@@ -3475,7 +3478,7 @@ public class SBMLutilities
 		return deepCopy(math);
 	}
 
-	public static String myFormulaToStringInfix(ASTNode math)
+	private static String myFormulaToStringInfix(ASTNode math)
 	{
 		if (math.getType() == ASTNode.Type.CONSTANT_E)
 		{
@@ -4121,6 +4124,30 @@ public class SBMLutilities
 		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
 		{
 			return true;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_IMPLIES)
+		{
+			return true;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MIN)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MAX)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_QUOTIENT)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_REM)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_RATE_OF)
+		{
+			return false;
 		}
 		else if (math.getType() == ASTNode.Type.MINUS)
 		{
@@ -5672,7 +5699,7 @@ public class SBMLutilities
 	public static SBMLDocument readSBML(String filename) throws XMLStreamException, IOException
 	{
 		SBMLDocument document = null;
-			document = SBMLReader.read(new File(filename));
+		document = SBMLReader.read(new File(filename));
 		if (document.getModel().isSetId())
 		{
 			document.getModel().setId(document.getModel().getId().replace(".", "_"));
@@ -5691,7 +5718,7 @@ public class SBMLutilities
 			long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
 			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
-			numErrors = doc.checkL3v1Compatibility();
+			numErrors = doc.checkL3v2Compatibility();
 			if (numErrors > 0)
 			{
 				String message = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION
@@ -6118,7 +6145,7 @@ public class SBMLutilities
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
 			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + File.separator + extModel);
+			if (!subModel.load(root + File.separator + extModel)) continue;
 			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{
@@ -6238,75 +6265,208 @@ public class SBMLutilities
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isCompUsed(SBase sbase)
+	{
+
+		if(sbase instanceof SBMLDocument)
+		{
+			CompSBMLDocumentPlugin plugin = (CompSBMLDocumentPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumModelDefinitions() > 0 || plugin.getNumExternalModelDefinitions() > 0);
+		}
+
+		if(sbase instanceof Model)
+		{
+			CompModelPlugin plugin = (CompModelPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumPorts() > 0 || plugin.getNumSubmodels() > 0);
+		}
+
+		if(sbase instanceof SBase)
+		{
+			CompSBasePlugin plugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumReplacedElements() > 0);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isFbcUsed(SBase sbase)
+	{
+
+		if(sbase instanceof Model)
+		{
+			FBCModelPlugin plugin = (FBCModelPlugin) sbase.getExtension(FBCConstants.shortLabel);
+
+			if(plugin != null)
+			{
+				if(plugin.getNumObjective() > 0)
+				{
+					return true;
+				}
+				plugin.unsetStrict();
+			}
+			return false;
+		}
+
+		if(sbase instanceof Reaction)
+		{
+			FBCReactionPlugin plugin = (FBCReactionPlugin) sbase.getExtension(FBCConstants.shortLabel);
+			return plugin != null && (plugin.getLowerFluxBound() != null || plugin.getUpperFluxBound() != null || plugin.getGeneProductAssociation() != null);
+		}
+		return false;
+	}
+
+	private static boolean isArraysUsed(SBase sbase)
+	{
+		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
+
+		if(plugin != null)
+		{
+			return plugin != null && (plugin.getNumDimensions() > 0 || plugin.getNumIndices() > 0);
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 */
+	public static void removeUnusedNamespaces(SBMLDocument doc)
+	{
+
+		boolean isCompSet = false;
+		boolean isArraysSet = false;
+		boolean isFbcSet = false;
+
+		LinkedList<SBase> queue = new LinkedList<SBase>();
+		queue.add(doc);
+
+		while(!queue.isEmpty())
+		{
+
+			SBase sbase = queue.pop();
+
+			if(!isArraysSet)
+			{
+				isArraysSet = isArraysUsed(sbase);
+			}
+
+			if(!isCompSet)
+			{
+				isCompSet =  isCompUsed(sbase);;
+			}
+
+			if(!isFbcSet)
+			{
+				isFbcSet =  isFbcUsed(sbase);
+			}
+
+			for (int i = sbase.getChildCount() - 1; i >= 0; i--) 
+			{
+				TreeNode node = sbase.getChildAt(i);
+
+				if(node instanceof SBase)
+				{
+					queue.push((SBase) node);
+				}
+
+			}
+		}
 
 
-  public static String createTimeString(long time1, long time2)
-  {
-    long minutes;
-    long hours;
-    long days;
-    double secs = ((time2 - time1) / 1000000000.0);
-    long seconds = ((time2 - time1) / 1000000000);
-    secs = secs - seconds;
-    minutes = seconds / 60;
-    secs = seconds % 60 + secs;
-    hours = minutes / 60;
-    minutes = minutes % 60;
-    days = hours / 24;
-    hours = hours % 60;
-    String time;
-    String dayLabel;
-    String hourLabel;
-    String minuteLabel;
-    String secondLabel;
-    if (days == 1)
-    {
-      dayLabel = " day ";
-    }
-    else
-    {
-      dayLabel = " days ";
-    }
-    if (hours == 1)
-    {
-      hourLabel = " hour ";
-    }
-    else
-    {
-      hourLabel = " hours ";
-    }
-    if (minutes == 1)
-    {
-      minuteLabel = " minute ";
-    }
-    else
-    {
-      minuteLabel = " minutes ";
-    }
-    if (seconds == 1)
-    {
-      secondLabel = " second";
-    }
-    else
-    {
-      secondLabel = " seconds";
-    }
-    if (days != 0)
-    {
-      time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-    }
-    else if (hours != 0)
-    {
-      time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-    }
-    else if (minutes != 0)
-    {
-      time = minutes + minuteLabel + secs + secondLabel;
-    }
-    else
-    {
-      time = secs + secondLabel;
-    }
-    return time;
-  }
+		if(!isArraysSet)
+		{
+			doc.disablePackage(ArraysConstants.shortLabel);
+		}
+
+		if(!isCompSet)
+		{
+			doc.disablePackage(CompConstants.shortLabel);
+		}
+
+		if(!isFbcSet)
+		{
+			doc.disablePackage(FBCConstants.shortLabel);
+		}
+	}
+
+	public static String createTimeString(long time1, long time2)
+	{
+		long minutes;
+		long hours;
+		long days;
+		double secs = ((time2 - time1) / 1000000000.0);
+		long seconds = ((time2 - time1) / 1000000000);
+		secs = secs - seconds;
+		minutes = seconds / 60;
+		secs = seconds % 60 + secs;
+		hours = minutes / 60;
+		minutes = minutes % 60;
+		days = hours / 24;
+		hours = hours % 60;
+		String time;
+		String dayLabel;
+		String hourLabel;
+		String minuteLabel;
+		String secondLabel;
+		if (days == 1)
+		{
+			dayLabel = " day ";
+		}
+		else
+		{
+			dayLabel = " days ";
+		}
+		if (hours == 1)
+		{
+			hourLabel = " hour ";
+		}
+		else
+		{
+			hourLabel = " hours ";
+		}
+		if (minutes == 1)
+		{
+			minuteLabel = " minute ";
+		}
+		else
+		{
+			minuteLabel = " minutes ";
+		}
+		if (seconds == 1)
+		{
+			secondLabel = " second";
+		}
+		else
+		{
+			secondLabel = " seconds";
+		}
+		if (days != 0)
+		{
+			time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (hours != 0)
+		{
+			time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (minutes != 0)
+		{
+			time = minutes + minuteLabel + secs + secondLabel;
+		}
+		else
+		{
+			time = secs + secondLabel;
+		}
+		return time;
+	}
 }

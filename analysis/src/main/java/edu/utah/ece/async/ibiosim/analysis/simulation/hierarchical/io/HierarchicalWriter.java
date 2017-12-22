@@ -21,7 +21,6 @@ import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  * 
@@ -53,8 +52,18 @@ public abstract class HierarchicalWriter {
   
   public abstract void addVariable(String id, HierarchicalNode node, int index,  boolean isConcentration);
   
+  /**
+   * 
+   * @throws IOException
+   */
   public abstract void close() throws IOException;
   
+  /**
+   * 
+   * @param node
+   * @param index
+   * @param isConcentration
+   */
   protected void addNode(HierarchicalNode node, int index, boolean isConcentration)
   {
     listOfStates.add(new WriterNode(node, index, isConcentration));
@@ -66,6 +75,12 @@ public abstract class HierarchicalWriter {
     private int index;
     private boolean isConcentration;
     
+    /**
+     * 
+     * @param node
+     * @param index
+     * @param isConcentration
+     */
     public WriterNode(HierarchicalNode node, int index, boolean isConcentration)
     {
       this.node = node;
@@ -73,6 +88,9 @@ public abstract class HierarchicalWriter {
       this.isConcentration = isConcentration;
     }
     
+    /**
+     * 
+     */
     public String toString()
     {
       double value = 0;

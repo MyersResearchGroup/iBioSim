@@ -284,8 +284,6 @@ public class ReplacementSetup
 	    else if(varType == VariableType.REACTION)
 	    {
 	      node = new ReactionNode(id);
-	     ((ReactionNode) node).addReactionState(top.getIndex());
-	     ((ReactionNode) node).copyReactionState(top.getIndex(), sub.getIndex());
 	    }
 	    else if(varType == VariableType.VARIABLE)
 	    {
@@ -313,20 +311,12 @@ public class ReplacementSetup
       node = sub.getNode(subId);
       top.addMappingNode(id, node);
       node.getState().copyState(sub.getIndex(), top.getIndex());
-      if(varType == VariableType.REACTION)
-      {
-       ((ReactionNode) node).copyReactionState(sub.getIndex(), top.getIndex());
-      }
     }
 	  else
 	  {
 	    node = top.getNode(id);
       sub.addMappingNode(subId, node);
       node.getState().copyState(top.getIndex(), sub.getIndex());
-      if(varType == VariableType.REACTION)
-      {
-       ((ReactionNode) node).copyReactionState(top.getIndex(), sub.getIndex());
-      }
 	  }
 	  
     if(isReplacedBy)

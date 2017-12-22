@@ -1,5 +1,153 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md"/>
+    <sbol:displayId>CRISPR_Template_md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic"/>
+        <sbol:displayId>cas9_generic</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9_generic</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_generic/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic"/>
+        <sbol:displayId>gRNA_generic</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>gRNA_generic</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex"/>
+        <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>cas9_gRNA_complex</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene"/>
+        <sbol:displayId>target_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>target_gene</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target_gene/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target"/>
+        <sbol:displayId>target</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>target</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene"/>
+        <sbol:displayId>cas9_gRNA_complex_rep_target_gene</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene"/>
+            <sbol:displayId>target_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex"/>
+            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target"/>
+        <sbol:displayId>target_gene_prod_target</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target"/>
+            <sbol:displayId>target</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene"/>
+            <sbol:displayId>target_gene</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation"/>
+        <sbol:displayId>cas9_complex_formation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex"/>
+            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic"/>
+            <sbol:displayId>gRNA_generic</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic"/>
+            <sbol:displayId>cas9_generic</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_model/1"/>
+  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md/1">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRPb_characterization_Circuit_md"/>
     <sbol:displayId>CRPb_characterization_Circuit_md</sbol:displayId>
@@ -453,154 +601,6 @@
         </sbol:mapsTo>
       </sbol:Module>
     </sbol:module>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/1">
-    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md"/>
-    <sbol:displayId>CRISPR_Template_md</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex"/>
-        <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>cas9_gRNA_complex</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_gRNA_complex/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic"/>
-        <sbol:displayId>gRNA_generic</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>gRNA_generic</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__gRNA_generic/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene"/>
-        <sbol:displayId>target_gene</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>target_gene</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target_gene/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target"/>
-        <sbol:displayId>target</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>target</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__target/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic"/>
-        <sbol:displayId>cas9_generic</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>cas9_generic</dcterms:title>
-        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template__cas9_generic/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene"/>
-        <sbol:displayId>cas9_gRNA_complex_rep_target_gene</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/target_gene"/>
-            <sbol:displayId>target_gene</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex_rep_target_gene/cas9_gRNA_complex"/>
-            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target"/>
-        <sbol:displayId>target_gene_prod_target</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target"/>
-            <sbol:displayId>target</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene_prod_target/target_gene"/>
-            <sbol:displayId>target_gene</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/target_gene/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/1">
-        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation"/>
-        <sbol:displayId>cas9_complex_formation</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_gRNA_complex"/>
-            <sbol:displayId>cas9_gRNA_complex</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_gRNA_complex/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/gRNA_generic"/>
-            <sbol:displayId>gRNA_generic</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/gRNA_generic/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic/1">
-            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_complex_formation/cas9_generic"/>
-            <sbol:displayId>cas9_generic</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_md/cas9_generic/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:model rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_model/1"/>
   </sbol:ModuleDefinition>
   <sbol:Model rdf:about="http://www.async.ece.utah.edu/CRISPR_Template_model/1">
     <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/CRISPR_Template_model"/>
