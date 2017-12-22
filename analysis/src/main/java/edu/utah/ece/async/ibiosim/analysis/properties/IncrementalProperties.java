@@ -14,8 +14,7 @@
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
 /**
- * The incremental properties contains information associated with the advanced tab of
- * an {@link AnalysisView} used for running iSSA.
+ * The incremental properties contains information used for running iSSA.
  * 
  * @author Leandro Watanabe
  * @author Chris Myers

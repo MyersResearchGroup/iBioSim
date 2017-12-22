@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The simulation properties contains information associated with the simulation options of
- * an {@link AnalysisView}.
+ * The simulation properties contains information associated with the simulation options.
  * 
  * @author Leandro Watanabe
  * @author Chris Myers

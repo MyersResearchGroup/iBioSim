@@ -16,6 +16,14 @@ package edu.utah.ece.async.ibiosim.analysis.simulation;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
+/**
+ * 
+ * @author Leandro Watanabe
+ * @author Chris Myers
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version $Rev$
+ * @version %I%
+ */
 public abstract class AbstractSimulator extends CoreObservable implements ParentSimulator{
 
   protected final Message message = new Message();
