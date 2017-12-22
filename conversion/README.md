@@ -28,7 +28,7 @@ There is also a main Java [Converter.java](https://github.com/MyersResearchGroup
 
 ## Building VPR API for iBioSim GUI:
 1. Open up your command line 
-2. Navigate to conversion package in iBioSim  
-        1. type ```mvn clean``` to bring in dependencies to iBioSim conversion package
-        2. type ```mvn install``` to build the JAR 
-        3. type ```mvn update``` to update iBioSim workspace
+2. Navigate to conversion package in iBioSim
+    1. type ```mvn clean``` to bring in dependencies to iBioSim conversion package
+    2. type ```mvn install``` to build the JAR 
+    3. type ```mvn update``` to update iBioSim workspace
