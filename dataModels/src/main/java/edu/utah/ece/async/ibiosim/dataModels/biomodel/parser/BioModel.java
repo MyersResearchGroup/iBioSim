@@ -460,7 +460,13 @@ public class BioModel extends CoreObservable{
 			parameter.setId(global);
 			if (CompatibilityFixer.getGuiName(global)!=null) 
 				parameter.setName(CompatibilityFixer.getGuiName(global));
-			parameter.setValue(Double.parseDouble(value));
+			if (value != null && !value.equals("")) {
+				try {
+					parameter.setValue(Double.parseDouble(value));
+				} catch (NumberFormatException e) {
+					parameter.unsetValue();
+				}
+			}
 			parameter.setConstant(true);
 		}
 	}
