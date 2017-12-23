@@ -8950,13 +8950,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Runtime.getRuntime();
 		int exitValue = 1;
 		try {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-			  Executables.reb2sacExecutable = "reb2sac.linux64";
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			  Executables.reb2sacExecutable = "reb2sac.mac64";
-			} else {
-			  Executables.reb2sacExecutable = "reb2sac.exe";
-			}
+			Executables.reb2sacExecutable = "reb2sac";
 			ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
@@ -9007,13 +9001,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		exitValue = 1;
 		try {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-			  Executables.geneNetExecutable = "GeneNet.linux64";
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			  Executables.geneNetExecutable = "GeneNet.mac64";
-			} else {
-			  Executables.geneNetExecutable = "GeneNet.exe";
-			}
+			Executables.geneNetExecutable = "GeneNet";
 			ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
