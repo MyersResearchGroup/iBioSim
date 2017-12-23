@@ -751,7 +751,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		SynBioHubFrontend stack = new SynBioHubFrontend(registry);
 		try {
 			stack.login(user, password);
-			stack.submit(id, version, name, description, citations, overwrite, uploadDoc);
+			stack.createCollection(id, version, name, description, citations, overwrite, uploadDoc);
 			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", "Submssion Successful",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (SynBioHubException e) {
