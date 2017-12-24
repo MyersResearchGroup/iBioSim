@@ -5529,7 +5529,7 @@ public class BioModel extends CoreObservable{
 				SBMLutilities.setMetaId(md, newMetaId);
 				
 				String id = subDocument.getModel().getId();
-				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 				for (int j = 0; j < elements.size(); j++) {
 					SBase sbase = elements.get(j);
 					if (sbase.isSetMetaId()) {
@@ -5610,7 +5610,8 @@ public class BioModel extends CoreObservable{
 					LayoutModelPlugin subDocumentLayoutModel = SBMLutilities.getLayoutModelPlugin(subDocument.getModel());
 					Layout layout = subDocumentLayoutModel.getListOfLayouts().get("iBioSim");
 					layout.setId(id+"__iBioSim");
-					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+					ModelDefinition md = new ModelDefinition(subDocument.getModel());
+					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 					for (int j = 0; j < elements.size(); j++) {
 						SBase sbase = elements.get(j);
 						if (sbase.isSetMetaId()) {
@@ -5634,7 +5635,6 @@ public class BioModel extends CoreObservable{
 							SBMLutilities.setMetaId(sbase, newMetaId);
 						}
 					}
-					ModelDefinition md = new ModelDefinition(subDocument.getModel());
 					documentComp.addModelDefinition(md);
 					recurseExportSingleFile(comps,SBMLutilities.getCompModelPlugin(subDocument.getModel()),
 							SBMLutilities.getCompSBMLDocumentPlugin(subDocument),documentComp);
