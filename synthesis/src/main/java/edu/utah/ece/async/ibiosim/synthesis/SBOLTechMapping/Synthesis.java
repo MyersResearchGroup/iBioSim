@@ -355,26 +355,30 @@ public class Synthesis
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
-		try {
-			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
+		
+		try 
+		{
+			ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_ModDef");
+//			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
+			getSBOLfromTechMap(sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
 		}
-		catch (SBOLValidationException e1) {
-			// TODO Auto-generated catch block
+		catch (SBOLValidationException e1) 
+		{
 			e1.printStackTrace();
 		}
 
 		try
 		{
 			//Technology_Mapping_Solution
-//			sbolDoc.write(System.out);
+			//sbolDoc.write(System.out);
 			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
+		catch (SBOLConversionException e) 
+		{
 			e.printStackTrace();
 		}
 	}
@@ -409,6 +413,20 @@ public class Synthesis
 			
 			}
 		}
+	}
+	
+	private void getSBOLfromTechMap(SBOLDocument sbolDoc, ModuleDefinition solModDef, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
+	{
+		//Grab the gate that matches the spec. graph
+		SBOLGraph coveredLibGate = solution.get(specNode);
+		
+//		ModuleDefinition gateMD = (ModuleDefinition) sbolDoc.createCopy(coveredLibGate.getOutputNode().getModuleDefinition());
+//		Module module = gateMD.createModule(gateMD.getDisplayId()+"_module", gateMD.getIdentity());
+		ModuleDefinition gateMD = coveredLibGate.getOutputNode().getModuleDefinition();
+		sbolDoc.createCopy(gateMD);
+		solModDef.createModule(gateMD.getIdentity() + "_module", gateMD.getIdentity());
+		
+		
 	}
 
 	private boolean isCrossTalk(Collection<SBOLGraph> gatesUsed, SBOLGraph gate)
