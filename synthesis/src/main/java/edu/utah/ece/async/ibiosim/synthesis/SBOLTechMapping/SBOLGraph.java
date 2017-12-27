@@ -73,14 +73,14 @@ public class SBOLGraph
 		for(Interaction i : md.getInteractions())
 		{
 			URI type = i.getTypes().iterator().next();
-			if(type.equals(SystemsBiologyOntology.GENETIC_SUPPRESSION))
+			if(type.equals(SystemsBiologyOntology.INHIBITION))
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.INHIBITED))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -93,17 +93,17 @@ public class SBOLGraph
 				{
 					addChild(u, promoter);
 					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_SUPPRESSION);
+					addRelationship(promoter, u, SystemsBiologyOntology.INHIBITION);
 				}
 			}
-			else if(type.equals(SystemsBiologyOntology.GENETIC_ENHANCEMENT))
+			else if(type.equals(SystemsBiologyOntology.STIMULATION))
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.TEMPLATE))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -116,17 +116,17 @@ public class SBOLGraph
 				{
 					addChild(u, promoter);
 					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_ENHANCEMENT);
+					addRelationship(promoter, u, SystemsBiologyOntology.STIMULATION);
 				}
 			}
-			else //SystemsBiologyOntology.GENETIC_PRODUCTION
+			else if(type.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) //SystemsBiologyOntology.GENETIC_PRODUCTION
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.TEMPLATE))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -139,8 +139,12 @@ public class SBOLGraph
 				{
 					addChild(promoter, u);
 					addParent(promoter, u);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_PRODUCTION);
+					addRelationship(promoter, u, SystemsBiologyOntology.PRODUCTION);
 				}
+			}
+			else
+			{
+				System.out.println("Unidentified Interaction occurred: " + type);
 			}
 		}
 

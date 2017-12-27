@@ -37,7 +37,7 @@ public class TempSynthesisRunner
 { 	
 	public static void main(String[] args)
 	{
-		String PATH = "/Users/tramynguyen/Desktop/SBOL/";
+		String PATH = "/Users/tramyn/Desktop/sbol_gates/";
 		String SPEC_FILE_NAME = "spec.sbol"; 
 		String LIB_FILE_NAME = "LIBRARY_ANNOT.sbol";
 		String defaultURIPrefix = "http://www.async.ece.utah.edu/";
@@ -59,9 +59,9 @@ public class TempSynthesisRunner
 		setLibraryGateScores(library);
 		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
 		syn.match_topLevel(syn.getSpecification(), matches);
-//		printMatches(matches);
+		printMatches(matches);
 		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
-//		syn.printCoveredGates(solution);
+		syn.printCoveredGates(solution);
 		syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 	} 
 
@@ -80,39 +80,39 @@ public class TempSynthesisRunner
 	{
 		for(SBOLGraph g: library)
 		{
-			if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV0"))
+			if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV0_md_S0"))
 			{
 				g.getOutputNode().setScore(5);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV1"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV1_md_S1"))
 			{
 				g.getOutputNode().setScore(15);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV2"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV2_md_S1"))
 			{
 				g.getOutputNode().setScore(15);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV3"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("INV3_md_S1"))
 			{
 				g.getOutputNode().setScore(20);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR0"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR0_md_S2"))
 			{
 				g.getOutputNode().setScore(40);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR1"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR1_md_S2"))
 			{
 				g.getOutputNode().setScore(45);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR2"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR2_md_S2"))
 			{
 				g.getOutputNode().setScore(50);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR3"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("NOR3_md_S2"))
 			{
 				g.getOutputNode().setScore(50);
 			}
-			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("X1"))
+			else if(g.getOutputNode().getModuleDefinition().getDisplayId().equals("X1_md_S3"))
 			{
 				g.getOutputNode().setScore(30);
 			}	

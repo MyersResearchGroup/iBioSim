@@ -1438,6 +1438,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				System.out.println(filename);
+				e1.printStackTrace();
+				
 				return;
 			}
 			root = filename;
