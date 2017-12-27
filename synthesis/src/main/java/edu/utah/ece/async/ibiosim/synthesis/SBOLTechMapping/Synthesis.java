@@ -50,7 +50,7 @@ public class Synthesis
 	private static List<SBOLGraph> _libraryGraph; 
 	private static SBOLGraph _specificationGraph; 
 	//TODO: Make sure to alter path for different users or computer used
-	private String OUTPUT_PATH = "/Users/tramynguyen/Desktop/SBOL/"; 
+	private String OUTPUT_PATH = "/Users/tramynguyen/Desktop/sbol_gates/"; 
 	private String OUTPUT_FILE_NAME = "Technology_Mapping_Solution.sbol";
 
 	public Synthesis()
