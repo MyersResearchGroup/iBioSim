@@ -347,7 +347,7 @@ public class Synthesizer {
 				speciesIndex++;
 			}
 		}
-		biomodel.createSpecies(speciesID, 0, 0);
+		biomodel.createSpecies(speciesID, -1, -1);
 		return biomodel.getSBMLDocument().getModel().getSpecies(speciesID);
 	}
 
