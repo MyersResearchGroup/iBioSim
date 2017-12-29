@@ -31,7 +31,7 @@ import org.jlibsedml.SedML;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.UniformTimeCourse;
 
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
 /**

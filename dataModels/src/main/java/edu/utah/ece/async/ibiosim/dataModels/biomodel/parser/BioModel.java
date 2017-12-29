@@ -460,7 +460,13 @@ public class BioModel extends CoreObservable{
 			parameter.setId(global);
 			if (CompatibilityFixer.getGuiName(global)!=null) 
 				parameter.setName(CompatibilityFixer.getGuiName(global));
-			parameter.setValue(Double.parseDouble(value));
+			if (value != null && !value.equals("")) {
+				try {
+					parameter.setValue(Double.parseDouble(value));
+				} catch (NumberFormatException e) {
+					parameter.unsetValue();
+				}
+			}
 			parameter.setConstant(true);
 		}
 	}
@@ -2123,7 +2129,7 @@ public class BioModel extends CoreObservable{
 		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
-    SBMLutilities.removeUnusedNamespaces(sbml);
+		SBMLutilities.removeUnusedNamespaces(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		try {
 		  //SBMLutilities.removeUnusedNamespaces(sbml);
@@ -5523,7 +5529,7 @@ public class BioModel extends CoreObservable{
 				SBMLutilities.setMetaId(md, newMetaId);
 				
 				String id = subDocument.getModel().getId();
-				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 				for (int j = 0; j < elements.size(); j++) {
 					SBase sbase = elements.get(j);
 					if (sbase.isSetMetaId()) {
@@ -5604,7 +5610,8 @@ public class BioModel extends CoreObservable{
 					LayoutModelPlugin subDocumentLayoutModel = SBMLutilities.getLayoutModelPlugin(subDocument.getModel());
 					Layout layout = subDocumentLayoutModel.getListOfLayouts().get("iBioSim");
 					layout.setId(id+"__iBioSim");
-					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+					ModelDefinition md = new ModelDefinition(subDocument.getModel());
+					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 					for (int j = 0; j < elements.size(); j++) {
 						SBase sbase = elements.get(j);
 						if (sbase.isSetMetaId()) {
@@ -5628,7 +5635,6 @@ public class BioModel extends CoreObservable{
 							SBMLutilities.setMetaId(sbase, newMetaId);
 						}
 					}
-					ModelDefinition md = new ModelDefinition(subDocument.getModel());
 					documentComp.addModelDefinition(md);
 					recurseExportSingleFile(comps,SBMLutilities.getCompModelPlugin(subDocument.getModel()),
 							SBMLutilities.getCompSBMLDocumentPlugin(subDocument),documentComp);
@@ -5807,7 +5813,7 @@ public class BioModel extends CoreObservable{
 		modelList.add(filename);
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
-		
+
 		BioModel model = new BioModel(path);
 		model.load(tempFile);
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
@@ -5819,7 +5825,7 @@ public class BioModel extends CoreObservable{
 				SBMLDocument arrayFlat = ArraysFlattening.convert(model.getSBMLDocument());
 				if (arrayFlat==null) {
 					message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
-		      this.notifyObservers(message);
+					this.notifyObservers(message);
 					load(tempFile);
 					new File(tempFile).delete();
 					return null;
@@ -5828,9 +5834,9 @@ public class BioModel extends CoreObservable{
 				model.createCompPlugin();
 				model.createFBCPlugin();
 			} catch (Exception e) {
-        message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
-        this.notifyObservers(message);
-			  load(tempFile);
+				message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
+				this.notifyObservers(message);
+				load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
@@ -5848,7 +5854,7 @@ public class BioModel extends CoreObservable{
 			catch (XMLStreamException e) {
 				e.printStackTrace();
 			}
-			*/
+			 */
 			//model.save(tempFile.replace("_temp", "_after"));
 		}
 		ArrayList<String> comps = model.getListOfSubmodels();
@@ -5860,8 +5866,8 @@ public class BioModel extends CoreObservable{
 			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
-        message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-        this.notifyObservers(message);
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -5874,15 +5880,15 @@ public class BioModel extends CoreObservable{
 			if (flatSubModel!=null) {
 				unionSBML(model, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
 			} else if (modelListCopy.isEmpty()) {
-			  message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-        this.notifyObservers(message);
-			  load(tempFile);
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				this.notifyObservers(message);
+				load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
 			else {
-			  message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
-        this.notifyObservers(message);
+				message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+				this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -5898,13 +5904,13 @@ public class BioModel extends CoreObservable{
 				model.getSBMLFBC().getFluxBoundCount()==0) {
 			model.getSBMLDocument().disablePackage(FBCConstants.namespaceURI);
 		}
-		*/
+		 */
 		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
-//		checkModelConsistency(model.getSBMLDocument());
+		//		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();
 		return model.getSBMLDocument();
 	}
-	
+
 	// TODO: check if this is up-to-date
 	public SBMLDocument flattenBioModel() throws XMLStreamException, IOException {
 		Preferences biosimrc = Preferences.userRoot();

@@ -556,7 +556,6 @@ public class Run extends CoreObservable implements ActionListener
     }
     else
     {
-      
       Simulator.expandArrays(SBMLFileName, properties.getAdvancedProperties().getStoichAmp());
       runJava = false;
     }

@@ -66,6 +66,22 @@
 						</goals>
 					</execution>
 					<execution>
+						<id>install-epsgraphics</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/../lib/epsgraphics.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.jibble</groupId>
+							<artifactId>epsgraphics</artifactId>
+							<version>1.0.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
 						<id>install-jlibsedml</id>
 						<phase>clean</phase>
 						<configuration>
@@ -179,7 +195,36 @@
 			<artifactId>flanagan</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.14</version>
+		</dependency>
+				<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-dom</artifactId>
+			<version>1.8</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-svggen</artifactId>
+			<version>1.8</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jmathml</groupId>
+			<artifactId>jmathml</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+			
+		<dependency>
+			<groupId>org.jibble</groupId>
+			<artifactId>epsgraphics</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.jlibsedml</groupId>
 			<artifactId>jlibsedml</artifactId>
