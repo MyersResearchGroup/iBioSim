@@ -215,7 +215,7 @@ public class Analysis implements BioObserver
   private void performAnalysis() throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
   {
     Run run = new Run(properties);
-
+    run.addObserver(this);
     if(omex != null)
     {
       List<String> sedMLs = unpackageArchive(omex);
@@ -240,13 +240,6 @@ public class Analysis implements BioObserver
     }
   }
 
-  /**
-   * 
-   * @param omex
-   * @param properties
-   * @return a list of SED-ML files.
-   * @throws IOException 
-   */
   private List<String> unpackageArchive(String omex) throws IOException
   {
     List<String> listOfSedML = new ArrayList<String>();
@@ -264,8 +257,7 @@ public class Analysis implements BioObserver
 
       return listOfSedML;
     }
-
-
+    
     // read description of the archive itself
     System.out.println ("found " + ca.getDescriptions ().size ()
       + " meta data entries describing the archive.");
@@ -299,7 +291,7 @@ public class Analysis implements BioObserver
         modelSource = sedml.getModelWithId(modelSource).getSource();
       }
       properties.setModelFile(modelSource);
-      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, null, properties);
+      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, task.getId(), properties);
       File analysisDir = new File(root + File.separator + task.getId());
       if (!analysisDir.exists()) 
       {
@@ -307,6 +299,7 @@ public class Analysis implements BioObserver
       }
       /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
+      biomodel.addObserver(this);
       biomodel.load(root + File.separator + modelSource);
       SBMLDocument flatten = biomodel.flattenModel(true);
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
