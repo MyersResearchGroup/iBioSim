@@ -40,7 +40,7 @@ public class SynthesisNode
 	private URI compDefType; 
 	private double score; 
 	private List<SynthesisNode> parents;
-	private Map<SynthesisNode, URI> relations; //TODO: MIGHT NOT NEED
+	private Map<SynthesisNode, URI> relations; 
 	private int degree; 
 	private boolean visited; 
 	

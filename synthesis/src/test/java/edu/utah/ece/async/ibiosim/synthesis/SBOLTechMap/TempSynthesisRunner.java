@@ -59,9 +59,9 @@ public class TempSynthesisRunner
 		setLibraryGateScores(library);
 		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
 		syn.match_topLevel(syn.getSpecification(), matches);
-		printMatches(matches);
+//		printMatches(matches);
 		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
-		syn.printCoveredGates(solution);
+//		syn.printCoveredGates(solution);
 		syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 	} 
 
