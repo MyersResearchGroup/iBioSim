@@ -567,6 +567,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		}
 		int idIndex = 0;
 		for (List<SynthesisGraph> solutionGraphs : solutions) {
+			System.out.println(solutionGraphs.toString());
 			BioModel solutionModel = new BioModel(synthFilePath);
 			solutionModel.createSBMLDocument("tempID_" + idIndex, false, false);	
 			idIndex++;
