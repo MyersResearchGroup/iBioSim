@@ -18,6 +18,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
@@ -161,6 +162,9 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
+import edu.utah.ece.async.sboldesigner.versioning.Infos;
+import edu.utah.ece.async.sboldesigner.versioning.PersonInfo;
+import edu.utah.ece.async.sboldesigner.versioning.Terms;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import uk.ac.ncl.ico2s.VPRException;
@@ -168,7 +172,6 @@ import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -181,6 +184,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -8926,6 +8930,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
+		List<String> errors = null;
+		String message = "";
+
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			if (System.getenv("DDLD_LIBRARY_PATH") == null) {
 				System.out.println("DDLD_LIBRARY_PATH is missing");
@@ -8944,32 +8951,29 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				}
 			}
 		}
+
+		errors = new ArrayList<String>();
+		
 		Executables.checkExecutables();
 		try {
 			System.loadLibrary("sbmlj");
 			// For extra safety, check that the jar file is in the classpath.
 			Class.forName("org.sbml.libsbml.libsbml");
 		} catch (UnsatisfiedLinkError e) {
-			System.out.println("UnsatisfiedLinkError: libsbml not found");
-			e.printStackTrace();
+			errors.add("libsbml not found (UnsatisfiedLinkError)");
+			//e.printStackTrace();
 			libsbmlFound = false;
 		} catch (ClassNotFoundException e) {
-			System.out.println("ClassNotFoundException: libsbml not found");
+			errors.add("libsbml not found (ClassNotFoundException)");
 			libsbmlFound = false;
 		} catch (SecurityException e) {
-			System.out.println("SecurityException: libsbml not found");
+			errors.add("libsbml not found (SecurityException)");
 			libsbmlFound = false;
 		}
 		Runtime.getRuntime();
 		int exitValue = 1;
 		try {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-			  Executables.reb2sacExecutable = "reb2sac.linux64";
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			  Executables.reb2sacExecutable = "reb2sac.mac64";
-			} else {
-			  Executables.reb2sacExecutable = "reb2sac.exe";
-			}
+			Executables.reb2sacExecutable = "reb2sac";
 			ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
@@ -8998,7 +9002,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 
 			//ps.redirectOutput(Redirect.INHERIT);
-			ps.redirectError(Redirect.INHERIT);
+			//ps.redirectError(Redirect.INHERIT);
 			//ps.redirectErrorStream(true);
 			
 			Process reb2sac = ps.start();
@@ -9008,25 +9012,19 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (exitValue != 255 && exitValue != -1) {
 
 				Executables.reb2sacFound = false;
-				System.out.println("ERROR: " + Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
+				errors.add(Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
 			}
 		} catch (IOException e) {
-		  Executables.reb2sacFound = false;
-			System.out.println("ERROR: " + Executables.reb2sacExecutable + " not found.");
+			Executables.reb2sacFound = false;
+			errors.add(Executables.reb2sacExecutable + " not found.");
 		} catch (InterruptedException e) {
 		  Executables.reb2sacFound = false;
-		  System.out.println("ERROR: " + Executables.reb2sacExecutable + " throws exception.");
+		  errors.add(Executables.reb2sacExecutable + " throws exception.");
 
 		}
 		exitValue = 1;
 		try {
-			if (System.getProperty("os.name").contentEquals("Linux")) {
-			  Executables.geneNetExecutable = "GeneNet.linux64";
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			  Executables.geneNetExecutable = "GeneNet.mac64";
-			} else {
-			  Executables.geneNetExecutable = "GeneNet.exe";
-			}
+			Executables.geneNetExecutable = "GeneNet";
 			ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
 			Map<String, String> env = ps.environment();
 			if (System.getenv("BIOSIM") != null) {
@@ -9048,25 +9046,67 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				env.put("PATH", System.getenv("PATH"));
 			}
 			//ps.redirectOutput(Redirect.INHERIT);
-			ps.redirectError(Redirect.INHERIT);
+			//ps.redirectError(Redirect.INHERIT);
 			//ps.redirectErrorStream(true);
 			Process geneNet = ps.start();
 			if (geneNet != null) {
 				exitValue = geneNet.waitFor();
 			}
 			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
-			  Executables.geneNetFound = false;
-				System.out.println("ERROR: " + Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
+				Executables.geneNetFound = false;
+				errors.add(Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
 
 			}
 		} catch (IOException e) {
 
 		  Executables.geneNetFound = false;
-			System.out.println("ERROR: " + Executables.geneNetExecutable + " not found.");
+			errors.add(Executables.geneNetExecutable + " not found.");
 		} catch (InterruptedException e) {
 		  Executables.geneNetFound = false;
-			System.out.println("ERROR: " + Executables.geneNetExecutable + " throws exception..");
+			errors.add(Executables.geneNetExecutable + " throws exception..");
 
+		}
+		if (errors.size()>0) {
+			message = "<html>WARNING: Some external components are missing or have problems.<br>" +
+					"You may continue but with some loss of functionality.";	
+			System.err.println("WARNING: Some external components are missing or have problems.\n" +
+					"You may continue but with some loss of functionality.");	
+			for (int i = 0; i < errors.size(); i++) {
+				message += "<br>" + errors.get(i);
+				System.err.println(errors.get(i));
+			}
+			message += "<br></html>";
+			
+			JPanel msgPanel = new JPanel(new BorderLayout());
+			JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			JLabel msg = new JLabel(message);
+			msgPanel.add(msg, BorderLayout.NORTH);
+			JCheckBox jcb = new JCheckBox("Do not ask me again");
+			jcb.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    // if-else statement below is used to update checkbox in settings whenever this one is changed.
+                    if (jcb.isSelected()) {
+                    	Preferences.userRoot().put("biosim.ignore.external.warnings", "true");
+                    } 
+
+                }
+            });
+			checkPanel.add(jcb);
+			msgPanel.add(checkPanel, BorderLayout.SOUTH);
+			if (!Preferences.userRoot().get("biosim.ignore.external.warnings", "").equals("true")) {
+				int value = JOptionPane.showConfirmDialog(null , msgPanel , "Problems with External Components" , JOptionPane.OK_CANCEL_OPTION);
+				if (value == JOptionPane.CANCEL_OPTION) return;
+			}
+		} else {
+			Preferences.userRoot().put("biosim.ignore.external.warnings", "false");
+		}
+		if (SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString().endsWith("dummy.org")) {
+			message = "WARNING: No valid domain has been provided.\n" +
+					"Please enter a valid domain for your organization.";	
+			JOptionPane.showMessageDialog(null , message , "No Domain Set" , JOptionPane.ERROR_MESSAGE);
+			PreferencesDialog.showPreferences(frame);
 		}
 		new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}

@@ -898,40 +898,46 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				{
 					if(sbolField.isSBOLSBOSet() && (sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT)))
 					{
+						JOptionPane.showMessageDialog(Gui.frame, 
+								"You are not allowed to annotate a species that has an SBOL component type DNA.", 
+								"Prohibited SBOL Annotation Type",
+								JOptionPane.WARNING_MESSAGE); 
+						// Probably safer to just not allow this
 						/*
 						 * The user has annotated a promoter to the SBML species. We will need to remove this species
 						 * and create an SBML promoter. This will allow the user to correctly edit their annotated 
 						 * part as an SBML promoter rather than an SBML species with a promoter SBO type.
 						 */
 						// create a new promoter so that all the fields are set properly.
-						String id ; //TODO: modify to mouse position
-						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
-						{ 
-							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
-							
-							// annotate the new promoter 
-							setSBOLAnnotation(promoter);
-							
-							// remove the old species to indicate it was transformed into a promoter
-							modelEditor.removeSpecies(species.getId());
-							modelEditor.refresh();
-							return true; //handling species annotation successful.
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(Gui.frame,  
-									"Null pointer was encountered when creating a promoter.", 
-									"Unable to create SBML element",
-									JOptionPane.ERROR_MESSAGE);
-						}
+//						String id ; //TODO: modify to mouse position
+//						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
+//						{ 
+//							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
+//							
+//							// annotate the new promoter 
+//							setSBOLAnnotation(promoter);
+//							
+//							// remove the old species to indicate it was transformed into a promoter
+//							modelEditor.removeSpecies(species.getId());
+//							modelEditor.refresh();
+//							return true; //handling species annotation successful.
+//						}
+//						else
+//						{
+//							JOptionPane.showMessageDialog(Gui.frame,  
+//									"Null pointer was encountered when creating a promoter.", 
+//									"Unable to create SBML element",
+//									JOptionPane.ERROR_MESSAGE);
+//						}
+					} else {
+					
+						if (!species.isSetMetaId() || species.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
+									bioModel.getMetaIDIndex());
+					
+						//Set SBOL annotation to SBML species
+						setSBOLAnnotation(species);
 					}
-					
-					if (!species.isSetMetaId() || species.getMetaId().equals(""))
-						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
-								bioModel.getMetaIDIndex());
-					
-					//Set SBOL annotation to SBML species
-					setSBOLAnnotation(species);
 				} 
 				else 
 				{

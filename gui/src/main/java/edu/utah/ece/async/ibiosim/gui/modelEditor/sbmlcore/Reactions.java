@@ -1322,6 +1322,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber") || splitLaw[i].equals("rateOf")
+					|| splitLaw[i].equals("quotient") || splitLaw[i].equals("rem") || splitLaw[i].equals("implies")	
+					|| splitLaw[i].equals("max") || splitLaw[i].equals("min")
 					|| splitLaw[i].equals("avogadro")) {
 			}
 			else {
