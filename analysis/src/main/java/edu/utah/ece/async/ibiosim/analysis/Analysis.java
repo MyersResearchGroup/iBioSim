@@ -28,7 +28,6 @@ import org.jlibsedml.Libsedml;
 import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
-import org.jlibsedml.Task;
 import org.jlibsedml.XMLException;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
@@ -43,10 +42,8 @@ import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.graphData.GraphData;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
@@ -281,13 +278,13 @@ public class Analysis implements BioObserver
       }
       entry.extractFile (new File(properties.getDirectory() + File.separator + entry.getFileName()));
     }
+    properties.setRoot(properties.getDirectory());
     ca.close();
     return listOfSedML;
   }
 
   private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
   {
-
     File sedmlFile = new File(sedML);
     SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
     SedML sedml = sedmlDoc.getSedMLModel();
@@ -295,35 +292,41 @@ public class Analysis implements BioObserver
     String root = properties.getRoot();
     for(AbstractTask task : listOfTasks)
     {
-      properties.setModelFile(sedml.getModelWithId(task.getModelReference()).getSource());
+      /* Load from SED-ML */
       properties.setId(task.getId());
       String modelSource = sedml.getModelWithId(task.getModelReference()).getSource();
       while (sedml.getModelWithId(modelSource)!=null) {
         modelSource = sedml.getModelWithId(modelSource).getSource();
       }
       properties.setModelFile(modelSource);
-      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, null/* task.getId()*/, properties);
+      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, null, properties);
       File analysisDir = new File(root + File.separator + task.getId());
-      if (!analysisDir.exists()) {
+      if (!analysisDir.exists()) 
+      {
         new File(root + File.separator + task.getId()).mkdir();
       }
+      /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
       biomodel.load(root + File.separator + modelSource);
       SBMLDocument flatten = biomodel.flattenModel(true);
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
       SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
       AnalysisPropertiesWriter.createProperties(properties);
-      //Replace values with properties given by user
+      /* Replace values with properties given by user */
       loadUserValues(properties, userValues);
       run.execute();
     }
-    for (Output output : sedml.getOutputs()) {
-      if (output.isPlot2d()) {
+    for (Output output : sedml.getOutputs()) 
+    {
+      if (output.isPlot2d()) 
+      {
         GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
-      } else if (output.isReport()) {
+          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+      } 
+      else if (output.isReport()) 
+      {
         GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       }
     }
   }
