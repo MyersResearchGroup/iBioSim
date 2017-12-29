@@ -21,8 +21,8 @@ import org.jlibsedml.Annotation;
 import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 
 /**
  * A set of helper methods that are used when reading and writing properties files.
