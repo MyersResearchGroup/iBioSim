@@ -2170,6 +2170,7 @@ public class SBMLutilities
 		ArrayList<String> productsUsing = new ArrayList<String>();
 		ArrayList<String> modifiersUsing = new ArrayList<String>();
 		ArrayList<String> kineticLawsUsing = new ArrayList<String>();
+		ArrayList<String> fluxboundsUsing = new ArrayList<String>();
 		ArrayList<String> defaultParametersNeeded = new ArrayList<String>();
 		ArrayList<String> initsUsing = new ArrayList<String>();
 		ArrayList<String> rulesUsing = new ArrayList<String>();
@@ -2261,6 +2262,14 @@ public class SBMLutilities
 							break;
 						}
 					}
+				}
+				FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(reaction);
+				if (rBounds != null && (rBounds.isSetLowerFluxBound() && rBounds.getLowerFluxBoundInstance() != null &&
+						rBounds.getLowerFluxBoundInstance().getId().equals(id)) ||
+						(rBounds.isSetUpperFluxBound() && rBounds.getUpperFluxBoundInstance() != null &&
+								rBounds.getUpperFluxBoundInstance().getId().equals(id))) {
+					fluxboundsUsing.add(reaction.getId());
+					inUse = true;
 				}
 			}
 		}
@@ -2375,6 +2384,7 @@ public class SBMLutilities
 			String products = "";
 			String modifiers = "";
 			String kineticLaws = "";
+			String fluxbounds = "";
 			String defaults = "";
 			String stoicMath = "";
 			String initAssigns = "";
@@ -2395,6 +2405,8 @@ public class SBMLutilities
 			Utility.sort(mods);
 			String[] kls = kineticLawsUsing.toArray(new String[0]);
 			Utility.sort(kls);
+			String[] fbs = fluxboundsUsing.toArray(new String[0]);
+			Utility.sort(fbs);
 			String[] dps = defaultParametersNeeded.toArray(new String[0]);
 			Utility.sort(dps);
 			String[] sm = stoicMathUsing.toArray(new String[0]);
@@ -2471,6 +2483,17 @@ public class SBMLutilities
 				else
 				{
 					kineticLaws += kls[i] + "\n";
+				}
+			}
+			for (int i = 0; i < fbs.length; i++)
+			{
+				if (i == fbs.length - 1)
+				{
+					fluxbounds += fbs[i];
+				}
+				else
+				{
+					fluxbounds += fbs[i] + "\n";
 				}
 			}
 			for (int i = 0; i < dps.length; i++)
@@ -2571,6 +2594,10 @@ public class SBMLutilities
 			if (kineticLawsUsing.size() != 0)
 			{
 				message += "\n\nIt is used in the kinetic law in the following reactions:\n" + kineticLaws;
+			}
+			if (fluxboundsUsing.size() != 0)
+			{
+				message += "\n\nIt is used in the flux bounds in the following reactions:\n" + fluxbounds;
 			}
 			if (defaultParametersNeeded.size() != 0)
 			{

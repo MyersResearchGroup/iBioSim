@@ -15,22 +15,41 @@ package edu.utah.ece.async.ibiosim.analysis;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.Libsedml;
+import org.jlibsedml.Output;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Task;
 import org.jlibsedml.XMLException;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 
+import com.lowagie.text.DocumentException;
+
+import de.unirostock.sems.cbarchive.ArchiveEntry;
+import de.unirostock.sems.cbarchive.CombineArchive;
+import de.unirostock.sems.cbarchive.CombineArchiveException;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.graphData.GraphData;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 
 /**
  * Command line method for running the analysis jar file.  
@@ -49,7 +68,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Analysis {
+public class Analysis implements BioObserver
+{
 
   private static final String ti = "Initial Time";
   private static final String tl = "Time Limit";
@@ -62,7 +82,13 @@ public class Analysis {
   private static final String sd = "Random Seed";
   private static final String r = "Number of Runs";
   private static final String sim = "Simulation";
-  
+
+  private String sedML = null;
+  private String propertiesFile = null;
+  private String omex = null;
+  private HashMap<String, String> propertiesMap;
+  private final AnalysisProperties properties;
+
   private static void usage() 
   {
     System.err.println("Description:");
@@ -70,149 +96,247 @@ public class Analysis {
     System.err.println("Usage:");
     System.err.println("\t java -jar [-d directory] input.xml");
     System.err.println("Required:");
-    System.err.println("\t SBML model.");
+    System.err.println("\t A SED-ML file.");
     System.err.println("Options:\n");
     System.exit(1);
   }
 
   public static void main(String[] args) 
-  {    
-    try
-    {
-      String root = ".";
-      String sedML = null;
-      String propertiesFile = null;
-      HashMap<String, String> propertiesMap = new HashMap<String, String>();
-      
-      if(args.length < 1)
-      {
-        usage();
-      }
+  {   
+    Executables.checkExecutables();
+    Analysis analysis = new Analysis();
 
-      // Last argument should be a SBML file
-      if(!args[args.length - 1].endsWith(".xml"))
-      {
-        usage();
-      }
-
-      // Optional arguments should have a value
-      if(args.length % 2  - 1 != 0)
-      {
-        usage();
-      }
-
-      // Retrieve optional arguments
-      for(int i = 0; i < args.length - 1; i=i+2)
-      {
-        String arg = args[i];
-        String value = args[i+1];
-
-        switch(arg)
-        {
-        case "-d":
-          root = value;
-          break;
-        case "-p":
-          if(value.endsWith(".xml") || value.endsWith(".sedml"))
-          {
-            sedML = value;
-          }
-          else if(value.endsWith(".properties"))
-          {
-            propertiesFile = value;
-          }
-          else
-          {
-            usage();
-          }
-          break;
-        case "-ti":
-          propertiesMap.put(ti, value);
-          break;
-        case "-tl":
-          propertiesMap.put(tl, value);
-          break;
-        case "-ot":
-          propertiesMap.put(ot, value);
-          break;
-        case "-pi":
-          propertiesMap.put(pi, value);
-          break;
-        case "-m0":
-          propertiesMap.put(m0, value);
-          break;
-        case "-m1":
-          propertiesMap.put(m1, value);
-          break;
-        case "-aErr":
-          propertiesMap.put(aErr, value);
-          break;
-        case "-rErr":
-          propertiesMap.put(rErr, value);
-          break;
-        case "-sd":
-          propertiesMap.put(sd, value);
-          break;
-        case "-r":
-          propertiesMap.put(r, value);
-          break;
-        case "-sim":
-          propertiesMap.put(sim, value);
-          break;
-        default:
-          usage();
-        }
-      }
-
-
-      final AnalysisProperties properties = new AnalysisProperties("", "", root, false);
-      Run run = new Run(properties);
-
-      if(sedML != null)
-      {
-        runSEDML(sedML, properties, run, propertiesMap);
-      }
-      else
-      {
-        if(propertiesFile != null)
-        {
-          AnalysisPropertiesLoader.loadPropertiesFile(properties);
-        }
-        loadUserValues(properties, propertiesMap);
-        run.execute();
-      }
-    }
-    catch(Exception e)
+    if(args.length < 1)
     {
       usage();
     }
-  } 
 
-  private static void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException
+    // Last argument should be a SED-ML file, Combine Archive, or SBML model
+    if(args[args.length - 1].endsWith(".xml"))
+    {
+      analysis.properties.setModelFile(args[args.length - 1]);
+      analysis.properties.setId(args[args.length - 1].replace(".xml", ""));
+    }
+    else if(args[args.length - 1].endsWith(".omex"))
+    {
+      analysis.properties.setId(args[args.length - 1].replace(".omex", ""));
+      analysis.omex = args[args.length - 1];
+    }
+    else if(args[args.length - 1].endsWith(".sedml"))
+    {
+      analysis.properties.setId(args[args.length - 1].replace(".sedml", ""));
+      analysis.sedML = args[args.length - 1];
+    }
+    else
+    {
+      usage();
+    }
+
+
+    // Optional arguments should have a value
+    if((args.length - 1) % 2 > 0)
+    {
+      usage();
+    }
+
+
+    // Retrieve optional arguments
+    for(int i = 0; i < args.length - 1; i=i+2)
+    {
+      String arg = args[i];
+      String value = args[i+1];
+
+      switch(arg)
+      {
+      case "-d":
+        analysis.properties.setRoot(value);
+        break;
+      case "-p":
+        if(value.endsWith(".properties"))
+        {
+          analysis.propertiesFile = value;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-ti":
+        analysis.propertiesMap.put(ti, value);
+        break;
+      case "-tl":
+        analysis.propertiesMap.put(tl, value);
+        break;
+      case "-ot":
+        analysis.propertiesMap.put(ot, value);
+        break;
+      case "-pi":
+        analysis.propertiesMap.put(pi, value);
+        break;
+      case "-m0":
+        analysis.propertiesMap.put(m0, value);
+        break;
+      case "-m1":
+        analysis.propertiesMap.put(m1, value);
+        break;
+      case "-aErr":
+        analysis.propertiesMap.put(aErr, value);
+        break;
+      case "-rErr":
+        analysis.propertiesMap.put(rErr, value);
+        break;
+      case "-sd":
+        analysis.propertiesMap.put(sd, value);
+        break;
+      case "-r":
+        analysis.propertiesMap.put(r, value);
+        break;
+      case "-sim":
+        analysis.propertiesMap.put(sim, value);
+        break;
+      default:
+        usage();
+      }
+    }
+    
+    try 
+    {
+      analysis.performAnalysis();
+    } 
+    catch (XMLException | IOException | XMLStreamException | InterruptedException | BioSimException | DocumentException e) 
+    {
+      System.out.println(e.getMessage());
+    } 
+  }
+
+  private Analysis()
   {
+    properties = new AnalysisProperties("", "", "", false);
+    propertiesMap = new HashMap<String, String>();
+  }
+
+  private void performAnalysis() throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
+  {
+    Run run = new Run(properties);
+
+    if(omex != null)
+    {
+      List<String> sedMLs = unpackageArchive(omex);
+      
+      for(String sedML : sedMLs)
+      {
+        runSEDML(sedML, properties, run, propertiesMap); 
+      }
+    }
+    else if(sedML != null)
+    {
+      runSEDML(sedML, properties, run, propertiesMap); 
+    }
+    else
+    {
+      if(propertiesFile != null)
+      {
+        AnalysisPropertiesLoader.loadPropertiesFile(properties);
+      }
+      loadUserValues(properties, propertiesMap);
+      run.execute();
+    }
+  }
+
+  /**
+   * 
+   * @param omex
+   * @param properties
+   * @return a list of SED-ML files.
+   * @throws IOException 
+   */
+  private List<String> unpackageArchive(String omex) throws IOException
+  {
+    List<String> listOfSedML = new ArrayList<String>();
+
+    new File(properties.getDirectory()).mkdir();
+    System.out.println ("--- reading archive. ---");
+    File archiveFile = new File (properties.getRoot() + File.separator + omex);
+
+    // read the archive stored in `archiveFile`
+    CombineArchive ca;
+    try {
+      ca = new CombineArchive (archiveFile, true);
+    }
+    catch (JDOMException | ParseException | CombineArchiveException | IOException e) {
+
+      return listOfSedML;
+    }
+
+
+    // read description of the archive itself
+    System.out.println ("found " + ca.getDescriptions ().size ()
+      + " meta data entries describing the archive.");
+
+    // iterate over all entries in the archive
+    for (ArchiveEntry entry : ca.getEntries ())
+    {
+      if (entry.getFormat().toString().contains("sed-ml")) {
+        listOfSedML.add(properties.getDirectory() + File.separator + entry.getFileName());
+      }
+      entry.extractFile (new File(properties.getDirectory() + File.separator + entry.getFileName()));
+    }
+    ca.close();
+    return listOfSedML;
+  }
+
+  private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
+  {
+
     File sedmlFile = new File(sedML);
     SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
     SedML sedml = sedmlDoc.getSedMLModel();
     List<AbstractTask> listOfTasks = sedml.getTasks();
-
+    String root = properties.getRoot();
     for(AbstractTask task : listOfTasks)
     {
+      properties.setModelFile(sedml.getModelWithId(task.getModelReference()).getSource());
       properties.setId(task.getId());
-      properties.setModelFile(task.getModelReference());
-      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, task.getId(), properties);
+      String modelSource = sedml.getModelWithId(task.getModelReference()).getSource();
+      while (sedml.getModelWithId(modelSource)!=null) {
+        modelSource = sedml.getModelWithId(modelSource).getSource();
+      }
+      properties.setModelFile(modelSource);
+      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, null/* task.getId()*/, properties);
+      File analysisDir = new File(root + File.separator + task.getId());
+      if (!analysisDir.exists()) {
+        new File(root + File.separator + task.getId()).mkdir();
+      }
+      BioModel biomodel = new BioModel(root);
+      biomodel.load(root + File.separator + modelSource);
+      SBMLDocument flatten = biomodel.flattenModel(true);
+      String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
+      SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
+      AnalysisPropertiesWriter.createProperties(properties);
       //Replace values with properties given by user
       loadUserValues(properties, userValues);
       run.execute();
     }
+    for (Output output : sedml.getOutputs()) {
+      if (output.isPlot2d()) {
+        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+      } else if (output.isReport()) {
+        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+      }
+    }
   }
-  
+
+
+
   private static void loadUserValues(AnalysisProperties properties, HashMap<String, String> userValues)
   {
     SimulationProperties simProperties = properties.getSimulationProperties();
     for(String key : userValues.keySet())
     {
       String value = userValues.get(key);
-      
+
       if(key == ti)
       {
         simProperties.setInitialTime(Double.parseDouble(value));
@@ -289,5 +413,11 @@ public class Analysis {
         }
       }
     }
+  }
+
+  @Override
+  public void update(Message message) {
+    System.out.println(message.getMessage());
+
   }
 }

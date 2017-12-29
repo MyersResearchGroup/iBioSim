@@ -89,7 +89,6 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.TopLevel;
 
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.GeneticNetwork;
@@ -102,6 +101,7 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
@@ -751,7 +751,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		SynBioHubFrontend stack = new SynBioHubFrontend(registry);
 		try {
 			stack.login(user, password);
-			stack.submit(id, version, name, description, citations, overwrite, uploadDoc);
+			stack.createCollection(id, version, name, description, citations, overwrite, uploadDoc);
 			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", "Submssion Successful",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (SynBioHubException e) {
