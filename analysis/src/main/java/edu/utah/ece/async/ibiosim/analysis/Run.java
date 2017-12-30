@@ -291,6 +291,7 @@ public class Run extends CoreObservable implements ActionListener
       retrieveSpeciesAndConLevels(specs, conLevel);
 
       BioModel bioModel = new BioModel(properties.getRoot());
+      bioModel.addObservable(this);
       bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
@@ -1164,7 +1165,10 @@ public class Run extends CoreObservable implements ActionListener
   {
     if(type == RequestType.REQUEST_PROGRESS)
     {
-      return parent.send(type, message);
+      if(parent!= null)
+      {
+        return parent.send(type, message);
+      }
     }
    
     return false;
