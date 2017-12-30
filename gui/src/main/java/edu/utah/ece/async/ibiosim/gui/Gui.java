@@ -157,6 +157,7 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
+import com.lowagie.tools.Executable;
 
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
@@ -8903,191 +8904,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return exit;
 	}
 
-	/**
-	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
-	 */
-	public static void main(String args[]) {
-		List<String> errors = null;
-		String message = "";
-
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			if (System.getenv("DDLD_LIBRARY_PATH") == null) {
-				System.out.println("DDLD_LIBRARY_PATH is missing");
-			}
-		}
-
-		boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
-		if (args.length > 0) {
-			for (int i = 0; i < args.length; i++) {
-				if (args[i].equals("-lema")) {
-					lemaFlag = true;
-				} else if (args[i].equals("-atacs")) {
-					atacsFlag = true;
-				} else if (args[i].equals("-lpn")) {
-					lpnFlag = true;
-				}
-			}
-		}
-
-		errors = new ArrayList<String>();
-		
-		Executables.checkExecutables();
-		try {
-			System.loadLibrary("sbmlj");
-			// For extra safety, check that the jar file is in the classpath.
-			Class.forName("org.sbml.libsbml.libsbml");
-		} catch (UnsatisfiedLinkError e) {
-			errors.add("libsbml not found (UnsatisfiedLinkError)");
-			//e.printStackTrace();
-			libsbmlFound = false;
-		} catch (ClassNotFoundException e) {
-			errors.add("libsbml not found (ClassNotFoundException)");
-			libsbmlFound = false;
-		} catch (SecurityException e) {
-			errors.add("libsbml not found (SecurityException)");
-			libsbmlFound = false;
-		}
-		Runtime.getRuntime();
-		int exitValue = 1;
-		try {
-			Executables.reb2sacExecutable = "reb2sac";
-			ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
-			Map<String, String> env = ps.environment();
-			if (System.getenv("BIOSIM") != null) {
-				env.put("BIOSIM", System.getenv("BIOSIM"));
-			}
-			if (System.getenv("LEMA") != null) {
-				env.put("LEMA", System.getenv("LEMA"));
-			}
-			if (System.getenv("ATACSGUI") != null) {
-				env.put("ATACSGUI", System.getenv("ATACSGUI"));
-			}
-			if (System.getenv("LD_LIBRARY_PATH") != null) {
-				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-			}
-			if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-			}
-			if (System.getenv("PATH") != null) {
-				env.put("PATH", System.getenv("PATH"));
-			}
-			envp = new String[env.size()];
-			int i = 0;
-			for (String envVar : env.keySet()) {
-				envp[i] = envVar + "=" + env.get(envVar);
-				i++;
-			}
-
-			//ps.redirectOutput(Redirect.INHERIT);
-			//ps.redirectError(Redirect.INHERIT);
-			//ps.redirectErrorStream(true);
-			
-			Process reb2sac = ps.start();
-			if (reb2sac != null) {
-				exitValue = reb2sac.waitFor();
-			}
-			if (exitValue != 255 && exitValue != -1) {
-
-				Executables.reb2sacFound = false;
-				errors.add(Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
-			}
-		} catch (IOException e) {
-			Executables.reb2sacFound = false;
-			errors.add(Executables.reb2sacExecutable + " not found.");
-		} catch (InterruptedException e) {
-		  Executables.reb2sacFound = false;
-		  errors.add(Executables.reb2sacExecutable + " throws exception.");
-
-		}
-		exitValue = 1;
-		try {
-			Executables.geneNetExecutable = "GeneNet";
-			ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
-			Map<String, String> env = ps.environment();
-			if (System.getenv("BIOSIM") != null) {
-				env.put("BIOSIM", System.getenv("BIOSIM"));
-			}
-			if (System.getenv("LEMA") != null) {
-				env.put("LEMA", System.getenv("LEMA"));
-			}
-			if (System.getenv("ATACSGUI") != null) {
-				env.put("ATACSGUI", System.getenv("ATACSGUI"));
-			}
-			if (System.getenv("LD_LIBRARY_PATH") != null) {
-				env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-			}
-			if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-				env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-			}
-			if (System.getenv("PATH") != null) {
-				env.put("PATH", System.getenv("PATH"));
-			}
-			//ps.redirectOutput(Redirect.INHERIT);
-			//ps.redirectError(Redirect.INHERIT);
-			//ps.redirectErrorStream(true);
-			Process geneNet = ps.start();
-			if (geneNet != null) {
-				exitValue = geneNet.waitFor();
-			}
-			if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
-				Executables.geneNetFound = false;
-				errors.add(Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
-
-			}
-		} catch (IOException e) {
-
-		  Executables.geneNetFound = false;
-			errors.add(Executables.geneNetExecutable + " not found.");
-		} catch (InterruptedException e) {
-		  Executables.geneNetFound = false;
-			errors.add(Executables.geneNetExecutable + " throws exception..");
-
-		}
-		if (errors.size()>0) {
-			message = "<html>WARNING: Some external components are missing or have problems.<br>" +
-					"You may continue but with some loss of functionality.";	
-			System.err.println("WARNING: Some external components are missing or have problems.\n" +
-					"You may continue but with some loss of functionality.");	
-			for (int i = 0; i < errors.size(); i++) {
-				message += "<br>" + errors.get(i);
-				System.err.println(errors.get(i));
-			}
-			message += "<br></html>";
-			
-			JPanel msgPanel = new JPanel(new BorderLayout());
-			JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			JLabel msg = new JLabel(message);
-			msgPanel.add(msg, BorderLayout.NORTH);
-			JCheckBox jcb = new JCheckBox("Do not ask me again");
-			jcb.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // if-else statement below is used to update checkbox in settings whenever this one is changed.
-                    if (jcb.isSelected()) {
-                    	Preferences.userRoot().put("biosim.ignore.external.warnings", "true");
-                    } 
-
-                }
-            });
-			checkPanel.add(jcb);
-			msgPanel.add(checkPanel, BorderLayout.SOUTH);
-			if (!Preferences.userRoot().get("biosim.ignore.external.warnings", "").equals("true")) {
-				int value = JOptionPane.showConfirmDialog(null , msgPanel , "Problems with External Components" , JOptionPane.OK_CANCEL_OPTION);
-				if (value == JOptionPane.CANCEL_OPTION) return;
-			}
-		} else {
-			Preferences.userRoot().put("biosim.ignore.external.warnings", "false");
-		}
-		if (SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString().endsWith("dummy.org")) {
-			message = "WARNING: No valid domain has been provided.\n" +
-					"Please enter a valid domain for your organization.";	
-			JOptionPane.showMessageDialog(null , message , "No Domain Set" , JOptionPane.ERROR_MESSAGE);
-			PreferencesDialog.showPreferences(frame);
-		}
-		new Gui(lemaFlag, atacsFlag, libsbmlFound);
-	}
-
 	public void refreshLearn(String learnName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (getTitleAt(i).equals(learnName)) {
@@ -10270,6 +10086,77 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
       log.addText(message.getMessage());
     }
     
+  }
+
+  /**
+   * This is the main method. It excecutes the BioSim GUI FrontEnd program.
+   */
+  public static void main(String args[]) {
+	  String message = "";
+
+	  if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+		  if (System.getenv("DDLD_LIBRARY_PATH") == null) {
+			  System.out.println("DDLD_LIBRARY_PATH is missing");
+		  }
+	  }
+
+	  boolean lemaFlag = false, atacsFlag = false, libsbmlFound = true, lpnFlag = false;
+	  if (args.length > 0) {
+		  for (int i = 0; i < args.length; i++) {
+			  if (args[i].equals("-lema")) {
+				  lemaFlag = true;
+			  } else if (args[i].equals("-atacs")) {
+				  atacsFlag = true;
+			  } else if (args[i].equals("-lpn")) {
+				  lpnFlag = true;
+			  }
+		  }
+	  }
+	  Executables.checkExecutables();
+	  ArrayList<String> errors = Executables.getErrors();
+	  if (errors.size()>0) {
+		  message = "<html>WARNING: Some external components are missing or have problems.<br>" +
+				  "You may continue but with some loss of functionality.";	
+		  System.err.println("WARNING: Some external components are missing or have problems.\n" +
+				  "You may continue but with some loss of functionality.");	
+		  for (int i = 0; i < errors.size(); i++) {
+			  message += "<br>" + errors.get(i);
+			  System.err.println(errors.get(i));
+		  }
+		  message += "<br></html>";
+
+		  JPanel msgPanel = new JPanel(new BorderLayout());
+		  JPanel checkPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		  JLabel msg = new JLabel(message);
+		  msgPanel.add(msg, BorderLayout.NORTH);
+		  JCheckBox jcb = new JCheckBox("Do not ask me again");
+		  jcb.addActionListener(new ActionListener() {
+
+			  @Override
+			  public void actionPerformed(ActionEvent arg0) {
+				  // if-else statement below is used to update checkbox in settings whenever this one is changed.
+				  if (jcb.isSelected()) {
+					  Preferences.userRoot().put("biosim.ignore.external.warnings", "true");
+				  } 
+
+			  }
+		  });
+		  checkPanel.add(jcb);
+		  msgPanel.add(checkPanel, BorderLayout.SOUTH);
+		  if (!Preferences.userRoot().get("biosim.ignore.external.warnings", "").equals("true")) {
+			  int value = JOptionPane.showConfirmDialog(null , msgPanel , "Problems with External Components" , JOptionPane.OK_CANCEL_OPTION);
+			  if (value == JOptionPane.CANCEL_OPTION) return;
+		  }
+	  } else {
+		  Preferences.userRoot().put("biosim.ignore.external.warnings", "false");
+	  }
+	  if (SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString().endsWith("dummy.org")) {
+		  message = "WARNING: No valid domain has been provided.\n" +
+				  "Please enter a valid domain for your organization.";	
+		  JOptionPane.showMessageDialog(null , message , "No Domain Set" , JOptionPane.ERROR_MESSAGE);
+		  PreferencesDialog.showPreferences(frame);
+	  }
+	  new Gui(lemaFlag, atacsFlag, libsbmlFound);
   }
 
 }

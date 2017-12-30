@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Executables {
@@ -28,8 +29,11 @@ public class Executables {
 
 	private static boolean hasChecked = false;
 
+	private static ArrayList<String> errors;
+	
 	public static void checkExecutables()
 	{
+		errors = new ArrayList<String>();
 		if(!hasChecked)
 		{
 			int exitValue = 1;
@@ -43,21 +47,19 @@ public class Executables {
 				// For extra safety, check that the jar file is in the classpath.
 				Class.forName("org.sbml.libsbml.libsbml");
 			} catch (UnsatisfiedLinkError e) {
+				errors.add("libsbml not found (UnsatisfiedLinkError)");
+				//e.printStackTrace();
 				libsbmlFound = false;
 			} catch (ClassNotFoundException e) {
+				errors.add("libsbml not found (ClassNotFoundException)");
 				libsbmlFound = false;
 			} catch (SecurityException e) {
+				errors.add("libsbml not found (SecurityException)");
 				libsbmlFound = false;
 			}
-			
+			Runtime.getRuntime();
 			try {
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					Executables.reb2sacExecutable = "reb2sac.linux64";
-				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					Executables.reb2sacExecutable = "reb2sac.mac64";
-				} else {
-					Executables.reb2sacExecutable = "reb2sac.exe";
-				}
+				Executables.reb2sacExecutable = "reb2sac";
 				ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
 				Map<String, String> env = ps.environment();
 				if (System.getenv("BIOSIM") != null) {
@@ -91,21 +93,18 @@ public class Executables {
 				}
 				if (exitValue != 255 && exitValue != -1) {
 					Executables.reb2sacFound = false;
+					errors.add(Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
 				}
 			} catch (IOException e) {
 				Executables.reb2sacFound = false;
+				errors.add(Executables.reb2sacExecutable + " not found.");
 			} catch (InterruptedException e) {
-				Executables.reb2sacFound = false;
+			  Executables.reb2sacFound = false;
+			  errors.add(Executables.reb2sacExecutable + " throws exception.");
 			}
 			exitValue = 1;
 			try {
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					Executables.geneNetExecutable = "GeneNet.linux64";
-				} else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					Executables.geneNetExecutable = "GeneNet.mac64";
-				} else {
-					Executables.geneNetExecutable = "GeneNet.exe";
-				}
+				Executables.geneNetExecutable = "GeneNet";
 				ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
 				Map<String, String> env = ps.environment();
 				if (System.getenv("BIOSIM") != null) {
@@ -133,13 +132,22 @@ public class Executables {
 				}
 				if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
 					Executables.geneNetFound = false;
+					errors.add(Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
 				}
 			} catch (IOException e) {
 				Executables.geneNetFound = false;
+				errors.add(Executables.geneNetExecutable + " not found.");
 			} catch (InterruptedException e) {
 				Executables.geneNetFound = false;
+				errors.add(Executables.geneNetExecutable + " throws exception..");
 			}
 		}
 	}
 
+	/**
+	 * @return the errors
+	 */
+	public static ArrayList<String> getErrors() {
+		return errors;
+	}
 }
