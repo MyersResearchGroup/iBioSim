@@ -53,11 +53,24 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  * <p>
  * Requirements:
  * </p>
- * <p>
- * inputfile
- * </p>
- *
- *
+ * <ul>
+ *  <li>Optional:</li>
+ *  <ul>
+ *    <li>-d [value]: project directory</li>
+ *    <li>-ti [value]: initial simulation time</li>
+ *    <li>-tl [value]: simulation time limit</li>
+ *    <li>-ot [value]: output time</li>
+ *    <li>-pi [value]: print interval</li>
+ *    <li>-m0 [value]: minimum step time</li>
+ *    <li>-m1 [value]: maximum step time</li>
+ *    <li>-aErr [value]: absolute error</li>
+ *    <li>-sErr [value]: relative error</li>
+ *    <li>-sd [value]: random seed</li>
+ *    <li>-r [value]: number of runs</li>
+ *    <li>-sim [value]: simulation type</li>
+ *  </ul>
+ *  <li>Input file: (Combine archive, SED-ML, or SBML.</li>
+ * </ul>
  * @author Leandro Watanabe
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -91,10 +104,22 @@ public class Analysis implements BioObserver
     System.err.println("Description:");
     System.err.println("\t This application is used to run various analysis methods.");
     System.err.println("Usage:");
-    System.err.println("\t java -jar [-d directory] input.xml");
+    System.err.println("\t java -jar [options] input");
     System.err.println("Required:");
-    System.err.println("\t A SED-ML file.");
+    System.err.println("\t input: combine archive, sed-ml, or sbml file.");
     System.err.println("Options:\n");
+    System.err.println("\t -d [value]: project directory");
+    System.err.println("\t -ti [value]: initial simulation time");
+    System.err.println("\t -tl [value]: simulation time limit");
+    System.err.println("\t -ot [value]: output time");
+    System.err.println("\t -pi [value]: print interval");
+    System.err.println("\t -m0 [value]: minimum step time");
+    System.err.println("\t -m1 [value]: maximum step time");
+    System.err.println("\t -aErr [value]: absolute error");
+    System.err.println("\t -sErr [value]: relative error");
+    System.err.println("\t -sd [value]: random seed");
+    System.err.println("\t -r [value]: number of runs");
+    System.err.println("\t -sim [value]: simulation type");
     System.exit(1);
   }
 
