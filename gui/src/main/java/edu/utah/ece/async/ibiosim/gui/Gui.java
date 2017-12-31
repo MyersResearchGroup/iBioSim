@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
@@ -39,6 +38,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,7 +66,6 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -142,6 +141,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.GenericTopLevel;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -149,8 +149,8 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
-import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
+import org.synbiohub.frontend.SynBioHubFrontend;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -161,13 +161,13 @@ import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 
-import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesign;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
-import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadNewDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import uk.ac.ncl.ico2s.VPRException;
@@ -176,7 +176,6 @@ import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
-import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -241,7 +240,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected JMenuItem newCsp, newHse, newUnc, newRsg, newSpice;
 	protected JMenuItem exit;
 	protected JMenuItem importSbol, importGenBank, importFasta;
-	protected JMenuItem importSedml, importSbml, importBioModel, importVirtualPart, importVhdl;
+	protected JMenuItem importSedml, importSbml, importVhdl;
 	protected JMenuItem importS, importInst, importLpn, importG, importCsp, importHse, importUnc;
 	protected JMenuItem importRsg, importSpice, importProperty, importArchive;
 	protected JMenuItem manual;
@@ -256,7 +255,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected JMenuItem exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportArchive, exportAvi,
 	exportMp4;
 	protected JMenuItem uploadSBOL, uploadArchive;
-	protected JMenuItem downloadSBOL, downloadArchive;
+	protected JMenuItem downloadBioModel, downloadVirtualPart, downloadSynBioHub;
 	protected JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
 	protected String root;
 	protected String currentProjectId;
@@ -564,8 +563,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml = new JMenuItem("SED-ML File");
 		importArchive = new JMenuItem("Archive");
 		importSbml = new JMenuItem("SBML Model");
-		importBioModel = new JMenuItem("BioModel");
-		importVirtualPart = new JMenuItem("Virtual Part");
 		convertToLPN = new JMenuItem("Convert To LPN"); // convert
 		// importDot = new JMenuItem("iBioSim Model");
 		importG = new JMenuItem("Petri Net");
@@ -598,8 +595,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportMp4 = new JMenuItem("MP4");
 		uploadSBOL = new JMenuItem("SBOL");
 		uploadArchive = new JMenuItem("Archive");
-		downloadSBOL = new JMenuItem("SBOL");
-		downloadArchive = new JMenuItem("Archive");
+		downloadBioModel = new JMenuItem("From BioModel");
+		downloadVirtualPart = new JMenuItem("From VPR");
+		downloadSynBioHub = new JMenuItem("From SynBioHub");
 		save = new JMenuItem("Save");
 		if (async) {
 			saveModel = new JMenuItem("Save Learned LPN");
@@ -687,8 +685,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml.addActionListener(this);
 		importArchive.addActionListener(this);
 		importSbml.addActionListener(this);
-		importBioModel.addActionListener(this);
-		importVirtualPart.addActionListener(this);
 		// importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importS.addActionListener(this);
@@ -720,8 +716,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportMp4.addActionListener(this);
 		uploadArchive.addActionListener(this);
 		uploadSBOL.addActionListener(this);
-		downloadArchive.addActionListener(this);
-		downloadSBOL.addActionListener(this);
+		downloadSynBioHub.addActionListener(this);
+		downloadBioModel.addActionListener(this);
+		downloadVirtualPart.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		save.addActionListener(this);
@@ -826,8 +823,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml.setEnabled(false);
 		importArchive.setEnabled(false);
 		importSbml.setEnabled(false);
-		importBioModel.setEnabled(false);
-		importVirtualPart.setEnabled(false);
 		importVhdl.setEnabled(false);
 		importS.setEnabled(false);
 		importInst.setEnabled(false);
@@ -861,8 +856,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		uploadSBOL.setEnabled(false);
 		uploadArchive.setEnabled(false);
 		downloadMenu.setEnabled(false);
-		downloadSBOL.setEnabled(false);
-		downloadArchive.setEnabled(false);
+		downloadBioModel.setEnabled(false);
+		downloadVirtualPart.setEnabled(false);
+		downloadSynBioHub.setEnabled(false);
 		newSBMLModel.setEnabled(false);
 		newSBOL.setEnabled(false);
 		newGridModel.setEnabled(false);
@@ -1018,7 +1014,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		if (!async) {
 			// importMenu.add(importDot);
 			importMenu.add(importSbml);
-			importMenu.add(importBioModel);
 			// TODO: Removed due to issues with JParts
 			// importMenu.add(importVirtualPart);
 			importMenu.add(importLpn);
@@ -1073,8 +1068,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		uploadMenu.add(uploadArchive);
 
 		file.add(downloadMenu);
-		downloadMenu.add(downloadSBOL);
-		downloadMenu.add(downloadArchive);
+		downloadMenu.add(downloadBioModel);
+		downloadMenu.add(downloadSynBioHub);
 		
 		help.add(manual);
 		help.add(bugReport);
@@ -1499,8 +1494,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importSedml.setEnabled(true);
 			importArchive.setEnabled(true);
 			importSbml.setEnabled(true);
-			importBioModel.setEnabled(true);
-			importVirtualPart.setEnabled(true);
 			importVhdl.setEnabled(true);
 			importS.setEnabled(true);
 			importInst.setEnabled(true);
@@ -1512,8 +1505,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importUnc.setEnabled(true);
 			importRsg.setEnabled(true);
 			importSpice.setEnabled(true);
-			downloadSBOL.setEnabled(true);
-			downloadArchive.setEnabled(true);
+			downloadMenu.setEnabled(true);
+			downloadBioModel.setEnabled(true);
+			downloadVirtualPart.setEnabled(true);
+			downloadSynBioHub.setEnabled(true);
 			newSBMLModel.setEnabled(true);
 			newSBOL.setEnabled(true);
 			newGridModel.setEnabled(true);
@@ -1619,8 +1614,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					importSedml.setEnabled(true);
 					importArchive.setEnabled(true);
 					importSbml.setEnabled(true);
-					importBioModel.setEnabled(true);
-					importVirtualPart.setEnabled(true);
 					importVhdl.setEnabled(true);
 					importS.setEnabled(true);
 					importInst.setEnabled(true);
@@ -1632,8 +1625,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					importUnc.setEnabled(true);
 					importRsg.setEnabled(true);
 					importSpice.setEnabled(true);
-					downloadArchive.setEnabled(true);
-					downloadSBOL.setEnabled(true);
+					downloadMenu.setEnabled(true);
+					downloadBioModel.setEnabled(true);
+					downloadVirtualPart.setEnabled(true);
+					downloadSynBioHub.setEnabled(true);
 					newSBMLModel.setEnabled(true);
 					newSBOL.setEnabled(true);
 					newGridModel.setEnabled(true);
@@ -3044,18 +3039,16 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importSEDML();
 		} else if (e.getSource().equals(importArchive)) {
 			importArchive();
-		} else if (e.getSource().equals(downloadArchive)) {
-			// TODO: download archive
-		} else if (e.getSource().equals(downloadSBOL)) {
-			// TODO: download SBOL
+		} else if (e.getSource().equals(downloadSynBioHub)) {
+			downloadSynBioHub();
+		} else if (e.getSource() == downloadBioModel) {
+			downloadBioModel();
+		} else if (e.getSource() == downloadVirtualPart) {
+			// importVirtualPart();
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
 			importSBML(null);
-		} else if (e.getSource() == importBioModel) {
-			importBioModel();
-		} else if (e.getSource() == importVirtualPart) {
-			// importVirtualPart();
 		}
 		// if the import dot menu item is selected
 		/*
@@ -3472,7 +3465,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-	private void importBioModel() {
+	private void downloadBioModel() {
 		final BioModelsWSClient client = new BioModelsWSClient();
 		if (BioModelIds == null) {
 			try {
@@ -5194,6 +5187,70 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}		
 		}
 	}
+	
+	public String downloadAttachment(GenericTopLevel attachment) throws SynBioHubException, IOException {
+		SynBioHubFrontends frontends = new SynBioHubFrontends();
+		for (Registry registry : Registries.get()) {
+			if (attachment.getIdentity().toString().startsWith(registry.getUriPrefix())) {
+				SynBioHubFrontend frontend = null;
+				if (frontends.hasFrontend(registry.getLocation())) {
+					frontend = frontends.getFrontend(registry.getLocation());
+				} else {
+					frontend = new SynBioHubFrontend(registry.getLocation(), registry.getUriPrefix());
+				}
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				String filename = frontend.getAttachment(attachment.getIdentity(), outputStream);
+				if (filename.equals("default")) continue;
+				if (overwrite(root + File.separator + filename, filename)) {
+					File file = new File(root + File.separator +filename);
+					FileOutputStream fileOutputStream = new FileOutputStream(file);
+					fileOutputStream.write(outputStream.toByteArray());
+					fileOutputStream.close();
+					addToTree(filename);
+					return filename;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void downloadSynBioHub() {
+		SBOLDocument selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+				edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, sbolDocument).getInput();
+
+		if (selection != null) 
+		{
+			try {
+//				try {
+//					selection.write(System.out);
+//				}
+//				catch (SBOLConversionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				generateSBMLFromSBOL(selection, root);
+				// TODO: update to attachment class
+				String sedmlFile = null;
+				for (GenericTopLevel attachment : selection.getGenericTopLevels()) {
+					String filename = downloadAttachment(attachment);
+					if (filename.endsWith(".sedml")) {
+						sedmlFile = filename;
+					}
+				}
+				if (sedmlFile!=null) {
+					importSEDMLFile(root + File.separator + sedmlFile);
+				}
+				getSBOLDocument().createCopy(selection);
+				writeSBOLDocument();
+			}
+			catch (SBOLValidationException | SynBioHubException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(frame, "Unable to download from SynBioHub.", "Error Exporting to SynBioHub",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
 	public void upload(String fileType) 
 	{
@@ -6671,21 +6728,23 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		int numGeneratedSBML = 0;
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
-				List<BioModel> models;
-				try {
-					models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
-					for (BioModel model : models) {
-						if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
-								model.getSBMLDocument().getModel().getId() + ".xml")) {
-							model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
-							addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
+				if (moduleDef.getModels().size()==0) {
+					List<BioModel> models;
+					try {
+						models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
+						for (BioModel model : models) {
+							if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
+									model.getSBMLDocument().getModel().getId() + ".xml")) {
+								model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+								addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
+							}
+							numGeneratedSBML++;
 						}
-						numGeneratedSBML++;
+					} catch (XMLStreamException e) {
+						JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+								JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
-				} catch (XMLStreamException e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
 				}
 			}
 		} catch (IOException e) {

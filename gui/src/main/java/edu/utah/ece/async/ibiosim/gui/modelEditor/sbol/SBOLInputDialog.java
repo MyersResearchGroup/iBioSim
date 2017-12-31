@@ -686,7 +686,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	}
 	
 	@Override
-	protected void handleTableSelection() 
+	protected void handleTableSelection(boolean select) 
 	{
 		canceled = false;
 		setVisible(false);

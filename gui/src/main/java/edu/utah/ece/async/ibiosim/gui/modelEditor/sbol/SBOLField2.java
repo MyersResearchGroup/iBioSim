@@ -357,8 +357,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 				} 
 				catch (Exception e) 
 				{
-					JOptionPane.showMessageDialog(getParent(), "Unable to load parts to SBOLDesigner dialog for SBOL Association: " + filePath, 
-							"Failed Loading SBOL Parts",
+					JOptionPane.showMessageDialog(getParent(), "Unable associate SBOL with this object", 
+							"Failed Associating SBOL",
 							JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
