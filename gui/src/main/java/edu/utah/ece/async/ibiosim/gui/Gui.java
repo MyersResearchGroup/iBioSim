@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
@@ -48,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.ProcessBuilder.Redirect;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -59,7 +59,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -67,6 +66,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -103,6 +103,7 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
+import org.apache.commons.httpclient.URIException;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -148,6 +149,8 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
+import org.sbolstandard.core2.TopLevel;
+import org.synbiohub.frontend.SynBioHubException;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -157,15 +160,14 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
-import com.lowagie.tools.Executable;
 
+import edu.utah.ece.async.sboldesigner.sbol.editor.Images;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesign;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
-import edu.utah.ece.async.sboldesigner.versioning.Infos;
-import edu.utah.ece.async.sboldesigner.versioning.PersonInfo;
-import edu.utah.ece.async.sboldesigner.versioning.Terms;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadNewDialog;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import uk.ac.ncl.ico2s.VPRException;
@@ -174,6 +176,7 @@ import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
+import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -233,7 +236,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	public static JFrame frame; // Frame where components of the GUI are displayed
 	protected JMenuBar menuBar;
-	protected JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
+	protected JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, uploadMenu, downloadMenu, newMenu, viewModel;
 	protected JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
 	protected JMenuItem newCsp, newHse, newUnc, newRsg, newSpice;
 	protected JMenuItem exit;
@@ -250,15 +253,17 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected JMenuItem graph;
 	protected JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf;
 	protected JMenuItem exportPng, exportSvg, exportTsd, exportSBML, exportFlatSBML;
-	protected JMenuItem exportSBOL1, exportSBOL2, exportSynBioHub, exportGenBank, exportFasta, exportArchive, exportAvi,
+	protected JMenuItem exportSBOL1, exportSBOL2, exportGenBank, exportFasta, exportArchive, exportAvi,
 	exportMp4;
+	protected JMenuItem uploadSBOL, uploadArchive;
+	protected JMenuItem downloadSBOL, downloadArchive;
 	protected JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
 	protected String root;
 	protected String currentProjectId;
 	protected FileTree tree;
 	protected CloseAndMaxTabbedPane tab;
 	protected JToolBar toolbar;
-	protected JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton;
+	protected JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton, uploadButton;
 	protected JPanel mainPanel;
 	protected JSplitPane topSplit;
 	protected JSplitPane mainSplit;
@@ -462,6 +467,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		imgName = "export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export");
 		toolbar.add(exportButton);
+		imgName = "upload-to-the-cloud.png";
+		uploadButton = makeToolButton(imgName, "upload", "Upload");
+		toolbar.add(uploadButton);
 		imgName = "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run");
 		toolbar.add(runButton);
@@ -474,6 +482,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		saveasButton.setEnabled(false);
 		checkButton.setEnabled(false);
 		exportButton.setEnabled(false);
+		uploadButton.setEnabled(false);
 
 		// Creates a menu for the frame
 		menuBar = new JMenuBar();
@@ -483,6 +492,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		openRecent = new JMenu("Open Recent");
 		importMenu = new JMenu("Import");
 		exportMenu = new JMenu("Export");
+		uploadMenu = new JMenu("Upload");
+		downloadMenu = new JMenu("Download");
 		exportDataMenu = new JMenu("Data");
 		exportImageMenu = new JMenu("Image");
 		exportMovieMenu = new JMenu("Movie");
@@ -572,7 +583,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL1 = new JMenuItem("SBOL 1");
 		exportSBOL2 = new JMenuItem("SBOL 2");
-		exportSynBioHub = new JMenuItem("SynBioHub");
 		exportGenBank = new JMenuItem("GenBank");
 		exportFasta = new JMenuItem("Fasta");
 		exportArchive = new JMenuItem("Archive");
@@ -586,6 +596,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportTsd = new JMenuItem("TSD");
 		exportAvi = new JMenuItem("AVI");
 		exportMp4 = new JMenuItem("MP4");
+		uploadSBOL = new JMenuItem("SBOL");
+		uploadArchive = new JMenuItem("Archive");
+		downloadSBOL = new JMenuItem("SBOL");
+		downloadArchive = new JMenuItem("Archive");
 		save = new JMenuItem("Save");
 		if (async) {
 			saveModel = new JMenuItem("Save Learned LPN");
@@ -691,7 +705,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportFlatSBML.addActionListener(this);
 		exportSBOL1.addActionListener(this);
 		exportSBOL2.addActionListener(this);
-		exportSynBioHub.addActionListener(this);
 		exportGenBank.addActionListener(this);
 		exportFasta.addActionListener(this);
 		exportArchive.addActionListener(this);
@@ -705,6 +718,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportTsd.addActionListener(this);
 		exportAvi.addActionListener(this);
 		exportMp4.addActionListener(this);
+		uploadArchive.addActionListener(this);
+		uploadSBOL.addActionListener(this);
+		downloadArchive.addActionListener(this);
+		downloadSBOL.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		save.addActionListener(this);
@@ -827,7 +844,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportFlatSBML.setEnabled(false);
 		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
-		exportSynBioHub.setEnabled(false);
 		exportGenBank.setEnabled(false);
 		exportFasta.setEnabled(false);
 		exportArchive.setEnabled(false);
@@ -841,6 +857,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportTsd.setEnabled(false);
 		exportAvi.setEnabled(false);
 		exportMp4.setEnabled(false);
+		uploadMenu.setEnabled(false);
+		uploadSBOL.setEnabled(false);
+		uploadArchive.setEnabled(false);
+		downloadMenu.setEnabled(false);
+		downloadSBOL.setEnabled(false);
+		downloadArchive.setEnabled(false);
 		newSBMLModel.setEnabled(false);
 		newSBOL.setEnabled(false);
 		newGridModel.setEnabled(false);
@@ -1032,9 +1054,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportMenu.add(exportDataMenu);
 		exportMenu.add(exportImageMenu);
 		exportMenu.add(exportMovieMenu);
-		// Removed for now since not working
 		exportMenu.add(exportArchive);
-		exportMenu.add(exportSynBioHub);
 
 		exportDataMenu.add(exportTsd);
 		exportDataMenu.add(exportCsv);
@@ -1046,7 +1066,16 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportImageMenu.add(exportSvg);
 		exportMovieMenu.add(exportAvi);
 		exportMovieMenu.add(exportMp4);
-		// file.addSeparator();
+		
+		file.addSeparator();
+		file.add(uploadMenu);
+		uploadMenu.add(uploadSBOL);
+		uploadMenu.add(uploadArchive);
+
+		file.add(downloadMenu);
+		downloadMenu.add(downloadSBOL);
+		downloadMenu.add(downloadArchive);
+		
 		help.add(manual);
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -1483,6 +1512,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importUnc.setEnabled(true);
 			importRsg.setEnabled(true);
 			importSpice.setEnabled(true);
+			downloadSBOL.setEnabled(true);
+			downloadArchive.setEnabled(true);
 			newSBMLModel.setEnabled(true);
 			newSBOL.setEnabled(true);
 			newGridModel.setEnabled(true);
@@ -1601,6 +1632,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					importUnc.setEnabled(true);
 					importRsg.setEnabled(true);
 					importSpice.setEnabled(true);
+					downloadArchive.setEnabled(true);
+					downloadSBOL.setEnabled(true);
 					newSBMLModel.setEnabled(true);
 					newSBOL.setEnabled(true);
 					newGridModel.setEnabled(true);
@@ -1765,14 +1798,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} else if (comp instanceof SBOLDesignerPlugin) {
 				exportSBOL((SBOLDesignerPlugin) comp, "SBOL");
 			}
-		} else if (e.getSource() == exportSynBioHub) {
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof ModelEditor) {
-				((ModelEditor) comp).exportSynBioHub();
-			} else if (comp instanceof SBOLDesignerPlugin) {
-				// TODO: change to upload for SBOLDesigner
-				exportSBOL((SBOLDesignerPlugin) comp, "SBOL");
-			}
 		} else if (e.getSource() == exportGenBank) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
@@ -1788,8 +1813,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				exportSBOL((SBOLDesignerPlugin) comp, "Fasta");
 			}
 		} else if (e.getSource() == exportArchive) {
-			// exportSEDML();
-			exportCombineArchive();
+			export("Archive");
+		} else if (e.getSource() == uploadArchive) {
+			upload("Archive");
+		} else if (e.getSource() == uploadSBOL) {
+			upload("SBOL");
 		}
 		else if (e.getSource() == exportCsv) {
 			Component comp = tab.getSelectedComponent();
@@ -2914,6 +2942,25 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				}
 				// TODO: what about export of movie?
 			}
+		} else if (e.getActionCommand().equals("upload")) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				//TODO: upload graph 
+				//((Graph) comp).export();
+			} else if (comp instanceof ModelEditor) {
+				//TODO: upload SBML or SBOL
+				//((ModelEditor) comp).exportSBML();
+				// TODO: should give choice of SBML or SBOL
+			} else if (comp instanceof SBOLDesignerPlugin) {
+				upload("SBOL");
+			} else if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof Graph) {
+					//TODO: upload graph
+					// ((Graph) component).export();
+				}
+				// TODO: what about export of movie?
+			}
 		}
 		// if the new menu item is selected
 		else if (e.getSource() == newProj) {
@@ -2997,6 +3044,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importSEDML();
 		} else if (e.getSource().equals(importArchive)) {
 			importArchive();
+		} else if (e.getSource().equals(downloadArchive)) {
+			// TODO: download archive
+		} else if (e.getSource().equals(downloadSBOL)) {
+			// TODO: download SBOL
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -5080,8 +5131,37 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	// }
 	// }
 	// }
-
-	public void exportCombineArchive() {
+	
+	public void createCombineArchive(File file) {
+		try {
+			CombineArchive archive = new CombineArchive(file);
+			File baseDir = new File(root);
+			for (String s : new File(root).list()) {
+				if (s.endsWith(".xml")) {
+					File modelFile = new File(root + File.separator + s);
+					archive.addEntry(baseDir, modelFile, URI
+							.create("http://identifiers.org/combine.specifications/sbml.level-3.version-1.core"));
+				}
+				// TODO: add other file types
+			}
+			String sbolFilename = root + File.separator + currentProjectId + ".sbol";
+			File sbolFile = new File(sbolFilename);
+			archive.addEntry(baseDir, sbolFile,
+					URI.create("http://identifiers.org/combine.specifications/sbol.version-2"), true);
+			File sedmlFile = new File(root + File.separator
+					+ GlobalConstants.getFilename(root)	+ ".sedml");
+			archive.addEntry(baseDir, sedmlFile,
+					URI.create("http://identifiers.org/combine.specifications/sed-ml.level-1.version-2"), true);
+			archive.pack();
+			archive.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to export COMBINE Archive file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void export(String fileType) {
 		File lastFilePath;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -5089,42 +5169,53 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else {
 			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 		}
-		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY,
-				"Export Archive", -1);
+		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, 
+				null, JFileChooser.FILES_ONLY, "Export " + fileType, -1);
 		if (!exportPath.equals("")) {
 			String dir = GlobalConstants.getPath(exportPath);
 			biosimrc.put("biosim.general.export_dir", dir);
-			log.addText("Exporting COMBINE archive file:\n" + exportPath + "\n");
+			log.addText("Exporting " + fileType + " file:\n" + exportPath + "\n");
 			File file = new File(exportPath);
+			boolean exportIt = true;
 			if (file.exists()) {
+//				Object[] options = { "Overwrite", "Cancel" };
+//				int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + " Overwrite?", "File Already Exists",
+//						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//				exportIt = false;
+//				if (value == JOptionPane.YES_OPTION) {
+//					exportIt = true;
 				file.delete();
+//				}
 			}
-			try {
-				CombineArchive archive = new CombineArchive(file);
-				File baseDir = new File(root);
-				for (String s : new File(root).list()) {
-					if (s.endsWith(".xml")) {
-						File modelFile = new File(root + File.separator + s);
-						archive.addEntry(baseDir, modelFile, URI
-								.create("http://identifiers.org/combine.specifications/sbml.level-3.version-1.core"));
-					}
-					// TODO: add other file types
+			if (exportIt) {
+				if (fileType.equals("Archive")) {
+					createCombineArchive(file);
 				}
-				String sbolFilename = root + File.separator + currentProjectId + ".sbol";
-				File sbolFile = new File(sbolFilename);
-				archive.addEntry(baseDir, sbolFile,
-						URI.create("http://identifiers.org/combine.specifications/sbol.version-2"), true);
-				File sedmlFile = new File(root + File.separator
-						+ GlobalConstants.getFilename(root)	+ ".sedml");
-				archive.addEntry(baseDir, sedmlFile,
-						URI.create("http://identifiers.org/combine.specifications/sed-ml.level-1.version-2"), true);
-				archive.pack();
-				archive.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to export SED-ML file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			}		
+		}
+	}
+
+	public void upload(String fileType) 
+	{
+		try {
+			if (fileType.equals("Archive")) {
+				File file = new File(root + File.separator + "temp.omex");
+				createCombineArchive(file);
+				SBOLDesign.uploadDesign(Gui.frame,null,file);
+				file.delete();
+			} else if (fileType.equals("SBOL")) {
+				Component comp = tab.getSelectedComponent();
+				if (comp instanceof ModelEditor) {
+					((ModelEditor) comp).exportSynBioHub();
+				} else if (comp instanceof SBOLDesignerPlugin) {
+					((SBOLDesignerPlugin) comp).uploadSBOL(comp);
+				}
 			}
+		}
+		catch (URIException | SynBioHubException | SBOLValidationException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to upload " + fileType + " to SynBioHub.", "Error Exporting to SynBioHub",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -9230,6 +9321,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		refreshButton.setEnabled(false);
 		checkButton.setEnabled(false);
 		exportButton.setEnabled(false);
+		uploadButton.setEnabled(false);
 		save.setEnabled(false);
 		saveAs.setEnabled(false);
 		// saveSBOL.setEnabled(false);
@@ -9245,7 +9337,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportFlatSBML.setEnabled(false);
 		exportSBOL1.setEnabled(false);
 		exportSBOL2.setEnabled(false);
-		exportSynBioHub.setEnabled(false);
 		exportGenBank.setEnabled(false);
 		exportFasta.setEnabled(false);
 		exportDataMenu.setEnabled(false);
@@ -9261,6 +9352,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exportTsd.setEnabled(false);
 		exportAvi.setEnabled(false);
 		exportMp4.setEnabled(false);
+		uploadMenu.setEnabled(true);
+		uploadArchive.setEnabled(true);
+		uploadSBOL.setEnabled(false);
 		saveAsVerilog.setEnabled(false);
 		viewCircuit.setEnabled(false);
 		viewSG.setEnabled(false);
@@ -9298,6 +9392,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			saveasButton.setEnabled(true);
 			checkButton.setEnabled(true);
 			exportButton.setEnabled(true);
+			uploadButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			// saveSBOL.setEnabled(true);
@@ -9333,15 +9428,17 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			exportFlatSBML.setEnabled(true);
 			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
-			exportSynBioHub.setEnabled(true);
 			exportGenBank.setEnabled(true);
 			exportFasta.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
+			uploadMenu.setEnabled(true);
+			uploadSBOL.setEnabled(true);
 		} else if (comp instanceof SBOLDesignerPlugin) {
 			saveButton.setEnabled(true);
 			checkButton.setEnabled(true);
 			exportButton.setEnabled(true);
+			uploadButton.setEnabled(true);
 			save.setEnabled(true);
 			// saveSBOL.setEnabled(true);
 			saveAll.setEnabled(true);
@@ -9351,9 +9448,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			exportMenu.setEnabled(true);
 			exportSBOL1.setEnabled(true);
 			exportSBOL2.setEnabled(true);
-			exportSynBioHub.setEnabled(true);
 			exportGenBank.setEnabled(true);
 			exportFasta.setEnabled(true);
+			uploadMenu.setEnabled(true);
+			uploadSBOL.setEnabled(true);
 		} else if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
@@ -9366,11 +9464,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
 			exportFlatSBML.setEnabled(true);
+			uploadMenu.setEnabled(true);
 		} else if (comp instanceof Graph) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			refreshButton.setEnabled(true);
 			exportButton.setEnabled(true);
+			uploadButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			saveAll.setEnabled(true);
@@ -9390,6 +9490,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			exportPdf.setEnabled(true);
 			exportPng.setEnabled(true);
 			exportSvg.setEnabled(true);
+			uploadSBOL.setEnabled(true);
 		} else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			Component learnComponent = null;
@@ -9412,6 +9513,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(true);
 				exportButton.setEnabled(true);
+				uploadButton.setEnabled(true);
 				save.setEnabled(true);
 				saveAll.setEnabled(true);
 				close.setEnabled(true);
@@ -9445,6 +9547,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				exportPdf.setEnabled(true);
 				exportPng.setEnabled(true);
 				exportSvg.setEnabled(true);
+				uploadSBOL.setEnabled(true);
 			} else if (component instanceof AnalysisView) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
@@ -9467,6 +9570,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
+				uploadSBOL.setEnabled(true);
 			} else if (component instanceof ModelEditor) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
