@@ -59,7 +59,7 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * --readLevels: Reads the levels from level.lvl file for every specie
  * --cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.
  * --cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.
- * --cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a > r+n || r > a + n
+ * --cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n
  * --score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept
  * --output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed
  * -binNumbers: Equal spacing per bin
