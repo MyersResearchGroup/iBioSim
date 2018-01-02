@@ -81,16 +81,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox SBOTerms;
 	
+	private boolean lema;
+	
 	/* Create event panel */
-	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
+	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual, boolean lema) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.isTextual = isTextual;
 		this.modelEditor = modelEditor;
+		this.lema = lema;
 		Model model = bioModel.getSBMLDocument().getModel();
 		addEvent = new JButton("Add Event");
 		addTrans = new JButton("Add Transition");
-		if (biosim.lema) {
+		if (lema) {
 			removeEvent = new JButton("Remove Transition");
 			editEvent = new JButton("Edit Transition");
 		} else {
@@ -116,7 +119,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			ev[i] += SBMLutilities.getDimensionString(event);
 		}
 		JPanel addRem = new JPanel();
-		if (!biosim.lema) {
+		if (!lema) {
 			addRem.add(addEvent);
 		}
 		if (isTextual) {
@@ -129,7 +132,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		removeEvent.addActionListener(this);
 		editEvent.addActionListener(this);
 		JLabel panelLabel;
-		if (biosim.lema) {
+		if (lema) {
 			panelLabel = new JLabel("List of Transitions:");
 		} else {
 			panelLabel = new JLabel("List of Events:");

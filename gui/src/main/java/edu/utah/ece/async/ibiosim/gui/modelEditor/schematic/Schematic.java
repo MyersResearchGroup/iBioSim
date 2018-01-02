@@ -229,7 +229,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel,biosim.lema,editable,modelEditor);	
+			graph = new BioGraph(bioModel,lema,editable,modelEditor);	
 			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
 			modelEditor.makeUndoPoint();
