@@ -123,7 +123,7 @@ public class Analysis implements BioObserver
     System.exit(1);
   }
 
-  public static void main(String[] args) 
+  public static void main(String[] args) throws Exception 
   {   
     Executables.checkExecutables();
     Analysis analysis = new Analysis();
@@ -237,7 +237,7 @@ public class Analysis implements BioObserver
     propertiesMap = new HashMap<String, String>();
   }
 
-  private void performAnalysis() throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
+  private void performAnalysis() throws Exception
   {
     Run run = new Run(properties);
     run.addObserver(this);
@@ -300,7 +300,7 @@ public class Analysis implements BioObserver
     return listOfSedML;
   }
 
-  private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws XMLException, IOException, XMLStreamException, InterruptedException, BioSimException, DocumentException
+  private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws Exception
   {
     File sedmlFile = new File(sedML);
     SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);

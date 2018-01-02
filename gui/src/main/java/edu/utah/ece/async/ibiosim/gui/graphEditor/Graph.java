@@ -5219,7 +5219,11 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 	public void setDirectory(String newDirectory) {
 		outDir = newDirectory;
 	}
-
+	
+	public String getGraphName() {
+		return graphName;
+	}
+	
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
 	}
@@ -6495,6 +6499,13 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 		icons.put("java", TextIcons.getIcon("java"));
 		icons.put("html", TextIcons.getIcon("html"));
 		return icons;
+	}
+
+	/**
+	 * @return the graphData
+	 */
+	public GraphData getGraphData() {
+		return graphData;
 	}
 
 }
