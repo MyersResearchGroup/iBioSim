@@ -20,10 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -116,7 +113,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	// fields
 
-	private JComboBox reacReverse, reacFast; // reaction reversible, fast combo
+	private JComboBox reacReverse; //, reacFast; // reaction reversible, fast combo
 
 	// boxes
 
@@ -419,9 +416,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String[] options = { "true", "false" };
 		reacReverse = new JComboBox(options);
 		reacReverse.setSelectedItem("false");
-		JLabel fast = new JLabel("Fast:");
-		reacFast = new JComboBox(options);
-		reacFast.setSelectedItem("false");
+		//JLabel fast = new JLabel("Fast:");
+		//reacFast = new JComboBox(options);
+		//reacFast.setSelectedItem("false");
 		Reaction copyReact = null;
 		JPanel param = new JPanel(new BorderLayout());
 		JPanel addParams = new JPanel();
@@ -688,10 +685,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		kineticPanel.add(kineticButtons, "South");
 		JPanel reactionPanel = new JPanel(new BorderLayout());
 		JPanel reactionPanelNorth = new JPanel();
-		reactionPanelNorth.setLayout(new GridLayout(3, 1));
+		reactionPanelNorth.setLayout(new GridLayout(2, 1));
 		JPanel reactionPanelNorth1 = new JPanel();
 		JPanel reactionPanelNorth3 = new JPanel();
-		JPanel reactionPanelNorth4 = new JPanel();
 		CiIndex = new JTextField(20);
 		reactionPanelNorth1.add(id);
 		reactionPanelNorth1.add(reacID);
@@ -699,6 +695,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth1.add(reacName);
 		reactionPanelNorth1.add(onPortLabel);
 		reactionPanelNorth1.add(onPort);
+		reactionPanelNorth1.add(reverse);
+		reactionPanelNorth1.add(reacReverse);
 
 		reactionPanelNorth3.add(sboTermLabel);
 		reactionPanelNorth3.add(reactionSBO);
@@ -707,14 +705,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactionPanelNorth3.add(new JLabel("Compartment Indices:"));
 		reactionPanelNorth3.add(CiIndex);
 		
-		reactionPanelNorth4.add(reverse);
-		reactionPanelNorth4.add(reacReverse);
-		reactionPanelNorth4.add(fast);
-		reactionPanelNorth4.add(reacFast);
+		//reactionPanelNorth4.add(fast);
+		//reactionPanelNorth4.add(reacFast);
 
 		reactionPanelNorth.add(reactionPanelNorth1);
 		reactionPanelNorth.add(reactionPanelNorth3);
-		reactionPanelNorth.add(reactionPanelNorth4);
 		
 		if (inSchematic) {
 			reactionPanel.add(reactionPanelNorth, "North");
@@ -753,12 +748,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				reacReverse.setSelectedItem("false");
 			}
+			/*
 			if (reac.getFast()) {
 				reacFast.setSelectedItem("true");
 			}
 			else {
 				reacFast.setSelectedItem("false");
 			}
+			*/
 			if (reac.isSetSBOTerm()) {
 				reactionSBO.setSelectedItem(SBMLutilities.sbo.getName(reac.getSBOTermID()));
 			}
@@ -772,7 +769,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -795,7 +792,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -822,7 +819,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
 					reacReverse.setEnabled(false);
-					reacFast.setEnabled(false);
+					//reacFast.setEnabled(false);
 					reactionComp.setEnabled(false);
 					reacAddParam.setEnabled(false);
 					reacRemoveParam.setEnabled(false);
@@ -851,7 +848,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacID.setEditable(false);
 			reacName.setEditable(false);
 			reacReverse.setEnabled(false);
-			reacFast.setEnabled(false);
+			//reacFast.setEnabled(false);
 			reacAddParam.setEnabled(false);
 			reacRemoveParam.setEnabled(false);
 			addReactant.setEnabled(false);
@@ -898,11 +895,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				/*
 				else if ((changedReactants.size() == 0) && (changedProducts.size() == 0)) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have at least one reactant or product.", "No Reactants or Products",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				*/
 				else if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 					if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
@@ -944,8 +943,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				else {
 					// TODO: need to update for arrays
 					error = !isFluxBoundValid(bioModel.getSBMLDocument(),
-							kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
-					error = false;
+							kineticLaw.getText().replaceAll("\\s",""), reactionID,dimensionIds,dimID);
+					//error = false;
 				}
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -1010,12 +1009,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.setSBOTerm(SBMLutilities.sbo.getId((String)reactionSBO.getSelectedItem()));
 					}
 					react.setCompartment((String) reactionComp.getSelectedItem());
+					/*
 					if (reacFast.getSelectedItem().equals("true")) {
 						react.setFast(true);
 					}
 					else {
 						react.setFast(false);
 					}
+					*/
 					react.setId(reactionID);
 					react.setName(reacName.getText().trim());
 					Port port = bioModel.getPortByIdRef(val);
@@ -1052,7 +1053,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						react.unsetKineticLaw();
-						error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+						error = !createReactionFluxBounds(reactionID,dimID,dimensionIds);
 					}
 
 					if (!error) {
@@ -1131,12 +1132,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setReversible(false);
 					}
+					/*
 					if (reacFast.getSelectedItem().equals("true")) {
 						react.setFast(true);
 					}
 					else {
 						react.setFast(false);
 					}
+					*/
 					if (reactionSBO.getSelectedItem().equals("(unspecified)")) {
 						react.unsetSBOTerm();
 					} else {
@@ -1165,8 +1168,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						error = !isFluxBoundValid(bioModel.getSBMLDocument(),
-								kineticLaw.getText().replaceAll("\\s",""), reactionId,dimensionIds,dimID);
-						if (!error)	error = !createReactionFluxBounds(reactionId,dimID,dimensionIds);
+								kineticLaw.getText().replaceAll("\\s",""), reactionID,dimensionIds,dimID);
+						if (!error)	error = !createReactionFluxBounds(reactionID,dimID,dimensionIds);
 					}
 						
 					if (!error) {
@@ -1319,6 +1322,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber") || splitLaw[i].equals("rateOf")
+					|| splitLaw[i].equals("quotient") || splitLaw[i].equals("rem") || splitLaw[i].equals("implies")	
+					|| splitLaw[i].equals("max") || splitLaw[i].equals("min")
 					|| splitLaw[i].equals("avogadro")) {
 			}
 			else {
@@ -1867,7 +1873,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (product.isSetId()) {
 				selectedID = product.getId();
 				productId.setText(product.getId());
-				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignmentBySymbol(selectedID);
 				if (init!=null) {
 					productStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 						
@@ -2738,7 +2744,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reactant.isSetId()) {
 				selectedID = reactant.getId();
 				reactantId.setText(reactant.getId());
-				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignmentBySymbol(selectedID);
 				if (init!=null) {
 					reactantStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
 				} 

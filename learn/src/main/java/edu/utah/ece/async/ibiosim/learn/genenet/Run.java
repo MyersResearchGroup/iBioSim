@@ -44,7 +44,7 @@ public class Run
 
   public static boolean run(String filename, String directory) throws BioSimException
   {
-    experiment = 0;
+    
     SpeciesCollection S = new SpeciesCollection();
     Experiments E = new Experiments();
     Encodings L = new Encodings();
@@ -67,7 +67,7 @@ public class Run
   public static void loadExperiments(String directory, SpeciesCollection S, Experiments E) throws BioSimException
   {
     File path = new File(directory);
-
+    experiment = 0;
     for (File file : path.listFiles())
     {
       String name = file.getAbsolutePath();
@@ -94,6 +94,10 @@ public class Run
 
       for (Species species : model.getListOfSpecies())
       {
+        if(species.isSetSBOTerm() && species.getSBOTerm() == 590)
+        {
+          continue;
+        }
         S.addInterestingSpecies(species.getId());
       }
     }

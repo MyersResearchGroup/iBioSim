@@ -75,10 +75,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
@@ -93,10 +92,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
@@ -111,10 +109,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
@@ -129,10 +126,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
@@ -147,10 +143,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(spec.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
@@ -166,10 +161,9 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		Utility.Parameter(kl, actString, act, GeneticNetwork.getMoleTimeParameter(1));
 		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}

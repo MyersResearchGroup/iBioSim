@@ -36,18 +36,6 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public double getStateValue()
-  {
-    return value;
-  }
-
-  @Override
-  public void setStateValue(double value)
-  {
-    this.value = value;
-  }
-
-  @Override
   public void addState(int index, double value)
   {
     // can't have children
@@ -61,7 +49,7 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public void addState(int index)
+  public void addState(int index, HierarchicalState state )
   {
 
   }
@@ -82,13 +70,14 @@ public class ValueState extends HierarchicalState
   }
   
   @Override
-  public double getRateValue() {
+  public double getRateValue(int index) {
     return 0;
   }
 
   @Override
-  public double getRateValue(int index) {
-    return 0;
+  public boolean isSetRate(int index)
+  {
+    return false;
   }
 
   @Override
@@ -96,7 +85,9 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public void setRateValue(double value) {
+  public void copyState(int from, int to) {
+    // TODO Auto-generated method stub
+    
   }
 
   

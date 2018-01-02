@@ -743,7 +743,7 @@ public class GCM2SBML {
 	 * @throws XMLStreamException 
 	 */
 	public void convertGCM2SBML(String root, String fileName) throws XMLStreamException, IOException {
-		String filename = root + GlobalConstants.separator + fileName;
+		String filename = root + File.separator + fileName;
 		int condCnt = 0;
 		for (String s : conditions) {
 			bioModel.createCondition(s,condCnt);
@@ -852,7 +852,7 @@ public class GCM2SBML {
 			bioModel.createComponentFromGCM(s,components.get(s));
 		}
 		if (sbmlFile!=null && !sbmlFile.equals("")) {
-			SBMLDocument document = SBMLutilities.readSBML(root + GlobalConstants.separator + sbmlFile);
+			SBMLDocument document = SBMLutilities.readSBML(root + File.separator + sbmlFile);
 			if (document!=null) {
 				Model model = document.getModel();
 				Model modelNew = bioModel.getSBMLDocument().getModel();
@@ -864,7 +864,7 @@ public class GCM2SBML {
 				for (int i = 0; i < model.getEventCount(); i++) {
 					modelNew.addEvent(model.getEvent(i).clone());
 				}
-				new File(root + GlobalConstants.separator + sbmlFile).delete();
+				new File(root + File.separator + sbmlFile).delete();
 			}
 		}
 		new File(filename).delete();

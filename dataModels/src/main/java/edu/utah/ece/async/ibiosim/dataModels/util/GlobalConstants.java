@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -164,11 +165,11 @@ public class GlobalConstants {
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SO_AUTHORITY = "purl.obolibrary.org";
 	public static final String SO_AUTHORITY2 = "identifiers.org";
-	public static final String SBOL_COMPONENTDEFINITION = "sbolDnaComponent";
+	public static final String SBOL_COMPONENTDEFINITION = "ComponentDefinition";
+	public static final String SBOL_MODULEDEFINITION = "ModuleDefinition";
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = 
 			SO_PROMOTER + "(" + SO_RBS + "," + SO_CDS + ")+" + SO_TERMINATOR + "+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
-	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.assembly.authority";
 	public static final String SBOL_AUTHORITY_DEFAULT = "http://dummy.org";
 	public static final String CONSTRUCT_ASSEMBLY_DEFAULT = "False";
 	public static final String CONSTRUCT_ASSEMBLY_PREFERENCE = "biosim.assembly.validation";
@@ -285,6 +286,11 @@ public class GlobalConstants {
 	public static final String KISAO_RELATIVE_TOLERANCE = "KISAO:0000209";
 	public static final String KISAO_SEED = "KISAO:0000488";
 	public static final String KISAO_SAMPLES = "KISAO:0000326";
+	public static final String KISAO_NUMBER_OF_RUNS = "KISAO:0000498";
+	public static final String KISAO_DFBA = "KISAO_0000499";
+	public static final String KISAO_DFBA_SOA = "KISAO:0000500";
+	public static final String KISAO_DFBA_DOA = "KISAO:0000501 ";
+	public static final String KISAO_DFBA_DA = "KISAO:0000501 ";
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
@@ -329,9 +335,23 @@ public class GlobalConstants {
 	public static final int DEFAULT_COMPARTMENT_HEIGHT = 250;
 	public static final int DEFAULT_TEXT_WIDTH = 40;
 	public static final int DEFAULT_TEXT_HEIGHT = 10;
-	public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
-	public static int				SBML_LEVEL			= 3;
-	public static int				SBML_VERSION		= 1;
+	//public static final String		separator			= (File.separator.equals("\\")) ? "\\\\" : File.separator;
+	//public static final String		separator			= File.separator;
+	public static final int	SBML_LEVEL			= 3;
+	public static final int	SBML_VERSION		= 2;
 	
+	public static String[] splitPath(String path) {
+		String[] subDirs = path.split(Pattern.quote(File.separator));
+		return subDirs;
+	}
+	
+	public static String getFilename(String path) {
+		String[] subDirs = splitPath(path);
+		return subDirs[subDirs.length-1];
+	}
+	
+	public static String getPath(String path) {
+		return path.substring(0, path.lastIndexOf(File.separator));
+	}
 	
 }

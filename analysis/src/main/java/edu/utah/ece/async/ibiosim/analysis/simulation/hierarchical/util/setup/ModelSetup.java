@@ -42,6 +42,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Vector
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
  * 
@@ -76,17 +77,15 @@ public class ModelSetup
     SBMLDocument document = sim.getDocument();
     Model model = document.getModel();
     String rootPath = sim.getRootDirectory();
-    HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel");
+    HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
     sim.setTopmodel(hierarchicalModel);
-    
-    CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin) document.getPlugin(CompConstants.namespaceURI);
-    
+     
     LinkedList<ModelContainer> unproc = new LinkedList<ModelContainer>();
     List<ModelContainer> listOfContainers = new ArrayList<ModelContainer>();
     //TODO: Map<String, ModelContainer> templateFromSource;
     
-    unproc.push(new ModelContainer(model, hierarchicalModel, null));
-    
+    unproc.push(new ModelContainer(model, hierarchicalModel, null, type));
+    int count = 0;
     while(!unproc.isEmpty())
     {
       ModelContainer container = unproc.pop();
@@ -98,47 +97,51 @@ public class ModelSetup
         for (Submodel submodel : container.getCompModel().getListOfSubmodels())
         {
           model = null;
-          CompSBMLDocumentPlugin compDoc = sbmlComp;
-          if (sbmlComp.getListOfExternalModelDefinitions() != null && sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
+          CompSBMLDocumentPlugin compDoc = container.getCompDoc();
+          if(compDoc != null)
           {
-            ExternalModelDefinition ext = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef());
-            String source = ext.getSource();
-            String extDef = rootPath + HierarchicalUtilities.separator + source;
-            SBMLDocument extDoc = SBMLReader.read(new File(extDef));
-            model = extDoc.getModel();
-            compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
-
-            while (ext.isSetModelRef())
+            if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
             {
-              if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null)
+              ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
+              String source = ext.getSource();
+              String extDef = rootPath + HierarchicalUtilities.separator + source;
+              SBMLDocument extDoc = SBMLReader.read(new File(extDef));
+              model = extDoc.getModel();
+              compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
+            
+              while (ext.isSetModelRef())
               {
-                ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
-                source = ext.getSource().replace("file:", "");
-                extDef = rootPath + HierarchicalUtilities.separator + source;
-                extDoc = SBMLReader.read(new File(extDef));
-                model = extDoc.getModel();
-                compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
-              }
-              else if (compDoc.getModelDefinition(ext.getModelRef()) != null)
-              {
-                model = compDoc.getModelDefinition(ext.getModelRef());
-                break;
-              }
-              else
-              {
-                break;
+                if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null)
+                {
+                  ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
+                  source = ext.getSource().replace("file:", "");
+                  extDef = rootPath + HierarchicalUtilities.separator + source;
+                  extDoc = SBMLReader.read(new File(extDef));
+                  model = extDoc.getModel();
+                  compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
+                }
+                else if (compDoc.getModelDefinition(ext.getModelRef()) != null)
+                {
+                  model = compDoc.getModelDefinition(ext.getModelRef());
+                  break;
+                }
+                else
+                {
+                  break;
+                }
               }
             }
-          }
-          else if (sbmlComp.getListOfModelDefinitions() != null && sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef()) != null)
-          {
-            model = sbmlComp.getModelDefinition(submodel.getModelRef());
-          }
+            else if (compDoc.getListOfModelDefinitions() != null && compDoc.getListOfModelDefinitions().get(submodel.getModelRef()) != null)
+            {
+              model = compDoc.getModelDefinition(submodel.getModelRef());
+            }
 
-          if (model != null)
-          {
-            hierarchicalModel = new HierarchicalModel(submodel.getId());
-            unproc.push(new ModelContainer(model, hierarchicalModel, container));
+            if (model != null)
+            {
+              hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
+              
+              unproc.push(new ModelContainer(model, hierarchicalModel, container, type));
+            }
           }
         }
       }
@@ -153,7 +156,7 @@ public class ModelSetup
 
   private static void initializeModelStates(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
   {
-    StateType type = StateType.SPARSE;
+    StateType type = StateType.SCALAR;
 
     boolean isSSA = modelType == ModelType.HSSA;
     
@@ -162,10 +165,16 @@ public class ModelSetup
       type = StateType.VECTOR;
     }
     
+    
     for(ModelContainer container : listOfContainers)
     {
       ReplacementSetup.setupDeletion(container);
-      CoreSetup.initializeModel(sim, container, type, time, wrapper, isSSA);
+      CoreSetup.initializeVariables(sim, container, type, time, wrapper, isSSA);
+    }
+    
+    for(ModelContainer container : listOfContainers)
+    {
+      CoreSetup.initializeMath(sim, container, type, time, wrapper, isSSA);
     }
     
     if(wrapper != null)

@@ -26,9 +26,9 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNod
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
@@ -69,6 +69,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   {
     if (!isInitialized)
     {
+      currProgress = 0;
+      
       setCurrentTime(getInitialTime());
       ModelSetup.setupModels(this, ModelType.HSSA);
       computeFixedPoint();
@@ -80,7 +82,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       totalPropensity.computeFunction(0);
       if (hasEvents)
       {
-        triggeredEventList = new PriorityQueue<EventState>(1, new HierarchicalEventComparator());
+        triggeredEventList =
+            new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
         computeEvents();
       }
 
@@ -153,6 +156,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
       r1 = getRandomNumberGenerator().nextDouble();
       r2 = getRandomNumberGenerator().nextDouble();
+      computePropensities();
       totalPropensity = getTotalPropensity();
       delta_t = computeNextTimeStep(r1, totalPropensity);
       nextReactionTime = currentTime.getValue(0) + delta_t;
@@ -227,7 +231,13 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
       computeEvents();
     }
+    
     computeAssignmentRules();
+    
+  }
+  
+  private void computePropensities()
+  {
     for(HierarchicalModel modelstate : this.getListOfHierarchicalModels())
     {
       for(ReactionNode node : modelstate.getReactions())
@@ -240,7 +250,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     this.totalPropensity.computeFunction(0);
   }
 
-  public double computeNextTimeStep(double r1, double totalPropensity)
+  private double computeNextTimeStep(double r1, double totalPropensity)
   {
     return Math.log(1 / r1) / totalPropensity;
   }

@@ -24,6 +24,8 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  */
 public abstract class TreeState extends HierarchicalState{
   
+  protected HierarchicalState multiplier;
+  
   @Override
   public double getStateValue(int index) {
     if(!containsChild(index))
@@ -35,31 +37,35 @@ public abstract class TreeState extends HierarchicalState{
 
   @Override
   public void setStateValue(int index, double value) {
-    if(!containsChild(index))
+    if(containsChild(index))
     {
-      addState(index);
+      getState(index).setStateValue(value);
     }
-    getState(index).setStateValue(value);
   }
   
-  @Override
-  public double getRateValue() {
-    return 0;
-  }
-
   @Override
   public double getRateValue(int index) {
-    return 0;
-  }
-  
-  @Override
-  public void setRateValue(int index, double value) {
+    if(!containsChild(index))
+    {
+      return 0;
+    }
+     return getState(index).getRateValue(index);
   }
 
   @Override
-  public void setRateValue(double value) {
+  public void setRateValue(int index, double value) {
+    if(containsChild(index))
+    {
+      getState(index).setRateValue(index, value);
+    }
   }
   
+  @Override
+  public boolean isSetRate(int index)
+  {
+    return getState(index).isSetRate(index);
+  }
+ 
   protected abstract boolean containsChild(int index);
  
 }

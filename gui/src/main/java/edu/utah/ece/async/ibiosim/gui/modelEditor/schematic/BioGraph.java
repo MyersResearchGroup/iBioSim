@@ -228,6 +228,7 @@ public class BioGraph extends mxGraph {
 	}
 
 	private static void addReferenceGlyph(Layout layout,mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
+		if (cell.getSource()==null || cell.getTarget()==null) return;
 		if (generalGlyph.getListOfReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId)==null) {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
@@ -1340,7 +1341,7 @@ public class BioGraph extends mxGraph {
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
 			try {
-        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+        compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
@@ -1494,7 +1495,7 @@ public class BioGraph extends mxGraph {
 	 */
 	public void addGridCells() {
 		
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			int gridRows = bioModel.getGridTable().getNumRows();
 			int gridCols = bioModel.getGridTable().getNumCols();
@@ -2294,11 +2295,11 @@ public class BioGraph extends mxGraph {
 		if (modelFileName.equals("")) {
 			return false;
 		}
-		File compFile = new File(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+		File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
 		
 		if (compFile.exists()) {
 			try {
-        compBioModel.load(bioModel.getPath() + GlobalConstants.separator + modelFileName);
+        compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
@@ -3261,7 +3262,7 @@ public class BioGraph extends mxGraph {
 		
 		String style = "";
 		
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			if (compart) style = "GRIDCOMPARTMENT;";
 			else style = "GRIDCOMPONENT;";

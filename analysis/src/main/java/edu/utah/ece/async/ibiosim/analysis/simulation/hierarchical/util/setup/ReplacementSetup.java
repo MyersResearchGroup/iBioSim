@@ -25,8 +25,17 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.VariableType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 
 /**
@@ -57,7 +66,7 @@ public class ReplacementSetup
 						{
 							if (sub.containsSubmodel(deletion.getIdRef()))
 							{
-								sub = top.getSubmodel(deletion.getIdRef());
+								sub = sub.getSubmodel(deletion.getIdRef());
 							}
 							if (deletion.isSetSBaseRef())
 							{
@@ -116,7 +125,7 @@ public class ReplacementSetup
 		}
 	}
 
-  static void setupReplacement(SBase sbase, ModelContainer container)
+  static void setupReplacement(HierarchicalSimulation sim, SBase sbase, String id, ModelContainer container)
   {
     CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
 
@@ -124,45 +133,49 @@ public class ReplacementSetup
     {
       if (sbasePlugin.isSetReplacedBy())
       {
-        setupReplacedBy(sbasePlugin.getReplacedBy(), container);
+        ReplacedBy replacedBy = sbasePlugin.getReplacedBy();
+        setupReplacedElement(sim, id, replacedBy.getSubmodelRef(), replacedBy, container, false);
       }
 
       if (sbasePlugin.isSetListOfReplacedElements())
       {
         for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
         {
-          setupReplacedElement(element, container);
+          setupReplacedElement(sim, id,element.getSubmodelRef(), element, container, false);
         }
       }
     }
 
   }
   
-	static void setupReplacement(AbstractNamedSBase sbase, VariableNode node, ModelContainer container)
+	static void setupReplacement(HierarchicalSimulation sim, AbstractNamedSBase sbase, VectorWrapper wrapper, VariableType varType , ModelContainer container)
 	{
 		CompSBasePlugin sbasePlugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
-
+		String id = sbase.getId();
+		
 		if (sbasePlugin != null)
 		{
 			if (sbasePlugin.isSetReplacedBy())
 			{
-				setupReplacedBy(sbasePlugin.getReplacedBy(), sbase.getId(), node,container);
+			  ReplacedBy replacedBy = sbasePlugin.getReplacedBy();
+			  String subModelId = replacedBy.getSubmodelRef();
+			  setupReplacedElement(sim, subModelId, replacedBy, id, container,  wrapper, varType, true);
 			}
 
 			if (sbasePlugin.isSetListOfReplacedElements())
 			{
 				for (ReplacedElement element : sbasePlugin.getListOfReplacedElements())
 				{
-					setupReplacedElement(element, node, container);
+	        String subModelId = element.getSubmodelRef();
+	        setupReplacedElement(sim, subModelId, element, id, container, wrapper, varType, false);
 				}
 			}
 		}
 
 	}
 
-	private static void setupReplacedElement(ReplacedElement element, VariableNode node, ModelContainer container)
+	private static void setupReplacedElement(HierarchicalSimulation sim, String subModelId, SBaseRef element, String id, ModelContainer container, VectorWrapper wrapper, VariableType varType, boolean isReplacedBy)
 	{
-		String subModelId = element.getSubmodelRef();
 		HierarchicalModel top = container.getHierarchicalModel();
 		HierarchicalModel sub = top.getSubmodel(subModelId);
 		CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
@@ -178,92 +191,30 @@ public class ReplacementSetup
 				SBaseRef ref = element.getSBaseRef();
 				while (ref.isSetSBaseRef())
 				{
-					sub = sub.getSubmodel(element.getIdRef());
+					sub = sub.getSubmodel(ref.getIdRef());
+					ref = ref.getSBaseRef();
 				}
 
 				String subId = ref.getIdRef();
-				if(node != null)
-				{
-				  sub.addMappingNode(subId, node);
-				}
-				
-				sub.addDeletedBySid(subId);
+				performReplacement(sim, id,  top,  subId,  sub,   wrapper, varType, isReplacedBy);
 			}
 			else
 			{
 				String subId = element.getIdRef();
-				if(node != null)
-        {
-				  sub.addMappingNode(subId, node);
-        }
-				sub.addDeletedBySid(subId);
+				performReplacement(sim, id,  top,  subId,  sub,  wrapper, varType, isReplacedBy);
 			}
 		}
 		else if (element.isSetPortRef())
 		{
 			Port port = compModel.getListOfPorts().get(element.getPortRef());
 			String subId = port.getIdRef();
-			if(node != null)
-      {
-			  sub.addMappingNode(subId, node);
-      }
-			sub.addDeletedBySid(subId);
+			performReplacement(sim, id,  top,  subId,  sub,   wrapper, varType, isReplacedBy);
 		}
 	}
 
-	private static void setupReplacedBy(ReplacedBy element, String id, VariableNode node, ModelContainer container)
-	{
-		String subModelId = element.getSubmodelRef();
-		HierarchicalModel top = container.getHierarchicalModel();
-		HierarchicalModel sub = top.getSubmodel(subModelId);
-		CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
-
-		if (element.isSetIdRef())
-		{
-			if (sub.containsSubmodel(element.getIdRef()))
-			{
-				sub = sub.getSubmodel(element.getIdRef());
-			}
-			if (element.isSetSBaseRef())
-			{
-				SBaseRef ref = element.getSBaseRef();
-				while (ref.isSetSBaseRef())
-				{
-					sub = sub.getSubmodel(element.getIdRef());
-				}
-
-				String subId = ref.getIdRef();
-				if(node != null)
-        {
-				  sub.addMappingNode(subId, node);
-        }
-        top.addDeletedBySid(id);
-			}
-			else
-			{
-				String subId = element.getIdRef();
-				if(node != null)
-        {
-          sub.addMappingNode(subId, node);
-        }
-				top.addDeletedBySid(id);
-			}
-		}
-		else if (element.isSetPortRef())
-		{
-			Port port = compModel.getListOfPorts().get(element.getPortRef());
-			String subId = port.getIdRef();
-			if(node != null)
-      {
-        sub.addMappingNode(subId, node);
-      }
-			top.addDeletedBySid(id);
-		}
-	}
 	
-	private static void setupReplacedElement(ReplacedElement element, ModelContainer container)
+	private static void setupReplacedElement(HierarchicalSimulation sim, String id, String subModelId, SBaseRef element, ModelContainer container, boolean isReplacedBy)
   {
-    String subModelId = element.getSubmodelRef();
     HierarchicalModel top = container.getHierarchicalModel();
     HierarchicalModel sub = top.getSubmodel(subModelId);
     CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
@@ -279,7 +230,8 @@ public class ReplacementSetup
         SBaseRef ref = element.getSBaseRef();
         while (ref.isSetSBaseRef())
         {
-          sub = sub.getSubmodel(element.getMetaIdRef());
+          sub = sub.getSubmodel(ref.getMetaIdRef());
+          ref = ref.getSBaseRef();
         }
 
         String subId = ref.getMetaIdRef();
@@ -288,60 +240,94 @@ public class ReplacementSetup
       else
       {
         String subId = element.getIdRef();
-        sub.addDeletedByMetaId(subId);
+        sub.addDeletedBySid(subId);
       }
     }
     else if (element.isSetMetaIdRef())
     {
-      String subId = element.getMetaIdRef();
-      sub.addDeletedByMetaId(subId);
+      if(isReplacedBy)
+      {
+        top.addDeletedByMetaId(id);
+      }
+      else
+      {
+        String subId = element.getMetaIdRef();
+        sub.addDeletedByMetaId(subId);
+      }
     }
     else if (element.isSetPortRef())
     {
       Port port = compModel.getListOfPorts().get(element.getPortRef());
+      if(isReplacedBy)
+      {
+        top.addDeletedByMetaId(id);
+      }
       String subId = port.getMetaIdRef();
       sub.addDeletedByMetaId(subId);
-    }
-  }
-
-  private static void setupReplacedBy(ReplacedBy element, ModelContainer container)
-  {
-    String subModelId = element.getSubmodelRef();
-    HierarchicalModel top = container.getHierarchicalModel();
-    HierarchicalModel sub = top.getSubmodel(subModelId);
-    CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
-
-    if (element.isSetIdRef())
-    {
-      if (sub.containsSubmodel(element.getIdRef()))
-      {
-        sub = sub.getSubmodel(element.getIdRef());
-      }
-      if (element.isSetSBaseRef())
-      {
-        SBaseRef ref = element.getSBaseRef();
-        while (ref.isSetSBaseRef())
-        {
-          sub = sub.getSubmodel(element.getIdRef());
-        }
-
-        String subId = ref.getMetaIdRef();
-        top.addDeletedByMetaId(subId);
-      }
-    }
-    else if(element.isSetMetaId())
-    {
-      String subId = element.getMetaIdRef();
-      top.addDeletedBySid(subId);
-    }
-    else if (element.isSetPortRef())
-    {
-      Port port = compModel.getListOfPorts().get(element.getPortRef());
-      String subId = port.getMetaIdRef();
-      top.addDeletedByMetaId(subId);
     }
   }
   
+	private static void performReplacement(HierarchicalSimulation sim, String id, HierarchicalModel top, String subId, HierarchicalModel sub, VectorWrapper wrapper, VariableType varType, boolean isReplacedBy)
+	{
+	  boolean hasTopNode = top.containsNode(id);
+	  boolean hasSubNode = sub.containsNode(subId);
+	  
+	  VariableNode node = null;
+	  
+	  if(!hasTopNode && !hasSubNode)
+	  {
+	    if(varType == VariableType.SPECIES)
+	    {
+	      node = new SpeciesNode(id);
+	      ((SpeciesNode)node).createSpeciesTemplate();
+	    }
+	    else if(varType == VariableType.REACTION)
+	    {
+	      node = new ReactionNode(id);
+	    }
+	    else if(varType == VariableType.VARIABLE)
+	    {
+	      node = new VariableNode(id);
+	    }
+
+      top.addMappingNode(id, node);
+      sub.addMappingNode(subId, node);
+      
+	    HierarchicalState state = node.createState(sim.getCollectionType(), wrapper);
+      HierarchicalState child = null;
+	    if(sim.getAtomicType() == StateType.VECTOR)
+	    {
+	      child = new VectorState(wrapper);
+	    }
+	    else
+	    {
+	      child = new ValueState();
+	    }
+	    state.addState(top.getIndex(), child);
+	    state.addState(sub.getIndex(), child);
+	  }
+	  else if(!hasTopNode && hasSubNode)
+    {
+      node = sub.getNode(subId);
+      top.addMappingNode(id, node);
+      node.getState().copyState(sub.getIndex(), top.getIndex());
+    }
+	  else
+	  {
+	    node = top.getNode(id);
+      sub.addMappingNode(subId, node);
+      node.getState().copyState(top.getIndex(), sub.getIndex());
+	  }
+	  
+    if(isReplacedBy)
+    {
+      top.addDeletedBySid(id);
+    }
+    else
+    {
+      sub.addDeletedBySid(subId);
+    }
+	}
 
 
 }

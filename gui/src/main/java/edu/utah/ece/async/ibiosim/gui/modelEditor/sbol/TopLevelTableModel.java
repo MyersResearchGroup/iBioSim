@@ -53,4 +53,5 @@ public class TopLevelTableModel extends AbstractListTableModel<TopLevel> {
 			throw new IndexOutOfBoundsException();
 		}
 	}
+
 }

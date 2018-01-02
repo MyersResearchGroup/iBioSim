@@ -18,8 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,8 +97,8 @@ public class SBOL2SBML {
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
 	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
-	 * @throws XMLStreamException -
-	 * @throws IOException
+	 * @throws XMLStreamException - Invalid XML file occurred
+	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 */
 	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException {
 
@@ -318,8 +316,8 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML model.
 	 * @param targetModel - The SBML "top level" model that will referenced all converted SBML submodels. 
 	 * @return
-	 * @throws XMLStreamException
-	 * @throws IOException
+	 * @throws XMLStreamException - Invalid XML file.
+	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 */
 	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException {

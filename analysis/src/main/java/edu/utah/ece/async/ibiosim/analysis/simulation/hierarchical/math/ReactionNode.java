@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ReactionState;
-
 /**
  * 
  *
@@ -33,215 +31,194 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Reacti
 public class ReactionNode extends VariableNode
 {
 
-	private List<SpeciesReferenceNode>	reactants;
-	private List<SpeciesReferenceNode>	products;
-	private Map<String, VariableNode> 	localParameters;
-	private HierarchicalNode			forwardRate;
-	private HierarchicalNode			reverseRate;
-	private Map<Integer, ReactionState> reactionState;
-	
-	public ReactionNode(String name)
-	{
-		super(name);
-		isReaction = true;
-		reactionState = new HashMap<Integer, ReactionState>();
-	}
+  private List<SpeciesReferenceNode>	reactants;
+  private List<SpeciesReferenceNode>	products;
+  private Map<String, VariableNode> 	localParameters;
+  private HierarchicalNode			forwardRate;
+  private HierarchicalNode      reverseRate;
 
-	public ReactionNode(ReactionNode copy)
-	{
-		super(copy);
-		isReaction = true;
-	}
+  public ReactionNode(String name)
+  {
+    super(name);
+    varType = VariableType.REACTION;
+  }
 
-	public ReactionState addReactionState(int index)
-	{
-	  ReactionState state = new ReactionState();
-	  reactionState.put(index, state);
-	  return state;
-	}
-	public List<SpeciesReferenceNode> getListOfReactants()
-	{
-		return reactants;
-	}
+  public ReactionNode(ReactionNode copy)
+  {
+    super(copy);
+    varType = VariableType.REACTION;
+    this.reactants = copy.reactants;
+    this.products = copy.products;
+    this.localParameters = copy.localParameters;
+    this.forwardRate = copy.forwardRate;
+  }
 
-	public void addReactant(SpeciesReferenceNode speciesRef)
-	{
-		if (reactants == null)
-		{
-			reactants = new ArrayList<SpeciesReferenceNode>();
-		}
-		speciesRef.getSpecies().addReactionDependency(this);
-		reactants.add(speciesRef);
-	}
+  public void addReactant(SpeciesReferenceNode speciesRef)
+  {
+    if (reactants == null)
+    {
+      reactants = new ArrayList<SpeciesReferenceNode>();
+    }
+    speciesRef.getSpecies().addReactionDependency(this);
+    reactants.add(speciesRef);
+  }
 
-	public void addProduct(SpeciesReferenceNode speciesRef)
-	{
-		if (products == null)
-		{
-			products = new ArrayList<SpeciesReferenceNode>();
-		}
+  public void addProduct(SpeciesReferenceNode speciesRef)
+  {
+    if (products == null)
+    {
+      products = new ArrayList<SpeciesReferenceNode>();
+    }
 
-		speciesRef.getSpecies().addReactionDependency(this);
-		products.add(speciesRef);
-	}
+    speciesRef.getSpecies().addReactionDependency(this);
+    products.add(speciesRef);
+  }
 
-	public void setForwardRate(HierarchicalNode kineticLaw)
-	{
-		this.forwardRate = kineticLaw;
-	}
+  public void setForwardRate(HierarchicalNode kineticLaw)
+  {
+    this.forwardRate = kineticLaw;
+  }
 
-	public HierarchicalNode getForwardRate()
-	{
-		return forwardRate;
-	}
+  public void setReverseRate(HierarchicalNode kineticLaw)
+  {
+    this.reverseRate = kineticLaw;
+  }
 
-	public HierarchicalNode getReverseRate()
-	{
-		return forwardRate;
-	}
+  public HierarchicalNode getForwardRate()
+  {
+    return forwardRate;
+  }
 
-	public boolean computePropensity(int index)
-	{
-		double oldValue = getValue(index);
-		if (forwardRate != null)
-		{
-			double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
-			setValue(index, forwardRateValue);
-		}
-		if (reverseRate != null)
-		{
-			//TODO
-		}
-		return oldValue != getValue(index);
-	}
+  public HierarchicalNode getReverseRate()
+  {
+    return reverseRate;
+  }
 
-	private void fireReaction(int index, boolean hasEnoughMolecules, List<SpeciesReferenceNode> reactants, List<SpeciesReferenceNode> products)
-	{
-		if (hasEnoughMolecules)
-		{
-			Set<ReactionNode> dependentReactions = new HashSet<ReactionNode>();
+  public boolean computePropensity(int index)
+  {
+    double oldValue = getValue(index);
+    double newValue = 0;
 
-			if (reactants != null)
-			{
-				for (SpeciesReferenceNode specRef : reactants)
-				{
-					double stoichiometry = specRef.getStoichiometry(index);
-					SpeciesNode speciesNode = specRef.getSpecies();
-					speciesNode.setValue(index, speciesNode.getValue(index) - stoichiometry);
-					dependentReactions.addAll(speciesNode.getReactionDependents());
-				}
-			}
+    if (forwardRate != null)
+    {
+      double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+      newValue = forwardRateValue;
+    }
 
-			if (products != null)
-			{
-				for (SpeciesReferenceNode specRef : products)
-				{
-					double stoichiometry = specRef.getStoichiometry(index);
-					SpeciesNode speciesNode = specRef.getSpecies();
-					speciesNode.setValue(index, speciesNode.getValue(index) + stoichiometry);
-					dependentReactions.addAll(speciesNode.getReactionDependents());
-				}
-			}
-			computePropensity(index);
-			updateDependentReactions(index, dependentReactions);
-		}
-	}
+    if (reverseRate != null)
+    {
+      double reverseRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+      newValue = newValue + reverseRateValue;
+    }
 
-	public void fireReaction(int index, double threshold)
-	{
-		computeNotEnoughEnoughMolecules(index);
-		ReactionState state = reactionState.get(index);
-//		if (state.getForwardRateValue() >= threshold)
-//		{
-			fireReaction(index, state.hasEnoughMoleculesFd(), reactants, products);
-//		}
-//		else
-//		{
-//			fireReaction(index, state.hasEnoughMoleculesRv(), products, reactants);
-//		}
-	}
+    setValue(index, newValue);
 
-	private void updateDependentReactions(int index, Set<ReactionNode> dependentReactions)
-	{
-		for (ReactionNode reaction : dependentReactions)
-		{
-			reaction.computePropensity(index);
-		}
-	}
+    return oldValue != newValue;
+  }
 
-	public void computeNotEnoughEnoughMolecules(int index)
-	{
-	  ReactionState state = reactionState.get(index);
-	  state.setHasEnoughMoleculesFd(true);
-		if (reactants != null)
-		{
-			for (SpeciesReferenceNode specRef : reactants)
-			{
-				if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
-				{
-				  state.setHasEnoughMoleculesFd(false);
-					break;
-				}
-			}
-		}
-		if (reverseRate != null)
-		{
-		  state.setHasEnoughMoleculesRv(true);
-			if (products != null)
-			{
-				for (SpeciesReferenceNode specRef : products)
-				{
-					if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
-					{
-					  state.setHasEnoughMoleculesRv(false);
-						return;
-					}
-				}
-			}
-		}
-	}
 
-	public void setReverseRate(HierarchicalNode rate)
-	{
-		this.reverseRate = rate;
-	}
 
-	public void setInitPropensity(int index)
-	{
-	  ReactionState state = reactionState.get(index);
-		state.setInitPropensity(getValue(index));
-		state.setInitForwardPropensity(state.getForwardRateValue());
-	}
+  public void fireReaction(int index, double threshold)
+  {
 
-	public void addLocalParameter(String id, VariableNode node)
-	{
-		if(localParameters == null)
-		{
-			localParameters = new HashMap<String, VariableNode>();
-		}
-		localParameters.put(id, node);
-	}
-	
-	public Map<String, VariableNode> getLocalParameters()
-	{
-		return localParameters;
-	}
-	
-	public void restoreInitPropensity(int index)
-	{
-	  ReactionState state = reactionState.get(index);
-		setValue(index, state.getInitPropensity());
-		state.setForwardRateValue(state.getInitForwardPropensity());
-    state.setReverseRateValue(state.getInitPropensity() - state.getInitForwardPropensity());
-	}
+    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
+    if(isForward)
+    {
+      if (computeNotEnoughEnoughMoleculesFd(index))
+      {
+        if (reactants != null)
+        {
 
-	@Override
-	public ReactionNode clone()
-	{
-		return new ReactionNode(this);
-	}
-	
-	 public boolean hasEnoughMoleculesFd(int index) {
-	    return reactionState.get(index).hasEnoughMoleculesFd();
-	  }
+          updateSpeciesReference(reactants, index, -1);
+        }
+
+        if (products != null)
+        {
+          updateSpeciesReference(products, index, 1);
+        }
+      }
+    }
+    else
+    {
+      if (computeNotEnoughEnoughMoleculesRv(index))
+      {
+        if (reactants != null)
+        {
+          updateSpeciesReference(reactants, index, 1);
+        }
+
+        if (products != null)
+        {
+          updateSpeciesReference(products, index, -1);
+        }
+      }
+    }
+  }
+
+  private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier)
+  {
+    for (SpeciesReferenceNode specRef : specRefs)
+    {
+      double stoichiometry = specRef.getStoichiometry(index);
+      SpeciesNode speciesNode = specRef.getSpecies();
+      if(!speciesNode.isBoundaryCondition())
+      {
+        speciesNode.setValue(index, speciesNode.getValue(index) + multiplier* stoichiometry);
+      }
+    }
+  }
+
+  private boolean computeNotEnoughEnoughMoleculesFd(int index)
+  {
+    if (reactants != null)
+    {
+      for (SpeciesReferenceNode specRef : reactants)
+      {
+        if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
+        {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  private boolean computeNotEnoughEnoughMoleculesRv(int index)
+  {
+    if (reactants != null)
+    {
+      for (SpeciesReferenceNode specRef : reactants)
+      {
+        if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
+        {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  public void addLocalParameter(String id, VariableNode node)
+  {
+    if(localParameters == null)
+    {
+      localParameters = new HashMap<String, VariableNode>();
+    }
+    localParameters.put(id, node);
+  }
+
+  public Map<String, VariableNode> getLocalParameters()
+  {
+    return localParameters;
+  }
+
+  @Override
+  public ReactionNode clone()
+  {
+    return new ReactionNode(this);
+  }
+
+
 }

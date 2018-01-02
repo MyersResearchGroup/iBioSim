@@ -25,34 +25,41 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 public abstract class HierarchicalState
 {
   protected double  value;
+ 
   
-
   public enum StateType
   {
     DENSE, SPARSE, SCALAR, VECTOR
   };
 
+  public double getStateValue()
+  {
+    return value;
+  }
+  
+  public void setStateValue(double value)
+  {
+    this.value = value;
+  }
+  
   public abstract void setRateValue(int index, double value);
   
-  public abstract void setRateValue(double value);
-  
-  public abstract double getRateValue();
-
   public abstract double getRateValue(int index);
-  
-  public abstract double getStateValue();
+ 
 
   public abstract double getStateValue(int index);
   
   public abstract void setStateValue(int index, double value);
   
-  public abstract void setStateValue(double value);
 
-  public abstract void addState(int index);
+  public abstract void addState(int index, HierarchicalState state );
 
   public abstract void addState(int index, double value);
 
   public abstract HierarchicalState getState(int index);
 
+  public abstract boolean isSetRate(int index);
+ 
+  public abstract void copyState(int from, int to);
 
 }

@@ -15,10 +15,13 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbol;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
@@ -39,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -47,6 +51,9 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.sbolstandard.core2.ComponentDefinition;
@@ -59,6 +66,7 @@ import org.sbolstandard.core2.TopLevel;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
+import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils;
 import edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Part;
@@ -69,6 +77,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.InputDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PartCellRenderer;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PreferencesDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryPreferencesTab;
+import edu.utah.ece.async.sboldesigner.swing.AbstractListTableModel;
 import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
 
 /**
@@ -81,6 +90,11 @@ import edu.utah.ece.async.sboldesigner.swing.FormBuilder;
  */
 public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private static final String TITLE = "Select Designs";
+	
+	private final Gui gui;
+	private final String filePath;
+	private final String fileName;
+	
 	private final ActionListener actionListener = new DialogActionListener();
 	private JTable table;
 	private JLabel tableLabel;
@@ -104,12 +118,18 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	 * An instance of the SBOL Design/Part selection dialog that will allow the user to open their selected design
 	 * or part in SBOLDesigner or perform VPR Model Generation.
 	 * 
-	 * @param parent - The component the user wants this SBOL input dialog to be called on.
-	 * @param doc - The SBOLDocument the user wants to select their design or parts from. This means that ComponentDefinition and ModuleDefinition contained within this given SBOLDocumen will be loaded into the SBOL Input Dialog as the designs or parts the users are limited to select from.
+	 * @param parent - The component the user wants this SBOL input dialog to be called on. In this case, this is the main view of iBioSim.
+	 * @param gui - The gui that will allow SBOLInputDialog to pop up in.
+	 * @param filePath - Path to where the designs will be loaded from
+	 * @param fileName - Name of the file where the designs are loaded from.
+	 * @param doc -The SBOLDocument the user wants to select their design or parts from. 
+	 * This means that ComponentDefinition and ModuleDefinition contained within this given SBOLDocumen will be loaded into the SBOL Input Dialog as the designs the users are limited to selecting from.
 	 */
-	public SBOLInputDialog(final Component parent, SBOLDocument doc) {
+	public SBOLInputDialog(final Component parent, final Gui gui, String filePath, String fileName, SBOLDocument doc) {
 		super(parent, TITLE);
-
+		this.gui = gui;
+		this.filePath = filePath;
+		this.fileName = fileName;
 		this.sbolDesigns = doc;
 	}
 	
@@ -147,9 +167,10 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		
 		builder.add("Filter parts", filterSelection);
 		
-		// I want checkboxes to be aligned so a JPanel was created with a grid of 2x2 to limit 2 checkbox per row 
+		// I want checkboxes to be aligned so a JPanel was created with a grid of 2x2 to limit 2 checkboxes per row 
 		JPanel filteredDesignPanel = new JPanel();
-		GridLayout designPanel = new GridLayout(2, 2);
+		int checkBoxRows = 2, checkBoxCols = 2;
+		GridLayout designPanel = new GridLayout(checkBoxRows, checkBoxCols);
 		filteredDesignPanel.setLayout(designPanel);
 		
 		showCompDefs = new JRadioButton("Show ComponentDefinitions");
@@ -232,13 +253,24 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+					TopLevel deletedObject = null;
+					
 					int[] rows = table.getSelectedRows();
 					for (int row : rows) {
 						row = table.convertRowIndexToModel(row);
 						TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row);
 						sbolDesigns.removeTopLevel(comp);
+						
+						deletedObject = comp;
 					}
 					File file = SBOLUtils.setupFile();
+					
+					JOptionPane.showMessageDialog(Gui.frame, "Warning! You are about to remove the following SBOL component from the SBOL library file: \n"
+							+ "SBOL library file at: " + file.getAbsolutePath() + "\n"
+							+ "SBOL id: " + deletedObject.getIdentity() + "\n"
+							+ "SBOL displayId: " + deletedObject.getDisplayId() + "\n"
+							+ "SBOL name: " + deletedObject.getName());
+					
 					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
@@ -268,55 +300,118 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		//Get information for main design layout and load them up
 		List<TopLevel> topLevelObjs = new ArrayList<TopLevel>();
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootComponentDefinitions());
 		}
-		if(showRootDefs.isSelected())
+		if(showRootDefs.isSelected() && showModDefs.isSelected())
 		{
 			topLevelObjs.addAll(sbolDesigns.getRootModuleDefinitions());
 		}
 
-		// Show an instance of list of designs user can choose from
+		//Show an a list of designs user can choose from
 		TopLevelTableModel tableModel = new TopLevelTableModel(topLevelObjs);
+		
 		JPanel panel = createTablePanel(tableModel, "Select Design(s) (" + tableModel.getRowCount() + ")");
+		
 		table = (JTable) panel.getClientProperty("table");
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		tableLabel = (JLabel) panel.getClientProperty("label");
-
+		
 		updateTable();
 
 		return panel;
+	}
+	
+	@Override
+	protected JPanel createTablePanel(AbstractListTableModel<?> tableModel, String title) 
+	{
+		/* Set up Design Table */
+		final JTable table = new JTable(tableModel);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent event) {
+				setSelectAllowed(table.getSelectedRow() >= 0);
+			}
+		});
+
+		setWidthAsPercentages(table, tableModel.getWidths());
+
+		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableModel);
+		table.setRowSorter(sorter);
+
+		JScrollPane tableScroller = new JScrollPane(table);
+		tableScroller.setPreferredSize(new Dimension(450, 200));
+		tableScroller.setAlignmentX(LEFT_ALIGNMENT);
+
+		JLabel tableLabel = new JLabel(title);
+		tableLabel.setLabelFor(table);
+
+		JPanel tablePane = new JPanel();
+		tablePane.setLayout(new BoxLayout(tablePane, BoxLayout.PAGE_AXIS));
+		tablePane.add(tableLabel);
+		tablePane.add(Box.createRigidArea(new Dimension(0, 5)));
+		tablePane.add(tableScroller);
+
+		tablePane.putClientProperty("table", table);
+		tablePane.putClientProperty("scroller", tableScroller);
+		tablePane.putClientProperty("label", tableLabel);
+
+		//If the user decide to double click on a design, open the design in SBOLDesigner.
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2 && table.getSelectedRow() >= 0 && !showModDefs.isSelected())
+				{
+					SBOLDocument chosenDesign = getSelection(); 
+					gui.openSBOLDesigner(filePath, fileName, chosenDesign.getRootComponentDefinitions(), chosenDesign.getDefaultURIprefix());
+					setVisible(false);
+				}
+			}
+		});
+		
+		return tablePane;
 	}
 	
 	/**
 	 * Get the SBOL part design that the user has selected from the Design/Parts table and return it part selected
 	 * in a new SBOLDocument.
 	 */
-	public SBOLDocument getSelection() {
-		try 
+	public SBOLDocument getSelection()
+	{
+		SBOLDocument outputDoc = new SBOLDocument();
+
+		for(int r : table.getSelectedRows())
 		{
-			SBOLDocument outputDoc = new SBOLDocument();
-			
-			for(int r : table.getSelectedRows())
+			int row = table.convertRowIndexToModel(r);
+			TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
+			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
+			try 
 			{
-				int row = table.convertRowIndexToModel(r);
-				TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
-				
 				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
+				/*
+				SBOLDocument copyDoc = sbolDesigns.createRecursiveCopy(comp);
+				for (TopLevel topLevel : copyDoc.getTopLevels()) {
+					if (outputDoc.getTopLevel(topLevel.getIdentity())==null) {
+						outputDoc.createCopy(topLevel);
+					} 
+				}
+				*/
+			} 
+			catch (SBOLValidationException e) 
+			{
+				JOptionPane.showMessageDialog(null, "This TopLevel SBOL object cannot be imported: " + e.getMessage());
+				e.printStackTrace();
+
 			}
-			
-			return outputDoc;
-		} 
-		catch (SBOLValidationException e) 
-		{
-			JOptionPane.showMessageDialog(null, "This TopLevel SBOL object cannot be imported: " + e.getMessage());
-			e.printStackTrace();
-			return null;
 		}
+
+		return outputDoc;
 	}
 	
-	private void updateRoleRefinement() {
+	
+	private void updateRoleRefinement() 
+	{
 		roleRefinement.removeAllItems();
 		for (String s : SBOLUtils.createRefinements((Part) roleSelection.getSelectedItem())) {
 			roleRefinement.addItem(s);
@@ -369,6 +464,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		else if (!showRootDefs.isSelected() && showCompDefs.isSelected())
 		{
 			CDsToDisplay = sbolDesigns.getComponentDefinitions();
+			System.out.println("Total sbolLib: " + sbolDesigns.getComponentDefinitions().size());
 		}
 		else
 		{
@@ -377,6 +473,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		
 		List<ComponentDefinition> components = SBOLUtils.getCDOfRole(CDsToDisplay, part);
 		components = SBOLUtils.getCDOfType(components, (Types) typeSelection.getSelectedItem());
+		System.out.println("Total retreived: " + components.size());
 		return components;
 	}
 	
@@ -405,7 +502,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return roleSelection != null;
 	}
 	
-	private void updateFilter(String filterText) {
+	private void updateFilter(String filterText) 
+	{
 		filterText = "(?i)" + filterText;
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		TableRowSorter<TopLevelTableModel> sorter = (TableRowSorter) table.getRowSorter();
@@ -443,7 +541,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		}
 	}
 	
-	private void initGUI() {
+	private void initGUI() 
+	{
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -514,15 +613,21 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		setLocationRelativeTo(getOwner());
 	}
 	
-	private class DialogActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
+	private class DialogActionListener implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent e) 
+		{
 			Object source = e.getSource();
-			if (source == registrySelection) {
+			if (source == registrySelection) 
+			{
 				final Registry registry = (Registry) registrySelection.getSelectedItem();
-				if (registry == null) {
+				if (registry == null) 
+				{
 					location = null;
 					location = null;
-				} else {
+				} 
+				else 
+				{
 					int selectedIndex = registrySelection.getSelectedIndex();
 					
 					Registries.get().setVersionRegistryIndex(selectedIndex);
@@ -530,28 +635,38 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					location = registry.getLocation();
 					uriPrefix = registry.getUriPrefix();
 				}
-				SwingUtilities.invokeLater(new Runnable() {
+				SwingUtilities.invokeLater(new Runnable() 
+				{
 					@Override
-					public void run() {
+					public void run() 
+					{
 						registryChanged();
 					}
 				});
-			} else if (source == optionsButton) {
+			} 
+			else if (source == optionsButton) 
+			{
 				PreferencesDialog.showPreferences(SBOLInputDialog.this, RegistryPreferencesTab.INSTANCE.getTitle());
 				registrySelection.removeAllItems();
-				for (Registry r : Registries.get()) {
+				for (Registry r : Registries.get()) 
+				{
 					registrySelection.addItem(r);
 				}
 				registrySelection.setSelectedIndex(Registries.get().getPartRegistryIndex());
-			} else if (source == cancelButton) {
+			} 
+			else if (source == cancelButton) 
+			{
 				canceled = true;
 				setVisible(false);
-			} else if (source == openSBOLDesigner) {
+			} else if (source == openSBOLDesigner) 
+			{
 				setVisible(false);
 				canceled = false;
 				sbolDesigner = true;
 				vprGenerator = false;
-			} else if (source == openVPRGenerator) {
+			} 
+			else if (source == openVPRGenerator) 
+			{
 				setVisible(false);
 				canceled = false;
 				sbolDesigner = false;
@@ -561,7 +676,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	}
 	
 	@Override
-	protected void setSelectAllowed(boolean allow) {
+	protected void setSelectAllowed(boolean allow) 
+	{
 		boolean setSBOLDesigner = (!showModDefs.isSelected() && showRootDefs.isSelected() && showCompDefs.isSelected()) ||
 				(!showModDefs.isSelected() && !showRootDefs.isSelected() && showCompDefs.isSelected()) ||
 				(showModDefs.isSelected() && showRootDefs.isSelected() && showCompDefs.isSelected());
@@ -570,7 +686,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	}
 	
 	@Override
-	protected void handleTableSelection() {
+	protected void handleTableSelection(boolean select) 
+	{
 		canceled = false;
 		setVisible(false);
 	}
@@ -592,7 +709,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	{
 		return sbolDesigner;
 	}
-	
+
 	/**
 	 * Check if cancel button was selected
 	 * @return True if the user clicked Cancel. False otherwise.

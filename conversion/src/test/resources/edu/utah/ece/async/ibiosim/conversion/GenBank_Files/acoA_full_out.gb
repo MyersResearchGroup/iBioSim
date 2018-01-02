@@ -1,0 +1,16 @@
+LOCUS       acoA_full                129 bp    DNA     linear   UNK 14-Oct-2017
+ACCESSION   acoA_full
+VERSION     acoA_full.1  
+FEATURES             Location/Qualifiers
+     misc_feature    1..62
+                     /OBI_0001617=23571273
+                     /OBI_0001617=27110921
+     promoter        88..127
+                     /OBI_0001617=23571273
+                     /OBI_0001617=27110921
+     promoter        1..129
+ORIGIN
+        1 CGAGACAAAT GAATCAGTTT GAGACAAAAC GAGACACACG TCTCAAACTG TCTCCAAAGT
+       61 GAAGATGAGA AGACTGATTT TACGGGCTCA AAAGACTGGC ACACTTCTTG CATTTATAAT
+      121 GGTGAACCC
+//

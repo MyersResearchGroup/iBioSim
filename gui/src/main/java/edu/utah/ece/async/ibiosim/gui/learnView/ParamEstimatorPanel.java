@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -56,28 +55,20 @@ import edu.utah.ece.async.ibiosim.gui.Gui;
 public class ParamEstimatorPanel extends JPanel implements ActionListener, Runnable, ListSelectionListener
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JComboBox			methods;
 
 	private final String[]		methodNames	= { "None", "SRES" };
 
-	private String				directory, filename;
-
-	private String				separator;
-
-	private Gui					biosim;
-
-	private ArrayList<String>	parameterList;
-
 	private SBMLDocument		sbmlDocument;
-
-	private Pattern				IDpat		= Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
 	private JList				list, list2;
 
 	JButton						add, remove, insertBound;
-
-	// Specify bounds
-	private JTextField			up, lw, paramId;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -103,11 +94,6 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 			return;
 		}
 
-		this.separator = GlobalConstants.separator;
-		this.biosim = biosim;
-		this.directory = directory;
-		this.filename = filename;
-
 		Model model = sbmlDocument.getModel();
 
 		DefaultListModel listmodel1 = new DefaultListModel();
@@ -119,7 +105,7 @@ public class ParamEstimatorPanel extends JPanel implements ActionListener, Runna
 			listmodel1.add(count++, param.getId());
 		}
 
-		String[] fileArray = filename.split(separator);
+		String[] fileArray = GlobalConstants.splitPath(filename);
 		String file = fileArray[fileArray.length - 1];
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(2, 2));
 		JLabel backgroundLabel = new JLabel("Model File:");

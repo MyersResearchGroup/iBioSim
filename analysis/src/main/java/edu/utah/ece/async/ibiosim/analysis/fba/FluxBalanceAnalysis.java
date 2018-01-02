@@ -64,6 +64,16 @@ public class FluxBalanceAnalysis {
 
   private boolean initialize = false;
 
+	/**
+	 * Constructor for flux balance analysis.
+	 * 
+	 * @param root - the root directory of the project
+	 * @param sbmlFileName - the name of the sbml document 
+	 * @param absError - absolute error for the flux balance analysis
+	 * 
+	 * @throws XMLStreamException - problem with the sbml document
+	 * @throws IOException - i/o problem
+	 */
   public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) throws XMLStreamException, IOException {
     this.root = root;
     this.absError = absError;
@@ -73,6 +83,12 @@ public class FluxBalanceAnalysis {
     fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
   }
 
+	/**
+	 * Constructor for flux balance analysis.
+	 * 
+	 * @param model - fbc model object
+	 * @param absError - absolute error for the flux balance analysis
+	 */
   public FluxBalanceAnalysis(Model model,double absError) {
     this.root = null;
     this.absError = absError;
@@ -82,6 +98,14 @@ public class FluxBalanceAnalysis {
     initialize();
   }
 
+	/**
+	 * Transforms objective function vector to string.
+	 * 
+	 * @param objective - coefficients of reaction fluxes for the objective function.
+	 * @param reactionIndex - map of reaction id to vector index
+	 * 
+	 * @return a string for the objective function
+	 */
   public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
     String result = "";
     for (String reaction : reactionIndex.keySet()) {
@@ -100,6 +124,11 @@ public class FluxBalanceAnalysis {
     return result;
   }
 
+	/**
+	 * Performs flux balance analysis on the given FBC model.
+	 * 
+	 * @return error code for the FBA procedure.
+	 */
   public int PerformFluxBalanceAnalysis(){
 
     int error = initialize();
@@ -175,10 +204,20 @@ public class FluxBalanceAnalysis {
     }
   }
 
+	/**
+	 * Getter for flux distribution.
+	 * 
+	 * @return Mapping of reaction ids to fluxes.
+	 */
   public HashMap<String, Double> getFluxes() {
     return fluxes;
   }
 
+	/**
+	 * Setter for flux bounds.
+	 * 
+	 * @param parameter values associated with bounds.
+	 */
   public void setBoundParameters(HashMap<String,Double> bounds) {
 
     for(int i = 0 ; i < ubIndex.length; i++)

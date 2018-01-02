@@ -16,25 +16,15 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
 
-import org.sbml.jsbml.Model;
 
 /**
  * 
@@ -83,110 +73,6 @@ public class HierarchicalUtilities
 		{
 			double runPerc = 1.0 * currentRun / totalRuns;
 			return (int) (runPerc * 100);
-		}
-	}
-
-	/**
-	 * inlines a formula with function definitions
-	 * 
-	 * @param formula
-	 * @return
-	 */
-	public static ASTNode inlineFormula(HierarchicalModel state, ASTNode formula, Model model)
-	{
-		// TODO: Avoid calling this method
-		if (formula.isFunction() == false || formula.isOperator()/*
-																 * ||
-																 * formula.isLeaf
-																 * () == false
-																 */)
-		{
-
-			for (int i = 0; i < formula.getChildCount(); ++i)
-			{
-				formula.replaceChild(i, inlineFormula(state, formula.getChild(i), model));// .clone()));
-			}
-		}
-
-		// TODO: need to check isOperator here because new ASTNode says they are
-		// FUNCTIONS but we can't getName of operators.
-		if (formula.isFunction() && !formula.isOperator() && model.getFunctionDefinition(formula.getName()) != null)
-		{
-
-			if (ibiosimFunctionDefinitions != null && ibiosimFunctionDefinitions.contains(formula.getName()))
-			{
-				return formula;
-			}
-
-			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
-
-			ASTNode oldFormula = formula.clone();
-
-			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
-			HierarchicalUtilities.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
-
-			if (inlinedChildren.size() == 0)
-			{
-				inlinedChildren.add(inlinedFormula);
-			}
-
-			Map<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
-
-			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i)
-			{
-				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
-			}
-
-			for (int i = 0; i < inlinedChildren.size(); ++i)
-			{
-
-				ASTNode child = inlinedChildren.get(i);
-				if ((child.getChildCount() == 0) && child.isName())
-				{
-
-					int index = inlinedChildToOldIndexMap.get(child.getName());
-					HierarchicalUtilities.replaceArgument(inlinedFormula, child.toFormula(), oldFormula.getChild(index));
-
-					if (inlinedFormula.getChildCount() == 0)
-					{
-						inlinedFormula = oldFormula.getChild(index);
-					}
-				}
-			}
-
-			return inlinedFormula;
-		}
-		return formula;
-	}
-
-	public static void replaceArgument(ASTNode formula, String bvar, ASTNode arg)
-	{
-		for (int i = 0; i < formula.getChildCount(); i++)
-		{
-			ASTNode child = formula.getChild(i);
-			if (child.isString() && child.getName().equals(bvar))
-			{
-				formula.replaceChild(i, arg.clone());
-			}
-			else if (child.getChildCount() > 0)
-			{
-				replaceArgument(child, bvar, arg);
-			}
-		}
-	}
-
-	public static void replaceArgument(ASTNode formula, String bvar, int arg)
-	{
-		if (formula.isString() && formula.getName().equals(bvar))
-		{
-			formula.setValue(arg);
-		}
-		for (int i = 0; i < formula.getChildCount(); i++)
-		{
-			ASTNode child = formula.getChild(i);
-
-			replaceArgument(child, bvar, arg);
-
 		}
 	}
 	

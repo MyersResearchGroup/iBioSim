@@ -15,8 +15,6 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import java.util.Comparator;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
-
 /**
  * 
  *
@@ -25,10 +23,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventS
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalEventComparator implements Comparator<EventState>
+public class HierarchicalEventComparator implements Comparator<TriggeredEventNode>
 {
 	@Override
-	public int compare(EventState event1, EventState event2)
+	public int compare(TriggeredEventNode event1, TriggeredEventNode event2)
 	{
 		if (event1.getFireTime() > event2.getFireTime())
 		{
@@ -51,7 +49,7 @@ public class HierarchicalEventComparator implements Comparator<EventState>
 			}
 			else
 			{
-				return Math.random() > 0.5 ? 1 : -1;
+				return Math.random() >= 0.5 ? 1 : -1;
 			}
 
 		}

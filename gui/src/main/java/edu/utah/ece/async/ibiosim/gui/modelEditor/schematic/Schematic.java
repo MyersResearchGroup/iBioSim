@@ -36,6 +36,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -100,6 +102,7 @@ import com.mxgraph.util.mxRectangle;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GridTable;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -226,7 +229,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel,biosim.lema,editable,modelEditor);	
+			graph = new BioGraph(bioModel,lema,editable,modelEditor);	
 			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
 			modelEditor.makeUndoPoint();
@@ -287,9 +290,9 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolbar = new JToolBar();
 
 		//if the grid is enabled, change the toolbar
-		if (grid.isEnabled()) {
-
-			grid.syncGridGraph(graph);
+		if (bioModel.isGridEnabled()) {
+		  grid.createGrid("none");
+		  grid.syncGridGraph(graph);
 
 			//remove the previous toolbar (and add back the graph)
 			this.removeAll();
@@ -479,7 +482,7 @@ public class Schematic extends JPanel implements ActionListener {
 		boolean dropped;
 		
 		//if there's a grid, do a different panel than normal
-		if (grid.isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 
 			//the true is to indicate the dropping is happening on a grid
 			dropped = DropComponentPanel.dropComponent(modelEditor, bioModel, x, y, true);
@@ -914,12 +917,11 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void refresh() {
-		if (grid.isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			grid = modelEditor.getGrid();
 			
 			//the new grid pointer may not have an accurate enabled state
 			//so make sure it's set to true
-			grid.setEnabled(true);
 			grid.refreshComponents();
 		}
 		
@@ -976,7 +978,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					int offset = graphComponent.getVerticalScrollBar().getValue();				
 					Point scrollOffset = new Point(grid.getScrollOffset().x, offset);
@@ -993,7 +995,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					int offset = graphComponent.getHorizontalScrollBar().getValue();		
 					Point scrollOffset = new Point(offset, grid.getScrollOffset().y);
@@ -1012,7 +1014,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				Point location = event.getPoint();
 				
-				if (grid.isEnabled() && SwingUtilities.isLeftMouseButton(event)) {
+				if (bioModel.isGridEnabled() && SwingUtilities.isLeftMouseButton(event)) {
 						
 					grid.setMouseClickLocation(location);
 					drawGrid();
@@ -1026,7 +1028,7 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void mouseMoved(MouseEvent event) {
 				
-				if (grid.isEnabled()) {
+				if (bioModel.isGridEnabled()) {
 					
 					Point location = event.getPoint();
 					
@@ -1058,14 +1060,14 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						graphComponent.zoomOut();
 						
-						if (grid.isEnabled())
+						if (bioModel.isGridEnabled())
 							grid.syncGridGraph(graph);
 					}
 					else {
 						
 						graphComponent.zoomIn();
 						
-						if (grid.isEnabled()) 
+						if (bioModel.isGridEnabled()) 
 							grid.syncGridGraph(graph);
 					}
 					
@@ -1202,7 +1204,7 @@ public class Schematic extends JPanel implements ActionListener {
 //					}
 				}
 				
-				if (grid.isEnabled())
+				if (bioModel.isGridEnabled())
 					drawGrid();
 			}
 		});
@@ -1249,7 +1251,7 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						//if there's a grid, only move cell to an open grid location
 						//only one cell at a time and you can't be in analysis view
-						if (grid.isEnabled() && cells.length == 1 && editable) {
+						if (bioModel.isGridEnabled() && cells.length == 1 && editable) {
 							
 							//see if the component/cell can be moved
 							Boolean moved = grid.moveNode(cell.getId(), cell.getGeometry().getCenterX(), 
@@ -1270,7 +1272,7 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						//if there's no grid, move the cell wherever
 						else {
-							if (!grid.isEnabled())
+							if (!bioModel.isGridEnabled())
 								graph.updateInternalPosition(cell,true);
 						}
 					}
@@ -1617,7 +1619,7 @@ public class Schematic extends JPanel implements ActionListener {
 				else if(type == GlobalConstants.COMPONENT){
 							
 					//if there's a grid, remove the component from the grid as well
-					if (grid.isEnabled()) {
+					if (bioModel.isGridEnabled()) {
 						
 						grid.eraseNode(cell.getId(), bioModel);
 						modelEditor.getSpeciesPanel().refreshSpeciesPanel(bioModel);
@@ -2125,7 +2127,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the module.
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2152,7 +2154,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return a boolean representing success or failure.
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2180,7 +2182,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2215,7 +2217,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectVariableToComponent(String varID, String compID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
-		String fullPath = bioModel.getPath() + GlobalConstants.separator + bioModel.getModelFileName(compID);
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		try {
       compBioModel.load(fullPath);
@@ -2605,7 +2607,7 @@ public class Schematic extends JPanel implements ActionListener {
 						String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(bioModel.getSBMLCompModel().getListOfSubmodels().get(s)
 									.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 						try {
-              subModel.load(bioModel.getPath() + bioModel.getSeparator() + extModel);
+              subModel.load(bioModel.getPath() + File.separator + extModel);
               Model submodel = subModel.getSBMLDocument().getModel();
               
               for (int j = 0; j < submodel.getSpeciesCount(); ++j)
@@ -2630,7 +2632,7 @@ public class Schematic extends JPanel implements ActionListener {
 				HashMap<String, JCheckBox> checkboxes = new HashMap<String, JCheckBox>();
 				HashMap<String, JTextField> thresholds = new HashMap<String, JTextField>();
 				
-				ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();
+				List<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();
 				
 				for (String compSpec : compSpecies) {
 					
@@ -2760,7 +2762,7 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else {
 							
-							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpecies()) {
 								
 								if (intSpecies.split(" ")[0].equals(checkbox.getKey())) {
 									modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
@@ -2776,7 +2778,7 @@ public class Schematic extends JPanel implements ActionListener {
 									
 									if (newID.equals(checkbox.getKey()) == false) {
 										
-										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpecies()) {
 											
 											if (intSpecies.split(" ")[0].equals(newID)) {
 												modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
@@ -2841,7 +2843,7 @@ public class Schematic extends JPanel implements ActionListener {
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
 		mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
-		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this, cell, biosim);
+		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this, bioModel, cell, biosim);
 		
 		menu.show(graphComponent, pt.x, pt.y);
 
@@ -2887,7 +2889,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			super.paintComponent(g);
 			
-			if (grid.isEnabled()) {
+			if (bioModel.isGridEnabled()) {
 				
 				Component[] comps = this.getComponents();
 				int height = 0;
@@ -2975,19 +2977,18 @@ public class Schematic extends JPanel implements ActionListener {
 	public void outputFrame(String filename, boolean scale) {
 
 		FileOutputStream out = null;		
-		String separator = GlobalConstants.separator;
 		
 		String path = "";
 		
-		if (filename.contains(separator)) {
-			path = filename.substring(0, filename.lastIndexOf(separator));
-			filename = filename.substring(filename.lastIndexOf(separator)+1, filename.length());
+		if (filename.contains(File.separator)) {
+			path = GlobalConstants.getPath(filename);
+			filename = GlobalConstants.getFilename(filename);
 		}
 		
 		if (filename.contains("."))
 			filename = filename.substring(0, filename.indexOf("."));		
 		
-		filename = path + separator + filename + ".jpg";
+		filename = path + File.separator + filename + ".jpg";
 		
 		try {
 			out = new FileOutputStream(filename);

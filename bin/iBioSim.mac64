@@ -3,13 +3,9 @@ cd -- "$(dirname "$0")"
 if [ -z "$BIOSIM" ]; then
     export BIOSIM=$PWD/..
 fi  
-source $BIOSIM/bin/detect-java.sh
-if [ -z "$JAVA_HOME" ]; then
-    echo "Must install Java JDK Version 1.7 or later"
-    exit
-fi
-export PATH=$BIOSIM/bin:$PATH
-export DYLD_LIBRARY_PATH=$BIOSIM/lib64:$DYLD_LIBRARY_PATH
-export DDLD_LIBRARY_PATH=$BIOSIM/lib64:$DDLD_LIBRARY_PATH
+export PATH=$BIOSIM/bin:/usr/local/lib:$PATH
 
-exec java -Xmx2048M -Xms2048M -Djava.library.path=$BIOSIM/lib64 -XX:+UseSerialGC -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/icons/iBioSim.jpg -jar iBioSim.jar 
+export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
+export DDLD_LIBRARY_PATH=/usr/local/lib:$DDLD_LIBRARY_PATH
+
+exec java -Xmx2048M -Xms2048M -Djava.library.path=/usr/local/lib -XX:+UseSerialGC -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/iBioSim.jpg -jar iBioSim.jar 

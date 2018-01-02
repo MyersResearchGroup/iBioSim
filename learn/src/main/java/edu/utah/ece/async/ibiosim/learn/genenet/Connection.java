@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
+ * A connection object is used to represent a potential influence from a set of influencers
+ * to a particular species.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -34,7 +35,7 @@ public class Connection
 	private List<String>		parents;
 	private Map<String, Type>	parentToType;
 
-	public enum Type
+	private enum Type
 	{
 		ACTIVATOR("activator"), REPRESSOR("repressor"), UNKNOWN("unknown");
 
@@ -47,6 +48,16 @@ public class Connection
 
 	}
 
+	/**
+	 * This object class is used to store the connections and their types among different species.
+	 * Several connections may exist between two species. A score is used to distinguish the likelihood
+	 * of each connection.
+	 * 
+	 * @param child - the influenced species.
+	 * @param score - the likelihood of this connection existence.
+	 * @param type - what kind of connection this is.
+	 * @param parent - the influencing species.
+	 */
 	public Connection(String child, double score, String type, String parent)
 	{
 		this.child = child;
@@ -56,7 +67,15 @@ public class Connection
 		this.parentToType = new HashMap<String, Type>();
 		this.parentToType.put(parent, getType(type));
 	}
-
+	
+  /**
+   * This object class is used to store the connections and their types among different species.
+   * This is used when a child species is influenced by many species.
+   * 
+   * @param child - the influenced species.
+   * @param score - the likelihood of this connection existence.
+	 * @param connections - the different connections that influence a certain species.
+	 */
 	public Connection(String child, double score, List<Connection> connections)
 	{
 		this.child = child;
@@ -76,6 +95,14 @@ public class Connection
 
 	}
 
+  /**
+   * This object class is used to store the connections and their types among different species.
+   * This is used when a child species is influenced by many species.
+   * 
+   * @param child - the influenced species.
+   * @param score - the likelihood of this connection existence.
+   * @param connections - the different connections that influence a certain species.
+   */
 	public Connection(String child, double score, Connection... connections)
 	{
 		this.child = child;
@@ -95,7 +122,8 @@ public class Connection
 
 	}
 
-	public Type getType(String type)
+	
+	private Type getType(String type)
 	{
 		type = type.toLowerCase();
 
@@ -113,21 +141,42 @@ public class Connection
 		}
 	}
 
+	/**
+	 * Gets the score of this connection.
+	 * 
+	 * @return the score value.
+	 */
 	public double getScore()
 	{
 		return score;
 	}
 
+	/**
+	 * Get the parent species (the one that is influencing) of this connection.
+	 * 
+	 * @return the parent species.
+	 */
 	public List<String> getParents()
 	{
 		return parents;
 	}
 
+	 /**
+   * Get the child species (the one that is influenced by) of this connection.
+   * 
+   * @return the child species.
+   */
 	public String getChild()
 	{
 		return child;
 	}
 
+	/**
+	 * Get the type of influence by the parent.
+	 * 
+	 * @param parent - the parent species.
+	 * @return the type of influence.
+	 */
 	public String getParentType(String parent)
 	{
 		if (parentToType.containsKey(parent))
@@ -140,6 +189,12 @@ public class Connection
 		}
 	}
 
+	/**
+	 * Check if this connection has all parents from a given list.
+	 * 
+	 * @param parents - the list of parents that needs to be checked whether they participate in this connection.
+	 * @return true if connection has all the parents from given list. False otherwise.
+	 */
 	public boolean equalParents(List<String> parents)
 	{
 		for (String parent : parents)
@@ -159,6 +214,11 @@ public class Connection
 		return "Connection [score=" + score + ", child=" + child + ", parents=" + getParents() + "]";
 	}
 
+	/**
+	 * Returns a string corresponding to the parent species of this connection.
+	 * 
+	 * @return the list of parents as a string.
+	 */
 	public String getParentString()
 	{
 		String list = "";

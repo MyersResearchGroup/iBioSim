@@ -13,16 +13,13 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
-import java.awt.Dimension;
 import java.io.IOException;
-import java.util.Observable;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorODERK;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorSSACR;
 import edu.utah.ece.async.ibiosim.analysis.simulation.flattened.SimulatorSSADirect;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
@@ -30,6 +27,8 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.Hiera
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalSSADirectSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
  * 
@@ -39,192 +38,176 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class DynamicSimulation extends Observable
+public class DynamicSimulation extends CoreObservable
 {
 
-	// simulator type
-	private final SimulationType	simulatorType;
-	private final Message message;
-	
-	// the simulator object
-	private ParentSimulator			simulator;
-	private boolean					cancelFlag;
-	private boolean					statisticsFlag;
-	
-	
-	public static enum SimulationType
-	{
-		CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK, HIERARCHICAL_MIXED;
-	}
+  // simulator type
+  private final SimulationType	simulatorType;
+  private final Message message;
 
-	/**
-	 * constructor; sets the simulator type
-	 */
-	public DynamicSimulation(SimulationType type)
-	{
-		simulatorType = type;
-		message = new Message();
-	}
-
-	public void simulate(String SBMLFileName, String rootDirectory, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, int runs, JLabel progressLabel, JFrame running, double stoichAmpValue,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType, boolean genStats, JTabbedPane simTab, String abstraction,  double initialTime, double outputStartTime)
-	{
-		String progressText = "";
-
-		if (progressLabel != null)
-		{
-			progressText = progressLabel.getText();
-			statisticsFlag = genStats;
-		}
-		try
-		{
-
-			if (progressLabel != null)
-			{
-				progressLabel.setText("Generating Model . . .");
-				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
-			}
-
-			switch (simulatorType)
-			{
-			case CR:
-				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-
-				break;
-			case DIRECT:
-				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
-
-				break;
-			case HIERARCHICAL_DIRECT:
-				simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
-
-				break;
-			case HIERARCHICAL_RK:
-				simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType, initialTime,
-						outputStartTime);
-				break;
-			case HIERARCHICAL_HYBRID:
-				break;
-			case HIERARCHICAL_MIXED:
-				simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime);
-				break;
-			default:
-		    message.setLog("The simulation selection was invalid.");
-		    notifyObservers(message);
-				return;
-
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		catch (XMLStreamException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		catch (BioSimException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		double val1 = System.currentTimeMillis();
-
-		Runtime runtime = Runtime.getRuntime();
-		double mb = 1024 * 1024;
-		// int count = 0, total = 0;
-		for (int run = 1; run <= runs; ++run)
-		{
-
-			if (cancelFlag == true)
-			{
-				break;
-			}
-
-			if (progressLabel != null && running != null)
-			{
-				progressLabel.setText(progressText.replace(" (" + (run - 1) + ")", "") + " (" + run + ")");
-				running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
-			}
-			if (simulator != null)
-			{
-				simulator.simulate();
-				// count += ((HierarchicalSSADirectSimulator)
-				// simulator).getTopLevelValue("counter");
-				// total += ((HierarchicalSSADirectSimulator)
-				// simulator).getTopLevelValue("n")
-				// * ((HierarchicalSSADirectSimulator)
-				// simulator).getTopLevelValue("n");
-				if ((runs - run) >= 1)
-				{
-					simulator.setupForNewRun(run + 1);
-				}
-			}
-		}
-
-		System.gc();
-		double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-		double val2 = System.currentTimeMillis();
-
-		simulator = null;
-		System.gc();
-		System.runFinalization();
+  // the simulator object
+  private AbstractSimulator			simulator;
+  private boolean					cancelFlag;
+  private boolean					statisticsFlag;
 
 
-    message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
-    notifyObservers(message);
+  public static enum SimulationType
+  {
+    CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK, HIERARCHICAL_MIXED;
+  }
 
-		if (cancelFlag == false && statisticsFlag == true)
-		{
-			if (progressLabel != null && running != null)
-			{
+  /**
+   * constructor; sets the simulator type
+   */
+  public DynamicSimulation(SimulationType type)
+  {
+    simulatorType = type;
+    message = new Message();
+  }
 
-				progressLabel.setText("Generating Statistics . . .");
-				running.setMinimumSize(new Dimension(200, 100));
-			}
+  public void simulate(AnalysisProperties properties)
+  {
+    SimulationProperties simProperties = properties.getSimulationProperties();
 
-			if (simulator != null)
-			{
-				simulator.printStatisticsTSD();
-			}
+    try
+    {
 
-		}
-//		if (simTab != null)
-//		{
-//			for (int i = 0; i < simTab.getComponentCount(); i++)
-//			{
-//				if (simTab.getComponentAt(i).getName().equals("TSD Graph"))
-//				{
-//					if (simTab.getComponentAt(i) instanceof Graph)
-//					{
-//						((Graph) simTab.getComponentAt(i)).refresh();
-//					}
-//				}
-//			}
-//		}
-	}
+      String SBMLFileName = properties.getFilename(), outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
+      double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
+          initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
+      long randomSeed = simProperties.getRndSeed();
+      String[] interestingSpecies = simProperties.getIntSpecies().toArray(new String[simProperties.getIntSpecies().size()]);
+      int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
+      if(numSteps == 0)
+      {
+        numSteps = (int)(timeLimit/printInterval);
+      }
+      switch (simulatorType)
+      {
+      case RK:
+        
+        simulator = new SimulatorODERK(SBMLFileName,  outputDirectory,  runs,  timeLimit,  maxTimeStep,  randomSeed,  printInterval,  stoichAmpValue, interestingSpecies,  numSteps,  relError,  absError, quantityType);
+        simulator.addObservable(this);
+        break;
+      case CR:
+        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator.addObservable(this);
+        break;
+      case DIRECT:
+        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
+        simulator.addObservable(this);
+        break;
+      case HIERARCHICAL_DIRECT:
+        simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
+        simulator.addObservable(this);
+        break;
+      case HIERARCHICAL_RK:
+        simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType, initialTime,
+          outputStartTime);
+        simulator.addObservable(this);
+        break;
+      case HIERARCHICAL_HYBRID:
+        break;
+      case HIERARCHICAL_MIXED:
+        simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime);
+        simulator.addObservable(this);
+        break;
+      default:
+        message.setLog("The simulation selection was invalid.");
+        notifyObservers(message);
+        return;
+      }
+      
+      //double val1 = System.currentTimeMillis();
 
-	/**
-	 * cancels the simulation on the next iteration called from outside the
-	 * class when the user closes the progress bar dialog
-	 */
-	public void cancel()
-	{
+      //Runtime runtime = Runtime.getRuntime();
+      //double mb = 1024 * 1024;
+      for (int run = 1; run <= runs; ++run)
+      {
 
-		if (simulator != null)
-		{
+        if (cancelFlag == true)
+        {
+          break;
+        }
 
-			simulator.cancel();
+        if (simulator != null)
+        {
+          simulator.simulate();
+          if ((runs - run) >= 1)
+          {
+            simulator.setupForNewRun(run + 1);
+          }
+        }
+        System.gc();
+        //double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+        ///double val2 = System.currentTimeMillis();
 
-			
-			cancelFlag = true;
+        System.runFinalization();
+
+
+        //message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
+        //notifyObservers(message);
+
+        if (cancelFlag == false && statisticsFlag == true)
+        {
+
+          if (simulator != null)
+          {
+            simulator.printStatisticsTSD();
+          }
+
+        }
+      }
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+      return;
+    }
+    catch (XMLStreamException e)
+    {
+      e.printStackTrace();
+      return;
+    }
+    catch (BioSimException e)
+    {
+      e.printStackTrace();
+      return;
+    }
+   
+
+
+  }
+
+  /**
+   * cancels the simulation on the next iteration called from outside the
+   * class when the user closes the progress bar dialog
+   */
+  public void cancel()
+  {
+
+    if (simulator != null)
+    {
+
+      simulator.cancel();
+
+
+      cancelFlag = true;
 
       message.setCancel();
       notifyObservers(message);
-		}
-	}
+    }
+  }
+  
+  @Override
+  public boolean send(RequestType type, Message message)
+  {
+    if(parent != null)
+    {
+      return parent.send(type, message);
+    }
+    return true;
+  }
 
 
 }

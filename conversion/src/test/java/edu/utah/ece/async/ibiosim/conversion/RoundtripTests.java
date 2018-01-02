@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.conversion;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
@@ -32,31 +30,29 @@ public class RoundtripTests extends ConversionAbstractTests{
 	
 	public void roundtripSBOLFile(final String fileName){
 		String inputFile = sbolDir + fileName + ".xml";
-		String outputFile = sbol2sbml_outputDir + fileName + ".xml";
+		String outputFile = sbmlDir + fileName + ".xml";
 		
 		convertSBOL(inputFile, outputFile);
 		
 		inputFile = outputFile;
-		outputFile = sbml2sbol_outputDir + fileName + ".xml";
+		outputFile = sbolDir + fileName + ".xml";
 		
-		convertSBML(inputFile, outputFile);
+		//Can't do another cycle of roundtrip if SBML model produces submodels where files are named after each submodel.
 	}
 	
 	public void roundtripSBMLFile(final String fileName){
 		String inputFile = sbmlDir + fileName + ".xml";
-		String outputFile = sbml2sbol_outputDir + fileName + ".rdf";
+		String outputFile = sbolDir + fileName + ".xml";
 		
 		convertSBML(inputFile, outputFile);
 		
 		inputFile = outputFile;
-		outputFile = sbol2sbml_outputDir + fileName + ".xml";
+		outputFile = sbmlDir + fileName + ".xml";
 		
 		convertSBOL(inputFile, outputFile);
 		
 		inputFile = outputFile;
-		outputFile = sbml2sbol_outputDir + fileName + ".xml";
-		
-		//convertSBML(inputFile, outputFile);
+		outputFile = sbolDir + fileName + ".xml";
 	}
 	
 	

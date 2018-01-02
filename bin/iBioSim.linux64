@@ -1,14 +1,11 @@
 #!/bin/bash
 #
-source detect-java.sh
-if [ -z "$JAVA_HOME" ]; then
-    echo "Must install Java JDK Version 1.7 or later"
-    exit
-fi
 if [ -z "$BIOSIM" ]; then
     export BIOSIM=$PWD/..
 fi  
-export PATH=$BIOSIM/bin:$PATH
-export LD_LIBRARY_PATH=$BIOSIM/lib64:$LD_LIBRARY_PATH
-export DDLD_LIBRARY_PATH=$BIOSIM/lib64:$DDLD_LIBRARY_PATH
-exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -jar iBioSim.jar 
+export PATH=$BIOSIM/bin:/usr/local/lib:$PATH
+
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export DDLD_LIBRARY_PATH=/usr/local/lib:$DDLD_LIBRARY_PATH
+
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -Djava.library.path=/usr/local/lib -jar iBioSim.jar 

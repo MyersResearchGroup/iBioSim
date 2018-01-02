@@ -21,7 +21,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
@@ -55,6 +54,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintRepressionBin
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintSpeciesVisitor;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * This class represents a genetic network
@@ -64,7 +64,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class GeneticNetwork extends Observable {
+public class GeneticNetwork extends CoreObservable 
+{
 	
 	//private String separator;
 	
@@ -180,7 +181,7 @@ public class GeneticNetwork extends Observable {
 		properties = gcm;
 	}
 	
-	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions, String property) {
+	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions) {
 		properties = gcm;
 		for (String abstractionOption : gcmAbstractions) {
 			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
@@ -188,7 +189,6 @@ public class GeneticNetwork extends Observable {
 			else if (abstractionOption.equals("operator-site-reduction-abstraction"))
 				operatorAbstraction = true;
 		}
-		this.property = property;
 	}
 	
 	public void setSBMLFile(String file) {
@@ -212,8 +212,10 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument outputSBML(String filename) {
+	public SBMLDocument outputSBML(String filename) throws XMLStreamException, IOException {
 		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
@@ -223,52 +225,47 @@ public class GeneticNetwork extends Observable {
 		return outputSBML(filename, document);
 	}
 
-	public SBMLDocument outputSBML(String filename, SBMLDocument document) {
-		try {
-			Model m = document.getModel();
-			SBMLWriter writer = new SBMLWriter();
-			
-			printSpecies(document);
-			if (!operatorAbstraction) {
-				if (promoters.size()>0) {
-					printPromoters(document);
-					printRNAP(document);
-				}
-			}
-			printDecay(document);
-			printPromoterProduction(document);
-			if (!operatorAbstraction)
-				printPromoterBinding(document);
-			printComplexBinding(document);
-			
-			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
+	public SBMLDocument outputSBML(String filename, SBMLDocument document) throws XMLStreamException, IOException {
+		Model m = document.getModel();
+		SBMLWriter writer = new SBMLWriter();
 
-			//m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
-			m.setId(new File(filename).getName().replace(".xml", ""));			
-			m.setVolumeUnits("litre");
-			m.setSubstanceUnits("mole");
-//			if (property != null && !property.equals("")) {
-//				ArrayList<String> species = new ArrayList<String>();
-//				ArrayList<Object[]> levels = new ArrayList<Object[]>();
-//				for (String spec : properties.getSpecies()) {
-//					species.add(spec);
-//					levels.add(new Object[0]);
-//				}
-//				MutableString prop = new MutableString(property);
-//				LPN lpn = properties.convertToLHPN(species, levels, prop);
-//				property = prop.getString();
-//				Translator.generateSBMLConstraints(document, property, lpn);
-//			}
-			reformatArrayContent(properties, document, filename);
-			p.print(writer.writeSBMLToString(document));
-			p.close();
-			// TODO: temporarily removed
-			//SBMLutilities.check(filename, document, false, false);
-			return document;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
+		printSpecies(document);
+		if (!operatorAbstraction) {
+			if (promoters.size()>0) {
+				printPromoters(document);
+				printRNAP(document);
+			}
 		}
+		printDecay(document);
+		printPromoterProduction(document);
+		if (!operatorAbstraction)
+			printPromoterBinding(document);
+		printComplexBinding(document);
+
+		PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
+
+		//m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
+		m.setId(new File(filename).getName().replace(".xml", ""));			
+		m.setVolumeUnits("litre");
+		m.setSubstanceUnits("mole");
+		//			if (property != null && !property.equals("")) {
+		//				ArrayList<String> species = new ArrayList<String>();
+		//				ArrayList<Object[]> levels = new ArrayList<Object[]>();
+		//				for (String spec : properties.getSpecies()) {
+		//					species.add(spec);
+		//					levels.add(new Object[0]);
+		//				}
+		//				MutableString prop = new MutableString(property);
+		//				LPN lpn = properties.convertToLHPN(species, levels, prop);
+		//				property = prop.getString();
+		//				Translator.generateSBMLConstraints(document, property, lpn);
+		//			}
+		reformatArrayContent(properties, document, filename);
+		p.print(writer.writeSBMLToString(document));
+		p.close();
+		// TODO: temporarily removed
+		//SBMLutilities.check(filename, document, false, false);
+		return document;
 	}
 
 	/**
@@ -276,26 +273,22 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument mergeSBML(String filename) {
-		try {
-			if (document == null) {
-				if (sbmlDocument.equals("")) {
-					return outputSBML(filename);
-				}
-
-				SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
-				// checkConsistancy(document);
-				currentDocument = document;
-				return outputSBML(filename, document);
+	public SBMLDocument mergeSBML(String filename) throws XMLStreamException, IOException {
+		if (document == null) {
+			if (sbmlDocument.equals("")) {
+				return outputSBML(filename);
 			}
+			
+			SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
+			// checkConsistancy(document);
 			currentDocument = document;
 			return outputSBML(filename, document);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
-		}
+		currentDocument = document;
+		return outputSBML(filename, document);
 	}
 	
 	/**
@@ -303,8 +296,10 @@ public class GeneticNetwork extends Observable {
 	 * 
 	 * @param filename
 	 * @return the sbml document
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	public SBMLDocument mergeSBML(String filename, SBMLDocument document) {
+	public SBMLDocument mergeSBML(String filename, SBMLDocument document) throws XMLStreamException, IOException {
 		//try {
 		currentDocument = document;
 		return outputSBML(filename, document);
@@ -335,17 +330,17 @@ public class GeneticNetwork extends Observable {
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
 			r.addProduct(Utility.SpeciesReference(p.getId() + "_RNAP", 1));
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
 			if (Krnap[0] >= 0) {
-				kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
-						GeneticNetwork.getMoleTimeParameter(2)));
+				Utility.Parameter(kl, GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
+						GeneticNetwork.getMoleTimeParameter(2));
 				if (Krnap.length == 2) {
-					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
-							GeneticNetwork.getMoleTimeParameter(1)));
+					Utility.Parameter(kl,GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
+							GeneticNetwork.getMoleTimeParameter(1));
 				} else {
-					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
+					Utility.Parameter(kl,GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1));
 				}
 			}
 			kl.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
@@ -604,7 +599,7 @@ public class GeneticNetwork extends Observable {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 			}
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			if (operatorAbstraction) {
 				r.setId("R_abstracted_production_" + p.getId());
@@ -618,11 +613,11 @@ public class GeneticNetwork extends Observable {
 				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 				if (p.getActivators().size() > 0) {
 					r.setId("R_basal_production_" + p.getId());
-					kl.addLocalParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
+					Utility.Parameter(kl,kBasalString, p.getKbasal(), getMoleTimeParameter(1));
 					kl.setMath(SBMLutilities.myParseFormula(kBasalString + "*" + p.getId() + "_RNAP"));
 				} else {
 					r.setId("R_constitutive_production_" + p.getId());
-					kl.addLocalParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
+					Utility.Parameter(kl,kOcString, p.getKoc(), getMoleTimeParameter(1));
 					kl.setMath(SBMLutilities.myParseFormula(kOcString + "*" + p.getId() + "_RNAP"));
 				}
 				Utility.addReaction(document, r);
@@ -1016,8 +1011,6 @@ public class GeneticNetwork extends Observable {
 	private String kBasalString = GlobalConstants.KBASAL_STRING;
 	
 	private String kOcString = GlobalConstants.OCR_STRING;
-	
-	private String property;
 
 	private final Message message = new Message();
 	

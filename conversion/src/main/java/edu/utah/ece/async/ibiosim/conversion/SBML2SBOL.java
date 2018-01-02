@@ -32,6 +32,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -41,13 +42,11 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core2.AccessType;
-import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
-import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
@@ -63,6 +62,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 
 /**
  * Perform conversion from SBML to SBOL. 
@@ -74,7 +74,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  */
 public class SBML2SBOL {
 
-	private static String VERSION = "";
+	private static String VERSION = "1";
 
 	
 	/**
@@ -85,10 +85,10 @@ public class SBML2SBOL {
 	 * @param sbolFilePaths - The set of SBOL files to use for the conversion to reference from.
 	 * @param sbolURIPrefix - The SBOL URI prefix that the global SBOLDocument will contain
 	 * @return True if all referenced SBOL files were loaded successfully. False otherwise.
-	 * @throws FileNotFoundException
-	 * @throws SBOLValidationException
-	 * @throws IOException
-	 * @throws SBOLConversionException
+	 * @throws FileNotFoundException - Unable to find referenced SBOL files. 
+	 * @throws SBOLValidationException - SBOL Exception occurred when loading referenced SBOL files
+	 * @throws IOException - Input Exception occurred. 
+	 * @throws SBOLConversionException - SBOL conversion exception occurred when reading in the referenced SBOL files.
 	 */
 	private static boolean loadSBOLFiles(SBOLDocument sbol_Library, HashSet<String> sbolFilePaths, String sbolURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
@@ -103,26 +103,15 @@ public class SBML2SBOL {
 				{
 					if(sbol_Library.getComponentDefinition(c.getIdentity()) == null) 
 					{
-						try {
-							sbol_Library.createCopy(c);
-						}
-						catch (SBOLValidationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						sbol_Library.createCopy(c);
 					}
 				}
 				for(Sequence c : sbolDoc.getSequences())
 				{
 					if(sbol_Library.getSequence(c.getIdentity()) == null) 
 					{
-						try {
-							sbol_Library.createCopy(c);
-						}
-						catch (SBOLValidationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						sbol_Library.createCopy(c);
+						
 					}
 				}
 			} 
@@ -143,10 +132,10 @@ public class SBML2SBOL {
 	 * @param fileName - The name of the input SBML file
 	 * @param sbolFiles - The set of SBOL files to use for the conversion to reference from. If no ref_sbolInputfilePath is given, then null should be set to indicate no referencing SBOL files are given for conversion.
 	 * @param sbolURIPrefix - The URI prefix to be set on the SBOLDocument.
-	 * @throws SBOLValidationException -
-	 * @throws XMLStreamException -
-	 * @throws IOException -
-	 * @throws SBOLConversionException -
+	 * @throws SBOLValidationException - SBOL Exception occurred when loading referenced SBOL files
+	 * @throws XMLStreamException - Invalid XML file.
+	 * @throws IOException - Input Exception occurred. 
+	 * @throws SBOLConversionException - SBOL conversion exception occurred when reading in the referenced SBOL files.
 	 */
 	public static void convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
 
@@ -176,9 +165,9 @@ public class SBML2SBOL {
 	 * @param model - The SBML model to be converted to SBOL ModuleDefinition
 	 * @param sbolDoc - The SBOL document to store all SBOL objects converted from the SBML Document
 	 * @param sbol_Library - The global SBOL document that contains all SBOL objects referenced in conversion. 
-	 * @throws SBOLValidationException
-	 * @throws XMLStreamException
-	 * @throws IOException
+	 * @throws SBOLValidationException - SBOL Exception occurred when loading referenced SBOL files
+	 * @throws XMLStreamException - Invalid XML file.
+	 * @throws IOException - Input Exception occurred. 
 	 */
 	private static void parseSBMLModel(String source, String externalSBMLPath, SBMLDocument sbmlDoc, Model model, SBOLDocument sbolDoc, SBOLDocument sbol_Library) throws SBOLValidationException, XMLStreamException, IOException 
 	{
@@ -194,7 +183,7 @@ public class SBML2SBOL {
 		
 		sbolModel = sbolDoc.createModel(model.getId() + "_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
 
-		String identityStr  = model.getId();
+		String identityStr  = model.getId() + "_md";
 		ModuleDefinition moduleDef = sbolDoc.getModuleDefinition(identityStr, VERSION);
 		if (moduleDef!=null) {
 			sbolDoc.removeModuleDefinition(moduleDef);
@@ -244,7 +233,7 @@ public class SBML2SBOL {
 	 * 
 	 * @param moduleDef - The SBOL ModuleDefinition the converted SBOL Interaction will be stored in.
 	 * @param reaction - The SBML reaction to be converted into SBOL Interaction.
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static void parseBiochemicalReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException{
 		
@@ -285,7 +274,7 @@ public class SBML2SBOL {
 	 * 
 	 * @param sbolDoc - The SBOL Document that will store the created ComponentDefintion.
 	 * @param cd - The ComponentDefinition's Component to be created.
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static void recurseComponentDefinition(SBOLDocument sbolDoc, ComponentDefinition cd) throws SBOLValidationException {
 		for (org.sbolstandard.core2.Component comp : cd.getComponents()) {
@@ -313,7 +302,7 @@ public class SBML2SBOL {
 	 * @param model - The SBML model that contains the SBML species.
 	 * @param species - The SBML Species to be converted to SBOL ComponentDefinition.
 	 * @return The ComponentDefintion that was created.
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static ComponentDefinition setComponentDefinition(SBOLDocument sbol_Library, SBOLDocument sbolDoc, Model model, Species species) throws SBOLValidationException
 	{
@@ -440,7 +429,7 @@ public class SBML2SBOL {
 	 * @param compDef - The ComponentDefinition that the FunctionalComponent will reference from.
 	 * @param species - The SBML Species that will be converted to SBOL FunctionalComponent.
 	 * @return The FunctionalComponent that was created. 
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static FunctionalComponent setFunctionalComponent(SBMLDocument sbmlDoc, Model model, 
 			ModuleDefinition moduleDef, ComponentDefinition compDef, Species species) throws SBOLValidationException
@@ -480,7 +469,7 @@ public class SBML2SBOL {
 	 * 
 	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
 	 * @param reaction - The SBML reaction to be converted to its corresponding SBOL Interaction.
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static void parseProductionReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
@@ -555,7 +544,7 @@ public class SBML2SBOL {
 	 * 
 	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
 	 * @param reaction - The SBML reaction to be converted to SBOL Interaction
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static void parseComplexReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
@@ -579,7 +568,7 @@ public class SBML2SBOL {
 	 * 
 	 * @param moduleDef - The SBOL ModuleDefinition that the Interaction occurs in.
 	 * @param reaction - The SBML reaction to be converted to SBOL Interaction
-	 * @throws SBOLValidationException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
 	 */
 	private static void parseDegradationReaction(ModuleDefinition moduleDef, Reaction reaction) throws SBOLValidationException
 	{
@@ -607,9 +596,9 @@ public class SBML2SBOL {
 	 * @param sbolDoc - The SBOL Document that will store the ModuleDefinition.
 	 * @param moduleDef - The SBOL ModuleDefinition to reference the converted SBOL Module.
 	 * @param model - The SBML Model external model to convert to SBML Module.
-	 * @throws SBOLValidationException
-	 * @throws XMLStreamException
-	 * @throws IOException
+	 * @throws SBOLValidationException - SBOL validation exception while creating an SBOL object for SBML2SBOL conversion.
+	 * @throws XMLStreamException - Invalid XML occurred when loading SBML file
+	 * @throws IOException - Unable to read SBML file
 	 */
 	private static void extractSubModels(String source, String externalSBMLPath, SBMLDocument sbmlDoc, SBOLDocument sbol_Library, SBOLDocument sbolDoc, ModuleDefinition moduleDef, Model model) throws SBOLValidationException, XMLStreamException, IOException
 	{
@@ -626,7 +615,7 @@ public class SBML2SBOL {
 				Model subModel = null;
 				if (extModelRef!=null) {
 					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					SBMLDocument subDocument = SBMLutilities.readSBML(externalSBMLPath + GlobalConstants.separator + extModel);
+					SBMLDocument subDocument = SBMLReader.read(new File(externalSBMLPath + File.separator + extModel));
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
@@ -644,7 +633,7 @@ public class SBML2SBOL {
 					}	
 				}	
 				
-				Module m = moduleDef.createModule(subModelId, subModel.getId(), VERSION);
+				Module m = moduleDef.createModule(subModelId, subModel.getId()+"_md", VERSION);
 
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{
@@ -763,21 +752,21 @@ public class SBML2SBOL {
 				}
 			}
 
-			if(sbolURIPre == null || sbolURIPre.isEmpty()){
-				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
-				Preferences biosimrc = Preferences.userRoot();
-				sbolURIPre = biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
-			}
+//			if(sbolURIPre == null || sbolURIPre.isEmpty()){
+//				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
+//				Preferences biosimrc = Preferences.userRoot();
+//				sbolURIPre = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
+//			}
 
 			SBMLDocument sbmlDoc = null;
 			try {
 				if(inputFilePath != null){
 					if (includeSBMLPath == null) {
 						//SBML file is relative. No external path was given for the input SBML file. 
-						sbmlDoc = SBMLutilities.readSBML(inputFilePath);
+						sbmlDoc = SBMLReader.read(new File(inputFilePath));
 					} 
 					else {
-						sbmlDoc = SBMLutilities.readSBML(includeSBMLPath + GlobalConstants.separator + inputFilePath);
+						sbmlDoc = SBMLReader.read(new File(includeSBMLPath + File.separator + inputFilePath));
 					}
 					SBOLDocument sbolDoc = new SBOLDocument();
 					SBML2SBOL.convert_SBML2SBOL(sbolDoc,includeSBMLPath, sbmlDoc, inputFilePath, ref_sbolInputFilePath, sbolURIPre);

@@ -34,7 +34,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.AbstractRunnableNamedButton;
@@ -63,7 +62,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private PropertyList variables, places, transitions, controlFlow,
 			properties;
 
-	private String filename = "", directory = "", separator = "";
+	private String filename = "", directory = "";
 
 	private String[] varOptions = new String[] { "Boolean", "Continuous",
 			"Discrete" };
@@ -87,8 +86,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		super();
 		this.biosim = biosim;
 		addMouseListener(biosim);
-
-		separator = GlobalConstants.separator;
 		
 		lhpnFile = lhpn;
 		if (lhpnFile == null) {
@@ -96,10 +93,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 		this.directory = directory;
 		if (filename != null) {
-			File f = new File(directory + separator + filename);
+			File f = new File(directory + File.separator + filename);
 			if (!(f.length() == 0)) {
 				try {
-          lhpnFile.load(directory + separator + filename);
+          lhpnFile.load(directory + File.separator + filename);
         } catch (BioSimException e) {
           JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
           e.printStackTrace();
@@ -242,7 +239,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	}
 
 	public void save() {
-		lhpnFile.save(directory + separator + filename);
+		lhpnFile.save(directory + File.separator + filename);
 		dirty = false;
 		biosim.updateAsyncViews(filename);
 	}
@@ -251,8 +248,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		if (newName.endsWith(".xml")) {
 			Translator t1 = new Translator();
 			try {
-        t1.convertLPN2SBML(directory + separator + filename, "");
-        t1.setFilename(directory + separator + newName);
+        t1.convertLPN2SBML(directory + File.separator + filename, "");
+        t1.setFilename(directory + File.separator + newName);
         t1.outputSBML();
         biosim.addToTree(newName);
       } catch (BioSimException e) {
@@ -260,7 +257,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
       }
 		} else {
 			dirty = false;
-			lhpnFile.save(directory + separator + newName);
+			lhpnFile.save(directory + File.separator + newName);
 			reload(newName);
 			biosim.addToTree(newName);
 			biosim.updateAsyncViews(newName);
@@ -270,19 +267,19 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	public void viewLhpn() {
 		try {
 			File work = new File(directory);
-			if (new File(directory + separator + filename).exists()) {
+			if (new File(directory + File.separator + filename).exists()) {
 				String dotFile = filename.replace(".lpn", ".dot");
-				File dot = new File(directory + separator + dotFile);
+				File dot = new File(directory + File.separator + dotFile);
 				dot.delete();
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.graphviz", "");
 				command = command + " " + dotFile;
 				Runtime exec = Runtime.getRuntime();
-				lhpnFile.printDot(directory + separator + dotFile);
+				lhpnFile.printDot(directory + File.separator + dotFile);
 				if (dot.exists()) {
 					exec.exec(command, null, work);
 				} else {
-					File log = new File(directory + separator + "atacs.log");
+					File log = new File(directory + File.separator + "atacs.log");
 					BufferedReader input = new BufferedReader(new FileReader(
 							log));
 					String line = null;
@@ -317,9 +314,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void reload(String newName) {
 		filename = newName + ".lpn";
-		if (new File(directory + separator + newName).exists()) {
+		if (new File(directory + File.separator + newName).exists()) {
 			try {
-        lhpnFile.load(directory + separator + newName);
+        lhpnFile.load(directory + File.separator + newName);
       } catch (BioSimException e) {
         JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
         e.printStackTrace();

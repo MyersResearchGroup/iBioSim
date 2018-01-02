@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
@@ -41,6 +43,7 @@ import org.sbml.jsbml.ext.layout.Layout;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.Validate;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -56,6 +59,7 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -400,7 +404,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					if (ruleType.getSelectedItem().equals("Algebraic")) {
 						r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 						addStr = "0 = " + bioModel.removeBooleans(r.getMath());
-						error = !Utils.check("",bioModel.getSBMLDocument(),true);
+						try 
+						{
+              error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
+            } 
+						catch (SBMLException | IOException | XMLStreamException e) 
+						{
+              error = true;
+            }
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
 						oldVar = SBMLutilities.getVariable(r);
@@ -543,7 +554,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							r = sbmlDoc.getModel().createAlgebraicRule();
 							SBMLutilities.setMetaId(r, ruleId);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
-							error = !Utils.check("",bioModel.getSBMLDocument(),true);
+							try 
+							{
+                error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
+              } 
+							catch (SBMLException | IOException | XMLStreamException e) {
+                error = true;
+              }
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							r = sbmlDoc.getModel().createRateRule();

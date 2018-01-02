@@ -62,6 +62,8 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.Validate;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 
 /**
@@ -698,183 +700,31 @@ public class Utils {
   /**
    * Checks consistency of the sbml file.
    */
-  public static boolean check(String file, SBMLDocument doc, boolean overdeterminedOnly)
+  public static void check(String file, SBMLDocument doc, boolean overdeterminedOnly)
   {
-  	String message = "";
-  	long numErrors = 0;
-  	Preferences biosimrc = Preferences.userRoot();
-  	boolean warnings = biosimrc.get("biosim.general.warnings", "").equals("true");
-  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound())
-  	{
-  		message += "Validation Problems Found by libsbml\n";
-  		org.sbml.libsbml.SBMLDocument document = null;
-  		// TODO: temporary hack because otherwise it hangs
-  		if (doc == null)
-  		{
-  			document = new org.sbml.libsbml.SBMLReader().readSBML(file);
-  		}
-  		else
-  		{
-  			try
-  			{
-  				document = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(doc));
-  			}
-  			catch (SBMLException e)
-  			{
-  				JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-  				return false;
-  			}
-  			catch (XMLStreamException e)
-  			{
-  				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-  				return false;
-  			}
-  		}
-  		if (document == null)
-  		{
-  			return false;
-  		}
-  		if (overdeterminedOnly)
-  		{
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-  		}
-  		else
-  		{
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-  		}
-  		if (warnings && !overdeterminedOnly)
-  		{
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, true);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, true);
-  		}
-  		else
-  		{
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, false);
-  			document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
-  		}
-  
-  		long numberOfErrors = document.checkConsistency();
-  		for (int i = 0; i < numberOfErrors; i++)
-  		{
-  			String error = document.getError(i).getMessage();
-  			if (error.startsWith("Due to the need to instantiate models"))
-  			{
-  				continue;
-  			}
-  			if (error.startsWith("The CompFlatteningConverter has encountered a required package"))
-  			{
-  				continue;
-  			}
-  			message += numErrors + ":" + error + "\n";
-  			numErrors++;
-  		}
-  		if (!overdeterminedOnly)
-  		{
-  			List<SBMLError> arraysErrors = ArraysValidator.validate(doc);
-  			for (int i = 0; i < arraysErrors.size(); i++)
-  			{
-  				String error = arraysErrors.get(i).getMessage();
-  				message += numErrors + ":" + error + "\n";
-  				numErrors++;
-  			}
-  		}
-  	}
-  	else
-  	{
-  		message += "Validation Problems Found by Webservice\n";
-  		SBMLDocument document = doc;
-  		if (document == null)
-  		{
-  			try {
-          document = SBMLutilities.readSBML(file);
-        } catch (XMLStreamException e) {
-          JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-          e.printStackTrace();
-        } catch (IOException e) {
-          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-          e.printStackTrace();
-        }
-  		}
-  		if (document == null)
-  		{
-  			return false;
-  		}
-  		if (overdeterminedOnly)
-  		{
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, false);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, false);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
-  		}
-  		else
-  		{
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
-  		}
-  		if (warnings && !overdeterminedOnly)
-  		{
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, true);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, true);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, true);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, true);
-  		}
-  		else
-  		{
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
-  			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
-  		}
-  		long numberOfErrors = document.checkConsistency(); 
-  		for (int i = 0; i < numberOfErrors; i++)
-  		{
-  			String error = document.getError(i).getMessage();
-  			if (error.startsWith("Due to the need to instantiate models"))
-  			{
-  				continue;
-  			}
-  			if (error.startsWith("The CompFlatteningConverter has encountered a required package"))
-  			{
-  				continue;
-  			}
-  			message += numErrors + ":" + error + "\n";
-  			numErrors++;
-  		}
-  		if (!overdeterminedOnly)
-  		{
-  			List<SBMLError> arraysErrors = ArraysValidator.validate(document);
-  			for (int i = 0; i < arraysErrors.size(); i++)
-  			{
-  				String error = arraysErrors.get(i).getMessage();
-  				message += numErrors + ":" + error + "\n";
-  				numErrors++;
-  			}
-  		}
-  	}
-  
-  	if (numErrors > 0)
-  	{
-  		JTextArea messageArea = new JTextArea(message);
-  		messageArea.setLineWrap(true);
-  		messageArea.setEditable(false);
-  		JScrollPane scroll = new JScrollPane();
-  		scroll.setMinimumSize(new java.awt.Dimension(600, 600));
-  		scroll.setPreferredSize(new java.awt.Dimension(600, 600));
-  		scroll.setViewportView(messageArea);
-  		JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-  		return false;
-  	}
-  	return true;
+    try 
+    {
+      if(Validate.validateDoc(file, doc, overdeterminedOnly))
+      {
+        String message = Validate.getMessage();
+        JTextArea messageArea = new JTextArea(message);
+        messageArea.setLineWrap(true);
+        messageArea.setEditable(false);
+        JScrollPane scroll = new JScrollPane();
+        scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+        scroll.setPreferredSize(new java.awt.Dimension(600, 600));
+        scroll.setViewportView(messageArea);
+        JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+      }
+    } catch (SBMLException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+    } catch (XMLStreamException e) {
+      JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+    
   }
 
   /**
@@ -1184,7 +1034,7 @@ public class Utils {
   public static void checkOverDetermined(SBMLDocument document)
   {
   	Preferences biosimrc = Preferences.userRoot();
-  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Gui.isLibsbmlFound())
+  	if (biosimrc.get("biosim.general.validate", "").equals("libsbml") && Executables.libsbmlFound)
   	{
   		try
   		{

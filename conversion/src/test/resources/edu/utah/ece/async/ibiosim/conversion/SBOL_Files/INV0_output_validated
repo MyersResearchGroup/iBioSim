@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
+  <sbol:ModuleDefinition rdf:about="http://www.async.ece.utah.edu/INV0_md/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md"/>
+    <sbol:displayId>INV0_md</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/Si/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si"/>
+        <sbol:displayId>Si</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>Si</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__Si/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/Pa/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa"/>
+        <sbol:displayId>Pa</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>Pa</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__Pa/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://www.async.ece.utah.edu/INV0_md/So/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/So"/>
+        <sbol:displayId>So</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <dcterms:title>So</dcterms:title>
+        <sbol:definition rdf:resource="http://www.async.ece.utah.edu/INV0__So/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa"/>
+        <sbol:displayId>Si_rep_Pa</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa/Si/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa/Si"/>
+            <sbol:displayId>Si</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa/Pa/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Si_rep_Pa/Pa"/>
+            <sbol:displayId>Pa</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So/1">
+        <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So"/>
+        <sbol:displayId>Pa_prod_So</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So/So/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So/So"/>
+            <sbol:displayId>So</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/INV0_md/So/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So/Pa/1">
+            <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa_prod_So/Pa"/>
+            <sbol:displayId>Pa</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://www.async.ece.utah.edu/INV0_md/Pa/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:model rdf:resource="http://www.async.ece.utah.edu/INV0_model/1"/>
+  </sbol:ModuleDefinition>
+  <sbol:Model rdf:about="http://www.async.ece.utah.edu/INV0_model/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0_model"/>
+    <sbol:displayId>INV0_model</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:source rdf:resource="file:src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/INV0.xml"/>
+    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
+    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
+  </sbol:Model>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV0__Pa/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0__Pa"/>
+    <sbol:displayId>INV0__Pa</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Pa</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV0__So/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0__So"/>
+    <sbol:displayId>INV0__So</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>So</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://www.async.ece.utah.edu/INV0__Si/1">
+    <sbol:persistentIdentity rdf:resource="http://www.async.ece.utah.edu/INV0__Si"/>
+    <sbol:displayId>INV0__Si</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Si</dcterms:title>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>

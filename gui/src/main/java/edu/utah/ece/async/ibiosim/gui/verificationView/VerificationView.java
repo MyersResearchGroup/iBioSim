@@ -69,6 +69,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
@@ -97,7 +98,7 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class VerificationView extends JPanel implements ActionListener, Runnable, Observer {
+public class VerificationView extends PanelObservable implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -127,7 +128,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
-	private String directory, separator, root, verFile, oldBdd,
+	private String directory, root, verFile, oldBdd,
 	sourceFileNoPath;
 
 	public String verifyFile;
@@ -150,7 +151,6 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 	 */
 	public VerificationView(String directory, String verName, String filename,
 			Log log, Gui biosim, boolean lema, boolean atacs) {
-		separator = GlobalConstants.separator;
 		this.atacs = atacs;
 		this.lema = lema;
 		this.biosim = biosim;
@@ -160,10 +160,10 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		String[] tempArray = filename.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
-		String[] tempDir = directory.split(separator);
+		String[] tempDir = GlobalConstants.splitPath(directory);
 		root = tempDir[0];
 		for (int i = 1; i < tempDir.length - 1; i++) {
-			root = root + separator + tempDir[i];
+			root = root + File.separator + tempDir[i];
 		}
 		this.setMaximumSize(new Dimension(300,300));
 		this.setMinimumSize(new Dimension(300,300));
@@ -493,7 +493,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		verifyFile = "";
 		try {
 			FileInputStream in = new FileInputStream(new File(directory
-					+ separator + verFile));
+					+ File.separator + verFile));
 			load.load(in);
 			in.close();
 			if (load.containsKey("verification.file")) {
@@ -527,7 +527,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					abstractLhpn.setSelected(true);
 				}
 			}
-			abstPane = new AbstractionPanel(root + separator + verName, this, log);
+			abstPane = new AbstractionPanel(root + File.separator + verName, this, log);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
 					if (load.getProperty("verification.timing.methods").equals("untimed")) {
@@ -882,7 +882,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				abstPane.iterField.setText(load
 						.getProperty("abstraction.iterations"));
 			}
-			tempArray = verifyFile.split(separator);
+			tempArray = GlobalConstants.splitPath(verifyFile);
 			sourceFileNoPath = tempArray[tempArray.length - 1];
 			backgroundField = new JTextField(sourceFileNoPath);
 		} catch (Exception e) {
@@ -927,7 +927,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
-		tempArray = verifyFile.split(separator);
+		tempArray = GlobalConstants.splitPath(verifyFile);
 		JLabel componentLabel = new JLabel("Component:");
 		componentField.setPreferredSize(new Dimension(200, 20));
 		String sourceFile = tempArray[tempArray.length - 1];
@@ -995,7 +995,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			save(verFile);
 			new Thread(this).start();
 		} else if (e.getSource() == save) {
-			log.addText("Saving:\n" + directory + separator + verFile + "\n");
+			log.addText("Saving:\n" + directory + File.separator + verFile + "\n");
 			save(verFile);
 		} else if (e.getSource() == viewCircuit) {
 			viewCircuit();
@@ -1032,7 +1032,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 							"You must select a valid VHDL file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
-				} else if (new File(directory + separator + filename).exists()
+				} else if (new File(directory + File.separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
 					JOptionPane
 					.showMessageDialog(
@@ -1048,7 +1048,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			if (componentList.getSelectedValue() != null) {
 				String selected = componentList.getSelectedValue().toString();
 				componentList.removeItem(selected);
-				new File(directory + separator + selected).delete();
+				new File(directory + File.separator + selected).delete();
 			}
 		} else if (e.getSource() == addSFile) {
 			String sFile = JOptionPane.showInputDialog(this, "Enter Assembly File Name:",
@@ -1094,7 +1094,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 									"You must select a valid LPN file.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 							return;
-						} else if (new File(directory + separator + filename).exists()
+						} else if (new File(directory + File.separator + filename).exists()
 								|| filename.equals(sourceFileNoPath) || contains) {
 							JOptionPane
 							.showMessageDialog(
@@ -1113,7 +1113,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			if (lpnList.getSelectedValue() != null) {
 				String selected = lpnList.getSelectedValue().toString();
 				lpnList.removeItem(selected);
-				new File(directory + separator + selected).delete();
+				new File(directory + File.separator + selected).delete();
 			}
 		}
 	}
@@ -1131,7 +1131,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 	@Override
 	public void run() {
 		copyFile();
-		String[] array = directory.split(separator);
+		String[] array = GlobalConstants.splitPath(directory);
 		String tempDir = "";
 		String lpnFileName = "";
 		if (!verifyFile.endsWith("lpn")) {
@@ -1143,7 +1143,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		if (untimedStateSearch.isSelected()) {
 			LPN lpn = new LPN();
 			try {
-        lpn.load(directory + separator + lpnFileName);
+        lpn.load(directory + File.separator + lpnFileName);
       } catch (BioSimException e1) {
         JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
         e1.printStackTrace();
@@ -1159,7 +1159,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					String curLPNname = (String) lpnList.getSelectedValues()[i];
 					LPN curLPN = new LPN();
 					try {
-            curLPN.load(directory + separator + curLPNname);
+            curLPN.load(directory + File.separator + curLPNname);
           } catch (BioSimException e) {
             JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
             e.printStackTrace();
@@ -1202,7 +1202,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				//				}			
 				//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
 				Project untimed_dfs = new Project(selectedLPNs);				
-				untimed_dfs.setObserver(this);
+				//untimed_dfs.setObserver(this);
+				
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
@@ -1288,7 +1289,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				//					if (dot.isSelected()) {
 				//						Options.setOutputSgFlag(true);
 				//					}
-				//					Options.setPrjSgPath(directory + separator);
+				//					Options.setPrjSgPath(directory + File.separator);
 				//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 				//					Options.setOutputLogFlag(true);
 				////					Options.setPrintLogToFile(false);
@@ -1296,7 +1297,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				//					if (dot.isSelected()) {
 				//						for (int i=0; i<stateGraphArray.length; i++) {
 				//							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
-				//							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+				//							stateGraphArray[i].outputLocalStateGraph(directory + File.separator + graphFileName);
 				//						}
 				//						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
 				//					}
@@ -1411,7 +1412,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
 					}
-					//Options.setPrjSgPath(directory + separator);
+					//Options.setPrjSgPath(directory + File.separator);
 					System.out.println("directory = "+ directory);
 					Options.setPrjSgPath(directory);
 					// Options for printing the final numbers from search_dfs.
@@ -1425,7 +1426,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					
 				//}				
 				//else { // No POR
-//					Options.setPrjSgPath(directory + separator);
+//					Options.setPrjSgPath(directory + File.separator);
 //					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 //					Options.setOutputLogFlag(true);
 //					//					Options.setPrintLogToFile(false);
@@ -1589,7 +1590,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 							for (Component comp : compMap.values()) {
 								LPN lpnComp = new LPN();
 								lpnComp = comp.buildLPN(lpnComp);
-								lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
+								lpnComp.save(root + File.separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
 							}
 						}
 						maxNumVarsInOneComp++;
@@ -1636,8 +1637,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 							LpnProcess curProcess = processMap.get(curProcId);	
 							LPN lpnProc = new LPN();
 							lpnProc = curProcess.buildLPN(lpnProc);
-							lpnProc.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
-							//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+							lpnProc.save(root + File.separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
+							//lpnProc.save(directory + File.separator + lpn.getLabel() + curProcId + ".lpn");
 						}
 						JOptionPane.showMessageDialog(
 								Gui.frame,
@@ -1654,7 +1655,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 						// --- TEMP ----
 						//checkDecomposition(lpn, lpnComp);
 						// -------------
-						lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
+						lpnComp.save(root + File.separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
 					}				
 				}
 			}
@@ -1702,11 +1703,11 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		} catch (Exception e) {
 		}
 		for (int i = 0; i < array.length - 1; i++) {
-			tempDir = tempDir + array[i] + separator;
+			tempDir = tempDir + array[i] + File.separator;
 		}
 		LPN lhpnFile = new LPN();
 		try {
-      lhpnFile.load(directory + separator + lpnFileName);
+      lhpnFile.load(directory + File.separator + lpnFileName);
     } catch (BioSimException e2) {
       JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
       e2.printStackTrace();
@@ -1716,7 +1717,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		//if(dbm2.isSelected())
 		//{
 			//try {
-				//verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFileName);
+				//verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+File.separator, lpnFileName);
 			//} catch (FileNotFoundException e) {
 				//e.printStackTrace();
 			//}
@@ -1740,7 +1741,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			//			else
 			//			{
 			//				LhpnFile lpn = new LhpnFile();
-			//				lpn.load(directory + separator + lpnFileName);
+			//				lpn.load(directory + File.separator + lpnFileName);
 			//
 			//				// The full state graph is created for only one LPN.
 			//
@@ -1771,10 +1772,10 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			//				}
 			//				else {
 			//					if (dot.isSelected()) {
-			//						stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+			//						stateGraphArray[0].outputLocalStateGraph(directory + File.separator + graphFileName);  
 			//					}
 			//					if(graph.isSelected()){
-			//						showGraph(directory + separator + graphFileName);
+			//						showGraph(directory + File.separator + graphFileName);
 			//					}
 			//				}
 			//			
@@ -1787,7 +1788,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			// This is the code before the revision for allowing multiple LPNs
 			//			// Uses the timed_state_exploration.zoneProject infrastructure.
 			//			LhpnFile lpn = new LhpnFile();
-			//			lpn.load(directory + separator + lpnFileName);
+			//			lpn.load(directory + File.separator + lpnFileName);
 			//
 			//			// The full state graph is created for only one LPN.
 			//			
@@ -1807,11 +1808,11 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 			//			
 			//			if (dot.isSelected()) {
-			//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+			//				stateGraphArray[0].outputLocalStateGraph(directory + File.separator + graphFileName);  
 			//			}
 			//			
 			//			if(graph.isSelected()){
-			//				showGraph(directory + separator + graphFileName);
+			//				showGraph(directory + File.separator + graphFileName);
 			//			}
 			//		
 			//			Options.setTimingAnalsysisType("off");
@@ -1822,12 +1823,12 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LPN lpn = new LPN();
 			try {
-        lpn.load(directory + separator + lpnFileName);
+        lpn.load(directory + File.separator + lpnFileName);
       } catch (BioSimException e2) {
         JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
         e2.printStackTrace();
       }			
-			Options.set_TimingLogFile(directory + separator
+			Options.set_TimingLogFile(directory + File.separator
 					+ lpnFileName + ".tlog");
 
 			// Load any other listed LPNs.
@@ -1837,7 +1838,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			//			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
 			//				 String curLPNname = (String) lpnList.getSelectedValues()[i];
 			//				 LhpnFile curLPN = new LhpnFile();
-			//				 curLPN.load(directory + separator + curLPNname);
+			//				 curLPN.load(directory + File.separator + curLPNname);
 			//				 selectedLPNs.add(curLPN);
 			//			}
 
@@ -1846,7 +1847,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				String curLPNname = guiLPNList[i];
 				LPN curLPN = new LPN();
 				try {
-          curLPN.load(directory + separator + curLPNname);
+          curLPN.load(directory + File.separator + curLPNname);
         } catch (BioSimException e) {
           JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
           e.printStackTrace();
@@ -1888,7 +1889,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			Project timedStateSearch = new Project(selectedLPNs);
 			if (dot.isSelected()) {
 				Options.setOutputSgFlag(true);
-				Options.setPrjSgPath(directory + separator);				
+				Options.setPrjSgPath(directory + File.separator);				
 			}
 			try {
         timedStateSearch.search();
@@ -1900,11 +1901,11 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			String graphFileName = "full_sg.dot";
 
 //			if (dot.isSelected()) {
-//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+//				stateGraphArray[0].outputLocalStateGraph(directory + File.separator + graphFileName);  
 //			}
 
 			if(graph.isSelected()){
-				showGraph(directory + separator + graphFileName);
+				showGraph(directory + File.separator + graphFileName);
 			}
 
 			Options.setTimingAnalsysisType("off");
@@ -1971,15 +1972,15 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			}
 			abstraction.abstractSTG(true);
 			if (!lhpn.isSelected() && !view.isSelected()) {
-				abstraction.save(directory + separator + abstFilename);
+				abstraction.save(directory + File.separator + abstFilename);
 			}
 			sourceFile = abstFilename;
 		} else {
-			String[] tempArray = verifyFile.split(separator);
+			String[] tempArray = GlobalConstants.splitPath(verifyFile);
 			sourceFile = tempArray[tempArray.length - 1];
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
-			abstraction.save(directory + separator + abstFilename);
+			abstraction.save(directory + File.separator + abstFilename);
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
 			String[] tempArray = verifyFile.split("\\.");
@@ -1989,25 +1990,25 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			String dotName = "";
 			if (componentField.getText().trim().equals("")) {
 				if (verifyFile.endsWith(".g")) {
-					pargName = directory + separator
+					pargName = directory + File.separator
 							+ sourceFile.replace(".g", ".prg");
-					dotName = directory + separator
+					dotName = directory + File.separator
 							+ sourceFile.replace(".g", ".dot");
 				} else if (verifyFile.endsWith(".lpn")) {
-					pargName = directory + separator
+					pargName = directory + File.separator
 							+ sourceFile.replace(".lpn", ".prg");
-					dotName = directory + separator
+					dotName = directory + File.separator
 							+ sourceFile.replace(".lpn", ".dot");
 				} else if (verifyFile.endsWith(".vhd")) {
-					pargName = directory + separator
+					pargName = directory + File.separator
 							+ sourceFile.replace(".vhd", ".prg");
-					dotName = directory + separator
+					dotName = directory + File.separator
 							+ sourceFile.replace(".vhd", ".dot");
 				}
 			} else {
-				pargName = directory + separator
+				pargName = directory + File.separator
 						+ componentField.getText().trim() + ".prg";
-				dotName = directory + separator
+				dotName = directory + File.separator
 						+ componentField.getText().trim() + ".dot";
 			}
 			File pargFile = new File(pargName);
@@ -2024,9 +2025,9 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			for (String s : componentList.getItems()) {
 				try {
 					FileInputStream in = new FileInputStream(new File(root
-							+ separator + s));
+							+ File.separator + s));
 					FileOutputStream out = new FileOutputStream(new File(
-							directory + separator + s));
+							directory + File.separator + s));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -2044,9 +2045,9 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			for (String s : lpnList.getItems()) {
 				try {
 					FileInputStream in = new FileInputStream(new File(root
-							+ separator + s));
+							+ File.separator + s));
 					FileOutputStream out = new FileOutputStream(new File(
-							directory + separator + s));
+							directory + File.separator + s));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -2301,7 +2302,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
 					FileWriter out = new FileWriter(new File(directory
-							+ separator + "run.log"));
+							+ File.separator + "run.log"));
 					while ((output = br.readLine()) != null) {
 						out.write(output);
 						out.write("\n");
@@ -2340,7 +2341,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
 					FileWriter out = new FileWriter(new File(directory
-							+ separator + "run.log"));
+							+ File.separator + "run.log"));
 					while ((output = br.readLine()) != null) {
 						out.write(output);
 						out.write("\n");
@@ -2405,7 +2406,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 				running.setCursor(null);
 				running.dispose();
 				FileInputStream atacsLog = new FileInputStream(new File(
-						directory + separator + "atacs.log"));
+						directory + File.separator + "atacs.log"));
 				InputStreamReader atacsReader = new InputStreamReader(atacsLog);
 				BufferedReader atacsBuffer = new BufferedReader(atacsReader);
 				boolean success = false;
@@ -2456,17 +2457,17 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 			}
 		} else {
 			if (lhpn.isSelected()) {
-				abstraction.save(tempDir + separator + abstFilename);
+				abstraction.save(tempDir + File.separator + abstFilename);
 				biosim.addToTree(abstFilename);
 			} else if (view.isSelected()) {
-				abstraction.save(directory + separator + abstFilename);
-				work = new File(directory + separator);
+				abstraction.save(directory + File.separator + abstFilename);
+				work = new File(directory + File.separator);
 				try {
 					String dotName = abstFilename.replace(".lpn", ".dot");
-					new File(directory + separator + dotName).delete();
+					new File(directory + File.separator + dotName).delete();
 					Runtime exec = Runtime.getRuntime();
-					abstraction.printDot(directory + separator + dotName);
-					if (new File(directory + separator + dotName).exists()) {
+					abstraction.printDot(directory + File.separator + dotName);
+					if (new File(directory + File.separator + dotName).exists()) {
 						Preferences biosimrc = Preferences.userRoot();
 						String command = biosimrc.get("biosim.general.graphviz", "") + " ";
 						Process dot = exec.exec(command + dotName, null, work);
@@ -2537,7 +2538,7 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		try {
 			Properties prop = new Properties();
 //			FileInputStream in = new FileInputStream(new File(directory
-//					+ separator + filename));
+//					+ File.separator + filename));
 //			prop.load(in);
 //			in.close();
 			prop.setProperty("verification.file", verifyFile);
@@ -2851,10 +2852,10 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 						.getText());
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory
-					+ separator + verFile));
+					+ File.separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator
+			log.addText("Saving Parameter File:\n" + directory + File.separator
 					+ verFile + "\n");
 			change = false;
 			oldBdd = bddSize.getText();
@@ -2866,11 +2867,11 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		}
 		for (String s : componentList.getItems()) {
 			try {
-				new File(directory + separator + s).createNewFile();
+				new File(directory + File.separator + s).createNewFile();
 				FileInputStream in = new FileInputStream(new File(root
-						+ separator + s));
+						+ File.separator + s));
 				FileOutputStream out = new FileOutputStream(new File(directory
-						+ separator + s));
+						+ File.separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -2887,11 +2888,11 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		}
 		for (String s : lpnList.getItems()) {
 			try {
-				new File(directory + separator + s).createNewFile();
+				new File(directory + File.separator + s).createNewFile();
 				FileInputStream in = new FileInputStream(new File(root
-						+ separator + s));
+						+ File.separator + s));
 				FileOutputStream out = new FileOutputStream(new File(directory
-						+ separator + s));
+						+ File.separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -2964,8 +2965,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		String[] getFilename = verifyFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
 		try {
-			if (new File(directory + separator + traceFilename).exists()) {
-				File log = new File(directory + separator + traceFilename);
+			if (new File(directory + File.separator + traceFilename).exists()) {
+				File log = new File(directory + File.separator + traceFilename);
 				BufferedReader input = new BufferedReader(new FileReader(log));
 				String line = null;
 				JTextArea messageArea = new JTextArea();
@@ -2997,8 +2998,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 
 	public void viewLog() {
 		try {
-			if (new File(directory + separator + "run.log").exists()) {
-				File log = new File(directory + separator + "run.log");
+			if (new File(directory + File.separator + "run.log").exists()) {
+				File log = new File(directory + File.separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
 				String line = null;
 				JTextArea messageArea = new JTextArea();
@@ -3042,19 +3043,19 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 	}
 
 	public void copyFile() {
-		String[] tempArray = verifyFile.split(separator);
+		String[] tempArray = GlobalConstants.splitPath(verifyFile);
 		String sourceFile = tempArray[tempArray.length - 1];
-		String[] workArray = directory.split(separator);
+		String[] workArray = GlobalConstants.splitPath(directory);
 		String workDir = "";
 		for (int i = 0; i < (workArray.length - 1); i++) {
-			workDir = workDir + workArray[i] + separator;
+			workDir = workDir + workArray[i] + File.separator;
 		}
 		try {
-			File newFile = new File(directory + separator + sourceFile);
+			File newFile = new File(directory + File.separator + sourceFile);
 			newFile.createNewFile();
 			FileOutputStream copyin = new FileOutputStream(newFile);
 			FileInputStream copyout = new FileInputStream(new File(workDir
-					+ separator + sourceFile));
+					+ File.separator + sourceFile));
 			int read = copyout.read();
 			while (read != -1) {
 				copyin.write(read);
@@ -3103,8 +3104,8 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		} else if (sourceFile.endsWith(".xml")) {
 			BioModel bioModel = new BioModel(workDir);
 			try {
-        bioModel.load(workDir + separator + sourceFile);
-        ModelEditor.saveLPN(bioModel, directory + separator + sourceFile.replace(".xml", ".lpn"));
+        bioModel.load(workDir + File.separator + sourceFile);
+        ModelEditor.saveLPN(bioModel, directory + File.separator + sourceFile.replace(".xml", ".lpn"));
       } catch (XMLStreamException e) {
         JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
@@ -3207,25 +3208,5 @@ public class VerificationView extends JPanel implements ActionListener, Runnable
 		}
 		return true;		
 	}
-
-  @Override
-  public void update(Observable o, Object arg) {
-    Message message = (Message) arg;
-    
-    if(message.isConsole())
-    {
-      System.out.println(message.getMessage());
-    }
-    else if(message.isErrorDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    }
-    else if(message.isDialog())
-    {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(), JOptionPane.PLAIN_MESSAGE);
-    }
-    
-    
-  }
   
 }

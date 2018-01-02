@@ -13,8 +13,15 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.pedi;
 
+/**
+ * 
+ * @author Chris Myers
+ * @version $Rev$
+ */
 public class GeneProduct
 {
+
+  /*
 	private double			mRNADegradationConstant;
 	private double			translationConstant;
 	private double			proteinDegradationConstant;
@@ -35,12 +42,6 @@ public class GeneProduct
 		return 0;
 	}
 
-	/**
-	 * RNA degradation constants for each gene. NaN if the constant is unknown,
-	 * value if the constant is known.
-	 * 
-	 * @return
-	 */
 	public double getmRNADegradationConstant()
 	{
 		return mRNADegradationConstant;
@@ -130,4 +131,5 @@ public class GeneProduct
 	{
 		this.proteinLevel = proteinLevel;
 	}
+	*/
 }

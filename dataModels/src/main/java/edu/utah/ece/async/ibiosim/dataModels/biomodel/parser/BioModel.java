@@ -13,25 +13,16 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.biomodel.parser;
 
-
-import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
@@ -46,8 +37,6 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ext.layout.CompartmentGlyph;
-//CompartmentType not supported in Level 3
-//import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.layout.Dimensions;
@@ -82,8 +71,6 @@ import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.layout.SpeciesGlyph;
 import org.sbml.jsbml.SpeciesReference;
-//SpeciesType not supported in Level 3
-//import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
@@ -96,16 +83,13 @@ import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.AbstractionEngine;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.GeneticNetwork;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.Promoter;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpeciesInterface;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
-import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 
 /**
@@ -116,9 +100,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class BioModel extends Observable{
-
-	private String separator;
+public class BioModel extends CoreObservable{
 
 	private String filename = null;
 
@@ -127,8 +109,6 @@ public class BioModel extends Observable{
 	private GridTable gridTable;
 	
 	public BioModel(String path) {
-		//gcm2sbml = new GCM2SBML(this);
-		separator = GlobalConstants.separator;
 		this.path = path;
 		compartments = new HashMap<String, Properties>();
 		gridTable = new GridTable();
@@ -480,7 +460,13 @@ public class BioModel extends Observable{
 			parameter.setId(global);
 			if (CompatibilityFixer.getGuiName(global)!=null) 
 				parameter.setName(CompatibilityFixer.getGuiName(global));
-			parameter.setValue(Double.parseDouble(value));
+			if (value != null && !value.equals("")) {
+				try {
+					parameter.setValue(Double.parseDouble(value));
+				} catch (NumberFormatException e) {
+					parameter.unsetValue();
+				}
+			}
 			parameter.setConstant(true);
 		}
 	}
@@ -1056,7 +1042,7 @@ public class BioModel extends Observable{
 			r.setId(id);
 			r.setSBOTerm(SBOid);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			String kLaw = "k";
 			for (String reactant : reactants.keySet()) {
 				SpeciesReference ref = r.createReactant();
@@ -1096,7 +1082,7 @@ public class BioModel extends Observable{
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(s);
 			product.setStoichiometry(1);
@@ -1605,7 +1591,7 @@ public class BioModel extends Observable{
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(true);
-			reaction.setFast(false);
+			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
 			reactant.setSpecies(s);
 			reactant.setStoichiometry(1);
@@ -1653,7 +1639,7 @@ public class BioModel extends Observable{
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(s);
 			//double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
@@ -1733,7 +1719,7 @@ public class BioModel extends Observable{
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(false);
-			reaction.setFast(false);
+			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
 			reactant.setSpecies(s);
 			reactant.setStoichiometry(1);
@@ -1796,7 +1782,7 @@ public class BioModel extends Observable{
 			r.setCompartment(sbml.getModel().getSpecies(promoterId).getCompartment());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(promoterId);
 			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterId), modifier, "species");
@@ -2143,8 +2129,10 @@ public class BioModel extends Observable{
 		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
+		SBMLutilities.removeUnusedNamespaces(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		try {
+		  //SBMLutilities.removeUnusedNamespaces(sbml);
 			writer.writeSBMLToFile(sbml, filename.replace(".gcm",".xml"));
 		}
 		catch (SBMLException e) {
@@ -2161,7 +2149,7 @@ public class BioModel extends Observable{
 	public boolean load(String filename) throws XMLStreamException, IOException {
 		//gcm2sbml.load(filename);
 		this.filename = filename;
-		String[] splitPath = filename.split(separator);
+		String[] splitPath = GlobalConstants.splitPath(filename);
 		sbmlFile = splitPath[splitPath.length-1].replace(".gcm",".xml");
 		return loadSBMLFile(sbmlFile);
 	}
@@ -2229,19 +2217,20 @@ public class BioModel extends Observable{
 		if (promoter != null) 
 			promoter.setId(newId);
 		Reaction production = getProductionReaction(oldId);
-		if (production.getId().contains(GlobalConstants.PRODUCTION)) 
-			if (newId.contains("__")) {
-				production.setId(GlobalConstants.PRODUCTION + "_" 
-						+ newId.substring(newId.lastIndexOf("__") + 2));
-			} else {
-				production.setId(GlobalConstants.PRODUCTION + "_" + newId);
+		if (production != null) {
+			if (production.getId().contains(GlobalConstants.PRODUCTION)) 
+				if (newId.contains("__")) {
+					production.setId(GlobalConstants.PRODUCTION + "_" 
+							+ newId.substring(newId.lastIndexOf("__") + 2));
+				} else {
+					production.setId(GlobalConstants.PRODUCTION + "_" + newId);
+				}
+			SpeciesReference product = production.getProductForSpecies(oldId+"_mRNA");
+			if (product!=null) {
+				sbml.getModel().getSpecies(oldId+"_mRNA").setId(newId+"_mRNA");
+				product.setSpecies(newId+"_mRNA");
 			}
-		SpeciesReference product = production.getProductForSpecies(oldId+"_mRNA");
-		if (product!=null) {
-			sbml.getModel().getSpecies(oldId+"_mRNA").setId(newId+"_mRNA");
-			product.setSpecies(newId+"_mRNA");
 		}
-
 		Layout layout = getLayout();
 		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+oldId)!=null) {
 			SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+oldId);
@@ -2662,6 +2651,7 @@ public class BioModel extends Observable{
 			}
 		}
 		if (gridSize != null) {
+		  
 		  gridTable.setNumRows(gridSize[0]);
 		  gridTable.setNumCols(gridSize[1]);
 		} 
@@ -4318,7 +4308,7 @@ public class BioModel extends Observable{
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
 			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			
 			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
@@ -4345,7 +4335,7 @@ public class BioModel extends Observable{
 				j.setId("j");
 				
 				//parameter: id="kecd" value=(usually 0.005) units="u_1_second_n1" (inverse seconds)
-				kl.addLocalParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
+				Utility.Parameter(kl, decayString, decayRate, decayUnitString);
 				
 				//formula: kecd * species
 				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
@@ -4420,7 +4410,7 @@ public class BioModel extends Observable{
 				r.setCompartment(diffComp);
 				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 				r.setReversible(true);
-				r.setFast(false);
+				//r.setFast(false);
 
 				AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 				KineticLaw kl = r.createKineticLaw();
@@ -4473,7 +4463,7 @@ public class BioModel extends Observable{
 			SBMLutilities.setMetaId(r, r.getId());
 			r.setCompartment(membraneDiffusionComp);
 			r.setReversible(true);
-			r.setFast(false);
+			//r.setFast(false);
 			
 			AnnotationUtility.setGridAnnotation(r, gridTable.getNumRows(), gridTable.getNumCols());
 			
@@ -4840,7 +4830,7 @@ public class BioModel extends Observable{
 		r.setCompartment(compartment);
 		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),r,"compartment");
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		KineticLaw k = r.createKineticLaw();
 		LocalParameter p = k.createLocalParameter();
 		p.setId("kf");
@@ -5349,7 +5339,7 @@ public class BioModel extends Observable{
 			BioModel subBioModel = new BioModel(path);		
 			String extModelFile = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subBioModel.load(path + separator + extModelFile);
+			subBioModel.load(path + File.separator + extModelFile);
 //			TODO:  Not currently supported.
 			String md5 = Utility.MD5(subBioModel.getSBMLDocument());
 			if (!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals("") &&
@@ -5489,8 +5479,8 @@ public class BioModel extends Observable{
 	private boolean loadSBMLFile(String sbmlFile) throws XMLStreamException, IOException {
 		boolean successful = true;
 		if (!sbmlFile.equals("")) {
-			if (new File(path + separator + sbmlFile).exists()) {
-				sbml = SBMLutilities.readSBML(path + separator + sbmlFile);
+			if (new File(path + File.separator + sbmlFile).exists()) {
+				sbml = SBMLutilities.readSBML(path + File.separator + sbmlFile);
 				createLayoutPlugin();
 				createCompPlugin();
 				createFBCPlugin();
@@ -5526,11 +5516,20 @@ public class BioModel extends Observable{
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			if (!comps.contains(extModel)) {
 				comps.add(extModel);
-				SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
+				SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel);
 				CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
+				
+				// TODO: hack to make sure metaId is unique
+				String newMetaId = md.getMetaId();
+				while (SBMLutilities.getElementByMetaId(documentComp, newMetaId)!=null) {
+					newMetaId += "_";
+				}
+				md.unsetMetaId();
+				SBMLutilities.setMetaId(md, newMetaId);
+				
 				String id = subDocument.getModel().getId();
-				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 				for (int j = 0; j < elements.size(); j++) {
 					SBase sbase = elements.get(j);
 					if (sbase.isSetMetaId()) {
@@ -5554,6 +5553,7 @@ public class BioModel extends Observable{
 		SBMLDocument document = createSingleDocument();
 		SBMLWriter writer = new SBMLWriter();
 		try {
+		  SBMLutilities.removeUnusedNamespaces(document);
 			writer.writeSBMLToFile(document, exportFile);
 		} catch (SBMLException e) {
 			e.printStackTrace();
@@ -5592,6 +5592,7 @@ public class BioModel extends Observable{
 				}
 			}
 		}
+	  
 		document.enablePackage(ArraysConstants.namespaceURI);
 
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
@@ -5602,14 +5603,15 @@ public class BioModel extends Observable{
 						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 				if (!comps.contains(extModel)) {
 					comps.add(extModel);
-					SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
+					SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel);
 					CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 					String id = subDocument.getModel().getId();
 					// TODO: hack to avoid jsbml scope bug
 					LayoutModelPlugin subDocumentLayoutModel = SBMLutilities.getLayoutModelPlugin(subDocument.getModel());
 					Layout layout = subDocumentLayoutModel.getListOfLayouts().get("iBioSim");
 					layout.setId(id+"__iBioSim");
-					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
+					ModelDefinition md = new ModelDefinition(subDocument.getModel());
+					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(md);
 					for (int j = 0; j < elements.size(); j++) {
 						SBase sbase = elements.get(j);
 						if (sbase.isSetMetaId()) {
@@ -5633,7 +5635,6 @@ public class BioModel extends Observable{
 							SBMLutilities.setMetaId(sbase, newMetaId);
 						}
 					}
-					ModelDefinition md = new ModelDefinition(subDocument.getModel());
 					documentComp.addModelDefinition(md);
 					recurseExportSingleFile(comps,SBMLutilities.getCompModelPlugin(subDocument.getModel()),
 							SBMLutilities.getCompSBMLDocumentPlugin(subDocument),documentComp);
@@ -5732,7 +5733,7 @@ public class BioModel extends Observable{
 	}
 	
 	public SBMLDocument flattenModelWithLibSBML(boolean removeComp) throws Exception {
-		if (SBMLutilities.libsbmlFound) {
+		if (Executables.libsbmlFound) {
 			String tempFile = filename.replace(".gcm", "").replace(".xml", "") + "_temp.xml";
 			save(tempFile);
 			
@@ -5767,7 +5768,7 @@ public class BioModel extends Observable{
 				/* add an option to leave ports if the user has requested this */
 				props.addOption("leavePorts", !removeComp, "unused ports should be listed in the flattened model");
 				
-				props.addOption("abortIfUnflattenable", "none");
+				//props.addOption("abortIfUnflattenable", "none");
 				
 				props.addOption("performValidation", "false");
 				
@@ -5812,7 +5813,7 @@ public class BioModel extends Observable{
 		modelList.add(filename);
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
-		
+
 		BioModel model = new BioModel(path);
 		model.load(tempFile);
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
@@ -5824,7 +5825,7 @@ public class BioModel extends Observable{
 				SBMLDocument arrayFlat = ArraysFlattening.convert(model.getSBMLDocument());
 				if (arrayFlat==null) {
 					message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
-		      this.notifyObservers(message);
+					this.notifyObservers(message);
 					load(tempFile);
 					new File(tempFile).delete();
 					return null;
@@ -5833,9 +5834,9 @@ public class BioModel extends Observable{
 				model.createCompPlugin();
 				model.createFBCPlugin();
 			} catch (Exception e) {
-        message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
-        this.notifyObservers(message);
-			  load(tempFile);
+				message.setErrorDialog("Array Flattening Failed", "Cannot flatten model.\n" + "There is a problem with arrays.");
+				this.notifyObservers(message);
+				load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
@@ -5853,7 +5854,7 @@ public class BioModel extends Observable{
 			catch (XMLStreamException e) {
 				e.printStackTrace();
 			}
-			*/
+			 */
 			//model.save(tempFile.replace("_temp", "_after"));
 		}
 		ArrayList<String> comps = model.getListOfSubmodels();
@@ -5862,11 +5863,11 @@ public class BioModel extends Observable{
 		for (String subModelId : comps) {
 			BioModel subModel = new BioModel(path);		
 			String extModelFile = model.getExtModelFileName(subModelId);
-			subModel.load(path + separator + extModelFile);
+			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
-        message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-        this.notifyObservers(message);
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -5879,15 +5880,15 @@ public class BioModel extends Observable{
 			if (flatSubModel!=null) {
 				unionSBML(model, flatSubModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
 			} else if (modelListCopy.isEmpty()) {
-			  message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-        this.notifyObservers(message);
-			  load(tempFile);
+				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+				this.notifyObservers(message);
+				load(tempFile);
 				new File(tempFile).delete();
 				return null;
 			}
 			else {
-			  message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
-        this.notifyObservers(message);
+				message.setErrorDialog("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+				this.notifyObservers(message);
 				load(tempFile);
 				new File(tempFile).delete();
 				return null;
@@ -5903,13 +5904,13 @@ public class BioModel extends Observable{
 				model.getSBMLFBC().getFluxBoundCount()==0) {
 			model.getSBMLDocument().disablePackage(FBCConstants.namespaceURI);
 		}
-		*/
+		 */
 		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
-//		checkModelConsistency(model.getSBMLDocument());
+		//		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();
 		return model.getSBMLDocument();
 	}
-	
+
 	// TODO: check if this is up-to-date
 	public SBMLDocument flattenBioModel() throws XMLStreamException, IOException {
 		Preferences biosimrc = Preferences.userRoot();
@@ -5935,7 +5936,7 @@ public class BioModel extends Observable{
 		for (String subModelId : comps) {
 			BioModel subModel = new BioModel(path);		
 			String extModelFile = getExtModelFileName(subModelId);
-			subModel.load(path + separator + extModelFile);
+			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
 				message.setErrorDialog("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
@@ -5991,7 +5992,7 @@ public class BioModel extends Observable{
 			BioModel subModel = new BioModel(path);
 			String extModel = model.getSBMLComp().getListOfExternalModelDefinitions().get(model.getSBMLCompModel().getListOfSubmodels().get(s)
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subModel.load(path + separator + extModel);
+			subModel.load(path + File.separator + extModel);
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
 				while (!modelList.isEmpty()) {
@@ -6510,6 +6511,7 @@ public class BioModel extends Observable{
 			s = s.replace(" " + origVar + ")", " " + newVar + ")");
 			s = s.replace(" " + origVar + "^", " " + newVar + "^");
 			s = s.replace("^" + origVar + ")", "^" + newVar + ")");
+			s = s.replace("^" + origVar + " ", "^" + newVar + " ");
 		} while (s != olds);
 		return s.trim();
 	}
@@ -6628,20 +6630,6 @@ public class BioModel extends Observable{
 	public String getPath() {
 		return path;
 	}
-	
-	public String getSeparator() {
-		return separator;
-	}
-	
-	//UNDO-REDO METHODS
-	
-	/*
-	public void setGrid(Grid g) {
-		grid = g;
-	}	
-	*/
-	
-
 	
 	public boolean isGridEnabled() {
 		if ((gridTable.getNumRows() > 0) && (gridTable.getNumCols() > 0)) return true;

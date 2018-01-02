@@ -49,8 +49,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -181,7 +179,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		for (String s : new File(directoryName).list()) {
 			
-			String fullFileName = directoryName + GlobalConstants.separator + s;
+			String fullFileName = directoryName + File.separator + s;
 			File f = new File(fullFileName);
 			
 			if (s.endsWith(".tsd") || s.endsWith(".dtsd") && f.isFile()) {
@@ -300,13 +298,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		movieToolbar.addSeparator();
 		
-		rewindButton = makeToolButton("movie" + GlobalConstants.separator + "rewind.png", "rewind", "Rewind", this);
+		rewindButton = makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
 		movieToolbar.add(rewindButton);
 
-		singleStepButton = makeToolButton("movie" + GlobalConstants.separator + "single_step.png", "singlestep", "Single Step", this);
+		singleStepButton = makeToolButton("movie" + File.separator + "single_step.png", "singlestep", "Single Step", this);
 		movieToolbar.add(singleStepButton);
 		
-		playPauseButton = makeToolButton("movie" + GlobalConstants.separator + "play.png", "playpause", "Play", this);
+		playPauseButton = makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
 		movieToolbar.add(playPauseButton);
 			
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
@@ -427,13 +425,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 				slider.setValue(0);
 			
 			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
-			setIcon(playPauseButton, "movie" + GlobalConstants.separator + "pause.png");
+			setIcon(playPauseButton, "movie" + File.separator + "pause.png");
 			playTimer.start();
 			mode = PLAYING;
 		}
 		else{
 			
-			setIcon(playPauseButton, "movie" + GlobalConstants.separator + "play.png");
+			setIcon(playPauseButton, "movie" + File.separator + "play.png");
 			playTimer.stop();
 			mode = PAUSED;
 		}		
@@ -585,7 +583,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 			
 		//if there's a grid to set the appearance of
-		if (modelEditor.getGrid().isEnabled()) {
+		if (bioModel.isGridEnabled()) {
 			
 			//loop through all grid locations and set appearances
 			for (int row = minRow; row < numRows + minRow; ++row) {
@@ -786,10 +784,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	        }
 		}
 		
-		String separator = GlobalConstants.separator;
-		
 		String filenum = String.format("%09d", fileNumber);			
-		schematic.outputFrame(analysisView.getRootPath() + separator + filenum  + ".jpg", scale);
+		schematic.outputFrame(analysisView.getRootPath() + File.separator + filenum  + ".jpg", scale);
 	}
 	
 	/**
@@ -797,14 +793,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void removeJPGs() {
 		
-		String separator = GlobalConstants.separator;
-		
 		//remove all created jpg files
 	    for (int jpgNum = 0; jpgNum <= slider.getMaximum(); ++jpgNum) {
 	    	
 	    	String jpgNumString = String.format("%09d", jpgNum);				    	
 	    	String jpgFilename = 
-	    		analysisView.getRootPath() + separator + jpgNumString + ".jpg";
+	    		analysisView.getRootPath() + File.separator + jpgNumString + ".jpg";
 		    File jpgFile = new File(jpgFilename);
 		    
 		    if (jpgFile.exists() && jpgFile.canWrite())
@@ -937,7 +931,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private String getPreferencesFullPath() {
 		
 		String path = analysisView.getSimPath();
-		String fullPath = path +  GlobalConstants.separator + "schematic_preferences.json";
+		String fullPath = path +  File.separator + "schematic_preferences.json";
 		return fullPath;
 	}
 
@@ -1010,15 +1004,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 				progressBar.setValue((100 * (currentFrame - startFrame) / (endFrame - startFrame)));
 			}
 			
-			String separator = GlobalConstants.separator;
-			
 			String path = "";
 			String movieName = "";
 
-			if (outputFilename.contains(separator)) {
+			if (outputFilename.contains(File.separator)) {
 				
-				path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
-				movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+				path = outputFilename.substring(0, outputFilename.lastIndexOf(File.separator));
+				movieName = outputFilename.substring(outputFilename.lastIndexOf(File.separator)+1, outputFilename.length());
 			}
 			
 			if (movieName.contains("."))
@@ -1036,8 +1028,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 					"ffmpeg " + "-y " +
 					"-r " + "5 " +
 					"-b " + "5000k " +
-					"-i " + analysisView.getRootPath() + separator + "%09d.jpg " +
-					path + separator + movieName + ".mp4";
+					"-i " + analysisView.getRootPath() + File.separator + "%09d.jpg " +
+					path + File.separator + movieName + ".mp4";
 			}		
 			else if (movieFormat.equals("avi")) {
 				//args for ffmpeg
@@ -1046,8 +1038,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 					"-r " + "5 " +
 					"-vcodec " + "copy " +
 					"-b " + "5000k " +
-					"-i " + analysisView.getRootPath() + separator + "%09d.jpg " +
-					path + separator + movieName + ".avi";
+					"-i " + analysisView.getRootPath() + File.separator + "%09d.jpg " +
+					path + File.separator + movieName + ".avi";
 			}		
 			
 			//run ffmpeg to generate the movie file

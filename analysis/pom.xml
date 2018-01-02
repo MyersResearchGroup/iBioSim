@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>edu.utah.ece.async</groupId>
 		<artifactId>iBioSim</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<packaging>jar</packaging>
@@ -35,15 +35,52 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Build an executable JAR -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-converter</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>edu.utah.ece.async.ibiosim.analysis.Analysis</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+	  		<id>sems-maven-repository-releases</id>
+	  		<name>SEMS Maven Repo</name>
+	  		<url>http://mvn.sems.uni-rostock.de/releases/</url>
+	  		<layout>default</layout>
+	  		<snapshots>
+	    		<enabled>false</enabled>
+	  		</snapshots>
+		</repository>
+		<repository>
+	  		<id>sems-maven-repository-snapshots</id>
+	  		<name>SEMS Maven Repo</name>
+	  		<url>http://mvn.sems.uni-rostock.de/snapshots/</url>
+	  		<layout>default</layout>
+	  		<releases>
+	    		<enabled>false</enabled>
+	  		</releases>
+		</repository>
+	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>org.jmathml</groupId>
-			<artifactId>jmathml</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
@@ -65,14 +102,25 @@
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>iBioSim-dataModels</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>LEMA-verification</artifactId>
 			<version>3.0.0-SNAPSHOT</version>
+		</dependency>
+			
+		<dependency>
+    		<groupId>de.unirostock.sems</groupId>
+    		<artifactId>CombineArchive</artifactId>
+    		<version>1.3.0</version>
+		</dependency>
+						
+		<dependency>
+    		<groupId>org.jdom</groupId>
+    		<artifactId>jdom2</artifactId>
+    		<version>2.0.6</version>
 		</dependency>
 	</dependencies>
 </project>

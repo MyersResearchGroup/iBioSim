@@ -15,6 +15,8 @@ package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.File;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * 
  *
@@ -25,15 +27,15 @@ import java.io.File;
  */
 public abstract class ConversionAbstractTests {
 	
-	protected String resourceDir = ConversionAbstractTests.class.getResource(".").getPath() + File.separator ;
-	protected String sbml2sbol_outputDir = resourceDir + "SBML2SBOL_Output" + File.separator;
-	protected String sbol2sbml_outputDir = resourceDir + "SBOL2SBML_Output" + File.separator;
-	protected String genBank_outputDir = resourceDir + "GenBank_Output" + File.separator;
-	protected String fasta_outputDir = resourceDir + "FASTA_Output" + File.separator;
-	protected String sbmlDir = resourceDir + "SBML" + File.separator;
-	protected String sbolDir = resourceDir + "SBOL" + File.separator;
-	protected String repressionDir = sbolDir + File.separator + "genModels" + File.separator;
-
+	protected String conversionResourceDir = "src" + File.separator + "test" + File.separator + 
+			"resources" + File.separator + "edu" + File.separator + "utah" + File.separator + 
+			"ece" + File.separator + "async" + File.separator + "ibiosim" + File.separator + 
+			"conversion" + File.separator;
 	
+	//output dir
+	protected String genBankDir = conversionResourceDir + "GenBank_Files/";
+	protected String sbmlDir = conversionResourceDir + "SBML_Files/";
+	protected String sbolDir = conversionResourceDir + "SBOL_Files/";
+
 	
 }

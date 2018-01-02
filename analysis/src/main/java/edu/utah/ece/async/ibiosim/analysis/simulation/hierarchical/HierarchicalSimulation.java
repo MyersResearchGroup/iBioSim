@@ -23,17 +23,13 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.jlibsedml.SEDMLDocument;
-import org.jlibsedml.SedML;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
@@ -44,10 +40,9 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Reaction
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 
@@ -55,11 +50,10 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * This class provides the state variables of the simulation.
  *
  * @author Leandro Watanabe
- * @author Leandro Watanabe
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class HierarchicalSimulation implements ParentSimulator
+public abstract class HierarchicalSimulation extends AbstractSimulator
 {
 
   final private int SBML_LEVEL    = 3;
@@ -81,11 +75,8 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private boolean             printConcentrations;
   private HashSet<String>         printConcentrationSpecies;
   private double              printInterval;
-  private JProgressBar          progress;
-  private JFrame              running;
   private String              SBMLFileName;
   private boolean             sbmlHasErrorsFlag;
-  private String              separator;
   private boolean             stoichAmpBoolean;
   private double              stoichAmpGridValue;
   protected double            timeLimit;
@@ -93,10 +84,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private SBMLDocument          document;
   private String              abstraction;
   private int               totalRuns;
-
   protected final ArrayList<Double> initValues;
   protected double            initTotalPropensity;
-  protected PriorityQueue<EventState>    triggeredEventList;
+  protected PriorityQueue<TriggeredEventNode>    triggeredEventList;
   protected boolean           isInitialized;
 
   protected boolean hasEvents;
@@ -104,14 +94,19 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
-  final private SimType         type;
+
   protected List<HierarchicalModel>     modules;
   protected FunctionNode        totalPropensity;
   private double              initialTime, outputStartTime;
 
   private HierarchicalWriter writer;
 
+  protected double currProgress, maxProgress;
 
+  final private SimType         type;
+  final private StateType atomicType;
+  final private StateType parentType;
+  
   public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
     String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
   {
@@ -125,6 +120,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.rootDirectory = rootDirectory;
     this.outputDirectory = outputDirectory;
     this.printConcentrationSpecies = new HashSet<String>();
+    
+    this.parentType = StateType.SPARSE;
+    if(type == SimType.HODE || type == SimType.MIXED)
+    {
+      this.atomicType = StateType.VECTOR;
+    }
+    else
+    {
+      this.atomicType = StateType.SCALAR; 
+    }
+    
     if(interestingSpecies != null && interestingSpecies.length > 0)
     {
       this.interestingSpecies = new HashSet<String>();
@@ -134,22 +140,20 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       }
     }
 
-
+    this.maxProgress = timeLimit * runs;
     this.document = SBMLReader.read(new File(SBMLFileName));
     this.totalRuns = runs;
     this.type = type;
-    this.topmodel = new HierarchicalModel("topmodel");
+    this.topmodel = new HierarchicalModel("topmodel", 0);
     this.currentTime = new VariableNode("_time", StateType.SCALAR);
     this.hasEvents = false;
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(randomSeed);
     this.initialTime = initialTime;
     this.outputStartTime = outputStartTime;
-
     this.initValues = new ArrayList<Double>();
-
     this.writer = new HierarchicalTSDWriter();
-    this.addPrintVariable("time", printTime.getState());
+    this.addPrintVariable("time", printTime, 0, false);
 
     this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
@@ -189,7 +193,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
       throw new BioSimException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "Error!");
     }
 
-    separator = GlobalConstants.separator;
   }
 
   public HierarchicalSimulation(HierarchicalSimulation copy)
@@ -198,12 +201,10 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.timeLimit = copy.timeLimit;
     this.maxTimeStep = copy.maxTimeStep;
     this.minTimeStep = copy.minTimeStep;
-    this.progress = copy.progress;
     this.printInterval = copy.printInterval;
     this.printTime = copy.printTime;
     this.rootDirectory = copy.rootDirectory;
     this.outputDirectory = copy.outputDirectory;
-    this.running = copy.running;
     this.printConcentrationSpecies = copy.printConcentrationSpecies;
     this.interestingSpecies = copy.interestingSpecies;
     this.document = copy.document;
@@ -212,11 +213,12 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.type = copy.type;
     this.isGrid = copy.isGrid;
     this.topmodel = copy.topmodel;
-    this.separator = copy.separator;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
     this.initValues = copy.initValues;
     this.hasEvents = copy.hasEvents;
+    this.atomicType = copy.atomicType;
+    this.parentType = copy.parentType;
     //this.totalPropensity = copy.totalPropensity;
   }
 
@@ -231,9 +233,9 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     modules.add(modelstate);
   }
 
-  public void addPrintVariable(String id, HierarchicalState state)
+  public void addPrintVariable(String id, HierarchicalNode node, int index, boolean isConcentration)
   {
-    writer.addVariable(id, state);
+    writer.addVariable(id, node, index, isConcentration);
   }
 
   public List<HierarchicalModel> getListOfHierarchicalModels()
@@ -337,22 +339,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @return the progress
-   */
-  public JProgressBar getProgress()
-  {
-    return progress;
-  }
-
-  /**
-   * @return the running
-   */
-  public JFrame getRunning()
-  {
-    return running;
-  }
-
-  /**
    * @return the sBML_LEVEL
    */
   public int getSBML_LEVEL()
@@ -382,14 +368,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public boolean isSbmlHasErrorsFlag()
   {
     return sbmlHasErrorsFlag;
-  }
-
-  /**
-   * @return the separator
-   */
-  public String getSeparator()
-  {
-    return separator;
   }
 
   /**
@@ -515,24 +493,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   }
 
   /**
-   * @param progress
-   *            the progress to set
-   */
-  public void setProgress(JProgressBar progress)
-  {
-    this.progress = progress;
-  }
-
-  /**
-   * @param running
-   *            the running to set
-   */
-  public void setRunning(JFrame running)
-  {
-    this.running = running;
-  }
-
-  /**
    * @param sBMLFileName
    *            the sBMLFileName to set
    */
@@ -548,15 +508,6 @@ public abstract class HierarchicalSimulation implements ParentSimulator
   public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag)
   {
     this.sbmlHasErrorsFlag = sbmlHasErrorsFlag;
-  }
-
-  /**
-   * @param separator
-   *            the separator to set
-   */
-  public void setSeparator(String separator)
-  {
-    this.separator = separator;
   }
 
   /**
@@ -682,8 +633,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     this.topmodel = topmodel;
   }
 
+  public StateType getAtomicType()
+  {
+    return this.atomicType;
+  }
+  
+  public StateType getCollectionType()
+  {
+    return this.parentType;
+  }
 
-  public SimType getType()
+  public SimType getSimType()
   {
     return type;
   }
@@ -693,7 +653,7 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     setCurrentRun(currentRun);
     try
     {
-      writer.init(getOutputDirectory() + "run-" + currentRun + ".tsd");
+      writer.init(getOutputDirectory() + File.separator + "run-" + currentRun + ".tsd");
     }
     catch (IOException e)
     {
@@ -766,22 +726,24 @@ public abstract class HierarchicalSimulation implements ParentSimulator
         e.printStackTrace();
       }
 
+      currProgress += getPrintInterval();
       printTime.setValue(getRoundedDouble(printTime.getValue() + getPrintInterval()));
 
-      if (getRunning() != null)
-      {
-        getRunning().setTitle("Progress (" + (int) ((getCurrentTime().getValue() / getTimeLimit()) * 100.0) + "%)");
-      }
+      message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
+      parent.send(RequestType.REQUEST_PROGRESS, message);
     }
   }
 
-  private double getRoundedDouble(double value)
+  protected double getRoundedDouble(double value)
   {
-    BigDecimal bd = new BigDecimal(value);
-    bd = bd.setScale(6, BigDecimal.ROUND_HALF_EVEN);
-    double newValue = bd.doubleValue();
-    bd = null;
-    return newValue;
+    if(Double.isFinite(value))
+    {
+      BigDecimal bd = new BigDecimal(value);
+      bd = bd.setScale(6, BigDecimal.ROUND_HALF_EVEN);
+      value = bd.doubleValue();
+      bd = null;
+    }
+    return value;
   }
 
 
@@ -803,24 +765,56 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     }
   }
 
+  protected void reevaluatePriorities()
+  {
+    PriorityQueue<TriggeredEventNode> tmp = new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
+    while (triggeredEventList != null && !triggeredEventList.isEmpty())
+    {
+      TriggeredEventNode eventState = triggeredEventList.poll();
+      EventNode event = eventState.getParent();
+      int index = eventState.getIndex();
+      eventState.setPriority(event.evaluatePriority(index));
+      tmp.add(eventState);
+    }
+    triggeredEventList = tmp;
+  }
+
+
   protected void checkEvents()
   {
     for(HierarchicalModel model : modules)
     {
+      int index = model.getIndex();
       for (EventNode event : model.getEvents())
       {
-        if(!event.isEnabled(model.getIndex()))
+        if(event.isTriggeredAtTime(currentTime.getValue(), index))
         {
-          event.isTriggeredAtTime(currentTime.getValue(), model.getIndex());
-          if(event.computeEnabled(model.getIndex(), currentTime.getValue()))
+          event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
+          event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
+          TriggeredEventNode triggered = new TriggeredEventNode(index, event);
+          triggered.setPriority(event.evaluatePriority(index));
+          triggered.setFireTime(currentTime.getValue() + event.evaluateFireTime(index));
+          if(event.isUseTriggerValue())
           {
-            triggeredEventList.add(event.getEventState(model.getIndex()));
+            double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getValue());
+            
+            if(eventAssignments != null)
+            {
+              triggered.setAssignmentValues(eventAssignments);  
+            }
+            
+          }
+          triggeredEventList.add(triggered);
+          if(!event.isPersistent())
+          {
+            event.addTriggeredEvent(index, triggered);
           }
         }
+
       }
     }
   }
-  
+
   protected void computeEvents()
   {
     boolean changed = true;
@@ -829,18 +823,18 @@ public abstract class HierarchicalSimulation implements ParentSimulator
     while (changed)
     {
       changed = false;
-      
+
       checkEvents();
 
-      while (triggeredEventList != null && !triggeredEventList.isEmpty())
+      if (triggeredEventList != null && !triggeredEventList.isEmpty())
       {
-        EventState eventState = triggeredEventList.peek();
-        EventNode event = eventState.getParent();
+        TriggeredEventNode eventState = triggeredEventList.peek();
         int index = eventState.getIndex();
-        if (event.getFireTime(index) <= time)
+        if (eventState.getFireTime() <= time)
         {
           triggeredEventList.poll();
-          event.fireEvent(index, time);
+          eventState.fireEvent(index, time);
+          reevaluatePriorities();
           changed = true;
         }
         else
@@ -882,6 +876,17 @@ public abstract class HierarchicalSimulation implements ParentSimulator
           for(FunctionNode node : modelstate.getInitAssignments())
           {
             changed = changed | node.computeFunction(modelstate.getIndex());
+          }
+        }
+
+        if(modelstate.getInitConcentration() != null)
+        {
+          for(FunctionNode node : modelstate.getInitConcentration())
+          {
+            if(!node.getVariable().hasRule() && !node.getVariable().hasInitRule())
+            {
+              changed = changed | node.computeFunction(modelstate.getIndex());
+            }
           }
         }
 

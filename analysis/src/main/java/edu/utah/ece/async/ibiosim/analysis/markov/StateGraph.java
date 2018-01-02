@@ -28,6 +28,7 @@ import javax.swing.JProgressBar;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.ExprTree;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -40,7 +41,7 @@ import edu.utah.ece.async.lema.verification.lpn.Translator;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class StateGraph extends Observable implements Runnable {
+public class StateGraph extends CoreObservable implements Runnable {
 	// private HashMap<String, LinkedList<State>> stateGraph;
 
 	private ArrayList<State> stateGraph;

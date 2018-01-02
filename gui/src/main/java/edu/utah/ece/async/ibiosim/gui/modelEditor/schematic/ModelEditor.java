@@ -27,8 +27,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
@@ -91,7 +89,6 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.TopLevel;
 
-import edu.utah.ece.async.ibiosim.analysis.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.GeneticNetwork;
@@ -103,10 +100,11 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisThread;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
@@ -137,16 +135,16 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.Runnable;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.util.UndoManager;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.Assembler2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.AssemblyGraph2;
 import edu.utah.ece.async.ibiosim.synthesis.assembly.SequenceTypeValidator;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
-import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadDialog;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UploadNewDialog;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
-import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
+import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -162,7 +160,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;;
  *         Contributors </a>
  * @version %I%
  */
-public class ModelEditor extends JPanel implements ActionListener, MouseListener, ChangeListener, Observer {
+public class ModelEditor extends PanelObservable implements ActionListener, MouseListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -183,8 +181,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private AnalysisView analysisView;
 
 	private ElementsPanel elementsPanel;
-
-	private String separator;
 
 	private ModelPanel modelPanel;
 
@@ -231,11 +227,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private Grid grid = null;
 
 	private UndoManager undoManager;
+	
+	private boolean lema;
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly, String simName,
-			String paramFile, AnalysisView analysisView, boolean textBased, boolean grid) throws Exception {
+			String paramFile, AnalysisView analysisView, boolean textBased, boolean grid, boolean lema) throws Exception {
 		super();
-		separator = GlobalConstants.separator;
+		this.lema = lema;
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
@@ -247,7 +245,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.elementsPanel = null;
 		this.getParams = new ArrayList<String>();
 		this.undoManager = new UndoManager();
-		this.grid = new Grid();
+		
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
@@ -267,11 +265,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			filename = refFile;
 		}
 		biomodel = new BioModel(path);
-		biomodel.addObserver(this);
+		biomodel.addObservable(this);
 		if (filename != null) {
-			biomodel.load(path + separator + filename);
+			biomodel.load(path + File.separator + filename);
 			this.filename = filename;
 			this.modelId = filename.replace(".gcm", "").replace(".xml", "");
+			this.grid = new Grid(biomodel);
 		} else {
 			this.filename = "";
 		}
@@ -307,7 +306,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		filename = newName + ".xml";
 		modelId = newName;
 		try {
-			biomodel.load(path + separator + newName + ".xml");
+			biomodel.load(path + File.separator + newName + ".xml");
 		} catch (XMLStreamException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 					JOptionPane.ERROR_MESSAGE);
@@ -418,11 +417,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void save(boolean check) {
 		setDirty(false);
 		speciesPanel.refreshSpeciesPanel(biomodel);
-		GeneticNetwork.setRoot(path + separator);
+		GeneticNetwork.setRoot(path + File.separator);
 
 		// Annotate SBML model with synthesized SBOL DNA component and save
 		// component to local SBOL file
-		if (!biosim.lema && !biomodel.isGridEnabled()) {
+		if (!lema && !biomodel.isGridEnabled()) {
 			try {
 				modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			} catch (SBOLValidationException e1) {
@@ -432,18 +431,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (check) {
 				// saveSBOL(true);
 			} else {
-				if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
-					try {
-						saveSBOL2();
-					} catch (SBOLValidationException e) {
-						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", "SBOL Assembly Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				//if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
+				// TODO: Removed assembly for now
+//				if (false) {
+//					try {
+//						saveSBOL2();
+//					} catch (SBOLValidationException e) {
+//						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", "SBOL Assembly Error",
+//								JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
 			}
 		}
 		try {
-			biomodel.save(path + separator + modelId + ".xml");
+			biomodel.save(path + File.separator + modelId + ".xml");
 		} catch (XMLStreamException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 					JOptionPane.ERROR_MESSAGE);
@@ -453,12 +454,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
-		log.addText("Saving SBML file:\n" + path + separator + modelId + ".xml");
+		log.addText("Saving SBML file:\n" + path + File.separator + modelId + ".xml");
 		// saveAsSBOL2();
 		// log.addText("Converting SBML into SBOL and saving into the project's
 		// SBOL library.");
 		if (check) {
-			Utils.check(path + separator + modelId + ".xml", biomodel.getSBMLDocument(), false);
+			Utils.check(path + File.separator + modelId + ".xml", biomodel.getSBMLDocument(), false);
 		}
 		biosim.updateViews(modelId + ".xml");
 
@@ -469,13 +470,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL2() throws SBOLValidationException {
 		try {
 			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel,
-					Preferences.userRoot().get(EditPreferences.getDefaultUriPrefix(), ""));
+					Preferences.userRoot().get(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), ""));
 			if (identityManager.containsBioSimURI()) {
 				AssemblyGraph2 assemblyGraph = new AssemblyGraph2(biomodel);
 				if (assemblyGraph.containsSBOL()) {
 					SBOLFileManager fileManager = new SBOLFileManager(
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),
-							EditPreferences.getDefaultUriPrefix());
+							SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
@@ -483,10 +484,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);
 
 						SBOLDocument tempSbolDoc = new SBOLDocument();
-						tempSbolDoc.setDefaultURIprefix(EditPreferences.getDefaultUriPrefix());
+						tempSbolDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 						ComponentDefinition assembledComp = assembler.assembleDNAComponent(tempSbolDoc,
-								EditPreferences.getDefaultUriPrefix());
+								SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 						ComponentDefinition new_assembledComp = null;
 						if (assembledComp != null) {
 							// NOTE: Check to see if the SBOL annotation could
@@ -504,11 +505,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									String version = "1.0";
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0], version);
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 										//
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0], version);
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0], version);
 
 									}
 									new_assembledComp.setTypes(assembledComp.getTypes());
@@ -521,7 +522,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											EditPreferences.getDefaultUriPrefix(), described_CompDef[0] + "_seq",
+											SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											version);
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -530,11 +531,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									Double compDef_version = Double.parseDouble(retrievedCompDef.getVersion()) + 1;
 									if (described_CompDef[3] != null) {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(
-												retrievedCompDef, EditPreferences.getDefaultUriPrefix(),
+												retrievedCompDef, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(),
 												described_CompDef[0], compDef_version.toString());
 									} else {
 										new_assembledComp = (ComponentDefinition) tempSbolDoc.createCopy(removeCompDef,
-												EditPreferences.getDefaultUriPrefix(), described_CompDef[0],
+												SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0],
 												compDef_version.toString());
 
 									}
@@ -549,7 +550,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 									Sequence new_assembledSeq = (Sequence) tempSbolDoc.createCopy(
 											removeCompDef.getSequences().iterator().next(),
-											EditPreferences.getDefaultUriPrefix(), described_CompDef[0] + "_seq",
+											SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), described_CompDef[0] + "_seq",
 											compDef_version.toString());
 									new_assembledComp.clearSequences();
 									new_assembledComp.addSequence(new_assembledSeq);
@@ -605,40 +606,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	// /**
-	// * Save the current iBioSim project as SBOL.
-	// */
-	// public void saveAsSBOL2()
-	// {
-	// try {
-	// String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
-	// HashSet<String> sbolFiles =
-	// biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
-	//
-	// SBML2SBOL.convert_SBML2SBOL(biosim.getSBOLDocument(), path,
-	// biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-	// sbolFiles, defaultURIprefix);
-	//
-	//
-	// } catch (SBOLValidationException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (FileNotFoundException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (SBOLConversionException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (XMLStreamException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// biosim.writeSBOLDocument();
-	// }
-
 	/**
 	 * Export the current model into the specified file format.
 	 * 
@@ -654,7 +621,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			SBOLDocument sbolOut = new SBOLDocument();
 			SBML2SBOL.convert_SBML2SBOL(sbolOut, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
-					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), EditPreferences.getDefaultUriPrefix());
+					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 			if (biosimrc.get("biosim.general.export_dir", "").equals(""))
 				lastFilePath = null;
@@ -663,7 +630,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			String exportFilePath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null,
 					JFileChooser.FILES_ONLY, "Export " + fileType.replace("1", ""), -1);
 			if (!exportFilePath.equals("")) {
-				String dir = exportFilePath.substring(0, exportFilePath.lastIndexOf(GlobalConstants.separator));
+				String dir = GlobalConstants.getPath(exportFilePath);
 				biosimrc.put("biosim.general.export_dir", dir);
 
 				if (fileType.equals("SBOL")) {
@@ -730,7 +697,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
+			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
@@ -747,7 +714,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Show the UploadDialog
-		UploadDialog ud = new UploadDialog(getParent(), registry, uploadDoc);
+		UploadNewDialog ud = new UploadNewDialog(getParent(), registry, uploadDoc);
 	}
 
 	/**
@@ -761,15 +728,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	 * @param name
 	 * @param description
 	 * @param citations
-	 * @param keywords
 	 * @param ifExisting
 	 */
 	public void submitSBOL(String registry, String user, String password, String id, String version, String name,
-			String description, String citations, String keywords, String ifExisting) {
+			String description, String citations, boolean overwrite) {
 		SBOLDocument uploadDoc = new SBOLDocument();
 
 		try {
-			String defaultURIprefix = EditPreferences.getDefaultUriPrefix();
+			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 
 			SBML2SBOL.convert_SBML2SBOL(uploadDoc, path, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
 					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
@@ -788,7 +754,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SynBioHubFrontend stack = new SynBioHubFrontend(registry);
 		try {
 			stack.login(user, password);
-			stack.submit(id, version, name, description, citations, keywords, ifExisting, uploadDoc);
+			stack.createCollection(id, version, name, description, citations, overwrite, uploadDoc);
 			JOptionPane.showMessageDialog(Gui.frame, "Submission Successful", "Submssion Successful",
 					JOptionPane.INFORMATION_MESSAGE);
 		} catch (SynBioHubException e) {
@@ -808,7 +774,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null,
 				JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
+			//System.out.println("exportPath="+exportPath);
+			String dir = exportPath.substring(0, exportPath.lastIndexOf(File.separator));
 			biosimrc.put("biosim.general.export_dir", dir);
 			try {
 				biomodel.exportSingleFile(exportPath);
@@ -838,14 +805,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null,
 				JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
+			String dir = GlobalConstants.getPath(exportPath);
 			biosimrc.put("biosim.general.export_dir", dir);
 			GCMParser parser;
 			try {
-				parser = new GCMParser(path + separator + modelId + ".xml");
+				parser = new GCMParser(path + File.separator + modelId + ".xml");
 				GeneticNetwork network = null;
 				BioModel bioModel = new BioModel(path);
-				bioModel.load(path + separator + modelId + ".xml");
+				bioModel.load(path + File.separator + modelId + ".xml");
 				SBMLDocument sbml = bioModel.flattenModel(true);
 				if (sbml == null)
 					return;
@@ -870,17 +837,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void saveAsVerilog(String newName) {
-		if (new File(path + separator + newName).exists()) {
+		if (new File(path + File.separator + newName).exists()) {
 			int value = JOptionPane.showOptionDialog(Gui.frame, newName + " already exists.  Overwrite file?",
 					"Save file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.NO_OPTION) {
 				return;
 			}
 		}
-		log.addText("Saving SBML file as SystemVerilog file:\n" + path + separator + newName + "\n");
+		log.addText("Saving SBML file as SystemVerilog file:\n" + path + File.separator + newName + "\n");
 		try {
-			if (saveLPN(biomodel, path + separator + newName.replace(".sv", ".lpn"))) {
-				Lpn2verilog.convert(path + separator + newName.replace(".sv", ".lpn"));
+			if (saveLPN(biomodel, path + File.separator + newName.replace(".sv", ".lpn"))) {
+				Lpn2verilog.convert(path + File.separator + newName.replace(".sv", ".lpn"));
 				biosim.addToTree(newName);
 			}
 		} catch (XMLStreamException e) {
@@ -898,16 +865,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void saveAsLPN(String newName) {
-		if (new File(path + separator + newName).exists()) {
+		if (new File(path + File.separator + newName).exists()) {
 			int value = JOptionPane.showOptionDialog(Gui.frame, newName + " already exists.  Overwrite file?",
 					"Save file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.NO_OPTION) {
 				return;
 			}
 		}
-		log.addText("Saving SBML file as LPN file:\n" + path + separator + newName + "\n");
+		log.addText("Saving SBML file as LPN file:\n" + path + File.separator + newName + "\n");
 		try {
-			if (saveLPN(biomodel, path + separator + newName)) {
+			if (saveLPN(biomodel, path + File.separator + newName)) {
 				biosim.addToTree(newName);
 			}
 		} catch (XMLStreamException e) {
@@ -925,20 +892,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public void saveAs(String newName) {
 		try {
-			if (new File(path + separator + newName + ".xml").exists()) {
+			if (new File(path + File.separator + newName + ".xml").exists()) {
 				int value = JOptionPane.showOptionDialog(Gui.frame, newName + " already exists.  Overwrite file?",
 						"Save file", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					biomodel.save(path + separator + newName + ".xml");
-					log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
+					biomodel.save(path + File.separator + newName + ".xml");
+					log.addText("Saving SBML file as:\n" + path + File.separator + newName + ".xml\n");
 					biosim.addToTree(newName + ".xml");
 				} else {
 					// Do nothing
 					return;
 				}
 			} else {
-				biomodel.save(path + separator + newName + ".xml");
-				log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
+				biomodel.save(path + File.separator + newName + ".xml");
+				log.addText("Saving SBML file as:\n" + path + File.separator + newName + ".xml\n");
 				biosim.addToTree(newName + ".xml");
 			}
 			biosim.updateTabName(modelId + ".xml", newName + ".xml");
@@ -968,7 +935,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = edu.utah.ece.async.ibiosim.gui.util.Utility.browse(Gui.frame, lastFilePath, null,
 				JFileChooser.FILES_ONLY, "Export " + "Schematic", -1);
 		if (!exportPath.equals("")) {
-			String dir = exportPath.substring(0, exportPath.lastIndexOf(GlobalConstants.separator));
+			String dir = GlobalConstants.getPath(exportPath);
 			biosimrc.put("biosim.general.export_dir", dir);
 			schematic.outputFrame(exportPath, false);
 			log.addText("Exporting schmeatic image:\n" + exportPath + "\n");
@@ -1181,15 +1148,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 								}
 							}
-							new File(path + separator + simName + separator + stem
+							new File(path + File.separator + simName + File.separator + stem
 									+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
 											.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
 											.replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
 							AnalysisThread thread = new AnalysisThread(analysisView);
-							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
-									.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
-									.replace(",", ""), false);
+							String simStem = stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
+                  .replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
+                  .replace(",", "");
+							thread.start(false);
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
 									.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
@@ -1200,15 +1168,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else {
-						new File(path + separator + simName + separator + stem
+						new File(path + File.separator + simName + File.separator + stem
 								+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
 										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""))
 												.mkdir();
 						createSBML(stem, sweep, analysisMethod);
 						AnalysisThread thread = new AnalysisThread(analysisView);
+						String simStem = 
+                stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+                .replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
 						thread.start(
-								stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""),
 								false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
@@ -1223,15 +1192,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 				new ConstraintTermThread(analysisView).start(threads, dirs, levelOne, stem);
 			} else {
-				if (!stem.equals("")) {
-					new File(path + separator + simName + separator + stem).mkdir();
-				}
+//				if (!stem.equals("")) {
+//					new File(path + File.separator + simName + File.separator + stem).mkdir();
+//				}
 				if (createSBML(stem, ".", analysisMethod)) {
-					if (!stem.equals("")) {
-						new AnalysisThread(analysisView).start(stem, true);
-					} else {
-						new AnalysisThread(analysisView).start(".", true);
-					}
+						new AnalysisThread(analysisView).start(true);
 				}
 				// analysisView.emptyFrames();
 			}
@@ -1670,15 +1635,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				reactionId);
 		SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "stddev", taskId, type,
 				reactionId);
-		for (int i = analysisView.getStartIndex(taskId.replace("__", GlobalConstants.separator)); i < analysisView
-				.getStartIndex(taskId.replace("__", GlobalConstants.separator)) + analysisView.getNumRuns(); i++) {
+		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < analysisView
+				.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
 			SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "" + i, taskId, type,
 					reactionId);
 		}
 	}
 
 	private void createDataGenerators(org.sbml.jsbml.Model model, SedML sedml, String taskId) {
-		if (analysisView.getStartIndex(taskId.replace("__", GlobalConstants.separator)) == 1) {
+		if (analysisView.getStartIndex(taskId.replace("__", File.separator)) == 1) {
 			SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
 		}
 		for (Compartment compartment : model.getListOfCompartments()) {
@@ -1726,12 +1691,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		SBMLWriter Xwriter = new SBMLWriter();
 		try {
 			SBMLDocument sbmlDoc = SBMLReader
-					.read(new File(path + GlobalConstants.separator + simName + GlobalConstants.separator + filename));
+					.read(new File(path + File.separator + simName + File.separator + filename));
 			createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
 			if (model.getListOfChanges().size() == 0)
 				return;
 			Xwriter.write(applyChanges(sedmlDoc, sbmlDoc, model),
-					path + GlobalConstants.separator + simName + GlobalConstants.separator + filename);
+					path + File.separator + simName + File.separator + filename);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1760,7 +1725,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
-		if (analysisMethod != null && !analysisMethod.contains("Hierarchical")) {
+		if (analysisMethod != null && !analysisMethod.contains("Hierarchical") && !analysisMethod.contains("Mixed")) {
 			SBMLDocument sbml;
 			try {
 				sbml = biomodel.flattenModel(true);
@@ -1788,22 +1753,34 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (network == null)
 					return false;
 				if (analysisView != null)
-					network.loadProperties(biomodel, analysisView.getGcmAbstractions(), analysisView.getProperty());
+					network.loadProperties(biomodel, analysisView.getGcmAbstractions());
 				else
 					network.loadProperties(biomodel);
 
 				SBMLDocument d = network.getSBML();
 				network.markAbstractable();
-				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml",
-						d);
+				try {
+					network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml",
+							d);
+				} catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+					return false;
+				}
 			} else {
 				SBMLWriter writer = new SBMLWriter();
 				PrintStream p;
 				try {
 					GeneticNetwork.reformatArrayContent(biomodel, sbml,
-							path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
+							path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml");
 					p = new PrintStream(new FileOutputStream(
-							path + separator + simName + separator + stem + direct + separator + modelId + ".xml"),
+							path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml"),
 							true, "UTF-8");
 					p.print(writer.writeSBMLToString(sbml));
 					p.close();
@@ -1822,7 +1799,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		} else {
 			try {
-				biomodel.save(path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
+				biomodel.save(path + File.separator + simName + File.separator + stem + direct + File.separator + modelId + ".xml");
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -2122,16 +2099,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		String file = filename.replace(".gcm", ".xml");
 
-		compartmentPanel = new Compartments(biomodel, this, paramsOnly, getParams, path + separator + file,
+		compartmentPanel = new Compartments(biomodel, this, paramsOnly, getParams, path + File.separator + file,
 				parameterChanges, false);
-		reactionPanel = new Reactions(biomodel, paramsOnly, getParams, path + separator + file, parameterChanges, this);
-		speciesPanel = new MySpecies(biomodel, paramsOnly, getParams, path + separator + file, parameterChanges,
-				grid.isEnabled(), this);
-		parametersPanel = new Parameters(biomodel, this, paramsOnly, getParams, path + separator + file,
-				parameterChanges, (paramsOnly || !textBased) && !grid.isEnabled());
+		reactionPanel = new Reactions(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges, this);
+		speciesPanel = new MySpecies(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges,
+		  biomodel.isGridEnabled(), this);
+		parametersPanel = new Parameters(biomodel, this, paramsOnly, getParams, path + File.separator + file,
+				parameterChanges, (paramsOnly || !textBased) && !biomodel.isGridEnabled());
 		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
-		eventPanel = new Events(biosim, biomodel, this, textBased);
+		eventPanel = new Events(biosim, biomodel, this, textBased, lema);
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
@@ -2161,7 +2138,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		mainPanelCenterCenter.add(componentsPanel);
 
 		this.schematic = new Schematic(biomodel, biosim, this, true, null, compartmentPanel, reactionPanel, rulesPanel,
-				consPanel, eventPanel, parametersPanel, biosim.lema);
+				consPanel, eventPanel, parametersPanel, lema);
 		int size = SBMLutilities.getModelSize(biomodel.getSBMLDocument());
 		if (!textBased && size > LARGE_MODEL_SIZE) {
 			String[] editor = { "Open in Textual Editor", "Open in Graphical Editor" };
@@ -2173,7 +2150,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (textBased) {
-			if (!biosim.lema) {
+			if (!lema) {
 				tab.addTab("Compartments", compPanel);
 				tab.addTab("Species", speciesPanel);
 				tab.addTab("Reactions", reactionPanel);
@@ -2182,7 +2159,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Modules", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
 			tab.addTab("Constraints", propPanel);
-			if (!biosim.lema) {
+			if (!lema) {
 				tab.addTab("Events", eventPanel);
 			} else {
 				tab.addTab("Transitions", eventPanel);
@@ -2190,7 +2167,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} else {
 			modelPanel = schematic.getModelPanel();
 			tab.addTab("Schematic", schematic);
-			if (grid.isEnabled()) {
+			if (biomodel.isGridEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 				tab.addTab("Parameters", parametersPanel);
 			} else {
@@ -2483,7 +2460,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
 			try {
-				refGCM.load(path + separator + refFile);
+				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -2521,7 +2498,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
 			try {
-				refGCM.load(path + separator + refFile);
+				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -2559,7 +2536,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
 			try {
-				refGCM.load(path + separator + refFile);
+				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -2595,7 +2572,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		 * BioModel refBioModel = null;
 		 * 
 		 * if (paramsOnly) { refBioModel = new BioModel(path);
-		 * refBioModel.load(path + separator + refFile); }
+		 * refBioModel.load(path + File.separator + refFile); }
 		 */
 
 		// TODO: This is a messy way to do things. We set the selected component
@@ -2649,7 +2626,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		boolean check = true;
 		BioModel g = new BioModel(path);
 		try {
-			g.load(path + separator + checkFile);
+			g.load(path + File.separator + checkFile);
 		} catch (XMLStreamException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 					JOptionPane.ERROR_MESSAGE);
@@ -2735,7 +2712,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (comp != null && !comp.equals("")) {
 			BioModel subBioModel = new BioModel(path);
 			try {
-				subBioModel.load(path + separator + comp);
+				subBioModel.load(path + File.separator + comp);
 				subBioModel.flattenBioModel();
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
@@ -2769,7 +2746,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public boolean isGridEditor() {
-		return grid.isEnabled();
+		return biomodel.isGridEnabled();
 	}
 
 	public void addCompartment() {
@@ -2880,7 +2857,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		biomodel.loadDefaultEnclosingCompartment();
 		biomodel.loadGridSize();
-		buildGrid();
+    grid.createGrid(null);
 	}
 
 	public void setElementsPanel(ElementsPanel elementsPanel) {
@@ -3042,11 +3019,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return grid;
 	}
 
-	public void buildGrid() {
-
-		grid.createGrid(biomodel, null);
-	}
-
 	public void makeUndoPoint() {
 		StringBuffer up = saveToBuffer();
 		undoManager.makeUndoPoint(up);
@@ -3177,7 +3149,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			r.setId(reactionId);
 			r.setReversible(false);
-			r.setFast(false);
+			//r.setFast(false);
 			ArrayList<String> CompChoices = new ArrayList<String>();
 			if (isModifier) {
 				ModifierSpeciesReference source = r.createModifier();
@@ -3513,23 +3485,5 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		lpn.save(filename);
 		return true;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		Message message = (Message) arg;
-
-		if (message.isConsole()) {
-			System.out.println(message.getMessage());
-		} else if (message.isErrorDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-		} else if (message.isDialog()) {
-			JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-					JOptionPane.PLAIN_MESSAGE);
-		} else if (message.isLog()) {
-			log.addText(message.getMessage());
-		}
-
 	}
 }

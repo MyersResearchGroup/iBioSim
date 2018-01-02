@@ -44,7 +44,7 @@ public class ComponentAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		gui.openModelEditor(id, false);
+		gui.openModelEditor(id, false, false);
 	}
 
 }

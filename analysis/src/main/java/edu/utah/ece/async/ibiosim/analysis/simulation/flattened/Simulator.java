@@ -32,11 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.PriorityQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
@@ -68,6 +65,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -76,6 +74,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
  * 
@@ -85,7 +85,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class Simulator extends Observable implements ParentSimulator
+public abstract class Simulator extends AbstractSimulator
 {
 
 	// SBML model
@@ -226,7 +226,6 @@ public abstract class Simulator extends Observable implements ParentSimulator
 	protected double										timeLimit;
 	protected double										maxTimeStep;
 	protected double										minTimeStep;
-	protected JProgressBar									progress;
 	protected double										printInterval;
 	protected int											currentRun;
 	protected String										outputDirectory;
@@ -258,13 +257,10 @@ public abstract class Simulator extends Observable implements ParentSimulator
 	protected int											totalCount									= 0;
 	protected int											memCount									= 0;
 
-	protected JFrame										running										= null;
-
 	PsRandom												prng										= new PsRandom();
 
-	
-	protected final Message message = new Message();
-	
+  protected double currProgress, maxProgress;
+  
 	/**
 	 * does lots of initialization
 	 * 
@@ -277,19 +273,17 @@ public abstract class Simulator extends Observable implements ParentSimulator
 	 * @param printInterval
 	 * @param initializationTime
 	 */
-	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)
+	public Simulator(String SBMLFileName, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, Long initializationTime, double stoichAmpValue, String[] interestingSpecies, String quantityType)
 	{
 
 		long initTime1 = System.nanoTime();
-
+		this.maxProgress = timeLimit * runs;
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
 		this.maxTimeStep = maxTimeStep;
 		this.minTimeStep = minTimeStep;
-		this.progress = progress;
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
-		this.running = running;
 		this.interestingSpecies.clear();
 
 		for (int i = 0; i < interestingSpecies.length; ++i)
@@ -1915,7 +1909,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 						newReaction.setId(compartmentID + "__" + reactionID);
 						SBMLutilities.setMetaId(newReaction, compartmentID + "__" + reactionID);
 						newReaction.setReversible(true);
-						newReaction.setFast(false);
+						//newReaction.setFast(false);
 						newReaction.setCompartment(reaction.getCompartment());
 
 						// alter the kinetic law to so that it has the correct
@@ -2092,7 +2086,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
-							newReaction.setFast(false);
+							//newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
 
 							// get the nodes to alter
@@ -4204,6 +4198,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 
 		String commaSpace = "";
 
+    
 		// dynamic printing requires re-printing the species values each time
 		// step
 		if (dynamicBoolean == true)
@@ -4354,6 +4349,12 @@ public abstract class Simulator extends Observable implements ParentSimulator
 
 		bufferedTSDWriter.write(")");
 		bufferedTSDWriter.flush();
+		
+
+    currProgress += printInterval;
+    message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
+    parent.send(RequestType.REQUEST_PROGRESS, message);
+    
 	}
 
 	/**
@@ -4381,7 +4382,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 			for (int run = 1; run <= numRuns; ++run)
 			{
 
-				DTSDParser dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				DTSDParser dtsdParser = new DTSDParser(outputDirectory + File.separator + "run-" + run + ".dtsd");
 				speciesSet.addAll(dtsdParser.getSpecies());
 			}
 
@@ -4401,13 +4402,13 @@ public abstract class Simulator extends Observable implements ParentSimulator
 			if (dynamicBoolean == true)
 			{
 
-				dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				dtsdParser = new DTSDParser(outputDirectory + File.separator + "run-" + run + ".dtsd");
 				// allSpecies = dtsdParser.getSpecies();
 				runStatistics = dtsdParser.getHashMap(allSpecies);
 			}
 			else
 			{
-				tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd", false);
+				tsdParser = new TSDParser(outputDirectory + File.separator + "run-" + run + ".tsd", false);
 				allSpecies = tsdParser.getSpecies();
 				runStatistics = tsdParser.getHashMap();
 			}
@@ -4825,7 +4826,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 						newReaction.setId(compartmentID + "__" + reactionID);
 						SBMLutilities.setMetaId(newReaction, compartmentID + "__" + reactionID);
 						newReaction.setReversible(true);
-						newReaction.setFast(false);
+						//newReaction.setFast(false);
 						newReaction.setCompartment(reaction.getCompartment());
 
 						// alter the kinetic law to so that it has the correct
@@ -5002,7 +5003,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 							newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 							SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 							newReaction.setReversible(false);
-							newReaction.setFast(false);
+							//newReaction.setFast(false);
 							newReaction.setCompartment(reaction.getCompartment());
 
 							// get the nodes to alter
@@ -6020,7 +6021,7 @@ public abstract class Simulator extends Observable implements ParentSimulator
 				extension = ".dtsd";
 			}
 
-			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + extension);
+			TSDWriter = new FileWriter(outputDirectory + File.separator + "run-" + currentRun + extension);
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
 

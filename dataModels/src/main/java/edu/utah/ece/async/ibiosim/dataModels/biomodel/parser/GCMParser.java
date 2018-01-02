@@ -48,15 +48,11 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * @version %I%
  */
 public class GCMParser {
-	
-	private String separator;
 
 	public GCMParser(String filename) throws XMLStreamException, IOException {
-		separator = GlobalConstants.separator;
 		//this.debug = debug;
 		biomodel = new BioModel(filename.substring(0, filename.length()
-				- filename.split(separator)[filename.split(separator).length - 1]
-						.length()));
+				- GlobalConstants.getFilename(filename).length()));
 		biomodel.load(filename);
 		
 		data = new StringBuffer();
@@ -74,7 +70,6 @@ public class GCMParser {
 	}
 	
 	public GCMParser(BioModel gcm) {
-		separator = GlobalConstants.separator;
 		//this.debug = debug;
 		this.biomodel = gcm;
 	}

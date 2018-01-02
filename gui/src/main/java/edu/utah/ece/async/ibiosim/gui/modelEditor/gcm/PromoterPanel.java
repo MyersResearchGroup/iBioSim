@@ -365,17 +365,27 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		
 		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
+			
 			// Field for annotating promoter with SBOL DNA components
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
-			// TODO: if sbolURIs.size > 0, add them to the promoter species, and remove from reaction
-			if (sbolURIs.size()>0) {
+			
+			if (sbolURIs.size()>0 && sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT)) 
+			{
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolURIs, sbolStrand);
+				sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+						sbolField.getSBOLURIs().iterator().next()); 
 				if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
 				{
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+					JOptionPane.showMessageDialog(Gui.frame, 
+							"Invalid XML in SBML file", 
+							"Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", 
+							JOptionPane.ERROR_MESSAGE); 
 				}
-				AnnotationUtility.removeSBOLAnnotation(production);
+				else
+				{
+					AnnotationUtility.removeSBOLAnnotation(production);
+				}
 			} 
 			else 
 			{
@@ -404,14 +414,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		}
 		return true;
 	}
-	
-//	private boolean checkSbolValues() {
-//		for (SBOLField sf : sbolFields.values()) {
-//			if (!sf.isValidText())
-//				return false;
-//		}
-//		return true;
-//	}
 
 	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(Gui.frame, this,
@@ -431,7 +433,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			if(idDims==null)return false;
 			dimensionIds = SBMLutilities.getDimensionIds("",idDims.length-1);
 			String id = selected;
-//			boolean removeModelSBOLAnnotationFlag = false;
+			
 			if (!paramsOnly) {
 				if (oldName == null) {
 					if (bioModel.isSIdInUse(idDims[0])) {
@@ -446,19 +448,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 						return false;
 					}
 				}
-				// Checks whether SBOL annotation on model needs to be deleted later when annotating promoter with SBOL
-//				if (sbolField.getSBOLURIs().size() > 0 && 
-//						bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
-//					Object[] options = { "OK", "Cancel" };
-//					int choice = JOptionPane.showOptionDialog(null, 
-//							"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//							" the latter was previously generated from the former.  Remove SBOL associated to model?", 
-//							"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//					if (choice == JOptionPane.OK_OPTION)
-//						removeModelSBOLAnnotationFlag = true;
-//					else
-//						return false;
-//				}
+				
 				id = idDims[0];
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 				SBMLutilities.createDimensions(promoter, dimensionIds, idDims);
@@ -527,35 +517,49 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort,idDims);
 
 			if (!paramsOnly) {
-				// Add SBOL annotation to promoter
-				if (sbolField.getSBOLURIs().size() > 0) {
-					if (!production.isSetMetaId() || production.getMetaId().equals(""))
-						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
-								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(selected, sbolField.getSBOLURIs(),
-							sbolField.getSBOLStrand());
-					if(!AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot))
-					{
-						JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(promoter) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
-					}
-					
-//					promoter.setId(sbolField.getSBOLObjID());
-//					promoter.setName(sbolField.getSBOLObjName()); 
-//					promoter.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-				} else
-					AnnotationUtility.removeSBOLAnnotation(promoter);
-
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && oldName != null && !oldName.equals(id)) {
 					try {
 						bioModel.changePromoterId(oldName, id);
 					} catch (BioSimException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+								JOptionPane.ERROR_MESSAGE);
 					}
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}
+
+				// Add SBOL annotation to promoter
+				if (sbolField.getSBOLURIs().size() > 0) 
+				{
+					if(sbolField.isSBOLSBOSet() && !sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT))
+					{
+						JOptionPane.showMessageDialog(Gui.frame, 
+								"You are not allowed to annotate a promoter that does not have SBOL component type DNA.", 
+								"Prohibited SBOL Annotation Type",
+								JOptionPane.WARNING_MESSAGE); 
+					}
+					else
+					{
+						if (!production.isSetMetaId() || production.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), production, 
+									bioModel.getMetaIDIndex());
+						//try 
+						//{
+							// TODO: removed this since changing id based on SBOL field could cause name conflicts
+							//bioModel.changePromoterId(id, SBMLutilities.getUniqueSBMLId(sbolField.getSBOLObjID(), bioModel));
+						setSBOLAnnotation(promoter);
+						//} 
+						//catch (BioSimException e) 
+						//{
+						//	JOptionPane.showMessageDialog(Gui.frame, e.getTitle(), e.getMessage(), 
+						//			JOptionPane.ERROR_MESSAGE);
+						//}
+					}
+
+				} else
+					AnnotationUtility.removeSBOLAnnotation(promoter);
+
 				bioModel.createDirPort(promoter.getId(),speciesType);
 				this.lastUsedPromoter = id;
 			}
@@ -570,6 +574,34 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			return true;
 		}
 		return true;
+	}
+	
+	/**
+	 * Perform annotation on the SBML element with the SBOL object that was selected from SBOL association.
+	 * @param sbmlElement - The SBML element to set the SBOL annotation on.
+	 */
+	private void setSBOLAnnotation(SBase sbmlElement)
+	{
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlElement.getMetaId(), 
+				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+				sbolField.getSBOLURIs().iterator().next()); 
+		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
+		{
+			JOptionPane.showMessageDialog(Gui.frame,  
+					"Error occurred while annotating SBML element "  + sbmlElement.getId() + " with SBOL.", 
+					"Invalid XML in SBML file",
+					JOptionPane.ERROR_MESSAGE); 
+		}
+		
+		if(sbolField.isSBOLNameSet())
+		{
+			sbmlElement.setName(sbolField.getSBOLObjName());
+		}
+		if(sbolField.isSBOLSBOSet())
+		{
+			sbmlElement.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+		}
 	}
 	
 	public String updates() {

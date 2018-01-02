@@ -34,7 +34,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class HierarchicalNode extends AbstractHierarchicalNode
 {
-
   private List<HierarchicalNode>  children;
   private ArrayNode       arrayNode;
   protected HierarchicalState   state;
@@ -177,7 +176,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public void setValue(int index, double value)
   {
-    state.setStateValue(index, value);
+    state.getState(index).setStateValue(value);
   }
   
   public double getValue()
@@ -192,17 +191,28 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   
   public double getRate()
   {
-    return state.getRateValue();
+    return state.getRateValue(0);
   }
   
   public double getRate(int index)
   {
-    return state.getRateValue();
+    return state.getRateValue(index);
   }
 
+
+  public void setRateValue(int index, double value)
+  {
+    state.setRateValue(index, value);
+  }
+  
   public HierarchicalState getState()
   {
     return state;
+  }
+  
+  public double computeRateOfChange(int index)
+  {
+    return 0;
   }
   
   @Override

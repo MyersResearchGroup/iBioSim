@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 - 2015, Clark & Parsia, LLC. <http://www.clarkparsia.com>
+ * Copyright (c) 2012 - 2017, Clark & Parsia, LLC. <http://www.clarkparsia.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ import javax.swing.event.ListSelectionListener;
 
 import com.google.common.base.Objects;
 
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.PreferencesDialog.PreferencesTab;
+import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.SettingsTab;
+
 /**
  * 
  * @author Evren Sirin
@@ -51,9 +54,9 @@ import com.google.common.base.Objects;
 public class PreferencesDialog extends JDialog implements ActionListener {
 	private static final String TITLE = "Preferences";
 
-	private static final PreferencesTab[] TABS = { UserInfoTab.INSTANCE, RegistryPreferencesTab.INSTANCE,
-			GeneralPreferencesTab.INSTANCE, PartEditorPreferencesTab.INSTANCE, ModelEditorPreferencesTab.INSTANCE, 
-			ModelPreferencesTab.INSTANCE, AnalysisPreferencesTab.INSTANCE, LearnPreferencesTab.INSTANCE 
+	private static final PreferencesTab[] TABS = { edu.utah.ece.async.sboldesigner.sbol.editor.dialog.UserInfoTab.INSTANCE, edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryPreferencesTab.INSTANCE,
+			GeneralPreferencesTab.INSTANCE, SettingsTab.INSTANCE, ModelEditorPreferencesTab.INSTANCE, 
+			ModelPreferencesTab.INSTANCE, AnalysisPreferencesTab.INSTANCE, LearnPreferencesTab.INSTANCE, SynthesisPreferencesTab.INSTANCE  
 			/**
 			 * SOMappingTab.INSTANCE,
 			 * VersioningPreferencesTab.INSTANCE
@@ -133,7 +136,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		contentPane.add(cards, BorderLayout.CENTER);
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 
-		setSize(600, 450);
+		setSize(720, 450);
 		setLocationRelativeTo(getOwner());
 	}
 
@@ -151,17 +154,17 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 		setVisible(false);
 	}
 
-	interface PreferencesTab {
-		String getTitle();
-
-		String getDescription();
-
-		Icon getIcon();
-
-		Component getComponent();
-
-		void save();
-
-		boolean requiresRestart();
-	}
+//	interface PreferencesTab {
+//		String getTitle();
+//
+//		String getDescription();
+//
+//		Icon getIcon();
+//
+//		Component getComponent();
+//
+//		void save();
+//
+//		boolean requiresRestart();
+//	}
 }

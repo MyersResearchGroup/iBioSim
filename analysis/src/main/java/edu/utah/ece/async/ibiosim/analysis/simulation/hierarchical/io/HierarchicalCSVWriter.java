@@ -1,9 +1,23 @@
+/*******************************************************************************
+ *  
+ * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
+ * for the latest version of iBioSim.
+ *
+ * Copyright (C) 2017 University of Utah
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the Apache License. A copy of the license agreement is provided
+ * in the file named "LICENSE.txt" included with this software distribution
+ * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
+ *  
+ *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 public class HierarchicalCSVWriter extends HierarchicalWriter{
@@ -23,11 +37,11 @@ public class HierarchicalCSVWriter extends HierarchicalWriter{
     bufferedWriter.write("\n");
     if(listOfStates.size() > 0)
     {
-      bufferedWriter.write(String.valueOf(listOfStates.get(0).getStateValue()));
+      bufferedWriter.write(String.valueOf(listOfStates.get(0).toString()));
       
       for(int i = 1; i < this.listOfStates.size(); ++i)
       {
-        bufferedWriter.write(String.valueOf(separator) + listOfStates.get(i).getStateValue());
+        bufferedWriter.write(String.valueOf(separator) + listOfStates.get(i).toString());
       }
     }
     
@@ -35,7 +49,7 @@ public class HierarchicalCSVWriter extends HierarchicalWriter{
   }
 
   @Override
-  public void addVariable(String id, HierarchicalState state) {
+  public void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
     if(header.length() == 0)
     {
       header.append(id);
@@ -45,7 +59,7 @@ public class HierarchicalCSVWriter extends HierarchicalWriter{
       header.append(separator + id);
     }
     
-    listOfStates.add(state);
+    addNode(node, index, isConcentration);
   }
   @Override
   public void init(String filename) throws IOException {

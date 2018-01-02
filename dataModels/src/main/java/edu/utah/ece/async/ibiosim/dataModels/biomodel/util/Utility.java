@@ -23,6 +23,8 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,19 +34,26 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLError;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
+import org.sbml.jsbml.validator.SBMLValidator;
+import org.sbml.libsbml.libsbmlConstants;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -99,7 +108,7 @@ public class Utility {
 		Reaction r = new Reaction(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		r.setId(id);
 		r.setReversible(false);
-		r.setFast(false);
+		//r.setFast(false);
 		return r;
 	}
 
@@ -117,19 +126,17 @@ public class Utility {
 		return sr;
 	}
 	
-	public static LocalParameter Parameter(String id, double value, String units) {
-		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
-		p.setId(id);
+	public static void Parameter(KineticLaw kl, String id, double value, String units) {
+		if (kl.getLocalParameter(id)!=null) return;
+		LocalParameter p = kl.createLocalParameter(id);
 		p.setValue(value);
 		p.setUnits(units);
-		return p;
 	}
 	
-	public static LocalParameter Parameter(String id, double value) {
-		LocalParameter p = new LocalParameter(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
-		p.setId(id);
+	public static void Parameter(KineticLaw kl, String id, double value) {
+		if (kl.getLocalParameter(id)!=null) return;
+		LocalParameter p = kl.createLocalParameter(id);
 		p.setValue(value);
-		return p;
 	}
 	
 	public static Species makeSpecies(String id, String compartment, double amount, double concentration) {
@@ -263,6 +270,26 @@ public class Utility {
 		return result;
 
 	}
+
+	public static boolean deleteDir(File dir) {
+    int count = 0;
+    do {
+      File[] list = dir.listFiles();
+      System.gc();
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].isDirectory()) {
+          deleteDir(list[i]);
+        } else {
+          list[i].delete();
+        }
+      }
+      count++;
+    } while (!dir.delete() && count != 100);
+    if (count == 100) {
+      return false;
+    }
+    return true;
+  }
 	
 	public static String[] getTSDFiles(String folder) {
 		File allFiles = new File(folder);
@@ -281,12 +308,11 @@ public class Utility {
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
-		String separator = GlobalConstants.separator;
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
 		String[] files = getTSDFiles(folder);
 		for (int i = 0; i < files.length; i++) {
-			result = readFile(folder+separator+files[i]);
+			result = readFile(folder+File.separator+files[i]);
 			if (average == null) {
 				average = result;
 			} else {
@@ -456,6 +482,7 @@ public class Utility {
 		}
 		return null;
 	}
+	
 
 	private static FilenameFilter filter = null;
 

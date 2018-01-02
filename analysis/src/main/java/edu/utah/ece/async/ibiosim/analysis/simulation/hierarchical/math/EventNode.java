@@ -15,10 +15,11 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 
 /**
  * 
@@ -30,254 +31,201 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventS
  */
 public class EventNode extends HierarchicalNode
 {
-	private HierarchicalNode	delayValue;
-	private HierarchicalNode	priorityValue;
+  private HierarchicalNode	delayValue;
+  private HierarchicalNode	priorityValue;
 
-	private boolean				isPersistent;
-	private boolean				useTriggerValue;
+  private boolean				isPersistent;
+  private boolean				useTriggerValue;
 
-	List<FunctionNode>	eventAssignments;
+  private List<FunctionNode>	eventAssignments;
+  private Map<Integer, EventState> eventState;
 
-	Map<Integer, EventState> eventState;
-	
-	public EventNode(HierarchicalNode trigger)
-	{
-		super(Type.PLUS);
-		this.addChild(trigger);
+  public EventNode(HierarchicalNode trigger)
+  {
+    super(Type.PLUS);
+    this.addChild(trigger);
 
-		eventState = new HashMap<Integer, EventState>();
-	}
+    eventState = new HashMap<Integer, EventState>();
+  }
 
-	public EventState addEventState(int index)
-	{
-	  EventState state = new EventState(index, this);
-	  eventState.put(index, state);
-	  return state;
-	}
-	
-	public EventState getEventState(int index)
-	{
-	  return eventState.get(index);
-	}
-	
-	public HierarchicalNode getDelayValue()
-	{
-		return delayValue;
-	}
+  public void addEventState(int index)
+  {
+    EventState state = new EventState();
+    eventState.put(index, state);
+  }
 
-	public void setDelayValue(HierarchicalNode delayValue)
-	{
-		this.delayValue = delayValue;
-	}
+  public EventState getEventState(int index)
+  {
+    return eventState.get(index);
+  }
 
-	public boolean isPersistent()
-	{
-		return isPersistent;
-	}
+  public HierarchicalNode getDelayValue()
+  {
+    return delayValue;
+  }
 
-	public void setPersistent(boolean isPersistent)
-	{
-		this.isPersistent = isPersistent;
-	}
+  public void setDelayValue(HierarchicalNode delayValue)
+  {
+    this.delayValue = delayValue;
+  }
 
-	public boolean isUseTriggerValue()
-	{
-		return useTriggerValue;
-	}
+  public boolean isPersistent()
+  {
+    return isPersistent;
+  }
 
-	public void setUseTriggerValue(boolean useTriggerValue)
-	{
-		this.useTriggerValue = useTriggerValue;
-	}
+  public void setPersistent(boolean isPersistent)
+  {
+    this.isPersistent = isPersistent;
+  }
 
-	public boolean isEnabled(int index)
-	{
-		return eventState.get(index).isEnabled();
-	}
+  public boolean isUseTriggerValue()
+  {
+    return useTriggerValue;
+  }
 
-	public void setEnabled(int index, boolean isEnabled)
-	{
-	  eventState.get(index).setEnabled(isEnabled);
-	}
+  public void setUseTriggerValue(boolean useTriggerValue)
+  {
+    this.useTriggerValue = useTriggerValue;
+  }
 
-	public double getFireTime(int index)
-	{
-		return eventState.get(index).getFireTime();
-	}
+  public double getMaxDisabledTime(int index)
+  {
+    return eventState.get(index).maxDisabledTime;
+  }
 
-	public void setFireTime(int index, double fireTime)
-	{
-	  eventState.get(index).setFireTime(fireTime);
-	}
+  public void setMaxDisabledTime(int index, double maxDisabledTime)
+  {
+    eventState.get(index).maxDisabledTime = maxDisabledTime;
+  }
 
-	public double getMaxDisabledTime(int index)
-	{
-		return eventState.get(index).getMaxDisabledTime();
-	}
+  public double getMinEnabledTime(int index)
+  {
+    return eventState.get(index).minEnabledTime;
+  }
 
-	public void setMaxDisabledTime(int index, double maxDisabledTime)
-	{
-	  eventState.get(index).setMaxDisabledTime(maxDisabledTime);
-	}
+  public void setMinEnabledTime(int index, double minEnabledTime)
+  {
+    eventState.get(index).minEnabledTime = minEnabledTime;
+  }
 
-	public double getMinEnabledTime(int index)
-	{
-		return eventState.get(index).getMinEnabledTime();
-	}
+  public void addTriggeredEvent(int index, TriggeredEventNode event)
+  {
+    eventState.get(index).nonPersistentEvents.add(event);
+  }
+  
+  private void untriggerNonPersistent(int index)
+  {
+    LinkedList<TriggeredEventNode> nonPersistent = eventState.get(index).nonPersistentEvents;
+    
+    while(!nonPersistent.isEmpty())
+    {
+      TriggeredEventNode node = nonPersistent.removeFirst();
+      node.setFlipped();
+    }
+  }
+  
+  public void addEventAssignment(FunctionNode eventAssignmentNode)
+  {
+    if (eventAssignments == null)
+    {
+      eventAssignments = new ArrayList<FunctionNode>();
+    }
 
-	public void setMinEnabledTime(int index, double minEnabledTime)
-	{
-	  eventState.get(index).setMinEnabledTime(minEnabledTime);
-	}
+    eventAssignments.add(eventAssignmentNode);
+  }
 
-	public void addEventAssignment(FunctionNode eventAssignmentNode)
-	{
-		if (eventAssignments == null)
-		{
-			eventAssignments = new ArrayList<FunctionNode>();
-		}
+  public double evaluateFireTime(int index)
+  {
+    double fireTime = 0;
+    if (delayValue != null)
+    {
+      fireTime = Evaluator.evaluateExpressionRecursive(delayValue, index);
+    }
+    return  fireTime;
+  }
 
-		eventAssignments.add(eventAssignmentNode);
-	}
+  public double evaluatePriority(int index)
+  {
+    double priority = 0;
+    if(priorityValue != null)
+    {
+      priority =  Evaluator.evaluateExpressionRecursive(priorityValue, index);
+    }
+    return  priority;
+  }
+  
+  public double[] computeEventAssignmentValues(int index, double time)
+  {
 
-	public boolean computeEnabled(int index, double time)
-	{
+    double[] assignmentValues = null;
+    if(eventAssignments != null)
+    {
+      assignmentValues = new double[eventAssignments.size()];
+      for (int i = 0; i < eventAssignments.size(); i++)
+      {
+        FunctionNode eventAssignmentNode = eventAssignments.get(i);
+        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, index);
+        assignmentValues[i] = value;
+      }
+    }
+    return assignmentValues;
+  }
 
-	  EventState state = eventState.get(index);
-		if (state.getMaxDisabledTime() >= 0 && state.getMaxDisabledTime() <= state.getMinEnabledTime() && state.getMinEnabledTime() <= time)
-		{
-			state.setEnabled(true);
-			if (priorityValue != null)
-			{
-				state.setPriority(Evaluator.evaluateExpressionRecursive(priorityValue, index));
-			}
-			double fireTime = time;
-			if (delayValue != null)
-			{
-			  fireTime += Evaluator.evaluateExpressionRecursive(delayValue, index);
-			}
-			state.setFireTime(fireTime);
-			if (useTriggerValue)
-			{
-				computeEventAssignmentValues(index, time);
-			}
-		}
+  public boolean computeTrigger(int index)
+  {
 
-		return state.isEnabled();
-	}
+    double triggerResult = Evaluator.evaluateExpressionRecursive(this,index);
+    return triggerResult != 0;
+  }
 
-	public void fireEvent(int index, double time)
-	{
-	  EventState state = eventState.get(index);
-		if (state.isEnabled() && state.getFireTime() <= time)
-		{
-			state.setEnabled(false);
-      state.setPriority(0);
+  public boolean isTriggeredAtTime(double time, int index)
+  {
+    boolean trigger = computeTrigger(index);
+    EventState state = eventState.get(index);
+
+    if (trigger)
+    {
+      if(state.maxDisabledTime >= 0 && time >= state.maxDisabledTime && time <= state.minEnabledTime)
+      {
+        state.minEnabledTime = time;
+      }
+      return state.maxDisabledTime >= 0 && state.minEnabledTime <= time;
+    }
+    else
+    {
+      untriggerNonPersistent(index);
       
-			state.setMaxDisabledTime(Double.NEGATIVE_INFINITY);
-			state.setMinEnabledTime(Double.POSITIVE_INFINITY);
+      if (time > state.maxDisabledTime)
+      {
+        state.maxDisabledTime = time;
+      }
 
-			
-			if (isPersistent)
-			{
-				if (!computeTrigger(index))
-				{
-					state.setMaxDisabledTime(time);
-					return;
-				}
-			}
+      return false;
+    }
+  }
 
-			if (useTriggerValue)
-			{
-			  double[] assignmentValues = state.getAssignmentValues();
-			  for (int i = 0; i < eventAssignments.size(); i++)
-	      {
-	        FunctionNode eventAssignmentNode = eventAssignments.get(i);
-	        VariableNode variable = eventAssignmentNode.getVariable();
-	        variable.setValue(index, assignmentValues[i]);
-	      }
-			}
-			else
-			{
-			  for(FunctionNode node : eventAssignments)
-        {
-          node.computeFunction(index);
-        }
-			}
-			
+  public void setPriorityValue(HierarchicalNode priorityValue)
+  {
+    this.priorityValue = priorityValue;
+  }
 
-			isTriggeredAtTime(time, index);
-		}
+  public List<FunctionNode> getEventAssignments()
+  {
+    return eventAssignments;
+  }
+  
+  private class EventState {
+    private double        maxDisabledTime;
+    private double        minEnabledTime;
+    private LinkedList<TriggeredEventNode> nonPersistentEvents;
+    
+    public EventState()
+    {
+      this.maxDisabledTime = Double.NEGATIVE_INFINITY;
+      this.minEnabledTime = Double.POSITIVE_INFINITY;
+      this.nonPersistentEvents = new LinkedList<TriggeredEventNode>();
+    }
 
-	}
-
-	private void computeEventAssignmentValues(int index, double time)
-	{
-		double[] assignmentValues = new double[eventAssignments.size()];
-		eventState.get(index).setAssignmentValues(assignmentValues);
-		for (int i = 0; i < eventAssignments.size(); i++)
-		{
-			FunctionNode eventAssignmentNode = eventAssignments.get(i);
-			VariableNode variable = eventAssignmentNode.getVariable();
-			double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode, false, index);
-			if (variable.isSpecies())
-			{
-				SpeciesNode species = (SpeciesNode) variable;
-				if (!species.hasOnlySubstance())
-				{
-					assignmentValues[i] = value * species.getCompartment().getValue(index);
-					continue;
-				}
-			}
-			assignmentValues[i] = value;
-		}
-	}
-
-	public boolean computeTrigger(int index)
-	{
-	  
-		double triggerResult = Evaluator.evaluateExpressionRecursive(this, index);
-		return triggerResult != 0;
-	}
-
-	public boolean isTriggeredAtTime(double time, int index)
-	{
-		boolean trigger = computeTrigger(index);
-		EventState state = eventState.get(index);
-		
-		if (trigger)
-		{
-			if(state.getMaxDisabledTime() >= 0 && time >= state.getMaxDisabledTime() && time <= state.getMinEnabledTime())
-			{
-				state.setMinEnabledTime(time);
-			}
-			return state.getMaxDisabledTime() >= 0 && state.getMinEnabledTime() <= time;
-		}
-		else
-		{
-			if (time > state.getMaxDisabledTime())
-			{
-				state.setMaxDisabledTime(time);
-			}
-
-			return false;
-		}
-	}
-
-	public double getPriority(int index)
-	{
-	  EventState state = eventState.get(index);
-	  return state.getPriority();
-	}
-
-
-	public void setPriorityValue(HierarchicalNode priorityValue)
-	{
-		this.priorityValue = priorityValue;
-	}
-
-	public List<FunctionNode> getEventAssignments()
-	{
-		return eventAssignments;
-	}
+  }
 }

@@ -51,17 +51,19 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
+import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
+ * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
  * 
- *
+ * @author Tramy Nguyen
  * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
@@ -378,7 +380,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					for (String fileID : new File(libFilePath).list())
 						if (fileID.endsWith(".sbol"))
 							sbolFilePaths.add(libFilePath + separator + fileID);
-				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, EditPreferences.getDefaultUriPrefix());
+				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 				//		boolean flatImport = libFilePaths.size() > 1;

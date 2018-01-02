@@ -13,31 +13,31 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.biomodel.util;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.TreeNode;
 import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
+import org.jlibsedml.SEDMLDocument;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.Compartment;
-//CompartmentType not supported in Level 3
-//import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
@@ -62,8 +62,6 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-//SpeciesType not supported in Level 3
-//import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
@@ -106,6 +104,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -113,7 +112,14 @@ import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
 /**
+ * This class is a utility class for SBML models. 
+ * This class has functions that will allow you to:
+ * - read in SBML files
+ * - has getter and setter methods to get SBML elements and their fields
+ * - has boolean checks for SBML elements.
  * 
+ * @author Leandro Watanabe
+ * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -124,6 +130,185 @@ public class SBMLutilities
 	public static final SystemsBiologyOntology sbo = new SystemsBiologyOntology();
 	public static final Message message = new Message();
 	
+	/**
+	 * The user has the option to :
+	 * 1. Export a list of BioModels to multiple SBML files 
+	 * 2. Export a list of BioModels to one SBML file
+	 * 3. Print to console.
+	 *  
+	 * @param models - The list of BioModels
+	 * @param outputDir - The output directory to save the BioModels in
+	 * @param outputFileName - The output file name if there was only one BioModel to export
+	 * @param noOutput - True if no output file is to be produced. False otherwise. 
+	 * @param sbmlOut - True if the user want to write the BioModel to an SBML file. False otherwise.
+	 * @param singleSBMLOutput - True if the user want to the list of BioModels into one SBML file rather than multiple files. False otherwise.
+	 * @throws XMLStreamException Invalid XML file
+	 * @throws SBMLException SBML Exception occurred when exporting BioModels to an SBML file
+	 * @throws IOException Unable to write file to SBML.
+	 */
+	public static void exportSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
+			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput) throws SBMLException, XMLStreamException, IOException
+	{
+		// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
+		// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
+		BioModel target = models.get(models.size() - 1);
+
+		if(noOutput)
+		{
+			printSBMLModel(target);
+		}
+		else if(sbmlOut)
+		{
+			if(outputFileName.isEmpty())
+			{
+				printSBMLModel(target);
+			}
+			else
+			{
+				//Note: In order to export multiple BioModels into one single SBML file, we must first
+				//generate each submodel and then collapse all models into one file. This is necessary because
+				//the top level SBML models are using external ModelDefinitions.
+				ArrayList<String> submodels = exportMultSBMLFile(models, outputDir);
+				if(singleSBMLOutput)
+				{
+					//delete 
+					target.exportSingleFile(outputDir + File.separator + outputFileName + ".xml"); 
+					File fileDir = new File(outputDir);
+					
+					File[] files = fileDir.listFiles();
+					for(File f : files)
+					{
+						if(f.isFile())
+						{
+							String fileName = f.getName();
+							if(submodels.contains(outputFileName+".xml") && !fileName.equals(outputFileName + ".xml"))
+							{
+								f.delete();
+							}
+						}
+					}
+					
+				}
+			}
+		}
+
+	}
+	
+
+	
+	/**
+	 * Print the BioModel to the console
+	 * @param target - The BioModel to be printed to the console.
+	 * @throws XMLStreamException Invalid XML file
+	 * @throws SBMLException SBML Exception occurred when exporting BioModels to an SBML file
+	 */
+	private static void printSBMLModel(BioModel target) throws SBMLException, XMLStreamException
+	{
+		SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
+	}
+	
+	/**
+	 * Export a list of BioModels to the specified output directory.
+	 * @param models - The list of BioModels
+	 * @param outputDir - The output directory to store the SBML files
+	 * @throws IOException  Unable to write file to SBML.
+	 * @throws XMLStreamException Invalid XML file
+	 */
+	public static ArrayList<String> exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException
+	{
+		ArrayList<String> submodels = new ArrayList<String>();
+		//Multiple SBML output
+		for (BioModel model : models)
+		{
+			String filename =  model.getSBMLDocument().getModel().getId() + ".xml";
+			model.save(outputDir + File.separator + filename);
+			submodels.add(filename);
+		}
+		return submodels;
+	}
+	
+	/**
+	 * Check if the given file is an SBML file.
+	 * @param file - The file to check if it is a valid SBML file.
+	 * @return True if it is an SBML file. False otherwise. 
+	 * @throws IOException - Unable to read file.
+	 */
+	public static boolean isSBMLFile(String file) throws IOException
+	{
+		BufferedReader b = new BufferedReader( new FileReader(file));
+
+		String xmlComment =  "!--";
+		String xmlProlog = "?xml";
+		String sbmlText = "sbml";
+
+		/* NOTE: Because we are reading the xml file as a general file, the BufferedReader will not understand xml syntax.
+		 * Therefore, we must account for corner cases:
+		 * - there can be new lines in arbitrary places.
+		 * - there can be comments before reaching the root node.
+		 */
+		int c;
+		StringBuilder builder = null;
+		while((c = b.read()) >= 0)
+		{
+			if(c == '<')
+			{
+				builder = new StringBuilder();
+			}
+			else if(c == '>')
+			{
+				String currentElement = builder.toString();
+				if(currentElement.startsWith(xmlComment)){
+					continue;
+				}
+				else if(currentElement.startsWith(xmlProlog)){
+					continue;
+				}
+				else if(currentElement.startsWith(sbmlText)){
+					return true;
+				}
+				else
+				{
+					//No need to check for SBOL text. 
+					//We will assume user gave SBOL file at this point.
+					return false;
+				}
+			}
+			else if(c =='\n')
+			{
+				continue;
+			}
+			else if(builder != null)
+			{
+				builder.append((char) c);
+			}
+			else
+			{
+				//we have a non xml file
+				return false;
+			}
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Check to see if the given SBML id is unique within the BioModel. If the given id is not unique, then a unique
+	 * id will be generated. 
+	 * 
+	 * @param currentId - The SBML id to check if it is unique or not.
+	 * @param bioModel - The BioModel to check for unique SBML IDs.
+	 * @return The unique id that was generated 
+	 */
+	public static String getUniqueSBMLId(String currentId, BioModel bioModel)
+	{
+		String newId = currentId;
+		while(bioModel.isSIdInUse(newId))
+		{
+			newId = newId + "_";
+		}
+		return newId;
+	}
+	
 	public static final Object[] getSortedListOfSBOTerms(String parent) {
 		Set<String> SBOTerms = SBMLutilities.sbo.getDescendantNamesOf(parent);
 		ArrayList<String> list = new ArrayList<String>();
@@ -132,8 +317,6 @@ public class SBMLutilities
 		list.add(0,"(unspecified)");
 		return list.toArray();
 	}
-
-	
 	
 	public static int getModelSize(SBMLDocument doc) {
 		int size = 0;
@@ -414,7 +597,9 @@ public class SBMLutilities
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
-					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber") || splitLaw[i].equals("rateOf")
+					|| splitLaw[i].equals("quotient") || splitLaw[i].equals("rem") || splitLaw[i].equals("implies")	
+					|| splitLaw[i].equals("max") || splitLaw[i].equals("min")	
 					|| ((document.getLevel() > 2) && (splitLaw[i].equals("avogadro"))))
 			{
 			}
@@ -1985,6 +2170,7 @@ public class SBMLutilities
 		ArrayList<String> productsUsing = new ArrayList<String>();
 		ArrayList<String> modifiersUsing = new ArrayList<String>();
 		ArrayList<String> kineticLawsUsing = new ArrayList<String>();
+		ArrayList<String> fluxboundsUsing = new ArrayList<String>();
 		ArrayList<String> defaultParametersNeeded = new ArrayList<String>();
 		ArrayList<String> initsUsing = new ArrayList<String>();
 		ArrayList<String> rulesUsing = new ArrayList<String>();
@@ -2076,6 +2262,14 @@ public class SBMLutilities
 							break;
 						}
 					}
+				}
+				FBCReactionPlugin rBounds = SBMLutilities.getFBCReactionPlugin(reaction);
+				if (rBounds != null && (rBounds.isSetLowerFluxBound() && rBounds.getLowerFluxBoundInstance() != null &&
+						rBounds.getLowerFluxBoundInstance().getId().equals(id)) ||
+						(rBounds.isSetUpperFluxBound() && rBounds.getUpperFluxBoundInstance() != null &&
+								rBounds.getUpperFluxBoundInstance().getId().equals(id))) {
+					fluxboundsUsing.add(reaction.getId());
+					inUse = true;
 				}
 			}
 		}
@@ -2190,6 +2384,7 @@ public class SBMLutilities
 			String products = "";
 			String modifiers = "";
 			String kineticLaws = "";
+			String fluxbounds = "";
 			String defaults = "";
 			String stoicMath = "";
 			String initAssigns = "";
@@ -2210,6 +2405,8 @@ public class SBMLutilities
 			Utility.sort(mods);
 			String[] kls = kineticLawsUsing.toArray(new String[0]);
 			Utility.sort(kls);
+			String[] fbs = fluxboundsUsing.toArray(new String[0]);
+			Utility.sort(fbs);
 			String[] dps = defaultParametersNeeded.toArray(new String[0]);
 			Utility.sort(dps);
 			String[] sm = stoicMathUsing.toArray(new String[0]);
@@ -2286,6 +2483,17 @@ public class SBMLutilities
 				else
 				{
 					kineticLaws += kls[i] + "\n";
+				}
+			}
+			for (int i = 0; i < fbs.length; i++)
+			{
+				if (i == fbs.length - 1)
+				{
+					fluxbounds += fbs[i];
+				}
+				else
+				{
+					fluxbounds += fbs[i] + "\n";
 				}
 			}
 			for (int i = 0; i < dps.length; i++)
@@ -2386,6 +2594,10 @@ public class SBMLutilities
 			if (kineticLawsUsing.size() != 0)
 			{
 				message += "\n\nIt is used in the kinetic law in the following reactions:\n" + kineticLaws;
+			}
+			if (fluxboundsUsing.size() != 0)
+			{
+				message += "\n\nIt is used in the flux bounds in the following reactions:\n" + fluxbounds;
 			}
 			if (defaultParametersNeeded.size() != 0)
 			{
@@ -3293,7 +3505,7 @@ public class SBMLutilities
 		return deepCopy(math);
 	}
 
-	public static String myFormulaToStringInfix(ASTNode math)
+	private static String myFormulaToStringInfix(ASTNode math)
 	{
 		if (math.getType() == ASTNode.Type.CONSTANT_E)
 		{
@@ -3939,6 +4151,30 @@ public class SBMLutilities
 		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
 		{
 			return true;
+		}
+		else if (math.getType() == ASTNode.Type.LOGICAL_IMPLIES)
+		{
+			return true;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MIN)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_MAX)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_QUOTIENT)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_REM)
+		{
+			return false;
+		}
+		else if (math.getType() == ASTNode.Type.FUNCTION_RATE_OF)
+		{
+			return false;
 		}
 		else if (math.getType() == ASTNode.Type.MINUS)
 		{
@@ -5455,7 +5691,7 @@ public class SBMLutilities
 		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel)!=null &&
 				document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 			  SBMLutilities.message.setErrorDialog("Error Opening File", "Unable convert FBC model from Version 1 to Version 2.");
 				return null;
@@ -5490,7 +5726,7 @@ public class SBMLutilities
 	public static SBMLDocument readSBML(String filename) throws XMLStreamException, IOException
 	{
 		SBMLDocument document = null;
-			document = SBMLReader.read(new File(filename));
+		document = SBMLReader.read(new File(filename));
 		if (document.getModel().isSetId())
 		{
 			document.getModel().setId(document.getModel().getId().replace(".", "_"));
@@ -5498,7 +5734,7 @@ public class SBMLutilities
 
 		if (document.getLevel() < GlobalConstants.SBML_LEVEL || document.getVersion() < GlobalConstants.SBML_VERSION)
 		{
-			if (!SBMLutilities.libsbmlFound)
+			if (!Executables.libsbmlFound)
 			{
 				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 				SBMLWriter Xwriter = new SBMLWriter();
@@ -5509,7 +5745,7 @@ public class SBMLutilities
 			long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
 			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
-			numErrors = doc.checkL3v1Compatibility();
+			numErrors = doc.checkL3v2Compatibility();
 			if (numErrors > 0)
 			{
 				String message = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION
@@ -5547,7 +5783,11 @@ public class SBMLutilities
 		if (deletion == null)
 		{
 			deletion = submodel.createDeletion();
-			deletion.setId("delete_" + subPortId);
+			String id = "delete_" + subPortId;
+			while (submodel.getSBMLDocument().getElementBySId(id) != null) {
+				id = id.replace("_", "__");
+			}
+			deletion.setId(id);
 			deletion.setPortRef(subPortId);
 		}
 		SBMLutilities.createDimensions(deletion, dimensionIds, dimensions);
@@ -5827,9 +6067,9 @@ public class SBMLutilities
 			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
 			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
 					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + GlobalConstants.separator + extModel);
+			subModel.load(root + File.separator + extModel);
 			id += changeIdToPortRef(root, sbaseRef.getSBaseRef(), subModel);
-			subModel.save(root + GlobalConstants.separator + extModel);
+			subModel.save(root + File.separator + extModel);
 		}
 		if (sbaseRef.isSetIdRef())
 		{
@@ -5932,7 +6172,7 @@ public class SBMLutilities
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
 			String extModel = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource().replace("file://", "")
 					.replace("file:", "").replace(".gcm", ".xml");
-			subModel.load(root + GlobalConstants.separator + extModel);
+			if (!subModel.load(root + File.separator + extModel)) continue;
 			ArrayList<SBase> elements = getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++)
 			{
@@ -5951,7 +6191,7 @@ public class SBMLutilities
 				Deletion deletion = submodel.getListOfDeletions().get(j);
 				changeIdToPortRef(root, deletion, subModel);
 			}
-			subModel.save(root + GlobalConstants.separator + extModel);
+			subModel.save(root + File.separator + extModel);
 		}
 
 		return true;
@@ -6052,9 +6292,208 @@ public class SBMLutilities
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isCompUsed(SBase sbase)
+	{
+
+		if(sbase instanceof SBMLDocument)
+		{
+			CompSBMLDocumentPlugin plugin = (CompSBMLDocumentPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumModelDefinitions() > 0 || plugin.getNumExternalModelDefinitions() > 0);
+		}
+
+		if(sbase instanceof Model)
+		{
+			CompModelPlugin plugin = (CompModelPlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumPorts() > 0 || plugin.getNumSubmodels() > 0);
+		}
+
+		if(sbase instanceof SBase)
+		{
+			CompSBasePlugin plugin = (CompSBasePlugin) sbase.getExtension(CompConstants.shortLabel);
+			return plugin != null && (plugin.getNumReplacedElements() > 0);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private static boolean isFbcUsed(SBase sbase)
+	{
+
+		if(sbase instanceof Model)
+		{
+			FBCModelPlugin plugin = (FBCModelPlugin) sbase.getExtension(FBCConstants.shortLabel);
+
+			if(plugin != null)
+			{
+				if(plugin.getNumObjective() > 0)
+				{
+					return true;
+				}
+				plugin.unsetStrict();
+			}
+			return false;
+		}
+
+		if(sbase instanceof Reaction)
+		{
+			FBCReactionPlugin plugin = (FBCReactionPlugin) sbase.getExtension(FBCConstants.shortLabel);
+			return plugin != null && (plugin.getLowerFluxBound() != null || plugin.getUpperFluxBound() != null || plugin.getGeneProductAssociation() != null);
+		}
+		return false;
+	}
+
+	private static boolean isArraysUsed(SBase sbase)
+	{
+		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
+
+		if(plugin != null)
+		{
+			return plugin != null && (plugin.getNumDimensions() > 0 || plugin.getNumIndices() > 0);
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 */
+	public static void removeUnusedNamespaces(SBMLDocument doc)
+	{
+
+		boolean isCompSet = false;
+		boolean isArraysSet = false;
+		boolean isFbcSet = false;
+
+		LinkedList<SBase> queue = new LinkedList<SBase>();
+		queue.add(doc);
+
+		while(!queue.isEmpty())
+		{
+
+			SBase sbase = queue.pop();
+
+			if(!isArraysSet)
+			{
+				isArraysSet = isArraysUsed(sbase);
+			}
+
+			if(!isCompSet)
+			{
+				isCompSet =  isCompUsed(sbase);;
+			}
+
+			if(!isFbcSet)
+			{
+				isFbcSet =  isFbcUsed(sbase);
+			}
+
+			for (int i = sbase.getChildCount() - 1; i >= 0; i--) 
+			{
+				TreeNode node = sbase.getChildAt(i);
+
+				if(node instanceof SBase)
+				{
+					queue.push((SBase) node);
+				}
+
+			}
+		}
 
 
-  public static Boolean			libsbmlFound		= true;
-  public static Boolean			reb2sacFound		= true;
-  public static Boolean			geneNetFound		= true;
+		if(!isArraysSet)
+		{
+			doc.disablePackage(ArraysConstants.shortLabel);
+		}
+
+		if(!isCompSet)
+		{
+			doc.disablePackage(CompConstants.shortLabel);
+		}
+
+		if(!isFbcSet)
+		{
+			doc.disablePackage(FBCConstants.shortLabel);
+		}
+	}
+
+	public static String createTimeString(long time1, long time2)
+	{
+		long minutes;
+		long hours;
+		long days;
+		double secs = ((time2 - time1) / 1000000000.0);
+		long seconds = ((time2 - time1) / 1000000000);
+		secs = secs - seconds;
+		minutes = seconds / 60;
+		secs = seconds % 60 + secs;
+		hours = minutes / 60;
+		minutes = minutes % 60;
+		days = hours / 24;
+		hours = hours % 60;
+		String time;
+		String dayLabel;
+		String hourLabel;
+		String minuteLabel;
+		String secondLabel;
+		if (days == 1)
+		{
+			dayLabel = " day ";
+		}
+		else
+		{
+			dayLabel = " days ";
+		}
+		if (hours == 1)
+		{
+			hourLabel = " hour ";
+		}
+		else
+		{
+			hourLabel = " hours ";
+		}
+		if (minutes == 1)
+		{
+			minuteLabel = " minute ";
+		}
+		else
+		{
+			minuteLabel = " minutes ";
+		}
+		if (seconds == 1)
+		{
+			secondLabel = " second";
+		}
+		else
+		{
+			secondLabel = " seconds";
+		}
+		if (days != 0)
+		{
+			time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (hours != 0)
+		{
+			time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+		}
+		else if (minutes != 0)
+		{
+			time = minutes + minuteLabel + secs + secondLabel;
+		}
+		else
+		{
+			time = secs + secondLabel;
+		}
+		return time;
+	}
 }

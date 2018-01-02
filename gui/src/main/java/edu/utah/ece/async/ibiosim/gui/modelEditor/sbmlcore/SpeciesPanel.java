@@ -15,7 +15,6 @@ package edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore;
 
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,7 +57,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.util.PropertyList;
 
 
 /**
- * 
+ * Construct the Species Editor Panel.
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -128,10 +127,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList componentsList, 
 			BioModel bioModel, boolean paramsOnly, BioModel refGCM,
 			ModelEditor modelEditor, boolean inTab){
-
 		super(new BorderLayout());
+		
 		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
+
 	}
+	
 	
 	/**
 	 * constructs the species panel
@@ -151,8 +152,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel grid;
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
-		if (paramsOnly)
+		if (paramsOnly){
 			grid = new JPanel(new GridLayout(7,1));
+			}
 		else {
 			grid = new JPanel(new GridLayout(18,1));
 		}
@@ -366,7 +368,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String thresholdText = "";
 			boolean speciesMarked = false;
 			
-			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			List<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
 			
 			//look for the selected species among the already-interesting
 			//if it is interesting, populate the field with its data
@@ -598,8 +600,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			List<URI> sbolURIs = new LinkedList<URI>();
 			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			sbolField = new SBOLField2(sbolURIs, sbolStrand, GlobalConstants.SBOL_COMPONENTDEFINITION, modelEditor, 
-					3, false);
-
+					2, false);
+			
 			grid.add(sbolField);
 
 			if (bioModel.isInput(species.getId())) {
@@ -738,18 +740,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
           
 					return false;
 				}
+				
 			}
 			newSpeciesID = dimID[0];
-
-			if (selected != null) {			
+			
+			if (selected != null) 
+			{			
 				
 				//check and add interesting species information
-				if (paramsOnly) {
-					if (!addInterestingSpecies())
-					return false;
+				if (paramsOnly) 
+				{
+					if (!addInterestingSpecies()) return false;
 				}
 				
-				if (!paramsOnly) {
+				if (!paramsOnly) 
+				{
+				  
 					InitialAssignments.removeInitialAssignment(bioModel, selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
@@ -762,6 +768,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
+
 					SBMLutilities.createDimensions(species, dimensionIds, dimID);
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					species.setBoundaryCondition(specBoundary.isSelected());
@@ -887,33 +894,65 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				if (sbolField.getSBOLURIs().size() > 0) {
-					if (!species.isSetMetaId() || species.getMetaId().equals(""))
-						SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
-								bioModel.getMetaIDIndex());
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
-							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
-					
-					if(!AnnotationUtility.setSBOLAnnotation(species, sbolAnnot))
+				if (sbolField.getSBOLURIs().size() > 0) 
+				{
+					if(sbolField.isSBOLSBOSet() && (sbolField.getSBOLObjSBOTerm().equals(GlobalConstants.SBO_DNA_SEGMENT)))
 					{
-					    JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", JOptionPane.ERROR_MESSAGE); 
+						JOptionPane.showMessageDialog(Gui.frame, 
+								"You are not allowed to annotate a species that has an SBOL component type DNA.", 
+								"Prohibited SBOL Annotation Type",
+								JOptionPane.WARNING_MESSAGE); 
+						// Probably safer to just not allow this
+						/*
+						 * The user has annotated a promoter to the SBML species. We will need to remove this species
+						 * and create an SBML promoter. This will allow the user to correctly edit their annotated 
+						 * part as an SBML promoter rather than an SBML species with a promoter SBO type.
+						 */
+						// create a new promoter so that all the fields are set properly.
+//						String id ; //TODO: modify to mouse position
+//						if ((id = bioModel.createPromoter(null, -1, -1, true)) != null) 
+//						{ 
+//							SBase promoter = bioModel.getSBMLDocument().getModel().getElementBySId(id); 
+//							
+//							// annotate the new promoter 
+//							setSBOLAnnotation(promoter);
+//							
+//							// remove the old species to indicate it was transformed into a promoter
+//							modelEditor.removeSpecies(species.getId());
+//							modelEditor.refresh();
+//							return true; //handling species annotation successful.
+//						}
+//						else
+//						{
+//							JOptionPane.showMessageDialog(Gui.frame,  
+//									"Null pointer was encountered when creating a promoter.", 
+//									"Unable to create SBML element",
+//									JOptionPane.ERROR_MESSAGE);
+//						}
+					} else {
+					
+						if (!species.isSetMetaId() || species.getMetaId().equals(""))
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), species, 
+									bioModel.getMetaIDIndex());
+					
+						//Set SBOL annotation to SBML species
+						setSBOLAnnotation(species);
 					}
-					
-					//Update iBioSim species id, name and SBO term from the annotated SBOL element
-					newSpeciesID = sbolField.getSBOLObjID();
-					species.setName(sbolField.getSBOLObjName()); 
-					species.setSBOTerm(sbolField.getSBOLObjSBOTerm());
-					
-				} else 
+				} 
+				else 
+				{
 					AnnotationUtility.removeSBOLAnnotation(species);
+				}
 			}
 			
 			try {
-				bioModel.changeSpeciesId(selected, newSpeciesID);
-			} catch (BioSimException e1) {
-				JOptionPane.showMessageDialog(Gui.frame,  e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
+        bioModel.changeSpeciesId(selected, newSpeciesID);
+      } catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, 
+          e.getMessage(), 
+          e.getTitle(), 
+          JOptionPane.ERROR_MESSAGE); 
+      }
 			((DefaultListModel) components.getModel()).clear();
 
 			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -956,6 +995,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		return true;
 	}
+	
+	/**
+	 * Perform annotation on the SBML element with the SBOL object that was selected from SBOL association.
+	 * @param sbmlElement - The SBML element to set the SBOL annotation on.
+	 */
+	private void setSBOLAnnotation(SBase sbmlElement)
+	{
+		SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlElement.getMetaId(), 
+				sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
+		sbolAnnot.createSBOLElementsDescription(GlobalConstants.SBOL_COMPONENTDEFINITION, 
+				sbolField.getSBOLURIs().iterator().next()); 
+		if(!AnnotationUtility.setSBOLAnnotation(sbmlElement, sbolAnnot))
+		{
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Error occurred while annotating SBML element "  + SBMLutilities.getId(species) + " with SBOL.", 
+					"Invalid XML in SBML file", 
+					JOptionPane.ERROR_MESSAGE); 
+		}
+		
+		if(sbolField.isSBOLNameSet())
+		{
+			sbmlElement.setName(sbolField.getSBOLObjName());
+		}
+		if(sbolField.isSBOLSBOSet())
+		{
+			sbmlElement.setSBOTerm(sbolField.getSBOLObjSBOTerm());
+		}
+	}
+	
+	
 
 	public String updates() {
 		

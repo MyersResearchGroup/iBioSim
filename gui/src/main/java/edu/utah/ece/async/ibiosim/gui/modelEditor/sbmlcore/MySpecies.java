@@ -42,8 +42,6 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-//SpeciesType not supported in Level 3
-//import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;

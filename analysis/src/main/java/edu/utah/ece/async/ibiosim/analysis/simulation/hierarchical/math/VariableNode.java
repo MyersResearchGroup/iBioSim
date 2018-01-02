@@ -32,14 +32,18 @@ public class VariableNode extends HierarchicalNode
 
   protected boolean			isVariableConstant;
   protected boolean hasRule;
-
+  protected boolean hasInitRule;
+  protected boolean hasAmountUnits;
+  protected boolean     isSetInitialValue;
+  
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
-  
+
   public VariableNode(String name)
   {
     super(Type.NAME);
     this.name = name;
+    this.hasAmountUnits = true;
   }
 
   public VariableNode(String name, StateType type)
@@ -47,6 +51,7 @@ public class VariableNode extends HierarchicalNode
     super(Type.NAME);
     this.name = name;
     this.state = new ValueState();
+    this.hasAmountUnits = true;
   }
 
   public VariableNode(VariableNode copy)
@@ -54,6 +59,7 @@ public class VariableNode extends HierarchicalNode
     super(copy);
     this.name = copy.name;
     this.isVariableConstant = copy.isVariableConstant;
+    this.hasAmountUnits = copy.hasAmountUnits;
   }
 
   public List<ReactionNode> getReactionDependents()
@@ -80,15 +86,32 @@ public class VariableNode extends HierarchicalNode
     return isVariableConstant;
   }
 
-
-
-  public double computeRateOfChange(int index, double time)
+  @Override
+  public void setRateValue(int index, double value)
   {
-    double rate = state.getRateValue(index);
+    if(!isVariableConstant)
+    {
+      state.setRateValue(index, value);
+    }
+  }
+
+  @Override
+  public void setValue(int index, double value)
+  {
+    if(!isVariableConstant)
+    {
+      state.getState(index).setStateValue(value);
+    }
+  }
+
+  @Override
+  public double computeRateOfChange(int index)
+  {
+    double rate = 0;
     if (rateRule != null)
     {
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, false, index);
-      state.setStateValue(index, rate);
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
+      state.setRateValue(index, rate);
     }
     return rate;
   }
@@ -126,9 +149,40 @@ public class VariableNode extends HierarchicalNode
     return hasRule;
   }
 
+  public void setHasInitRule(boolean hasInitRule)
+  {
+    this.hasInitRule = hasInitRule;
+  }
+
+  public boolean hasInitRule()
+  {
+    return hasInitRule;
+  }
+
   public void setName(String name)
   {
     this.name = name;
   }
 
+  public boolean hasAmountUnits()
+  {
+    return this.hasAmountUnits;
+  }
+  
+  public void setHasAmountUnits(boolean hasAmountUnits)
+  {
+    this.hasAmountUnits = hasAmountUnits;
+  }
+  
+  public void setIsSetInitialValue(boolean isSetInitialValue)
+  {
+    this.isSetInitialValue = isSetInitialValue;
+  }
+  
+  public boolean isSetInitialValue()
+  {
+    return this.isSetInitialValue;
+  }
+  
+  
 }

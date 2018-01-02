@@ -23,28 +23,6 @@
 <h3 align="center">Chris J. Myers </h3>
 
 <div class="p"><!----></div>
- 
-<div class="p"><!----></div>
-
-<h1>Contents </h1><a href="#tth_sEc1"
->1&nbsp; Introduction</a><br />
-<a href="#tth_sEc2"
->2&nbsp; Project Management</a><br />
-<a href="#tth_sEc3"
->3&nbsp; Model Editor</a><br />
-<a href="#tth_sEc4"
->4&nbsp; ODE Analysis</a><br />
-<a href="#tth_sEc5"
->5&nbsp; Stochastic Analysis</a><br />
-<a href="#tth_sEc6"
->6&nbsp; Reaction-based Abstraction</a><br />
-<a href="#tth_sEc7"
->7&nbsp; State-based Abstraction</a><br />
-<a href="#tth_sEc8"
->8&nbsp; Learn Tool</a><br />
-<a href="#tth_sEc9"
->9&nbsp; Advanced Modeling</a><br />
-
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc1">
@@ -133,8 +111,8 @@ Compartments are the membrane-enclosed regions where species can be found and re
 </center>
 
 <div class="p"><!----></div>
-To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
-<img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and
+To add a chemical species, select the Add Species icon  and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
+, and
 double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI, and click on degrades checkbox.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  
 
 <div class="p"><!----></div>
@@ -143,7 +121,7 @@ double-clicking on the species to open the Species Editor.  In this case, let us
 </center>
 
 <div class="p"><!----></div>
-Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S1 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
+Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon , highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S1 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
 
 <div class="p"><!----></div>
 
@@ -159,7 +137,7 @@ If you double-click on the complex formation arc, an influence editor will open 
 </center>
 
 <div class="p"><!----></div>
-Next, let's add the PR promoter, which initiates transcription of the gene that produces the protein CII.  To do this, select the promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas to drop the promoter with a default ID and parameter values.  Double-click on the promoter to bring up the promoter editor.  Change the ID to PR, customize the RNAP binding equilibrium to be 0.69422, and set the open complex production rate to be 0.014. 
+Next, let's add the PR promoter, which initiates transcription of the gene that produces the protein CII.  To do this, select the promoter icon  and click on the schematic canvas to drop the promoter with a default ID and parameter values.  Double-click on the promoter to bring up the promoter editor.  Change the ID to PR, customize the RNAP binding equilibrium to be 0.69422, and set the open complex production rate to be 0.014. 
 
 <div class="p"><!----></div>
 
@@ -168,7 +146,7 @@ Next, let's add the PR promoter, which initiates transcription of the gene that 
 
 <div class="p"><!----></div>
 The PR promoter is repressed by the CI2 species.  To create this relationship, select the repression arc icon 
-<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the CI2 species, and, while holding the mouse button, stretch the repression arc to the PR promoter.  Next, double-click on the repression arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1, indicating that just one CI dimer is necessary to repress this promoter, and change the repression binding equilibrium to 0.2165.
+, highlight the CI2 species, and, while holding the mouse button, stretch the repression arc to the PR promoter.  Next, double-click on the repression arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1, indicating that just one CI dimer is necessary to repress this promoter, and change the repression binding equilibrium to 0.2165.
 
 <div class="p"><!----></div>
 
@@ -184,7 +162,7 @@ As mentioned earlier, the PR promoter initiates the production of the CII specie
 </center>
 
 <div class="p"><!----></div>
-Finally, CII species activates the production of the CI species from the PRE promoter.  Promoters do not need to always be drawn.  They can also be implicit on an influence.  To add an activation arc with an implicit promoter, select the activation arc icon <img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the CII species, and, while holding the mouse button, stretch the activation arc to the CI species.  This creates not only the influence but also a default promoter.  Double-click on the activation arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1, indicating that just one CII molecule is necessary to activate this promoter, and change the activation binding equilibrium to 0.00161.  Finally, click on the Edit Promoter button and change the ID of this promoter to PRE.  Also, customize the RNAP binding equilibrium to be 0.01, the basal production rate to be 0.00004, and the activated production rate to be 0.015.
+Finally, CII species activates the production of the CI species from the PRE promoter.  Promoters do not need to always be drawn.  They can also be implicit on an influence.  To add an activation arc with an implicit promoter, select the activation arc icon , highlight the CII species, and, while holding the mouse button, stretch the activation arc to the CI species.  This creates not only the influence but also a default promoter.  Double-click on the activation arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1, indicating that just one CII molecule is necessary to activate this promoter, and change the activation binding equilibrium to 0.00161.  Finally, click on the Edit Promoter button and change the ID of this promoter to PRE.  Also, customize the RNAP binding equilibrium to be 0.01, the basal production rate to be 0.00004, and the activated production rate to be 0.015.
 
 <div class="p"><!----></div>
 
@@ -241,8 +219,8 @@ Next, click on the Constants tab.  This tab includes the default model generatio
 </center>
 
 <div class="p"><!----></div>
-While you can add a global variable here, the preferred way is to add it on the schematic.  Click on the Schematic tab.  Select the add variable icon <img src="../gui/icons/modelview/variable_mode_selected.png" alt="../gui/icons/modelview/variable_mode_selected.png" />, and click a location to add the variable to the schematic.  Then, click on the selection icon 
-<img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and double click on the variable to open the Parameter Editor.  Change the ID to CI_total, for the total amount of the species CI in both monomer and dimer form.  Its units are in nanoMole and it is not constant.  
+While you can add a global variable here, the preferred way is to add it on the schematic.  Click on the Schematic tab.  Select the add variable icon , and click a location to add the variable to the schematic.  Then, click on the selection icon 
+, and double click on the variable to open the Parameter Editor.  Change the ID to CI_total, for the total amount of the species CI in both monomer and dimer form.  Its units are in nanoMole and it is not constant.  
 
 <div class="p"><!----></div>
 
@@ -255,7 +233,7 @@ While you can add a global variable here, the preferred way is to add it on the 
 
 <div class="p"><!----></div>
 Now, let's create a rule to compute the value of CI_total.  There are three types of rules: algebraic, assignment, and rate.  Algebraic rules are used to specify relationships that must be maintained.  Assignment rules are used to define one variable in terms of a mathematical expression.  Finally, rate rules are used to indicate a differential equation to govern the evolution of a variable in terms of a mathematical expression on other variables.  To add a rule, select the add rule icon
-<img src="../gui/icons/modelview/rule_mode_selected.png" alt="../gui/icons/modelview/rule_mode_selected.png" />.  In the Rule editor, 
+.  In the Rule editor, 
 select Assignment, select the variable CI_total, and enter the expression total(CI,CI2).  This uses our new function to compute that the amount of CI in total is the number of monomer molecules plus two times the number of dimer molecules.
 
 <div class="p"><!----></div>
@@ -269,7 +247,7 @@ select Assignment, select the variable CI_total, and enter the expression total(
 
 <div class="p"><!----></div>
 Next, let's add a constraint.  A constraint is a condition that must be satisfied or simulation should terminate.  To add a constraint, select the add constraint icon
-<img src="../gui/icons/modelview/constraint_mode_selected.png" alt="../gui/icons/modelview/constraint_mode_selected.png" />.  Add a constraint that states that CI remains less than or equal to 20 molecules as shown below.  Add a second constraint that states that CII remains less than or equal to 50 molecules.
+.  Add a constraint that states that CI remains less than or equal to 20 molecules as shown below.  Add a second constraint that states that CII remains less than or equal to 50 molecules.
 
 <div class="p"><!----></div>
 
@@ -285,7 +263,7 @@ Finally, let's add an event.  Events are used to specify discrete state changes.
 </center>
 
 <div class="p"><!----></div>
-At this point, you should have a model that looks like the one below (though locations of elements may be different).  Now, let's make sure the model is saved by either clicking on the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> or selecting the Save option from the File menu.
+At this point, you should have a model that looks like the one below (though locations of elements may be different).  Now, let's make sure the model is saved by either clicking on the Save icon  or selecting the Save option from the File menu.
 
 <div class="p"><!----></div>
 
@@ -313,7 +291,7 @@ Next, click on the Schematic tab.  This tab allows you to select which SBML mode
 </center>
 
 <div class="p"><!----></div>
-Now, go back to the simulation options tab.  Make sure that the simulation type is set to ODE and the simulator selected is Runge-Kutta-Fehlberg.  Change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of <tt>ode</tt>.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.  
+Now, go back to the simulation options tab.  Make sure that the simulation type is set to ODE and the simulator selected is Runge-Kutta-Fehlberg.  Change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of <tt>ode</tt>.  Then, either press the Save and Run icon  or select the Save and Run option from the File menu.  
 
 <div class="p"><!----></div>
 
@@ -366,7 +344,7 @@ Graphs can be exported in a variety of formats including:
 <div class="p"><!----></div>
 </li>
 </ul>
-In order to export a graph, you can either click on the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> or select one of the graph export options from the File menu.  When using the Export icon, the type of file exported will depend on the extension provided to the file name.  Click on the Export icon, browse to a location on your file system, and enter the file name of <tt>ode.pdf</tt> to create a PDF file for your graph.
+In order to export a graph, you can either click on the Export icon  or select one of the graph export options from the File menu.  When using the Export icon, the type of file exported will depend on the extension provided to the file name.  Click on the Export icon, browse to a location on your file system, and enter the file name of <tt>ode.pdf</tt> to create a PDF file for your graph.
 
 <div class="p"><!----></div>
 
@@ -374,7 +352,7 @@ In order to export a graph, you can either click on the Export icon <img src="..
 </center>
 
 <div class="p"><!----></div>
-Genetic production and its regulation are modeled as a single complex reaction.  If the expand reactions abstraction option is selected, the binding reactions for transcription factors are separated into their own reactions providing a more detailed model.  To see the effect of this, select Expand Reactions, change the Simulation ID to <tt>ode2</tt> and rerun the simulation.  Then, go to the TSD Graph tab, and add CI_total and CII from this simulation to the graph.  You should see that there is not a significant difference though the simulation time is slower due to these extra reactions.  If you would like to see the actual model that is simulated in this case,  you can save the reaction-based model by selecting Model as your simulation type.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />,
+Genetic production and its regulation are modeled as a single complex reaction.  If the expand reactions abstraction option is selected, the binding reactions for transcription factors are separated into their own reactions providing a more detailed model.  To see the effect of this, select Expand Reactions, change the Simulation ID to <tt>ode2</tt> and rerun the simulation.  Then, go to the TSD Graph tab, and add CI_total and CII from this simulation to the graph.  You should see that there is not a significant difference though the simulation time is slower due to these extra reactions.  If you would like to see the actual model that is simulated in this case,  you can save the reaction-based model by selecting Model as your simulation type.  Then, either press the Save and Run icon  or select the Save and Run option from the File menu.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    ,
 
 <div class="p"><!----></div>
 
@@ -443,7 +421,7 @@ Now, click on the CI species, which brings up the Edit Species window.  Select t
 </center>
 
 <div class="p"><!----></div>
-Once you have made your selections, you can now play back the simulation.  You can either single-step the simulation by pressing the <img src="../gui/icons/modelview/movie/single_step.png" alt="../gui/icons/modelview/movie/single_step.png" /> icon or play continuously by pressing the <img src="../gui/icons/modelview/movie/play.png" alt="../gui/icons/modelview/movie/play.png" /> icon.  The playback can also be paused by pressing the <img src="../gui/icons/modelview/movie/pause.png" alt="../gui/icons/modelview/movie/pause.png" /> icon and restarted by pressing the  <img src="../gui/icons/modelview/movie/rewind.png" alt="../gui/icons/modelview/movie/rewind.png" /> icon. 
+Once you have made your selections, you can now play back the simulation.  You can either single-step the simulation by pressing the  icon or play continuously by pressing the  icon.  The playback can also be paused by pressing the  icon and restarted by pressing the   icon. 
 
 <div class="p"><!----></div>
 
@@ -504,7 +482,7 @@ These results can also be visualized using the TSD graph tool.  Click on the TSD
 
 <div class="p"><!----></div>
 This section describes how a model can be learned from time series data using <tt>iBioSim</tt>'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, <tt>learnModel</tt>, which just includes the two species CI and CII as shown below.  This model represents any background knowledge you have about the model that you wish to learn.  Any influences that you add between species will be assumed as part of the final learned model.  You can also indicate definite knowledge about there not being any influence between two species by selecting the No Influence icon 
-<img src="../gui/icons/modelview/no_influence_selected.png" alt="../gui/icons/modelview/no_influence_selected.png" /> and connecting the species with a no influence arc.
+ and connecting the species with a no influence arc.
 
 <div class="p"><!----></div>
 Now, create a learn view by right-clicking on this model file and selecting Create Learn View.  Give this learn view the ID <tt>learnLambda</tt>.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
@@ -553,7 +531,7 @@ First, let's consider an alternative model of CII degradation which we are going
 </center>
 
 <div class="p"><!----></div>
-Now, select the Add Reaction icon <img src="../gui/icons/modelview/add_reaction_selected.png" alt="../gui/icons/modelview/add_reaction_selected.png" /> and click on the schematic canvas to drop a reaction.  This creates a reaction with a default ID and parameter values that we can change later, if we wish.
+Now, select the Add Reaction icon  and click on the schematic canvas to drop a reaction.  This creates a reaction with a default ID and parameter values that we can change later, if we wish.
 
 <div class="p"><!----></div>
 
@@ -561,7 +539,7 @@ Now, select the Add Reaction icon <img src="../gui/icons/modelview/add_reaction_
 </center>
 
 <div class="p"><!----></div>
-Now, let's connect up the reactant species.  To do this, select the Reaction icon <img src="../gui/icons/modelview/reaction_selected.png" alt="../gui/icons/modelview/reaction_selected.png" />, select the reactant species CII, and, while holding the mouse button, drag the reaction edge to the reaction R1.  Similarly, add P1 as a reactant as well.  If you double-click on a reactant edge, it brings up a Reactant editor where you can change the stoichiometry, if desired.
+Now, let's connect up the reactant species.  To do this, select the Reaction icon , select the reactant species CII, and, while holding the mouse button, drag the reaction edge to the reaction R1.  Similarly, add P1 as a reactant as well.  If you double-click on a reactant edge, it brings up a Reactant editor where you can change the stoichiometry, if desired.
 
 <div class="p"><!----></div>
 
@@ -569,7 +547,7 @@ Now, let's connect up the reactant species.  To do this, select the Reaction ico
 </center>
 
 <div class="p"><!----></div>
-Connecting product species is accomplished in much the same way, except in this case you select reaction R1 and drag the reaction edge to the product CII_P1.  Again, there is a Product editor for changing the stoichiometry.  Note that modifiers (i.e., species that are neither produced nor consumed by a reaction but simply catalyze a reaction) can be added in a similar way using the Modifier icon <img src="../gui/icons/modelview/modifier_selected.png" alt="../gui/icons/modelview/modifier_selected.png" /> instead.
+Connecting product species is accomplished in much the same way, except in this case you select reaction R1 and drag the reaction edge to the product CII_P1.  Again, there is a Product editor for changing the stoichiometry.  Note that modifiers (i.e., species that are neither produced nor consumed by a reaction but simply catalyze a reaction) can be added in a similar way using the Modifier icon  instead.
 
 <div class="p"><!----></div>
 
@@ -593,7 +571,7 @@ Follow the same steps to add another reaction that degrades CII in the CII_P1 fo
 </center>
 
 <div class="p"><!----></div>
-Let's now go and add this new degradation mechanism to our lambda model (you might actually want to copy your old model before you do this, which you can do by highlighting the file and selecting Edit &#8594; Copy or using the right mouse button menu).   To simplify things, remove the rule, constraints, and event.  Next, open the Species Editor on CII and deselect the degrades option.  Finally, select the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and click on the Schematic canvas opening the Add Component(s) window.  In this window, browse the combo box to find your CII_degradation model.  Pressing OK will then add it to your schematic.
+Let's now go and add this new degradation mechanism to our lambda model (you might actually want to copy your old model before you do this, which you can do by highlighting the file and selecting Edit &#8594; Copy or using the right mouse button menu).   To simplify things, remove the rule, constraints, and event.  Next, open the Species Editor on CII and deselect the degrades option.  Finally, select the Add Component icon  and click on the Schematic canvas opening the Add Component(s) window.  In this window, browse the combo box to find your CII_degradation model.  Pressing OK will then add it to your schematic.
 
 <div class="p"><!----></div>
 
@@ -648,5 +626,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 27 Mar 2015, 14:47.</small>
+version 3.81.<br />On 11 Sep 2017, 09:31.</small>
 </html>

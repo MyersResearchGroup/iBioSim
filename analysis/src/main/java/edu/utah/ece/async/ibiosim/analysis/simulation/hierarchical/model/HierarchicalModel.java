@@ -58,6 +58,7 @@ public final class HierarchicalModel
 	private List<ReactionNode>			reactions;
 	private List<VariableNode>			arrays;
 	private List<ConstraintNode>		constraints;
+	private List<FunctionNode> initConcentrations;
 	private List<FunctionNode> initAssignments;
 	private List<FunctionNode> assignRules;
 	private List<VariableNode> variables;
@@ -72,12 +73,6 @@ public final class HierarchicalModel
 	private FunctionNode  propensity;
 
 	private Map<String, HierarchicalModel>	idToSubmodel;
-	
-	
-	public HierarchicalModel(String submodelID)
-	{
-		this(submodelID, 0);
-	}
 
 	public HierarchicalModel(String submodelID, int index)
 	{
@@ -198,6 +193,11 @@ public final class HierarchicalModel
 		idToNode.put(variable, node);
 	}
 
+	public boolean containsNode(String variable)
+  {
+    return idToNode.containsKey(variable);
+  }
+	
 	public VariableNode getNode(String variable)
 	{
 		return idToNode.get(variable);
@@ -303,26 +303,7 @@ public final class HierarchicalModel
 		this.type = type;
 	}
 
-	public void setModelType(Model model)
-	{
-		if (model == null)
-		{
-			type = ModelType.NONE;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_FLUX_BALANCE)
-		{
-			type = ModelType.HFBA;
-		}
-		else if (model.getSBOTerm() == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS)
-		{
-			type = ModelType.HODE;
-		}
-		else
-		{
-			type = ModelType.HSSA;
-		}
-	}
-
+	
 	public String getID()
 	{
 		return ID;
@@ -363,6 +344,15 @@ public final class HierarchicalModel
 		return index;
 	}
 
+	public void addInitConcentration(FunctionNode node)
+  {
+    if(initConcentrations == null)
+    {
+      initConcentrations = new ArrayList<FunctionNode>();
+    }
+
+    initConcentrations.add(node);
+  }
 
 	public void addInitAssignment(FunctionNode node)
 	{
@@ -388,6 +378,10 @@ public final class HierarchicalModel
 		return initAssignments;
 	}
 
+	public List<FunctionNode> getInitConcentration() 
+  {
+    return initConcentrations;
+  }
 
 	public void setInitAssignments(List<FunctionNode> initAssignments) 
 	{
@@ -436,12 +430,19 @@ public final class HierarchicalModel
 		return false;
 	}
 	
-	public void computePropensities()
+	public boolean computePropensities()
 	{
+	  boolean hasChanged = false;
 	  for(ReactionNode node : reactions)
     {
+	    double oldValue = node.getValue(index);
       node.computePropensity(index);
+      double newValue = node.getValue(index);
+      
+      hasChanged = hasChanged | oldValue != newValue;
     }
+	  
+	  return hasChanged;
 	}
 
 	public void removeSubmodel(String id)
