@@ -101,7 +101,6 @@ import javax.xml.transform.TransformerException;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
@@ -213,9 +212,7 @@ import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 //import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
-import edu.utah.ece.async.lema.verification.lpn.Lpn2verilog;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
-import edu.utah.ece.async.lema.verification.lpn.properties.BuildProperty;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarLexer;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser;
 
@@ -236,26 +233,18 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	public static JFrame frame; // Frame where components of the GUI are displayed
 	protected JMenuBar menuBar;
 	protected JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, uploadMenu, downloadMenu, newMenu, viewModel;
-	protected JMenuItem newProj, newSBMLModel, newSBOL, newGridModel, newVhdl, newS, newInst, newLhpn, newProperty, newG;
-	protected JMenuItem newCsp, newHse, newUnc, newRsg, newSpice;
-	protected JMenuItem exit;
-	protected JMenuItem manual;
-	protected JMenuItem bugReport;
-	protected JMenuItem about;
-	protected JMenuItem openProj;
-	protected JMenuItem clearRecent;
-	protected JMenuItem pref;
-	protected JMenuItem graph, probGraph;
+	protected JMenuItem newProj, newSBMLModel;
+	private   JMenuItem newSBOL, newGridModel;
+	protected JMenuItem exit,manual,bugReport,about,openProj,clearRecent,pref,graph, probGraph;
 	protected JMenu importModelMenu;
-	protected JMenuItem importSbml, importVhdl, importRsg, importSpice, importProperty;
-	protected JMenuItem importS, importInst, importLpn, importG, importCsp, importHse, importUnc;
-	protected JMenu importPartMenu;
-	protected JMenuItem importSbol, importGenBank, importFasta;
+	protected JMenuItem importSbml, importLpn;
+	private JMenu importPartMenu;
+	private JMenuItem importSbol, importGenBank, importFasta;
 	protected JMenuItem importSedml, importArchive;
 	protected JMenu exportModelMenu;
 	protected JMenuItem exportSBML, exportFlatSBML;
-	protected JMenu exportPartMenu;
-	protected JMenuItem exportSBOL1, exportSBOL2, exportGenBank, exportFasta; 
+	private JMenu exportPartMenu;
+	private JMenuItem exportSBOL1, exportSBOL2, exportGenBank, exportFasta; 
 	protected JMenu exportDataMenu;
 	protected JMenuItem exportCsv, exportDat, exportTsd;
 	protected JMenu exportImageMenu;
@@ -312,18 +301,18 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	// protected Thread getPartsThread = null;
 
-	protected String[] BioModelIds = null;
+	private String[] BioModelIds = null;
 
 	// protected Parts allVirtualParts = null;
 
-	protected JMenuItem addCompartment, addSpecies, addReaction, addModule, addPromoter, addVariable, addBoolean,
-	addPlace, addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select, undo, redo, copy,
-	rename, delete, moveLeft, moveRight, moveUp, moveDown;
+	private JMenuItem addCompartment, addSpecies, addReaction, addPromoter, addEvent, addSelfInfl;
+	
+	protected JMenuItem addModule, addVariable, addBoolean,	addPlace, addTransition, addRule, addConstraint; 
+	protected JMenuItem cut, select, undo, redo, copy, rename, delete, moveLeft, moveRight, moveUp, moveDown;
 
-	protected JMenuItem save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog,
-	viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser,
-	createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll,
-	convertToLPN;
+	protected JMenuItem save, saveAs, check, run, refresh;
+	
+	protected JMenuItem saveModel, createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll;
 
 	protected String ENVVAR;
 
@@ -342,10 +331,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	public static Object ICON_EXPAND = UIManager.get("Tree.expandedIcon");
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
-
-	protected static final String lemaVersion = "2.9.6";
-
-	protected static final String atacsVersion = "6.1";
 
 	protected static final String		iBioSimVersion		= "3.0.0-beta";	
 
@@ -394,32 +379,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Executables.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
-		/*
-		 * if (File.separator.equals("\\")) { separator = "\\\\"; } else {
-		 * separator = File.separator; }
-		 */
-		if (atacs) {
-			ENVVAR = System.getenv("ATACSGUI");
-			System.setProperty("software.running", "ATACS Version " + atacsVersion);
-		} else if (lema) {
-			ENVVAR = System.getenv("LEMA");
-			System.setProperty("software.running", "LEMA Version " + lemaVersion);
-		} else {
-			ENVVAR = System.getenv("BIOSIM");
-			System.setProperty("software.running", "iBioSim Version " + iBioSimVersion);
-		}
 
-		// Creates a new frame
-		if (lema) {
-			frame = new JFrame("LEMA");
-			frame.setIconImage(ResourceManager.getImageIcon("LEMA.png").getImage());
-		} else if (atacs) {
-			frame = new JFrame("ATACS");
-			frame.setIconImage(ResourceManager.getImageIcon("ATACS.png").getImage());
-		} else {
-			frame = new JFrame("iBioSim");
-			frame.setIconImage(ResourceManager.getImageIcon("iBioSim.png").getImage());
-		}
+		ENVVAR = System.getenv("BIOSIM");
+		System.setProperty("software.running", "iBioSim Version " + iBioSimVersion);
+		frame = new JFrame("iBioSim");
+		frame.setIconImage(ResourceManager.getImageIcon("iBioSim.png").getImage());
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
@@ -514,9 +478,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		tools = new JMenu("Tools");
 		menuBar.add(file);
 		menuBar.add(edit);
-		if (lema) {
-			menuBar.add(view);
-		}
 		menuBar.add(tools);
 		menuBar.add(help);
 		select = new JMenuItem("Select Mode");
@@ -556,17 +517,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		newSBMLModel = new JMenuItem("Model");
 		newSBOL = new JMenuItem("Part");
 		newGridModel = new JMenuItem("Grid Model");
-		newSpice = new JMenuItem("Spice Circuit");
-		newVhdl = new JMenuItem("VHDL Model");
-		newS = new JMenuItem("Assembly File");
-		newInst = new JMenuItem("Instruction File");
-		newLhpn = new JMenuItem("LPN Model");
-		newProperty = new JMenuItem("Property"); // DK
-		newG = new JMenuItem("Petri Net");
-		newCsp = new JMenuItem("CSP Model");
-		newHse = new JMenuItem("Handshaking Expansion");
-		newUnc = new JMenuItem("Extended Burst Mode Machine");
-		newRsg = new JMenuItem("Reduced State Graph");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
 		importSbol = new JMenuItem("SBOL File");
@@ -575,19 +525,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml = new JMenuItem("SED-ML File");
 		importArchive = new JMenuItem("Archive");
 		importSbml = new JMenuItem("SBML Model");
-		convertToLPN = new JMenuItem("Convert To LPN"); // convert
 		// importDot = new JMenuItem("iBioSim Model");
-		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("LPN Model");
-		importVhdl = new JMenuItem("VHDL Model");
-		importS = new JMenuItem("Assembly File");
-		importInst = new JMenuItem("Instruction File");
-		importProperty = new JMenuItem("Property File");
-		importSpice = new JMenuItem("Spice Circuit");
-		importCsp = new JMenuItem("CSP Model");
-		importHse = new JMenuItem("Handshaking Expansion");
-		importUnc = new JMenuItem("Extended Burst Mode Machine");
-		importRsg = new JMenuItem("Reduced State Graph");
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL1 = new JMenuItem("SBOL 1");
@@ -619,25 +558,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else {
 			saveModel = new JMenuItem("Save Learned Model");
 		}
-		saveAsVerilog = new JMenuItem("Save as Verilog");
-		saveAsVerilog.addActionListener(this);
-		saveAsVerilog.setActionCommand("saveAsVerilog");
-		saveAsVerilog.setEnabled(false);
 		saveAs = new JMenuItem("Save As");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
 		// saveSBOL = new JMenuItem("Save SBOL");
 		refresh = new JMenuItem("Refresh");
-		viewCircuit = new JMenuItem("Circuit");
-		viewRules = new JMenuItem("Production Rules");
-		viewTrace = new JMenuItem("Error Trace");
-		viewLog = new JMenuItem("Log");
-		viewCoverage = new JMenuItem("Coverage Report");
-		viewLHPN = new JMenuItem("Model");
-		viewModGraph = new JMenuItem("Model");
-		viewLearnedModel = new JMenuItem("Learned Model");
-		viewModBrowser = new JMenuItem("Model in Browser");
-		viewSG = new JMenuItem("State Graph");
 		createAnal = new JMenuItem("Analysis Tool");
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
@@ -680,18 +605,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		newSBMLModel.addActionListener(this);
 		newSBOL.addActionListener(this);
 		newGridModel.addActionListener(this);
-		newVhdl.addActionListener(this);
-		newS.addActionListener(this);
-		newInst.addActionListener(this);
-		newLhpn.addActionListener(this);
-		newProperty.addActionListener(this); // DK
-		convertToLPN.addActionListener(this);
-		newG.addActionListener(this);
-		newCsp.addActionListener(this);
-		newHse.addActionListener(this);
-		newUnc.addActionListener(this);
-		newRsg.addActionListener(this);
-		newSpice.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbol.addActionListener(this);
@@ -700,18 +613,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml.addActionListener(this);
 		importArchive.addActionListener(this);
 		importSbml.addActionListener(this);
-		// importDot.addActionListener(this);
-		importVhdl.addActionListener(this);
-		importS.addActionListener(this);
-		importInst.addActionListener(this);
-		importProperty.addActionListener(this);
 		importLpn.addActionListener(this);
-		importG.addActionListener(this);
-		importCsp.addActionListener(this);
-		importHse.addActionListener(this);
-		importUnc.addActionListener(this);
-		importRsg.addActionListener(this);
-		importSpice.addActionListener(this);
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
 		exportSBOL1.addActionListener(this);
@@ -746,16 +648,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		check.addActionListener(this);
 		refresh.addActionListener(this);
 		saveModel.addActionListener(this);
-		viewCircuit.addActionListener(this);
-		viewRules.addActionListener(this);
-		viewTrace.addActionListener(this);
-		viewLog.addActionListener(this);
-		viewCoverage.addActionListener(this);
-		viewLHPN.addActionListener(this);
-		viewModGraph.addActionListener(this);
-		viewLearnedModel.addActionListener(this);
-		viewModBrowser.addActionListener(this);
-		viewSG.addActionListener(this);
 		createAnal.addActionListener(this);
 		createLearn.addActionListener(this);
 		createSbml.addActionListener(this);
@@ -767,14 +659,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		run.setActionCommand("run");
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
-		if (atacs) {
-			viewModGraph.setActionCommand("viewModel");
-		} else {
-			viewModGraph.setActionCommand("graph");
-		}
-		viewLHPN.setActionCommand("viewModel");
-		viewModBrowser.setActionCommand("browse");
-		viewSG.setActionCommand("stateGraph");
 		createLearn.setActionCommand("createLearn");
 		createSbml.setActionCommand("createSBML");
 		createVer.setActionCommand("createVerify");
@@ -788,22 +672,17 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
-		if (lema) {
-			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
-		} else {
-			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
+		check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
 
-			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
-			newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | InputEvent.ALT_MASK));
+		refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+		newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+		newSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | InputEvent.ALT_MASK));
 
-			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
-			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
-			createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
-			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
+		newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
+		createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
+		createSynth.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey | InputEvent.SHIFT_MASK));
+		createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
 
-		}
-		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
 		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | InputEvent.SHIFT_MASK));
 		select.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
@@ -841,17 +720,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importSedml.setEnabled(false);
 		importArchive.setEnabled(false);
 		importSbml.setEnabled(false);
-		importVhdl.setEnabled(false);
-		importS.setEnabled(false);
-		importInst.setEnabled(false);
-		importProperty.setEnabled(false);
 		importLpn.setEnabled(false);
-		importG.setEnabled(false);
-		importCsp.setEnabled(false);
-		importHse.setEnabled(false);
-		importUnc.setEnabled(false);
-		importRsg.setEnabled(false);
-		importSpice.setEnabled(false);
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
@@ -883,18 +752,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		newSBMLModel.setEnabled(false);
 		newSBOL.setEnabled(false);
 		newGridModel.setEnabled(false);
-		newVhdl.setEnabled(false);
-		newS.setEnabled(false);
-		newInst.setEnabled(false);
-		newLhpn.setEnabled(false);
-		newProperty.setEnabled(false); // DK
-		convertToLPN.setEnabled(false);
-		newG.setEnabled(false);
-		newCsp.setEnabled(false);
-		newHse.setEnabled(false);
-		newUnc.setEnabled(false);
-		newRsg.setEnabled(false);
-		newSpice.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
 		save.setEnabled(false);
@@ -932,17 +789,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		copy.setEnabled(false);
 		rename.setEnabled(false);
 		delete.setEnabled(false);
-		viewCircuit.setEnabled(false);
-		viewRules.setEnabled(false);
-		viewTrace.setEnabled(false);
-		viewLog.setEnabled(false);
-		viewCoverage.setEnabled(false);
-		viewLHPN.setEnabled(false);
 		viewModel.setEnabled(false);
-		viewModGraph.setEnabled(false);
-		viewLearnedModel.setEnabled(false);
-		viewModBrowser.setEnabled(false);
-		viewSG.setEnabled(false);
 		createAnal.setEnabled(false);
 		createLearn.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -980,86 +827,35 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		edit.add(delete);
 		file.add(newMenu);
 		newMenu.add(newProj);
-		if (!async) {
-			newMenu.add(newSBMLModel);
-			newMenu.add(newGridModel);
-			newMenu.add(newSBOL);
-		} else if (lema) {
-			newMenu.add(newSBMLModel);
-		}
+		newMenu.add(newSBMLModel);
+		newMenu.add(newGridModel);
+		newMenu.add(newSBOL);
 		newMenu.add(graph);
 		newMenu.add(probGraph);
-		if (atacs) {
-			newMenu.add(newVhdl);
-			newMenu.add(newG);
-			newMenu.add(newLhpn);
-			newMenu.add(newCsp);
-			newMenu.add(newHse);
-			newMenu.add(newUnc);
-			newMenu.add(newRsg);
-			newMenu.add(newProperty);
-		} else if (lema) {
-			newMenu.add(newVhdl);
-			newMenu.add(newProperty);
-			newMenu.add(newS);
-			newMenu.add(newInst);
-			// newMenu.add(newSpice);
-		}
 		file.add(openProj);
 		file.add(openRecent);
-		// openMenu.add(openProj);
 		file.addSeparator();
 		file.add(close);
 		file.add(closeAll);
 		file.addSeparator();
 		file.add(save);
-		if (!async) {
-			// file.add(saveSBOL);
-			file.add(check);
-		}
+		file.add(check);
 		file.add(run);
 		file.add(saveAs);
-		if (lema) {
-			file.add(saveAsVerilog);
-		}
 		file.add(saveAll);
-		if (!async) {
-			file.addSeparator();
-			file.add(refresh);
-		}
-		/*
-		 * if (lema) { file.add(saveModel); }
-		 */
+		file.addSeparator();
+		file.add(refresh);
 		file.addSeparator();
 		file.add(importMenu);
 		importMenu.add(importModelMenu);
-		if (!async) {
-			// importMenu.add(importDot);
-			importModelMenu.add(importSbml);
-			// TODO: Removed due to issues with JParts
-			// importMenu.add(importVirtualPart);
-			importModelMenu.add(importLpn);
-			importMenu.add(importPartMenu);
-			importPartMenu.add(importSbol);
-			importPartMenu.add(importGenBank);
-			importPartMenu.add(importFasta);
-		} else if (atacs) {
-			importModelMenu.add(importVhdl);
-			importModelMenu.add(importG);
-			importModelMenu.add(importLpn);
-			importModelMenu.add(importCsp);
-			importModelMenu.add(importHse);
-			importModelMenu.add(importUnc);
-			importModelMenu.add(importRsg);
-		} else {
-			importModelMenu.add(importVhdl);
-			importModelMenu.add(importSbml);
-			importModelMenu.add(importS);
-			importModelMenu.add(importInst);
-			importModelMenu.add(importProperty);
-			importModelMenu.add(importLpn);
-			// importMenu.add(importSpice);
-		}
+		importModelMenu.add(importSbml);
+		// TODO: Removed due to issues with JParts
+		// importMenu.add(importVirtualPart);
+		importModelMenu.add(importLpn);
+		importMenu.add(importPartMenu);
+		importPartMenu.add(importSbol);
+		importPartMenu.add(importGenBank);
+		importPartMenu.add(importFasta);
 		importMenu.add(importSedml);
 		importMenu.add(importArchive);
 		file.add(exportMenu);
@@ -1114,44 +910,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			// file.addSeparator();
 			help.add(about);
 		}
-		if (lema) {
-			// view.add(viewVHDL);
-			// view.add(viewVerilog);
-			view.add(viewLHPN);
-			view.addSeparator();
-			view.add(viewLearnedModel);
-			view.add(viewCoverage);
-			view.add(viewLog);
-			view.add(viewTrace);
-
-		} else if (atacs) {
-			view.add(viewModGraph);
-			view.add(viewCircuit);
-			view.add(viewRules);
-			view.add(viewTrace);
-			view.add(viewLog);
-		} else {
-			view.add(viewModGraph);
-			// view.add(viewModBrowser);
-			view.add(viewLearnedModel);
-			view.add(viewSG);
-			view.add(viewLog);
-			// view.addSeparator();
-			// view.add(refresh);
-		}
 		tools.add(createAnal);
-		if (!atacs) {
-			tools.add(createLearn);
-		}
-		if (!lema) {
-			tools.add(createSynth);
-		}
-		if (async) {
-			tools.add(createVer);
-		}
-		// else {
-		// tools.add(createSbml);
-		// }
+		tools.add(createLearn);
+		tools.add(createSynth);
+		tools.add(createVer);
 		root = null;
 
 		// Create recent project menu items
@@ -1188,33 +950,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Preferences biosimrc = Preferences.userRoot();
 		viewer = biosimrc.get("biosim.general.viewer", "");
 		for (int i = 0; i < 10; i++) {
-			if (atacs) {
-				recentProjects[i].setText(biosimrc.get("atacs.recent.project." + i, ""));
-				recentProjectPaths[i] = biosimrc.get("atacs.recent.project.path." + i, "");
-				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
-					openRecent.add(recentProjects[i]);
-					numberRecentProj = i + 1;
-				} else {
-					break;
-				}
-			} else if (lema) {
-				recentProjects[i].setText(biosimrc.get("lema.recent.project." + i, ""));
-				recentProjectPaths[i] = biosimrc.get("lema.recent.project.path." + i, "");
-				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
-					openRecent.add(recentProjects[i]);
-					numberRecentProj = i + 1;
-				} else {
-					break;
-				}
+			recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
+			recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
+			if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
+				openRecent.add(recentProjects[i]);
+				numberRecentProj = i + 1;
 			} else {
-				recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
-				recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
-				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
-					openRecent.add(recentProjects[i]);
-					numberRecentProj = i + 1;
-				} else {
-					break;
-				}
+				break;
 			}
 		}
 		openRecent.addSeparator();
@@ -1313,23 +1055,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		JLabel name;
 		JLabel version;
 		final String developers;
-		if (lema) {
-			name = new JLabel("LEMA", SwingConstants.CENTER);
-			version = new JLabel("Version " + lemaVersion, SwingConstants.CENTER);
-			developers = "Satish Batchu\nAndrew Fisher\nKevin Jones\nDhanashree Kulkarni\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
-					+ "Robert Thacker\nDavid Walter\nZhen Zhang";
-		} else if (atacs) {
-			name = new JLabel("ATACS", SwingConstants.CENTER);
-			version = new JLabel("Version " + atacsVersion, SwingConstants.CENTER);
-			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
-					+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
-					+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
-		} else {
-			name = new JLabel("iBioSim", SwingConstants.CENTER);
-			version = new JLabel("Version " + iBioSimVersion, SwingConstants.CENTER);
-			developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
-					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel";
-		}
+		name = new JLabel("iBioSim", SwingConstants.CENTER);
+		version = new JLabel("Version " + iBioSimVersion, SwingConstants.CENTER);
+		developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
+				+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel";
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
 		name.setFont(font);
@@ -1358,19 +1087,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		uOfUPanel.add(name, "North");
 		uOfUPanel.add(version, "Center");
 		uOfUPanel.add(uOfU, "South");
-		if (lema) {
-			aboutPanel.add(new javax.swing.JLabel(ResourceManager.getImageIcon("LEMA.png")),
-					"North");
-		} else if (atacs) {
-			aboutPanel.add(
-					new javax.swing.JLabel(ResourceManager.getImageIcon("ATACS.png")),
-					"North");
-		} else {
-			aboutPanel.add(
-					new javax.swing.JLabel(ResourceManager.getImageIcon("iBioSim.png")),
-					"North");
-		}
-		// aboutPanel.add(bioSim, "North");
+		aboutPanel.add(new javax.swing.JLabel(ResourceManager.getImageIcon("iBioSim.png")),"North");
 		aboutPanel.add(uOfUPanel, "Center");
 		aboutPanel.add(buttons, "South");
 		f.setContentPane(aboutPanel);
@@ -1410,28 +1127,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		Preferences biosimrc = Preferences.userRoot();
 		for (int i = 0; i < numberRecentProj; i++) {
-			if (atacs) {
-				biosimrc.put("atacs.recent.project." + i, recentProjects[i].getText());
-				biosimrc.put("atacs.recent.project.path." + i, recentProjectPaths[i]);
-			} else if (lema) {
-				biosimrc.put("lema.recent.project." + i, recentProjects[i].getText());
-				biosimrc.put("lema.recent.project.path." + i, recentProjectPaths[i]);
-			} else {
-				biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
-				biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
-			}
+			biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
+			biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
 		}
 		for (int i = numberRecentProj; i < 10; i++) {
-			if (atacs) {
-				biosimrc.put("atacs.recent.project." + i, "");
-				biosimrc.put("atacs.recent.project.path." + i, "");
-			} else if (lema) {
-				biosimrc.put("lema.recent.project." + i, "");
-				biosimrc.put("lema.recent.project.path." + i, "");
-			} else {
-				biosimrc.put("biosim.recent.project." + i, "");
-				biosimrc.put("biosim.recent.project.path," + i, "");
-			}
+			biosimrc.put("biosim.recent.project." + i, "");
+			biosimrc.put("biosim.recent.project.path," + i, "");
 		}
 		System.exit(1);
 		return true;
@@ -1489,13 +1190,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			new File(filename).mkdir();
 			try {
-				if (lema) {
-					new FileWriter(new File(filename + File.separator + "LEMA.prj")).close();
-				} else if (atacs) {
-					new FileWriter(new File(filename + File.separator + "ATACS.prj")).close();
-				} else {
-					new FileWriter(new File(filename + File.separator + "BioSim.prj")).close();
-				}
+				new FileWriter(new File(filename + File.separator + "BioSim.prj")).close();
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -1528,17 +1223,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importSedml.setEnabled(true);
 			importArchive.setEnabled(true);
 			importSbml.setEnabled(true);
-			importVhdl.setEnabled(true);
-			importS.setEnabled(true);
-			importInst.setEnabled(true);
-			importProperty.setEnabled(true);
 			importLpn.setEnabled(true);
-			importG.setEnabled(true);
-			importCsp.setEnabled(true);
-			importHse.setEnabled(true);
-			importUnc.setEnabled(true);
-			importRsg.setEnabled(true);
-			importSpice.setEnabled(true);
 			downloadMenu.setEnabled(true);
 			downloadBioModel.setEnabled(true);
 			downloadVirtualPart.setEnabled(true);
@@ -1546,17 +1231,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			newSBMLModel.setEnabled(true);
 			newSBOL.setEnabled(true);
 			newGridModel.setEnabled(true);
-			newVhdl.setEnabled(true);
-			newProperty.setEnabled(true); // DK
-			newS.setEnabled(true);
-			newInst.setEnabled(true);
-			newLhpn.setEnabled(true);
-			newG.setEnabled(true);
-			newCsp.setEnabled(true);
-			newHse.setEnabled(true);
-			newUnc.setEnabled(true);
-			newRsg.setEnabled(true);
-			newSpice.setEnabled(true);
 			graph.setEnabled(true);
 			probGraph.setEnabled(true);
 		}
@@ -1622,11 +1296,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					if (temp.equals(".prj")) {
 						isProject = true;
 					}
-					if (lema && temp.equals("LEMA.prj")) {
-						isProject = true;
-					} else if (atacs && temp.equals("ATACS.prj")) {
-						isProject = true;
-					} else if (temp.equals("BioSim.prj")) {
+					if (temp.equals("BioSim.prj")) {
 						isProject = true;
 					}
 				}
@@ -1650,17 +1320,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					importSedml.setEnabled(true);
 					importArchive.setEnabled(true);
 					importSbml.setEnabled(true);
-					importVhdl.setEnabled(true);
-					importS.setEnabled(true);
-					importInst.setEnabled(true);
-					importProperty.setEnabled(true);
 					importLpn.setEnabled(true);
-					importG.setEnabled(true);
-					importCsp.setEnabled(true);
-					importHse.setEnabled(true);
-					importUnc.setEnabled(true);
-					importRsg.setEnabled(true);
-					importSpice.setEnabled(true);
 					downloadMenu.setEnabled(true);
 					downloadBioModel.setEnabled(true);
 					downloadVirtualPart.setEnabled(true);
@@ -1668,17 +1328,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					newSBMLModel.setEnabled(true);
 					newSBOL.setEnabled(true);
 					newGridModel.setEnabled(true);
-					newVhdl.setEnabled(true);
-					newS.setEnabled(true);
-					newInst.setEnabled(true);
-					newLhpn.setEnabled(true);
-					newProperty.setEnabled(true); // DK
-					newG.setEnabled(true);
-					newCsp.setEnabled(true);
-					newHse.setEnabled(true);
-					newUnc.setEnabled(true);
-					newRsg.setEnabled(true);
-					newSpice.setEnabled(true);
 					graph.setEnabled(true);
 					probGraph.setEnabled(true);
 				} else {
@@ -1700,47 +1349,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == viewCircuit) {
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof JTabbedPane) {
-				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				if (component instanceof LearnView) {
-					((LearnView) component).viewModel();
-				} 
-			} else if (comp instanceof LHPNEditor) {
-				((LHPNEditor) comp).viewLhpn();
-			} else if (comp instanceof JPanel) {
-				Component[] array = ((JPanel) comp).getComponents();
-				if (array[0] instanceof VerificationView) {
-					((VerificationView) array[0]).viewCircuit();
-				} else if (array[0] instanceof SynthesisViewATACS) {
-					((SynthesisViewATACS) array[0]).viewCircuit();
-				}
-			}
-		} else if (e.getSource() == viewLog) {
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof VerificationView) {
-				((VerificationView) comp).viewLog();
-			} else if (comp instanceof JPanel) {
-				Component[] array = ((JPanel) comp).getComponents();
-				if (array[0] instanceof SynthesisViewATACS) {
-					((SynthesisViewATACS) array[0]).viewLog();
-				}
-			} else if (comp instanceof JTabbedPane) {
-				for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
-					Component component = ((JTabbedPane) comp).getComponent(i);
-					if (component instanceof LearnView) {
-						((LearnView) component).viewLog();
-						return;
-					}
-				}
-			}
-		} else if (e.getSource() == viewCoverage) {
-			Component comp = tab.getSelectedComponent();
-			for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
-				Component component = ((JTabbedPane) comp).getComponent(i);
-			}
-		} else if (e.getSource() == saveModel) {
+		if (e.getSource() == saveModel) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof JTabbedPane) {
 				for (Component component : ((JTabbedPane) comp).getComponents()) {
@@ -1749,21 +1358,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					}
 				}
 			}
-		} else if (e.getSource() == saveAsVerilog) {
-			try {
-				Lpn2verilog.convert(tree.getFile());
-			} catch (BioSimException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
-			String theFile = "";
-			if (tree.getFile().lastIndexOf('/') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
-			}
-			if (tree.getFile().lastIndexOf('\\') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
-			}
-			addToTree(theFile.replace(".lpn", ".sv"));
 		} else if (e.getSource() == close && tab.getSelectedComponent() != null) {
 			Component comp = tab.getSelectedComponent();
 			Point point = comp.getLocation();
@@ -1791,19 +1385,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				tab.fireCloseTabEvent(
 						new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(), point.x, point.y, 0, false),
 						index);
-			}
-		} else if (e.getSource() == viewRules) {
-			Component comp = tab.getSelectedComponent();
-			Component[] array = ((JPanel) comp).getComponents();
-			((SynthesisViewATACS) array[0]).viewRules();
-		} else if (e.getSource() == viewTrace) {
-			Component comp = tab.getSelectedComponent();
-			if (comp.getName().equals("Verification")) {
-				Component[] array = ((JPanel) comp).getComponents();
-				((VerificationView) array[0]).viewTrace();
-			} else if (comp.getName().equals("Synthesis")) {
-				Component[] array = ((JPanel) comp).getComponents();
-				((SynthesisViewATACS) array[0]).viewTrace();
 			}
 		} else if (e.getSource() == exportFlatSBML) {
 			Component comp = tab.getSelectedComponent();
@@ -1943,13 +1524,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			try {
 				String directory = "";
 				String theFile = "";
-				if (!async) {
-					theFile = "iBioSim.html";
-				} else if (atacs) {
-					theFile = "ATACS.html";
-				} else {
-					theFile = "LEMA.html";
-				}
+				theFile = "iBioSim.html";
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
 				if (System.getProperty("os.name").contentEquals("Linux")
@@ -1977,68 +1552,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} catch (Exception e0) {
 			}
 		} else if (e.getActionCommand().equals("openLearn")) {
-			if (lema) {
-				// TODO: removed
-			} else {
-				openLearn();
-			}
+			openLearn();
 		} else if (e.getActionCommand().equals("openSynth")) {
 			openSynth();
 		} else if (e.getActionCommand().equals("openVerification")) {
 			openVerify();
-		} else if (e.getActionCommand().equals("convertToSBML")) {
-			Translator t1 = new Translator();
-			try {
-				t1.convertLPN2SBML(tree.getFile(), "");
-			} catch (BioSimException e1) {
-				e1.printStackTrace();
-			}
-			t1.outputSBML();
-			String theFile = "";
-			if (tree.getFile().lastIndexOf('/') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
-			}
-			if (tree.getFile().lastIndexOf('\\') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
-			}
-			// updateOpenSBML(theFile.replace(".lpn", ".xml"));
-			addToTree(theFile.replace(".lpn", ".xml"));
-		} else if (e.getActionCommand().equals("convertToVerilog")) {
-			try {
-				Lpn2verilog.convert(tree.getFile());
-			} catch (BioSimException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e1.printStackTrace();
-			}
-			String theFile = "";
-			if (tree.getFile().lastIndexOf('/') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
-			}
-			if (tree.getFile().lastIndexOf('\\') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
-			}
-			addToTree(theFile.replace(".lpn", ".sv"));
-		}
-
-		else if (e.getActionCommand().equals("convertToLPN")) {
-			// new BuildProperty();
-			try {
-				BuildProperty.buildProperty(tree.getFile());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} catch (RecognitionException e1) {
-				e1.printStackTrace();
-			} catch (BioSimException e1) {
-				e1.printStackTrace();
-			}
-			String theFile = "";
-			if (tree.getFile().lastIndexOf('/') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
-			}
-			if (tree.getFile().lastIndexOf('\\') >= 0) {
-				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
-			}
-			addToTree(theFile.replace(".prop", ".xml"));
 		} else if (e.getActionCommand().equals("createAnalysis")) {
 			try {
 				createAnalysisView(tree.getFile());
@@ -2369,16 +1887,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing SBML file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
-		} else if (e.getSource() == viewLearnedModel) {
-			Component comp = tab.getSelectedComponent();
-			for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
-				Component component = ((JTabbedPane) comp).getComponent(i);
-				if (component instanceof LearnView) {
-					((LearnView) component).viewModel();
-					return;
-				}
-			}
-		}
+		} 
 		// if the graph popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("graph")) {
 			String directory = "";
@@ -2715,20 +2224,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		else if (e.getActionCommand().equals("saveas")) {
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
-			if (comp instanceof LHPNEditor) {
-				String newName = JOptionPane.showInputDialog(frame, "Enter LPN name:", "LPN Name",
-						JOptionPane.PLAIN_MESSAGE);
-				if (newName == null) {
-					return;
-				}
-				if (!newName.endsWith(".lpn") && !newName.endsWith(".xml")) {
-					newName = newName + ".lpn";
-				}
-				((LHPNEditor) comp).saveAs(newName);
-				if (newName.endsWith(".lpn")) {
-					tab.setTitleAt(tab.getSelectedIndex(), newName);
-				}
-			} else if (comp instanceof ModelEditor) {
+			if (comp instanceof ModelEditor) {
 				String newName = JOptionPane.showInputDialog(frame, "Enter model name:", "Model Name",
 						JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
@@ -2780,89 +2276,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} else if (comp instanceof JScrollPane) {
 				String fileName = getTitleAt(tab.getSelectedIndex());
 				String newName = "";
-				if (fileName.endsWith(".vhd")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter VHDL name:", "VHDL Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".vhd")) {
-						newName = newName + ".vhd";
-					}
-				}
-				if (fileName.endsWith(".prop")) { // DK
-					newName = JOptionPane.showInputDialog(frame, "Enter Property name:", "Property Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".prop")) {
-						newName = newName + ".prop";
-					}
-				} else if (fileName.endsWith(".s")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Assembly File Name:", "Assembly File Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".s")) {
-						newName = newName + ".s";
-					}
-				} else if (fileName.endsWith(".inst")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Instruction File Name:",
-							"Instruction File Name", JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".inst")) {
-						newName = newName + ".inst";
-					}
-				} else if (fileName.endsWith(".g")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Petri net name:", "Petri net Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".g")) {
-						newName = newName + ".g";
-					}
-				} else if (fileName.endsWith(".csp")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter CSP name:", "CSP Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".csp")) {
-						newName = newName + ".csp";
-					}
-				} else if (fileName.endsWith(".hse")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter HSE name:", "HSE Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".hse")) {
-						newName = newName + ".hse";
-					}
-				} else if (fileName.endsWith(".unc")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter UNC name:", "UNC Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".unc")) {
-						newName = newName + ".unc";
-					}
-				} else if (fileName.endsWith(".rsg")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter RSG name:", "RSG Name",
-							JOptionPane.PLAIN_MESSAGE);
-					if (newName == null) {
-						return;
-					}
-					if (!newName.endsWith(".rsg")) {
-						newName = newName + ".rsg";
-					}
-				}
 				try {
 					File output = new File(root + File.separator + newName);
 					output.createNewFile();
@@ -3024,48 +2437,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			createPart();
 		} else if (e.getSource() == newGridModel) {
 			createModel(true);
-		}
-		// if the new vhdl menu item is selected
-		else if (e.getSource() == newVhdl) {
-			newModel("VHDL", ".vhd");
-		}
-		// if the new assembly menu item is selected
-		else if (e.getSource() == newS) {
-			newModel("Assembly", ".s");
-		}
-		// if the new instruction file menu item is selected
-		else if (e.getSource() == newInst) {
-			newModel("Instruction", ".inst");
-		}
-		// if the new petri net menu item is selected
-		else if (e.getSource() == newG) {
-			newModel("Petri Net", ".g");
-		}
-		// if the new lhpn menu item is selected
-		else if (e.getSource() == newLhpn) {
-			createLPN();
-		} else if (e.getSource() == newProperty) { // DK
-			newModel("Property", ".prop");
-		}
-		// if the new csp menu item is selected
-		else if (e.getSource() == newCsp) {
-			newModel("CSP", ".csp");
-		}
-		// if the new hse menu item is selected
-		else if (e.getSource() == newHse) {
-			newModel("Handshaking Expansion", ".hse");
-		}
-		// if the new unc menu item is selected
-		else if (e.getSource() == newUnc) {
-			newModel("Extended Burst Mode Machine", ".unc");
-		}
-		// if the new rsg menu item is selected
-		else if (e.getSource() == newRsg) {
-			newModel("Reduced State Graph", ".rsg");
-		}
-		// if the new rsg menu item is selected
-		else if (e.getSource() == newSpice) {
-			newModel("Spice Circuit", ".cir");
 		} else if (e.getSource().equals(importSbol)) {
 			importSBOL("Import SBOL");
 		} else if (e.getSource().equals(importGenBank)) {
@@ -3086,45 +2457,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
 			importSBML(null);
-		}
-		// if the import dot menu item is selected
-		/*
-		 * else if (e.getSource() == importDot) { importGCM(); }
-		 */
-		// if the import vhdl menu item is selected
-		else if (e.getSource() == importVhdl) {
-			importFile("VHDL", ".vhd", ".vhd");
-		} else if (e.getSource() == importProperty) {
-			importFile("Property", ".prop", ".prop");
-		} else if (e.getSource() == importS) {
-			importFile("Assembly", ".s", ".s");
-		} else if (e.getSource() == importInst) {
-			importFile("Instruction", ".inst", ".inst");
 		} else if (e.getSource() == importLpn) {
 			importLPN();
-		} else if (e.getSource() == importG) {
-			importFile("Petri Net", ".g", ".g");
-		}
-		// if the import csp menu item is selected
-		else if (e.getSource() == importCsp) {
-			importFile("CSP", ".csp", ".csp");
-		}
-		// if the import hse menu item is selected
-		else if (e.getSource() == importHse) {
-			importFile("Handshaking Expansion", ".hse", ".hse");
-		}
-		// if the import unc menu item is selected
-		else if (e.getSource() == importUnc) {
-			importFile("Extended Burst State Machine", ".unc", ".unc");
-		}
-		// if the import rsg menu item is selected
-		else if (e.getSource() == importRsg) {
-			importFile("Reduced State Graph", ".rsg", ".rsg");
-		}
-		// if the import spice menu item is selected
-		else if (e.getSource() == importSpice) {
-			importFile("Spice Circuit", ".cir", ".cir");
-		}
+		} 
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
 			createGraph();
@@ -4214,54 +3549,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	// e.printStackTrace();
 	// }
 	// }
-
-	private void createLPN() {
-		try {
-			String lhpnName = JOptionPane.showInputDialog(frame, "Enter LPN Model ID:", "Model ID",
-					JOptionPane.PLAIN_MESSAGE);
-			if (lhpnName != null && !lhpnName.trim().equals("")) {
-				lhpnName = lhpnName.trim();
-				if (lhpnName.length() > 3) {
-					if (!lhpnName.substring(lhpnName.length() - 4).equals(".lpn")) {
-						lhpnName += ".lpn";
-					}
-				} else {
-					lhpnName += ".lpn";
-				}
-				String modelID = "";
-				if (lhpnName.length() > 3) {
-					if (lhpnName.substring(lhpnName.length() - 4).equals(".lpn")) {
-						modelID = lhpnName.substring(0, lhpnName.length() - 4);
-					} else {
-						modelID = lhpnName.substring(0, lhpnName.length() - 3);
-					}
-				}
-				if (!(IDpat.matcher(modelID).matches())) {
-					JOptionPane.showMessageDialog(frame,
-							"A model ID can only contain letters, digits, and underscores.\nIt also cannot start with a digit.",
-							"Invalid ID", JOptionPane.ERROR_MESSAGE);
-				} else {
-					if (overwrite(root + File.separator + lhpnName, lhpnName)) {
-						File f = new File(root + File.separator + lhpnName);
-						f.createNewFile();
-						LPN lpn = new LPN();
-						lpn.addObserver(this);
-						lpn.save(f.getAbsolutePath());
-						int i = getTab(f.getName());
-						if (i != -1) {
-							tab.remove(i);
-						}
-						LHPNEditor lhpn = new LHPNEditor(root + File.separator, f.getName(), null, this);
-						// lhpn.addMouseListener(this);
-						addTab(f.getName(), lhpn, "LHPN Editor");
-						addToTree(f.getName());
-					}
-				}
-			}
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-	}
 
 	private void importLPN() {
 		File importFile;
@@ -5587,11 +4874,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				try {
 					FileOutputStream out = new FileOutputStream(new File(root + File.separator
 							+ lrnName.trim() + File.separator + lrnName.trim() + ".lrn"));
-					if (lema) {
-						out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
-					} else {
-						out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
-					}
+					out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
 					out.close();
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File",
@@ -5603,17 +4886,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				DataManager data = new DataManager(root + File.separator + lrnName, this);
 				lrnTab.addTab("Data Manager", data);
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-				if (lema) {
-					// TODO: removed
-				} else {
-					LearnView learn = new LearnView(root + File.separator + lrnName, log, this);
-					lrnTab.addTab("Learn Options", learn);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
-					lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
-					lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-				}
+				LearnView learn = new LearnView(root + File.separator + lrnName, log, this);
+				lrnTab.addTab("Learn Options", learn);
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
+				lrnTab.addTab("Parameter Estimator Options", learn.getParamEstimator());
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Parameter Estimator Options");
+				lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 				Graph tsdGraph;
 				tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer",
 						root + File.separator + lrnName, "Time", this, null, log, null, true, false);
@@ -7702,11 +6981,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	public void updateMenu(boolean logEnabled, boolean othersEnabled) {
-		viewLearnedModel.setEnabled(othersEnabled);
-		viewCoverage.setEnabled(othersEnabled);
 		save.setEnabled(othersEnabled);
 		saveAll.setEnabled(othersEnabled);
-		viewLog.setEnabled(logEnabled);
 		// Do saveas & save button too
 	}
 
@@ -7762,452 +7038,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
 				popup.add(create);
-				if (!lema) {
-					popup.add(createSynthesis);
-				}
+				popup.add(createSynthesis);
 				popup.add(createLearn);
 				popup.add(createVerification);
 				popup.addSeparator();
 				popup.add(edit);
 				popup.add(editText);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} 
-			else if (tree.getFile().endsWith(".vhd")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs) {
-					popup.add(createSynthesis);
-				}
-				// popup.add(createAnalysis);
-				if (lema) {
-					popup.add(createLearn);
-				}
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".vams")) {
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (lema) {
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-			} else if (tree.getFile().endsWith(".sv")) {
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (lema) {
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-			} else if (tree.getFile().endsWith(".g")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs) {
-					popup.add(createSynthesis);
-				}
-				// popup.add(createAnalysis);
-				// if (lema) {
-				// popup.add(createLearn);
-				// }
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".lpn")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
-				convertToSBML.addActionListener(this);
-				convertToSBML.addMouseListener(this);
-				convertToSBML.setActionCommand("convertToSBML");
-				JMenuItem convertToVerilog = new JMenuItem("Save as Verilog");
-				convertToVerilog.addActionListener(this);
-				convertToVerilog.addMouseListener(this);
-				convertToVerilog.setActionCommand("convertToVerilog");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem view = new JMenuItem("View/Edit");
-				view.addActionListener(this);
-				view.addMouseListener(this);
-				view.setActionCommand("openLPN");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs) {
-					popup.add(createSynthesis);
-				}
-				popup.add(createAnalysis);
-				popup.add(createVerification);
-				if (lema) {
-					popup.add(createLearn);
-					popup.addSeparator();
-				}
-				if (atacs || lema) {
-					popup.add(convertToVerilog);
-				}
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(view);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-
-			else if (tree.getFile().endsWith(".prop")) {
-
-				JMenuItem convertToLPN = new JMenuItem("Convert To LPN");
-				convertToLPN.addActionListener(this);
-				convertToLPN.addMouseListener(this);
-				convertToLPN.setActionCommand("convertToLPN");
-
-				JMenuItem view = new JMenuItem("View/Edit");
-				view.addActionListener(this);
-				view.addMouseListener(this);
-				view.setActionCommand("openLPN");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-
-				if (lema) {
-					popup.add(createLearn);
-					popup.addSeparator();
-					popup.add(viewModel);
-				}
-				popup.addSeparator();
-				popup.add(view);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-				popup.add(convertToLPN);
-			}
-
-			else if (tree.getFile().endsWith(".s")) {
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createAnalysis);
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".inst")) {
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".csp")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs) {
-					popup.add(createSynthesis);
-				}
-				// popup.add(createAnalysis);
-				if (lema) {
-					popup.add(createLearn);
-				}
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".hse")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createAnalysis");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.addMouseListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createVerification = new JMenuItem("Create Verification View");
-				createVerification.addActionListener(this);
-				createVerification.addMouseListener(this);
-				createVerification.setActionCommand("createVerify");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				if (atacs) {
-					popup.add(createSynthesis);
-				}
-				// popup.add(createAnalysis);
-				if (lema) {
-					popup.add(createLearn);
-				}
-				popup.add(createVerification);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".unc")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			} else if (tree.getFile().endsWith(".rsg")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.addMouseListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem viewModel = new JMenuItem("View Model");
-				viewModel.addActionListener(this);
-				viewModel.addMouseListener(this);
-				viewModel.setActionCommand("viewModel");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.addMouseListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.addMouseListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.addSeparator();
-				popup.add(viewModel);
-				popup.addSeparator();
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
@@ -8416,11 +7252,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				} else if (ver) {
 					openVerify();
 				} else if (learn) {
-					if (lema) {
-						// TODO: removed
-					} else {
-						openLearn();
-					}
+					openLearn();
 				}
 			} else if (new File(tree.getFile()).isDirectory() && tree.getFile().equals(root)) {
 				tree.expandPath(tree.getRoot());
@@ -8876,17 +7708,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			// if (!graphFile.equals("")) {
 			VerificationView ver = new VerificationView(root + File.separator + verName, verName, "flag", log, this,
 					lema, atacs);
-			// ver.addMouseListener(this);
-			// verPanel.add(ver);
-			// AbstPane abst = new AbstPane(root + separator + verName, ver,
-			// "flag", log, this, lema,
-			// atacs);
-			// abstPanel.add(abst);
-			// verTab.add("verify", verPanel);
-			// verTab.add("abstract", abstPanel);
 			addTab(GlobalConstants.getFilename(tree.getFile()), ver, "Verification");
 		}
 	}
@@ -9172,14 +7995,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							.equals("Learn Options")) {
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnView) {
 						} else {
-							if (lema) {
-								// TODO: removed
-							} else {
-								LearnView learn = new LearnView(root + File.separator + learnName, log, this);
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
-										learn.getAdvancedOptionsPanel());
-							}
+							LearnView learn = new LearnView(root + File.separator + learnName, log, this);
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, learn);
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j + 1,
+									learn.getAdvancedOptionsPanel());
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn Options");
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j + 1).setName("Advanced Options");
 						}
@@ -9518,12 +8337,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		uploadPart.setEnabled(false);
 		uploadImage.setEnabled(false);
 		uploadData.setEnabled(false);
-		saveAsVerilog.setEnabled(false);
-		viewCircuit.setEnabled(false);
-		viewSG.setEnabled(false);
-		viewLog.setEnabled(false);
-		viewCoverage.setEnabled(false);
-		viewLearnedModel.setEnabled(false);
 		refresh.setEnabled(false);
 		select.setEnabled(false);
 		cut.setEnabled(false);
@@ -9619,21 +8432,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			exportFasta.setEnabled(true);
 			uploadMenu.setEnabled(true);
 			uploadPart.setEnabled(true);
-		} else if (comp instanceof LHPNEditor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			save.setEnabled(true);
-			saveAs.setEnabled(true);
-			saveAll.setEnabled(true);
-			close.setEnabled(true);
-			closeAll.setEnabled(true);
-			viewCircuit.setEnabled(true);
-			exportMenu.setEnabled(true);
-			exportModelMenu.setEnabled(true);
-			exportSBML.setEnabled(true);
-			exportFlatSBML.setEnabled(true);
-			uploadMenu.setEnabled(true);
-			uploadModel.setEnabled(true);
 		} else if (comp instanceof Graph) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
@@ -9666,11 +8464,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Component learnComponent = null;
 			Boolean learn = false;
 			Boolean learnLHPN = false;
-			for (String s : new File(root + File.separator + getTitleAt(tab.getSelectedIndex())).list()) {
-				if (s.contains("_sg.dot")) {
-					viewSG.setEnabled(true);
-				}
-			}
 			for (Component c : ((JTabbedPane) comp).getComponents()) {
 				if (c instanceof LearnView) {
 					learn = true;
@@ -9690,15 +8483,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				if (learn && learnComponent != null) {
-					if (new File(root + File.separator + getTitleAt(tab.getSelectedIndex())
-					+ File.separator + "method.gcm").exists()) {
-						viewLearnedModel.setEnabled(true);
-					}
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					saveAsVerilog.setEnabled(false);
-					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
 				} else if (learnLHPN && learnComponent != null) {
 					// TODO: removed
 				}
@@ -9752,10 +8538,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
 			} else if (component instanceof LearnView) {
-				if (new File(root + File.separator + getTitleAt(tab.getSelectedIndex())
-				+ File.separator + "method.gcm").exists()) {
-					viewLearnedModel.setEnabled(true);
-				}
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
@@ -9763,8 +8545,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
-				viewCircuit.setEnabled(((LearnView) component).getViewModelEnabled());
-				viewLog.setEnabled(((LearnView) component).getViewLogEnabled());
 				saveModel.setEnabled(((LearnView) component).getViewModelEnabled());
 			} else if (component instanceof DataManager) {
 				saveButton.setEnabled(true);
@@ -9775,14 +8555,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				if (learn && learnComponent != null) {
-					if (new File(root + File.separator + getTitleAt(tab.getSelectedIndex())
-					+ File.separator + "method.gcm").exists()) {
-						viewLearnedModel.setEnabled(true);
-					}
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
 				} 
 			} else if (component instanceof JPanel) {
 				saveButton.setEnabled(true);
@@ -9793,14 +8567,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				if (learn && learnComponent != null) {
-					if (new File(root + File.separator + getTitleAt(tab.getSelectedIndex())
-					+ File.separator + "method.gcm").exists()) {
-						viewLearnedModel.setEnabled(true);
-					}
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					viewCircuit.setEnabled(((LearnView) learnComponent).getViewModelEnabled());
-					viewLog.setEnabled(((LearnView) learnComponent).getViewLogEnabled());
 				} 
 			} else if (component instanceof JScrollPane) {
 				saveButton.setEnabled(true);
@@ -9821,8 +8589,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
-				viewTrace.setEnabled(((VerificationView) comp).getViewTraceEnabled());
-				viewLog.setEnabled(((VerificationView) comp).getViewLogEnabled());
 			} else if (comp.getName().equals("Synthesis")) {
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
@@ -9832,22 +8598,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
-				viewRules.setEnabled(
-						true/*
-						 * ((Synthesis) comp).getViewRulesEnabled()
-						 */);
-				viewTrace.setEnabled(
-						true/*
-						 * ((Synthesis) comp).getViewTraceEnabled()
-						 */);
-				viewCircuit.setEnabled(
-						true/*
-						 * ((Synthesis) comp).getViewCircuitEnabled()
-						 */);
-				viewLog.setEnabled(
-						true/*
-						 * ((Synthesis) comp).getViewLogEnabled()
-						 */);
 			}
 		} else if (comp instanceof JScrollPane) {
 			saveButton.setEnabled(true);
@@ -9861,8 +8611,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	private void enableTreeMenu() {
-		viewModGraph.setEnabled(false);
-		viewModBrowser.setEnabled(false);
 		createAnal.setEnabled(false);
 		createSynth.setEnabled(false);
 		createLearn.setEnabled(false);
@@ -9873,18 +8621,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		rename.setEnabled(false);
 		delete.setEnabled(false);
 		viewModel.setEnabled(false);
-		viewRules.setEnabled(false);
-		viewTrace.setEnabled(false);
-		viewCircuit.setEnabled(false);
-		viewLHPN.setEnabled(false);
-		saveAsVerilog.setEnabled(false);
 		if (tree.getFile() != null) {
 			if (tree.getFile().equals(root)) {
 			} else if (tree.getFile().endsWith(".sbol")) {
 			} else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
-				viewModGraph.setEnabled(true);
-				viewModGraph.setActionCommand("graph");
-				viewModBrowser.setEnabled(true);
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("createAnalysis");
 				createSynth.setEnabled(true);
@@ -9898,59 +8638,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
-			} else if (tree.getFile().endsWith(".vams")) {
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-			} else if (tree.getFile().endsWith(".sv")) {
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-			} else if (tree.getFile().endsWith(".g")) {
-				viewModel.setEnabled(true);
-				viewModGraph.setEnabled(true);
-				createSynth.setEnabled(true);
-				createSynth.setActionCommand("createSynthesis");
-				createVer.setEnabled(true);
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-				viewLHPN.setEnabled(true);
-			} else if (tree.getFile().endsWith(".lpn")) {
-				viewModel.setEnabled(true);
-				viewModGraph.setEnabled(true);
-				createAnal.setEnabled(true);
-				createAnal.setActionCommand("createAnalysis");
-				if (lema) {
-					createLearn.setEnabled(true);
-				}
-				createSynth.setEnabled(true);
-				createSynth.setActionCommand("createSynthesis");
-				createVer.setEnabled(true);
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-				viewLHPN.setEnabled(true);
-				saveAsVerilog.setEnabled(true);
-			} else if (tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc")
-					|| tree.getFile().endsWith(".csp") || tree.getFile().endsWith(".vhd")
-					|| tree.getFile().endsWith(".rsg")) {
-				viewModel.setEnabled(true);
-				viewModGraph.setEnabled(true);
-				createSynth.setEnabled(true);
-				createSynth.setActionCommand("createSynthesis");
-				createVer.setEnabled(true);
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-				viewLHPN.setEnabled(true);
-			} else if (tree.getFile().endsWith(".s") || tree.getFile().endsWith(".inst")) {
-				createAnal.setEnabled(true);
-				createVer.setEnabled(true);
-				copy.setEnabled(true);
-				rename.setEnabled(true);
-				delete.setEnabled(true);
-				viewLHPN.setEnabled(true);
 			} else if (new File(tree.getFile()).isDirectory()) {
 				boolean sim = false;
 				boolean synth = false;
