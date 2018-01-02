@@ -42,31 +42,34 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * <p>
  * Options:
  * <p>
- * -e: when specified, the program will run parameter estimation.
- * -l: when specified, parameter estimation will use the estimate the value of the parameters in the list.
- * -ta [num]: Sets the activation threshold.  Default 1.15
- * -tr [num]: Sets the repression threshold.  Default 0.75
- * -ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5
- * -tm [num]: Sets how close IVs must be in score to be considered for combination.  Default 0.01
- * -tn [num]: Sets minimum number of parents to allow through in SelectInitialParents. Default 2
- * -tj [num]: Sets the max parents of merged influence vectors, Default 2
- * -tt [num]: Sets how fast the bound is relaxed for ta and tr, Default 0.025
- * -d [num]:  Sets the debug or output level.  Default 0
- * -wr [num]: Sets how much larger a number must be to be considered as a rise.  Default 1
- * -ws [num]: Sets how far the TSD points are when compared.  Default 1
- * -nb [num]: Sets how many bins are used in the evaluation.  Default 4
- * --lvl:     Writes out the suggested levels for every specie
- * --readLevels: Reads the levels from level.lvl file for every specie
- * --cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.
- * --cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.
- * --cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n
- * --score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept
- * --output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed
- * -binNumbers: Equal spacing per bin
- * -noSUCC: to not use successors in calculating probabilities
- * -PRED: use preicessors in calculating probabilities
- * -basicFBP: to use the basic FindBaseProb function
- * 
+ * <ul>
+ * <li>-e: when specified, the program will run parameter estimation.</li>
+ * <li>-l: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
+ * <li>-ta [num]: Sets the activation threshold.  Default 1.15</li>
+ * <li>-tr [num]: Sets the repression threshold.  Default 0.75</li>
+ * <li>-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5</li>
+ * <li>-tm [num]: Sets how close IVs must be in score to be considered for combination.  Default 0.01</li>
+ * <li>-tn [num]: Sets minimum number of parents to allow through in SelectInitialParents. Default 2</li>
+ * <li>-tj [num]: Sets the max parents of merged influence vectors, Default 2</li>
+ * <li>-tt [num]: Sets how fast the bound is relaxed for ta and tr, Default 0.025</li>
+ * <li>-d [num]:  Sets the debug or output level.  Default 0</li>
+ * <li>-wr [num]: Sets how much larger a number must be to be considered as a rise.  Default 1</li>
+ * <li>-ws [num]: Sets how far the TSD points are when compared.  Default 1</li>
+ * <li>-nb [num]: Sets how many bins are used in the evaluation.  Default 4</li>
+ * <li>--lvl:     Writes out the suggested levels for every species.</li>
+ * <li>--readLevels: Reads the levels from level.lvl file for every species.</li>
+ * <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
+ * <li>--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.</li>
+ * <li>--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal</li>
+ * <li>--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.</li>
+ * <li>--cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n</li>
+ * <li>--score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept</li>
+ * <li>--output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed</li>
+ * <li>-binNumbers: Equal spacing per bin</li>
+ * <li>-noSUCC: to not use successors in calculating probabilities</li>
+ * <li>-PRED: use preicessors in calculating probabilities</li>
+ * <li>-basicFBP: to use the basic FindBaseProb function</li>
+ * </ul>
  * 
  * @author Leandro Watanabe
  * @author Tramy Nguyen
@@ -76,6 +79,31 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  */
 public class Learn {
 
+
+  private double ta, tr, ti, tm, tn, tj, tt;
+  private int d, wr, ws, nb;
+  private boolean runParameterEstimation, lvl, readLevels, cpp, cpp_harshenBoundsOnTie, cpp_cmp_output_donotInvertSortOrder,
+  cpp_seedParents, cmp_score_mustNotWinMajority, score_donotTossSingleRatioParents, output_donotTossChangedInfluenceSingleParents, binNumbers,
+  noSUCC, PRED, basicFBP;
+  private String directory;
+  private String filename;
+  private List<String> listOfParameters;
+  
+  private Learn()
+  {
+    ta = 1.15;
+    tr = 0.75;
+    ti = 0.5;
+    tm = 0.01;
+    tn = 2;
+    tj = 2;
+    tt = 0.025;
+    d = 0;
+    wr = 1;
+    ws = 1;
+    nb = 4;
+  }
+  
   private static void usage() {
     System.err.println("Description:");
     System.err.println("\tExecutes bayesian methods for structural learning of regulatory networks using GeneNet or parameter estimation using SRES.");
@@ -86,9 +114,8 @@ public class Learn {
     System.err.println("\t<Project Directory> the directory where the experimental data is located.");
     System.err.println("Options:");
     System.err.println("\t-e to execute parameter estimation.");
-    System.err.println("\t-l to specify the list of parameters to estimate. If not specified, all parameters are estimated.");
-    System.err.println("\t   to use it, specify the parameters separated by commas (e.g. p1,p2,p3).");
-    
+    System.err.println("\t-l to specify the list of parameters to estimate. If not specified, all parameters are estimated. To use it, specify the parameters separated by commas (e.g. p1,p2,p3).");
+
     System.exit(1);
   }
 
@@ -100,98 +127,261 @@ public class Learn {
       usage();
     }
 
-    boolean runParameterEstimation = false;
-    List<String> listOfParameters = null;
-    String filename = args[args.length-2];
-    String directory = args[args.length-1];
-    
-    for(int i = 0; i < args.length-2; i++)
+    Learn learn = new Learn();
+
+    learn.filename = args[args.length-2];
+    learn.directory = args[args.length-1];
+
+    int end = args.length-2;
+    for(int i = 0; i < end; i++)
     {
-      if(args[i].startsWith("-"))
+      String flag = args[i];
+      switch(flag)
       {
-        if(args[i].length() == 2)
+      case "-e":
+        learn.runParameterEstimation = true;
+        break;
+      case "-l":
+        learn.listOfParameters = new ArrayList<String>();
+        if(i+1 < end)
         {
-          if(args[i].charAt(1) == 'e')
+          String[] parsedList = args[i+1].split(",");
+          for(String parameter : parsedList)
           {
-            runParameterEstimation = true;
+            learn.listOfParameters.add(parameter);
           }
-          else if(args[i].charAt(1) == 'l')
-          {
-            if(i+1 < args.length-2)
-            {
-              listOfParameters = new ArrayList<String>();
-              String unparsedList = args[i+1];
-              String[] parsedList = unparsedList.split(",");
-              for(String param : parsedList)
-              {
-                listOfParameters.add(param);
-              }
-            }
-            else
-            {
-              usage();
-            }
-          }
+          i=i+1;
         }
         else
         {
           usage();
         }
+        break;
+      case "-ta":
+        if(i+1 < end)
+        {
+          learn.ta = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-tr":
+        if(i+1 < end)
+        {
+          learn.tr = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-ti":
+        if(i+1 < end)
+        {
+          learn.ti = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-tm":
+        if(i+1 < end)
+        {
+          learn.tm = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-tn":
+        if(i+1 < end)
+        {
+          learn.tn = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-tj":
+        if(i+1 < end)
+        {
+          learn.tj = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-tt":
+        if(i+1 < end)
+        {
+          learn.tt = Double.parseDouble(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-d":
+        if(i+1 < end)
+        {
+          learn.d = Integer.parseInt(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-wr":
+        if(i+1 < end)
+        {
+          learn.wr = Integer.parseInt(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-ws":
+        if(i+1 < end)
+        {
+          learn.ws = Integer.parseInt(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-nb":
+        if(i+1 < end)
+        {
+          learn.nb = Integer.parseInt(args[i+1]);
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "-lvl":
+        learn.lvl = true;
+        break;
+      case "--readLevels":
+        learn.readLevels = true;
+        break;
+      case "--cpp":
+        learn.cpp = true;
+        break;
+      case "--cpp_harshenBoundsOnTie":
+        learn.cpp_harshenBoundsOnTie = true;
+        break;
+      case "--cpp_cmp_output_donotInvertSortOrder":
+        learn.cpp_cmp_output_donotInvertSortOrder = true;
+        break;
+      case "--cpp_seedParents":
+        learn.cpp_seedParents = true;
+        break;
+      case "--cmp_score_mustNotWinMajority":
+        learn.cmp_score_mustNotWinMajority = true;
+        break;
+      case "--score_donotTossSingleRatioParents":
+        learn.score_donotTossSingleRatioParents = true;
+        break;
+      case "--output_donotTossChangedInfluenceSingleParents":
+        learn.output_donotTossChangedInfluenceSingleParents = true;
+        break;
+      case "-binNumbers":
+        learn.binNumbers = true;
+        break;
+      case "--noSUCC":
+        learn.noSUCC = true;
+        break;
+      case "--PRED":
+        learn.PRED = true;
+        break;
+      case "--basicFBP":
+        learn.basicFBP = true;
+        break;
       }
     }
-    
-    if(runParameterEstimation)
-    { 
-      try {
-        if(listOfParameters == null)
-        {
-          listOfParameters = new ArrayList<String>();
-          SBMLDocument doc = SBMLReader.read(new File(filename));
-          Model model = doc.getModel();
-          for(Parameter param : model.getListOfParameters())
-          {
-            listOfParameters.add(param.getId());
-          }
-        }
-        
-        SpeciesCollection S = new SpeciesCollection();
-        Experiments E = new Experiments();
-        Run.init(filename, S);
-        Run.loadExperiments(directory, S, E);
-        SBMLDocument newDocument = ParameterEstimator.estimate(filename, directory, listOfParameters, E, S);
-        if (newDocument != null)
-        {
-          Model model = newDocument.getModel();
-          for (String parameterId : listOfParameters)
-          {
-            Parameter parameter = model.getParameter(parameterId);
-            if(parameter != null)
-            {
-              System.out.println(parameterId + " = " + parameter.getValue());
-            }
-            else
-            {
-              System.out.println(parameterId + " = NA");
-            }
-            
-          }
-        }
-      } catch (IOException e) {
-        System.err.println("The program encoutered IO problems.");
-      } catch (XMLStreamException e) {
-        System.err.println("The program could not parse the input SBML file.");
-      } catch (BioSimException e) {
-        System.err.println("Error: " + e.getMessage());
-      }
 
+    try
+    {
+      if(learn.runParameterEstimation)
+      { 
+        learn.runParameterEstimation();
+      }
+      else
+      {
+        learn.runGeneNet();
+      }
+    }
+    catch(Exception e)
+    {
+      System.err.println(e.getMessage());
+    }
+  } 
+
+  private void runParameterEstimation() throws XMLStreamException, IOException, BioSimException
+  {
+    if(listOfParameters == null)
+    {
+      listOfParameters = new ArrayList<String>();
+      SBMLDocument doc = SBMLReader.read(new File(filename));
+      Model model = doc.getModel();
+      for(Parameter param : model.getListOfParameters())
+      {
+        listOfParameters.add(param.getId());
+      }
+    }
+
+    SpeciesCollection S = new SpeciesCollection();
+    Experiments E = new Experiments();
+    Run.init(filename, S);
+    Run.loadExperiments(directory, S, E);
+    SBMLDocument newDocument = ParameterEstimator.estimate(filename, directory, listOfParameters, E, S);
+    if (newDocument != null)
+    {
+      Model model = newDocument.getModel();
+      for (String parameterId : listOfParameters)
+      {
+        Parameter parameter = model.getParameter(parameterId);
+        if(parameter != null)
+        {
+          System.out.println(parameterId + " = " + parameter.getValue());
+        }
+        else
+        {
+          System.out.println(parameterId + " = NA");
+        }
+      }
+    }
+  }
+
+  private void runGeneNet() throws BioSimException
+  {
+    if(cpp)
+    {
+      
     }
     else
     {
-      try {
-        Run.run(filename, directory);
-      } catch (BioSimException e) {
-        System.err.println("Error: " + e.getMessage());
-      }
+      Run.run(filename, directory);
     }
-  } 
+  }
 }
