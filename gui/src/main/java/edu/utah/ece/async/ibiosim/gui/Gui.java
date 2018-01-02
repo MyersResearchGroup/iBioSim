@@ -4104,7 +4104,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (sedmlModel.getTaskWithId(task.getId()) != null) {
 				sedmlModel.removeTask(sedmlModel.getTaskWithId(task.getId()));
 			}
-			sedmlModel.addTask(SEDMLutilities.copyTask(task, task.getId()));
+			sedmlModel.addTask(SEDMLutilities.copyTask(task, task.getId(), task.getModelReference(), task.getSimulationReference()));
 		}
 		importTasks(sedml, modelMap);
 		for (DataGenerator dataGenerator : sedml.getDataGenerators()) {
@@ -5165,7 +5165,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else {
 			AbstractTask task = sedml.getTaskWithId(oldName);
 			if (task != null) {
-				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
+				org.jlibsedml.Model mod = sedml.getModelWithId(task.getModelReference());
+				org.jlibsedml.Model newMod = SEDMLutilities.copyModel(mod, newName+"_model");
+				sedml.addModel(newMod);
+				Simulation sim = sedml.getSimulation(task.getSimulationReference());
+				Simulation newSim = SEDMLutilities.copySimulation(sim, newName+"_sim");
+				sedml.addSimulation(newSim);
+				AbstractTask newTask = SEDMLutilities.copyTask(task, newName, newMod.getId(), newSim.getId());
 				sedml.addTask(newTask);
 				Output output = sedml.getOutputWithId(oldName + "__graph");
 				Plot2D newGraph = null;
@@ -5228,7 +5234,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				}
 				for (AbstractTask subTask : subTasks) {
 					String newId = subTask.getId().replace(oldName + "__", newName + "__");
-					newTask = SEDMLutilities.copyTask(subTask, newId);
+					org.jlibsedml.Model subMod = sedml.getModelWithId(subTask.getModelReference());
+					org.jlibsedml.Model subNewMod = SEDMLutilities.copyModel(subMod, subTask.getModelReference().replace(oldName + "__", newName + "__"));
+					sedml.addModel(subNewMod);
+					Simulation subSim = sedml.getSimulation(subTask.getSimulationReference());
+					Simulation subNewSim = SEDMLutilities.copySimulation(subSim, subTask.getSimulationReference().replace(oldName + "__", newName + "__"));
+					sedml.addSimulation(subNewSim);
+					newTask = SEDMLutilities.copyTask(subTask, newId, subNewMod.getId(), subNewSim.getId());
 					sedml.addTask(newTask);
 					copy = new ArrayList<DataGenerator>();
 					for (DataGenerator dg : sedml.getDataGenerators()) {
@@ -5526,7 +5538,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else {
 			AbstractTask task = sedml.getTaskWithId(oldName);
 			if (task != null) {
-				AbstractTask newTask = SEDMLutilities.copyTask(task, newName);
+				org.jlibsedml.Model mod = sedml.getModelWithId(task.getModelReference());
+				org.jlibsedml.Model newMod = SEDMLutilities.copyModel(mod, newName+"_model");
+				sedml.addModel(newMod);
+				sedml.removeModel(mod);
+				Simulation sim = sedml.getSimulation(task.getSimulationReference());
+				Simulation newSim = SEDMLutilities.copySimulation(sim, newName+"_sim");
+				sedml.addSimulation(newSim);
+				sedml.removeSimulation(sim);
+				AbstractTask newTask = SEDMLutilities.copyTask(task, newName, newMod.getId(), newSim.getId());
 				sedml.addTask(newTask);
 				sedml.removeTask(task);
 				Output output = sedml.getOutputWithId(oldName + "__graph");
@@ -5556,7 +5576,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				}
 				for (AbstractTask subTask : subTasks) {
 					String newId = subTask.getId().replace(oldName + "__", newName + "__");
-					newTask = SEDMLutilities.copyTask(subTask, newId);
+					org.jlibsedml.Model subMod = sedml.getModelWithId(subTask.getModelReference());
+					org.jlibsedml.Model subNewMod = SEDMLutilities.copyModel(subMod, subTask.getModelReference().replace(oldName + "__", newName + "__"));
+					sedml.addModel(subNewMod);
+					sedml.removeModel(subMod);
+					Simulation subSim = sedml.getSimulation(subTask.getSimulationReference());
+					Simulation subNewSim = SEDMLutilities.copySimulation(subSim, subTask.getSimulationReference().replace(oldName + "__", newName + "__"));
+					sedml.addSimulation(subNewSim);
+					sedml.removeSimulation(subSim);
+					newTask = SEDMLutilities.copyTask(subTask, newId, subNewMod.getId(), subNewSim.getId());
 					sedml.addTask(newTask);
 					for (DataGenerator dg : sedml.getDataGenerators()) {
 						for (Variable var : dg.getListOfVariables()) {
@@ -5566,7 +5594,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							}
 						}
 					}
-					sedml.removeTask(task);
+					sedml.removeTask(subTask);
 				}
 			}
 
