@@ -3588,35 +3588,39 @@ public class BioModel extends CoreObservable{
 	}
 	
 	public void connectComponentAndSBase(String compId, String port, CompSBasePlugin sbmlSBase, boolean output) {
-		boolean found = false;
-		ReplacedElement replacement = null;
-		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
-			replacement = sbmlSBase.getListOfReplacedElements().get(i);
-			if (replacement.getSubmodelRef().equals(compId) && 
-				replacement.getPortRef().equals(port)) {
-				if (!output) found = true;
-				else sbmlSBase.removeReplacedElement(replacement);
-				break;
+		
+		// If port already used in replacement, remove it from that replacement
+		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
+		for (int j = 0; j < elements.size(); j++) {
+			SBase sbase = elements.get(j);
+			CompSBasePlugin compSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+			if (compSBase!=null) {
+				for (int i = 0; i < compSBase.getListOfReplacedElements().size(); i++) {
+					ReplacedElement replacement = compSBase.getListOfReplacedElements().get(i);
+					if (replacement.getSubmodelRef().equals(compId) && 
+							replacement.getPortRef().equals(port)) {
+						compSBase.removeReplacedElement(replacement);
+						break;
+					}
+				}
+				if (compSBase.isSetReplacedBy()) {
+					ReplacedBy replacedBy = compSBase.getReplacedBy();
+					if (replacedBy.getSubmodelRef().equals(compId) &&
+							replacedBy.getPortRef().equals(port)) {
+						compSBase.unsetReplacedBy();
+					}
+				}
 			}
 		}
-		if (sbmlSBase.isSetReplacedBy()) {
-			ReplacedBy replacedBy = sbmlSBase.getReplacedBy();
-			if (replacedBy.getSubmodelRef().equals(compId) &&
-					replacedBy.getPortRef().equals(port)) {
-				if (output) found = true;
-				else sbmlSBase.unsetReplacedBy();
-			}
-		}
-		if (!found) {
-			if (output) {
-				ReplacedBy replacedBy = sbmlSBase.createReplacedBy();
-				replacedBy.setSubmodelRef(compId);
-				replacedBy.setPortRef(port);
-			} else {
-				replacement = sbmlSBase.createReplacedElement();
-				replacement.setSubmodelRef(compId);
-				replacement.setPortRef(port);
-			}
+
+		if (output) {
+			ReplacedBy replacedBy = sbmlSBase.createReplacedBy();
+			replacedBy.setSubmodelRef(compId);
+			replacedBy.setPortRef(port);
+		} else {
+			ReplacedElement replacement = sbmlSBase.createReplacedElement();
+			replacement.setSubmodelRef(compId);
+			replacement.setPortRef(port);
 		}
 	}
 	

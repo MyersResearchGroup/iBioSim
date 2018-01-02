@@ -6322,19 +6322,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		mainPanel.validate();
 	}
 
-	// /**
-	// * This method refreshes the tree.
-	// */
-	// private void refreshTree()
-	// {
-	// mainPanel.remove(tree);
-	// tree = new FileTree(new File(root), this, lema, atacs, lpn);
-	// topSplit.setLeftComponent(tree);
-	// // mainPanel.add(tree, "West");
-	// // updateGCM();
-	// mainPanel.validate();
-	// }
-
 	public void addToTree(String item) {
 		tree.addToTree(item, root);
 		// updateGCM();
