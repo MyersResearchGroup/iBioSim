@@ -1194,7 +1194,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			writeSBOLDocument();
 
-			refresh();
+			refresh(false,false,false);
 			tab.removeAll();
 			addRecentProject(filename);
 
@@ -1292,7 +1292,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					currentProjectId = GlobalConstants.getFilename(root);
 					readSEDMLDocument();
 					readSBOLDocument();
-					refresh();
+					refresh(false,false,false);
 					addToTree(currentProjectId + ".sbol");
 					tab.removeAll();
 					addRecentProject(projDir);
@@ -6314,9 +6314,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	/**
 	 * This method refreshes the menu.
 	 */
-	public void refresh() {
+	public void refresh(boolean lema,boolean atacs,boolean lpn) {
 		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this, false, false, false);
+		tree = new FileTree(new File(root), this, lema, atacs, lpn);
 		topSplit.setLeftComponent(tree);
 		// mainPanel.add(tree, "West");
 		mainPanel.validate();
