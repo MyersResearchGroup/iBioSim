@@ -25,7 +25,9 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.learn.genenet.Experiments;
 import edu.utah.ece.async.ibiosim.learn.genenet.Run;
 import edu.utah.ece.async.ibiosim.learn.genenet.SpeciesCollection;
@@ -67,7 +69,7 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * <li>--output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed</li>
  * <li>-binNumbers: Equal spacing per bin</li>
  * <li>-noSUCC: to not use successors in calculating probabilities</li>
- * <li>-PRED: use preicessors in calculating probabilities</li>
+ * <li>-PRED: use predecessors in calculating probabilities</li>
  * <li>-basicFBP: to use the basic FindBaseProb function</li>
  * </ul>
  * 
@@ -77,9 +79,8 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Learn {
-
-
+public class Learn implements BioObserver
+{
   private double ta, tr, ti, tm, tn, tj, tt;
   private int d, wr, ws, nb;
   private boolean runParameterEstimation, lvl, readLevels, cpp, cpp_harshenBoundsOnTie, cpp_cmp_output_donotInvertSortOrder,
@@ -88,7 +89,7 @@ public class Learn {
   private String directory;
   private String filename;
   private List<String> listOfParameters;
-  
+
   private Learn()
   {
     ta = 1.15;
@@ -103,7 +104,7 @@ public class Learn {
     ws = 1;
     nb = 4;
   }
-  
+
   private static void usage() {
     System.err.println("Description:");
     System.err.println("\tExecutes bayesian methods for structural learning of regulatory networks using GeneNet or parameter estimation using SRES.");
@@ -115,7 +116,30 @@ public class Learn {
     System.err.println("Options:");
     System.err.println("\t-e to execute parameter estimation.");
     System.err.println("\t-l to specify the list of parameters to estimate. If not specified, all parameters are estimated. To use it, specify the parameters separated by commas (e.g. p1,p2,p3).");
-
+    System.err.println("\t-ta [num]: Sets the activation threshold.  Default 1.15");
+    System.err.println("\t-tr [num]: Sets the repression threshold.  Default 0.75");
+    System.err.println("\t-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5");
+    System.err.println("\t-tm [num]: Sets how close IVs must be in score to be considered for combination.  Default 0.01");
+    System.err.println("\t-tn [num]: Sets minimum number of parents to allow through in SelectInitialParents. Default 2");
+    System.err.println("\t-tj [num]: Sets the max parents of merged influence vectors, Default 2");
+    System.err.println("\t-tt [num]: Sets how fast the bound is relaxed for ta and tr, Default 0.025");
+    System.err.println("\t-d [num]:  Sets the debug or output level.  Default 0");
+    System.err.println("\t-wr [num]: Sets how much larger a number must be to be considered as a rise.  Default 1");
+    System.err.println("\t-ws [num]: Sets how far the TSD points are when compared.  Default 1");
+    System.err.println("\t-nb [num]: Sets how many bins are used in the evaluation.  Default 4");
+    System.err.println("\t--lvl:     Writes out the suggested levels for every species.");
+    System.err.println("\t--readLevels: Reads the levels from level.lvl file for every species.");
+    System.err.println("\t--cpp: runs the C++ GeneNet. Default is the Java version.");
+    System.err.println("\t--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.");
+    System.err.println("\t--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal");
+    System.err.println("\t--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.");
+    System.err.println("\t--cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n");
+    System.err.println("\t--score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept");
+    System.err.println("\t--output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed");
+    System.err.println("\t-binNumbers: Equal spacing per bin");
+    System.err.println("\t-noSUCC: to not use successors in calculating probabilities");
+    System.err.println("\t-PRED: use preicessors in calculating probabilities");
+    System.err.println("\t-basicFBP: to use the basic FindBaseProb function");
     System.exit(1);
   }
 
@@ -373,15 +397,67 @@ public class Learn {
     }
   }
 
-  private void runGeneNet() throws BioSimException
+  private void runGeneNet() throws BioSimException, IOException
   {
     if(cpp)
     {
-      
+      File work = new File(directory);
+      Runtime exec = Runtime.getRuntime();
+      exec.exec(getProcessArguments(), null, work);
     }
     else
     {
       Run.run(filename, directory);
+
     }
+  }
+
+  private String[] getProcessArguments()
+  {
+    ArrayList<String> args = new ArrayList<String>();
+    args.add("GeneNet");
+    args.add("-ta");
+    args.add(String.valueOf(ta));
+    args.add("-tr");
+    args.add(String.valueOf(tr));
+    args.add("-ti");
+    args.add(String.valueOf(ti));
+    args.add("-tm");
+    args.add(String.valueOf(tm));
+    args.add("-tn");
+    args.add(String.valueOf(tn));
+    args.add("-tj");
+    args.add(String.valueOf(tj));
+    args.add("-tt");
+    args.add(String.valueOf(tt));
+    args.add("-d");
+    args.add(String.valueOf(d));
+    args.add("-wr");
+    args.add(String.valueOf(wr));
+    args.add("-ws");
+    args.add(String.valueOf(ws));
+    args.add("-nb");
+    args.add(String.valueOf(nb));
+
+    if(lvl) args.add("--lvl");
+    if(readLevels) args.add("--readLevels");
+    if(cpp_harshenBoundsOnTie) args.add("--cpp_harshenBoundsOnTie");
+    if(cpp_cmp_output_donotInvertSortOrder) args.add("--cpp_cmp_output_donotInvertSortOrder");
+    if(cpp_seedParents) args.add("--cpp_seedParents");
+    if(cmp_score_mustNotWinMajority) args.add("--cmp_score_mustNotWinMajority");
+    if(score_donotTossSingleRatioParents) args.add("--score_donotTossSingleRatioParents");
+    if(output_donotTossChangedInfluenceSingleParents) args.add("--output_donotTossChangedInfluenceSingleParents");
+    if(binNumbers) args.add("-binNumbers");
+    if(noSUCC) args.add("-noSUCC");
+    if(PRED) args.add("-PRED");
+    if(basicFBP) args.add("-basicFBP");
+
+    return args.toArray(new String[args.size()]);
+  }
+
+  @Override
+  public void update(Message message) 
+  {
+    System.out.println(message);
   }
 }
