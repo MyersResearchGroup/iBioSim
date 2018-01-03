@@ -1538,7 +1538,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     }
     if (modelEditor != null)
     {
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      //AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      save();
       modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
     }
     else
