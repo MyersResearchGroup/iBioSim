@@ -1635,8 +1635,8 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				reactionId);
 		SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "stddev", taskId, type,
 				reactionId);
-		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < analysisView
-				.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
+		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < 
+				analysisView.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
 			SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "" + i, taskId, type,
 					reactionId);
 		}
