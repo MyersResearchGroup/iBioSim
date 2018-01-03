@@ -1329,7 +1329,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich." + " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
       return false;
     }
-    if (noAbstraction.isSelected() && ODE.isSelected())
+    if (noAbstraction.isSelected())
     {
       properties.setNone();
     }
