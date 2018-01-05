@@ -13,11 +13,13 @@ verification methods that is used in the iBioSim tool.
 After building the executable jar, you need to invoke the following command:
 
 ```
-  java -jar target/iBioSim-analysis-3.0.0-SNAPSHOT-jar-with-dependencies.jar input
+  java -jar target/iBioSim-analysis-3.0.0-SNAPSHOT-jar-with-dependencies.jar [options] input
 ```
 
 where 
 
-* ```input``` is an arbitrary SED-ML file.
+* ```input``` is a Combine Archive, SED-ML file, or SBML file.
+* Options include:
+
 
 

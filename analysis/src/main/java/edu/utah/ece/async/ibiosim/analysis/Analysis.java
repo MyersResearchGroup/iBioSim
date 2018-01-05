@@ -57,17 +57,17 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  *  <li>Optional:</li>
  *  <ul>
  *    <li>-d [value]: project directory</li>
- *    <li>-ti [value]: initial simulation time</li>
- *    <li>-tl [value]: simulation time limit</li>
- *    <li>-ot [value]: output time</li>
- *    <li>-pi [value]: print interval</li>
- *    <li>-m0 [value]: minimum step time</li>
- *    <li>-m1 [value]: maximum step time</li>
- *    <li>-aErr [value]: absolute error</li>
- *    <li>-sErr [value]: relative error</li>
- *    <li>-sd [value]: random seed</li>
- *    <li>-r [value]: number of runs</li>
- *    <li>-sim [value]: simulation type</li>
+ *    <li>-ti [value]: non-negative double initial simulation time</li>
+ *    <li>-tl [value]: non-negative double simulation time limit</li>
+ *    <li>-ot [value]: non-negative double for output time</li>
+ *    <li>-pi [value]: positive double for print interval</li>
+ *    <li>-m0 [value]: positive double for minimum step time</li>
+ *    <li>-m1 [value]: positive double for maximum step time</li>
+ *    <li>-aErr [value]: positive double for absolute error</li>
+ *    <li>-sErr [value]: positive double for relative error</li>
+ *    <li>-sd [value]: long for random seed</li>
+ *    <li>-r [value]: integer for number of runs</li>
+ *    <li>-sim [value]: simulation type. Options are: ode, hode, ssa, hssa, dfba, jode, jssa.</li>
  *  </ul>
  *  <li>Input file: (Combine archive, SED-ML, or SBML.</li>
  * </ul>

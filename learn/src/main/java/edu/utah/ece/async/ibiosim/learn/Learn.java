@@ -43,7 +43,7 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * Options:
  * <p>
  * -e: when specified, the program will run parameter estimation.
- * -l: when specified, parameter estimation will use the estimate the value of the parameters in the list.
+ * -l [list]: when specified, parameter estimation will use the estimate the value of the parameters in the list.
  * -ta [num]: Sets the activation threshold.  Default 1.15
  * -tr [num]: Sets the repression threshold.  Default 0.75
  * -ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5
@@ -58,7 +58,8 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * --lvl:     Writes out the suggested levels for every specie
  * --readLevels: Reads the levels from level.lvl file for every specie
  * --cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.
- * --cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.
+ * --cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal
+ * --cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.
  * --cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n
  * --score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept
  * --output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed
