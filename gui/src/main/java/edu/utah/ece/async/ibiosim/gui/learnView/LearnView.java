@@ -1527,19 +1527,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
 
 	private void runGeneNet()
 	{
-		String geneNet = "";
-		if (System.getProperty("os.name").contentEquals("Linux"))
-		{
-			geneNet = "GeneNet.linux64";
-		}
-		else if (System.getProperty("os.name").toLowerCase().startsWith("mac os"))
-		{
-			geneNet = "GeneNet.mac64";
-		}
-		else
-		{
-			geneNet = "GeneNet.exe";
-		}
+		String geneNet = "GeneNet";
 		geneNet += " --debug " + debug.getSelectedItem();
 		try
 		{
