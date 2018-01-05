@@ -227,10 +227,13 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	private Grid grid = null;
 
 	private UndoManager undoManager;
+	
+	private boolean lema;
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly, String simName,
-			String paramFile, AnalysisView analysisView, boolean textBased, boolean grid) throws Exception {
+			String paramFile, AnalysisView analysisView, boolean textBased, boolean grid, boolean lema) throws Exception {
 		super();
+		this.lema = lema;
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
@@ -418,7 +421,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 		// Annotate SBML model with synthesized SBOL DNA component and save
 		// component to local SBOL file
-		if (!biosim.lema && !biomodel.isGridEnabled()) {
+		if (!lema && !biomodel.isGridEnabled()) {
 			try {
 				modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			} catch (SBOLValidationException e1) {
@@ -430,14 +433,14 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			} else {
 				//if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "False").equals("True")) {
 				// TODO: Removed assembly for now
-				if (false) {
-					try {
-						saveSBOL2();
-					} catch (SBOLValidationException e) {
-						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", "SBOL Assembly Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
+//				if (false) {
+//					try {
+//						saveSBOL2();
+//					} catch (SBOLValidationException e) {
+//						JOptionPane.showMessageDialog(Gui.frame, "Error saving SBOL.", "SBOL Assembly Error",
+//								JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
 			}
 		}
 		try {
@@ -1632,8 +1635,8 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				reactionId);
 		SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "stddev", taskId, type,
 				reactionId);
-		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < analysisView
-				.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
+		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < 
+				analysisView.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
 			SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "" + i, taskId, type,
 					reactionId);
 		}
@@ -1689,7 +1692,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		try {
 			SBMLDocument sbmlDoc = SBMLReader
 					.read(new File(path + File.separator + simName + File.separator + filename));
-			createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
+			//createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
+			SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
+			biosim.writeSEDMLDocument();
 			if (model.getListOfChanges().size() == 0)
 				return;
 			Xwriter.write(applyChanges(sedmlDoc, sbmlDoc, model),
@@ -2105,7 +2110,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				parameterChanges, (paramsOnly || !textBased) && !biomodel.isGridEnabled());
 		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
-		eventPanel = new Events(biosim, biomodel, this, textBased);
+		eventPanel = new Events(biosim, biomodel, this, textBased, lema);
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
@@ -2135,7 +2140,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		mainPanelCenterCenter.add(componentsPanel);
 
 		this.schematic = new Schematic(biomodel, biosim, this, true, null, compartmentPanel, reactionPanel, rulesPanel,
-				consPanel, eventPanel, parametersPanel, biosim.lema);
+				consPanel, eventPanel, parametersPanel, lema);
 		int size = SBMLutilities.getModelSize(biomodel.getSBMLDocument());
 		if (!textBased && size > LARGE_MODEL_SIZE) {
 			String[] editor = { "Open in Textual Editor", "Open in Graphical Editor" };
@@ -2147,7 +2152,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 		}
 		if (textBased) {
-			if (!biosim.lema) {
+			if (!lema) {
 				tab.addTab("Compartments", compPanel);
 				tab.addTab("Species", speciesPanel);
 				tab.addTab("Reactions", reactionPanel);
@@ -2156,7 +2161,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			tab.addTab("Modules", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
 			tab.addTab("Constraints", propPanel);
-			if (!biosim.lema) {
+			if (!lema) {
 				tab.addTab("Events", eventPanel);
 			} else {
 				tab.addTab("Transitions", eventPanel);

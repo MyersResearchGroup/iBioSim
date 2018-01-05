@@ -102,7 +102,6 @@ import com.mxgraph.util.mxRectangle;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GridTable;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -229,7 +228,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel,biosim.lema,editable,modelEditor);	
+			graph = new BioGraph(bioModel,lema,editable,modelEditor);	
 			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
 			modelEditor.makeUndoPoint();

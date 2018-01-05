@@ -287,10 +287,10 @@ public class SEDMLutilities {
 		return newSubTask;
 	}
 	
-	public static AbstractTask copyTask(AbstractTask abstractTask,String newId) {
+	public static AbstractTask copyTask(AbstractTask abstractTask,String newId,String modRef,String simRef) {
 		if (abstractTask instanceof Task) {
 			Task task = (Task)abstractTask;
-			Task newTask = new Task(newId,task.getName(),task.getModelReference(),task.getSimulationReference());
+			Task newTask = new Task(newId,task.getName(),modRef,simRef);
 			copyAnnotation(task,newTask);
 			return newTask;
 		} else if (abstractTask instanceof RepeatedTask) {

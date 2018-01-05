@@ -7,7 +7,6 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -53,12 +52,10 @@ import org.jlibsedml.Report;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Variable;
-import org.jlibsedml.XMLException;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.w3c.dom.DOMImplementation;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -178,48 +175,80 @@ public class GraphData extends CoreObservable {
 		averageOrder = null;
 	}
 	
-	public void exportDataFile(File file, int output) {
-		try {
-			int count = curData.getSeries(0).getItemCount();
+	public void exportDataFile(File file, int output) throws Exception {
+		int count = curData.getSeries(0).getItemCount();
+		for (int i = 1; i < curData.getSeriesCount(); i++) {
+			if (curData.getSeries(i).getItemCount() != count) {				
+				throw new Exception("Data series do not have the same number of points!");
+			}
+		}
+		for (int j = 0; j < count; j++) {
+			Number Xval = curData.getSeries(0).getDataItem(j).getX();
 			for (int i = 1; i < curData.getSeriesCount(); i++) {
-				if (curData.getSeries(i).getItemCount() != count) {				
-					message.setErrorDialog("Unable to Export Data File", "Data series do not have the same number of points!");
-					this.notifyObservers(message);
-					return;
+				if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
+					throw new Exception("Data series time points are not the same!");
 				}
 			}
-			for (int j = 0; j < count; j++) {
-				Number Xval = curData.getSeries(0).getDataItem(j).getX();
-				for (int i = 1; i < curData.getSeriesCount(); i++) {
-					if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
-						message.setErrorDialog("Unable to Export Data File", "Data series time points are not the same!");
-						this.notifyObservers(message);
-						return;
-					}
-				}
+		}
+		FileOutputStream csvFile = new FileOutputStream(file);
+		PrintWriter csvWriter = new PrintWriter(csvFile);
+		if (output == 7) {
+			csvWriter.print("((");
+		}
+		else if (output == 6) {
+			csvWriter.print("#");
+		}
+		csvWriter.print("\"Time\"");
+		count = curData.getSeries(0).getItemCount();
+		int pos = 0;
+		for (int i = 0; i < curData.getSeriesCount(); i++) {
+			if (output == 6) {
+				csvWriter.print(" ");
 			}
-			FileOutputStream csvFile = new FileOutputStream(file);
-			PrintWriter csvWriter = new PrintWriter(csvFile);
+			else {
+				csvWriter.print(",");
+			}
+			csvWriter.print("\"" + curData.getSeriesKey(i) + "\"");
+			if (curData.getSeries(i).getItemCount() > count) {
+				count = curData.getSeries(i).getItemCount();
+				pos = i;
+			}
+		}
+		if (output == 7) {
+			csvWriter.print(")");
+		}
+		else {
+			csvWriter.println("");
+		}
+		for (int j = 0; j < count; j++) {
 			if (output == 7) {
-				csvWriter.print("((");
+				csvWriter.print(",");
 			}
-			else if (output == 6) {
-				csvWriter.print("#");
-			}
-			csvWriter.print("\"Time\"");
-			count = curData.getSeries(0).getItemCount();
-			int pos = 0;
 			for (int i = 0; i < curData.getSeriesCount(); i++) {
-				if (output == 6) {
-					csvWriter.print(" ");
+				if (i == 0) {
+					if (output == 7) {
+						csvWriter.print("(");
+					}
+					csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
+				}
+				XYSeries data = curData.getSeries(i);
+				if (j < data.getItemCount()) {
+					XYDataItem item = data.getDataItem(j);
+					if (output == 6) {
+						csvWriter.print(" ");
+					}
+					else {
+						csvWriter.print(",");
+					}
+					csvWriter.print(item.getY());
 				}
 				else {
-					csvWriter.print(",");
-				}
-				csvWriter.print("\"" + curData.getSeriesKey(i) + "\"");
-				if (curData.getSeries(i).getItemCount() > count) {
-					count = curData.getSeries(i).getItemCount();
-					pos = i;
+					if (output == 6) {
+						csvWriter.print(" ");
+					}
+					else {
+						csvWriter.print(",");
+					}
 				}
 			}
 			if (output == 7) {
@@ -228,57 +257,15 @@ public class GraphData extends CoreObservable {
 			else {
 				csvWriter.println("");
 			}
-			for (int j = 0; j < count; j++) {
-				if (output == 7) {
-					csvWriter.print(",");
-				}
-				for (int i = 0; i < curData.getSeriesCount(); i++) {
-					if (i == 0) {
-						if (output == 7) {
-							csvWriter.print("(");
-						}
-						csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
-					}
-					XYSeries data = curData.getSeries(i);
-					if (j < data.getItemCount()) {
-						XYDataItem item = data.getDataItem(j);
-						if (output == 6) {
-							csvWriter.print(" ");
-						}
-						else {
-							csvWriter.print(",");
-						}
-						csvWriter.print(item.getY());
-					}
-					else {
-						if (output == 6) {
-							csvWriter.print(" ");
-						}
-						else {
-							csvWriter.print(",");
-						}
-					}
-				}
-				if (output == 7) {
-					csvWriter.print(")");
-				}
-				else {
-					csvWriter.println("");
-				}
-			}
-			if (output == 7) {
-				csvWriter.println(")");
-			}
-			csvWriter.close();
-			csvFile.close();
 		}
-		catch (Exception e1) {						
-			message.setErrorDialog("Error", "Unable To Export File!");
-			this.notifyObservers(message);
+		if (output == 7) {
+			csvWriter.println(")");
 		}
+		csvWriter.close();
+		csvFile.close();
 	}
 	
-	public void export(File file, int output, int width, int height) throws DocumentException, IOException {
+	public void export(File file, int output, int width, int height) throws Exception {
 		if (output == 0) {
 			ChartUtilities.saveChartAsJPEG(file, chart, width, height);
 		}
@@ -1651,6 +1638,7 @@ public class GraphData extends CoreObservable {
 				dataset.addSeries(graphDataSet.get(i));
 			}
 			chart.getXYPlot().setDataset(dataset);
+			setCurData(dataset);
 			XYPlot plot = chart.getXYPlot();
 			if (resize) {
 				resize(dataset);
@@ -2253,7 +2241,7 @@ public class GraphData extends CoreObservable {
 	
 	public static void createTSDGraph(SEDMLDocument sedmlDocument,String dataFileType,String dataPath,
 			String taskId,String plotId,String outputFileName,int outputFileType,int width, int height) 
-					throws XMLException, DocumentException, IOException 
+					throws Exception 
 	{
 		GraphData graphData = new GraphData(dataFileType,dataPath,false,"","",new XYSeriesCollection(),"",null);
 		graphData.loadSEDML(sedmlDocument,taskId,plotId,true,null);
@@ -2280,7 +2268,7 @@ public class GraphData extends CoreObservable {
 		
 	public static void createHistogram(SEDMLDocument sedmlDocument,String dataFileType,String dataPath,
 			String taskId,String plotId,String outputFileName,int outputFileType,int width, int height) 
-					throws XMLException, DocumentException, IOException 
+					throws Exception 
 	{
 		GraphData graphData = new GraphData(dataFileType,dataPath,false,"","",null);
 		graphData.loadSEDML(sedmlDocument,taskId,plotId,false,null);
@@ -2289,7 +2277,7 @@ public class GraphData extends CoreObservable {
 		graphData.export(file, outputFileType, width, height);
 	}
 
-	public static void main(String args[]) throws XMLException, DocumentException, IOException {
+	public static void main(String args[]) throws Exception {
 		String sedmlFilename = "/Users/myers/Documents/Projects/TestArchive/TestArchive.sedml";
 		File sedmlFile = new File(sedmlFilename);
 		SEDMLDocument sedmlDocument = Libsedml.readDocument(sedmlFile);

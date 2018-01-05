@@ -95,7 +95,7 @@ public class AnalysisPropertiesWriter {
     
     if(analysisProperties.getSimulationProperties().getPrinter_id() != null)
     {
-      properties.setProperty(reb2sac_simulation, analysisProperties.getSimulationProperties().getPrinter_id());
+      properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
     }
     if(analysisProperties.getSimulationProperties() != null)
     {
@@ -302,6 +302,7 @@ public class AnalysisPropertiesWriter {
       properties.setProperty(mc_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
       properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
       properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
+      properties.setProperty(mc_start_index, String.valueOf(analysisProperties.getSimulationProperties().getStartIndex()));
       properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
     }
     properties.setProperty(sim_run_term , "constraint");

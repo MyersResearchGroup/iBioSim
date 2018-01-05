@@ -15,7 +15,6 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import org.jlibsedml.UniformTimeCourse;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
+import static edu.utah.ece.async.ibiosim.analysis.properties.PropertiesConstants.*;
 
 /**
  * 
@@ -348,8 +348,9 @@ public class AnalysisPropertiesLoader {
         else if (key.equals("reb2sac.analysis.stop.rate"))
         {
         }
-        else if (key.equals("monte.carlo.simulation.start.index"))
+        else if (key.equals(mc_start_index))
         {
+        	simProperties.setStartIndex(Integer.parseInt(load.getProperty(mc_start_index)));
         }
         else if (key.equals("abstraction.interesting"))
         {
