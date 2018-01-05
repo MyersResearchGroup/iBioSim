@@ -6496,4 +6496,22 @@ public class SBMLutilities
 		}
 		return time;
 	}
+	
+  public static String commandString(String[] command)
+  {
+    String commandString = "";
+    if(command != null)
+    {
+       if(command.length > 0)
+       {
+         commandString = command[0];
+       }
+       
+       for(int i = 1; i < command.length; i++)
+       {
+         commandString = commandString + " " + command[i];
+       }
+    }
+    return commandString;
+  }
 }

@@ -571,7 +571,7 @@ public class Run extends CoreObservable implements ActionListener
     {
       String[] command = properties.getReb2sacCommand();
       
-      message.setLog("Executing:\n" + commandString(command) + "\n");
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command) + "\n");
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);
@@ -588,12 +588,12 @@ public class Run extends CoreObservable implements ActionListener
 
     String[] command =  properties.getHse2Command();
     
-    message.setLog("Executing:\n" +commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     reb2sac = exec.exec(command, Executables.envp, work);
 
     command = properties.getAtacsCommand();
     
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     this.notifyObservers(message);
     exec.exec(command, null, work);
 
@@ -763,7 +763,7 @@ public class Run extends CoreObservable implements ActionListener
     else
     {
       command = properties.getDotCommand();
-      message.setLog("Executing:\n" + commandString(command));
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command));
       this.notifyObservers(message);
       reb2sac = exec.exec(command, Executables.envp, work);
     }
@@ -778,7 +778,7 @@ public class Run extends CoreObservable implements ActionListener
       command = properties.getOpenDotCommand();
 
       exec.exec(command);
-      message.setLog("Executing:\n" + commandString(command));
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command));
       this.notifyObservers(message);
     }
     
@@ -791,7 +791,7 @@ public class Run extends CoreObservable implements ActionListener
     Simulator.expandArrays( properties.getFilename(), 1);
 
     String[] command = properties.getXhtmlCommand();
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     reb2sac = exec.exec(command, Executables.envp, work);
 
 
@@ -802,7 +802,7 @@ public class Run extends CoreObservable implements ActionListener
     
     command = properties.getOpenBrowserCommand();
     
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     this.notifyObservers(message);
     exec.exec(command, null, work);
 
@@ -961,7 +961,7 @@ public class Run extends CoreObservable implements ActionListener
         if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
         {
           String[] command = properties.getSbmlCommand(sbmlName);
-          message.setLog("Executing:\n" + commandString(command));
+          message.setLog("Executing:\n" + SBMLutilities.commandString(command));
           this.notifyObservers(message);
           reb2sac = exec.exec(command, Executables.envp, work);
         }
@@ -1173,23 +1173,6 @@ public class Run extends CoreObservable implements ActionListener
    
     return false;
   }
-  
-  private String commandString(String[] command)
-  {
-    String commandString = "";
-    if(command != null)
-    {
-       if(command.length > 0)
-       {
-         commandString = command[0];
-       }
-       
-       for(int i = 1; i < command.length; i++)
-       {
-         commandString = commandString + " " + command[i];
-       }
-    }
-    return commandString;
-  }
+ 
   
 }
