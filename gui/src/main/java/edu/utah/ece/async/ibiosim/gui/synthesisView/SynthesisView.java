@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -58,6 +59,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
@@ -438,9 +440,23 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				e.printStackTrace();
 			}
 		}
-		else
+		else if(select_SBOLTechMap.isSelected())
 		{
-			System.out.println("Call SBOL Tech Mapping here");
+			//NOTE: if there are more than one library file provided, convert them into one SBOL file.
+			
+			String libraryFile = libFilePaths.iterator().next();
+			String specFile = "";
+			String defaultPre = "";
+			try 
+			{
+				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specFile, libraryFile, defaultPre);
+			} 
+			catch (SBOLValidationException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}

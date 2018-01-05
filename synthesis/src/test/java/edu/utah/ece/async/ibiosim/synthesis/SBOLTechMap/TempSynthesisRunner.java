@@ -19,6 +19,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
+
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
@@ -62,7 +65,14 @@ public class TempSynthesisRunner
 //		printMatches(matches);
 		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
 //		syn.printCoveredGates(solution);
-		syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+		try 
+		{
+			SBOLDocument sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+		}
+		catch (SBOLValidationException e) 
+		{
+			e.printStackTrace();
+		}
 	} 
 
 	public static void printMatches(Map<SynthesisNode, LinkedList<WeightedGraph>> matches)

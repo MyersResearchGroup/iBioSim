@@ -29,6 +29,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 /**
@@ -58,14 +59,14 @@ public class SBOLGraph
 	 * for the graph.
 	 * @param md
 	 */
-	public void createGraph(ModuleDefinition md)
+	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md)
 	{
 
 		for(FunctionalComponent f : md.getFunctionalComponents())
 		{
 			if(!_nodes.containsKey(f.getIdentity()))
 			{
-				SynthesisNode node = new SynthesisNode(md, f, uniqueId++);
+				SynthesisNode node = new SynthesisNode(sbolDoc, md, f, uniqueId++);
 				_nodes.put(f.getIdentity(), node);
 			}	
 		}

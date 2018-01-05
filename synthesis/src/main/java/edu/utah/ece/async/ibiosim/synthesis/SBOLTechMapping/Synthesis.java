@@ -71,7 +71,7 @@ public class Synthesis
 			for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 			{
 				SBOLGraph sbolGraph = new SBOLGraph();
-				sbolGraph.createGraph(m);
+				sbolGraph.createGraph(sbolDoc, m);
 				sbolGraph.topologicalSort();
 				if(isLibraryFile)
 					_libraryGraph.add(sbolGraph);
@@ -97,7 +97,7 @@ public class Synthesis
 		SBOLGraph sbolGraph = new SBOLGraph();
 		for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 		{
-			sbolGraph.createGraph(m);
+			sbolGraph.createGraph(sbolDoc, m);
 			sbolGraph.topologicalSort(); 
 		}
 		return sbolGraph;
@@ -353,37 +353,17 @@ public class Synthesis
 		}
 	}
 	
-	public void getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph, String defaultURIPrefix)
+	public SBOLDocument getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph, String defaultURIPrefix) throws SBOLValidationException
 	{
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
-		
-		try 
-		{
-			ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_ModDef");
-//			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
-			getSBOLfromTechMap(null, sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
-		}
-		catch (SBOLValidationException e1) 
-		{
-			e1.printStackTrace();
-		}
 
-		try
-		{
-			//Technology_Mapping_Solution
-			//sbolDoc.write(System.out);
-			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SBOLConversionException e) 
-		{
-			e.printStackTrace();
-		}
+		ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_ModDef");
+		getSBOLfromTechMap(null, sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
+		//sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
+		return sbolDoc;
+
 	}
 
 	private void getSBOLfromTechMap(Component comp, SBOLDocument sbolDoc, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
@@ -423,14 +403,12 @@ public class Synthesis
 		//Grab the gate that matches the spec. graph
 		SBOLGraph coveredLibGate = solution.get(specNode);
 		
-		ModuleDefinition gateMD = coveredLibGate.getOutputNode().getModuleDefinition();
+		SynthesisNode gateOutNode = coveredLibGate.getOutputNode();
+		SBOLDocument gateSBOLDoc = gateOutNode.getSBOLDocument();
+		ModuleDefinition gateMD = gateOutNode.getModuleDefinition();
 		
 		//Copy each gate into an SBOLDocument that will act as the solution of tech. map
-		SBOLDocument gateSBOLDoc =  sbolDoc.createRecursiveCopy(gateMD);
-		for(TopLevel tl : gateSBOLDoc.getTopLevels())
-		{
-			sbolDoc.createCopy(tl);
-		}
+		gateSBOLDoc.createRecursiveCopy(sbolDoc, gateMD);
 		
 		//Create an SBOL Module for every gate mapped to the solution
 		Module gateModule = solModDef.createModule(gateMD.getDisplayId()+ "_module", gateMD.getIdentity());
@@ -439,12 +417,12 @@ public class Synthesis
 		// of the design specification. If comp is null, then conversion is at output node.
 		if(comp != null)
 		{
-			URI libGateURI = coveredLibGate.getOutputNode().getFunctionalComponent().getIdentity();
+			URI libGateURI = gateOutNode.getFunctionalComponent().getIdentity();
 			comp.createMapsTo(comp.getDisplayId()+"_outputMapsTo", RefinementType.USELOCAL, comp.getIdentity(), libGateURI);
 			gateModule.createMapsTo(gateModule.getDisplayId()+"_outputMapsTo", RefinementType.USEREMOTE, comp.getIdentity(), libGateURI);
 		}
-		List<SynthesisNode> specLeafNodes = getEndNodes(specNode, coveredLibGate.getOutputNode());
-		List<SynthesisNode> libLeafNodes = getEndNodes(coveredLibGate.getOutputNode(), coveredLibGate.getOutputNode());
+		List<SynthesisNode> specLeafNodes = getEndNodes(specNode, gateOutNode);
+		List<SynthesisNode> libLeafNodes = getEndNodes(gateOutNode, gateOutNode);
 
 		for(int i = 0; i < specLeafNodes.size(); i++)
 		{
@@ -452,8 +430,9 @@ public class Synthesis
 			SynthesisNode libLeaf = libLeafNodes.get(i); 
 			if(solution.containsKey(specLeaf))
 			{
-				ComponentDefinition topCD = specLeaf.getComponentDefinition();
-				FunctionalComponent topFC = solModDef.createFunctionalComponent(topCD.getDisplayId() + "_FunctionalComponent", AccessType.PUBLIC, topCD.getIdentity(), DirectionType.INOUT);
+				ComponentDefinition topCD = gateOutNode.getComponentDefinition();
+				String fc_id = topCD.getDisplayId() + "_" + specLeaf.getComponentDefinition().getDisplayId();
+				FunctionalComponent topFC = solModDef.createFunctionalComponent(fc_id + "_FunctionalComponent", AccessType.PUBLIC, topCD.getIdentity(), DirectionType.INOUT);
 				FunctionalComponent libFC = libLeaf.getFunctionalComponent();
 				gateModule.createMapsTo(gateModule.getDisplayId() + "_MapsTo" + i, RefinementType.USELOCAL, topFC.getIdentity(), libFC.getIdentity());
 				
