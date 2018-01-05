@@ -53,7 +53,9 @@ public class Synthesis
 	private static List<SBOLGraph> _libraryGraph; 
 	private static SBOLGraph _specificationGraph; 
 	//TODO: Make sure to alter path for different users or computer used
+
 	private String OUTPUT_PATH = "/Users/tramyn/Desktop/sbol_gates/"; 
+
 	private String OUTPUT_FILE_NAME = "Technology_Mapping_Solution.sbol";
 
 	public Synthesis()
@@ -370,9 +372,8 @@ public class Synthesis
 	{
 		//Grab the gate that matches the spec graph
 		SBOLGraph coveredLibGate = solution.get(specNode);
-		//TODO: does it matter what node is used to create a copy of the moduleDefinition from, when it is referring to the same library gate?
 		ModuleDefinition gateMD = (ModuleDefinition) sbolDoc.createCopy(coveredLibGate.getOutputNode().getModuleDefinition());
-		Module module = gateMD.createModule(gateMD.getDisplayId()+"_module", gateMD.getIdentity());
+		Module module = gateMD.createModule(gateMD.getDisplayId() + "_module", gateMD.getIdentity());
 		if(comp != null)
 		{
 			URI libGateURI = coveredLibGate.getOutputNode().getFunctionalComponent().getIdentity();
