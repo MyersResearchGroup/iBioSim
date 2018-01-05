@@ -5736,9 +5736,9 @@ public class SBMLutilities
 		{
 			if (!Executables.libsbmlFound)
 			{
-				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
-				SBMLWriter Xwriter = new SBMLWriter();
-				Xwriter.writeSBMLToFile(document, filename);
+//				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
+//				SBMLWriter Xwriter = new SBMLWriter();
+//				Xwriter.writeSBMLToFile(document, filename);
 				return document;
 				
 			}

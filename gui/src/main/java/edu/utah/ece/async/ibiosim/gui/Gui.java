@@ -175,6 +175,10 @@ import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
+import edu.utah.ece.async.ibiosim.analysis.Run;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -373,8 +377,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * 
 	 * @throws Exception
 	 */
-	public Gui(boolean libsbmlFound) {
-		Executables.libsbmlFound = libsbmlFound;
+	public Gui() {
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 
 		ENVVAR = System.getenv("BIOSIM");
@@ -3756,65 +3759,21 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return newFile;
 	}
 
-	private void performAnalysis(String modelId, String simName) throws Exception {
-		String sbmlFile = root + File.separator + modelId + ".xml";
-		String modelFileName = GlobalConstants.getFilename(sbmlFile);
-		String sbmlFileProp;
-		sbmlFileProp = root + File.separator + simName + File.separator + modelFileName;
-		new FileOutputStream(new File(sbmlFileProp)).close();
-		try {
-			FileOutputStream out = new FileOutputStream(new File(
-					root + File.separator + simName + File.separator + simName + ".sim"));
-			out.write((modelFileName + "\n").getBytes());
-			out.close();
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		addToTree(simName);
-		JTabbedPane simTab = new JTabbedPane();
-		simTab.addMouseListener(this);
-		AnalysisView analysisView = new AnalysisView(this, log, simTab, null, sedmlDocument, root, simName, modelFileName);
-		analysisView.addObserver(this);
-		simTab.addTab("Simulation Options", analysisView);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-		simTab.addTab("Advanced Options", analysisView.getAdvanced());
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		String gcmFile = modelFileName.replace(".xml", ".gcm");
-		ModelEditor modelEditor = new ModelEditor(root + File.separator, gcmFile, this, log, true, simName,
-				root + File.separator + simName + File.separator + simName + ".sim", analysisView,
-				false, false, false);
-		analysisView.setModelEditor(modelEditor);
-		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(), sedmlDocument,
-				simName);
-		modelEditor.setElementsPanel(elementsPanel);
-		addModelViewTab(analysisView, simTab, modelEditor);
-		simTab.addTab("Parameters", modelEditor);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Model Editor");
-		modelEditor.createSBML("", ".", analysisView.getSim());
-		new AnalysisThread(analysisView).start(true);
-		Graph tsdGraph;
-		if (new File(root + File.separator + simName + File.separator + simName + ".grf")
-				.exists()) {
-			tsdGraph = analysisView.createGraph(
-					root +File.separator + simName + File.separator + simName + ".grf", true);
-
-		} else {
-			tsdGraph = analysisView.createGraph(null,true);
-		}
-		simTab.addTab("TSD Graph", tsdGraph);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-		Graph probGraph;
-		if (new File(root + File.separator + simName + File.separator + simName + ".prb")
-				.exists()) {
-			probGraph = analysisView.createGraph(
-					root + File.separator + simName +File.separator + simName + ".prb", false);
-		} else {
-			probGraph = analysisView.createGraph(null, false);
-		}
-		simTab.addTab("Histogram", probGraph);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Histogram");
-		addTab(simName, simTab, null);
+	private void performAnalysis(String modelFileName, String analysisId) throws Exception {
+		AnalysisProperties properties;
+		properties = new AnalysisProperties(analysisId, modelFileName, root, false);
+	    BioModel biomodel = new BioModel(root);
+	    biomodel.addObserver(this);
+	    biomodel.load(root + File.separator + modelFileName);
+	    SBMLDocument flatten = biomodel.flattenModel(true);
+	    String newFilename = root + File.separator + analysisId + File.separator + modelFileName;
+	    SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
+	    properties.setId(analysisId);
+	    AnalysisPropertiesLoader.loadSEDML(sedmlDocument, "", properties);
+	    AnalysisPropertiesWriter.createProperties(properties);
+		Run run = new Run(properties);
+	    run.addObserver(this);
+	    run.execute();
 	}
 
 	private HashMap<String, String> importModels(String path, SedML sedml, ArchiveComponents ac)
@@ -3883,7 +3842,24 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				String analysisId = task.getId();
 				if (overwrite(root + File.separator + analysisId, analysisId)) {
 					new File(root + File.separator + analysisId).mkdir();
-					performAnalysis(modelId, analysisId);
+					String sbmlFile = root + File.separator + modelId + ".xml";
+					String modelFileName = GlobalConstants.getFilename(sbmlFile);
+					String sbmlFileProp;
+					sbmlFileProp = root + File.separator + analysisId + File.separator + modelFileName;
+					new FileOutputStream(new File(sbmlFileProp)).close();
+					FileOutputStream out = new FileOutputStream(new File(root + File.separator + analysisId + File.separator + analysisId + ".sim"));
+					out.write((modelFileName + "\n").getBytes());
+					out.close();
+					Properties graph = new Properties();
+					FileOutputStream store = new FileOutputStream(new File(root + File.separator + analysisId + File.separator + analysisId + ".grf"));
+					graph.store(store, "Graph Data");
+					store.close();
+					graph = new Properties();
+					store = new FileOutputStream(new File(root + File.separator + analysisId + File.separator + analysisId + ".prb"));
+					graph.store(store, "Probability Data");
+					store.close();
+					addToTree(analysisId);
+					performAnalysis(modelFileName, analysisId);
 				}
 			}
 		}
@@ -3893,6 +3869,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		for (Output output : sedml.getOutputs()) {
 			if (output.isPlot2d()) {
 				Plot2D plot = (Plot2D) output;
+				String taskId = plot.getId().replace("__graph","");
+				if (sedml.getTaskWithId(taskId)!=null) continue;
 				Properties graph = new Properties();
 				try {
 					FileOutputStream store = new FileOutputStream(
@@ -3910,6 +3888,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				}
 			} else if (output.isReport()) {
 				Report report = (Report) output;
+				String taskId = report.getId().replace("__report","");
+				if (sedml.getTaskWithId(taskId)!=null) continue;
 				Properties graph = new Properties();
 				try {
 					FileOutputStream store = new FileOutputStream(
@@ -3930,6 +3910,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		for (Output output : sedml.getOutputs()) {
 			if (output.isPlot2d()) {
 				Plot2D plot = (Plot2D) output;
+				if (sedml.getTaskWithId(plot.getId().replace("__graph",""))!=null) continue;
 				String graphFile = plot.getId() + ".grf";
 				for (int j = 0; j < tab.getTabCount(); j++) {
 					if (getTitleAt(j).equals(graphFile)) {
@@ -3942,6 +3923,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						"TSD Graph");
 			} else if (output.isReport()) {
 				Report report = (Report) output;
+				if (sedml.getTaskWithId(report.getId().replace("__report",""))!=null) continue;
 				String graphFile = report.getId() + ".prb";
 				for (int j = 0; j < tab.getTabCount(); j++) {
 					if (getTitleAt(j).equals(graphFile)) {
@@ -4120,6 +4102,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			sedmlModel.addOutput(SEDMLutilities.copyOutput(output, output.getId()));
 		}
 		importOutputs(sedml);
+		for (AbstractTask task : sedml.getTasks()) {
+			openAnalysisView(root + File.separator + task.getId(),false);
+		}
 		writeSEDMLDocument();
 	}
 
@@ -8997,7 +8982,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		  }
 	  }
 
-	  boolean libsbmlFound = true;
 	  Executables.checkExecutables();
 	  ArrayList<String> errors = Executables.getErrors();
 	  if (errors.size()>0) {
@@ -9042,7 +9026,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		  JOptionPane.showMessageDialog(null , message , "No Domain Set" , JOptionPane.ERROR_MESSAGE);
 		  PreferencesDialog.showPreferences(frame);
 	  }
-	  new Gui(libsbmlFound);
+	  new Gui();
   }
 
 }

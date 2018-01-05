@@ -24,7 +24,12 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.xpath.XPathExpressionException;
 
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
@@ -88,6 +93,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
@@ -347,6 +353,37 @@ public class BioModel extends CoreObservable{
 		this.isWithinCompartment = isWithinCompartment;
 	}
 	*/
+	
+	public SBMLDocument applyChanges(SEDMLDocument sedmlDoc, SBMLDocument sbmlDoc, org.jlibsedml.Model model)
+			throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		if (sedml.getModelWithId(model.getSource()) != null) {
+			sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, sedml.getModelWithId(model.getSource()));
+		}
+		SBMLWriter Xwriter = new SBMLWriter();
+		SBMLReader Xreader = new SBMLReader();
+		sbmlDoc = Xreader
+				.readSBMLFromString(sedmlDoc.getChangedModel(model.getId(), Xwriter.writeSBMLToString(sbmlDoc)));
+		return sbmlDoc;
+	}
+
+	public void performModelChanges(SEDMLDocument sedmlDoc, String taskId, String stem, String filename) {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		if (stem != null && !stem.equals("")) {
+			taskId = taskId + "__" + stem;
+		}
+		AbstractTask task = sedml.getTaskWithId(taskId);
+		if (task == null) return;
+		org.jlibsedml.Model model = sedml.getModelWithId(task.getModelReference());
+		SBMLWriter Xwriter = new SBMLWriter();
+		try {
+			if (model.getListOfChanges().size() == 0) return;
+			Xwriter.write(applyChanges(sedmlDoc, sbml, model), filename);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public String getSBMLFile() {
 		return sbmlFile;
