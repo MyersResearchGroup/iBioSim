@@ -1693,7 +1693,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			SBMLDocument sbmlDoc = SBMLReader
 					.read(new File(path + File.separator + simName + File.separator + filename));
 			//createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
-			SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
+			//SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
 			biosim.writeSEDMLDocument();
 			if (model.getListOfChanges().size() == 0)
 				return;

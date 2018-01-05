@@ -173,7 +173,7 @@ public class Run extends CoreObservable implements ActionListener
     String time = SBMLutilities.createTimeString(time1, time2);
 
 
-    message.setLog("Total Simulation Time: " + time + "\n\n");
+    message.setLog("Total Simulation Time: " + time);
     this.notifyObservers(message);
     return exitValue;
   }
@@ -571,7 +571,7 @@ public class Run extends CoreObservable implements ActionListener
     {
       String[] command = properties.getReb2sacCommand();
       
-      message.setLog("Executing:\n" + commandString(command) + "\n");
+      message.setLog("Executing:\n" + commandString(command));
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);

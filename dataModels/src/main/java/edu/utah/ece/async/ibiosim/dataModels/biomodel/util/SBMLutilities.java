@@ -5736,7 +5736,16 @@ public class SBMLutilities
 		{
 			if (!Executables.libsbmlFound)
 			{
-//				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
+				ArrayList<SBase> sbmlElements = getListOfAllElements(document);
+				for (SBase sbase : sbmlElements) {
+					if (sbase instanceof Reaction) {
+						Reaction r = (Reaction) sbase;
+						if (r.isSetFast()) {
+							r.unsetFast();
+						}
+					}
+				}
+				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 //				SBMLWriter Xwriter = new SBMLWriter();
 //				Xwriter.writeSBMLToFile(document, filename);
 				return document;
