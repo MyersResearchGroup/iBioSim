@@ -199,6 +199,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private final SEDMLDocument SedMLDoc; 
 
   private boolean change;
+  
+  private String root;
   /**
    * This is the constructor for the GUI. It initializes all the input fields,
    * puts them on panels, adds the panels to the frame, and then displays the
@@ -230,6 +232,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     this.log = log;
     this.simTab = simTab;
     this.SedMLDoc = SedMLDoc;
+    this.root = root;
 
     if(abstractionPanel != null)
     {
@@ -986,11 +989,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   public int getStartIndex(String outDir) {
     if (append.isSelected())
     {
-      String[] searchForRunFiles = new File(outDir).list();
+      String[] searchForRunFiles = new File(root + File.separator + outDir).list();
       int start = 1;
+      if (searchForRunFiles==null) return 1;
       for (String s : searchForRunFiles)
       {
-        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(outDir + File.separator + s).isFile())
+        if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + File.separator + outDir + File.separator + s).isFile())
         {
           String getNumber = s.substring(4, s.length());
           String number = "";
@@ -1256,7 +1260,18 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     {
       properties.getSimulationProperties().setGenStats("false");
     }
-
+    if (append.isSelected()) 
+    {
+    	String outDir = properties.getId();
+    	if (!properties.getFileStem().equals("")) {
+    		outDir += File.separator + properties.getFileStem();
+    	}
+    	properties.getSimulationProperties().setStartIndex(getStartIndex(outDir));
+    }
+    else 
+    {
+    	properties.getSimulationProperties().setStartIndex(1);
+    }
     try
     {
       double rap1 = Double.parseDouble(rapid1.getText().trim());
@@ -1314,7 +1329,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich." + " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
       return false;
     }
-    if (noAbstraction.isSelected() && ODE.isSelected())
+    if (noAbstraction.isSelected())
     {
       properties.setNone();
     }
@@ -1523,7 +1538,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     }
     if (modelEditor != null)
     {
-      AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      //AnalysisPropertiesWriter.saveSEDML(SedMLDoc, properties);
+      save();
       modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
     }
     else
@@ -1933,6 +1949,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     if (properties.getSimulationProperties().getPrinter_id() != null && properties.getSimulationProperties().getPrinter_id().equals("null.printer"))
     {
       genRuns.doClick();
+
+    }
+    if (properties.getSimulationProperties().getStartIndex() != 1)
+    {
+      append.doClick();
 
     }
     
@@ -3109,7 +3130,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
           if (genStats && (outputM || outputV || outputS))
           {
             warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-            ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, directory, warning, true);
+            ((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, null, warning, true);
           }
           new File(directory + File.separator + "running").delete();
           if (outputTerm)

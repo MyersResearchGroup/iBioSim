@@ -95,7 +95,7 @@ public class AnalysisPropertiesWriter {
     
     if(analysisProperties.getSimulationProperties().getPrinter_id() != null)
     {
-      properties.setProperty(reb2sac_simulation, analysisProperties.getSimulationProperties().getPrinter_id());
+      properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
     }
     if(analysisProperties.getSimulationProperties() != null)
     {
@@ -242,7 +242,7 @@ public class AnalysisPropertiesWriter {
     {
       properties.setProperty(reb2sac_simulation, "LPN");
     }
-    if (!analysisProperties.isSsa())
+    if (analysisProperties.isOde())
     {
       properties.setProperty(sim_init_time, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getInitialTime()));
       properties.setProperty(sim_out_time,  PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getOutputStartTime()));
@@ -270,11 +270,12 @@ public class AnalysisPropertiesWriter {
       properties.setProperty(ode_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
       properties.setProperty(ode_abs_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getAbsError()));
       properties.setProperty(ode_rel_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getRelError()));
-      properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
       properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
       properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
+      properties.setProperty(mc_start_index, String.valueOf(analysisProperties.getSimulationProperties().getStartIndex()));
+      properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
     }
-    if (!analysisProperties.isOde())
+    if (analysisProperties.isSsa())
     {
       properties.setProperty(sim_init_time, PropertiesUtil.parseDouble( analysisProperties.getSimulationProperties().getInitialTime()));
       properties.setProperty(sim_out_time, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getOutputStartTime()));
@@ -300,10 +301,13 @@ public class AnalysisPropertiesWriter {
         properties.setProperty(mc_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMaxTimeStep()));
       }
       properties.setProperty(mc_min_time_step, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getMinTimeStep()));
+      properties.setProperty(ode_abs_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getAbsError()));
+      properties.setProperty(ode_rel_error, PropertiesUtil.parseDouble(analysisProperties.getSimulationProperties().getRelError()));
       properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
       properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
+      properties.setProperty(mc_start_index, String.valueOf(analysisProperties.getSimulationProperties().getStartIndex()));
       properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
-    }
+      }
     properties.setProperty(sim_run_term , "constraint");
 
 

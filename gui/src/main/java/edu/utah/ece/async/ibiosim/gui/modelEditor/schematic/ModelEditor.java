@@ -1635,8 +1635,8 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				reactionId);
 		SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "stddev", taskId, type,
 				reactionId);
-		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < analysisView
-				.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
+		for (int i = analysisView.getStartIndex(taskId.replace("__", File.separator)); i < 
+				analysisView.getStartIndex(taskId.replace("__", File.separator)) + analysisView.getNumRuns(); i++) {
 			SEDMLutilities.getDataGenerator(sedml, namedSBase.getId(), namedSBase.getName(), "" + i, taskId, type,
 					reactionId);
 		}
@@ -1692,7 +1692,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		try {
 			SBMLDocument sbmlDoc = SBMLReader
 					.read(new File(path + File.separator + simName + File.separator + filename));
-			createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
+			//createDataGenerators(sbmlDoc.getModel(), sedml, taskId);
+			//SEDMLutilities.removeDataGeneratorsByTaskId(sedml, taskId);
+			biosim.writeSEDMLDocument();
 			if (model.getListOfChanges().size() == 0)
 				return;
 			Xwriter.write(applyChanges(sedmlDoc, sbmlDoc, model),
