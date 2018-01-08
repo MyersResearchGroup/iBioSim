@@ -420,16 +420,16 @@ public class Learn implements BioObserver
       List<String> speciesList = Learn.writeBackgroundFile(filename, directory);
       Learn.writeLevelsFile(directory, speciesList, nb);
       String[] command = getProcessArguments();
-      System.out.println(SBMLutilities.commandString(command));
+
+      System.out.println("Executing:");
+      System.out.println("\t" + SBMLutilities.commandString(command));
       Process process = exec.exec(command, null, work);
       process.waitFor();
-      System.out.println("Terminated");
     }
     else
     {
       System.out.println("Running GeneNet (Java)");
       Run.run(filename, directory);
-      System.out.println("Terminated");
     }
   }
 
@@ -472,10 +472,16 @@ public class Learn implements BioObserver
     if(noSUCC) args.add("-noSUCC");
     if(PRED) args.add("-PRED");
     if(basicFBP) args.add("-basicFBP");
-
+    args.add(directory);
     return args.toArray(new String[args.size()]);
   }
 
+  /**
+   * Writes the learn properties file associated that can be used in iBioSim. 
+   * 
+   * @param learn - the object that contains the parameters for the learn procedure.
+   * @throws IOException - if a problem occurs with the reading/write of learn files.
+   */
   public static void writeLearnFile(Learn learn) throws IOException
   {
     if(learn == null)
@@ -559,6 +565,14 @@ public class Learn implements BioObserver
   }
 
 
+  /**
+   * Writes a default levels file.
+   * 
+   * @param directory - the directory of the project
+   * @param species - the interesting species of the regulatory network
+   * @param bins - number of bins
+   * @throws IOException - if something wrong happens when writing the levels file.
+   */
   public static void writeLevelsFile(String directory, List<String> species, int bins) throws IOException
   {
     FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
@@ -579,6 +593,17 @@ public class Learn implements BioObserver
     write.close();
   }
 
+  /**
+   * Write background file that informs GeneNet of known prior information about
+   * the regulatory networks.
+   * 
+   * @param learnFile - the sbml file that the background file is generated from.
+   * @param directory - the directory the background file is saved to
+   * @return a list of interesting species.
+   * 
+   * @throws XMLStreamException - when reading bad formatted sbml file
+   * @throws IOException - when something wrong happens when saving the background file.
+   */
   public static List<String> writeBackgroundFile(String learnFile, String directory) throws XMLStreamException, IOException
   {
     ArrayList<String> speciesList = new ArrayList<String>();
