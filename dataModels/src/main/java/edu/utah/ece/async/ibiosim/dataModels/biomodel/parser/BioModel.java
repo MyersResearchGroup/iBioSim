@@ -24,7 +24,12 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.xpath.XPathExpressionException;
 
+import org.jlibsedml.AbstractTask;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.XMLException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
@@ -88,6 +93,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
@@ -347,6 +353,37 @@ public class BioModel extends CoreObservable{
 		this.isWithinCompartment = isWithinCompartment;
 	}
 	*/
+	
+	public SBMLDocument applyChanges(SEDMLDocument sedmlDoc, SBMLDocument sbmlDoc, org.jlibsedml.Model model)
+			throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		if (sedml.getModelWithId(model.getSource()) != null) {
+			sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, sedml.getModelWithId(model.getSource()));
+		}
+		SBMLWriter Xwriter = new SBMLWriter();
+		SBMLReader Xreader = new SBMLReader();
+		sbmlDoc = Xreader
+				.readSBMLFromString(sedmlDoc.getChangedModel(model.getId(), Xwriter.writeSBMLToString(sbmlDoc)));
+		return sbmlDoc;
+	}
+
+	public void performModelChanges(SEDMLDocument sedmlDoc, String taskId, String stem, String filename) {
+		SedML sedml = sedmlDoc.getSedMLModel();
+		if (stem != null && !stem.equals("")) {
+			taskId = taskId + "__" + stem;
+		}
+		AbstractTask task = sedml.getTaskWithId(taskId);
+		if (task == null) return;
+		org.jlibsedml.Model model = sedml.getModelWithId(task.getModelReference());
+		SBMLWriter Xwriter = new SBMLWriter();
+		try {
+			if (model.getListOfChanges().size() == 0) return;
+			Xwriter.write(applyChanges(sedmlDoc, sbml, model), filename);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public String getSBMLFile() {
 		return sbmlFile;
@@ -3588,35 +3625,39 @@ public class BioModel extends CoreObservable{
 	}
 	
 	public void connectComponentAndSBase(String compId, String port, CompSBasePlugin sbmlSBase, boolean output) {
-		boolean found = false;
-		ReplacedElement replacement = null;
-		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
-			replacement = sbmlSBase.getListOfReplacedElements().get(i);
-			if (replacement.getSubmodelRef().equals(compId) && 
-				replacement.getPortRef().equals(port)) {
-				if (!output) found = true;
-				else sbmlSBase.removeReplacedElement(replacement);
-				break;
+		
+		// If port already used in replacement, remove it from that replacement
+		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
+		for (int j = 0; j < elements.size(); j++) {
+			SBase sbase = elements.get(j);
+			CompSBasePlugin compSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
+			if (compSBase!=null) {
+				for (int i = 0; i < compSBase.getListOfReplacedElements().size(); i++) {
+					ReplacedElement replacement = compSBase.getListOfReplacedElements().get(i);
+					if (replacement.getSubmodelRef().equals(compId) && 
+							replacement.getPortRef().equals(port)) {
+						compSBase.removeReplacedElement(replacement);
+						break;
+					}
+				}
+				if (compSBase.isSetReplacedBy()) {
+					ReplacedBy replacedBy = compSBase.getReplacedBy();
+					if (replacedBy.getSubmodelRef().equals(compId) &&
+							replacedBy.getPortRef().equals(port)) {
+						compSBase.unsetReplacedBy();
+					}
+				}
 			}
 		}
-		if (sbmlSBase.isSetReplacedBy()) {
-			ReplacedBy replacedBy = sbmlSBase.getReplacedBy();
-			if (replacedBy.getSubmodelRef().equals(compId) &&
-					replacedBy.getPortRef().equals(port)) {
-				if (output) found = true;
-				else sbmlSBase.unsetReplacedBy();
-			}
-		}
-		if (!found) {
-			if (output) {
-				ReplacedBy replacedBy = sbmlSBase.createReplacedBy();
-				replacedBy.setSubmodelRef(compId);
-				replacedBy.setPortRef(port);
-			} else {
-				replacement = sbmlSBase.createReplacedElement();
-				replacement.setSubmodelRef(compId);
-				replacement.setPortRef(port);
-			}
+
+		if (output) {
+			ReplacedBy replacedBy = sbmlSBase.createReplacedBy();
+			replacedBy.setSubmodelRef(compId);
+			replacedBy.setPortRef(port);
+		} else {
+			ReplacedElement replacement = sbmlSBase.createReplacedElement();
+			replacement.setSubmodelRef(compId);
+			replacement.setPortRef(port);
 		}
 	}
 	

@@ -28,7 +28,7 @@ import java.util.List;
 public class SimulationProperties {
 
 
-  private int         numSteps, run;
+  private int         numSteps, run, startIndex;
   private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, absError, relError;
   private String        printer_id, printer_track_quantity,genStats;
   private long        rndSeed;
@@ -50,6 +50,7 @@ public class SimulationProperties {
     genStats = "false";
     timeLimit = 100;
     intSpecies = new ArrayList<String>();
+    startIndex = 1;
     
   }
   /**
@@ -329,6 +330,18 @@ public class SimulationProperties {
   public void setGenStats(String genStats) {
     this.genStats = genStats;
   }
+/**
+ * @return the startIndex
+ */
+public int getStartIndex() {
+	return startIndex;
+}
+/**
+ * @param startIndex the startIndex to set
+ */
+public void setStartIndex(int startIndex) {
+	this.startIndex = startIndex;
+}
 
 
 }

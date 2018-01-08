@@ -168,10 +168,10 @@ public enum IBioSimPreferences {
 		{
 			Preferences.userRoot().put("biosim.general.validate", "libsbml");
 		} 
-		if (enableJsbmlValidate) 
-    {
-      Preferences.userRoot().put("biosim.general.validate", "jsbml");
-    } 
+		else if (enableJsbmlValidate) 
+		{
+			Preferences.userRoot().put("biosim.general.validate", "jsbml");
+		} 
 		else 
 		{
 			Preferences.userRoot().put("biosim.general.validate", "default");
@@ -179,7 +179,7 @@ public enum IBioSimPreferences {
 	}
 
 	private Boolean enableWarnings = null;
-	
+
 	public boolean isWarningsEnabled() {
 		if (enableWarnings == null) {
 			enableWarnings = Preferences.userRoot().get("biosim.general.warnings", "").equals("true");

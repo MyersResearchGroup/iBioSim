@@ -5736,9 +5736,18 @@ public class SBMLutilities
 		{
 			if (!Executables.libsbmlFound)
 			{
+				ArrayList<SBase> sbmlElements = getListOfAllElements(document);
+				for (SBase sbase : sbmlElements) {
+					if (sbase instanceof Reaction) {
+						Reaction r = (Reaction) sbase;
+						if (r.isSetFast()) {
+							r.unsetFast();
+						}
+					}
+				}
 				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
-				SBMLWriter Xwriter = new SBMLWriter();
-				Xwriter.writeSBMLToFile(document, filename);
+//				SBMLWriter Xwriter = new SBMLWriter();
+//				Xwriter.writeSBMLToFile(document, filename);
 				return document;
 				
 			}
@@ -6496,4 +6505,22 @@ public class SBMLutilities
 		}
 		return time;
 	}
+	
+  public static String commandString(String[] command)
+  {
+    String commandString = "";
+    if(command != null)
+    {
+       if(command.length > 0)
+       {
+         commandString = command[0];
+       }
+       
+       for(int i = 1; i < command.length; i++)
+       {
+         commandString = commandString + " " + command[i];
+       }
+    }
+    return commandString;
+  }
 }

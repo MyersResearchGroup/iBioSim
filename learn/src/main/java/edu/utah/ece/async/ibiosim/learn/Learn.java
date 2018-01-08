@@ -13,18 +13,30 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.learn;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
@@ -46,7 +58,8 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * <p>
  * <ul>
  * <li>-e: when specified, the program will run parameter estimation.</li>
- * <li>-l [list]: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
+ * <li>-l: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
+ * <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
  * <li>-ta [num]: Sets the activation threshold.  Default 1.15</li>
  * <li>-tr [num]: Sets the repression threshold.  Default 0.75</li>
  * <li>-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5</li>
@@ -60,7 +73,6 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * <li>-nb [num]: Sets how many bins are used in the evaluation.  Default 4</li>
  * <li>--lvl:     Writes out the suggested levels for every species.</li>
  * <li>--readLevels: Reads the levels from level.lvl file for every species.</li>
- * <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
  * <li>--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.</li>
  * <li>--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal</li>
  * <li>--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.</li>
@@ -115,6 +127,7 @@ public class Learn implements BioObserver
     System.err.println("\t<Project Directory> the directory where the experimental data is located.");
     System.err.println("Options:");
     System.err.println("\t-e to execute parameter estimation.");
+    System.err.println("\t--cpp: runs the C++ GeneNet. Default is the Java version.");
     System.err.println("\t-l to specify the list of parameters to estimate. If not specified, all parameters are estimated. To use it, specify the parameters separated by commas (e.g. p1,p2,p3).");
     System.err.println("\t-ta [num]: Sets the activation threshold.  Default 1.15");
     System.err.println("\t-tr [num]: Sets the repression threshold.  Default 0.75");
@@ -129,7 +142,6 @@ public class Learn implements BioObserver
     System.err.println("\t-nb [num]: Sets how many bins are used in the evaluation.  Default 4");
     System.err.println("\t--lvl:     Writes out the suggested levels for every species.");
     System.err.println("\t--readLevels: Reads the levels from level.lvl file for every species.");
-    System.err.println("\t--cpp: runs the C++ GeneNet. Default is the Java version.");
     System.err.println("\t--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.");
     System.err.println("\t--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal");
     System.err.println("\t--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.");
@@ -397,18 +409,27 @@ public class Learn implements BioObserver
     }
   }
 
-  private void runGeneNet() throws BioSimException, IOException
+  private void runGeneNet() throws BioSimException, IOException, XMLStreamException, InterruptedException
   {
     if(cpp)
     {
+      System.out.println("Running GeneNet (C++)");
       File work = new File(directory);
       Runtime exec = Runtime.getRuntime();
-      exec.exec(getProcessArguments(), null, work);
+      Learn.writeLearnFile(this);
+      List<String> speciesList = Learn.writeBackgroundFile(filename, directory);
+      Learn.writeLevelsFile(directory, speciesList, nb);
+      String[] command = getProcessArguments();
+
+      System.out.println("Executing:");
+      System.out.println("\t" + SBMLutilities.commandString(command));
+      Process process = exec.exec(command, null, work);
+      process.waitFor();
     }
     else
     {
+      System.out.println("Running GeneNet (Java)");
       Run.run(filename, directory);
-
     }
   }
 
@@ -451,13 +472,231 @@ public class Learn implements BioObserver
     if(noSUCC) args.add("-noSUCC");
     if(PRED) args.add("-PRED");
     if(basicFBP) args.add("-basicFBP");
-
+    args.add(directory);
     return args.toArray(new String[args.size()]);
   }
 
+  /**
+   * Writes the learn properties file associated that can be used in iBioSim. 
+   * 
+   * @param learn - the object that contains the parameters for the learn procedure.
+   * @throws IOException - if a problem occurs with the reading/write of learn files.
+   */
+  public static void writeLearnFile(Learn learn) throws IOException
+  {
+    if(learn == null)
+    {
+      return;
+    }
+    
+    String filename = learn.directory + File.separator + "learn.lrn";
+    File[] list = new File(learn.directory).listFiles();
+    
+    Properties prop = new Properties();
+    File learnFile = new File(filename);
+    
+    if(learnFile.exists())
+    {
+      FileInputStream in = new FileInputStream(learnFile);
+      prop.load(in);
+      in.close();
+    }
+    
+    prop.setProperty("genenet.file", filename);
+    prop.setProperty("genenet.Tn", String.valueOf(learn.tn));
+    prop.setProperty("genenet.Tj", String.valueOf(learn.tj));
+    prop.setProperty("genenet.Ti", String.valueOf(learn.ti));
+    prop.setProperty("genenet.Ta", String.valueOf(learn.ta));
+    prop.setProperty("genenet.Tr", String.valueOf(learn.tr));
+    prop.setProperty("genenet.Tm", String.valueOf(learn.tm));
+    prop.setProperty("genenet.Tt", String.valueOf(learn.tt));
+    prop.setProperty("genenet.bins", String.valueOf(learn.binNumbers));
+    prop.setProperty("genenet.debug", String.valueOf(learn.binNumbers));
+    if (learn.binNumbers)
+    {
+      prop.setProperty("genenet.equal", "spacing");
+    }
+    else
+    {
+      prop.setProperty("genenet.equal", "data");
+    }
+    if (learn.lvl)
+    {
+      prop.setProperty("genenet.use", "user");
+    }
+    else
+    {
+      prop.setProperty("genenet.use", "auto");
+    }
+    if (learn.noSUCC)
+    {
+      prop.setProperty("genenet.data.type", "succ");
+    }
+    else if (learn.PRED)
+    {
+      prop.setProperty("genenet.data.type", "pred");
+    }
+    else
+    {
+      prop.setProperty("genenet.data.type", "both");
+    }
+    if (learn.basicFBP)
+    {
+      prop.setProperty("genenet.find.base.prob", "true");
+    }
+    else
+    {
+      prop.setProperty("genenet.find.base.prob", "false");
+    }
+
+    for(File file : list)
+    {
+      String fullPath = file.getPath();
+      String name = file.getName();
+      if(name.endsWith(".tsd"))
+      {
+        prop.setProperty(fullPath, name);
+      }
+    }
+    
+    FileOutputStream out = new FileOutputStream(new File(filename));
+    prop.store(out, filename);
+    out.close();
+  }
+
+
+  /**
+   * Writes a default levels file.
+   * 
+   * @param directory - the directory of the project
+   * @param species - the interesting species of the regulatory network
+   * @param bins - number of bins
+   * @throws IOException - if something wrong happens when writing the levels file.
+   */
+  public static void writeLevelsFile(String directory, List<String> species, int bins) throws IOException
+  {
+    FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
+    final String time = "time, 0\n";
+    write.write(time);
+    for (int i = 0; i < species.size(); i++)
+    {
+      write.write(species.get(0));
+
+      write.write(", " + bins);
+
+      for(int j = 1; j < bins; j++)
+      {
+        write.write(", " + -1);
+      }
+      write.write("\n");
+    }
+    write.close();
+  }
+
+  /**
+   * Write background file that informs GeneNet of known prior information about
+   * the regulatory networks.
+   * 
+   * @param learnFile - the sbml file that the background file is generated from.
+   * @param directory - the directory the background file is saved to
+   * @return a list of interesting species.
+   * 
+   * @throws XMLStreamException - when reading bad formatted sbml file
+   * @throws IOException - when something wrong happens when saving the background file.
+   */
+  public static List<String> writeBackgroundFile(String learnFile, String directory) throws XMLStreamException, IOException
+  {
+    ArrayList<String> speciesList = new ArrayList<String>();
+    if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml")))
+    {
+      SBMLDocument document = SBMLutilities.readSBML(learnFile);
+      Model model = document.getModel();
+      FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
+      write.write("digraph G {\n");
+      for (int i = 0; i < model.getSpeciesCount(); i++)
+      {
+        Species species = model.getSpecies(i);
+        if (BioModel.isPromoterSpecies(species))
+        {
+          continue;
+        }
+        speciesList.add(species.getId());
+        write.write(species.getId() + " [shape=ellipse,color=black,label=\"" + species.getId() + "\"" + "];\n");
+      }
+      for (int i = 0; i < model.getReactionCount(); i++)
+      {
+        Reaction r = model.getReaction(i);
+        if (BioModel.isProductionReaction(r))
+        {
+          for (int j = 0; j < r.getModifierCount(); j++)
+          {
+            ModifierSpeciesReference modifier = r.getModifier(j);
+            if (BioModel.isNeutral(modifier))
+            {
+              for (int k = 0; k < r.getProductCount(); k++)
+              {
+                SpeciesReference product = r.getProduct(k);
+                write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
+              }
+            }
+            if (BioModel.isActivator(modifier))
+            {
+              for (int k = 0; k < r.getProductCount(); k++)
+              {
+                SpeciesReference product = r.getProduct(k);
+                write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+              }
+            }
+            if (BioModel.isRepressor(modifier))
+            {
+              for (int k = 0; k < r.getProductCount(); k++)
+              {
+                SpeciesReference product = r.getProduct(k);
+                write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+              }
+            }
+            if (BioModel.isRegulator(modifier))
+            {
+              for (int k = 0; k < r.getProductCount(); k++)
+              {
+                SpeciesReference product = r.getProduct(k);
+                write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+                write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+              }
+            }
+          }
+        }
+      }
+      write.write("}\n");
+      write.close();
+    } 
+    else
+    {
+      BioModel bioModel = new BioModel(directory);
+      bioModel.load(learnFile);
+      speciesList = bioModel.getSpecies();
+      FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
+      BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
+      String line = null;
+      while ((line = input.readLine()) != null)
+      {
+        write.write(line + "\n");
+      }
+      write.close();
+      input.close();
+
+    }
+
+    return speciesList;
+  }
+  
   @Override
   public void update(Message message) 
   {
     System.out.println(message);
   }
+
+
+ 
 }
+
