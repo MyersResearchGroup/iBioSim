@@ -3795,15 +3795,17 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 		} 
 		SBMLWriter Xwriter = new SBMLWriter();
-		Xwriter.write(sbmlDoc, root + File.separator + analysisId + File.separator + modelFileName);
+		Xwriter.write(sbmlDoc, root + File.separator + "_" + modelFileName);
 		AnalysisProperties properties;
 		properties = new AnalysisProperties(analysisId, modelFileName, root, false);
-	    BioModel biomodel = new BioModel(root + File.separator + analysisId);
+	    BioModel biomodel = new BioModel(root + File.separator);
 	    biomodel.addObserver(this);
-	    biomodel.load(root + File.separator + analysisId + File.separator + modelFileName);
+	    biomodel.load(root + File.separator + "_" + modelFileName);
 	    SBMLDocument flatten = biomodel.flattenModel(true);
 	    String newFilename = root + File.separator + analysisId + File.separator + modelFileName;
 	    SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
+	    File tempFile = new File(root + File.separator + "_" + modelFileName);
+	    tempFile.delete();
 	    properties.setId(analysisId);
 	    AnalysisPropertiesLoader.loadSEDML(sedmlDocument, "", properties);
 	    AnalysisPropertiesWriter.createProperties(properties);
