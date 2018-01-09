@@ -83,6 +83,7 @@ public class AnalysisPropertiesLoader {
         String printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Print_Interval", null);
         if (printInterval != null)
         {
+          properties.setPrintInterval();
           simProperties.setPrintInterval(PropertiesUtil.parseDouble(printInterval));
         } 
         else 
@@ -90,16 +91,20 @@ public class AnalysisPropertiesLoader {
           printInterval = SEDMLutilities.getSEDBaseAnnotation(simulation, "printInterval", "Minimum_Print_Interval", null);
           if (printInterval != null) 
           {
+            properties.setMinPrintInterval();
             simProperties.setMinTimeStep(PropertiesUtil.parseDouble(printInterval));
-          } else 
+          } 
+          else 
           {
+            properties.setNumSteps();
             simProperties.setNumSteps(utcSimulation.getNumberOfPoints());
           }
         }
         simProperties.setInitialTime(utcSimulation.getInitialTime());
         simProperties.setOutputStartTime(utcSimulation.getOutputStartTime());
         simProperties.setTimeLimit(utcSimulation.getOutputEndTime());
-      } else if (simulation instanceof OneStep) {
+      } 
+      else if (simulation instanceof OneStep) {
         OneStep osSimulation = (OneStep) simulation;
         simProperties.setInitialTime(0);
         simProperties.setOutputStartTime(0);
@@ -562,20 +567,24 @@ public class AnalysisPropertiesLoader {
       }
       if (load.containsKey("monte.carlo.simulation.print.interval"))
       {
+        properties.setPrintInterval();
         simProperties.setPrintInterval(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.print.interval")));
 
       }
       else if (load.containsKey("monte.carlo.simulation.minimum.print.interval"))
       {
+        properties.setMinPrintInterval();
         simProperties.setMinTimeStep(PropertiesUtil.parseDouble(load.getProperty("monte.carlo.simulation.minimum.print.interval")));
 
       }
       else if (load.containsKey("monte.carlo.simulation.number.steps"))
       {
+        properties.setNumSteps();
         simProperties.setNumSteps(Integer.parseInt(load.getProperty("monte.carlo.simulation.number.steps")));
       }
       else
       {
+        properties.setPrintInterval();
         simProperties.setPrintInterval(1.);
       }
       if (load.containsKey("monte.carlo.simulation.random.seed"))

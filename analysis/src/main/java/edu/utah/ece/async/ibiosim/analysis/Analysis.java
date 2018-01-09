@@ -322,11 +322,13 @@ public class Analysis implements BioObserver
         modelSource = sedml.getModelWithId(modelSource).getSource();
       }
       properties.setModelFile(modelSource);
-      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, task.getId(), properties);
-      File analysisDir = new File(root + File.separator + task.getId());
+      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, "", properties);
+      /* Replace values with properties given by user */
+      loadUserValues(properties, userValues);
+      File analysisDir = new File(properties.getDirectory());
       if (!analysisDir.exists()) 
       {
-        new File(root + File.separator + task.getId()).mkdir();
+        new File(properties.getDirectory()).mkdir();
       }
       /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
@@ -336,8 +338,6 @@ public class Analysis implements BioObserver
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
       SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
       AnalysisPropertiesWriter.createProperties(properties);
-      /* Replace values with properties given by user */
-      loadUserValues(properties, userValues);
       run.execute();
     }
     for (Output output : sedml.getOutputs()) 
