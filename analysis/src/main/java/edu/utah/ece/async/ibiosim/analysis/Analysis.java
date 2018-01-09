@@ -68,6 +68,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  *    <li>-sd [value]: long for random seed</li>
  *    <li>-r [value]: integer for number of runs</li>
  *    <li>-sim [value]: simulation type. Options are: ode, hode, ssa, hssa, dfba, jode, jssa.</li>
+ *    <li>-data [value]: graph data type. Options are: csv, tsd.</li>
  *  </ul>
  *  <li>Input file: (Combine archive, SED-ML, or SBML.</li>
  * </ul>
@@ -92,7 +93,8 @@ public class Analysis implements BioObserver
   private static final String sd = "Random Seed";
   private static final String r = "Number of Runs";
   private static final String sim = "Simulation";
-
+  private static final String data = "Graph Data Type";
+  
   private String sedML = null;
   private String propertiesFile = null;
   private String omex = null;
@@ -120,6 +122,7 @@ public class Analysis implements BioObserver
     System.err.println("\t -sd [value]: random seed");
     System.err.println("\t -r [value]: number of runs");
     System.err.println("\t -sim [value]: simulation type");
+    System.err.println("\t -data [value]: output data type");
     System.exit(1);
   }
 
@@ -215,6 +218,9 @@ public class Analysis implements BioObserver
         break;
       case "-sim":
         analysis.propertiesMap.put(sim, value);
+        break;
+      case "-data":
+        analysis.propertiesMap.put(data, value);
         break;
       default:
         usage();
@@ -338,12 +344,12 @@ public class Analysis implements BioObserver
     {
       if (output.isPlot2d()) 
       {
-        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+        GraphData.createTSDGraph(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
           properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       } 
       else if (output.isReport()) 
       {
-        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+        GraphData.createHistogram(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
           properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       }
     }
@@ -431,6 +437,17 @@ public class Analysis implements BioObserver
         else
         {
           properties.setSim(value);
+        }
+      }
+      else if(key == data)
+      {
+        if(value.equals("csv"))
+        {
+          simProperties.setPrinter_id(GraphData.CSV_DATA_TYPE);
+        }
+        else if(value.equals("tsd"))
+        {
+          simProperties.setPrinter_id(GraphData.TSD_DATA_TYPE);
         }
       }
     }
