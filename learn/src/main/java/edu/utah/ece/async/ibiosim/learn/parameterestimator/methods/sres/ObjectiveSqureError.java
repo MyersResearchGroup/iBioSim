@@ -15,7 +15,10 @@ package edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.sres;
 
 import static java.lang.Math.abs;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
@@ -121,13 +124,21 @@ public class ObjectiveSqureError extends Objective
 		{
 
 			odeSim.setTimeLimit(experiment.get(i + 1).get(0));
-			odeSim.simulate();
-			for (int j = 1; j < speciesCollection.length; j++)
+			try 
 			{
-				double tmp = odeSim.getTopLevelValue(speciesCollection[j]) - experiment.get(i + 1).get(j);
-				tmp = tmp * tmp;
-				sum = sum + tmp;
-			}
+        odeSim.simulate();
+        for (int j = 1; j < speciesCollection.length; j++)
+        {
+          double tmp = odeSim.getTopLevelValue(speciesCollection[j]) - experiment.get(i + 1).get(j);
+          tmp = tmp * tmp;
+          sum = sum + tmp;
+        }
+      } 
+			catch (XMLStreamException | IOException e) 
+			{
+			  sum = Double.MAX_VALUE;
+      } 
+			
 
 		}
 

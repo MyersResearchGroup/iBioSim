@@ -648,17 +648,11 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return type;
   }
 
-  protected void setupForOutput(int currentRun)
+  protected void setupForOutput(int currentRun) throws IOException
   {
     setCurrentRun(currentRun);
-    try
-    {
-      writer.init(getOutputDirectory() + File.separator + "run-" + currentRun + ".tsd");
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
+    writer.init(getOutputDirectory() + File.separator + "run-" + currentRun + ".tsd");
+
   }
 
   public double getInitialTime()
@@ -705,13 +699,12 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return Double.NaN;
   }
 
-  protected void closeWriter()
+  protected void closeWriter() throws IOException
   {
-    try {
+    if(writer != null)
+    {
       writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    } 
   }
   protected void printToFile()
   {

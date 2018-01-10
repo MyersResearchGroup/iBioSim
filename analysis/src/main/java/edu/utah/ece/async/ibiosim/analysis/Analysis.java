@@ -60,17 +60,18 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  *  <li>Optional:</li>
  *  <ul>
  *    <li>-d [value]: project directory</li>
- *    <li>-ti [value]: initial simulation time</li>
- *    <li>-tl [value]: simulation time limit</li>
- *    <li>-ot [value]: output time</li>
- *    <li>-pi [value]: print interval</li>
- *    <li>-m0 [value]: minimum step time</li>
- *    <li>-m1 [value]: maximum step time</li>
- *    <li>-aErr [value]: absolute error</li>
- *    <li>-sErr [value]: relative error</li>
- *    <li>-sd [value]: random seed</li>
- *    <li>-r [value]: number of runs</li>
- *    <li>-sim [value]: simulation type</li>
+ *    <li>-ti [value]: non-negative double initial simulation time</li>
+ *    <li>-tl [value]: non-negative double simulation time limit</li>
+ *    <li>-ot [value]: non-negative double for output time</li>
+ *    <li>-pi [value]: positive double for print interval</li>
+ *    <li>-m0 [value]: positive double for minimum step time</li>
+ *    <li>-m1 [value]: positive double for maximum step time</li>
+ *    <li>-aErr [value]: positive double for absolute error</li>
+ *    <li>-sErr [value]: positive double for relative error</li>
+ *    <li>-sd [value]: long for random seed</li>
+ *    <li>-r [value]: integer for number of runs</li>
+ *    <li>-sim [value]: simulation type. Options are: ode, hode, ssa, hssa, dfba, jode, jssa.</li>
+ *    <li>-data [value]: graph data type. Options are: csv, tsd.</li>
  *  </ul>
  *  <li>Input file: (Combine archive, SED-ML, or SBML.</li>
  * </ul>
@@ -95,7 +96,8 @@ public class Analysis implements BioObserver
   private static final String sd = "Random Seed";
   private static final String r = "Number of Runs";
   private static final String sim = "Simulation";
-
+  private static final String data = "Graph Data Type";
+  
   private String sedML = null;
   private String propertiesFile = null;
   private String omex = null;
@@ -123,6 +125,7 @@ public class Analysis implements BioObserver
     System.err.println("\t -sd [value]: random seed");
     System.err.println("\t -r [value]: number of runs");
     System.err.println("\t -sim [value]: simulation type");
+    System.err.println("\t -data [value]: output data type");
     System.exit(1);
   }
 
@@ -218,6 +221,9 @@ public class Analysis implements BioObserver
         break;
       case "-sim":
         analysis.propertiesMap.put(sim, value);
+        break;
+      case "-data":
+        analysis.propertiesMap.put(data, value);
         break;
       default:
         usage();
@@ -350,10 +356,13 @@ public class Analysis implements BioObserver
       
       properties.setModelFile(modelSource);
       AnalysisPropertiesLoader.loadSEDML(sedmlDoc, "", properties);
-      File analysisDir = new File(root + File.separator + task.getId());
+//      File analysisDir = new File(root + File.separator + task.getId());
+      /* Replace values with properties given by user */
+      loadUserValues(properties, userValues);
+      File analysisDir = new File(properties.getDirectory());
       if (!analysisDir.exists()) 
       {
-        new File(root + File.separator + task.getId()).mkdir();
+        new File(properties.getDirectory()).mkdir();
       }
       /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
@@ -363,21 +372,23 @@ public class Analysis implements BioObserver
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
       SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
       AnalysisPropertiesWriter.createProperties(properties);
-      /* Replace values with properties given by user */
-      loadUserValues(properties, userValues);
       run.execute();
     }
     for (Output output : sedml.getOutputs()) 
     {
       if (output.isPlot2d()) 
       {
-        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+//        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+//          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+        GraphData.createTSDGraph(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
+          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       } 
       else if (output.isReport()) 
       {
-        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+//        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+//          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+        GraphData.createHistogram(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
+          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       }
     }
   }
@@ -464,6 +475,17 @@ public class Analysis implements BioObserver
         else
         {
           properties.setSim(value);
+        }
+      }
+      else if(key == data)
+      {
+        if(value.equals("csv"))
+        {
+          simProperties.setPrinter_id(GraphData.CSV_DATA_TYPE);
+        }
+        else if(value.equals("tsd"))
+        {
+          simProperties.setPrinter_id(GraphData.TSD_DATA_TYPE);
         }
       }
     }

@@ -112,14 +112,14 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   }
 
   @Override
-  public void setupForNewRun(int newRun)
+  public void setupForNewRun(int newRun) throws IOException
   {
     setCurrentTime(getInitialTime());
     setupForOutput(newRun);
   }
 
   @Override
-  public void simulate()
+  public void simulate() throws IOException, XMLStreamException
   {
 
     double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
@@ -131,18 +131,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
     if (!isInitialized)
     {
-      try
-      {
         this.initialize(randomSeed, 1);
-      }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-      }
-      catch (XMLStreamException e)
-      {
-        e.printStackTrace();
-      }
     }
     printTime.setValue(getOutputStartTime());
     previousTime = 0;
@@ -210,9 +199,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       {
         printToFile();
       }
-      
-      closeWriter();
+
     }
+    
+    closeWriter();
   }
 
   private void update(boolean reaction, boolean rateRule, boolean events, double r2, double previousTime)
