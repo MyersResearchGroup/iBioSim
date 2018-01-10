@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
@@ -30,6 +31,8 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 
 import com.lowagie.text.DocumentException;
@@ -299,6 +302,19 @@ public class Analysis implements BioObserver
     ca.close();
     return listOfSedML;
   }
+  
+  private SBMLDocument applyChanges(SEDMLDocument sedmlDoc, SBMLDocument sbmlDoc, org.jlibsedml.Model model)
+		  throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
+	  SedML sedml = sedmlDoc.getSedMLModel();
+	  if (sedml.getModelWithId(model.getSource()) != null) {
+		  sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, sedml.getModelWithId(model.getSource()));
+	  }
+	  SBMLWriter Xwriter = new SBMLWriter();
+	  SBMLReader Xreader = new SBMLReader();
+	  sbmlDoc = Xreader
+			  .readSBMLFromString(sedmlDoc.getChangedModel(model.getId(), Xwriter.writeSBMLToString(sbmlDoc)));
+	  return sbmlDoc;
+  }
 
   private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws Exception
   {
@@ -311,12 +327,29 @@ public class Analysis implements BioObserver
     {
       /* Load from SED-ML */
       properties.setId(task.getId());
+      
+      org.jlibsedml.Model model = sedml.getModelWithId(task.getModelReference());
       String modelSource = sedml.getModelWithId(task.getModelReference()).getSource();
       while (sedml.getModelWithId(modelSource)!=null) {
         modelSource = sedml.getModelWithId(modelSource).getSource();
       }
+      if (modelSource.indexOf("/")!=-1) {
+    	  modelSource = modelSource.substring(modelSource.lastIndexOf("/")+1);
+      }
+      SBMLDocument sbmlDoc = SBMLReader.read(new File(root + File.separator + modelSource));
+      if (model.getListOfChanges().size() != 0) {
+    	  try {
+    		  sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, model);
+    	  } catch (Exception e) {
+    		  // TODO Auto-generated catch block
+    		  e.printStackTrace();
+    	  }
+      } 
+      SBMLWriter Xwriter = new SBMLWriter();
+      Xwriter.write(sbmlDoc, root + File.separator + modelSource + "_");	
+      
       properties.setModelFile(modelSource);
-      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, task.getId(), properties);
+      AnalysisPropertiesLoader.loadSEDML(sedmlDoc, "", properties);
       File analysisDir = new File(root + File.separator + task.getId());
       if (!analysisDir.exists()) 
       {
@@ -325,7 +358,7 @@ public class Analysis implements BioObserver
       /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
       biomodel.addObserver(this);
-      biomodel.load(root + File.separator + modelSource);
+      biomodel.load(root + File.separator + modelSource + "_");
       SBMLDocument flatten = biomodel.flattenModel(true);
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
       SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
@@ -339,12 +372,12 @@ public class Analysis implements BioObserver
       if (output.isPlot2d()) 
       {
         GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       } 
       else if (output.isReport()) 
       {
         GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-          properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       }
     }
   }
