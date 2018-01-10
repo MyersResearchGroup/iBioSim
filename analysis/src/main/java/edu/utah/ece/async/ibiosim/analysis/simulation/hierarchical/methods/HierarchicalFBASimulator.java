@@ -55,6 +55,7 @@ class HierarchicalFBASimulator extends HierarchicalSimulation
 			values.put(parameter.getId(), parameter.getValue());
 		}
 		fba = new FluxBalanceAnalysis(model, 1e-9);
+		this.addObservable(fba);
 	}
 
 	@Override

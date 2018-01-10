@@ -35,6 +35,7 @@ import org.sbml.jsbml.SpeciesReference;
 import com.joptimizer.optimizers.*;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * 
@@ -44,8 +45,8 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class FluxBalanceAnalysis {
-	
+public class FluxBalanceAnalysis extends CoreObservable
+{
 	private String root;
 	
 	private Model model;

@@ -201,6 +201,7 @@ public class Run extends CoreObservable implements ActionListener
     int exitValue = 255;
 
     FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getDirectory()+File.separator, properties.getModelFile(), properties.getSimulationProperties().getAbsError());
+    this.addObservable(fluxBalanceAnalysis);
     exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 
     if (exitValue == 1)
