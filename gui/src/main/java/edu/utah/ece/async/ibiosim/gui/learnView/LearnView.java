@@ -1372,10 +1372,15 @@ public class LearnView extends JPanel implements ActionListener, Runnable
     }
     else if (methods.getSelectedItem().equals("GeneNet (Java)"))
     {
-      try {
-        if(Run.run(learnFile, directory))
+      try 
+      {
+        double activation = Double.parseDouble(this.activation.getText().trim());
+        double repression = Double.parseDouble(this.repression.getText().trim());
+        double parent = Double.parseDouble(this.parent.getText().trim());
+        int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
+        double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
+        if(Run.run(activation, repression, parent, relaxIPDelta, numBins, learnFile, directory))
         {
-
           opendot(Runtime.getRuntime(), new File(directory));
         }
         else
