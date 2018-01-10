@@ -5490,7 +5490,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 								}
 							} else {
 								if (c instanceof AnalysisView) {
-									((AnalysisView) c).setSim(rename);
+									((AnalysisView) c).setAnalysisId(rename);
 									t.addTab("Simulation Options", c);
 									t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
 									analysis = true;
