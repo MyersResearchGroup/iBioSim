@@ -302,6 +302,7 @@ public class Analysis implements BioObserver
       if (entry.getFormat().toString().contains("sed-ml")) {
         listOfSedML.add(properties.getDirectory() + File.separator + entry.getFileName());
       }
+      System.out.println("Extracting: "+properties.getDirectory() + File.separator + entry.getFileName());
       entry.extractFile (new File(properties.getDirectory() + File.separator + entry.getFileName()));
     }
     properties.setRoot(properties.getDirectory());
@@ -362,7 +363,7 @@ public class Analysis implements BioObserver
       File analysisDir = new File(properties.getDirectory());
       if (!analysisDir.exists()) 
       {
-        new File(properties.getDirectory()).mkdir();
+    	  new File(properties.getDirectory()).mkdir();
       }
       /* Flattening happens here */
       BioModel biomodel = new BioModel(root);
