@@ -3835,7 +3835,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					newFile = importSBMLDocument("model", doc, false, true);
 				} else {
 					if (ac == null) {
-						String sbmlFile = path + model.getSource();
+						String modelSource = model.getSource();
+						if (modelSource.indexOf("/")!=-1) {
+							modelSource = modelSource.substring(modelSource.lastIndexOf("/")+1);
+						}	
+						String sbmlFile = path + modelSource;
 						newFile = importSBMLFile(sbmlFile,true);
 					} else {
 						ArchiveModelResolver archiveModelResolver = new ArchiveModelResolver(ac);

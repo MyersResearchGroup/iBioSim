@@ -139,7 +139,8 @@ public class PropertiesUtil {
       properties.setOde();
       properties.setSim("euler");
     }
-    else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG))
+    else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG)||
+    		kisaoId.equals(GlobalConstants.KISAO_LSODA))
     {
       properties.setOde();
       properties.setSim("rkf45");
