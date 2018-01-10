@@ -322,7 +322,7 @@ public class Run extends CoreObservable implements ActionListener
       }
     }
     sg = new StateGraph(lhpnFile);
-
+    this.addObservable(sg);
     BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, null);
     buildStateGraph.start();
     buildStateGraph.join();
