@@ -243,6 +243,9 @@ public class Analysis implements BioObserver
   private Analysis()
   {
     properties = new AnalysisProperties("", "", "", false);
+    
+    properties.addObserver(this);
+    
     propertiesMap = new HashMap<String, String>();
   }
 

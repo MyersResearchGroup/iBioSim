@@ -16,6 +16,8 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+
 /**
  * The advanced properties contains information associated with model abstraction parameters.
  * 
@@ -25,7 +27,8 @@ import java.util.List;
  * @version $Rev$
  * @version %I%
  */
-public class AdvancedProperties {
+public class AdvancedProperties extends CoreObservable
+{
 
   private List<String> preAbs, loopAbs, postAbs;
   

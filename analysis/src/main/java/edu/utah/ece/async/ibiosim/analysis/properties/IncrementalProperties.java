@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.properties;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+
 /**
  * The incremental properties contains information used for running iSSA.
  * 
@@ -22,7 +24,8 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
  * @version $Rev$
  * @version %I%
  */
-public class IncrementalProperties {
+public final class IncrementalProperties extends CoreObservable
+{
 
   private boolean mpde, meanPath, medianPath, adaptive;
 

@@ -3798,6 +3798,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Xwriter.write(sbmlDoc, root + File.separator + "_" + modelFileName);
 		AnalysisProperties properties;
 		properties = new AnalysisProperties(analysisId, modelFileName, root, false);
+		properties.addObserver(this);
 	    BioModel biomodel = new BioModel(root + File.separator);
 	    biomodel.addObserver(this);
 	    biomodel.load(root + File.separator + "_" + modelFileName);
