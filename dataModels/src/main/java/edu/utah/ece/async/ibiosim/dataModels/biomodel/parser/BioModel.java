@@ -95,6 +95,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 
@@ -110,9 +112,33 @@ public class BioModel extends CoreObservable{
 
 	private String filename = null;
 
-	private Message message = new Message();
+	private final Message message = new Message();
 
 	private GridTable gridTable;
+	
+	public static BioModel createBioModel(String path, BioObservable observable)
+	{
+	  BioModel biomodel = new BioModel(path);
+	  
+	  if(observable != null)
+	  {
+	    biomodel.addObservable(observable);
+	  }
+	  
+	  return biomodel;
+	}
+	
+	public static BioModel createBioModel(String path, BioObserver observer)
+  {
+    BioModel biomodel = new BioModel(path);
+    
+    if(observer != null)
+    {
+      biomodel.addObserver(observer);
+    }
+    
+    return biomodel;
+  }
 	
 	public BioModel(String path) {
 		this.path = path;
@@ -5377,7 +5403,7 @@ public class BioModel extends CoreObservable{
 		//if (!this.isGridEnabled()) {
 		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
-			BioModel subBioModel = new BioModel(path);		
+			BioModel subBioModel =  BioModel.createBioModel(path, this);	
 			String extModelFile = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subBioModel.load(path + File.separator + extModelFile);
@@ -5826,7 +5852,7 @@ public class BioModel extends CoreObservable{
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", !removeComp);
 			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
 			writer.writeSBMLToFile(document, tempFile);
-			BioModel bioModel = new BioModel(path);
+			BioModel bioModel = BioModel.createBioModel(path, this);
 			bioModel.load(tempFile);
 			new File(tempFile).delete();
 			SBMLDocument doc = bioModel.getSBMLDocument();
@@ -5855,7 +5881,7 @@ public class BioModel extends CoreObservable{
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
 
-		BioModel model = new BioModel(path);
+		BioModel model = BioModel.createBioModel(path, this);
 		model.load(tempFile);
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
@@ -5902,7 +5928,7 @@ public class BioModel extends CoreObservable{
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
-			BioModel subModel = new BioModel(path);		
+			BioModel subModel =  BioModel.createBioModel(path, this);	
 			String extModelFile = model.getExtModelFileName(subModelId);
 			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
@@ -5975,7 +6001,7 @@ public class BioModel extends CoreObservable{
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
-			BioModel subModel = new BioModel(path);		
+			BioModel subModel = BioModel.createBioModel(path, this);	
 			String extModelFile = getExtModelFileName(subModelId);
 			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
@@ -6030,7 +6056,7 @@ public class BioModel extends CoreObservable{
 		}
 		
 		for (String s : comps) {
-			BioModel subModel = new BioModel(path);
+			BioModel subModel = BioModel.createBioModel(path, this);
 			String extModel = model.getSBMLComp().getListOfExternalModelDefinitions().get(model.getSBMLCompModel().getListOfSubmodels().get(s)
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subModel.load(path + File.separator + extModel);
@@ -6687,7 +6713,7 @@ public class BioModel extends CoreObservable{
 	 */
 	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException {
 		
-		BioModel subModel = new BioModel(path);
+		BioModel subModel =  BioModel.createBioModel(path, this);
 		subModel.load(filename);
 		if ((subModel.gridTable.getNumRows() > 0) || (subModel.gridTable.getNumCols() > 0)) return true;
 		return false;

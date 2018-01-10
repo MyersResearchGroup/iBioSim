@@ -47,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * 
@@ -57,7 +58,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class AssemblyGraph2 {
+public class AssemblyGraph2 extends CoreObservable{
 
 	private Set<AssemblyNode2> assemblyNodes;
 	private HashMap<AssemblyNode2, Set<AssemblyNode2>> assemblyEdges;
@@ -160,7 +161,7 @@ public class AssemblyGraph2 {
 				} else {
 					assemblyNodes.remove(subModelNode);
 					String extSBMLFileID = compSBMLDoc.getListOfExternalModelDefinitions().get(sbmlSubModel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					BioModel extBioModel = new BioModel(path);
+					BioModel extBioModel =  BioModel.createBioModel(path, this);
 					extBioModel.load(extSBMLFileID);
 					Model extSBMLModel = extBioModel.getSBMLDocument().getModel();
 					AssemblyNode2 extModelNode = constructNode(extSBMLModel, extSBMLModel.getId());

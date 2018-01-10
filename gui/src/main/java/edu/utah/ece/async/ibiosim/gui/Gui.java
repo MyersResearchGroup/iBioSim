@@ -3635,7 +3635,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 								"Invalid ID", JOptionPane.ERROR_MESSAGE);
 					} else {
 						if (overwrite(root + File.separator + modelId, modelId)) {
-							BioModel bioModel = new BioModel(root);
+							BioModel bioModel = BioModel.createBioModel(root, this);
 							bioModel.createSBMLDocument(modelId.replace(".xml", ""), grid, false);
 							bioModel.save(root + File.separator + modelId);
 							int i = getTab(modelId);
@@ -3799,8 +3799,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		AnalysisProperties properties;
 		properties = new AnalysisProperties(analysisId, modelFileName, root, false);
 		properties.addObserver(this);
-	    BioModel biomodel = new BioModel(root + File.separator);
-	    biomodel.addObserver(this);
+	    BioModel biomodel =  BioModel.createBioModel(root + File.separator, this);
 	    biomodel.load(root + File.separator + "_" + modelFileName);
 	    SBMLDocument flatten = biomodel.flattenModel(true);
 	    String newFilename = root + File.separator + analysisId + File.separator + modelFileName;
@@ -6882,7 +6881,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				in.close();
 				out.close();
 
-				BioModel bioModel = new BioModel(root);
+				BioModel bioModel =  BioModel.createBioModel(root, this);
 				try {
 					bioModel.load(root + File.separator + filename);
 					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
@@ -8825,7 +8824,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					views.add(s);
 				}
 			} else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
-				BioModel gcm = new BioModel(root);
+				BioModel gcm = BioModel.createBioModel(root, this);
 				try {
 					gcm.load(root + File.separator + s);
 					if (gcm.getSBMLComp() != null) {

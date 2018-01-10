@@ -1338,7 +1338,8 @@ public class BioGraph extends mxGraph {
 		// map components edges
 		for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
 			String id = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
-			BioModel compBioModel = new BioModel(bioModel.getPath());
+			//BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
+			BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), modelEditor);
 			String modelFileName = bioModel.getModelFileName(id);
 			try {
         compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
@@ -2287,7 +2288,7 @@ public class BioGraph extends mxGraph {
 		boolean needsPositioning = false;
 				
 		//set the correct compartment status
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), modelEditor);
 		boolean compart = false;
 		//String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);

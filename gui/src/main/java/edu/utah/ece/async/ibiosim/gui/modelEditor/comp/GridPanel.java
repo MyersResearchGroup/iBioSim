@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 
@@ -41,7 +42,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class GridPanel extends JPanel implements ActionListener {
+public class GridPanel extends PanelObservable implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	private BioModel gcm;
@@ -145,8 +146,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				//name of the component
 				String component = (String)componentChooser.getSelectedItem();
 				
-				BioModel compGCM = new BioModel(gcm.getPath());
-				
+				BioModel compGCM = BioModel.createBioModel(gcm.getPath(), this);
 				//don't allow dropping a grid component
 				try {
           if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
@@ -273,8 +273,7 @@ public class GridPanel extends JPanel implements ActionListener {
 				
 				//name of the component
 				String component = (String)componentChooser.getSelectedItem();
-				BioModel compGCM = new BioModel(gcm.getPath());
-				
+				BioModel compGCM = BioModel.createBioModel(gcm.getPath(), this);
 				//don't allow dropping a grid component
 				try {
           if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 

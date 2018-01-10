@@ -6072,7 +6072,7 @@ public class SBMLutilities
 		String id = "";
 		if (sbaseRef.isSetSBaseRef())
 		{
-			BioModel subModel = new BioModel(root);
+			BioModel subModel = BioModel.createBioModel(root, bioModel);
 			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
 			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
 					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");

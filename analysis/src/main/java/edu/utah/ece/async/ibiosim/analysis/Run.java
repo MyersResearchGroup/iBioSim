@@ -47,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -290,8 +291,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
 
-      BioModel bioModel = new BioModel(properties.getRoot());
-      bioModel.addObservable(this);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
@@ -351,7 +351,7 @@ public class Run extends CoreObservable implements ActionListener
         }
         else
         {
-          BioModel gcm = new BioModel(root);
+          BioModel gcm = BioModel.createBioModel(root, this);
           gcm.load(root + File.separator + filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
@@ -445,7 +445,7 @@ public class Run extends CoreObservable implements ActionListener
     ArrayList<String> specs = new ArrayList<String>();
     ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
     retrieveSpeciesAndConLevels(specs, conLevel);
-    BioModel bioModel = new BioModel(root);
+    BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
     //TODO: check
     bioModel.load(root + File.separator + modelFile);
     String prop = null;
@@ -624,7 +624,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
-      BioModel bioModel = new BioModel(root);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + properties.getFilename());
       if (bioModel.flattenModel(true) != null)
       {
@@ -899,7 +899,7 @@ public class Run extends CoreObservable implements ActionListener
         ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
         String directory = properties.getDirectory();
         retrieveSpeciesAndConLevels(specs, conLevel);
-        BioModel bioModel = new BioModel(root);
+        BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
         bioModel.load(root + File.separator + properties.getModelFile());
 
         if (bioModel.flattenModel(true) != null)

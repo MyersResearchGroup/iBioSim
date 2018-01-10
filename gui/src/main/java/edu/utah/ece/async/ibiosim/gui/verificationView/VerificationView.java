@@ -3102,7 +3102,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				//e.printStackTrace();
 			}
 		} else if (sourceFile.endsWith(".xml")) {
-			BioModel bioModel = new BioModel(workDir);
+			BioModel bioModel =  BioModel.createBioModel(workDir, this);
 			try {
         bioModel.load(workDir + File.separator + sourceFile);
         ModelEditor.saveLPN(bioModel, directory + File.separator + sourceFile.replace(".xml", ".lpn"));

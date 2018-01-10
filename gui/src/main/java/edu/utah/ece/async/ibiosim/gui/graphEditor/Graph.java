@@ -6416,7 +6416,7 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 		  learnSpecs = new ArrayList<String>();
 		  if (background != null) {
 		    if (background.endsWith(".gcm")) {
-		      BioModel gcm = new BioModel(gui.getRoot());
+		      BioModel gcm =  BioModel.createBioModel(gui.getRoot(), this);
 		      gcm.load(background);
 		      learnSpecs = gcm.getSpecies();
 		    }

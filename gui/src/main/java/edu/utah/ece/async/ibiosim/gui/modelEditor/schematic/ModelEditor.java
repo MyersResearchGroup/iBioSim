@@ -264,8 +264,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			parameterChanges = new ArrayList<String>();
 			filename = refFile;
 		}
-		biomodel = new BioModel(path);
-		biomodel.addObservable(this);
+		biomodel =  BioModel.createBioModel(path, this);
 		if (filename != null) {
 			biomodel.load(path + File.separator + filename);
 			this.filename = filename;
@@ -811,7 +810,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			try {
 				parser = new GCMParser(path + File.separator + modelId + ".xml");
 				GeneticNetwork network = null;
-				BioModel bioModel = new BioModel(path);
+				BioModel bioModel = BioModel.createBioModel(path, this);
 				bioModel.load(path + File.separator + modelId + ".xml");
 				SBMLDocument sbml = bioModel.flattenModel(true);
 				if (sbml == null)
@@ -2460,7 +2459,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	public PromoterPanel launchPromoterPanel(String id) {
 		BioModel refGCM = null;
 		if (paramsOnly) {
-			refGCM = new BioModel(path);
+			refGCM =  BioModel.createBioModel(path, this);
 			try {
 				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
@@ -2498,7 +2497,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		BioModel refGCM = null;
 
 		if (paramsOnly) {
-			refGCM = new BioModel(path);
+			refGCM =  BioModel.createBioModel(path, this);
 			try {
 				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
@@ -2536,7 +2535,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	public InfluencePanel launchInfluencePanel(String id) {
 		BioModel refGCM = null;
 		if (paramsOnly) {
-			refGCM = new BioModel(path);
+			refGCM =  BioModel.createBioModel(path, this);
 			try {
 				refGCM.load(path + File.separator + refFile);
 			} catch (XMLStreamException e) {
@@ -2626,7 +2625,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	public boolean checkNoComponentLoop(String gcm, String checkFile) {
 		gcm = gcm.replace(".gcm", ".xml");
 		boolean check = true;
-		BioModel g = new BioModel(path);
+		BioModel g = BioModel.createBioModel(path, this);
 		try {
 			g.load(path + File.separator + checkFile);
 		} catch (XMLStreamException e) {
@@ -2712,7 +2711,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 		}
 		if (comp != null && !comp.equals("")) {
-			BioModel subBioModel = new BioModel(path);
+			BioModel subBioModel = BioModel.createBioModel(path, this);
 			try {
 				subBioModel.load(path + File.separator + comp);
 				subBioModel.flattenBioModel();
@@ -3051,7 +3050,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	 */
 	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException {
 
-		BioModel subModel = new BioModel(path);
+		BioModel subModel =  BioModel.createBioModel(path, this);
 		subModel.load(filename);
 		if ((biomodel.getGridTable().getNumRows() > 0) || (subModel.getGridTable().getNumCols() > 0))
 			return true;

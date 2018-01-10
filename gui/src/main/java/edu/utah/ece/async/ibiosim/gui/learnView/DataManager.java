@@ -1153,7 +1153,7 @@ public class DataManager extends PanelObservable implements ActionListener, Tabl
 		if (background != null) {
 			if (background.contains(".gcm")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				BioModel gcm = new BioModel(biosim.getRoot());
+				BioModel gcm =  BioModel.createBioModel(biosim.getRoot(), this);
 				try {
           gcm.load(background);
 

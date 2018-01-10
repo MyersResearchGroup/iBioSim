@@ -32,6 +32,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 
@@ -43,7 +44,7 @@ import edu.utah.ece.async.ibiosim.gui.ResourceManager;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class FileTree extends JPanel implements MouseListener {
+public class FileTree extends PanelObservable implements MouseListener {
 
 	private static final long serialVersionUID = -6799125543270861304L;
 
@@ -341,7 +342,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			if (!async && thisObject.toString().endsWith(".gcm")) {
 				String sbmlFile = thisObject.replace(".gcm",".xml");
-				BioModel bioModel = new BioModel(curPath);
+				BioModel bioModel =  BioModel.createBioModel(curPath, this);
 				try {
 					bioModel.load(curPath + File.separator + sbmlFile);
 					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);

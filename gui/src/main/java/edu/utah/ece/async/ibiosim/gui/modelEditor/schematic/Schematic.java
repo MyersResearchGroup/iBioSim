@@ -104,6 +104,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.comp.DropComponentPanel;
@@ -126,7 +127,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.SpeciesPanel;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Schematic extends JPanel implements ActionListener {
+public class Schematic extends PanelObservable implements ActionListener {
 		
 	//CLASS VARIABLES
 	
@@ -2127,7 +2128,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
 		try {
       compBioModel.load(fullPath);
 		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.SBMLSPECIES);
@@ -2154,7 +2155,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
 		try {
       compBioModel.load(fullPath);
       ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.SBMLSPECIES);
@@ -2182,7 +2183,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
 		try {
       compBioModel.load(fullPath);
       ArrayList<String> ports;
@@ -2217,7 +2218,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public String connectVariableToComponent(String varID, String compID) throws ListChooser.EmptyListException{
 		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
 		try {
       compBioModel.load(fullPath);
       ArrayList<String> ports;
@@ -2602,7 +2603,7 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						String s = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
 						
-						BioModel subModel = new BioModel(bioModel.getPath());
+						BioModel subModel = BioModel.createBioModel(bioModel.getPath(), this);
 						String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(bioModel.getSBMLCompModel().getListOfSubmodels().get(s)
 									.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 						try {

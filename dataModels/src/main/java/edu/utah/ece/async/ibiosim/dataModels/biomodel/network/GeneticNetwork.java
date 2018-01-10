@@ -127,7 +127,7 @@ public class GeneticNetwork extends CoreObservable
 	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
 			HashMap<String, Promoter> promoters, String gcm, String filename) throws XMLStreamException, IOException {
 		
-		BioModel file = new BioModel(currentRoot);
+		BioModel file = BioModel.createBioModel(currentRoot, this);
 		file.load(currentRoot+gcm);
 		AbstractPrintVisitor.setGCMFile(file);
 		setSpecies(species);

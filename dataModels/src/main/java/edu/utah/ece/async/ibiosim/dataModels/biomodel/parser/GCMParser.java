@@ -38,6 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.Promoter;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpasticSpecies;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpeciesInterface;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * This class parses a genetic circuit model.
@@ -47,12 +48,12 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class GCMParser {
+public class GCMParser extends CoreObservable{
 
 	public GCMParser(String filename) throws XMLStreamException, IOException {
 		//this.debug = debug;
-		biomodel = new BioModel(filename.substring(0, filename.length()
-				- GlobalConstants.getFilename(filename).length()));
+		biomodel = BioModel.createBioModel(filename.substring(0, filename.length()
+      - GlobalConstants.getFilename(filename).length()), this);
 		biomodel.load(filename);
 		
 		data = new StringBuffer();

@@ -472,7 +472,7 @@ public class Learn implements BioObserver
         
         if(new File(learnFile).exists())
         {
-          BioModel biomodel = new BioModel(directory);
+          BioModel biomodel =  BioModel.createBioModel(directory, this);
           biomodel.load(learnFile);
           GCM2SBML gcm2sbml = new GCM2SBML(biomodel);
           gcm2sbml.load(learnFile);

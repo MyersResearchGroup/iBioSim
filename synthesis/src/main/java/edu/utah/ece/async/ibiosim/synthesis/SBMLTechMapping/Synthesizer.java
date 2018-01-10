@@ -315,7 +315,8 @@ public class Synthesizer {
 	}
 	
 	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) throws XMLStreamException, IOException {
-		BioModel subBiomodel = new BioModel(biomodel.getPath());
+		BioModel subBiomodel = BioModel.createBioModel(biomodel.getPath(), biomodel);
+		subBiomodel.addObservable(biomodel);
 		subBiomodel.load(biomodel.getPath() + File.separator + sbmlFileID);
 		String md5 = Utility.MD5(subBiomodel.getSBMLDocument());
 		
