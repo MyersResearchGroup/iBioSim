@@ -171,15 +171,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
 
   @Override
-  public void simulate() {
+  public void simulate() throws IOException, XMLStreamException {
     if (!isInitialized) {
-      try {
         initialize(0, 1);
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (XMLStreamException e) {
-        e.printStackTrace();
-      }
     }
     double nextEndTime = 0;
     while (currentTime.getValue() < getTimeLimit() && !isCancelFlag()) {
@@ -214,10 +208,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
         printToFile();
       }
     }
-    if (!isSingleStep) {
+    if (!isSingleStep) 
+    {
       printToFile();
       closeWriter();
     }
+    
   }
 
 

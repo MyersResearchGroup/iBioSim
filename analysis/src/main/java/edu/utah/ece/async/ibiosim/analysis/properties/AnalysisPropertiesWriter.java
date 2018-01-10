@@ -257,7 +257,7 @@ public class AnalysisPropertiesWriter {
       }
       else
       {
-        properties.setProperty(ode_number_steps, String.valueOf(((int) analysisProperties.getSimulationProperties().getPrintInterval())));
+        properties.setProperty(ode_number_steps, String.valueOf(((int) analysisProperties.getSimulationProperties().getNumSteps())));
       }
       if (analysisProperties.getSimulationProperties().getMaxTimeStep() == Double.MAX_VALUE)
       {
@@ -290,7 +290,7 @@ public class AnalysisPropertiesWriter {
       }
       else
       {
-        properties.setProperty(mc_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getPrintInterval()));
+        properties.setProperty(mc_number_steps, "" + ((int) analysisProperties.getSimulationProperties().getNumSteps()));
       }
       if (analysisProperties.getSimulationProperties().getMaxTimeStep() == Double.MAX_VALUE)
       {

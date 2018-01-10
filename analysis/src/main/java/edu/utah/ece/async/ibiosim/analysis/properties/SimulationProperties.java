@@ -46,6 +46,7 @@ public class SimulationProperties {
     absError = 1e-9;
     relError = 1e-9;
     rndSeed = 314159;
+    printer_id = "tsd.printer";
     printer_track_quantity = "amount";
     genStats = "false";
     timeLimit = 100;
