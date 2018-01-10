@@ -415,11 +415,11 @@ public class Learn
 		{
 			score = scoreParents(s, S, new HashSet<String>(Arrays.asList(p)), new HashSet<String>(Arrays.asList(s)), E, T, L);
 
-			if (score >= T.getTv())
+			if (score >= T.getTi())
 			{
 				C.addConnection(s, "activator", score, p);
 			}
-			else if (score <= -T.getTv())
+			else if (score <= -T.getTi())
 			{
 				C.addConnection(s, "repressor", score, p);
 			}
