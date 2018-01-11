@@ -65,6 +65,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.CSVParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
@@ -750,6 +751,7 @@ public class GraphData extends CoreObservable {
 		
 		DTSDParser dtsdParser;
 		TSDParser p;
+		CSVParser c;
 		ArrayList<ArrayList<Double>> data;
 		
 		if (file.contains(".dtsd")) {
@@ -758,6 +760,13 @@ public class GraphData extends CoreObservable {
 			warn = false;
 			graphSpecies = dtsdParser.getSpecies();
 			data = dtsdParser.getData();
+		}
+		else if(file.endsWith(".csv"))
+		{
+		  c = new CSVParser(file, warn);
+      warn = c.getWarning();
+      graphSpecies = c.getSpecies();
+      data = c.getData();
 		}
 		else {
 			p = new TSDParser(file, warn);
@@ -1012,9 +1021,17 @@ public class GraphData extends CoreObservable {
 
 	public void readGraphSpecies(String file) {
 		if (file.contains(".dtsd"))
-			graphSpecies = (new DTSDParser(file)).getSpecies();
+		{
+      graphSpecies = (new DTSDParser(file)).getSpecies();
+		}
+		else if(file.endsWith(".csv"))
+    {
+      graphSpecies = new CSVParser(file, true).getSpecies();
+    }
 		else
-			graphSpecies = new TSDParser(file, true).getSpecies();
+		{
+      graphSpecies = new TSDParser(file, true).getSpecies();
+		}
 		/*
 		if (startsWith!=null) {
 			for (int i = 1; i < graphSpecies.size(); i++) {

@@ -1665,9 +1665,9 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     change = false;
   }
 
-  public void setSim(String newSimName)
+  public void setAnalysisId(String id)
   {
-    properties.setSim(newSimName);
+    properties.setId(id);
   }
 
   public boolean hasChanged()

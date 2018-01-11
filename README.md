@@ -48,13 +48,15 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * Linux: ```iBioSim.linux64```
 
 ## [Optional] Building reb2sac and GeneNet dependencies.
-1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. You can install different features by following the instructions below:
+1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. 
+3. The easiest way to install reb2sac and GeneNet is to simply download the pre-compiled binaries for your operating system below: 
+   * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/releases)
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/releases)
+2. Another way to install them is to compile these tools on your machine following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
-   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
-2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project with the following names:
-      * Windows: ```reb2sac.exe``` ```GeneNet.exe``` 
-      * Mac OS X: ```reb2sac.mac64``` ```GeneNet.mac64``` 
-      * Linux: ```reb2sac.linux64``` ```GeneNet.linux64``` 
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/)
+4. After compiling or downloading reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim.
+
 
 ## [Optional] Setting up iBioSim in Eclipse
 ### Importing iBioSim to Eclipse
@@ -82,8 +84,9 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin).
       * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. path/to/iBioSim/lib64)
   * Set Arguments tab to the following information:
-    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
-  * If you are running on a MAC, also set the following:
+    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC -Djava.library.path=/path/to/lib/```
+    * Note: for the java library path, ```/path/to/lib/``` is often found in ```/usr/local/lib``` in Linux and OSX machines.
+  * If you are running on OSX, also set the following:
     * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.
 

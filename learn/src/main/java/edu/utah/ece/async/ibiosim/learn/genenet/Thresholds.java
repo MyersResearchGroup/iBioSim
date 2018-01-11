@@ -24,7 +24,7 @@ package edu.utah.ece.async.ibiosim.learn.genenet;
 public class Thresholds
 {
 
-	private double	Ta, Tr, Tv, Tt;
+	private double	Ta, Tr, Ti, Tt;
 
 	/**
 	 * Creates a Thresholds object using default values.
@@ -33,7 +33,7 @@ public class Thresholds
 	{
 		Ta = 1.15;
 		Tr = 0.75;
-		Tv = 0.5;
+		Ti = 0.5;
 		Tt = 0.025;
 	}
 
@@ -42,15 +42,31 @@ public class Thresholds
    *
 	 * @param Ta - activation threshold.
 	 * @param Tr - repression threshold.
-	 * @param Tv - no influence threshold.
+	 * @param Ti - no influence threshold.
 	 */
-	public Thresholds(double Ta, double Tr, double Tv)
+	public Thresholds(double Ta, double Tr, double Ti)
 	{
 		this.Ta = Ta;
 		this.Tr = Tr;
-		this.Tv = Tv;
+		this.Ti = Ti;
 		this.Tt = 0.025;
 	}
+	
+	 /**
+   * Creates a Thresholds object using custom values.
+   *
+   * @param Ta - activation threshold.
+   * @param Tr - repression threshold.
+   * @param Ti - no influence threshold.
+   * @param Tt - how relaxed the activation and repression thresholds are.
+   */
+  public Thresholds(double Ta, double Tr, double Ti, double Tt)
+  {
+    this.Ta = Ta;
+    this.Tr = Tr;
+    this.Ti = Ti;
+    this.Tt = Tt;
+  }
 
 	/**
 	 * Returns the threshold value of activation.
@@ -77,9 +93,9 @@ public class Thresholds
 	 * 
 	 * @return threshold for no influence.
 	 */
-	public double getTv()
+	public double getTi()
 	{
-		return Tv;
+		return Ti;
 	}
 
 	/**
@@ -107,9 +123,9 @@ public class Thresholds
 	 * 
 	 * @param Tv - value of threshold.
 	 */
-	public void setTv(double Tv)
+	public void setTi(double Ti)
 	{
-		this.Tv = Tv;
+		this.Ti = Ti;
 	}
 
 	/**

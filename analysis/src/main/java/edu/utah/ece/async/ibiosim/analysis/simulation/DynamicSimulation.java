@@ -138,6 +138,7 @@ public class DynamicSimulation extends CoreObservable
             simulator.setupForNewRun(run + 1);
           }
         }
+        
         System.gc();
         //double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
         ///double val2 = System.currentTimeMillis();

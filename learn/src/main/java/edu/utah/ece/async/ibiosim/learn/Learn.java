@@ -32,10 +32,12 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -60,6 +62,7 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
  * <li>-e: when specified, the program will run parameter estimation.</li>
  * <li>-l: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
  * <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
+ * <li>--sbml [name]: outputs an sbml file with the specified name (e.g. learn.xml). </li>
  * <li>-ta [num]: Sets the activation threshold.  Default 1.15</li>
  * <li>-tr [num]: Sets the repression threshold.  Default 0.75</li>
  * <li>-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5</li>
@@ -100,6 +103,7 @@ public class Learn implements BioObserver
   noSUCC, PRED, basicFBP;
   private String directory;
   private String filename;
+  private String sbmlOut;
   private List<String> listOfParameters;
 
   private Learn()
@@ -186,6 +190,17 @@ public class Learn implements BioObserver
           {
             learn.listOfParameters.add(parameter);
           }
+          i=i+1;
+        }
+        else
+        {
+          usage();
+        }
+        break;
+      case "--sbml":
+        if(i+1 < end)
+        {
+          learn.sbmlOut = args[i+1];
           i=i+1;
         }
         else
@@ -393,6 +408,7 @@ public class Learn implements BioObserver
     SBMLDocument newDocument = ParameterEstimator.estimate(filename, directory, listOfParameters, E, S);
     if (newDocument != null)
     {
+      saveSBML(null);
       Model model = newDocument.getModel();
       for (String parameterId : listOfParameters)
       {
@@ -406,6 +422,10 @@ public class Learn implements BioObserver
           System.out.println(parameterId + " = NA");
         }
       }
+    }
+    else
+    {
+      System.out.println("Could not run parameter estimation.");
     }
   }
 
@@ -429,10 +449,41 @@ public class Learn implements BioObserver
     else
     {
       System.out.println("Running GeneNet (Java)");
-      Run.run(filename, directory);
+      Run.run(ta, tr, ti, tt, nb, filename, directory);
     }
+    
+    saveSBML(null);
+    
   }
 
+  private void saveSBML(SBMLDocument doc) throws XMLStreamException, IOException
+  {
+    if(sbmlOut != null)
+    {
+      String newFileName = directory + File.separator + sbmlOut;
+      System.out.println("Saving " + newFileName);
+      if(runParameterEstimation)
+      {
+        SBMLWriter.write(doc, new File(newFileName), ' ', (short) 4);
+      }
+      else
+      {
+        String learnFile = directory + File.separator + "method.gcm";
+        
+        if(new File(learnFile).exists())
+        {
+          BioModel biomodel = new BioModel(directory);
+          biomodel.load(learnFile);
+          GCM2SBML gcm2sbml = new GCM2SBML(biomodel);
+          gcm2sbml.load(learnFile);
+          gcm2sbml.convertGCM2SBML(directory, "method.gcm");
+          biomodel.save(newFileName);
+         
+        }
+      }
+    }
+  }
+  
   private String[] getProcessArguments()
   {
     ArrayList<String> args = new ArrayList<String>();

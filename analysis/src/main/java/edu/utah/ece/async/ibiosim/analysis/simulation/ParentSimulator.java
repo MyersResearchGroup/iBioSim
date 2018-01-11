@@ -30,7 +30,7 @@ public interface ParentSimulator
 	/**
 	 * 
 	 */
-	public abstract void simulate();
+	public abstract void simulate() throws IOException, XMLStreamException;
 
 	/**
 	 * 
@@ -46,12 +46,19 @@ public interface ParentSimulator
 	 * 
 	 * @param newRun
 	 */
-	public abstract void setupForNewRun(int newRun);
+	public abstract void setupForNewRun(int newRun) throws IOException;
 
 	/**
 	 * 
 	 */
 	public abstract void printStatisticsTSD();
 
+	/**
+	 * 
+	 * @param randomSeed
+	 * @param runNumber
+	 * @throws IOException
+	 * @throws XMLStreamException
+	 */
 	public abstract void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException;
 }

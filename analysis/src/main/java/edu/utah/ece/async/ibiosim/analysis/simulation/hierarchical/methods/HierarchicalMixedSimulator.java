@@ -75,23 +75,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	}
 
 	@Override
-	public void simulate()
+	public void simulate() throws IOException, XMLStreamException
 	{
 
 		if (!isInitialized)
 		{
-			try
-			{
 				initialize(0, getCurrentRun());
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e)
-			{
-				e.printStackTrace();
-			}
 		}
 		double nextEndTime = currentTime.getValue(0);
     fbaTime = nextEndTime;
@@ -133,6 +122,8 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			printToFile();
 		}
+		
+		closeWriter();
 	}
 
 	@Override
