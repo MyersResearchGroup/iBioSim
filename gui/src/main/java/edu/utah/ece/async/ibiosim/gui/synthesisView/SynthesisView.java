@@ -52,6 +52,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
@@ -396,6 +397,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 								e.printStackTrace();
 							}
+							catch (BioSimException e) {
+				        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+				          JOptionPane.ERROR_MESSAGE);
+				        e.printStackTrace();
+				      }
 							graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
 						}
 
@@ -408,6 +414,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				} 
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
 
 				//NOTE: set up library to match with the given biomodel
@@ -467,6 +478,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			solutionModels.add(solutionModel);
 		}
 		List<String> orderedSolnFileIDs = new LinkedList<String>();
@@ -487,6 +503,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			orderedSolnFileIDs.add(solutionID + "_" + idIndex + ".xml");
 		}
 		orderedSolnFileIDs.addAll(solutionFileIDs);
@@ -508,6 +529,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			if (solutionFileToGraph.containsKey(solutionGraph.getModelFileID())) {
 				SynthesisGraph clashingGraph = solutionFileToGraph.get(solutionGraph.getModelFileID());
 				BioModel clashingSubModel = new BioModel(clashingGraph.getProjectPath());
@@ -520,6 +546,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 				if (!compareModels(solutionSubModel, clashingSubModel)) {
 					clashingFileIDs.add(solutionGraph.getModelFileID());
 					solutionFileToGraph.remove(solutionGraph.getModelFileID());
@@ -550,6 +581,11 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		return solutionFileToGraph.keySet();
 	}
 

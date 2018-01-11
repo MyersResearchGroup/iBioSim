@@ -35,6 +35,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GridTable;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.BioGraph;
@@ -1033,6 +1034,11 @@ public class Grid extends CoreObservable{
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			String md5 = Utility.MD5(compGCMFile.getSBMLDocument());

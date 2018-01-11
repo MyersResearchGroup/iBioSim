@@ -70,6 +70,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.comp.Grid;
@@ -1350,6 +1351,11 @@ public class BioGraph extends mxGraph {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
 			for (String propName : connections.keySet()) {
 				String targetName = connections.get(propName);
@@ -2306,6 +2312,11 @@ public class BioGraph extends mxGraph {
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			compart = compBioModel.IsWithinCompartment();

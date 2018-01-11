@@ -31,6 +31,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 /**
@@ -372,8 +373,9 @@ public class Converter {
 						usage();
 					}
 					
-					//SBML file is relative. No external path was given for the input SBML file. 
-					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName);
+					//SBML file is relative. No external path was given for the input SBML file.
+					
+					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
 
 					SBML2SBOL.convert_SBML2SBOL(outSBOLDoc, externalSBMLPath, inputSBMLDoc, fullInputFileName, ref_sbolInputFilePath, URIPrefix); 
 
@@ -418,6 +420,10 @@ public class Converter {
 					System.err.println("ERROR: Unable to read or write file");
 					e.printStackTrace();
 				}
+				catch (BioSimException e) {
+				  System.err.println("ERROR: Invalid SBML file");
+          e.printStackTrace();
+	      }
 			} //end of is input is SBML
 			else if(inputIsSBOL)
 			{
@@ -479,6 +485,10 @@ public class Converter {
 					{
 						System.err.println(e.getMessage());
 					}
+					catch (BioSimException e) 
+          {
+            System.err.println(e.getMessage());
+          }
 				}
 			} //end of isSBOL input
 		}//end of is not a directory check

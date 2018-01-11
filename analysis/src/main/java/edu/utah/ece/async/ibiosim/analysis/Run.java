@@ -197,7 +197,7 @@ public class Run extends CoreObservable implements ActionListener
     }
   }
 
-  private int executeFBA() throws XMLStreamException, IOException
+  private int executeFBA() throws XMLStreamException, IOException, BioSimException
   {
     int exitValue = 255;
 
@@ -434,7 +434,7 @@ public class Run extends CoreObservable implements ActionListener
     return 0;
   }
 
-  private int executeNary() throws XMLStreamException, IOException
+  private int executeNary() throws XMLStreamException, IOException, BioSimException
   {
     String modelFile = properties.getModelFile();
     String directory = properties.getDirectory();
@@ -811,7 +811,7 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException
+  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException, BioSimException
   {
     int exitValue = 255;
 

@@ -48,6 +48,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -60,7 +61,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class MySpecies extends JPanel implements ActionListener, MouseListener {
+public class MySpecies extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -442,6 +443,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(specHasOnly);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
+			MySpecies instance = this;
 			type.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -456,7 +458,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						initLabel.setEnabled(false);
 						SBMLDocument d;
             try {
-              d = SBMLutilities.readSBML(file);
+              d = SBMLutilities.readSBML(file, instance, null);
               if (d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).isSetInitialAmount()) {
 							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split("\\[| ")[0]).getInitialAmount() + "");
 							initLabel.setSelectedItem("Initial Amount");
@@ -470,6 +472,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
               e1.printStackTrace();
             } catch (IOException e1) {
               JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+            catch (BioSimException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
               e1.printStackTrace();
             }
 						
@@ -1047,7 +1054,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				modelEditor.setDirty(true);
 				modelEditor.makeUndoPoint();
 			} else {
-				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
+				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, this, null)) {
 				  modelEditor.removeSpecies(id);
 					modelEditor.setDirty(true);
 					modelEditor.makeUndoPoint();

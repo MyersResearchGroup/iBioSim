@@ -38,6 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.Promoter;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpasticSpecies;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.network.SpeciesInterface;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
@@ -50,7 +51,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
  */
 public class GCMParser extends CoreObservable{
 
-	public GCMParser(String filename) throws XMLStreamException, IOException {
+	public GCMParser(String filename) throws XMLStreamException, IOException, BioSimException {
 		//this.debug = debug;
 		biomodel = BioModel.createBioModel(filename.substring(0, filename.length()
       - GlobalConstants.getFilename(filename).length()), this);

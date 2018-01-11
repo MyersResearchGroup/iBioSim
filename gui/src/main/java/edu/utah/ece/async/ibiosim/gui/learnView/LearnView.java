@@ -498,7 +498,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
     {
       speciesList = Learn.writeBackgroundFile(learnFile, directory);
     } 
-    catch (XMLStreamException | IOException e) 
+    catch (XMLStreamException | IOException | BioSimException e) 
     {
       JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
       speciesList = new ArrayList<String>();
@@ -1812,7 +1812,7 @@ public class LearnView extends JPanel implements ActionListener, Runnable
     {
       speciesList = Learn.writeBackgroundFile(learnFile, directory);
     } 
-    catch (XMLStreamException | IOException e) 
+    catch (XMLStreamException | IOException | BioSimException e) 
     {
       JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
       speciesList = new ArrayList<String>();

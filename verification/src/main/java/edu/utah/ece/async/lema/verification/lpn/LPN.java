@@ -140,7 +140,7 @@ public class LPN extends CoreObservable {
 	}
 	
 	public static LPN convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty,
-			BioModel bioModel) throws XMLStreamException, IOException {
+			BioModel bioModel) throws XMLStreamException, IOException, BioSimException {
 		GCMParser parser = new GCMParser(bioModel);
 		SBMLDocument sbml = bioModel.flattenModel(true);	
 		if (sbml == null) return null;

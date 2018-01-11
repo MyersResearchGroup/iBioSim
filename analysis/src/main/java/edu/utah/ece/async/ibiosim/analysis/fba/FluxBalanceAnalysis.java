@@ -35,6 +35,7 @@ import org.sbml.jsbml.SpeciesReference;
 import com.joptimizer.optimizers.*;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
@@ -66,12 +67,13 @@ public class FluxBalanceAnalysis extends CoreObservable
 	 * 
 	 * @throws XMLStreamException - problem with the sbml document
 	 * @throws IOException - i/o problem
+	 * @throws BioSimException - if the sbml model is invalid.
 	 */
-	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) throws XMLStreamException, IOException {
+	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) throws XMLStreamException, IOException, BioSimException {
 		this.root = root;
 		this.absError = absError;
 		fluxes = new HashMap<String,Double>();
-		SBMLDocument sbml = SBMLutilities.readSBML(root + sbmlFileName);
+		SBMLDocument sbml = SBMLutilities.readSBML(root + sbmlFileName, this, null);
 		model = sbml.getModel();
 		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel(),true);
 	}

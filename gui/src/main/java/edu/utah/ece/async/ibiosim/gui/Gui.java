@@ -2906,7 +2906,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					out.write(model);
 					out.close();
 					String[] file = GlobalConstants.splitPath(filename.trim());
-					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim());
+					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim(), null, this);
 					Utils.check(root + File.separator + filename.trim(), document, false);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
@@ -3692,7 +3692,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
-			}
+			} catch (BioSimException e) {
+			  JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			SBMLWriter writer = new SBMLWriter();
 			if (document.getModel().getId() == null || document.getModel().getId().equals("")) {
 				document.getModel().setId(newFile.replace(".xml", ""));
@@ -3719,7 +3723,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	private String importSBMLFile(String filename,boolean open) {
 		String newFile = null;
 		try {
-			SBMLDocument document = SBMLutilities.readSBML(filename.trim());
+			SBMLDocument document = SBMLutilities.readSBML(filename.trim(), null, this);
 			if (document == null)
 				return null;
 			String[] file = GlobalConstants.splitPath(filename.trim());
@@ -4181,7 +4185,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (entry.getFormat().toString().contains("sbml")) {
 				try {
 					String fileName = entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath();
-					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
+					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath(), null, this);
 					SBMLWriter writer = new SBMLWriter();
 					String[] file = GlobalConstants.splitPath(fileName.trim());
 					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
@@ -4189,7 +4193,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				catch (XMLStreamException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				} catch (BioSimException e) {
+				  JOptionPane.showMessageDialog(frame, e.getMessage(), e.getTitle(),
+            JOptionPane.ERROR_MESSAGE);
+        }
 			}
 		}
 		for (ArchiveEntry entry : ca.getEntries ())
@@ -5320,12 +5327,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	private void copyDirectory(String srcDir, String destDir, String copyName)
-			throws SBMLException, XMLStreamException, IOException {
+			throws SBMLException, XMLStreamException, IOException, BioSimException {
 		new File(destDir).mkdir();
 		String[] files = new File(srcDir).list();
 		for (String file : files) {
 			if (file.endsWith(".sbml") || file.equals(".xml")) {
-				SBMLDocument document = SBMLutilities.readSBML(srcDir + File.separator + file);
+				SBMLDocument document = SBMLutilities.readSBML(srcDir + File.separator + file, null, this);
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBMLToFile(document, destDir + File.separator + file);
 			} else if (new File(srcDir + File.separator + file).isFile()) {
@@ -5383,7 +5390,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				if (checkFiles(oldName, copy)) {
 					if (overwrite(root + File.separator + copy, copy)) {
 						if (copy.endsWith(".xml")) {
-							SBMLDocument document = SBMLutilities.readSBML(tree.getFile());
+							SBMLDocument document = SBMLutilities.readSBML(tree.getFile(), null, this);
 							List<URI> sbolURIs = new LinkedList<URI>();
 							String sbolStrand = AnnotationUtility.parseSBOLAnnotation(document.getModel(), sbolURIs);
 							Iterator<URI> sbolIterator = sbolURIs.iterator();
@@ -5714,7 +5721,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						}
 						if (tree.getFile().endsWith(".xml")) {
 							new File(tree.getFile()).renameTo(new File(root + File.separator + newName));
-							SBMLDocument document = SBMLutilities.readSBML(root + File.separator + newName);
+							SBMLDocument document = SBMLutilities.readSBML(root + File.separator + newName, null, this);
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBMLToFile(document, root + File.separator + newName);
@@ -5772,7 +5779,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
 				e.printStackTrace();
-			}
+			} catch (BioSimException e) {
+			  JOptionPane.showMessageDialog(frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+      }
 		}
 	}
 
@@ -6099,6 +6109,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 								JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
+					catch (BioSimException e) {
+		        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+		          JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		      }
 				}
 			}
 		} catch (IOException e) {
@@ -6900,6 +6915,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 
 	public void copySFiles(String filename, String directory) {
@@ -8950,6 +8970,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 				SBMLutilities.checkModelCompleteness(document, true);
 				SBMLWriter writer = new SBMLWriter();
 				try {

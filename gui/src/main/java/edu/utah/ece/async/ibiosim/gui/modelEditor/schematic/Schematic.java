@@ -104,6 +104,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
@@ -1401,25 +1402,25 @@ public class Schematic extends PanelObservable implements ActionListener {
 				String type = graph.getCellType(cell);
 
 				if(type == GlobalConstants.SPECIES){
-					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, this, null)) {
 						doNotRemove = true;
 					}
 				} else if (type == GlobalConstants.PROMOTER){
-					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, false, this, null)) {
 						doNotRemove = true;
 					}
 				} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
-					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, this, null)) {
 						doNotRemove = true;
 					}
 				} else if(type == GlobalConstants.COMPARTMENT) {
 					if (Utils.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
 						doNotRemove = true; 
-					} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+					} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, this, null)) {
 						doNotRemove = true;
 					}
 				} else if (type == GlobalConstants.REACTION){
-					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, false, this, null)) {
 						doNotRemove = true;
 					}
 					/*
@@ -1441,7 +1442,7 @@ public class Schematic extends PanelObservable implements ActionListener {
 							SpeciesReference s = reactants.get(i);
 							if (s.getSpecies().equals(source.getId())) {
 								if (s.isSetId() && 
-										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, false, this, null)) {
 									doNotRemove = true;
 								}
 								break;
@@ -1452,7 +1453,7 @@ public class Schematic extends PanelObservable implements ActionListener {
 							SpeciesReference s = products.get(i);
 							if (s.getSpecies().equals(target.getId())) {
 								if (s.isSetId() && 
-										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, false, this, null)) {
 									doNotRemove = true;
 								}
 								break;
@@ -1465,7 +1466,7 @@ public class Schematic extends PanelObservable implements ActionListener {
 						int reactantNum = Integer.parseInt(cell.getId().replace(source.getId()+"__r","").replace("__"+target.getId(),""));
 						SpeciesReference s = r.getReactant(reactantNum);
 						if (s.isSetId() && 
-								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, false, this, null)) {
 							doNotRemove = true;
 						}
 						break;
@@ -1476,7 +1477,7 @@ public class Schematic extends PanelObservable implements ActionListener {
 						int productNum = Integer.parseInt(cell.getId().replace(source.getId()+"__p","").replace("__"+target.getId(),""));
 						SpeciesReference s = r.getProduct(productNum);
 						if (s.isSetId() && 
-								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+								SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, false, this, null)) {
 							doNotRemove = true;
 						}
 						break;
@@ -1488,7 +1489,7 @@ public class Schematic extends PanelObservable implements ActionListener {
 					int modifierNum = Integer.parseInt(cell.getId().replace(source.getId()+"__m","").replace("__"+target.getId(),""));
 					ModifierSpeciesReference s = r.getModifier(modifierNum);
 					if (s.isSetId() && 
-							SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+							SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, false, this, null)) {
 						doNotRemove = true;
 					}
 					break;
@@ -2144,6 +2145,11 @@ public class Schematic extends PanelObservable implements ActionListener {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		return null;
 	}
 	
@@ -2169,6 +2175,11 @@ public class Schematic extends PanelObservable implements ActionListener {
       e.printStackTrace();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
 		return null;
@@ -2206,6 +2217,11 @@ public class Schematic extends PanelObservable implements ActionListener {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	  return null;
 	}
 	
@@ -2239,6 +2255,11 @@ public class Schematic extends PanelObservable implements ActionListener {
       e.printStackTrace();
     } catch (IOException e) {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
 		return null;
@@ -2620,6 +2641,11 @@ public class Schematic extends PanelObservable implements ActionListener {
 		          JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
 		          e.printStackTrace();
 		        }
+						catch (BioSimException e) {
+			        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+			          JOptionPane.ERROR_MESSAGE);
+			        e.printStackTrace();
+			      }
 						
 						break;						
 					}

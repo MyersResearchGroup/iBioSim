@@ -6453,7 +6453,7 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 		      // END ADDED BY SB.
 		    }
 		    else {
-		      SBMLDocument document = SBMLutilities.readSBML(background);
+		      SBMLDocument document = SBMLutilities.readSBML(background, this, null);
 		      Model model = document.getModel();
 		      ListOf<Species> ids = model.getListOfSpecies();
 		      for (int i = 0; i < model.getSpeciesCount(); i++) {

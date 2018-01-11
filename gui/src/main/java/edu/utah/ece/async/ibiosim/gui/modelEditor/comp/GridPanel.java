@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
@@ -169,6 +170,12 @@ public class GridPanel extends PanelObservable implements ActionListener {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
+				
 				int rowCount = 0, colCount = 0;
 				
 				//try to get the number of rows and columns from the user
@@ -295,6 +302,11 @@ public class GridPanel extends PanelObservable implements ActionListener {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 				int rowCount = 0, colCount = 0;
 				
 				//try to get the number of rows and columns from the user

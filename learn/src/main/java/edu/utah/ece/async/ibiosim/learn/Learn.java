@@ -456,7 +456,7 @@ public class Learn implements BioObserver
     
   }
 
-  private void saveSBML(SBMLDocument doc) throws XMLStreamException, IOException
+  private void saveSBML(SBMLDocument doc) throws XMLStreamException, IOException, BioSimException
   {
     if(sbmlOut != null)
     {
@@ -654,13 +654,14 @@ public class Learn implements BioObserver
    * 
    * @throws XMLStreamException - when reading bad formatted sbml file
    * @throws IOException - when something wrong happens when saving the background file.
+   * @throws BioSimException - when the SBML file is invalid. 
    */
-  public static List<String> writeBackgroundFile(String learnFile, String directory) throws XMLStreamException, IOException
+  public static List<String> writeBackgroundFile(String learnFile, String directory) throws XMLStreamException, IOException, BioSimException
   {
     ArrayList<String> speciesList = new ArrayList<String>();
     if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml")))
     {
-      SBMLDocument document = SBMLutilities.readSBML(learnFile);
+      SBMLDocument document = SBMLutilities.readSBML(learnFile, null, null);
       Model model = document.getModel();
       FileWriter write = new FileWriter(new File(directory + File.separator + "background.gcm"));
       write.write("digraph G {\n");

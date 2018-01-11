@@ -44,6 +44,8 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Validate;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -72,7 +74,7 @@ import org.sbml.jsbml.SpeciesReference;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Rules extends JPanel implements ActionListener, MouseListener {
+public class Rules extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -408,7 +410,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						{
               error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
             } 
-						catch (SBMLException | IOException | XMLStreamException e) 
+						catch (SBMLException | IOException | XMLStreamException | BioSimException e) 
 						{
               error = true;
             }
@@ -558,7 +560,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							{
                 error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
               } 
-							catch (SBMLException | IOException | XMLStreamException e) {
+							catch (SBMLException | IOException | XMLStreamException | BioSimException e) {
                 error = true;
               }
 						}

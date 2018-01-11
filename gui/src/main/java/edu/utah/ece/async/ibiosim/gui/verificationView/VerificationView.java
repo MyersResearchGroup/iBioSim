@@ -3113,6 +3113,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			
 		}
 	}

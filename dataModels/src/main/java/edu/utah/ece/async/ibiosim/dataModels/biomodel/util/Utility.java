@@ -55,6 +55,7 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 import org.sbml.jsbml.ModifierSpeciesReference;
 
@@ -302,11 +303,6 @@ public class Utility {
 		return allFiles.list(Utility.getFilter(filter));			
 	}
 	
-	public static SBMLDocument openDocument(String filename) throws XMLStreamException, IOException {
-		SBMLDocument document = SBMLutilities.readSBML(filename);
-		return document;
-	}
-
 	public static HashMap<String, double[]> calculateAverage(String folder) {
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;

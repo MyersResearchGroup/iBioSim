@@ -46,6 +46,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
@@ -68,7 +69,7 @@ public class AssemblyGraph2 extends CoreObservable{
 	private boolean containsSBOL = false;
 //	//private boolean minusFlag = true;
 	
-	public AssemblyGraph2(BioModel biomodel) throws XMLStreamException, IOException {
+	public AssemblyGraph2(BioModel biomodel) throws XMLStreamException, IOException, BioSimException {
 		assemblyNodes = new HashSet<AssemblyNode2>(); // Initialize map of SBML element meta IDs to assembly nodes they identify
 		assemblyEdges = new HashMap<AssemblyNode2, Set<AssemblyNode2>>(); // Initialize map of assembly node IDs to sets of node IDs (node IDs are SBML meta IDs)
 		SBMLDocument sbmlDoc = biomodel.getSBMLDocument();
@@ -144,7 +145,7 @@ public class AssemblyGraph2 extends CoreObservable{
 	}
 	
 	// Creates assembly nodes for submodels and connects them to the nodes for their input/output species
-	private boolean parseSubModelSBOL(SBMLDocument sbmlDoc, String path, HashMap<String, AssemblyNode2> idToNode) throws XMLStreamException, IOException {
+	private boolean parseSubModelSBOL(SBMLDocument sbmlDoc, String path, HashMap<String, AssemblyNode2> idToNode) throws XMLStreamException, IOException, BioSimException {
 		CompModelPlugin compSBMLModel = SBMLutilities.getCompModelPlugin(sbmlDoc.getModel());
 		CompSBMLDocumentPlugin compSBMLDoc = SBMLutilities.getCompSBMLDocumentPlugin(sbmlDoc);
 		if (compSBMLModel.getListOfSubmodels().size() > 0) {

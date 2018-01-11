@@ -315,6 +315,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 
 	public void renameComponents(String oldname, String newName) {
@@ -453,6 +458,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		log.addText("Saving SBML file:\n" + path + File.separator + modelId + ".xml");
 		// saveAsSBOL2();
 		// log.addText("Converting SBML into SBOL and saving into the project's
@@ -466,7 +476,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 	// Annotate SBML model with synthesized SBOL DNA component and save
 	// component to local SBOL file
-	public void saveSBOL2() throws SBOLValidationException {
+	public void saveSBOL2() throws SBOLValidationException, BioSimException {
 		try {
 			SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel,
 					Preferences.userRoot().get(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString(), ""));
@@ -790,6 +800,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				log.addText("ERROR: Exporting SBML file:\n" + exportPath + "\n");
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 	}
 
@@ -832,6 +847,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				e.printStackTrace();
 				log.addText("ERROR: Exporting flat SBML file:\n" + exportPath + "failed.\n");
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 	}
 
@@ -885,6 +905,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		// biosim.updateTabName(modelId + ".xml", newName + ".xml");
 		// reload(newName);
 	}
@@ -918,6 +943,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 
 	/**
@@ -1741,6 +1771,12 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				e.printStackTrace();
 				return false;
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        return false;
+      }
 			if (sbml == null) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -1810,6 +1846,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		return true;
 	}
@@ -2471,6 +2512,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		PromoterPanel panel = new PromoterPanel(id, biomodel, species, paramsOnly, refGCM, this);
 
@@ -2509,6 +2555,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 
 		SpeciesPanel panel = new SpeciesPanel(id, species, components, biomodel, paramsOnly, refGCM, this, inTab);
@@ -2547,6 +2598,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 		}
 		InfluencePanel panel = new InfluencePanel(id, biomodel, paramsOnly, refGCM, this);
 
@@ -2637,6 +2693,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 		for (int i = 0; i < g.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
 			String compGCM = g.getSBMLComp().getListOfExternalModelDefinitions().get(i).getSource();
 			if (compGCM.equals(gcm)) {
@@ -2724,6 +2785,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			String oldPort = null;
 			if (selected != null) {
 				oldPort = selected.substring(selected.split(" ")[0].length() + selected.split(" ")[1].length() + 2);
@@ -3047,8 +3113,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 	 * @return
 	 * @throws IOException
 	 * @throws XMLStreamException
+	 * @throws BioSimException 
 	 */
-	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException {
+	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException, BioSimException {
 
 		BioModel subModel =  BioModel.createBioModel(path, this);
 		subModel.load(filename);
@@ -3198,7 +3265,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 	}
 
-	public static boolean saveLPN(BioModel biomodel, String filename) throws XMLStreamException, IOException {
+	public static boolean saveLPN(BioModel biomodel, String filename) throws XMLStreamException, IOException, BioSimException {
 		SBMLDocument sbml = biomodel.getSBMLDocument();
 		HashMap<String, Integer> constants = new HashMap<String, Integer>();
 		ArrayList<String> booleans = new ArrayList<String>();

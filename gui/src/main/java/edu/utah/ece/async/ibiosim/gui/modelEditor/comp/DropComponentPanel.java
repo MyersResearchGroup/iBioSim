@@ -34,6 +34,7 @@ import javax.xml.stream.XMLStreamException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
@@ -269,6 +270,11 @@ public class DropComponentPanel extends PanelObservable implements ActionListene
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 			}
 			else {
 				
@@ -303,6 +309,12 @@ public class DropComponentPanel extends PanelObservable implements ActionListene
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		
 		String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 		return bioModel.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
@@ -379,6 +391,11 @@ public class DropComponentPanel extends PanelObservable implements ActionListene
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 			}
 			else {
 				this.droppedComponent = false;
@@ -456,6 +473,12 @@ public class DropComponentPanel extends PanelObservable implements ActionListene
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
+				
 				String md5 = Utility.MD5(compBioModel.getSBMLDocument());
 				bioModel.addComponent(null, comp, compBioModel.IsWithinCompartment(), compBioModel.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);
