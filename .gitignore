@@ -6,3 +6,4 @@ bin/iBioSim.jar
 **/.classpath
 .settings/
 **/.project
+/.metadata/
