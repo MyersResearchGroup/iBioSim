@@ -44,6 +44,7 @@ public class SBOLGraph
 {
 	private Map<URI, SynthesisNode> _nodes; 
 	private List<SynthesisNode> _root; 
+	private int _score;
 	int uniqueId = 0;
 	private List<SynthesisNode> _topologicalSortNodes;
 
@@ -51,6 +52,7 @@ public class SBOLGraph
 	{
 		_nodes = new HashMap<URI, SynthesisNode>();
 		_root = new ArrayList<SynthesisNode>();
+		_score = 0;
 		_topologicalSortNodes = new ArrayList<SynthesisNode>();
 	}
 
@@ -157,6 +159,11 @@ public class SBOLGraph
 			node.setDegree(getDegree(node, node.getDegree()));
 		}
 
+	}
+	
+	public void setScore(int value)
+	{
+		_score = value;
 	}
 	
 	/**

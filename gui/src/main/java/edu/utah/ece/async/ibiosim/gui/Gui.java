@@ -3950,6 +3950,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		readSBOLDocument();
 		return sbolDocument;
 	}
+	
+	/**
+	 * Retrieves the SBOL library file located in the iBioSim workspace.
+	 * @return The full path to the SBOL library file.
+	 */
+	public String getSBOLFile()
+	{
+		return root + File.separator + currentProjectId + ".sbol";
+	}
 
 	/**
 	 * Return True if the current SBOLDocument in the current iBioSim workspace
@@ -3969,7 +3978,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * 
 	 */
 	protected void readSBOLDocument() {
-		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
+		String sbolFilename = getSBOLFile();
 		File sbolFile = new File(sbolFilename);
 		if (sbolFile.exists()) 
 		{
@@ -4025,7 +4034,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * workspace as an SBOL file.
 	 */
 	public void writeSBOLDocument() {
-		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
+		String sbolFilename = getSBOLFile();
 		try {
 			sbolDocument.write(sbolFilename);
 		} catch (IOException e) {
@@ -6037,7 +6046,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @param filePath - The file location where the SBOL document is located.
 	 * @return The number of SBML models that was converted from SBOL. 
 	 */
-	private int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+	public int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
 		int numGeneratedSBML = 0;
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
@@ -7290,7 +7299,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			if (overwrite(root + File.separator + synthID, synthID)) 
 			{
-				SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
+				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7308,7 +7317,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
-				SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
+				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
 				synthView.loadSynthesisProperties(synthProps);
 				addTab(synthID, synthView, null);
 			}

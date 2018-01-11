@@ -1,7 +1,9 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,16 +13,19 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 public class SBOLTechMap {
 
 	public static void main(String[] args) {
 		
-		String libraryFile = "";
+		String libFile = "";
+		String multLibFiles = "";
 		String specFile = "";
 		String outFileName = "";
-		String defaultURIPrefix = "";
+		String defaultPrefix = "";
 		
 		boolean greedySol = false;
 		boolean exactSol = false;
@@ -38,7 +43,14 @@ public class SBOLTechMap {
 				{
 					usage();
 				}
-				libraryFile = args[++index];
+				libFile = args[++index];
+				break;
+			case "-mlf":
+				if(index+1 >= args.length || args[index+1].equals("-"))
+				{
+					usage();
+				}
+				multLibFiles = args[++index];
 				break;
 			case "-sf":
 				if(index+1 >= args.length || args[index+1].equals("-"))
@@ -59,7 +71,7 @@ public class SBOLTechMap {
 				{
 					usage();
 				}
-				defaultURIPrefix = args[++index];
+				defaultPrefix = args[++index];
 				break;
 			case "-dot":
 				if(index+1 >= args.length || args[index+1].equals("-"))
@@ -75,12 +87,34 @@ public class SBOLTechMap {
 		
 		try 
 		{
-			SBOLDocument solution = runSBOLTechMap(specFile, libraryFile, defaultURIPrefix);
+			SBOLDocument libDoc = null;
+			if(!libFile.isEmpty() && multLibFiles.isEmpty())
+			{
+				libDoc = SBOLUtility.loadSBOLFile(libFile, defaultPrefix);
+			}
+			else if(libFile.isEmpty() && !multLibFiles.isEmpty())
+			{
+				libDoc = SBOLUtility.loadFromDir(multLibFiles, defaultPrefix);
+			}
+			else if(!libFile.isEmpty() && !multLibFiles.isEmpty())
+			{
+				System.err.println("ERROR: At least one SBOL library file must provided to perform SBOL Technology Mapping.");
+				usage();
+			}
+			else
+			{
+				System.err.println("ERROR: Both flags (-lf and -mlf) are not allowed to be turned on at the same time.");
+				usage();
+			}
+			
+			SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultPrefix);
+			
+			SBOLDocument solution = runSBOLTechMap(specDoc, libDoc);
 			solution.write(new File(outFileName));
 		} 
 		catch (SBOLValidationException e) 
 		{
-			System.err.println("ERROR: Failed SBOL Validation when creating solution into SBOL data model.");
+			System.err.println("ERROR: Failed SBOL Validation when converting SBOL Tech. Map solution into SBOL data model.");
 			e.printStackTrace();
 		} 
 		catch (IOException e) 
@@ -91,6 +125,11 @@ public class SBOLTechMap {
 		catch (SBOLConversionException e) 
 		{
 			System.err.println("ERROR: Unable to convert input file to SBOL data format.");
+			e.printStackTrace();
+		} 
+		catch (SBOLException e) 
+		{
+			System.err.println("ERROR: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -107,11 +146,11 @@ public class SBOLTechMap {
 		
 	}
 	
-	public static SBOLDocument runSBOLTechMap(String specFile, String libFile, String defaultPre) throws SBOLValidationException
+	public static SBOLDocument runSBOLTechMap(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException
 	{
 		Synthesis syn = new Synthesis();
-		syn.createSBOLGraph(specFile, false, defaultPre);
-		syn.createSBOLGraph(libFile, true, defaultPre);
+		syn.createSBOLGraph(specDoc, false);
+		syn.createSBOLGraph(libDoc, true);
 		
 		List<SBOLGraph> library = syn.getLibrary();
 		syn.setLibraryGateScores(library);

@@ -51,6 +51,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -63,13 +64,8 @@ import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
-<<<<<<< HEAD
- * This is the UI implementation to perform technology mapping.
- *
-=======
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
  * 
->>>>>>> master
  * @author Tramy Nguyen
  * @author Nicholas Roehner 
  * @author Chris Myers
@@ -85,7 +81,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	
 	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
-	private Properties synthProps; // Stores fields needed for SBML (Nic's) technology mapping in a property file
+	private Gui gui;
+	private Properties synthProps; // Stores fields needed for technology mapping in a property file
 	private JTextField specText;
 	private List<String> libFilePaths;
 	private JList<String> libList; // The path to all the gate library files.
@@ -107,8 +104,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 * @param rootFilePath - Path to the iBioSim project
 	 * @param log - Log file used in each iBioSim project
 	 */
-	public SynthesisView(String synthID, String separator, String rootFilePath, Log log) 
+	public SynthesisView(Gui ibioSimGUI, String synthID, String separator, String rootFilePath, Log log) 
 	{
+		this.gui = ibioSimGUI;
 		this.synthID = synthID;
 		this.separator = separator;
 		this.rootFilePath = rootFilePath;
@@ -555,17 +553,44 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		else if(select_SBOLTechMap.isSelected())
 		{
 			//NOTE: if there are more than one library file provided, convert them into one SBOL file.
+			String specFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+			String defaultURIPrefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 			
-			String libraryFile = libFilePaths.iterator().next();
-			String specFile = "";
-			String defaultPre = "";
 			try 
 			{
-				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specFile, libraryFile, defaultPre);
+				SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultURIPrefix);
+				SBOLDocument libDoc = SBOLUtility.loadMultSBOLFile(libFilePaths, defaultURIPrefix);
+			
+				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
+				gui.generateSBMLFromSBOL(solution, gui.getSBOLFile());
 			} 
 			catch (SBOLValidationException e) 
 			{
 				JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+			catch (FileNotFoundException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to locate input file(s).", "File Not Found",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+			catch (SBOLException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write SBOL file", "File Not Found",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+			catch (SBOLConversionException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}

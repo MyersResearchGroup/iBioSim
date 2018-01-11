@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -103,6 +104,40 @@ public class SBOLUtility
 			throw new SBOLException("ERROR: The input SBOL file produced a null SBOLDocument.", "Null SBOLDocument");
 		}
 		return sbolDoc;
+	}
+	
+	public static SBOLDocument loadMultSBOLFile(List<String> files, String defaultPrefix) throws SBOLValidationException, IOException, SBOLConversionException
+	{
+		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setDefaultURIprefix(defaultPrefix);
+		
+		for(String filePath : files)
+		{
+			SBOLDocument currentDoc = SBOLReader.read(filePath);
+			sbolDoc.createCopy(currentDoc);
+		}
+		
+		return sbolDoc;
+	}
+	
+	public static SBOLDocument loadFromDir(String directory, String defaultPrefix) throws SBOLException, SBOLValidationException, IOException, SBOLConversionException
+	{
+		File files = new File(directory); 
+		List<String> sbolFiles = new ArrayList<String>();
+		boolean isDirectory = files.isDirectory();
+		if(!isDirectory)
+		{
+			System.err.println("ERROR: This flag must be set as a directory where multiple SBOL library files are located");
+			throw new SBOLException("ERROR: This is not a directory containing SBOL files.", "Invalid Path for A Directory");
+		}
+
+		for (File eachFile : files.listFiles()) 
+		{
+			sbolFiles.add(eachFile.getAbsolutePath());
+		}
+
+		return loadMultSBOLFile(sbolFiles, defaultPrefix);
+	
 	}
 
 	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 

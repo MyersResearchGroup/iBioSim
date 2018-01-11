@@ -14,16 +14,22 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMap;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.WeightedGraph;
@@ -44,37 +50,67 @@ public class TempSynthesisRunner
 		String SPEC_FILE_NAME = "spec.sbol"; 
 		String LIB_FILE_NAME = "LIBRARY_ANNOT.sbol";
 		String defaultURIPrefix = "http://www.async.ece.utah.edu/";
+
+		String OUTPUT_PATH = "/Users/tramyn/Desktop/sbol_gates/"; 
+		String OUTPUT_FILE_NAME = "Technology_Mapping_Solution.sbol";
+		
 		//Set up specification graph
-		String path1 = PATH + SPEC_FILE_NAME;
-		File SPEC_FILE = new File(path1);
-		Synthesis syn = new Synthesis();
-		syn.createSBOLGraph(path1, false, defaultURIPrefix);
-//		syn.getSpecification().createDotFile(PATH + "SPEC2.dot");
-
-		//Set up library graph
-		String path2 = PATH + LIB_FILE_NAME;
-		File LIBR_FILE = new File(path2);
-		syn.createSBOLGraph(path2, true, defaultURIPrefix);
-
-		//Set library gate scores
-		List<SBOLGraph> library = syn.getLibrary();
-		//TODO: make sure to comment the line of code below out if a different library file is used and write a different form of method to set the score for the graph
-		setLibraryGateScores(library);
-		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
-		syn.match_topLevel(syn.getSpecification(), matches);
-		printMatches(matches);
-		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
-
-//		syn.printCoveredGates(solution);
+		SBOLDocument specDoc;
 		try 
 		{
+			specDoc = SBOLUtility.loadSBOLFile(PATH + SPEC_FILE_NAME, defaultURIPrefix);
+			SBOLDocument libDoc = SBOLUtility.loadSBOLFile(PATH + LIB_FILE_NAME, defaultURIPrefix);
+			
+			//Set up specification. and library graph
+			Synthesis syn = new Synthesis();
+			syn.createSBOLGraph(libDoc, true);
+			syn.createSBOLGraph(specDoc, false);
+			syn.createSBOLGraph(libDoc, true);
+			
+			//Set library gate scores
+			List<SBOLGraph> library = syn.getLibrary();
+			
+			// NOTE: make sure to comment the line of code below out if a different library file is used 
+			// and write a different form of method to set the score for the graph
+			setLibraryGateScores(library);
+			
+			Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
+			syn.match_topLevel(syn.getSpecification(), matches);
+			Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
+			
 			SBOLDocument sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
-		}
-		catch (SBOLValidationException e) 
+			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
+		} 
+		catch (FileNotFoundException e1) 
 		{
-			e.printStackTrace();
+			System.err.println("ERROR: Unable to locate input file(s)");
+			e1.printStackTrace();
+		} 
+		catch (SBOLException e1) 
+		{
+			System.err.println("ERROR: " + e1.getMessage());
+			e1.printStackTrace();
+		} 
+		catch (SBOLValidationException e1) 
+		{
+			System.err.println("ERROR: Failed SBOL Validation when converting SBOL Tech. Map solution into SBOL data model.");
+			e1.printStackTrace();
+		} 
+		catch (IOException e1) 
+		{
+			System.err.println("ERROR: Unable to read or write SBOL file");
+			e1.printStackTrace();
+		} 
+		catch (SBOLConversionException e1) 
+		{
+			System.err.println("ERROR: Unable to convert input file to SBOL data model.");
+			e1.printStackTrace();
 		}
-
+		
+//		syn.getSpecification().createDotFile(PATH + "SPEC2.dot");
+//		printMatches(matches);
+//		syn.printCoveredGates(solution);
+		
 	} 
 
 	public static void printMatches(Map<SynthesisNode, LinkedList<WeightedGraph>> matches)
