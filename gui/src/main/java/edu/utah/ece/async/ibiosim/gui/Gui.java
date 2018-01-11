@@ -2907,7 +2907,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					out.close();
 					String[] file = GlobalConstants.splitPath(filename.trim());
 					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim(), null, this);
-					Utils.check(root + File.separator + filename.trim(), document, false);
+					Utils.check(root + File.separator + filename.trim(), document, false, null, this);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
 					addToTree(file[file.length - 1]);
@@ -3662,7 +3662,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document, true);
-		Utils.check(null, document, false);
+		Utils.check(null, document, false, null, this);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -9032,8 +9032,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
     if (message.isConsole()) {
       System.out.println(message.getMessage());
     } else if (message.isErrorDialog()) {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
+      JTextArea messageArea = new JTextArea(message.getMessage());
+      messageArea.setLineWrap(true);
+      messageArea.setEditable(false);
+      JScrollPane scroll = new JScrollPane();
+      scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+      scroll.setPreferredSize(new java.awt.Dimension(600, 600));
+      scroll.setViewportView(messageArea);
+      JOptionPane.showMessageDialog(Gui.frame, scroll, message.getTitle(), JOptionPane.ERROR_MESSAGE);
     } else if (message.isDialog()) {
       JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
           JOptionPane.PLAIN_MESSAGE);

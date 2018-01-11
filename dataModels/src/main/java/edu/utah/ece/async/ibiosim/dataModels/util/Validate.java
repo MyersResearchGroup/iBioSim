@@ -30,15 +30,11 @@ import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 
 public class Validate 
 {
-  private static final Message errorMessage = new Message();
-  public static String getMessage()
-  {
-    return errorMessage.getMessage();
-  }
-
   
   /**
    * Check consistency of sbml file.
@@ -52,7 +48,7 @@ public class Validate
    * @throws XMLStreamException
    * @throws BioSimException
    */
-  public static boolean validateDoc(String file, SBMLDocument doc, boolean overdeterminedOnly) throws IOException, SBMLException, XMLStreamException, BioSimException
+  public static boolean validateDoc(String file, SBMLDocument doc, boolean overdeterminedOnly, BioObservable observable, BioObserver observer) throws IOException, SBMLException, XMLStreamException, BioSimException
   {
     // TODO: added to turn off checking until libsbml bug is found
     //if (true) {
@@ -216,10 +212,21 @@ public class Validate
         }
       }
     }
-
+    
+    
     if (numErrors > 0)
     {
+      Message errorMessage = new Message();
       errorMessage.setLog(message);
+      
+      if(observable != null)
+      {
+        observable.notifyObservers(errorMessage);
+      }
+      if(observer != null)
+      {
+        observer.update(errorMessage);
+      }
       return true;
     }
 

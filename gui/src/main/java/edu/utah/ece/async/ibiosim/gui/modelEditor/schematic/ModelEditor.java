@@ -468,7 +468,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		// log.addText("Converting SBML into SBOL and saving into the project's
 		// SBOL library.");
 		if (check) {
-			Utils.check(path + File.separator + modelId + ".xml", biomodel.getSBMLDocument(), false);
+			Utils.check(path + File.separator + modelId + ".xml", biomodel.getSBMLDocument(), false, this, null);
 		}
 		biosim.updateViews(modelId + ".xml");
 

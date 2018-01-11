@@ -408,7 +408,7 @@ public class Rules extends PanelObservable implements ActionListener, MouseListe
 						addStr = "0 = " + bioModel.removeBooleans(r.getMath());
 						try 
 						{
-              error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
+              error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true, this, null);
             } 
 						catch (SBMLException | IOException | XMLStreamException | BioSimException e) 
 						{
@@ -558,7 +558,7 @@ public class Rules extends PanelObservable implements ActionListener, MouseListe
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							try 
 							{
-                error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true);
+                error = !Validate.validateDoc("",bioModel.getSBMLDocument(),true, this, null);
               } 
 							catch (SBMLException | IOException | XMLStreamException | BioSimException e) {
                 error = true;
