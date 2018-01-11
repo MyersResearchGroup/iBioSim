@@ -3644,6 +3644,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							}
 							ModelEditor modelEditor = new ModelEditor(root + File.separator, modelId, this,
 									log, false, null, null, null, false, grid, lema);
+							modelEditor.addObserver(this);
 							modelEditor.save(false);
 							addTab(modelId, modelEditor, "Model Editor");
 							addToTree(modelId);
@@ -5804,6 +5805,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			String path = work.getAbsolutePath();
 			try {
 				ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased, false, lema);
+				gcm.addObserver(this);
 				addTab(filename, gcm, "Model Editor");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -5829,6 +5831,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				// addToTree(theGCMFile);
 				ModelEditor gcm = new ModelEditor(root + File.separator, theGCMFile, this, log, false, null,
 						null, null, false, false, lema);
+				gcm.addObserver(this);
 				addTab(theSBMLFile, gcm, "Model Editor");
 			}
 		} catch (Exception e1) {
@@ -7320,6 +7323,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				try {
 					modelEditor = new ModelEditor(root + File.separator, solutionFileIDs.get(0), this, log,
 							false, null, null, null, false, false, false);
+					modelEditor.addObserver(this);
 					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED,
 							"layout_verticalHierarchical");
 					modelEditor.getSchematic().actionPerformed(applyLayout);

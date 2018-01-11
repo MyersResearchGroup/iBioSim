@@ -3723,6 +3723,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
           try
           {
             ModelEditor gcm = new ModelEditor(properties.getRoot() + File.separator, sbmlName, gui, log, false, null, null, null, false, false, false);
+            gcm.addObservable(this);
             gui.addTab(sbmlName, gcm, "Model Editor");
             gui.addToTree(sbmlName);
           }

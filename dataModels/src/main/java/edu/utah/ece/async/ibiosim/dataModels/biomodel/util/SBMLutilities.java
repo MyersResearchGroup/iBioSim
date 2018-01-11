@@ -2634,8 +2634,7 @@ public class SBMLutilities extends CoreObservable
 			}
 			
 			Message message = new Message();
-      message.setDialog("Unable To Remove Variable", msg);
-      
+      message.setErrorDialog("Unable To Remove Variable", msg);
       if(observable != null)
       {
         observable.notifyObservers(message);
@@ -2644,8 +2643,6 @@ public class SBMLutilities extends CoreObservable
       {
         observer.update(message);
       }
-      observable.notifyObservers(message);
-      message.setConsole(msg);
 			
 		}
 		return inUse;

@@ -2143,15 +2143,35 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 		compartmentPanel = new Compartments(biomodel, this, paramsOnly, getParams, path + File.separator + file,
 				parameterChanges, false);
+		compartmentPanel.addObservable(this);
+		
 		reactionPanel = new Reactions(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges, this);
+		reactionPanel.addObservable(this);
+		
 		speciesPanel = new MySpecies(biomodel, paramsOnly, getParams, path + File.separator + file, parameterChanges,
 		  biomodel.isGridEnabled(), this);
+		speciesPanel.addObservable(this);
+		
 		parametersPanel = new Parameters(biomodel, this, paramsOnly, getParams, path + File.separator + file,
 				parameterChanges, (paramsOnly || !textBased) && !biomodel.isGridEnabled());
+		parametersPanel.addObservable(this);
+    
 		rulesPanel = new Rules(biomodel, this);
+		rulesPanel.addObservable(this);
+		
 		consPanel = new Constraints(biomodel, this);
+		consPanel.addObservable(this);
+    
 		eventPanel = new Events(biosim, biomodel, this, textBased, lema);
+		eventPanel.addObservable(this);
 
+
+    functionPanel = new Functions(biomodel, this);
+    functionPanel.addObservable(this);
+    
+    unitPanel = new Units(biomodel, this);
+    unitPanel.addObservable(this);
+    
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
 			modelPanel = new ModelPanel(biomodel, this);
@@ -2181,6 +2201,8 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 		this.schematic = new Schematic(biomodel, biosim, this, true, null, compartmentPanel, reactionPanel, rulesPanel,
 				consPanel, eventPanel, parametersPanel, lema);
+		schematic.addObservable(this);
+		
 		int size = SBMLutilities.getModelSize(biomodel.getSBMLDocument());
 		if (!textBased && size > LARGE_MODEL_SIZE) {
 			String[] editor = { "Open in Textual Editor", "Open in Graphical Editor" };
@@ -2220,8 +2242,6 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 		}
 
-		functionPanel = new Functions(biomodel, this);
-		unitPanel = new Units(biomodel, this);
 		// JPanel defnPanel = new JPanel(new BorderLayout());
 		// defnPanel.add(mainPanelNorth, "North");
 		// defnPanel.add(functionPanel,"Center");
