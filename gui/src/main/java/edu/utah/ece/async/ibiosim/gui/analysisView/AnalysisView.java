@@ -15,7 +15,6 @@ package edu.utah.ece.async.ibiosim.gui.analysisView;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -29,18 +28,13 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
@@ -58,31 +52,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.xml.stream.XMLStreamException;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jlibsedml.AbstractTask;
-import org.jlibsedml.Algorithm;
-import org.jlibsedml.AlgorithmParameter;
-import org.jlibsedml.Annotation;
-import org.jlibsedml.DataGenerator;
-import org.jlibsedml.Libsedml;
-import org.jlibsedml.OneStep;
 import org.jlibsedml.SEDMLDocument;
-import org.jlibsedml.SedML;
-import org.jlibsedml.Simulation;
-import org.jlibsedml.SteadyState;
-import org.jlibsedml.Task;
-import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.Variable;
-import org.jlibsedml.VariableSymbol;
-import org.jlibsedml.modelsupport.KisaoOntology;
-import org.jlibsedml.modelsupport.KisaoTerm;
-//import org.jmathml.ASTNode;
-import org.sbml.libsbml.ASTNode;
 
 import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
@@ -91,13 +63,10 @@ import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.analysis.properties.PropertiesUtil;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
-import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
 import edu.utah.ece.async.ibiosim.gui.lpnEditor.LHPNEditor;
@@ -1668,6 +1637,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   public void setSim(String newSimName)
   {
     properties.setSim(newSimName);
+  }
+  
+  public void setFileStem(String fileStem)
+  {
+    properties.setFileStem(fileStem);
   }
 
   public boolean hasChanged()

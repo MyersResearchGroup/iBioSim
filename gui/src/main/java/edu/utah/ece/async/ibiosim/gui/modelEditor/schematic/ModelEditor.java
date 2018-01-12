@@ -1170,25 +1170,27 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 					} else {
 						new File(path + File.separator + simName + File.separator + stem
 								+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""))
+										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")
+										.replace("=", "_").replaceAll("-", "_").replace(".","_"))
 												.mkdir();
+						analysisView.setFileStem(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_")
+										.replaceAll("-", "_").replace(".","_"));
 						createSBML(stem, sweep, analysisMethod);
 						AnalysisThread thread = new AnalysisThread(analysisView);
-						String simStem = 
-                stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-                .replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
-						thread.start(
-								false);
+						thread.start(false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-								.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+								.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")
+								.replace("=", "_").replaceAll("-", "_").replace(".","_"));
 						// analysisView.emptyFrames();
 						if (ignoreSweep) {
 							j = max;
 						}
 					}
 					levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-							.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+							.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")
+							.replace("=", "_").replaceAll("-", "_").replace(".","_"));
 				}
 				new ConstraintTermThread(analysisView).start(threads, dirs, levelOne, stem);
 			} else {
@@ -1723,7 +1725,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 		}
 		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
-				.replace("\"", "").replace(" ", "_").replace(",", "");
+				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_").replaceAll("-", "_").replace(".","_");
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
