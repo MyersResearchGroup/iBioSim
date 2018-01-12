@@ -30,7 +30,7 @@ import org.sbml.jsbml.Species;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
- * 
+ * This class is used for running the Java version of the GeneNet learning algorithm.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -42,6 +42,50 @@ public class Run
 
   private static int	experiment;
 
+  /**
+   * Runs GeneNet with custom values.
+   * 
+   * @param Ta - activation threshold
+   * @param Tr - repression threshold
+   * @param Ti - influence threshold
+   * @param Tt - relaxing of activation repression threshold.
+   * @param bins - number of bins
+   * @param filename - the input sbml file
+   * @param directory - the directory of the project.
+   * @return true if learn was completed. False otherwise.
+   * @throws BioSimException - if something wrong happens with the learn procedure.
+   */
+  public static boolean run(double Ta, double Tr, double Ti, double Tt, int bins, String filename, String directory) throws BioSimException
+  {
+    
+    SpeciesCollection S = new SpeciesCollection();
+    Experiments E = new Experiments();
+    Encodings L = new Encodings();
+    Thresholds T = new Thresholds(Ta, Tr, Ti, Tt);
+    NetCon C = new NetCon();
+    init(filename, S);
+    loadExperiments(directory, S, E);
+    if(experiment < 1)
+    {
+      return false;
+    }
+    Learn learn = new Learn(bins);
+    learn.learnNetwork(S, E, C, T, L);
+    learn.getDotFile("method.gcm", directory, S, C);
+    learn.getDotFile("method.dot", directory, S, C);
+
+    return true;
+  }
+  
+  /**
+   * Runs GeneNet with default values.
+   * 
+
+   * @param filename - the input sbml file
+   * @param directory - the directory of the project.
+   * @return true if learn was completed. False otherwise.
+   * @throws BioSimException - if something wrong happens with the learn procedure.
+   */
   public static boolean run(String filename, String directory) throws BioSimException
   {
     
@@ -64,6 +108,14 @@ public class Run
     return true;
   }
 
+  /**
+   * Reads in time-series data to an {@link Experiments} object.
+   * 
+   * @param directory - where the experiments are located.
+   * @param S - the interesting species.
+   * @param E - where the data is stored.
+   * @throws BioSimException - if there is a problem reading the data.
+   */
   public static void loadExperiments(String directory, SpeciesCollection S, Experiments E) throws BioSimException
   {
     File path = new File(directory);
@@ -84,6 +136,12 @@ public class Run
     }
   }
 
+  /**
+   * Retrieves the interesting species of a model.
+   * 
+   * @param filename - an SBML model.
+   * @param S - where the interesting species are stored.
+   */
   public static void init(String filename, SpeciesCollection S)
   {
     try
