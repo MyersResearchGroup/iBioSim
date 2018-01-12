@@ -33,7 +33,6 @@ import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
-import org.jlibsedml.SEDMLDocument;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
@@ -5627,19 +5626,6 @@ public class SBMLutilities extends CoreObservable
 				}
 			}
 		}
-//		if (display)
-//		{
-//			messageArea.setLineWrap(true);
-//			messageArea.setEditable(false);
-//			messageArea.setSelectionStart(0);
-//			messageArea.setSelectionEnd(0);
-//			JScrollPane scroll = new JScrollPane();
-//			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
-//			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
-//			scroll.setViewportView(messageArea);
-//			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Model Completeness Errors", JOptionPane.ERROR_MESSAGE);
-//
-//		}
 	}
 
 	// TODO: should weave in better with existing conversion
@@ -5783,7 +5769,7 @@ public class SBMLutilities extends CoreObservable
 				}
 				
 				Message message = new Message();
-				message.setDialog("SBML Conversion Errors and Warnings", msg);
+				message.setErrorDialog("SBML Conversion Errors and Warnings", msg);
 				
 				if(observable != null)
 				{
@@ -5793,8 +5779,6 @@ public class SBMLutilities extends CoreObservable
 				{
 				  observer.update(message);
 				}
-				observable.notifyObservers(message);
-				message.setConsole(msg);
 			}
 			convertToL3(doc);
 			doc.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
