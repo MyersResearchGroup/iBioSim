@@ -182,17 +182,17 @@ public class Run extends CoreObservable implements ActionListener
   {
     if (exitValue == 143)
     {
-      message.setErrorDialog("The simulation was" + " canceled by the user.", "Canceled Simulation");
+      message.setDialog("Canceled Simulation", "The simulation was" + " canceled by the user.");
       this.notifyObservers(message);
     }
     else if (exitValue == 139)
     {
-      message.setErrorDialog("The selected model is not a valid sbml file." + "\nYou must select an sbml file.", "Not An SBML File");
+      message.setErrorDialog("Not An SBML File", "The selected model is not a valid sbml file." + "\nYou must select an sbml file.");
       this.notifyObservers(message);
     }
     else if(exitValue != 0)
     {
-      message.setErrorDialog( "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.", "Error");
+      message.setErrorDialog("Error In Execution!", "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.");
       this.notifyObservers(message);
     }
   }

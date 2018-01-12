@@ -2633,7 +2633,7 @@ public class SBMLutilities extends CoreObservable
 			}
 			
 			Message message = new Message();
-      message.setErrorDialog("Unable To Remove Variable", msg);
+      message.setScrollableErrorDialog("Unable To Remove Variable", msg);
       if(observable != null)
       {
         observable.notifyObservers(message);
@@ -5769,7 +5769,7 @@ public class SBMLutilities extends CoreObservable
 				}
 				
 				Message message = new Message();
-				message.setErrorDialog("SBML Conversion Errors and Warnings", msg);
+				message.setScrollableErrorDialog("SBML Conversion Errors and Warnings", msg);
 				
 				if(observable != null)
 				{

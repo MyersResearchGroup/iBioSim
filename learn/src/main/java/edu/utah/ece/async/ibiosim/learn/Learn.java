@@ -161,7 +161,6 @@ public class Learn implements BioObserver
 
   public static void main(String[] args) 
   {
-
     if(args.length  < 2)
     {
       usage();

@@ -25,6 +25,7 @@ public class Message {
   public static enum MessageType
   {
       ERROR,
+      SCROLLABLE_ERROR,
       DIALOG,
       LOG,
       CONSOLE,
@@ -43,6 +44,12 @@ public class Message {
     this.type = MessageType.NONE;
   }
   
+  public void setScrollableErrorDialog(String title, String message)
+  {
+    this.type = MessageType.SCROLLABLE_ERROR;
+    this.message = message;
+    this.title = title;
+  }
   
   public void setErrorDialog(String title, String message)
   {
@@ -105,6 +112,10 @@ public class Message {
     return this.type == MessageType.ERROR;
   }
   
+  public boolean isScrollableErrorDialog()
+  {
+    return this.type == MessageType.SCROLLABLE_ERROR;
+  }
   
   public String getMessage()
   {

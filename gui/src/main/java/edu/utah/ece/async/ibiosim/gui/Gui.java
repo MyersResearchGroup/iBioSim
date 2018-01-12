@@ -9029,9 +9029,17 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
   @Override
   public void update(Message message) {
-    if (message.isConsole()) {
+    if (message.isConsole()) 
+    {
       System.out.println(message.getMessage());
-    } else if (message.isErrorDialog()) {
+    } 
+    else if(message.isErrorDialog())
+    {
+      JOptionPane.showMessageDialog(frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
+      
+    }
+    else if (message.isScrollableErrorDialog()) 
+    {
       JTextArea messageArea = new JTextArea(message.getMessage());
       messageArea.setLineWrap(true);
       messageArea.setEditable(false);
@@ -9040,10 +9048,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
       scroll.setPreferredSize(new java.awt.Dimension(600, 600));
       scroll.setViewportView(messageArea);
       JOptionPane.showMessageDialog(Gui.frame, scroll, message.getTitle(), JOptionPane.ERROR_MESSAGE);
-    } else if (message.isDialog()) {
+    } 
+    else if (message.isDialog()) 
+    {
       JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
           JOptionPane.PLAIN_MESSAGE);
-    } else if (message.isLog()) {
+    } 
+    else if (message.isLog()) 
+    {
       log.addText(message.getMessage());
     }
     
