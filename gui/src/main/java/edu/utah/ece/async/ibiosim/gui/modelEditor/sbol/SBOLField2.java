@@ -346,7 +346,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		switch (choice) {
 
 		case 0: // Registry Part
-			SBOLDocument selection = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+			SBOLDocument selection = new RegistryInputDialog(Gui.frame, RegistryInputDialog.ALL_PARTS,
 					edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, workingDoc).getInput();
 
 			if (selection != null) 

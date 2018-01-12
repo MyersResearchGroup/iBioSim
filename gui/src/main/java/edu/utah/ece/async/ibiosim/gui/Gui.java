@@ -4504,9 +4504,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 	
 	public void downloadSynBioHub() {
-		RegistryInputDialog registryInputDialog = new RegistryInputDialog(null, RegistryInputDialog.ALL_PARTS,
+		RegistryInputDialog registryInputDialog = new RegistryInputDialog(Gui.frame, RegistryInputDialog.ALL_PARTS,
 				edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, sbolDocument);
 		registryInputDialog.allowCollectionSelection();
+		registryInputDialog.setObjectType("");
 		SBOLDocument selection = registryInputDialog.getInput();
 		if (selection != null) 
 		{
