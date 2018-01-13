@@ -1725,7 +1725,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 		}
 		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
-				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_").replaceAll("-", "_").replace(".","_");
+				.replace("\"", "").replace(" ", "_").replace(",", "");
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
