@@ -384,13 +384,13 @@ public class AnalysisPropertiesWriter {
     sedml.addSimulation(simulation);
     task = new Task(taskId, "", taskId+"_model", simulation.getId());
     sedml.addTask(task);
-    DataGenerator dataGen = sedml.getDataGeneratorWithId("time_"+taskId+"_dg");
+    DataGenerator dataGen = sedml.getDataGeneratorWithId(taskId+"_time_dg");
     if (dataGen != null) {
       sedml.removeDataGenerator(dataGen);
     }
-    Variable variable = new Variable("time_"+taskId,"",taskId,VariableSymbol.TIME);
-    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString("time_"+taskId);
-    dataGen = new DataGenerator("time_"+taskId+"_dg","time",math);
+    Variable variable = new Variable(taskId+"_time","",taskId,VariableSymbol.TIME);
+    org.jmathml.ASTNode math = org.jlibsedml.Libsedml.parseFormulaString(taskId+"_time");
+    dataGen = new DataGenerator(taskId+"_time_dg","time",math);
     dataGen.addVariable(variable);
     sedml.addDataGenerator(dataGen);
   }

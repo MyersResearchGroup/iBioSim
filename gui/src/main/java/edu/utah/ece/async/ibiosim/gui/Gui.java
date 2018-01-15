@@ -5548,89 +5548,89 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-	protected void renameSEDML(String oldName, String newName) {
-		SedML sedml = sedmlDocument.getSedMLModel();
-		if (oldName.endsWith(".prb") || oldName.endsWith(".grf")) {
-			String outputId = oldName.replace(".prb", "").replace(".grf", "");
-			String newOutputId = newName.replace(".prb", "").replace(".grf", "");
-			Output output = sedml.getOutputWithId(outputId);
-			if (output != null) {
-				Output newOutput = SEDMLutilities.copyOutput(output, newOutputId);
-				sedml.addOutput(newOutput);
-				sedml.removeOutput(output);
-			}
-		} else if (oldName.endsWith(".xml")) {
-			for (org.jlibsedml.Model model : sedml.getModels()) {
-				if (model.getSource().equals(oldName)) {
-					model.setSource(newName);
-				}
-			}
-		} else {
-			AbstractTask task = sedml.getTaskWithId(oldName);
-			if (task != null) {
-				org.jlibsedml.Model mod = sedml.getModelWithId(task.getModelReference());
-				org.jlibsedml.Model newMod = SEDMLutilities.copyModel(mod, newName+"_model");
-				sedml.addModel(newMod);
-				sedml.removeModel(mod);
-				Simulation sim = sedml.getSimulation(task.getSimulationReference());
-				Simulation newSim = SEDMLutilities.copySimulation(sim, newName+"_sim");
-				sedml.addSimulation(newSim);
-				sedml.removeSimulation(sim);
-				AbstractTask newTask = SEDMLutilities.copyTask(task, newName, newMod.getId(), newSim.getId());
-				sedml.addTask(newTask);
-				sedml.removeTask(task);
-				Output output = sedml.getOutputWithId(oldName + "__graph");
-				if (output != null) {
-					Output newOutput = SEDMLutilities.copyOutput(output, newName + "__graph");
-					sedml.addOutput(newOutput);
-					sedml.removeOutput(output);
-				}
-				output = sedml.getOutputWithId(oldName + "__report");
-				if (output != null) {
-					Output newOutput = SEDMLutilities.copyOutput(output, newName + "__report");
-					sedml.addOutput(newOutput);
-					sedml.removeOutput(output);
-				}
-				for (DataGenerator dg : sedml.getDataGenerators()) {
-					for (Variable var : dg.getListOfVariables()) {
-						if (var.getReference().equals(oldName)) {
-							var.setReference(newName);
-						}
-					}
-				}
-				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
-				for (AbstractTask subTask : sedml.getTasks()) {
-					if (subTask.getId().startsWith(oldName + "__")) {
-						subTasks.add(subTask);
-					}
-				}
-				for (AbstractTask subTask : subTasks) {
-					String newId = subTask.getId().replace(oldName + "__", newName + "__");
-					org.jlibsedml.Model subMod = sedml.getModelWithId(subTask.getModelReference());
-					org.jlibsedml.Model subNewMod = SEDMLutilities.copyModel(subMod, subTask.getModelReference().replace(oldName + "__", newName + "__"));
-					sedml.addModel(subNewMod);
-					sedml.removeModel(subMod);
-					Simulation subSim = sedml.getSimulation(subTask.getSimulationReference());
-					Simulation subNewSim = SEDMLutilities.copySimulation(subSim, subTask.getSimulationReference().replace(oldName + "__", newName + "__"));
-					sedml.addSimulation(subNewSim);
-					sedml.removeSimulation(subSim);
-					newTask = SEDMLutilities.copyTask(subTask, newId, subNewMod.getId(), subNewSim.getId());
-					sedml.addTask(newTask);
-					for (DataGenerator dg : sedml.getDataGenerators()) {
-						for (Variable var : dg.getListOfVariables()) {
-							if (var.getReference().equals(subTask.getId())) {
-								var.setReference(newId);
-								break;
-							}
-						}
-					}
-					sedml.removeTask(subTask);
-				}
-			}
-
-		}
-		writeSEDMLDocument();
-	}
+//	private void renameSEDML(String oldName, String newName) {
+//		SedML sedml = sedmlDocument.getSedMLModel();
+//		if (oldName.endsWith(".prb") || oldName.endsWith(".grf")) {
+//			String outputId = oldName.replace(".prb", "").replace(".grf", "");
+//			String newOutputId = newName.replace(".prb", "").replace(".grf", "");
+//			Output output = sedml.getOutputWithId(outputId);
+//			if (output != null) {
+//				Output newOutput = SEDMLutilities.copyOutput(output, newOutputId);
+//				sedml.addOutput(newOutput);
+//				sedml.removeOutput(output);
+//			}
+//		} else if (oldName.endsWith(".xml")) {
+//			for (org.jlibsedml.Model model : sedml.getModels()) {
+//				if (model.getSource().equals(oldName)) {
+//					model.setSource(newName);
+//				}
+//			}
+//		} else {
+//			AbstractTask task = sedml.getTaskWithId(oldName);
+//			if (task != null) {
+//				org.jlibsedml.Model mod = sedml.getModelWithId(task.getModelReference());
+//				org.jlibsedml.Model newMod = SEDMLutilities.copyModel(mod, newName+"_model");
+//				sedml.addModel(newMod);
+//				sedml.removeModel(mod);
+//				Simulation sim = sedml.getSimulation(task.getSimulationReference());
+//				Simulation newSim = SEDMLutilities.copySimulation(sim, newName+"_sim");
+//				sedml.addSimulation(newSim);
+//				sedml.removeSimulation(sim);
+//				AbstractTask newTask = SEDMLutilities.copyTask(task, newName, newMod.getId(), newSim.getId());
+//				sedml.addTask(newTask);
+//				sedml.removeTask(task);
+//				Output output = sedml.getOutputWithId(oldName + "__graph");
+//				if (output != null) {
+//					Output newOutput = SEDMLutilities.copyOutput(output, newName + "__graph");
+//					sedml.addOutput(newOutput);
+//					sedml.removeOutput(output);
+//				}
+//				output = sedml.getOutputWithId(oldName + "__report");
+//				if (output != null) {
+//					Output newOutput = SEDMLutilities.copyOutput(output, newName + "__report");
+//					sedml.addOutput(newOutput);
+//					sedml.removeOutput(output);
+//				}
+//				for (DataGenerator dg : sedml.getDataGenerators()) {
+//					for (Variable var : dg.getListOfVariables()) {
+//						if (var.getReference().equals(oldName)) {
+//							var.setReference(newName);
+//						}
+//					}
+//				}
+//				ArrayList<AbstractTask> subTasks = new ArrayList<AbstractTask>();
+//				for (AbstractTask subTask : sedml.getTasks()) {
+//					if (subTask.getId().startsWith(oldName + "__")) {
+//						subTasks.add(subTask);
+//					}
+//				}
+//				for (AbstractTask subTask : subTasks) {
+//					String newId = subTask.getId().replace(oldName + "__", newName + "__");
+//					org.jlibsedml.Model subMod = sedml.getModelWithId(subTask.getModelReference());
+//					org.jlibsedml.Model subNewMod = SEDMLutilities.copyModel(subMod, subTask.getModelReference().replace(oldName + "__", newName + "__"));
+//					sedml.addModel(subNewMod);
+//					sedml.removeModel(subMod);
+//					Simulation subSim = sedml.getSimulation(subTask.getSimulationReference());
+//					Simulation subNewSim = SEDMLutilities.copySimulation(subSim, subTask.getSimulationReference().replace(oldName + "__", newName + "__"));
+//					sedml.addSimulation(subNewSim);
+//					sedml.removeSimulation(subSim);
+//					newTask = SEDMLutilities.copyTask(subTask, newId, subNewMod.getId(), subNewSim.getId());
+//					sedml.addTask(newTask);
+//					for (DataGenerator dg : sedml.getDataGenerators()) {
+//						for (Variable var : dg.getListOfVariables()) {
+//							if (var.getReference().equals(subTask.getId())) {
+//								var.setReference(newId);
+//								break;
+//							}
+//						}
+//					}
+//					sedml.removeTask(subTask);
+//				}
+//			}
+//
+//		}
+//		writeSEDMLDocument();
+//	}
 
 	protected void rename() {
 		if (!tree.getFile().equals(root)) {
@@ -5763,7 +5763,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						updateViewNames(tree.getFile(), newName);
 						deleteFromTree(oldName);
 						addToTree(newName);
-						renameSEDML(oldName, newName);
+						copySEDML(oldName, newName);
+						deleteFromSEDML(oldName);
+						//renameSEDML(oldName, newName);
 					}
 				}
 			} catch (IOException e1) {
