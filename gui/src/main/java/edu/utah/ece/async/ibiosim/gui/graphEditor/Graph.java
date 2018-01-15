@@ -6416,7 +6416,7 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 		  learnSpecs = new ArrayList<String>();
 		  if (background != null) {
 		    if (background.endsWith(".gcm")) {
-		      BioModel gcm = new BioModel(gui.getRoot());
+		      BioModel gcm =  BioModel.createBioModel(gui.getRoot(), this);
 		      gcm.load(background);
 		      learnSpecs = gcm.getSpecies();
 		    }
@@ -6453,7 +6453,7 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 		      // END ADDED BY SB.
 		    }
 		    else {
-		      SBMLDocument document = SBMLutilities.readSBML(background);
+		      SBMLDocument document = SBMLutilities.readSBML(background, this, null);
 		      Model model = document.getModel();
 		      ListOf<Species> ids = model.getListOfSpecies();
 		      for (int i = 0; i < model.getSpeciesCount(); i++) {

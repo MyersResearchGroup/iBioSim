@@ -2906,8 +2906,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					out.write(model);
 					out.close();
 					String[] file = GlobalConstants.splitPath(filename.trim());
-					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim());
-					Utils.check(root + File.separator + filename.trim(), document, false);
+					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim(), null, this);
+					Utils.check(root + File.separator + filename.trim(), document, false, null, this);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
 					addToTree(file[file.length - 1]);
@@ -3635,7 +3635,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 								"Invalid ID", JOptionPane.ERROR_MESSAGE);
 					} else {
 						if (overwrite(root + File.separator + modelId, modelId)) {
-							BioModel bioModel = new BioModel(root);
+							BioModel bioModel = BioModel.createBioModel(root, this);
 							bioModel.createSBMLDocument(modelId.replace(".xml", ""), grid, false);
 							bioModel.save(root + File.separator + modelId);
 							int i = getTab(modelId);
@@ -3644,6 +3644,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							}
 							ModelEditor modelEditor = new ModelEditor(root + File.separator, modelId, this,
 									log, false, null, null, null, false, grid, lema);
+							modelEditor.addObserver(this);
 							modelEditor.save(false);
 							addTab(modelId, modelEditor, "Model Editor");
 							addToTree(modelId);
@@ -3661,7 +3662,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			throws SBMLException, FileNotFoundException, XMLStreamException {
 		String newFile = null;
 		SBMLutilities.checkModelCompleteness(document, true);
-		Utils.check(null, document, false);
+		Utils.check(null, document, false, null, this);
 		newFile = file;
 		newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 		if (Character.isDigit(newFile.charAt(0))) {
@@ -3692,7 +3693,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
-			}
+			} catch (BioSimException e) {
+			  JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
 			SBMLWriter writer = new SBMLWriter();
 			if (document.getModel().getId() == null || document.getModel().getId().equals("")) {
 				document.getModel().setId(newFile.replace(".xml", ""));
@@ -3719,7 +3724,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	private String importSBMLFile(String filename,boolean open) {
 		String newFile = null;
 		try {
-			SBMLDocument document = SBMLutilities.readSBML(filename.trim());
+			SBMLDocument document = SBMLutilities.readSBML(filename.trim(), null, this);
 			if (document == null)
 				return null;
 			String[] file = GlobalConstants.splitPath(filename.trim());
@@ -3798,8 +3803,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Xwriter.write(sbmlDoc, root + File.separator + "_" + modelFileName);
 		AnalysisProperties properties;
 		properties = new AnalysisProperties(analysisId, modelFileName, root, false);
-	    BioModel biomodel = new BioModel(root + File.separator);
-	    biomodel.addObserver(this);
+		properties.addObserver(this);
+	    BioModel biomodel =  BioModel.createBioModel(root + File.separator, this);
 	    biomodel.load(root + File.separator + "_" + modelFileName);
 	    SBMLDocument flatten = biomodel.flattenModel(true);
 	    String newFilename = root + File.separator + analysisId + File.separator + modelFileName;
@@ -4181,7 +4186,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			if (entry.getFormat().toString().contains("sbml")) {
 				try {
 					String fileName = entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath();
-					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath());
+					SBMLDocument document = SBMLutilities.readSBML(entry.extractFile (new File(path + File.separator + entry.getFileName())).getAbsolutePath(), null, this);
 					SBMLWriter writer = new SBMLWriter();
 					String[] file = GlobalConstants.splitPath(fileName.trim());
 					writer.writeSBMLToFile(document, root + File.separator + file[file.length - 1]);
@@ -4189,7 +4194,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				catch (XMLStreamException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				} catch (BioSimException e) {
+				  JOptionPane.showMessageDialog(frame, e.getMessage(), e.getTitle(),
+            JOptionPane.ERROR_MESSAGE);
+        }
 			}
 		}
 		for (ArchiveEntry entry : ca.getEntries ())
@@ -5321,12 +5329,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	private void copyDirectory(String srcDir, String destDir, String copyName)
-			throws SBMLException, XMLStreamException, IOException {
+			throws SBMLException, XMLStreamException, IOException, BioSimException {
 		new File(destDir).mkdir();
 		String[] files = new File(srcDir).list();
 		for (String file : files) {
 			if (file.endsWith(".sbml") || file.equals(".xml")) {
-				SBMLDocument document = SBMLutilities.readSBML(srcDir + File.separator + file);
+				SBMLDocument document = SBMLutilities.readSBML(srcDir + File.separator + file, null, this);
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBMLToFile(document, destDir + File.separator + file);
 			} else if (new File(srcDir + File.separator + file).isFile()) {
@@ -5384,7 +5392,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				if (checkFiles(oldName, copy)) {
 					if (overwrite(root + File.separator + copy, copy)) {
 						if (copy.endsWith(".xml")) {
-							SBMLDocument document = SBMLutilities.readSBML(tree.getFile());
+							SBMLDocument document = SBMLutilities.readSBML(tree.getFile(), null, this);
 							List<URI> sbolURIs = new LinkedList<URI>();
 							String sbolStrand = AnnotationUtility.parseSBOLAnnotation(document.getModel(), sbolURIs);
 							Iterator<URI> sbolIterator = sbolURIs.iterator();
@@ -5715,7 +5723,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						}
 						if (tree.getFile().endsWith(".xml")) {
 							new File(tree.getFile()).renameTo(new File(root + File.separator + newName));
-							SBMLDocument document = SBMLutilities.readSBML(root + File.separator + newName);
+							SBMLDocument document = SBMLutilities.readSBML(root + File.separator + newName, null, this);
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBMLToFile(document, root + File.separator + newName);
@@ -5775,7 +5783,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
 				e.printStackTrace();
-			}
+			} catch (BioSimException e) {
+			  JOptionPane.showMessageDialog(frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
+      }
 		}
 	}
 
@@ -5797,6 +5808,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			String path = work.getAbsolutePath();
 			try {
 				ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased, false, lema);
+				gcm.addObserver(this);
 				addTab(filename, gcm, "Model Editor");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -5822,6 +5834,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				// addToTree(theGCMFile);
 				ModelEditor gcm = new ModelEditor(root + File.separator, theGCMFile, this, log, false, null,
 						null, null, false, false, lema);
+				gcm.addObserver(this);
 				addTab(theSBMLFile, gcm, "Model Editor");
 			}
 		} catch (Exception e1) {
@@ -6102,6 +6115,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 								JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
+					catch (BioSimException e) {
+		        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+		          JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		      }
 				}
 			}
 		} catch (IOException e) {
@@ -6884,7 +6902,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				in.close();
 				out.close();
 
-				BioModel bioModel = new BioModel(root);
+				BioModel bioModel =  BioModel.createBioModel(root, this);
 				try {
 					bioModel.load(root + File.separator + filename);
 					GCM2SBML gcm2sbml = new GCM2SBML(bioModel);
@@ -6903,6 +6921,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
 	}
 
 	public void copySFiles(String filename, String directory) {
@@ -7303,6 +7326,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				try {
 					modelEditor = new ModelEditor(root + File.separator, solutionFileIDs.get(0), this, log,
 							false, null, null, null, false, false, false);
+					modelEditor.addObserver(this);
 					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED,
 							"layout_verticalHierarchical");
 					modelEditor.getSchematic().actionPerformed(applyLayout);
@@ -8827,7 +8851,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					views.add(s);
 				}
 			} else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
-				BioModel gcm = new BioModel(root);
+				BioModel gcm = BioModel.createBioModel(root, this);
 				try {
 					gcm.load(root + File.separator + s);
 					if (gcm.getSBMLComp() != null) {
@@ -8953,6 +8977,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 							JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 				SBMLutilities.checkModelCompleteness(document, true);
 				SBMLWriter writer = new SBMLWriter();
 				try {
@@ -9003,15 +9032,33 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
   @Override
   public void update(Message message) {
-    if (message.isConsole()) {
+    if (message.isConsole()) 
+    {
       System.out.println(message.getMessage());
-    } else if (message.isErrorDialog()) {
-      JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-    } else if (message.isDialog()) {
+    } 
+    else if(message.isErrorDialog())
+    {
+      JOptionPane.showMessageDialog(frame, message.getMessage(), message.getTitle(), JOptionPane.ERROR_MESSAGE);
+      
+    }
+    else if (message.isScrollableErrorDialog()) 
+    {
+      JTextArea messageArea = new JTextArea(message.getMessage());
+      messageArea.setLineWrap(true);
+      messageArea.setEditable(false);
+      JScrollPane scroll = new JScrollPane();
+      scroll.setMinimumSize(new java.awt.Dimension(600, 600));
+      scroll.setPreferredSize(new java.awt.Dimension(600, 600));
+      scroll.setViewportView(messageArea);
+      JOptionPane.showMessageDialog(Gui.frame, scroll, message.getTitle(), JOptionPane.ERROR_MESSAGE);
+    } 
+    else if (message.isDialog()) 
+    {
       JOptionPane.showMessageDialog(Gui.frame, message.getMessage(), message.getTitle(),
           JOptionPane.PLAIN_MESSAGE);
-    } else if (message.isLog()) {
+    } 
+    else if (message.isLog()) 
+    {
       log.addText(message.getMessage());
     }
     

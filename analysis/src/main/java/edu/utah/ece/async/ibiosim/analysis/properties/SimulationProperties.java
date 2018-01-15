@@ -16,6 +16,8 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
+
 /**
  * The simulation properties contains information associated with the simulation options.
  * 
@@ -25,8 +27,8 @@ import java.util.List;
  * @version $Rev$
  * @version %I%
  */
-public class SimulationProperties {
-
+public final class SimulationProperties extends CoreObservable
+{
 
   private int         numSteps, run, startIndex;
   private double        initialTime, outputStartTime, minTimeStep, maxTimeStep, printInterval, timeLimit, absError, relError;

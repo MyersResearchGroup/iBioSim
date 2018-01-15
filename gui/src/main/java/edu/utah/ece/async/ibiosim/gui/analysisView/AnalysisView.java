@@ -170,6 +170,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   private boolean change;
   
   private String root;
+  
   /**
    * This is the constructor for the GUI. It initializes all the input fields,
    * puts them on panels, adds the panels to the frame, and then displays the
@@ -196,7 +197,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     super(new BorderLayout());
 
     this.properties = new AnalysisProperties(simName, modelFile, root, abstractionPanel == null);
-
+    properties.addObservable(this);
+    
     this.gui = gui;
     this.log = log;
     this.simTab = simTab;
@@ -3695,6 +3697,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
           try
           {
             ModelEditor gcm = new ModelEditor(properties.getRoot() + File.separator, sbmlName, gui, log, false, null, null, null, false, false, false);
+            gcm.addObservable(this);
             gui.addTab(sbmlName, gcm, "Model Editor");
             gui.addToTree(sbmlName);
           }

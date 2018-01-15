@@ -1153,7 +1153,7 @@ public class DataManager extends PanelObservable implements ActionListener, Tabl
 		if (background != null) {
 			if (background.contains(".gcm")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				BioModel gcm = new BioModel(biosim.getRoot());
+				BioModel gcm =  BioModel.createBioModel(biosim.getRoot(), this);
 				try {
           gcm.load(background);
 
@@ -1166,6 +1166,11 @@ public class DataManager extends PanelObservable implements ActionListener, Tabl
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 			}
 			else if (background.contains(".lpn")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
@@ -1215,7 +1220,7 @@ public class DataManager extends PanelObservable implements ActionListener, Tabl
 			else {
 				SBMLDocument document;
         try {
-          document = SBMLutilities.readSBML(background);
+          document = SBMLutilities.readSBML(background, this, null);
           Model model = document.getModel();
           ArrayList<String> getSpecies = new ArrayList<String>();
           for (int i = 0; i < model.getSpeciesCount(); i++) {
@@ -1231,6 +1236,10 @@ public class DataManager extends PanelObservable implements ActionListener, Tabl
           e.printStackTrace();
         } catch (IOException e) {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+          e.printStackTrace();
+        } catch (BioSimException e) {
+          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+            JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
 			}

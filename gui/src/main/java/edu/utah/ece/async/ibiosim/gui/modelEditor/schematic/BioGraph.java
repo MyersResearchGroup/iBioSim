@@ -70,6 +70,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.comp.Grid;
@@ -1338,7 +1339,8 @@ public class BioGraph extends mxGraph {
 		// map components edges
 		for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
 			String id = bioModel.getSBMLCompModel().getListOfSubmodels().get(i).getId();
-			BioModel compBioModel = new BioModel(bioModel.getPath());
+			//BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
+			BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), modelEditor);
 			String modelFileName = bioModel.getModelFileName(id);
 			try {
         compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
@@ -1347,6 +1349,11 @@ public class BioGraph extends mxGraph {
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
@@ -2287,7 +2294,7 @@ public class BioGraph extends mxGraph {
 		boolean needsPositioning = false;
 				
 		//set the correct compartment status
-		BioModel compBioModel = new BioModel(bioModel.getPath());
+		BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), modelEditor);
 		boolean compart = false;
 		//String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
 		String label = SBMLutilities.getArrayId(bioModel.getSBMLDocument(), id);
@@ -2305,6 +2312,11 @@ public class BioGraph extends mxGraph {
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			compart = compBioModel.IsWithinCompartment();

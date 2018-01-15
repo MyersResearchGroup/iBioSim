@@ -3102,7 +3102,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				//e.printStackTrace();
 			}
 		} else if (sourceFile.endsWith(".xml")) {
-			BioModel bioModel = new BioModel(workDir);
+			BioModel bioModel =  BioModel.createBioModel(workDir, this);
 			try {
         bioModel.load(workDir + File.separator + sourceFile);
         ModelEditor.saveLPN(bioModel, directory + File.separator + sourceFile.replace(".xml", ".lpn"));
@@ -3111,6 +3111,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			

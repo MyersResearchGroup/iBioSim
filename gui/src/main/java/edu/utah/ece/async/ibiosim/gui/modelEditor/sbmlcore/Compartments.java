@@ -47,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -66,7 +67,7 @@ import org.sbml.jsbml.UnitDefinition;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Compartments extends JPanel implements ActionListener, MouseListener {
+public class Compartments extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -348,6 +349,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(dimLabel);
 		compPanel.add(dimText);
 		if (paramsOnly) {
+		  Compartments instance = this;
 			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
 				@Override
@@ -361,7 +363,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						compSize.setEnabled(false);
 						SBMLDocument d;
             try {
-              d = SBMLutilities.readSBML(file);
+              d = SBMLutilities.readSBML(file, instance, null);
 
               if (d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).isSetSize()) {
                 compSize.setText(d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).getSize() + "");
@@ -371,6 +373,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
               e1.printStackTrace();
             } catch (IOException e1) {
               JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+            catch (BioSimException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
               e1.printStackTrace();
             }
 					}
@@ -796,7 +803,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		if (index != -1) {
 			if (!Utils.compartmentInUse(bioModel.getSBMLDocument(),
 					((String) compartments.getSelectedValue()).split("\\[| ")[0])) {
-				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split("\\[| ")[0], false, true, true)) {
+				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split("\\[| ")[0], false, true, this, null)) {
 					Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split("\\[| ")[0]);
 					ListOf<Compartment> c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {

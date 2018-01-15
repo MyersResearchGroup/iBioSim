@@ -47,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -181,26 +182,27 @@ public class Run extends CoreObservable implements ActionListener
   {
     if (exitValue == 143)
     {
-      message.setErrorDialog("The simulation was" + " canceled by the user.", "Canceled Simulation");
+      message.setDialog("Canceled Simulation", "The simulation was" + " canceled by the user.");
       this.notifyObservers(message);
     }
     else if (exitValue == 139)
     {
-      message.setErrorDialog("The selected model is not a valid sbml file." + "\nYou must select an sbml file.", "Not An SBML File");
+      message.setErrorDialog("Not An SBML File", "The selected model is not a valid sbml file." + "\nYou must select an sbml file.");
       this.notifyObservers(message);
     }
     else if(exitValue != 0)
     {
-      message.setErrorDialog( "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.", "Error");
+      message.setErrorDialog("Error In Execution!", "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.");
       this.notifyObservers(message);
     }
   }
 
-  private int executeFBA() throws XMLStreamException, IOException
+  private int executeFBA() throws XMLStreamException, IOException, BioSimException
   {
     int exitValue = 255;
 
     FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getDirectory()+File.separator, properties.getModelFile(), properties.getSimulationProperties().getAbsError());
+    this.addObservable(fluxBalanceAnalysis);
     exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 
     if (exitValue == 1)
@@ -289,8 +291,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
 
-      BioModel bioModel = new BioModel(properties.getRoot());
-      bioModel.addObservable(this);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
@@ -321,7 +322,7 @@ public class Run extends CoreObservable implements ActionListener
       }
     }
     sg = new StateGraph(lhpnFile);
-
+    this.addObservable(sg);
     BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, null);
     buildStateGraph.start();
     buildStateGraph.join();
@@ -350,7 +351,7 @@ public class Run extends CoreObservable implements ActionListener
         }
         else
         {
-          BioModel gcm = new BioModel(root);
+          BioModel gcm = BioModel.createBioModel(root, this);
           gcm.load(root + File.separator + filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
@@ -433,7 +434,7 @@ public class Run extends CoreObservable implements ActionListener
     return 0;
   }
 
-  private int executeNary() throws XMLStreamException, IOException
+  private int executeNary() throws XMLStreamException, IOException, BioSimException
   {
     String modelFile = properties.getModelFile();
     String directory = properties.getDirectory();
@@ -444,7 +445,7 @@ public class Run extends CoreObservable implements ActionListener
     ArrayList<String> specs = new ArrayList<String>();
     ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
     retrieveSpeciesAndConLevels(specs, conLevel);
-    BioModel bioModel = new BioModel(root);
+    BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
     //TODO: check
     bioModel.load(root + File.separator + modelFile);
     String prop = null;
@@ -623,7 +624,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
-      BioModel bioModel = new BioModel(root);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + properties.getFilename());
       if (bioModel.flattenModel(true) != null)
       {
@@ -810,7 +811,7 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException
+  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException, BioSimException
   {
     int exitValue = 255;
 
@@ -898,7 +899,7 @@ public class Run extends CoreObservable implements ActionListener
         ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
         String directory = properties.getDirectory();
         retrieveSpeciesAndConLevels(specs, conLevel);
-        BioModel bioModel = new BioModel(root);
+        BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
         bioModel.load(root + File.separator + properties.getModelFile());
 
         if (bioModel.flattenModel(true) != null)

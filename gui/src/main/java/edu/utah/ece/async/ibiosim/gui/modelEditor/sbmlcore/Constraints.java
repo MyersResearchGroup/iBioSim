@@ -43,6 +43,7 @@ import org.sbml.jsbml.xml.XMLNode;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -57,7 +58,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Constraints extends JPanel implements ActionListener, MouseListener {
+public class Constraints extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 

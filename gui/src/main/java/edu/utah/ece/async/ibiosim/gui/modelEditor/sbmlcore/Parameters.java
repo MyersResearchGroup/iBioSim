@@ -40,6 +40,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -63,7 +64,7 @@ import org.sbml.jsbml.UnitDefinition;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Parameters extends JPanel implements ActionListener, MouseListener {
+public class Parameters extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -545,6 +546,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(paramName);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
+			Parameters instance = this;
 			type.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -561,7 +563,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramUnits.setEnabled(false);
 						SBMLDocument d;
             try {
-              d = SBMLutilities.readSBML(file);
+              d = SBMLutilities.readSBML(file, instance, null);
               if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
                 paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
               }
@@ -581,6 +583,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
               e1.printStackTrace();
             } catch (IOException e1) {
               JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+            catch (BioSimException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
               e1.printStackTrace();
             }
 						
@@ -983,7 +990,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Remove a global parameter
 	 */
 	private boolean removeParameter(String selected) {
-		if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selected, false, true, true)) {
+		if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selected, false, true, this, null)) {
 			Parameter tempParameter = bioModel.getSBMLDocument().getModel().getParameter(selected);
 			ListOf<Parameter> p = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {

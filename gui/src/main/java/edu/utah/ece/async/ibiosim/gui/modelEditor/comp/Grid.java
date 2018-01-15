@@ -35,6 +35,8 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GridTable;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.BioGraph;
 
@@ -49,7 +51,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.BioGraph;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Grid {
+public class Grid extends CoreObservable{
 	
 	
 	//---------------
@@ -1024,7 +1026,7 @@ public class Grid {
 		
 		//don't put blank components onto the grid or model
 		if (!compGCM.equals("none")) {
-			BioModel compGCMFile = new BioModel(bioModel.getPath());
+			BioModel compGCMFile = BioModel.createBioModel(bioModel.getPath(), this);
 			try {
         compGCMFile.load(bioModel.getPath() + File.separator + compGCM);
 		  } catch (XMLStreamException e) {
@@ -1032,6 +1034,11 @@ public class Grid {
         e.printStackTrace();
       } catch (IOException e) {
         JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+      }
+			catch (BioSimException e) {
+        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+          JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
       }
 			String md5 = Utility.MD5(compGCMFile.getSBMLDocument());

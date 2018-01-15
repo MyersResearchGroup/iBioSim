@@ -243,6 +243,9 @@ public class Analysis implements BioObserver
   private Analysis()
   {
     properties = new AnalysisProperties("", "", "", false);
+    
+    properties.addObserver(this);
+    
     propertiesMap = new HashMap<String, String>();
   }
 
@@ -366,7 +369,7 @@ public class Analysis implements BioObserver
     	  new File(properties.getDirectory()).mkdir();
       }
       /* Flattening happens here */
-      BioModel biomodel = new BioModel(root);
+      BioModel biomodel =  BioModel.createBioModel(root, this);
       biomodel.addObserver(this);
       biomodel.load(root + File.separator + modelSource + "_");
       SBMLDocument flatten = biomodel.flattenModel(true);

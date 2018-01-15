@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * The AnalysisProperties class incorporates all of the necessary information to run analysis in iBioSim,
@@ -37,7 +38,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
  * @version $Rev$
  * @version %I%
  */
-public final class AnalysisProperties 
+public final class AnalysisProperties extends CoreObservable
 {
   
   private static enum UserInterval
@@ -111,10 +112,16 @@ public final class AnalysisProperties
     this.userInterval = UserInterval.PRINT_INTERVAL;
     this.sim = "Runge-Kutta-Fehlberg (Hierarchical)";
     this.tasks = new ArrayList<String>();
+    
     this.advProperties = new AdvancedProperties();
     this.incProperties = new IncrementalProperties();
     this.simProperties = new SimulationProperties();
     this.verifProperties = new VerificationProperties();
+    
+    this.addObservable(advProperties);
+    this.addObservable(incProperties);
+    this.addObservable(simProperties);
+    this.addObservable(verifProperties);
   }
 
   /**

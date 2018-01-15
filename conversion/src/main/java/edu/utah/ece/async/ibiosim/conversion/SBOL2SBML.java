@@ -59,6 +59,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 
 /**
@@ -99,8 +100,9 @@ public class SBOL2SBML {
 	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
+	 * @throws BioSimException - if something is wrong with the SBML model.
 	 */
-	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException {
+	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException {
 
 		List<BioModel> models = new LinkedList<BioModel>();
 
@@ -318,9 +320,10 @@ public class SBOL2SBML {
 	 * @return
 	 * @throws XMLStreamException - Invalid XML file.
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
+	 * @throws BioSimException - if something is wrong the with SBML model.
 	 */
 	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) throws XMLStreamException, IOException {
+			BioModel targetModel) throws XMLStreamException, IOException, BioSimException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
@@ -1352,6 +1355,10 @@ public class SBOL2SBML {
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
 				e.printStackTrace();
+			}
+			catch(BioSimException e)
+			{
+			  e.printStackTrace();
 			}
 
 		}

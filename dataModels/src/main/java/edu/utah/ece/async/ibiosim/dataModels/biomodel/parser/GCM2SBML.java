@@ -34,6 +34,8 @@ import org.sbml.jsbml.ext.comp.Port;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
  * 
@@ -43,7 +45,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class GCM2SBML {
+public class GCM2SBML extends CoreObservable
+{
 	
 	public GCM2SBML(BioModel gcm) {
 		species = new HashMap<String, Properties>();
@@ -741,8 +744,9 @@ public class GCM2SBML {
 	 * @return
 	 * @throws IOException 
 	 * @throws XMLStreamException 
+	 * @throws BioSimException 
 	 */
-	public void convertGCM2SBML(String root, String fileName) throws XMLStreamException, IOException {
+	public void convertGCM2SBML(String root, String fileName) throws XMLStreamException, IOException, BioSimException {
 		String filename = root + File.separator + fileName;
 		int condCnt = 0;
 		for (String s : conditions) {
@@ -852,7 +856,7 @@ public class GCM2SBML {
 			bioModel.createComponentFromGCM(s,components.get(s));
 		}
 		if (sbmlFile!=null && !sbmlFile.equals("")) {
-			SBMLDocument document = SBMLutilities.readSBML(root + File.separator + sbmlFile);
+			SBMLDocument document = SBMLutilities.readSBML(root + File.separator + sbmlFile, this, null);
 			if (document!=null) {
 				Model model = document.getModel();
 				Model modelNew = bioModel.getSBMLDocument().getModel();
