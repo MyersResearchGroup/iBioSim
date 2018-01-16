@@ -121,7 +121,7 @@ public class Thresholds
 	/**
 	 * Set threshold for no influence.
 	 * 
-	 * @param Tv - value of threshold.
+	 * @param Ti - value of threshold.
 	 */
 	public void setTi(double Ti)
 	{
