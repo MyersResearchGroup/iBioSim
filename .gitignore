@@ -1,8 +1,15 @@
 /dist/
 /target/
+reb2sac
+reb2sac.mac64
+reb2sac.linux64
+GeneNet
+GeneNet.mac64
+GeneNet.linux64
 jsbml.log
 bin/iBioSim.jar
 **/.DS_Store
 **/.classpath
 .settings/
 **/.project
+/.metadata/

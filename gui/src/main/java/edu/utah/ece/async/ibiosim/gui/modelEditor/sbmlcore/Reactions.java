@@ -57,6 +57,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -70,7 +71,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Reactions extends JPanel implements ActionListener, MouseListener {
+public class Reactions extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -1496,6 +1497,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		parametersPanel.add(reacParamName);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
+			Reactions instance=  this;
 			type.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -1512,7 +1514,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						SBOTerms.setEnabled(false);
 						SBMLDocument d;
             try {
-              d = SBMLutilities.readSBML(file);
+              d = SBMLutilities.readSBML(file, instance, null);
               KineticLaw KL = d.getModel().getReaction(selectedReaction).getKineticLaw();
               ListOf<LocalParameter> list = KL.getListOfLocalParameters();
               int number = -1;
@@ -1536,6 +1538,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
               e1.printStackTrace();
             } catch (IOException e1) {
               JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+              e1.printStackTrace();
+            }
+            catch (BioSimException e1) {
+              JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(),
+                JOptionPane.ERROR_MESSAGE);
               e1.printStackTrace();
             }
 					}
@@ -1947,7 +1954,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				dimensionIds = SBMLutilities.getDimensionIds("p",dimID.length-1);
 				productID = dimID[0].trim();
 				if (productID.equals("")) {
-					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
+					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), productID, selectedID, false);
@@ -2380,7 +2387,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifierID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
 				if (modifierID.equals("")) {
-					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, true);
+					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), modifierID, selectedID, false);
@@ -2816,7 +2823,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactantID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
 				if (reactantID.equals("")) {
-					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
+					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, this, null);
 				}
 				else {
 					error = Utils.checkID(gcm.getSBMLDocument(), reactantID, selectedID, false);
@@ -3149,7 +3156,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String v = ((String) reactants.getSelectedValue()).split("\\[| ")[0];
 			for (int i = 0; i < changedReactants.size(); i++) {
 				if ((changedReactants.get(i).getId().equals(v) || changedReactants.get(i).getSpecies().equals(v)) &&
-						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedReactants.get(i).getId(), false, true,true)) {
+						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedReactants.get(i).getId(), false, true, this, null)) {
 					changedReactants.remove(i);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = (String[]) Utility.remove(reactants, reacta);
@@ -3176,7 +3183,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String v = ((String) products.getSelectedValue()).split("\\[| ")[0];
 			for (int i = 0; i < changedProducts.size(); i++) {
 				if ((changedProducts.get(i).getId().equals(v) || changedProducts.get(i).getSpecies().equals(v)) && 
-						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedProducts.get(i).getId(), false, true, true)) {
+						!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), changedProducts.get(i).getId(), false, true, this, null)) {
 					changedProducts.remove(i);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					proda = (String[]) Utility.remove(products, proda);

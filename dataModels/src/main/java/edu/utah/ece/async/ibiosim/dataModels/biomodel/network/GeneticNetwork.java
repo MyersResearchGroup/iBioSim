@@ -54,6 +54,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintRepressionBin
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.visitor.PrintSpeciesVisitor;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
@@ -125,9 +126,9 @@ public class GeneticNetwork extends CoreObservable
 	}
 	
 	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
-			HashMap<String, Promoter> promoters, String gcm, String filename) throws XMLStreamException, IOException {
+			HashMap<String, Promoter> promoters, String gcm, String filename) throws XMLStreamException, IOException, BioSimException {
 		
-		BioModel file = new BioModel(currentRoot);
+		BioModel file = BioModel.createBioModel(currentRoot, this);
 		file.load(currentRoot+gcm);
 		AbstractPrintVisitor.setGCMFile(file);
 		setSpecies(species);
@@ -275,14 +276,15 @@ public class GeneticNetwork extends CoreObservable
 	 * @return the sbml document
 	 * @throws IOException 
 	 * @throws XMLStreamException 
+	 * @throws BioSimException 
 	 */
-	public SBMLDocument mergeSBML(String filename) throws XMLStreamException, IOException {
+	public SBMLDocument mergeSBML(String filename) throws XMLStreamException, IOException, BioSimException {
 		if (document == null) {
 			if (sbmlDocument.equals("")) {
 				return outputSBML(filename);
 			}
 			
-			SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
+			SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument, this, null);
 			// checkConsistancy(document);
 			currentDocument = document;
 			return outputSBML(filename, document);
@@ -831,7 +833,7 @@ public class GeneticNetwork extends CoreObservable
 		if (!complex.isAbstractable()) {
 			if (!isGenetic(complexId)
 					&& !complex.isDiffusible()
-					&& !SBMLutilities.variableInUse(document, complexId, false, false, true)
+					&& !SBMLutilities.variableInUse(document, complexId, false, true, this, null)
 					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)) {
 				complex.setAbstractable(true);
 				for (Influence infl : complexMap.get(complexId)) {

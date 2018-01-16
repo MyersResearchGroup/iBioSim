@@ -95,6 +95,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 
@@ -110,9 +112,33 @@ public class BioModel extends CoreObservable{
 
 	private String filename = null;
 
-	private Message message = new Message();
+	private final Message message = new Message();
 
 	private GridTable gridTable;
+	
+	public static BioModel createBioModel(String path, BioObservable observable)
+	{
+	  BioModel biomodel = new BioModel(path);
+	  
+	  if(observable != null)
+	  {
+	    biomodel.addObservable(observable);
+	  }
+	  
+	  return biomodel;
+	}
+	
+	public static BioModel createBioModel(String path, BioObserver observer)
+  {
+    BioModel biomodel = new BioModel(path);
+    
+    if(observer != null)
+    {
+      biomodel.addObserver(observer);
+    }
+    
+    return biomodel;
+  }
 	
 	public BioModel(String path) {
 		this.path = path;
@@ -2160,8 +2186,9 @@ public class BioModel extends CoreObservable{
 	 * @param filename
 	 * @throws IOException 
 	 * @throws XMLStreamException 
+	 * @throws BioSimException 
 	 */
-	public void save(String filename) throws XMLStreamException, IOException {		
+	public void save(String filename) throws XMLStreamException, IOException, BioSimException {		
 		updatePorts();
 		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
@@ -2183,7 +2210,7 @@ public class BioModel extends CoreObservable{
 		}
 	}
 
-	public boolean load(String filename) throws XMLStreamException, IOException {
+	public boolean load(String filename) throws XMLStreamException, IOException, BioSimException {
 		//gcm2sbml.load(filename);
 		this.filename = filename;
 		String[] splitPath = GlobalConstants.splitPath(filename);
@@ -2702,7 +2729,7 @@ public class BioModel extends CoreObservable{
 
 	
 	public void removeReaction(String id) {
-		if (SBMLutilities.variableInUse(sbml, id, false, true, true)) return;
+		if (SBMLutilities.variableInUse(sbml, id, false, true, this, null)) return;
 //		Reaction tempReaction = sbml.getModel().getReaction(id);
 //
 //		ListOf<Reaction> r = sbml.getModel().getListOfReactions();
@@ -5357,7 +5384,7 @@ public class BioModel extends CoreObservable{
 		return false;
 	}
 	
-	private void updatePorts() throws XMLStreamException, IOException {
+	private void updatePorts() throws XMLStreamException, IOException, BioSimException {
 		int j = 0;
 		while (j < sbmlCompModel.getPortCount()) {
 			Port port = sbmlCompModel.getListOfPorts().get(j);
@@ -5377,7 +5404,7 @@ public class BioModel extends CoreObservable{
 		//if (!this.isGridEnabled()) {
 		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 			Submodel submodel = sbmlCompModel.getListOfSubmodels().get(i);
-			BioModel subBioModel = new BioModel(path);		
+			BioModel subBioModel =  BioModel.createBioModel(path, this);	
 			String extModelFile = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subBioModel.load(path + File.separator + extModelFile);
@@ -5517,11 +5544,11 @@ public class BioModel extends CoreObservable{
 		}
 	}
 
-	private boolean loadSBMLFile(String sbmlFile) throws XMLStreamException, IOException {
+	private boolean loadSBMLFile(String sbmlFile) throws XMLStreamException, IOException, BioSimException {
 		boolean successful = true;
 		if (!sbmlFile.equals("")) {
 			if (new File(path + File.separator + sbmlFile).exists()) {
-				sbml = SBMLutilities.readSBML(path + File.separator + sbmlFile);
+				sbml = SBMLutilities.readSBML(path + File.separator + sbmlFile, this, null);
 				createLayoutPlugin();
 				createCompPlugin();
 				createFBCPlugin();
@@ -5550,14 +5577,14 @@ public class BioModel extends CoreObservable{
 
 	
 	public void recurseExportSingleFile(ArrayList<String> comps,CompModelPlugin subCompModel,CompSBMLDocumentPlugin subComp,
-				CompSBMLDocumentPlugin documentComp) throws XMLStreamException, IOException {
+				CompSBMLDocumentPlugin documentComp) throws XMLStreamException, IOException, BioSimException {
 		for (int i = 0; i < subCompModel.getListOfSubmodels().size(); i++) {
 			String subModelId = subCompModel.getListOfSubmodels().get(i).getId();
 			String extModel = subComp.getListOfExternalModelDefinitions().get(subCompModel.getListOfSubmodels().get(subModelId)
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			if (!comps.contains(extModel)) {
 				comps.add(extModel);
-				SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel);
+				SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel, this, null);
 				CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
 				
@@ -5590,7 +5617,7 @@ public class BioModel extends CoreObservable{
 		}
 	}
 	
-	public void exportSingleFile(String exportFile) throws XMLStreamException, IOException {
+	public void exportSingleFile(String exportFile) throws XMLStreamException, IOException, BioSimException {
 		SBMLDocument document = createSingleDocument();
 		SBMLWriter writer = new SBMLWriter();
 		try {
@@ -5605,7 +5632,7 @@ public class BioModel extends CoreObservable{
 		}
 	}
 	
-	public SBMLDocument createSingleDocument() throws XMLStreamException, IOException {
+	public SBMLDocument createSingleDocument() throws XMLStreamException, IOException, BioSimException {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION);
 		Model model = new Model(sbml.getModel());
@@ -5644,7 +5671,7 @@ public class BioModel extends CoreObservable{
 						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 				if (!comps.contains(extModel)) {
 					comps.add(extModel);
-					SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel);
+					SBMLDocument subDocument = SBMLutilities.readSBML(path + File.separator + extModel, this, null);
 					CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 					String id = subDocument.getModel().getId();
 					// TODO: hack to avoid jsbml scope bug
@@ -5685,7 +5712,7 @@ public class BioModel extends CoreObservable{
 		return document;
 	}
 	
-	private void expandListOfSubmodels(org.sbml.libsbml.CompModelPlugin docCompModel, org.sbml.libsbml.SBMLDocument sbml) throws XMLStreamException, IOException {
+	private void expandListOfSubmodels(org.sbml.libsbml.CompModelPlugin docCompModel, org.sbml.libsbml.SBMLDocument sbml) throws XMLStreamException, IOException, BioSimException {
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
 			
 			//look through the location parameter arrays
@@ -5710,7 +5737,7 @@ public class BioModel extends CoreObservable{
 		}
 	}
 	
-	private ArrayList<String> getListOfSubmodels() throws XMLStreamException, IOException {
+	private ArrayList<String> getListOfSubmodels() throws XMLStreamException, IOException, BioSimException {
 		ArrayList<String> comps = new ArrayList<String>();
 
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
@@ -5739,7 +5766,7 @@ public class BioModel extends CoreObservable{
 		return comps;
 	}
 	
-	private String getExtModelFileName(String s) throws XMLStreamException, IOException {
+	private String getExtModelFileName(String s) throws XMLStreamException, IOException, BioSimException {
 		
 		String extModel;
 		String componentModelRef = "";
@@ -5826,7 +5853,7 @@ public class BioModel extends CoreObservable{
 			document.enablePackage(org.sbml.libsbml.CompExtension.getXmlnsL3V1V1(), "comp", !removeComp);
 			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
 			writer.writeSBMLToFile(document, tempFile);
-			BioModel bioModel = new BioModel(path);
+			BioModel bioModel = BioModel.createBioModel(path, this);
 			bioModel.load(tempFile);
 			new File(tempFile).delete();
 			SBMLDocument doc = bioModel.getSBMLDocument();
@@ -5835,7 +5862,7 @@ public class BioModel extends CoreObservable{
 		throw new Exception("libsbml not found.  Unable to flatten model.");
 	}
 		
-	public SBMLDocument flattenModel(boolean removeComp) throws XMLStreamException, IOException {
+	public SBMLDocument flattenModel(boolean removeComp) throws XMLStreamException, IOException, BioSimException {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
@@ -5855,7 +5882,7 @@ public class BioModel extends CoreObservable{
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
 
-		BioModel model = new BioModel(path);
+		BioModel model = BioModel.createBioModel(path, this);
 		model.load(tempFile);
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
 		model.getSBMLDocument().disablePackage(LayoutConstants.namespaceURI);
@@ -5902,7 +5929,7 @@ public class BioModel extends CoreObservable{
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
-			BioModel subModel = new BioModel(path);		
+			BioModel subModel =  BioModel.createBioModel(path, this);	
 			String extModelFile = model.getExtModelFileName(subModelId);
 			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
@@ -5953,7 +5980,7 @@ public class BioModel extends CoreObservable{
 	}
 
 	// TODO: check if this is up-to-date
-	public SBMLDocument flattenBioModel() throws XMLStreamException, IOException {
+	public SBMLDocument flattenBioModel() throws XMLStreamException, IOException, BioSimException {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			SBMLDocument result = null;
@@ -5975,7 +6002,7 @@ public class BioModel extends CoreObservable{
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
-			BioModel subModel = new BioModel(path);		
+			BioModel subModel = BioModel.createBioModel(path, this);	
 			String extModelFile = getExtModelFileName(subModelId);
 			subModel.load(path + File.separator + extModelFile);
 			ArrayList<String> modelListCopy = copyArray(modelList);
@@ -6009,7 +6036,7 @@ public class BioModel extends CoreObservable{
 		return this.getSBMLDocument();
 	}
 	
-	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) throws XMLStreamException, IOException {
+	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) throws XMLStreamException, IOException, BioSimException {
 		ArrayList<String> comps = new ArrayList<String>();
 		
 		model.getSBMLDocument().getModel().unsetExtension(LayoutConstants.namespaceURI);
@@ -6030,7 +6057,7 @@ public class BioModel extends CoreObservable{
 		}
 		
 		for (String s : comps) {
-			BioModel subModel = new BioModel(path);
+			BioModel subModel = BioModel.createBioModel(path, this);
 			String extModel = model.getSBMLComp().getListOfExternalModelDefinitions().get(model.getSBMLCompModel().getListOfSubmodels().get(s)
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subModel.load(path + File.separator + extModel);
@@ -6684,10 +6711,11 @@ public class BioModel extends CoreObservable{
 	 * @return
 	 * @throws IOException 
 	 * @throws XMLStreamException 
+	 * @throws BioSimException 
 	 */
-	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException {
+	public boolean getGridEnabledFromFile(String filename) throws XMLStreamException, IOException, BioSimException {
 		
-		BioModel subModel = new BioModel(path);
+		BioModel subModel =  BioModel.createBioModel(path, this);
 		subModel.load(filename);
 		if ((subModel.gridTable.getNumRows() > 0) || (subModel.gridTable.getNumCols() > 0)) return true;
 		return false;

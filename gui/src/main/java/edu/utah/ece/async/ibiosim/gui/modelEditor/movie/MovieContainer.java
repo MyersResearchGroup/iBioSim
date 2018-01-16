@@ -23,6 +23,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.ResourceManager;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
@@ -75,7 +76,7 @@ import javax.swing.Timer;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class MovieContainer extends JPanel implements ActionListener {
+public class MovieContainer extends PanelObservable implements ActionListener {
 
 	public static final String COLOR_PREPEND = "_COLOR";
 	public static final String MIN_PREPEND = "_MIN";
@@ -141,6 +142,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		//JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
 		schematic = new Schematic(bioModel, biosim, gcm2sbml, false, this, gcm2sbml.getCompartmentPanel(), gcm2sbml.getReactionPanel(), gcm2sbml.getRulePanel(),
 		  gcm2sbml.getConstraintPanel(),  gcm2sbml.getEventPanel(), gcm2sbml.getParameterPanel(), lema);
+		schematic.addObservable(this);
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.bioModel = bioModel;

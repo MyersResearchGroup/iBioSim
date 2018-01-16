@@ -33,7 +33,6 @@ import javax.xml.stream.XMLStreamException;
 
 import odk.lang.FastMath;
 
-import org.jlibsedml.SEDMLDocument;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;
@@ -108,6 +107,9 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
@@ -124,11 +126,10 @@ import flanagan.math.PsRandom;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SBMLutilities
+public class SBMLutilities extends CoreObservable
 {
 
 	public static final SystemsBiologyOntology sbo = new SystemsBiologyOntology();
-	public static final Message message = new Message();
 	
 	/**
 	 * The user has the option to :
@@ -145,9 +146,10 @@ public class SBMLutilities
 	 * @throws XMLStreamException Invalid XML file
 	 * @throws SBMLException SBML Exception occurred when exporting BioModels to an SBML file
 	 * @throws IOException Unable to write file to SBML.
+	 * @throws BioSimException - if sbml model is invalid.
 	 */
 	public static void exportSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
-			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput) throws SBMLException, XMLStreamException, IOException
+			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput) throws SBMLException, XMLStreamException, IOException, BioSimException
 	{
 		// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
 		// given from the converter is the top level model. All submodels belonging to the top level models are nested in side this last biomodel
@@ -213,8 +215,9 @@ public class SBMLutilities
 	 * @param outputDir - The output directory to store the SBML files
 	 * @throws IOException  Unable to write file to SBML.
 	 * @throws XMLStreamException Invalid XML file
+	 * @throws BioSimException - if sbml model is invalid.
 	 */
-	public static ArrayList<String> exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException
+	public static ArrayList<String> exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException, BioSimException
 	{
 		ArrayList<String> submodels = new ArrayList<String>();
 		//Multiple SBML output
@@ -772,189 +775,189 @@ public class SBMLutilities
 	{
 		if (document.getModel().getFunctionDefinition("uniform") != null)
 		{
-			if (!functionInUse(document, "uniform", false, false, true))
+			if (!functionInUse(document, "uniform", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("uniform");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("normal") != null)
 		{
-			if (!functionInUse(document, "normal", false, false, true))
+			if (!functionInUse(document, "normal", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("normal");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("exponential") != null)
 		{
-			if (!functionInUse(document, "exponential", false, false, true))
+			if (!functionInUse(document, "exponential", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("exponential");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("gamma") != null)
 		{
-			if (!functionInUse(document, "gamma", false, false, true))
+			if (!functionInUse(document, "gamma", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("gamma");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("lognormal") != null)
 		{
-			if (!functionInUse(document, "lognormal", false, false, true))
+			if (!functionInUse(document, "lognormal", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("lognormal");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("chisq") != null)
 		{
-			if (!functionInUse(document, "chisq", false, false, true))
+			if (!functionInUse(document, "chisq", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("chisq");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("laplace") != null)
 		{
-			if (!functionInUse(document, "laplace", false, false, true))
+			if (!functionInUse(document, "laplace", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("laplace");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("cauchy") != null)
 		{
-			if (!functionInUse(document, "cauchy", false, false, true))
+			if (!functionInUse(document, "cauchy", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("cauchy");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("rayleigh") != null)
 		{
-			if (!functionInUse(document, "rayleigh", false, false, true))
+			if (!functionInUse(document, "rayleigh", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("rayleigh");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("poisson") != null)
 		{
-			if (!functionInUse(document, "poisson", false, false, true))
+			if (!functionInUse(document, "poisson", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("poisson");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("binomial") != null)
 		{
-			if (!functionInUse(document, "binomial", false, false, true))
+			if (!functionInUse(document, "binomial", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("binomial");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("bernoulli") != null)
 		{
-			if (!functionInUse(document, "bernoulli", false, false, true))
+			if (!functionInUse(document, "bernoulli", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("bernoulli");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("St") != null)
 		{
-			if (!functionInUse(document, "St", false, false, true))
+			if (!functionInUse(document, "St", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("St");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PSt") != null)
 		{
-			if (!functionInUse(document, "PSt", false, false, true))
+			if (!functionInUse(document, "PSt", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("PSt");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PG") != null)
 		{
-			if (!functionInUse(document, "PG", false, false, true))
+			if (!functionInUse(document, "PG", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("PG");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PF") != null)
 		{
-			if (!functionInUse(document, "PF", false, false, true))
+			if (!functionInUse(document, "PF", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("PF");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PU") != null)
 		{
-			if (!functionInUse(document, "PU", false, false, true))
+			if (!functionInUse(document, "PU", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("PU");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("G") != null)
 		{
-			if (!functionInUse(document, "G", false, false, true))
+			if (!functionInUse(document, "G", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("G");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("F") != null)
 		{
-			if (!functionInUse(document, "F", false, false, true))
+			if (!functionInUse(document, "F", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("F");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("U") != null)
 		{
-			if (!functionInUse(document, "U", false, false, true))
+			if (!functionInUse(document, "U", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("U");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("rate") != null)
 		{
-			if (!functionInUse(document, "rate", false, false, true))
+			if (!functionInUse(document, "rate", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("rate");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("mod") != null)
 		{
-			if (!functionInUse(document, "mod", false, false, true))
+			if (!functionInUse(document, "mod", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("mod");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BIT") != null)
 		{
-			if (!functionInUse(document, "BIT", false, false, true))
+			if (!functionInUse(document, "BIT", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("BIT");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITOR") != null)
 		{
-			if (!functionInUse(document, "BITOR", false, false, true))
+			if (!functionInUse(document, "BITOR", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("BITOR");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITXOR") != null)
 		{
-			if (!functionInUse(document, "BITXOR", false, false, true))
+			if (!functionInUse(document, "BITXOR", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("BITXOR");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITNOT") != null)
 		{
-			if (!functionInUse(document, "BITNOT", false, false, true))
+			if (!functionInUse(document, "BITNOT", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("BITNOT");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("BITAND") != null)
 		{
-			if (!functionInUse(document, "BITAND", false, false, true))
+			if (!functionInUse(document, "BITAND", false, true, null, null))
 			{
 				document.getModel().removeFunctionDefinition("BITAND");
 			}
@@ -2124,14 +2127,15 @@ public class SBMLutilities
 	 * @param document
 	 * @param id
 	 * @param zeroDim
-	 * @param displayMessage
 	 * @param checkReactions
+	 * @param observable TODO
+	 * @param observer TODO
 	 * @return
 	 */
 	
-	public static boolean functionInUse(SBMLDocument document, String id, boolean zeroDim, boolean displayMessage, boolean checkReactions)
+	public static boolean functionInUse(SBMLDocument document, String id, boolean zeroDim, boolean checkReactions, BioObservable observable, BioObserver observer)
 	{
-		if (variableInUse(document,id,zeroDim,displayMessage,checkReactions)) {
+		if (variableInUse(document,id,zeroDim,checkReactions, observable, observer)) {
 			return true;
 		}
 		Model model = document.getModel();
@@ -2154,7 +2158,7 @@ public class SBMLutilities
 	/**
 	 * Check if a variable is in use.
 	 */
-	public static boolean variableInUse(SBMLDocument document, String id, boolean zeroDim, boolean displayMessage, boolean checkReactions)
+	public static boolean variableInUse(SBMLDocument document, String id, boolean zeroDim, boolean checkReactions, BioObservable observable, BioObserver observer)
 	{
 		Model model = document.getModel();
 		boolean inUse = false;
@@ -2562,73 +2566,82 @@ public class SBMLutilities
 					events += evs[i] + "\n";
 				}
 			}
-			String message;
+			String msg;
 			if (zeroDim)
 			{
-				message = "Unable to change compartment to 0-dimensions.";
+				msg = "Unable to change compartment to 0-dimensions.";
 			}
 			else
 			{
-				message = "Unable to remove the selected variable.";
+				msg = "Unable to remove the selected variable.";
 			}
 			if (usedInModelConversionFactor)
 			{
-				message += "\n\nIt is used as the model conversion factor.\n";
+				msg += "\n\nIt is used as the model conversion factor.\n";
 			}
 			if (speciesUsing.size() != 0)
 			{
-				message += "\n\nIt is used as a conversion factor in the following species:\n" + speciesConvFac;
+				msg += "\n\nIt is used as a conversion factor in the following species:\n" + speciesConvFac;
 			}
 			if (reactantsUsing.size() != 0)
 			{
-				message += "\n\nIt is used as a reactant in the following reactions:\n" + reactants;
+				msg += "\n\nIt is used as a reactant in the following reactions:\n" + reactants;
 			}
 			if (productsUsing.size() != 0)
 			{
-				message += "\n\nIt is used as a product in the following reactions:\n" + products;
+				msg += "\n\nIt is used as a product in the following reactions:\n" + products;
 			}
 			if (modifiersUsing.size() != 0)
 			{
-				message += "\n\nIt is used as a modifier in the following reactions:\n" + modifiers;
+				msg += "\n\nIt is used as a modifier in the following reactions:\n" + modifiers;
 			}
 			if (kineticLawsUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the kinetic law in the following reactions:\n" + kineticLaws;
+				msg += "\n\nIt is used in the kinetic law in the following reactions:\n" + kineticLaws;
 			}
 			if (fluxboundsUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the flux bounds in the following reactions:\n" + fluxbounds;
+				msg += "\n\nIt is used in the flux bounds in the following reactions:\n" + fluxbounds;
 			}
 			if (defaultParametersNeeded.size() != 0)
 			{
-				message += "\n\nDefault parameter is needed by the following reactions:\n" + defaults;
+				msg += "\n\nDefault parameter is needed by the following reactions:\n" + defaults;
 			}
 			if (stoicMathUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the stoichiometry math for the following reaction/species:\n" + stoicMath;
+				msg += "\n\nIt is used in the stoichiometry math for the following reaction/species:\n" + stoicMath;
 			}
 			if (initsUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the following initial assignments:\n" + initAssigns;
+				msg += "\n\nIt is used in the following initial assignments:\n" + initAssigns;
 			}
 			if (rulesUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the following rules:\n" + rules;
+				msg += "\n\nIt is used in the following rules:\n" + rules;
 			}
 			if (constraintsUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the following constraints:\n" + constraints;
+				msg += "\n\nIt is used in the following constraints:\n" + constraints;
 			}
 			if (eventsUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the following events:\n" + events;
+				msg += "\n\nIt is used in the following events:\n" + events;
 			}
 			if (fluxObjUsing.size() != 0)
 			{
-				message += "\n\nIt is used in the following flux objectives:\n" + fluxObj;
+				msg += "\n\nIt is used in the following flux objectives:\n" + fluxObj;
 			}
 			
-			SBMLutilities.message.setErrorDialog("Unable To Remove Variable", message);
+			Message message = new Message();
+      message.setScrollableErrorDialog("Unable To Remove Variable", msg);
+      if(observable != null)
+      {
+        observable.notifyObservers(message);
+      }
+      if(observer != null)
+      {
+        observer.update(message);
+      }
 			
 		}
 		return inUse;
@@ -5613,19 +5626,6 @@ public class SBMLutilities
 				}
 			}
 		}
-//		if (display)
-//		{
-//			messageArea.setLineWrap(true);
-//			messageArea.setEditable(false);
-//			messageArea.setSelectionStart(0);
-//			messageArea.setSelectionEnd(0);
-//			JScrollPane scroll = new JScrollPane();
-//			scroll.setMinimumSize(new java.awt.Dimension(600, 600));
-//			scroll.setPreferredSize(new java.awt.Dimension(600, 600));
-//			scroll.setViewportView(messageArea);
-//			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Model Completeness Errors", JOptionPane.ERROR_MESSAGE);
-//
-//		}
 	}
 
 	// TODO: should weave in better with existing conversion
@@ -5686,15 +5686,14 @@ public class SBMLutilities
 
 	}
 	
-	private static SBMLDocument convertToFBCVersion2(String filename,SBMLDocument document) throws XMLStreamException, IOException 
+	private static SBMLDocument convertToFBCVersion2(String filename,SBMLDocument document) throws XMLStreamException, IOException, BioSimException 
 	{
 		if (document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel)!=null &&
 				document.getDeclaredNamespaces().get("xmlns:"+FBCConstants.shortLabel).endsWith("1")) 
 		{
 			if (!Executables.libsbmlFound)
 			{
-			  SBMLutilities.message.setErrorDialog("Error Opening File", "Unable convert FBC model from Version 1 to Version 2.");
-				return null;
+			  throw new BioSimException("Unable convert FBC model from Version 1 to Version 2.", "Error Opening File");
 			}
 			//long numErrors = 0;
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
@@ -5723,7 +5722,7 @@ public class SBMLutilities
 		return document;
 	}
 
-	public static SBMLDocument readSBML(String filename) throws XMLStreamException, IOException
+	public static SBMLDocument readSBML(String filename, BioObservable observable, BioObserver observer) throws XMLStreamException, IOException, BioSimException
 	{
 		SBMLDocument document = null;
 		document = SBMLReader.read(new File(filename));
@@ -5736,7 +5735,16 @@ public class SBMLutilities
 		{
 			if (!Executables.libsbmlFound)
 			{
-//				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
+				ArrayList<SBase> sbmlElements = getListOfAllElements(document);
+				for (SBase sbase : sbmlElements) {
+					if (sbase instanceof Reaction) {
+						Reaction r = (Reaction) sbase;
+						if (r.isSetFast()) {
+							r.unsetFast();
+						}
+					}
+				}
+				document.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 //				SBMLWriter Xwriter = new SBMLWriter();
 //				Xwriter.writeSBMLToFile(document, filename);
 				return document;
@@ -5748,18 +5756,29 @@ public class SBMLutilities
 			numErrors = doc.checkL3v2Compatibility();
 			if (numErrors > 0)
 			{
-				String message = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION
+				String msg = "Conversion to SBML level " + GlobalConstants.SBML_LEVEL + " version " + GlobalConstants.SBML_VERSION
 						+ " produced the errors listed below.";
-				message += "It is recommended that you fix them before using these models or you may get unexpected results.\n\n";
-				message += "--------------------------------------------------------------------------------------\n";
-				message += filename;
-				message += "\n--------------------------------------------------------------------------------------\n\n";
+				msg += "It is recommended that you fix them before using these models or you may get unexpected results.\n\n";
+				msg += "--------------------------------------------------------------------------------------\n";
+				msg += filename;
+				msg += "\n--------------------------------------------------------------------------------------\n\n";
 				for (int i = 0; i < numErrors; i++)
 				{
 					String error = doc.getError(i).getMessage();
-					message += i + ":" + error + "\n";
+					msg += i + ":" + error + "\n";
 				}
-				SBMLutilities.message.setConsole(message);
+				
+				Message message = new Message();
+				message.setScrollableErrorDialog("SBML Conversion Errors and Warnings", msg);
+				
+				if(observable != null)
+				{
+				  observable.notifyObservers(message);
+				}
+				if(observer != null)
+				{
+				  observer.update(message);
+				}
 			}
 			convertToL3(doc);
 			doc.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
@@ -6058,12 +6077,12 @@ public class SBMLutilities
 		}
 	}
 
-	public static String changeIdToPortRef(String root, SBaseRef sbaseRef, BioModel bioModel) throws XMLStreamException, IOException
+	public static String changeIdToPortRef(String root, SBaseRef sbaseRef, BioModel bioModel) throws XMLStreamException, IOException, BioSimException
 	{
 		String id = "";
 		if (sbaseRef.isSetSBaseRef())
 		{
-			BioModel subModel = new BioModel(root);
+			BioModel subModel = BioModel.createBioModel(root, bioModel);
 			Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(sbaseRef.getIdRef());
 			String extModel = bioModel.getSBMLComp().getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()
 					.replace("file://", "").replace("file:", "").replace(".gcm", ".xml");
@@ -6136,7 +6155,7 @@ public class SBMLutilities
 		return "";
 	}
 
-	public static boolean updatePortMap(String root, CompSBasePlugin sbmlSBase, BioModel subModel, String subModelId) throws XMLStreamException, IOException
+	public static boolean updatePortMap(String root, CompSBasePlugin sbmlSBase, BioModel subModel, String subModelId) throws XMLStreamException, IOException, BioSimException
 	{
 		boolean updated = false;
 		if (sbmlSBase.isSetListOfReplacedElements())
@@ -6164,7 +6183,7 @@ public class SBMLutilities
 	}
 
 	public static boolean updateReplacementsDeletions(String root, SBMLDocument document, CompSBMLDocumentPlugin sbmlComp,
-			CompModelPlugin sbmlCompModel) throws XMLStreamException, IOException
+			CompModelPlugin sbmlCompModel) throws XMLStreamException, IOException, BioSimException
 	{
 		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++)
 		{
@@ -6496,4 +6515,22 @@ public class SBMLutilities
 		}
 		return time;
 	}
+	
+  public static String commandString(String[] command)
+  {
+    String commandString = "";
+    if(command != null)
+    {
+       if(command.length > 0)
+       {
+         commandString = command[0];
+       }
+       
+       for(int i = 1; i < command.length; i++)
+       {
+         commandString = commandString + " " + command[i];
+       }
+    }
+    return commandString;
+  }
 }

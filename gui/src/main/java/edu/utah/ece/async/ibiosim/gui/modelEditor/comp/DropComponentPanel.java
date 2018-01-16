@@ -34,6 +34,8 @@ import javax.xml.stream.XMLStreamException;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 
@@ -43,7 +45,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class DropComponentPanel extends JPanel implements ActionListener {
+public class DropComponentPanel extends PanelObservable implements ActionListener {
 	
 	/**
 	 * 
@@ -214,7 +216,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				//name of the component
 				String component = (String)componentChooser.getSelectedItem();
 				
-				BioModel compGCM = new BioModel(bioModel.getPath());
+				BioModel compGCM =  BioModel.createBioModel(bioModel.getPath(), this);
 				
 				//don't allow dropping a grid component
 				try {
@@ -268,6 +270,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 			}
 			else {
 				
@@ -292,7 +299,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		double width = grid.getComponentGeomWidth();
 		double height = grid.getComponentGeomHeight();
 		
-		BioModel compGCMFile = new BioModel(bioModel.getPath());
+		BioModel compGCMFile = BioModel.createBioModel(bioModel.getPath(), this);
 		try {
       compGCMFile.load(bioModel.getPath() + File.separator + component);
 	  } catch (XMLStreamException e) {
@@ -302,6 +309,12 @@ public class DropComponentPanel extends JPanel implements ActionListener {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
+		catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+		
 		String md5 = Utility.MD5(compGCMFile.getSBMLDocument());
 		return bioModel.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
@@ -348,7 +361,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				//name of the component
 				String component = (String)componentCombo.getSelectedItem();
 				
-				BioModel compGCM = new BioModel(bioModel.getPath());
+				BioModel compGCM =  BioModel.createBioModel(bioModel.getPath(), this);
 				
 				//don't allow grids within a grid
 				try {
@@ -378,6 +391,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
 			}
 			else {
 				this.droppedComponent = false;
@@ -445,7 +463,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		//sets location(s) for all of the tiled component(s)
 		for(int row=0; row<rowCount; row++) {
 			for(int col=0; col<colCount; col++) {
-				BioModel compBioModel = new BioModel(bioModel.getPath());
+				BioModel compBioModel = BioModel.createBioModel(bioModel.getPath(), this);
 				try {
           compBioModel.load(bioModel.getPath() + File.separator + comp);
         } catch (XMLStreamException e) {
@@ -455,6 +473,12 @@ public class DropComponentPanel extends JPanel implements ActionListener {
           JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
           e.printStackTrace();
         }
+				catch (BioSimException e) {
+	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+	          JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	      }
+				
 				String md5 = Utility.MD5(compBioModel.getSBMLDocument());
 				bioModel.addComponent(null, comp, compBioModel.IsWithinCompartment(), compBioModel.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);

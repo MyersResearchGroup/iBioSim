@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -48,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
+import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -173,7 +173,7 @@ public class Run extends CoreObservable implements ActionListener
     String time = SBMLutilities.createTimeString(time1, time2);
 
 
-    message.setLog("Total Simulation Time: " + time + "\n\n");
+    message.setLog("Total Simulation Time: " + time);
     this.notifyObservers(message);
     return exitValue;
   }
@@ -182,26 +182,27 @@ public class Run extends CoreObservable implements ActionListener
   {
     if (exitValue == 143)
     {
-      message.setErrorDialog("The simulation was" + " canceled by the user.", "Canceled Simulation");
+      message.setDialog("Canceled Simulation", "The simulation was" + " canceled by the user.");
       this.notifyObservers(message);
     }
     else if (exitValue == 139)
     {
-      message.setErrorDialog("The selected model is not a valid sbml file." + "\nYou must select an sbml file.", "Not An SBML File");
+      message.setErrorDialog("Not An SBML File", "The selected model is not a valid sbml file." + "\nYou must select an sbml file.");
       this.notifyObservers(message);
     }
     else if(exitValue != 0)
     {
-      message.setErrorDialog( "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.", "Error");
+      message.setErrorDialog("Error In Execution!", "Bad Return Value!\n" + "The reb2sac program returned " + exitValue + " as an exit value.");
       this.notifyObservers(message);
     }
   }
 
-  private int executeFBA() throws XMLStreamException, IOException
+  private int executeFBA() throws XMLStreamException, IOException, BioSimException
   {
     int exitValue = 255;
 
     FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(properties.getDirectory()+File.separator, properties.getModelFile(), properties.getSimulationProperties().getAbsError());
+    this.addObservable(fluxBalanceAnalysis);
     exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 
     if (exitValue == 1)
@@ -290,8 +291,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
 
-      BioModel bioModel = new BioModel(properties.getRoot());
-      bioModel.addObservable(this);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
@@ -322,7 +322,7 @@ public class Run extends CoreObservable implements ActionListener
       }
     }
     sg = new StateGraph(lhpnFile);
-
+    this.addObservable(sg);
     BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, null);
     buildStateGraph.start();
     buildStateGraph.join();
@@ -351,7 +351,7 @@ public class Run extends CoreObservable implements ActionListener
         }
         else
         {
-          BioModel gcm = new BioModel(root);
+          BioModel gcm = BioModel.createBioModel(root, this);
           gcm.load(root + File.separator + filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
@@ -434,7 +434,7 @@ public class Run extends CoreObservable implements ActionListener
     return 0;
   }
 
-  private int executeNary() throws XMLStreamException, IOException
+  private int executeNary() throws XMLStreamException, IOException, BioSimException
   {
     String modelFile = properties.getModelFile();
     String directory = properties.getDirectory();
@@ -445,7 +445,7 @@ public class Run extends CoreObservable implements ActionListener
     ArrayList<String> specs = new ArrayList<String>();
     ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
     retrieveSpeciesAndConLevels(specs, conLevel);
-    BioModel bioModel = new BioModel(root);
+    BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
     //TODO: check
     bioModel.load(root + File.separator + modelFile);
     String prop = null;
@@ -571,7 +571,8 @@ public class Run extends CoreObservable implements ActionListener
     {
       String[] command = properties.getReb2sacCommand();
       
-      message.setLog("Executing:\n" + commandString(command) + "\n");
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command) + "\n");
+      
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);
@@ -588,12 +589,12 @@ public class Run extends CoreObservable implements ActionListener
 
     String[] command =  properties.getHse2Command();
     
-    message.setLog("Executing:\n" +commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     reb2sac = exec.exec(command, Executables.envp, work);
 
     command = properties.getAtacsCommand();
     
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     this.notifyObservers(message);
     exec.exec(command, null, work);
 
@@ -623,7 +624,7 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
-      BioModel bioModel = new BioModel(root);
+      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
       bioModel.load(root + File.separator + properties.getFilename());
       if (bioModel.flattenModel(true) != null)
       {
@@ -763,7 +764,7 @@ public class Run extends CoreObservable implements ActionListener
     else
     {
       command = properties.getDotCommand();
-      message.setLog("Executing:\n" + commandString(command));
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command));
       this.notifyObservers(message);
       reb2sac = exec.exec(command, Executables.envp, work);
     }
@@ -778,7 +779,7 @@ public class Run extends CoreObservable implements ActionListener
       command = properties.getOpenDotCommand();
 
       exec.exec(command);
-      message.setLog("Executing:\n" + commandString(command));
+      message.setLog("Executing:\n" + SBMLutilities.commandString(command));
       this.notifyObservers(message);
     }
     
@@ -791,7 +792,7 @@ public class Run extends CoreObservable implements ActionListener
     Simulator.expandArrays( properties.getFilename(), 1);
 
     String[] command = properties.getXhtmlCommand();
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     reb2sac = exec.exec(command, Executables.envp, work);
 
 
@@ -802,7 +803,7 @@ public class Run extends CoreObservable implements ActionListener
     
     command = properties.getOpenBrowserCommand();
     
-    message.setLog("Executing:\n" + commandString(command));
+    message.setLog("Executing:\n" + SBMLutilities.commandString(command));
     this.notifyObservers(message);
     exec.exec(command, null, work);
 
@@ -810,7 +811,7 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException
+  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException, BioSimException
   {
     int exitValue = 255;
 
@@ -898,7 +899,7 @@ public class Run extends CoreObservable implements ActionListener
         ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
         String directory = properties.getDirectory();
         retrieveSpeciesAndConLevels(specs, conLevel);
-        BioModel bioModel = new BioModel(root);
+        BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
         bioModel.load(root + File.separator + properties.getModelFile());
 
         if (bioModel.flattenModel(true) != null)
@@ -961,7 +962,7 @@ public class Run extends CoreObservable implements ActionListener
         if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
         {
           String[] command = properties.getSbmlCommand(sbmlName);
-          message.setLog("Executing:\n" + commandString(command));
+          message.setLog("Executing:\n" + SBMLutilities.commandString(command));
           this.notifyObservers(message);
           reb2sac = exec.exec(command, Executables.envp, work);
         }
@@ -1173,23 +1174,6 @@ public class Run extends CoreObservable implements ActionListener
    
     return false;
   }
-  
-  private String commandString(String[] command)
-  {
-    String commandString = "";
-    if(command != null)
-    {
-       if(command.length > 0)
-       {
-         commandString = command[0];
-       }
-       
-       for(int i = 1; i < command.length; i++)
-       {
-         commandString = commandString + " " + command[i];
-       }
-    }
-    return commandString;
-  }
+ 
   
 }

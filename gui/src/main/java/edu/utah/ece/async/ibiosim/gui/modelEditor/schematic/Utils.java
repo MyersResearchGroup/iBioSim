@@ -64,6 +64,9 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.Validate;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 
 /**
@@ -700,28 +703,22 @@ public class Utils {
   /**
    * Checks consistency of the sbml file.
    */
-  public static void check(String file, SBMLDocument doc, boolean overdeterminedOnly)
+  public static void check(String file, SBMLDocument doc, boolean overdeterminedOnly, BioObservable observable, BioObserver observer)
   {
     try 
     {
-      if(Validate.validateDoc(file, doc, overdeterminedOnly))
-      {
-        String message = Validate.getMessage();
-        JTextArea messageArea = new JTextArea(message);
-        messageArea.setLineWrap(true);
-        messageArea.setEditable(false);
-        JScrollPane scroll = new JScrollPane();
-        scroll.setMinimumSize(new java.awt.Dimension(600, 600));
-        scroll.setPreferredSize(new java.awt.Dimension(600, 600));
-        scroll.setViewportView(messageArea);
-        JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-      }
+      Validate.validateDoc(file, doc, overdeterminedOnly, observable, observer);
     } catch (SBMLException e) {
       JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
     } catch (IOException e) {
       JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
     } catch (XMLStreamException e) {
       JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
+    catch (BioSimException e) {
+      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+        JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
     }
     

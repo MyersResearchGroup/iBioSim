@@ -47,6 +47,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.PanelObservable;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
@@ -63,7 +64,7 @@ import org.sbml.jsbml.JSBML;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Functions extends JPanel implements ActionListener, MouseListener {
+public class Functions extends PanelObservable implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -474,7 +475,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private void removeFunction() {
 		int index = functions.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
+			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, this, null)) {
 				FunctionDefinition tempFunc = bioModel.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
 				ListOf<FunctionDefinition> f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {

@@ -100,7 +100,7 @@ public class SEDMLutilities {
 		String xpath = "";
 		Variable variable;
 		if (variableId.equals("time")) {
-			variable = new Variable(variableId+"_"+cleanTaskId+"_"+dataSet+"_var",variableName,taskId,VariableSymbol.TIME);
+			variable = new Variable(cleanTaskId+"_"+variableId+"_"+dataSet+"_var",variableName,taskId,VariableSymbol.TIME);
 		} else {
 			if (type.equals("compartment")) {
 				xpath = support.getXPathForCompartment(variableId);
@@ -115,14 +115,14 @@ public class SEDMLutilities {
 			} else if (type.equals("product")) {
 				xpath = getXPathForProduct(reactionId,variableId);
 			}
-			variable = new Variable(variableId+"_"+cleanTaskId+"_"+dataSet+"_var",variableName,taskId,xpath);
+			variable = new Variable(cleanTaskId+"_"+variableId+"_"+dataSet+"_var",variableName,taskId,xpath);
 		}
-		DataGenerator dataGen = sedml.getDataGeneratorWithId(variableId+"_"+cleanTaskId+"_"+dataSet+"_dg");
+		DataGenerator dataGen = sedml.getDataGeneratorWithId(cleanTaskId+"_"+variableId+"_"+dataSet+"_dg");
 		if (dataGen != null) {
 			sedml.removeDataGenerator(dataGen);
 		}
-		ASTNode math = Libsedml.parseFormulaString(variableId+"_"+cleanTaskId+"_"+dataSet+"_var");
-		dataGen = new DataGenerator(variableId+"_"+cleanTaskId+"_"+dataSet+"_dg",variableId,math);
+		ASTNode math = Libsedml.parseFormulaString(cleanTaskId+"_"+variableId+"_"+dataSet+"_var");
+		dataGen = new DataGenerator(cleanTaskId+"_"+variableId+"_"+dataSet+"_dg",variableId,math);
 		dataGen.addVariable(variable);
 		if (!dataSet.equals("")) {
 			Element para = new Element("dataSet");
@@ -192,7 +192,7 @@ public class SEDMLutilities {
 			ComputeChange newComputeChange = new ComputeChange(computeChange.getTargetXPath(),
 					computeChange.getMath());
 			for (Variable variable : computeChange.getListOfVariables()) {
-				newComputeChange.addVariable(copyVariable(variable));
+				newComputeChange.addVariable(copyVariable(variable, variable.getId()));
 			}
 			for (Parameter parameter : computeChange.getListOfParameters()) {
 				newComputeChange.addParameter(copyParameter(parameter));
@@ -240,7 +240,7 @@ public class SEDMLutilities {
 		SetValue newSetValue = new SetValue(setValue.getTargetXPath(),setValue.getMath(),setValue.getRangeReference(),
 				setValue.getModelReference());
 		for (Variable variable : setValue.getListOfVariables()) {
-			newSetValue.addVariable(copyVariable(variable));
+			newSetValue.addVariable(copyVariable(variable,variable.getId()));
 		}
 		for (Parameter parameter : setValue.getListOfParameters()) {
 			newSetValue.addParameter(copyParameter(parameter));
@@ -270,7 +270,7 @@ public class SEDMLutilities {
 			FunctionalRange newFunctionalRange = new FunctionalRange(functionalRange.getId(),
 					functionalRange.getRange());
 			for (AbstractIdentifiableElement variable : functionalRange.getVariables().values()) {
-				newFunctionalRange.addVariable(copyVariable((Variable)variable));
+				newFunctionalRange.addVariable(copyVariable((Variable)variable,variable.getId()));
 			}
 			for (AbstractIdentifiableElement parameter : functionalRange.getParameters().values()) {
 				newFunctionalRange.addParameter(copyParameter((Parameter)parameter));
@@ -311,13 +311,13 @@ public class SEDMLutilities {
 		return null;
 	}
 	
-	public static Variable copyVariable(Variable variable) {
+	public static Variable copyVariable(Variable variable, String newId) {
 		Variable newVariable = null;
 		if (variable.isVariable()) {
-			newVariable = new Variable(variable.getId(),variable.getName(),variable.getReference(),
+			newVariable = new Variable(newId,variable.getName(),variable.getReference(),
 					variable.getTarget());
 		} else {
-			newVariable = new Variable(variable.getId(),variable.getName(),variable.getReference(),
+			newVariable = new Variable(newId,variable.getName(),variable.getReference(),
 					variable.getSymbol());
 		}
 		copyAnnotation(variable,newVariable);
@@ -335,7 +335,9 @@ public class SEDMLutilities {
 				dataGenerator.getName(),dataGenerator.getMath());
 		// TODO: need to update parameter/variable ids
 		for (Variable variable : dataGenerator.getListOfVariables()) {
-			newDataGenerator.addVariable(copyVariable(variable));
+			String newVarId = variable.getId().replace(dataGenerator.getId().replace("_dg", ""), 
+					newId.replace("_dg", ""));
+			newDataGenerator.addVariable(copyVariable(variable,newVarId));
 		}
 		for (Parameter parameter : dataGenerator.getListOfParameters()) {
 			newDataGenerator.addParameter(copyParameter(parameter));

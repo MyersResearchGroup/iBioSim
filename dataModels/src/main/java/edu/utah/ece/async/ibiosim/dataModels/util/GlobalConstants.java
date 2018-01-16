@@ -279,6 +279,7 @@ public class GlobalConstants {
 	public static final String KISAO_EULER = "KISAO:0000030";
 	public static final String KISAO_RUNGE_KUTTA_FEHLBERG = "KISAO:0000086";
 	public static final String KISAO_RUNGE_KUTTA_PRINCE_DORMAND = "KISAO:0000087";
+	public static final String KISAO_LSODA = "KISAO:0000088";
 	public static final String KISAO_FBA = "KISAO:0000437";
 	public static final String KISAO_MINIMUM_STEP_SIZE = "KISAO:0000485";
 	public static final String KISAO_MAXIMUM_STEP_SIZE = "KISAO:0000467";

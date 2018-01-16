@@ -26,13 +26,13 @@ Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curt
 
 Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 
-## Pre-installation Requirement(s)
+## Pre-installation Requirements
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
 5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.16.0/experimental/) libSBML for validation and flattening.
-6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim and SBOLDesigner GitHub repositories to your machine
+6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim, libSBOLj, and SBOLDesigner GitHub repositories to your machine
 
 ## Installing iBioSim
 1. Clone libSBOLj (https://github.com/SynBioDex/libSBOLj.git) project (e.g. ```git clone https://github.com/SynBioDex/libSBOLj.git```) in a location of your preference. Go to the directory where the libSBOLj is checked out and make sure you are on the develop branch. Perform ```mvn clean``` and then ```mvn install```. This will build libSBOLj and install it into your local repository, which is used as a dependency in iBioSim. 
@@ -48,13 +48,15 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * Linux: ```iBioSim.linux64```
 
 ## [Optional] Building reb2sac and GeneNet dependencies.
-1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. You can install different features by following the instructions below:
+1. So far, instructions on how to build, install, and run iBioSim from source have been presented. However, these steps only included source code that are native Java. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. 
+3. The easiest way to install reb2sac and GeneNet is to simply download the pre-compiled binaries for your operating system below: 
+   * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/releases)
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/releases)
+2. Another way to install them is to compile these tools on your machine following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
-   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet)
-2. After compiling reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim project with the following names:
-      * Windows: ```reb2sac.exe``` ```GeneNet.exe``` 
-      * Mac OS X: ```reb2sac.mac64``` ```GeneNet.mac64``` 
-      * Linux: ```reb2sac.linux64``` ```GeneNet.linux64``` 
+   * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/)
+4. After compiling or downloading reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim.
+
 
 ## [Optional] Setting up iBioSim in Eclipse
 ### Importing iBioSim to Eclipse
@@ -80,10 +82,10 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
     * Create variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
       * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin).
-      * DDLD_LIBRARY_PATH: full path to the lib directory in the iBioSim project (i.e. path/to/iBioSim/lib64)
   * Set Arguments tab to the following information:
-    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC```
-  * If you are running on a MAC, also set the following:
+    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC -Djava.library.path=/path/to/lib/```
+    * Note: for the java library path, ```/path/to/lib/``` is the location where [libSBML is installed](#pre-installation-requirements). The libSBML is installed by default in ```/usr/local/lib``` in Linux and Mac OS X machines and ```C:\Program Files\SBML\libSBML-5.16.0-libxml2-x64``` in Windows 64-bit machines. 
+  * If you are running on Mac OS X, also set the following:
     * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.
 

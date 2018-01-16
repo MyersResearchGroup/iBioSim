@@ -32,6 +32,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
@@ -241,7 +242,8 @@ public class Synthesizer {
 			specNodes.get(i).setCoverConstraint(coverNodes.get(i).getSignal());
 	}
 
-	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) throws XMLStreamException, IOException {
+	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) throws XMLStreamException, IOException, BioSimException {
+
 		List<SynthesisGraph> solutionCopy = new LinkedList<SynthesisGraph>();
 		solutionCopy.addAll(solution);
 		List<SynthesisNode> currentNodes = new LinkedList<SynthesisNode>();
@@ -285,7 +287,8 @@ public class Synthesizer {
 		} while (currentNodes.size() > 0);
 	}
 
-	private static void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) throws XMLStreamException, IOException {
+	
+	private static void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) throws XMLStreamException, IOException, BioSimException {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		Species species = createIOSpecies(currentCover.getOutput().getID(), solutionModel);
@@ -307,7 +310,7 @@ public class Synthesizer {
 	}
 
 	private static void composeIntermediate(SynthesisGraph currentCover, SynthesisGraph previousCover, BioModel solutionModel, 
-			List<Integer> inputIndices, int submodelIndex) throws XMLStreamException, IOException {
+			List<Integer> inputIndices, int submodelIndex) throws XMLStreamException, IOException, BioSimException {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		submodelIndex++;
@@ -320,9 +323,10 @@ public class Synthesizer {
 				previousCover.getInput(inputIndices.get(0)).getSignal(), currentCover.getOutput().getSignal(), 
 				previousCover.getSubmodelID(), currentCover.getSubmodelID());
 	}
-
-	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) throws XMLStreamException, IOException {
-		BioModel subBiomodel = new BioModel(biomodel.getPath());
+	
+	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) throws XMLStreamException, IOException, BioSimException {
+		BioModel subBiomodel = BioModel.createBioModel(biomodel.getPath(), biomodel);
+		subBiomodel.addObservable(biomodel);
 		subBiomodel.load(biomodel.getPath() + File.separator + sbmlFileID);
 		String md5 = Utility.MD5(subBiomodel.getSBMLDocument());
 

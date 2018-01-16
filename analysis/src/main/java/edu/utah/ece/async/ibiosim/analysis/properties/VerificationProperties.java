@@ -16,6 +16,7 @@ package edu.utah.ece.async.ibiosim.analysis.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
 
 /**
@@ -27,7 +28,7 @@ import edu.utah.ece.async.lema.verification.lpn.properties.AbstractionProperty;
  * @version $Rev$
  * @version %I%
  */
-public class VerificationProperties 
+public final class VerificationProperties extends CoreObservable
 {
 
   private AbstractionProperty absProperty;

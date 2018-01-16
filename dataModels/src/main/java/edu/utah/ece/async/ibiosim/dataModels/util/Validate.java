@@ -13,20 +13,14 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.util;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLError;
-import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.arrays.validator.ArraysValidator;
@@ -35,19 +29,26 @@ import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 
 public class Validate 
 {
-  private static final Message errorMessage = new Message();
-  public static String getMessage()
-  {
-    return errorMessage.getMessage();
-  }
-
+  
   /**
-   * Checks consistency of the sbml file.
+   * Check consistency of sbml file.
+   * 
+   * @param file
+   * @param doc
+   * @param overdeterminedOnly
+   * @return
+   * @throws IOException
+   * @throws SBMLException
+   * @throws XMLStreamException
+   * @throws BioSimException
    */
-  public static boolean validateDoc(String file, SBMLDocument doc, boolean overdeterminedOnly) throws IOException, SBMLException, XMLStreamException
+  public static boolean validateDoc(String file, SBMLDocument doc, boolean overdeterminedOnly, BioObservable observable, BioObserver observer) throws IOException, SBMLException, XMLStreamException, BioSimException
   {
     // TODO: added to turn off checking until libsbml bug is found
     //if (true) {
@@ -157,7 +158,7 @@ public class Validate
       SBMLDocument document = doc;
       if (document == null)
       {
-        document = SBMLutilities.readSBML(file);
+        document = SBMLutilities.readSBML(file, null, null);
       }
       if (overdeterminedOnly)
       {
@@ -211,10 +212,21 @@ public class Validate
         }
       }
     }
-
+    
+    
     if (numErrors > 0)
     {
+      Message errorMessage = new Message();
       errorMessage.setLog(message);
+      
+      if(observable != null)
+      {
+        observable.notifyObservers(errorMessage);
+      }
+      if(observer != null)
+      {
+        observer.update(errorMessage);
+      }
       return true;
     }
 
