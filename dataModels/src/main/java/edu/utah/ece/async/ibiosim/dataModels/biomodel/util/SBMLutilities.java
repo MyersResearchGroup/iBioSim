@@ -31,8 +31,7 @@ import javax.swing.JTextArea;
 import javax.swing.tree.TreeNode;
 import javax.xml.stream.XMLStreamException;
 
-import odk.lang.FastMath;
-
+import org.apache.commons.math3.util.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AbstractNamedSBase;
 import org.sbml.jsbml.AbstractSBase;

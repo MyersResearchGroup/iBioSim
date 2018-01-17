@@ -1300,6 +1300,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich." + " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
       return false;
     }
+    properties.getIncrementalProperties().setMpde(mpde.isSelected());
+    properties.getIncrementalProperties().setMedianPath(medianPath.isSelected());
+    properties.getIncrementalProperties().setMeanPath(meanPath.isSelected());
+    properties.getIncrementalProperties().setAdaptive(adaptive.isSelected());
+    properties.getIncrementalProperties().setNumPaths(Integer.parseInt((String)bifurcation.getSelectedItem()));
     if (noAbstraction.isSelected())
     {
       properties.setNone();
@@ -2206,61 +2211,27 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 //    postAbstractions = getLists.toArray();
 //    postAbs.setListData(postAbstractions);
 //
-//    if (load.containsKey("reb2sac.rapid.equilibrium.condition.1"))
-//    {
-//      rapid1.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.1"));
-//    }
-//    if (load.containsKey("reb2sac.rapid.equilibrium.condition.2"))
-//    {
-//      rapid2.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.2"));
-//    }
-//    if (load.containsKey("reb2sac.qssa.condition.1"))
-//    {
-//      qssa.setText(load.getProperty("reb2sac.qssa.condition.1"));
-//    }
-//    if (load.containsKey("reb2sac.operator.max.concentration.threshold"))
-//    {
-//      maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
-//    }
-//    if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
-//    {
-//      diffStoichAmp.setText(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
-//    }
-//    if (load.containsKey("reb2sac.iSSA.number.paths"))
-//    {
-//      bifurcation.setSelectedItem(load.getProperty("reb2sac.iSSA.number.paths"));
-//    }
-//    if (load.containsKey("reb2sac.iSSA.type"))
-//    {
-//      String type = load.getProperty("reb2sac.iSSA.type");
-//      if (type.equals("mpde"))
-//      {
-//        mpde.doClick();
-//      }
-//      else if (type.equals("medianPath"))
-//      {
-//        medianPath.doClick();
-//      }
-//      else
-//      {
-//        meanPath.doClick();
-//      }
-//    }
-//    if (load.containsKey("reb2sac.iSSA.adaptive"))
-//    {
-//      String type = load.getProperty("reb2sac.iSSA.adaptive");
-//      if (type.equals("true"))
-//      {
-//        adaptive.doClick();
-//      }
-//      else
-//      {
-//        nonAdaptive.doClick();
-//      }
-//    }
-
+    rapid1.setText(properties.getAdvancedProperties().getRap1()+"");
+    rapid2.setText(properties.getAdvancedProperties().getRap2()+"");
+    qssa.setText(properties.getAdvancedProperties().getQss()+"");
+    maxCon.setText(properties.getAdvancedProperties().getCon()+"");
+    diffStoichAmp.setText(properties.getAdvancedProperties().getStoichAmp()+"");
+    bifurcation.setSelectedIndex(properties.getIncrementalProperties().getNumPaths()-1);
+    if (properties.getIncrementalProperties().isMpde()) {
+    	mpde.doClick();
+    } else if (properties.getIncrementalProperties().isMedianPath()) {
+    	medianPath.doClick();
+    } else {
+    	meanPath.doClick();
+    }
+    if (properties.getIncrementalProperties().isAdaptive()) {
+    	adaptive.doClick();
+    } else {
+    	nonAdaptive.doClick();
+    }
     change = false;
   }
+  
   public void updateProperties()
   {
     String modelFile = properties.getModelFile();

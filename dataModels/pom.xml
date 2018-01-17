@@ -34,22 +34,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>install-jafama</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/jafama.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>odk.lang</groupId>
-							<artifactId>odk</artifactId>
-							<version>1.0.0</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>install-flanagan</id>
 						<phase>clean</phase>
 						<configuration>
@@ -57,22 +41,6 @@
 							<repositoryLayout>default</repositoryLayout>
 							<groupId>flanagan.math</groupId>
 							<artifactId>flanagan</artifactId>
-							<version>1.0.0</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>install-epsgraphics</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/epsgraphics.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>org.jibble</groupId>
-							<artifactId>epsgraphics</artifactId>
 							<version>1.0.0</version>
 							<packaging>jar</packaging>
 							<generatePom>true</generatePom>
@@ -184,10 +152,11 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
 		<dependency>
-			<groupId>odk.lang</groupId>
-			<artifactId>odk</artifactId>
-			<version>1.0.0</version>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-math3</artifactId>
+    		<version>3.0</version>
 		</dependency>
 
 		<dependency>
@@ -220,9 +189,9 @@
 		</dependency>
 			
 		<dependency>
-			<groupId>org.jibble</groupId>
-			<artifactId>epsgraphics</artifactId>
-			<version>1.0.0</version>
+    		<groupId>de.erichseifert.vectorgraphics2d</groupId>
+   			<artifactId>VectorGraphics2D</artifactId>
+    		<version>0.13</version>
 		</dependency>
 		
 		<dependency>

@@ -36,9 +36,8 @@ import java.util.PriorityQueue;
 
 import javax.xml.stream.XMLStreamException;
 
-import odk.lang.FastMath;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.util.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;

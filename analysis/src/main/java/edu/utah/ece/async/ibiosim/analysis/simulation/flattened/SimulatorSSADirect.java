@@ -18,8 +18,9 @@ import java.util.HashSet;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.math3.util.FastMath;
+
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
-import odk.lang.FastMath;
 
 /**
  * 

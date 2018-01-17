@@ -41,7 +41,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jibble.epsgraphics.EpsGraphics2D;
+//import org.jibble.epsgraphics.EpsGraphics2D;
 import org.jlibsedml.Curve;
 import org.jlibsedml.DataGenerator;
 import org.jlibsedml.DataSet;
@@ -62,6 +62,10 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
+import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
+import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
+import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
+import de.erichseifert.vectorgraphics2d.util.PageSize;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
@@ -289,11 +293,12 @@ public class GraphData extends CoreObservable {
 			out.close();
 		}
 		else if (output == 3) {
-			Graphics2D g = new EpsGraphics2D();
+			VectorGraphics2D g = new VectorGraphics2D();
 			chart.draw(g, new java.awt.Rectangle(width, height));
-			Writer out = new FileWriter(file);
-			out.write(g.toString());
-			out.close();
+			CommandSequence commands = g.getCommands();
+			EPSProcessor epsProcessor = new EPSProcessor();
+			de.erichseifert.vectorgraphics2d.Document doc = epsProcessor.getDocument(commands, new PageSize(width,height));
+			doc.writeTo(new FileOutputStream(file));
 		}
 		else if (output == 4) {
 			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
