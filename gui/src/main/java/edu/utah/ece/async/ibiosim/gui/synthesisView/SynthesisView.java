@@ -45,11 +45,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
+import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
@@ -59,6 +64,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
@@ -264,30 +270,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 * @param specFileID - ID of specification file.
 	 */
 	public void loadDefaultSynthesisProperties(String specFileID) {
-		synthProps = createDefaultSynthesisProperties(specFileID);
+		synthProps = TechMapping.createDefaultSynthesisProperties(specFileID);
 		saveSynthesisProperties();
 		loadSynthesisOptions();
 	}
 
-	/**
-	 * Get default fields to set the Synthesis View panel by storing the fields in a property file.
-	 * @param specFileID - ID of specification file
-	 * @return 
-	 */
-	private static Properties createDefaultSynthesisProperties(String specFileID) 
-	{
-		Properties synthProps = new Properties();
-		Preferences prefs = Preferences.userRoot();
-		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileID);
-		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, 
-				prefs.get(GlobalConstants.SBOL_SYNTH_LIBS_PREFERENCE, ""));
-		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY,
-				prefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, 
-						GlobalConstants.SBOL_SYNTH_EXHAUST_BB));
-		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, 
-				prefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
-		return synthProps;
-	}
+	
 
 	/**
 	 * Save the fields needed for SBML (Nic's) Technology mapping in the property file
@@ -564,16 +552,23 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			}
 		}
 		else if(select_SBOLTechMap.isSelected())
-		{
-			//NOTE: if there are more than one library file provided, convert them into one SBOL file.
-			String specFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-			String defaultURIPrefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
-			
+		{	
 			try 
 			{
-				SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultURIPrefix);
-				SBOLDocument libDoc = SBOLUtility.loadMultSBOLFile(libFilePaths, defaultURIPrefix);
-			
+				//NOTE: if there are more than one library file provided, convert them into one SBOL file.
+				String specFile = rootFilePath + File.separator + specText.getText();
+				File f = new File(specFile);
+				SBMLDocument sbmlSpec = SBMLReader.read(f);
+				
+				String defaultURIPrefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
+				SBOLDocument specDoc = new SBOLDocument();
+				specDoc.setDefaultURIprefix(defaultURIPrefix);
+				
+				SBML2SBOL.convert_SBML2SBOL(specDoc, specFile, sbmlSpec, f.getName(), null, defaultURIPrefix);
+				
+				String libDir = libFilePaths.iterator().next();
+				SBOLDocument libDoc = SBOLUtility.loadFromDir(libDir, defaultURIPrefix);
+				
 				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
 				gui.generateSBMLFromSBOL(solution, gui.getSBOLFile());
 			} 
@@ -605,6 +600,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			{
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
 						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

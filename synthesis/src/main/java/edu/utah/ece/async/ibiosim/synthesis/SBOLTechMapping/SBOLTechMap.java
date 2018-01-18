@@ -19,7 +19,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 public class SBOLTechMap {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) 
+	{
 		
 		String libFile = "";
 		String multLibFiles = "";
@@ -142,7 +143,7 @@ public class SBOLTechMap {
 		
 		System.err.println("Options:");
 		System.err.println("-o name of output file along with full path of where output file will be written to.");
-		System.err.println("-p SBOL URI prefix needed to set the SBOLDocument when creating converting the technology mapping solution to SBOL data format.");
+		System.err.println("-p SBOL URI prefix needed to set the SBOLDocument when converting the technology mapping solution to SBOL data format.");
 		
 	}
 	

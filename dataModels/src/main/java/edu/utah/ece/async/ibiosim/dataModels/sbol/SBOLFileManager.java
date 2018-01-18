@@ -93,32 +93,6 @@ public class SBOLFileManager {
 					 */
 					fileDocMap.put(sbolFilePath, sbolDoc); 
 					SBOLUtility.copyAllTopLevels(sbolDoc, SBOLDOC);
-//					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
-//					{
-//						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
-//						{
-//							try {
-//								SBOLDOC.createCopy(c);
-//							}
-//							catch (SBOLValidationException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//						}
-//					}
-//					for(Sequence s : sbolDoc.getSequences())
-//					{
-//						if(SBOLDOC.getSequence(s.getIdentity()) == null) 
-//						{
-//							try {
-//								SBOLDOC.createCopy(s);
-//							}
-//							catch (SBOLValidationException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//						}
-//					}
 				} 
 				else
 					sbolFilesAreLoaded = false;
