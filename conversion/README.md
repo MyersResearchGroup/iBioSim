@@ -42,9 +42,14 @@ where
 | -t [value] |  uses types in URIs |
 | -v [value] | mark version of data objects created during conversion |
 
-## Example Run:
+## Example run for SBOL to SBML:
 ```
   java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar "-l", "SBML", "-esf", "-p", "http://www.async.ece.utah.edu/", "-oDir", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/", "-o", "CRISPR_example_out2", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBOL_Files/CRISPR_example.xml"
+```
+
+## Example run for SBML to SBOL:
+```
+  java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar "-l", "SBOL2", "-p", "http://www.async.ece.utah.edu/", "-o", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBOL_Files/INV0_output", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/INV0.xml"
 ```
 
 ## Pre-installation Requirement(s)
