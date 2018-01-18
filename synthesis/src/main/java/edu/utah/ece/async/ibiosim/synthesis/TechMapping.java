@@ -225,7 +225,7 @@ public class TechMapping {
 	public static void exportSBMLTechMap(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
 			SBOLFileManager fileManager, String synthFilePath)
 	{
-		
+		//TODO: 
 	}
 
 	private static void usage() 

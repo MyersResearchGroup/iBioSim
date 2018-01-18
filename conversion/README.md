@@ -7,6 +7,43 @@ The conversion package currently supports three types of data conversion and VPR
 SBOL2SBML and SBML2SBOL can be build as a standalone JAR. 
 There is also a main Java [Converter.java](https://github.com/MyersResearchGroup/iBioSim/blob/master/conversion/src/main/java/edu/utah/ece/async/ibiosim/conversion/Converter.java) file that supports all three types of conversion.
 
+## How to use it:
+
+After building the executable jar, you need to invoke the following command:
+
+```
+  java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar [options] input
+```
+
+where 
+
+| Required        |  Description  |
+| -------------   | ------------- |
+| inputFile     | full path to input file |
+
+| Options        |  Description  |
+| -------------   | ------------- |
+| -b  | check best practices. | 
+| -cf  | The name of the file that will be produced to hold the result of the second SBOL file, if SBOL file diff was selected. | 
+| -d  | display detailed error trace | 
+| -e | The second SBOL file to compare to the main SBOL file. |
+| -esf |  Export SBML hierarchical models in a single output file. |
+| -f |  continue after first error. |
+| -i  | allow SBOL document to be incomplete. |
+| -l  <language> | specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2). To output FASTA or GenBank, no SBOL default URI prefix is needed. |
+| -mf | The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected. |
+| -o  <outputFile>| specifies the full path of the output file produced from the converter |
+| -no | indicate no output file to be generated from validation. Instead, print result to console/command line. |
+| -oDir [value] | output directory when SBOL to SBML conversion is performed and multiple SBML files are produced for individual submodels |
+| -p [value] | default URI prefix to set an SBOLDocument |
+| -rsbml [value] | The full path of external SBML files to be referenced in the SBML2SBOL conversion |
+| --rsbol [value] | The full path of external SBOL files to be referenced in the SBML2SBOL conversion |
+| -s [value] | select only this object and those it references |
+| -t [value] |  uses types in URIs |
+| -v [value] | mark version of data objects created during conversion |
+
+
+
 ## Pre-installation Requirement(s)
 * [libSBOLj](https://github.com/SynBioDex/libSBOLj)
 * VPR API jar provided from Newcastle Unveristy folks
@@ -32,3 +69,5 @@ There is also a main Java [Converter.java](https://github.com/MyersResearchGroup
     1. type ```mvn clean``` to bring in dependencies to iBioSim conversion package
     2. type ```mvn install``` to build the JAR 
     3. type ```mvn update``` to update iBioSim workspace
+    
+
