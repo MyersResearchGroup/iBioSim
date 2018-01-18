@@ -37,12 +37,15 @@ where
 | -oDir [value] | output directory when SBOL to SBML conversion is performed and multiple SBML files are produced for individual submodels |
 | -p [value] | default URI prefix to set an SBOLDocument |
 | -rsbml [value] | The full path of external SBML files to be referenced in the SBML2SBOL conversion |
-| --rsbol [value] | The full path of external SBOL files to be referenced in the SBML2SBOL conversion |
+| -rsbol [value] | The full path of external SBOL files to be referenced in the SBML2SBOL conversion |
 | -s [value] | select only this object and those it references |
 | -t [value] |  uses types in URIs |
 | -v [value] | mark version of data objects created during conversion |
 
-
+## Example Run:
+```
+  java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar "-l", "SBML", "-esf", "-p", "http://www.async.ece.utah.edu/", "-oDir", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBML_Files/", "-o", "CRISPR_example_out2", "src/test/resources/edu/utah/ece/async/ibiosim/conversion/SBOL_Files/CRISPR_example.xml"
+```
 
 ## Pre-installation Requirement(s)
 * [libSBOLj](https://github.com/SynBioDex/libSBOLj)
