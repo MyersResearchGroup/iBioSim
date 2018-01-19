@@ -92,7 +92,7 @@ public class AnalysisPropertiesWriter {
         properties.setProperty(reb2sac_abstraction_3 + (i + 1), analysisProperties.getAdvancedProperties().getPostAbs().get(i));
       }
     }
-    
+
     if(analysisProperties.getSimulationProperties().getPrinter_id() != null)
     {
       properties.setProperty(sim_printer, analysisProperties.getSimulationProperties().getPrinter_id());
@@ -306,8 +306,8 @@ public class AnalysisPropertiesWriter {
       properties.setProperty(mc_seed, String.valueOf(analysisProperties.getSimulationProperties().getRndSeed()));
       properties.setProperty(mc_runs, String.valueOf(analysisProperties.getSimulationProperties().getRun()));
       properties.setProperty(mc_start_index, String.valueOf(analysisProperties.getSimulationProperties().getStartIndex()));
-      properties.setProperty(ode_out_dir, analysisProperties.getOutDir());
-      }
+      properties.setProperty(mc_out_dir, analysisProperties.getOutDir());
+    }
     properties.setProperty(sim_run_term , "constraint");
 
 
@@ -332,7 +332,7 @@ public class AnalysisPropertiesWriter {
     int numberOfSteps;
     String fileStem = properties.getFileStem();
     String simName = properties.getSim();
-    
+
     if (properties.isNumSteps())
     {
       numberOfSteps = properties.getSimulationProperties().getNumSteps();
@@ -346,7 +346,7 @@ public class AnalysisPropertiesWriter {
     if (!fileStem.trim().equals("")) {
       taskId = properties.getId() + "__" + fileStem.trim();
     }
-    
+
     AbstractTask task = sedml.getTaskWithId(taskId);
     Simulation simulation = sedml.getSimulation(taskId+"_sim");
     if (simulation != null) {

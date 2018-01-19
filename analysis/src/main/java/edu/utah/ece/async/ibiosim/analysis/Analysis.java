@@ -60,6 +60,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  *  <li>Optional:</li>
  *  <ul>
  *    <li>-d [value]: project directory</li>
+ *    <li>-p [value]: loads a properties file</li>
+ *    <li>-outDir [value]: where the output should be stored </li>
  *    <li>-ti [value]: non-negative double initial simulation time</li>
  *    <li>-tl [value]: non-negative double simulation time limit</li>
  *    <li>-ot [value]: non-negative double for output time</li>
@@ -117,6 +119,8 @@ public class Analysis implements BioObserver
     System.err.println("\t input: combine archive, sed-ml, or sbml file.");
     System.err.println("Options:\n");
     System.err.println("\t -d [value]: project directory");
+    System.err.println("\t -p [value]: loads a properties file");
+    System.err.println("\t -outDir [value]: where the output should be stored");
     System.err.println("\t -ti [value]: initial simulation time");
     System.err.println("\t -tl [value]: simulation time limit");
     System.err.println("\t -ot [value]: output time");
@@ -207,6 +211,11 @@ public class Analysis implements BioObserver
       case "-data":
         analysis.propertiesMap.put(data, value);
         break;
+      case "-outDir":
+        analysis.properties.setOutDir(value);
+        File file = new File(value);
+        file.mkdirs();
+        break;
       default:
         usage();
       }
@@ -258,6 +267,7 @@ public class Analysis implements BioObserver
         AnalysisPropertiesLoader.loadPropertiesFile(properties);
       }
       loadUserValues(propertiesMap);
+      AnalysisPropertiesWriter.createProperties(properties);
       run.execute();
     }
   }
@@ -507,30 +517,37 @@ public class Analysis implements BioObserver
         if(value.equals("ode"))
         {
           properties.setSim("rkf45");
+          properties.setOde();
         }
         else if(value.equals("hode"))
         {
           properties.setSim("Runge-Kutta-Fehlberg (Hierarchical)");
+          properties.setOde();
         }
         else if(value.equals("ssa"))
         {
           properties.setSim("gillespie");
+          properties.setSsa();
         }
         else if(value.equals("hssa"))
         {
           properties.setSim("SSA-Direct (Hierarchical)");
+          properties.setSsa();
         }
         else if(value.equals("dfba"))
         {
           properties.setSim("Mixed-Hierarchical");
+          properties.setSsa();
         }
         else if(value.equals("jode"))
         {
           properties.setSim("Runge-Kutta-Fehlberg (Dynamic)");
+          properties.setOde();
         }
         else if(value.equals("jssa"))
         {
           properties.setSim("SSA-Direct (Dynamic)");
+          properties.setOde();
         }
         else
         {

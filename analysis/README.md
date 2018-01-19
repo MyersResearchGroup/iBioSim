@@ -25,6 +25,8 @@ where
 | Options        |  Description  |
 | -------------   | ------------- |
 | -d [value] | project directory | 
+|-p [value] | loads a properties file |
+| -outDir [value] | where the output should be stored |
 | -ti [value] | non-negative double initial simulation time | 
 | -tl [value] | non-negative double simulation time limit | 
 | -ot [value] | non-negative double output time |
