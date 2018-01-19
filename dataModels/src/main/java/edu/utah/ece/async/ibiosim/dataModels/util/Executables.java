@@ -36,112 +36,109 @@ public class Executables {
 		errors = new ArrayList<String>();
 		if(!hasChecked)
 		{
-			int exitValue = 1;
 			
 			libsbmlFound		= true;
 			reb2sacFound		= true;
 			geneNetFound		= true;
 			
-			try {
-				System.loadLibrary("sbmlj");
-				// For extra safety, check that the jar file is in the classpath.
-				Class.forName("org.sbml.libsbml.libsbml");
-			} catch (UnsatisfiedLinkError e) {
-				errors.add("libsbml not found (UnsatisfiedLinkError)");
-				//e.printStackTrace();
-				libsbmlFound = false;
-			} catch (ClassNotFoundException e) {
-				errors.add("libsbml not found (ClassNotFoundException)");
-				libsbmlFound = false;
-			} catch (SecurityException e) {
-				errors.add("libsbml not found (SecurityException)");
-				libsbmlFound = false;
-			}
-			Runtime.getRuntime();
-			try {
-				Executables.reb2sacExecutable = "reb2sac";
-				ProcessBuilder ps = new ProcessBuilder(Executables.reb2sacExecutable, "");
-				Map<String, String> env = ps.environment();
-				if (System.getenv("BIOSIM") != null) {
-					env.put("BIOSIM", System.getenv("BIOSIM"));
-				}
-				if (System.getenv("LEMA") != null) {
-					env.put("LEMA", System.getenv("LEMA"));
-				}
-				if (System.getenv("ATACSGUI") != null) {
-					env.put("ATACSGUI", System.getenv("ATACSGUI"));
-				}
-				if (System.getenv("LD_LIBRARY_PATH") != null) {
-					env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-				}
-				if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-					env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-				}
-				if (System.getenv("PATH") != null) {
-					env.put("PATH", System.getenv("PATH"));
-				}
-				Executables.envp = new String[env.size()];
-				int i = 0;
-				for (String envVar : env.keySet()) {
-					Executables.envp[i] = envVar + "=" + env.get(envVar);
-					i++;
-				}
-				ps.redirectErrorStream(true);
-				Process reb2sac = ps.start();
-				if (reb2sac != null) {
-					exitValue = reb2sac.waitFor();
-				}
-				if (exitValue != 255 && exitValue != -1) {
-					Executables.reb2sacFound = false;
-					errors.add(Executables.reb2sacExecutable + " not functional" + " (" + exitValue + ").");
-				}
-			} catch (IOException e) {
-				Executables.reb2sacFound = false;
-				errors.add(Executables.reb2sacExecutable + " not found.");
-			} catch (InterruptedException e) {
-			  Executables.reb2sacFound = false;
-			  errors.add(Executables.reb2sacExecutable + " throws exception.");
-			}
-			exitValue = 1;
-			try {
-				Executables.geneNetExecutable = "GeneNet";
-				ProcessBuilder ps = new ProcessBuilder(Executables.geneNetExecutable, "");
-				Map<String, String> env = ps.environment();
-				if (System.getenv("BIOSIM") != null) {
-					env.put("BIOSIM", System.getenv("BIOSIM"));
-				}
-				if (System.getenv("LEMA") != null) {
-					env.put("LEMA", System.getenv("LEMA"));
-				}
-				if (System.getenv("ATACSGUI") != null) {
-					env.put("ATACSGUI", System.getenv("ATACSGUI"));
-				}
-				if (System.getenv("LD_LIBRARY_PATH") != null) {
-					env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
-				}
-				if (System.getenv("DDLD_LIBRARY_PATH") != null) {
-					env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
-				}
-				if (System.getenv("PATH") != null) {
-					env.put("PATH", System.getenv("PATH"));
-				}
-				ps.redirectErrorStream(true);
-				Process geneNet = ps.start();
-				if (geneNet != null) {
-					exitValue = geneNet.waitFor();
-				}
-				if (exitValue != 255 && exitValue != 134 && exitValue != -1) {
-					Executables.geneNetFound = false;
-					errors.add(Executables.geneNetExecutable + " not functional." + " (" + exitValue + ").");
-				}
-			} catch (IOException e) {
-				Executables.geneNetFound = false;
-				errors.add(Executables.geneNetExecutable + " not found.");
-			} catch (InterruptedException e) {
-				Executables.geneNetFound = false;
-				errors.add(Executables.geneNetExecutable + " throws exception..");
-			}
+			checkLibsbml();
+			
+      Executables.reb2sacExecutable = "reb2sac";
+      Executables.geneNetExecutable = "GeneNet";
+      
+      reb2sacFound = checkProcess(Executables.reb2sacExecutable);
+      geneNetFound = checkProcess(Executables.geneNetExecutable);
+			
 		}
+	}
+	
+	private static void checkLibsbml()
+	{
+	  try {
+      System.loadLibrary("sbmlj");
+      // For extra safety, check that the jar file is in the classpath.
+      Class.forName("org.sbml.libsbml.libsbml");
+    } catch (UnsatisfiedLinkError e) {
+      errors.add("libsbml not found (UnsatisfiedLinkError)");
+      //e.printStackTrace();
+      libsbmlFound = false;
+    } catch (ClassNotFoundException e) {
+      errors.add("libsbml not found (ClassNotFoundException)");
+      libsbmlFound = false;
+    } catch (SecurityException e) {
+      errors.add("libsbml not found (SecurityException)");
+      libsbmlFound = false;
+    }
+	}
+	
+	private static boolean checkProcess(String processName)
+	{
+	  int exitValue = 1;
+	  boolean canRun = true;
+	  
+	  try {
+      ProcessBuilder ps = new ProcessBuilder(processName, "");
+      Map<String, String> env = ps.environment();
+      if (System.getenv("BIOSIM") != null) {
+        env.put("BIOSIM", System.getenv("BIOSIM"));
+      }
+      if (System.getenv("LEMA") != null) {
+        env.put("LEMA", System.getenv("LEMA"));
+      }
+      if (System.getenv("ATACSGUI") != null) {
+        env.put("ATACSGUI", System.getenv("ATACSGUI"));
+      }
+      if (System.getenv("LD_LIBRARY_PATH") != null) {
+        env.put("LD_LIBRARY_PATH", System.getenv("LD_LIBRARY_PATH"));
+      }
+      if (System.getenv("DDLD_LIBRARY_PATH") != null) {
+        env.put("DYLD_LIBRARY_PATH", System.getenv("DDLD_LIBRARY_PATH"));
+      }
+      if (System.getenv("PATH") != null) {
+        env.put("PATH", System.getenv("PATH"));
+      }
+      Executables.envp = new String[env.size()];
+      int i = 0;
+      for (String envVar : env.keySet()) {
+        Executables.envp[i] = envVar + "=" + env.get(envVar);
+        i++;
+      }
+      ps.redirectErrorStream(true);
+      Process process = ps.start();
+      if (process != null) {
+        exitValue = process.waitFor();
+      }
+      if(processName == Executables.geneNetExecutable)
+      {
+        if (exitValue != 255 &&  exitValue != -1 &&  exitValue != 0 &&  exitValue != 134) {
+          canRun = false;
+          errors.add(processName + " not functional" + " (" + exitValue + ").");
+        }
+      }
+      else if(processName == Executables.reb2sacExecutable)
+      {
+        if (exitValue != 255 &&  exitValue != -1) {
+          canRun = false;
+          errors.add(processName + " not functional" + " (" + exitValue + ").");
+        }
+      }
+      else
+      {
+        if (exitValue != 255) {
+          canRun = false;
+          errors.add(processName + " not functional" + " (" + exitValue + ").");
+        }
+      }
+      
+    } catch (IOException e) {
+      canRun= false;
+      errors.add(processName + " not found.");
+    } catch (InterruptedException e) {
+      canRun = false;
+      errors.add(processName + " throws exception.");
+    }
+	  
+	  return canRun;
 	}
 
 	/**
