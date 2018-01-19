@@ -76,7 +76,8 @@ public class Executables {
 	  int exitValue = 1;
 	  boolean canRun = true;
 	  
-	  try {
+	  try 
+	  {
       ProcessBuilder ps = new ProcessBuilder(processName, "");
       Map<String, String> env = ps.environment();
       if (System.getenv("BIOSIM") != null) {
