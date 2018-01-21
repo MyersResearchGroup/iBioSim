@@ -54,6 +54,7 @@ public class Validate
     //if (true) {
     //  return true;
     //}
+    String title = "";
     String message = "";
     long numErrors = 0;
     Preferences biosimrc = Preferences.userRoot();
@@ -61,7 +62,7 @@ public class Validate
     boolean warnings = biosimrc.get("biosim.general.warnings", "").equals("true");
     if (validationMethod.equals("libsbml") && Executables.libsbmlFound)
     {
-      message += "Validation Problems Found by libsbml\n";
+      title = "Validation Problems Found by libsbml\n";
       org.sbml.libsbml.SBMLDocument document = null;
       // TODO: temporary hack because otherwise it hangs
       if (doc == null)
@@ -140,7 +141,7 @@ public class Validate
     }
     else if(validationMethod.equals("jsbml"))
     {
-      message += "Validation Problems Found by JSBML\n";
+      title = "Validation Problems Found by JSBML\n";
       doc.checkConsistencyOffline();
       List<SBMLError> listOfError = doc.getErrorLog().getValidationErrors();
       for(SBMLError error : listOfError)
@@ -154,7 +155,7 @@ public class Validate
     }
     else
     {
-      message += "Validation Problems Found by Webservice\n";
+      title = "Validation Problems Found by Webservice\n";
       SBMLDocument document = doc;
       if (document == null)
       {
@@ -217,7 +218,7 @@ public class Validate
     if (numErrors > 0)
     {
       Message errorMessage = new Message();
-      errorMessage.setLog(message);
+      errorMessage.setScrollableErrorDialog(title,message);
       
       if(observable != null)
       {

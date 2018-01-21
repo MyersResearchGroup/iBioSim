@@ -105,7 +105,10 @@ public final class AnalysisProperties extends CoreObservable
     this.directory = root + File.separator + id;
     this.fileStem = "";
     this.filename = directory + File.separator + modelFile;
-    this.propertiesFile = root + File.separator + id + File.separator + modelFile.replace(".xml", ".properties");
+    if(modelFile != null)
+    {
+      this.propertiesFile = directory + File.separator + modelFile.replace(".xml", ".properties");
+    }
     this.outDir = ".";
     this.method = SimMethod.ODE;
     this.abs = AbstractionMethod.NONE;

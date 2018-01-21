@@ -1304,7 +1304,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     properties.getIncrementalProperties().setMedianPath(medianPath.isSelected());
     properties.getIncrementalProperties().setMeanPath(meanPath.isSelected());
     properties.getIncrementalProperties().setAdaptive(adaptive.isSelected());
-    properties.getIncrementalProperties().setNumPaths(Integer.parseInt((String)bifurcation.getSelectedItem()));
+    if(bifurcation.getSelectedIndex() != -1)
+    {
+      properties.getIncrementalProperties().setNumPaths(Integer.parseInt((String) bifurcation.getSelectedItem()));
+    }
     if (noAbstraction.isSelected())
     {
       properties.setNone();
@@ -1350,9 +1353,15 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       properties.setXhtml();
     }
 
+    if(bifurcation.getSelectedIndex() != -1)
+    {
+
+      int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
+      properties.getIncrementalProperties().setNumPaths(numPaths);
+    }
+    
     log.addText("Creating properties file:\n" + propName + "\n");
-    int numPaths = Integer.parseInt((String) (bifurcation.getSelectedItem()));
-    properties.getIncrementalProperties().setNumPaths(numPaths);
+
 
     try {
 
