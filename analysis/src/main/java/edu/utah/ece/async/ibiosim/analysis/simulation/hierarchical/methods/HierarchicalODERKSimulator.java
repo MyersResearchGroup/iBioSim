@@ -211,7 +211,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     if (!isSingleStep) 
     {
       printToFile();
-      closeWriter();
+      //closeWriter();
     }
     
   }

@@ -109,8 +109,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-import flanagan.math.Fmath;
-import flanagan.math.PsRandom;
 
 /**
  * This class is a utility class for SBML models. 
@@ -266,12 +264,14 @@ public class SBMLutilities extends CoreObservable
 					continue;
 				}
 				else if(currentElement.startsWith(sbmlText)){
+					b.close();
 					return true;
 				}
 				else
 				{
 					//No need to check for SBOL text. 
 					//We will assume user gave SBOL file at this point.
+					b.close();
 					return false;
 				}
 			}
@@ -286,10 +286,12 @@ public class SBMLutilities extends CoreObservable
 			else
 			{
 				//we have a non xml file
+				b.close();
 				return false;
 			}
 			
 		}
+		b.close();
 		return false;
 	}
 	
@@ -3406,7 +3408,7 @@ public class SBMLutilities extends CoreObservable
 			if (event.getSBOTerm() == GlobalConstants.SBO_TRANSITION)
 			{
 				event.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
-				Rule r = document.getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
+				Rule r = document.getModel().getRuleByVariable(GlobalConstants.TRIGGER + "_" + event.getId());
 				if (r != null)
 				{
 					return true;
@@ -3414,7 +3416,7 @@ public class SBMLutilities extends CoreObservable
 			}
 			else if (event.getSBOTerm() == GlobalConstants.SBO_PETRI_NET_TRANSITION)
 			{
-				Rule r = document.getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
+				Rule r = document.getModel().getRuleByVariable(GlobalConstants.TRIGGER + "_" + event.getId());
 				if (r != null)
 				{
 					return true;
@@ -3517,457 +3519,457 @@ public class SBMLutilities extends CoreObservable
 		return deepCopy(math);
 	}
 
-	private static String myFormulaToStringInfix(ASTNode math)
-	{
-		if (math.getType() == ASTNode.Type.CONSTANT_E)
-		{
-			return "exponentiale";
-		}
-		else if (math.getType() == ASTNode.Type.CONSTANT_FALSE)
-		{
-			return "false";
-		}
-		else if (math.getType() == ASTNode.Type.CONSTANT_PI)
-		{
-			return "pi";
-		}
-		else if (math.getType() == ASTNode.Type.CONSTANT_TRUE)
-		{
-			return "true";
-		}
-		else if (math.getType() == ASTNode.Type.DIVIDE)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " / " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION)
-		{
-			String result = math.getName() + "(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += ",";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ABS)
-		{
-			return "abs(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOS)
-		{
-			return "acos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOSH)
-		{
-			return "acosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOT)
-		{
-			return "acot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOTH)
-		{
-			return "acoth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSC)
-		{
-			return "acsc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSCH)
-		{
-			return "acsch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSEC)
-		{
-			return "asec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSECH)
-		{
-			return "asech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSIN)
-		{
-			return "asin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSINH)
-		{
-			return "asinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTAN)
-		{
-			return "atan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTANH)
-		{
-			return "atanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_CEILING)
-		{
-			return "ceil(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_COS)
-		{
-			return "cos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_COSH)
-		{
-			return "cosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_COT)
-		{
-			return "cot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_COTH)
-		{
-			return "coth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_CSC)
-		{
-			return "csc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_CSCH)
-		{
-			return "csch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_DELAY)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "delay(" + leftStr + " , " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_EXP)
-		{
-			return "exp(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_FACTORIAL)
-		{
-			return "factorial(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_FLOOR)
-		{
-			return "floor(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_LN)
-		{
-			return "ln(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_LOG)
-		{
-			String result = "log(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += ",";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE)
-		{
-			String result = "piecewise(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += ",";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_POWER)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "pow(" + leftStr + " , " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_ROOT)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "root(" + leftStr + " , " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_SEC)
-		{
-			return "sec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_SECH)
-		{
-			return "sech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_SIN)
-		{
-			return "sin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_SINH)
-		{
-			return "sinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_TAN)
-		{
-			return "tan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_TANH)
-		{
-			return "tanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
-		}
-		else if (math.getType() == ASTNode.Type.INTEGER)
-		{
-			if (math.hasUnits())
-			{
-				return "" + math.getInteger() + " " + math.getUnits();
-			}
-			return "" + math.getInteger();
-		}
-		else if (math.getType() == ASTNode.Type.LOGICAL_AND)
-		{
-			if (math.getChildCount() == 0)
-			{
-				return "";
-			}
-			String result = "(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += " && ";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.LOGICAL_NOT)
-		{
-			if (math.getChildCount() == 0)
-			{
-				return "";
-			}
-			String result = "!(";
-			String child = myFormulaToStringInfix(math.getChild(0));
-			result += child;
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.LOGICAL_OR)
-		{
-			if (math.getChildCount() == 0)
-			{
-				return "";
-			}
-			String result = "(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += " || ";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
-		{
-			if (math.getChildCount() == 0)
-			{
-				return "";
-			}
-			String result = "xor(";
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				String child = myFormulaToStringInfix(math.getChild(i));
-				result += child;
-				if (i + 1 < math.getChildCount())
-				{
-					result += ",";
-				}
-			}
-			result += ")";
-			return result;
-		}
-		else if (math.getType() == ASTNode.Type.MINUS)
-		{
-			if (math.getChildCount() == 1)
-			{
-				return "-" + myFormulaToStringInfix(math.getChild(0));
-			}
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " - " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.NAME)
-		{
-			return math.getName();
-		}
-		else if (math.getType() == ASTNode.Type.NAME_AVOGADRO)
-		{
-			return "avogadro";
-		}
-		else if (math.getType() == ASTNode.Type.NAME_TIME)
-		{
-			return "t";
-		}
-		else if (math.getType() == ASTNode.Type.PLUS)
-		{
-			String returnVal = "(";
-			boolean first = true;
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				if (first)
-				{
-					first = false;
-				}
-				else
-				{
-					returnVal += " + ";
-				}
-				returnVal += myFormulaToStringInfix(math.getChild(i));
-			}
-			returnVal += ")";
-			return returnVal;
-		}
-		else if (math.getType() == ASTNode.Type.POWER)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " ^ " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RATIONAL)
-		{
-			if (math.hasUnits())
-			{
-				return math.getNumerator() + "/" + math.getDenominator() + " " + math.getUnits();
-			}
-			return math.getNumerator() + "/" + math.getDenominator();
-		}
-		else if (math.getType() == ASTNode.Type.REAL)
-		{
-			if (math.hasUnits())
-			{
-				return "" + math.getReal() + " " + math.getUnits();
-			}
-			return "" + math.getReal();
-		}
-		else if (math.getType() == ASTNode.Type.REAL_E)
-		{
-			if (math.hasUnits())
-			{
-				return math.getMantissa() + "e" + math.getExponent() + " " + math.getUnits();
-			}
-			return math.getMantissa() + "e" + math.getExponent();
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_EQ)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " == " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_GEQ)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " >= " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_GT)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " > " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_LEQ)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " <= " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_LT)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " < " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.RELATIONAL_NEQ)
-		{
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " != " + rightStr + ")";
-		}
-		else if (math.getType() == ASTNode.Type.TIMES)
-		{
-			String returnVal = "(";
-			boolean first = true;
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				if (first)
-				{
-					first = false;
-				}
-				else
-				{
-					returnVal += " * ";
-				}
-				returnVal += myFormulaToStringInfix(math.getChild(i));
-			}
-			returnVal += ")";
-			return returnVal;
-		}
-		else if (math.getType() == ASTNode.Type.FUNCTION_SELECTOR)
-		{
-			String returnVal = myFormulaToStringInfix(math.getChild(0));
-			for (int i = 1; i < math.getChildCount(); i++)
-			{
-				returnVal += "[" + myFormulaToStringInfix(math.getChild(i)) + "]";
-			}
-			return returnVal;
-		}
-		else if (math.getType() == ASTNode.Type.VECTOR)
-		{
-			String returnVal = "{";
-			boolean first = true;
-			for (int i = 0; i < math.getChildCount(); i++)
-			{
-				if (first)
-				{
-					first = false;
-				}
-				else
-				{
-					returnVal += ", ";
-				}
-				returnVal += myFormulaToStringInfix(math.getChild(i));
-			}
-			returnVal += "}";
-			return returnVal;
-		}
-		else
-		{
-			if (math.isOperator())
-			{
-				System.out.println("Operator " + math.getName() + " is not currently supported.");
-			}
-			else
-			{
-				System.out.println(math.getName() + " is not currently supported.");
-			}
-		}
-		return "";
-	}
+//	private static String myFormulaToStringInfix(ASTNode math)
+//	{
+//		if (math.getType() == ASTNode.Type.CONSTANT_E)
+//		{
+//			return "exponentiale";
+//		}
+//		else if (math.getType() == ASTNode.Type.CONSTANT_FALSE)
+//		{
+//			return "false";
+//		}
+//		else if (math.getType() == ASTNode.Type.CONSTANT_PI)
+//		{
+//			return "pi";
+//		}
+//		else if (math.getType() == ASTNode.Type.CONSTANT_TRUE)
+//		{
+//			return "true";
+//		}
+//		else if (math.getType() == ASTNode.Type.DIVIDE)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " / " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION)
+//		{
+//			String result = math.getName() + "(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += ",";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ABS)
+//		{
+//			return "abs(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOS)
+//		{
+//			return "acos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOSH)
+//		{
+//			return "acosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOT)
+//		{
+//			return "acot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCOTH)
+//		{
+//			return "acoth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSC)
+//		{
+//			return "acsc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCCSCH)
+//		{
+//			return "acsch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSEC)
+//		{
+//			return "asec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSECH)
+//		{
+//			return "asech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSIN)
+//		{
+//			return "asin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCSINH)
+//		{
+//			return "asinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTAN)
+//		{
+//			return "atan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ARCTANH)
+//		{
+//			return "atanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_CEILING)
+//		{
+//			return "ceil(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_COS)
+//		{
+//			return "cos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_COSH)
+//		{
+//			return "cosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_COT)
+//		{
+//			return "cot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_COTH)
+//		{
+//			return "coth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_CSC)
+//		{
+//			return "csc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_CSCH)
+//		{
+//			return "csch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_DELAY)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "delay(" + leftStr + " , " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_EXP)
+//		{
+//			return "exp(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_FACTORIAL)
+//		{
+//			return "factorial(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_FLOOR)
+//		{
+//			return "floor(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_LN)
+//		{
+//			return "ln(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_LOG)
+//		{
+//			String result = "log(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += ",";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE)
+//		{
+//			String result = "piecewise(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += ",";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_POWER)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "pow(" + leftStr + " , " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_ROOT)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "root(" + leftStr + " , " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_SEC)
+//		{
+//			return "sec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_SECH)
+//		{
+//			return "sech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_SIN)
+//		{
+//			return "sin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_SINH)
+//		{
+//			return "sinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_TAN)
+//		{
+//			return "tan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_TANH)
+//		{
+//			return "tanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.INTEGER)
+//		{
+//			if (math.hasUnits())
+//			{
+//				return "" + math.getInteger() + " " + math.getUnits();
+//			}
+//			return "" + math.getInteger();
+//		}
+//		else if (math.getType() == ASTNode.Type.LOGICAL_AND)
+//		{
+//			if (math.getChildCount() == 0)
+//			{
+//				return "";
+//			}
+//			String result = "(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += " && ";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.LOGICAL_NOT)
+//		{
+//			if (math.getChildCount() == 0)
+//			{
+//				return "";
+//			}
+//			String result = "!(";
+//			String child = myFormulaToStringInfix(math.getChild(0));
+//			result += child;
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.LOGICAL_OR)
+//		{
+//			if (math.getChildCount() == 0)
+//			{
+//				return "";
+//			}
+//			String result = "(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += " || ";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.LOGICAL_XOR)
+//		{
+//			if (math.getChildCount() == 0)
+//			{
+//				return "";
+//			}
+//			String result = "xor(";
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				String child = myFormulaToStringInfix(math.getChild(i));
+//				result += child;
+//				if (i + 1 < math.getChildCount())
+//				{
+//					result += ",";
+//				}
+//			}
+//			result += ")";
+//			return result;
+//		}
+//		else if (math.getType() == ASTNode.Type.MINUS)
+//		{
+//			if (math.getChildCount() == 1)
+//			{
+//				return "-" + myFormulaToStringInfix(math.getChild(0));
+//			}
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " - " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.NAME)
+//		{
+//			return math.getName();
+//		}
+//		else if (math.getType() == ASTNode.Type.NAME_AVOGADRO)
+//		{
+//			return "avogadro";
+//		}
+//		else if (math.getType() == ASTNode.Type.NAME_TIME)
+//		{
+//			return "t";
+//		}
+//		else if (math.getType() == ASTNode.Type.PLUS)
+//		{
+//			String returnVal = "(";
+//			boolean first = true;
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				if (first)
+//				{
+//					first = false;
+//				}
+//				else
+//				{
+//					returnVal += " + ";
+//				}
+//				returnVal += myFormulaToStringInfix(math.getChild(i));
+//			}
+//			returnVal += ")";
+//			return returnVal;
+//		}
+//		else if (math.getType() == ASTNode.Type.POWER)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " ^ " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RATIONAL)
+//		{
+//			if (math.hasUnits())
+//			{
+//				return math.getNumerator() + "/" + math.getDenominator() + " " + math.getUnits();
+//			}
+//			return math.getNumerator() + "/" + math.getDenominator();
+//		}
+//		else if (math.getType() == ASTNode.Type.REAL)
+//		{
+//			if (math.hasUnits())
+//			{
+//				return "" + math.getReal() + " " + math.getUnits();
+//			}
+//			return "" + math.getReal();
+//		}
+//		else if (math.getType() == ASTNode.Type.REAL_E)
+//		{
+//			if (math.hasUnits())
+//			{
+//				return math.getMantissa() + "e" + math.getExponent() + " " + math.getUnits();
+//			}
+//			return math.getMantissa() + "e" + math.getExponent();
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_EQ)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " == " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_GEQ)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " >= " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_GT)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " > " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_LEQ)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " <= " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_LT)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " < " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.RELATIONAL_NEQ)
+//		{
+//			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+//			String rightStr = myFormulaToStringInfix(math.getRightChild());
+//			return "(" + leftStr + " != " + rightStr + ")";
+//		}
+//		else if (math.getType() == ASTNode.Type.TIMES)
+//		{
+//			String returnVal = "(";
+//			boolean first = true;
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				if (first)
+//				{
+//					first = false;
+//				}
+//				else
+//				{
+//					returnVal += " * ";
+//				}
+//				returnVal += myFormulaToStringInfix(math.getChild(i));
+//			}
+//			returnVal += ")";
+//			return returnVal;
+//		}
+//		else if (math.getType() == ASTNode.Type.FUNCTION_SELECTOR)
+//		{
+//			String returnVal = myFormulaToStringInfix(math.getChild(0));
+//			for (int i = 1; i < math.getChildCount(); i++)
+//			{
+//				returnVal += "[" + myFormulaToStringInfix(math.getChild(i)) + "]";
+//			}
+//			return returnVal;
+//		}
+//		else if (math.getType() == ASTNode.Type.VECTOR)
+//		{
+//			String returnVal = "{";
+//			boolean first = true;
+//			for (int i = 0; i < math.getChildCount(); i++)
+//			{
+//				if (first)
+//				{
+//					first = false;
+//				}
+//				else
+//				{
+//					returnVal += ", ";
+//				}
+//				returnVal += myFormulaToStringInfix(math.getChild(i));
+//			}
+//			returnVal += "}";
+//			return returnVal;
+//		}
+//		else
+//		{
+//			if (math.isOperator())
+//			{
+//				System.out.println("Operator " + math.getName() + " is not currently supported.");
+//			}
+//			else
+//			{
+//				System.out.println(math.getName() + " is not currently supported.");
+//			}
+//		}
+//		return "";
+//	}
 
 	public static boolean returnsBoolean(ASTNode math, Model model)
 	{
@@ -5067,7 +5069,8 @@ public class SBMLutilities extends CoreObservable
 
 	public static double evaluateExpression(Model model, ASTNode node)
 	{
-		PsRandom prng = new PsRandom();
+		//PsRandom prng = new PsRandom();
+		double value;
 		if (node.isBoolean())
 		{
 
@@ -5261,27 +5264,32 @@ public class SBMLutilities extends CoreObservable
 					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 					double upperBound = FastMath.max(leftChildValue, rightChildValue);
 
-					return prng.nextDouble(lowerBound, upperBound);
+					//return prng.nextDouble(lowerBound, upperBound);
+					return ((upperBound-lowerBound) / 2);
 				}
 				else if (nodeName.equals("exponential"))
 				{
 
-					return prng.nextExponential(evaluateExpression(model, node.getLeftChild()), 1);
+					//return prng.nextExponential(evaluateExpression(model, node.getLeftChild()), 1);
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("gamma"))
 				{
 
-					return prng.nextGamma(1, evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					//return prng.nextGamma(1, evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("chisq"))
 				{
 
-					return prng.nextChiSquare((int) evaluateExpression(model, node.getLeftChild()));
+					//return prng.nextChiSquare((int) evaluateExpression(model, node.getLeftChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("lognormal"))
 				{
 
-					return prng.nextLogNormal(evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					//return prng.nextLogNormal(evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("laplace"))
 				{
@@ -5292,27 +5300,32 @@ public class SBMLutilities extends CoreObservable
 				else if (nodeName.equals("cauchy"))
 				{
 
-					return prng.nextLorentzian(0, evaluateExpression(model, node.getLeftChild()));
+					//return prng.nextLorentzian(0, evaluateExpression(model, node.getLeftChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("poisson"))
 				{
 
-					return prng.nextPoissonian(evaluateExpression(model, node.getLeftChild()));
+					//return prng.nextPoissonian(evaluateExpression(model, node.getLeftChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("binomial"))
 				{
 
-					return prng.nextBinomial(evaluateExpression(model, node.getLeftChild()), (int) evaluateExpression(model, node.getRightChild()));
+					//return prng.nextBinomial(evaluateExpression(model, node.getLeftChild()), (int) evaluateExpression(model, node.getRightChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("bernoulli"))
 				{
 
-					return prng.nextBinomial(evaluateExpression(model, node.getLeftChild()), 1);
+					//return prng.nextBinomial(evaluateExpression(model, node.getLeftChild()), 1);
+					return evaluateExpression(model, node.getLeftChild());
 				}
 				else if (nodeName.equals("normal"))
 				{
 
-					return prng.nextGaussian(evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					//return prng.nextGaussian(evaluateExpression(model, node.getLeftChild()), evaluateExpression(model, node.getRightChild()));
+					return evaluateExpression(model, node.getLeftChild());
 				}
 
 				break;
@@ -5385,59 +5398,75 @@ public class SBMLutilities extends CoreObservable
 			}
 
 			case FUNCTION_ROOT:
-				return FastMath.pow(evaluateExpression(model, node.getRightChild()), 1 / evaluateExpression(model, node.getLeftChild()));
+				return Math.pow(evaluateExpression(model, node.getRightChild()), 1 / evaluateExpression(model, node.getLeftChild()));
 
 			case FUNCTION_SEC:
-				return Fmath.sec(evaluateExpression(model, node.getChild(0)));
+				return 1 / Math.cos(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_SECH:
-				return Fmath.sech(evaluateExpression(model, node.getChild(0)));
+				return 1 / Math.cosh(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_FACTORIAL:
-				return Fmath.factorial(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				double result = 1;
+				while (value > 0)
+				{
+					result = result * value;
+			        value--;
+				}
+				return result;
 
 			case FUNCTION_COT:
-				return Fmath.cot(evaluateExpression(model, node.getChild(0)));
+				return 1 / Math.tan(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_COTH:
-				return Fmath.coth(evaluateExpression(model, node.getChild(0)));
+				return Math.sinh(evaluateExpression(model, node.getChild(0))) / Math.cosh(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_CSC:
-				return Fmath.csc(evaluateExpression(model, node.getChild(0)));
+				return 1 / Math.sin(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_CSCH:
-				return Fmath.csch(evaluateExpression(model, node.getChild(0)));
+				return 1 / Math.sinh(evaluateExpression(model, node.getChild(0)));
 
 			case FUNCTION_DELAY:
 				// NOT PLANNING TO SUPPORT THIS
 				return 0;
 
 			case FUNCTION_ARCTANH:
-				return Fmath.atanh(evaluateExpression(model, node.getChild(0)));
+				return 0.5 * (Math.log(evaluateExpression(model, node.getChild(0)) + 1) - 
+						Math.log(1 - evaluateExpression(model, node.getChild(0))));
 
 			case FUNCTION_ARCSINH:
-				return Fmath.asinh(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.log(value + Math.sqrt(value * value + 1));
 
 			case FUNCTION_ARCCOSH:
-				return Fmath.acosh(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.log(value + Math.sqrt(value + 1) * Math.sqrt(value - 1));
 
 			case FUNCTION_ARCCOT:
-				return Fmath.acot(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.atan(1 / value);
 
 			case FUNCTION_ARCCOTH:
-				return Fmath.acoth(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return 0.5 * (Math.log(1 + 1 / value) - Math.log(1 - 1 / value));
 
 			case FUNCTION_ARCCSC:
-				return Fmath.acsc(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.asin(1 / value);
 
 			case FUNCTION_ARCCSCH:
-				return Fmath.acsch(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.log(1 / value + Math.sqrt(1 / (value * value) + 1));
 
 			case FUNCTION_ARCSEC:
-				return Fmath.asec(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.acos(1 / value);
 
 			case FUNCTION_ARCSECH:
-				return Fmath.asech(evaluateExpression(model, node.getChild(0)));
+				value = evaluateExpression(model, node.getChild(0));
+				return Math.log(1 / value + Math.sqrt(1 / value + 1) * Math.sqrt(1 / value - 1));
 
 			default:
 			} // end switch
@@ -5520,7 +5549,7 @@ public class SBMLutilities extends CoreObservable
 		for (int i = 0; i < model.getCompartmentCount(); i++)
 		{
 			Compartment compartment = model.getCompartment(i);
-			if (!compartment.isSetSize() && model.getInitialAssignment(compartment.getId())==null)
+			if (!compartment.isSetSize() && model.getInitialAssignmentBySymbol(compartment.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				if (addDefaults) {
@@ -5536,7 +5565,7 @@ public class SBMLutilities extends CoreObservable
 		{
 			Species species = model.getSpecies(i);
 			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())
-					 && model.getInitialAssignment(species.getId())==null)
+					 && model.getInitialAssignmentBySymbol(species.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				if (addDefaults) {
@@ -5551,7 +5580,7 @@ public class SBMLutilities extends CoreObservable
 		for (int i = 0; i < model.getParameterCount(); i++)
 		{
 			Parameter parameter = model.getParameter(i);
-			if (!(parameter.isSetValue()) && model.getInitialAssignment(parameter.getId())==null)
+			if (!(parameter.isSetValue()) && model.getInitialAssignmentBySymbol(parameter.getId())==null)
 			{
 				messageArea.append("--------------------------------------------------------------------------\n");
 				if (addDefaults) {

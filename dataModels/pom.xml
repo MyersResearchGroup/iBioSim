@@ -33,38 +33,6 @@
 							<goal>install-file</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>install-flanagan</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/flanagan.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>flanagan.math</groupId>
-							<artifactId>flanagan</artifactId>
-							<version>1.0.0</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>install-jlibsedml</id>
-						<phase>clean</phase>
-						<configuration>
-							<file>${basedir}/../lib/jlibsedml.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>org.jlibsedml</groupId>
-							<artifactId>jlibsedml</artifactId>
-							<version>1.0.0</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -159,12 +127,6 @@
     		<version>3.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>flanagan.math</groupId>
-			<artifactId>flanagan</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>

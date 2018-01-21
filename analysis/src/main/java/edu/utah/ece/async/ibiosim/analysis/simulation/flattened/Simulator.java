@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.flattened;
 
-import flanagan.math.Fmath;
-import flanagan.math.PsRandom;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.awt.Point;
@@ -36,6 +34,16 @@ import java.util.PriorityQueue;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.distribution.CauchyDistribution;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.distribution.GammaDistribution;
+import org.apache.commons.math3.distribution.LaplaceDistribution;
+import org.apache.commons.math3.distribution.LogNormalDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.FastMath;
 import org.sbml.jsbml.ASTNode;
@@ -65,16 +73,12 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.text.parser.ParseException;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.ParentSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DTSDParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.DataParser;
 import edu.utah.ece.async.ibiosim.dataModels.util.dataparser.TSDParser;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
  * 
@@ -255,8 +259,6 @@ public abstract class Simulator extends AbstractSimulator
 	protected int											diffCount									= 0;
 	protected int											totalCount									= 0;
 	protected int											memCount									= 0;
-
-	PsRandom												prng										= new PsRandom();
 
   protected double currProgress, maxProgress;
   
@@ -1130,7 +1132,7 @@ public abstract class Simulator extends AbstractSimulator
 	 */
 	protected double evaluateExpressionRecursive(ASTNode node)
 	{
-
+		double value;
 		// these if/else-ifs before the else are leaf conditions
 
 		// logical constant, logical operator, or relational operator
@@ -1249,18 +1251,18 @@ public abstract class Simulator extends AbstractSimulator
 			else
 			{
 
-				double value;
+				double thisValue;
 
 				if (this.speciesToHasOnlySubstanceUnitsMap.containsKey(name) && this.speciesToHasOnlySubstanceUnitsMap.get(name) == false)
 				{
 
-					value = (variableToValueMap.get(name) / variableToValueMap.get(speciesToCompartmentNameMap.get(name)));
+					thisValue = (variableToValueMap.get(name) / variableToValueMap.get(speciesToCompartmentNameMap.get(name)));
 				}
 				else
 				{
-					value = variableToValueMap.get(name);
+					thisValue = variableToValueMap.get(name);
 				}
-				return value;
+				return thisValue;
 			}
 		}
 
@@ -1335,59 +1337,74 @@ public abstract class Simulator extends AbstractSimulator
 					double rightChildValue = evaluateExpressionRecursive(node.getRightChild());
 					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 					double upperBound = FastMath.max(leftChildValue, rightChildValue);
-
-					return prng.nextDouble(lowerBound, upperBound);
+			        UniformRealDistribution distrib = new UniformRealDistribution(lowerBound, upperBound);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("exponential"))
 				{
-
-					return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
+					double mean = evaluateExpressionRecursive(node.getChild(0));
+					ExponentialDistribution distrib = new ExponentialDistribution(mean);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("gamma"))
 				{
-
-					return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
+					double shape = evaluateExpressionRecursive(node.getChild(0));
+			        double scale = evaluateExpressionRecursive(node.getChild(1));
+					GammaDistribution distrib = new GammaDistribution(shape, scale);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("chisq"))
 				{
-
-					return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
+					double deg = evaluateExpressionRecursive(node.getChild(0));
+					ChiSquaredDistribution distrib = new ChiSquaredDistribution(deg);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("lognormal"))
 				{
-
-					return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
+					double scale = evaluateExpressionRecursive(node.getChild(0));
+			        double shape = evaluateExpressionRecursive(node.getChild(1));
+					LogNormalDistribution distrib = new LogNormalDistribution(scale, shape);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("laplace"))
 				{
-
-					// function doesn't exist in current libraries
-					return 0;
+					double mu = evaluateExpressionRecursive(node.getChild(0));
+					double beta = evaluateExpressionRecursive(node.getChild(1));
+					LaplaceDistribution distrib = new LaplaceDistribution(mu, beta);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("cauchy"))
 				{
-
-					return prng.nextLorentzian(0, evaluateExpressionRecursive(node.getLeftChild()));
+			        double median = evaluateExpressionRecursive(node.getChild(0));
+			        double scale = evaluateExpressionRecursive(node.getChild(1));
+					CauchyDistribution distrib = new CauchyDistribution(median, scale);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("poisson"))
 				{
-
-					return prng.nextPoissonian(evaluateExpressionRecursive(node.getLeftChild()));
+					double p = evaluateExpressionRecursive(node.getChild(0));
+					PoissonDistribution distrib = new PoissonDistribution(p);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("binomial"))
 				{
-
-					return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), (int) evaluateExpressionRecursive(node.getRightChild()));
+			        int p = (int) evaluateExpressionRecursive(node.getChild(0));
+			        double b = evaluateExpressionRecursive(node.getChild(1));
+					BinomialDistribution distrib = new BinomialDistribution(p, b);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("bernoulli"))
 				{
-
-					return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), 1);
+					// TODO:
+			        return 0;
 				}
 				else if (nodeName.equals("normal"))
 				{
+					double mean = evaluateExpressionRecursive(node.getChild(0));
+			        double std = evaluateExpressionRecursive(node.getChild(1));
 
-					return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()), evaluateExpressionRecursive(node.getRightChild()));
+			        NormalDistribution distrib = new NormalDistribution(mean, std);
+			        return distrib.sample();
 				}
 				else if (nodeName.equals("get2DArrayElement"))
 				{
@@ -1540,58 +1557,74 @@ public abstract class Simulator extends AbstractSimulator
 
 			case FUNCTION_ROOT:
 				return FastMath.pow(evaluateExpressionRecursive(node.getRightChild()), 1 / evaluateExpressionRecursive(node.getLeftChild()));
-
+			
 			case FUNCTION_SEC:
-				return Fmath.sec(evaluateExpressionRecursive(node.getChild(0)));
+				return 1 / Math.cos(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_SECH:
-				return Fmath.sech(evaluateExpressionRecursive(node.getChild(0)));
+				return 1 / Math.cosh(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_FACTORIAL:
-				return Fmath.factorial(evaluateExpressionRecursive(node.getChild(0)));
-
+				value = evaluateExpressionRecursive(node.getChild(0));
+				double result = 1;
+				while (value > 0)
+				{
+					result = result * value;
+			        value--;
+				}
+				return result;
+				
 			case FUNCTION_COT:
-				return Fmath.cot(evaluateExpressionRecursive(node.getChild(0)));
+				return 1 / Math.tan(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_COTH:
-				return Fmath.coth(evaluateExpressionRecursive(node.getChild(0)));
+				return Math.sinh(evaluateExpressionRecursive(node.getChild(0))) / Math.cosh(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_CSC:
-				return Fmath.csc(evaluateExpressionRecursive(node.getChild(0)));
+				return 1 / Math.sin(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_CSCH:
-				return Fmath.csch(evaluateExpressionRecursive(node.getChild(0)));
+				return 1 / Math.sinh(evaluateExpressionRecursive(node.getChild(0)));
 
 			case FUNCTION_DELAY:
 				// NOT PLANNING TO SUPPORT THIS
 				return 0;
-
+				
 			case FUNCTION_ARCTANH:
-				return Fmath.atanh(evaluateExpressionRecursive(node.getChild(0)));
+				return 0.5 * (Math.log(evaluateExpressionRecursive(node.getChild(0)) + 1) - 
+						Math.log(1 - evaluateExpressionRecursive(node.getChild(0))));
 
 			case FUNCTION_ARCSINH:
-				return Fmath.asinh(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.log(value + Math.sqrt(value * value + 1));
 
 			case FUNCTION_ARCCOSH:
-				return Fmath.acosh(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.log(value + Math.sqrt(value + 1) * Math.sqrt(value - 1));
 
 			case FUNCTION_ARCCOT:
-				return Fmath.acot(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.atan(1 / value);
 
 			case FUNCTION_ARCCOTH:
-				return Fmath.acoth(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return 0.5 * (Math.log(1 + 1 / value) - Math.log(1 - 1 / value));
 
 			case FUNCTION_ARCCSC:
-				return Fmath.acsc(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.asin(1 / value);
 
 			case FUNCTION_ARCCSCH:
-				return Fmath.acsch(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.log(1 / value + Math.sqrt(1 / (value * value) + 1));
 
 			case FUNCTION_ARCSEC:
-				return Fmath.asec(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.acos(1 / value);
 
 			case FUNCTION_ARCSECH:
-				return Fmath.asech(evaluateExpressionRecursive(node.getChild(0)));
+				value = evaluateExpressionRecursive(node.getChild(0));
+				return Math.log(1 / value + Math.sqrt(1 / value + 1) * Math.sqrt(1 / value - 1));				
 
 			default:
 

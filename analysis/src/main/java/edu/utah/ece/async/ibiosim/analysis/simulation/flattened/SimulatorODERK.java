@@ -17,12 +17,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
-import flanagan.integration.DerivnFunction;
-import flanagan.integration.RungeKutta;
 
 /**
  * 
@@ -50,6 +52,7 @@ public class SimulatorODERK extends Simulator
 	int							numSteps;
 	double						relativeError;
 	double						absoluteError;
+	private DifferentialEquations  de;
 
 	public SimulatorODERK(String SBMLFileName, String outputDirectory, int runs, double timeLimit, double maxTimeStep, long randomSeed, double printInterval, double stoichAmpValue, String[] interestingSpecies, int numSteps, double relError, double absError,
 			String quantityType) throws IOException
@@ -311,15 +314,9 @@ public class SimulatorODERK extends Simulator
 		}
 
 		// create runge-kutta instance
-		DerivnFunc derivnFunction = new DerivnFunc();
-		RungeKutta rungeKutta = new RungeKutta();
-		rungeKutta.setStepSize(stepSize);
-
-		// absolute error
-		rungeKutta.setToleranceAdditionFactor(absoluteError);
-		// relative error
-		rungeKutta.setToleranceScalingFactor(relativeError);
-		// rungeKutta.setMaximumIterations(numSteps);
+		de = new DifferentialEquations();
+		HighamHall54Integrator rungeKutta = new HighamHall54Integrator(0 /*getMinTimeStep()*/, stepSize,
+			      absoluteError, relativeError);
 
 		// add events to queue if they trigger
 		if (noEventsFlag == false)
@@ -384,13 +381,6 @@ public class SimulatorODERK extends Simulator
 				nextEndTime = printTime;
 			}
 
-			// set rk values
-			rungeKutta.setInitialValueOfX(currentTime);
-			rungeKutta.setFinalValueOfX(nextEndTime);
-			rungeKutta.setInitialValuesOfY(values);
-
-			currentTime = nextEndTime;
-
 			// STEP 2B: calculate rate rules using this time step
 			HashSet<String> affectedVariables = performRateRules(stepSize);
 
@@ -432,7 +422,9 @@ public class SimulatorODERK extends Simulator
 			// System.err.println(variableToValueMap);
 
 			// call the rk algorithm
-			values = rungeKutta.fehlberg(derivnFunction);
+			rungeKutta.integrate(de, currentTime, values, nextEndTime, values);
+
+			currentTime = nextEndTime;
 
 			// TSD PRINTING
 			// this prints the previous timestep's data
@@ -486,8 +478,12 @@ public class SimulatorODERK extends Simulator
 
 	}
 
-	private class DerivnFunc implements DerivnFunction
-	{
+	public class DifferentialEquations implements FirstOrderDifferentialEquations {
+		
+	    @Override
+	    public int getDimension() {
+	      return values.length;
+	    }
 
 		/**
 		 * in this context, x is the time and y is the values array this method
@@ -495,11 +491,11 @@ public class SimulatorODERK extends Simulator
 		 * of the ODE system it needs to return the changes in values for y (ie,
 		 * its length is the same)
 		 */
-		@Override
-		public double[] derivn(double x, double[] y)
-		{
-
-			double[] currValueChanges = new double[y.length];
+	    @Override
+	    public void computeDerivatives(double t, double[] y, double[] currValueChanges)
+	        throws MaxCountExceededException, DimensionMismatchException 
+	    {
+	    	//double[] currValueChanges = new double[y.length];
 			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 
 			for (int i = 0; i < y.length; ++i)
@@ -557,7 +553,7 @@ public class SimulatorODERK extends Simulator
 			// for (int i = 0; i < currValueChanges.length; ++i)
 			// System.err.println(currValueChanges[i]);
 
-			return currValueChanges;
+			//return currValueChanges;
 		}
 	}
 }
