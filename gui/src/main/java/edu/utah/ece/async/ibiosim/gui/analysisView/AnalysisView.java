@@ -2225,7 +2225,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     qssa.setText(properties.getAdvancedProperties().getQss()+"");
     maxCon.setText(properties.getAdvancedProperties().getCon()+"");
     diffStoichAmp.setText(properties.getAdvancedProperties().getStoichAmp()+"");
-    bifurcation.setSelectedIndex(properties.getIncrementalProperties().getNumPaths()-1);
+    if (properties.getIncrementalProperties().getNumPaths()-1 == 1) {
+    	bifurcation.setSelectedIndex(1);
+    } else {
+    	bifurcation.setSelectedIndex(0);
+    }
     if (properties.getIncrementalProperties().isMpde()) {
     	mpde.doClick();
     } else if (properties.getIncrementalProperties().isMedianPath()) {
