@@ -1,0 +1,3 @@
+COMMAND TO DEPLOY libsbmlj.jar
+
+mvn deploy:deploy-file -DgroupId=edu.utah.ece.async -DartifactId=iBioSim-libsbml -Dversion=5.16.0-SNAPSHOT -Dpackaging=jar -Dfile=libsbmlj.jar -DrepositoryId=ossrh -Durl=https://oss.sonatype.org/content/repositories/snapshots
