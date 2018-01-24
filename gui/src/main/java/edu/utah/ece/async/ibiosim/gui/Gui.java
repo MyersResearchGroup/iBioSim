@@ -1512,21 +1512,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Utility.submitBugReport("");
 		} else if (e.getSource() == manual) {
 			try {
-				String directory = "";
 				String theFile = "";
-				theFile = "iBioSim.html";
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				if (System.getProperty("os.name").contentEquals("Linux")
-						|| System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					directory = ENVVAR + "/docs/";
-				} else {
-					directory = ENVVAR + "\\docs\\";
-				}
-				File work = new File(directory);
-				log.addText("Executing:\n" + command + " " + directory + theFile + "\n");
+				theFile = "http://www.async.ece.utah.edu/tools/BioSim/docs/iBioSim.html";
+				log.addText("Executing:\n" + command + " " + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec(command + " " + theFile, null, work);
+				exec.exec(command + " " + theFile);
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
