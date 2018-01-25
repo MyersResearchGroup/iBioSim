@@ -23,12 +23,12 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.virtualparts.VPRException;
+import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import junit.framework.Assert;
-import uk.ac.ncl.ico2s.VPRException;
-import uk.ac.ncl.ico2s.VPRTripleStoreException;
 
 public class ModelGeneratorTests extends ConversionAbstractTests{
 
