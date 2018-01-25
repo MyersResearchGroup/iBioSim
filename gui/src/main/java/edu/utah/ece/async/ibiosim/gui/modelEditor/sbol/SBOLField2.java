@@ -454,7 +454,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 					+ "SBOL id: " + removeSBOLObj.getIdentity() + "\n"
 					+ "SBOL displayId: " + removeSBOLObj.getDisplayId() + "\n"
 					+ "SBOL name: " + removeSBOLObj.getName());
-
+			
 			deleteRemovedBioSimComponent();
 		} 
 		catch (SBOLValidationException e) 

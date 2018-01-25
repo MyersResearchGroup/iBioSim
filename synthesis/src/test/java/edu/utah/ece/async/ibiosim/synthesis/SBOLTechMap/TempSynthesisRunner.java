@@ -106,7 +106,8 @@ public class TempSynthesisRunner
 			System.err.println("ERROR: Unable to convert input file to SBOL data model.");
 			e1.printStackTrace();
 		}
-		
+		System.out.println("Successfully generated a solution for SBOL Technology Mapping");
+		System.out.println("Solution located here: " + OUTPUT_PATH + OUTPUT_FILE_NAME);
 //		syn.getSpecification().createDotFile(PATH + "SPEC2.dot");
 //		printMatches(matches);
 //		syn.printCoveredGates(solution);

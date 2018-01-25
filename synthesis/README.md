@@ -30,3 +30,12 @@ where
 | -ld [value] |  directory to multiple SBOL or SBML library files |
 | -dot [value] | produced SBOL technology mapping solution in dot format. |
 
+## Example run for SBML Technology Mapping:
+```
+  java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar "-lf", "", "-sf", "", "-sbml", "-osbml", "-o", "src/test/resources/edu/utah/ece/async/ibiosim/synthesis/SBML_Files/sbml_techmap_sol"
+```
+
+## Example run for SBOL Technology Mapping:
+```
+  java -jar target/iBioSim-conversion-3.0.0-SNAPSHOT-jar-with-dependencies.jar 
+```
