@@ -391,6 +391,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					} 
 				}
 				*/
+				
 			} 
 			catch (SBOLValidationException e) 
 			{
