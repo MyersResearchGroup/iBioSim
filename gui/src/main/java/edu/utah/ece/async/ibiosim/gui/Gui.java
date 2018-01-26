@@ -151,6 +151,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
+import org.virtualparts.VPRException;
+import org.virtualparts.VPRTripleStoreException;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -170,8 +172,6 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
-import uk.ac.ncl.ico2s.VPRException;
-import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
@@ -1515,21 +1515,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Utility.submitBugReport("");
 		} else if (e.getSource() == manual) {
 			try {
-				String directory = "";
 				String theFile = "";
-				theFile = "iBioSim.html";
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				if (System.getProperty("os.name").contentEquals("Linux")
-						|| System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					directory = ENVVAR + "/docs/";
-				} else {
-					directory = ENVVAR + "\\docs\\";
-				}
-				File work = new File(directory);
-				log.addText("Executing:\n" + command + " " + directory + theFile + "\n");
+				theFile = "http://www.async.ece.utah.edu/tools/BioSim/docs/iBioSim.html";
+				log.addText("Executing:\n" + command + " " + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec(command + " " + theFile, null, work);
+				exec.exec(command + " " + theFile);
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error", JOptionPane.ERROR_MESSAGE);
 			}

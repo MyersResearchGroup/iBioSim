@@ -22,6 +22,7 @@ import org.jlibsedml.modelsupport.KisaoOntology;
 import org.jlibsedml.modelsupport.KisaoTerm;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 
 /**
@@ -84,6 +85,21 @@ public class PropertiesUtil {
       else {
         algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
         para.setAttribute("method", sim);
+        if (sim.equals("iSSA")) {
+        	if (properties.getIncrementalProperties().isMpde()) {
+        		para.setAttribute("type", "mpde");
+        	} else if (properties.getIncrementalProperties().isMeanPath()) {
+        		para.setAttribute("type", "meanPath");
+        	} else if (properties.getIncrementalProperties().isMedianPath()) {
+        		para.setAttribute("type", "medianPath");
+        	}
+        	if (properties.getIncrementalProperties().isAdaptive()) {
+        		para.setAttribute("adaptive","true");
+        	} else {
+        		para.setAttribute("adaptive","false");
+        	}
+        	para.setAttribute("numPaths",String.valueOf(properties.getIncrementalProperties().getNumPaths()));
+        }
       }
     } 
     else if (properties.isFba()) 
@@ -110,8 +126,14 @@ public class PropertiesUtil {
     } else if (properties.isNary()) {
       para.setAttribute("abstraction", "State-based");
     }
+    para.setAttribute("rapid1",String.valueOf(properties.getAdvancedProperties().getRap1()));
+    para.setAttribute("rapid2",String.valueOf(properties.getAdvancedProperties().getRap2()));
+    para.setAttribute("qssa",String.valueOf(properties.getAdvancedProperties().getQss()));
+    para.setAttribute("maxConc",String.valueOf(properties.getAdvancedProperties().getCon()));
+    para.setAttribute("stoichAmp",String.valueOf(properties.getAdvancedProperties().getStoichAmp()));
     Annotation ann = new Annotation(para);
     algorithm.addAnnotation(ann);
+
     SimulationProperties simProperties = properties.getSimulationProperties();
     
     AlgorithmParameter ap = new AlgorithmParameter(GlobalConstants.KISAO_MINIMUM_STEP_SIZE, String.valueOf(simProperties.getMinTimeStep()));
@@ -124,7 +146,7 @@ public class PropertiesUtil {
     algorithm.addAlgorithmParameter(ap);
     ap = new AlgorithmParameter(GlobalConstants.KISAO_SEED, String.valueOf(simProperties.getRndSeed()));
     algorithm.addAlgorithmParameter(ap);
-    ap = new AlgorithmParameter(GlobalConstants.KISAO_NUMBER_OF_RUNS, String.valueOf(simProperties.getRun()));
+    ap = new AlgorithmParameter(GlobalConstants.KISAO_NUMBER_OF_RUNS, String.valueOf(simProperties.getRun()+(simProperties.getStartIndex()-1)));
     algorithm.addAlgorithmParameter(ap);
     return algorithm;
   }
@@ -156,6 +178,26 @@ public class PropertiesUtil {
       properties.setSim("gillespie");
       if (method!=null) {
         properties.setSim(method);
+        if (method.equals("iSSA")) {
+            String type = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "type", "");
+        	if (type.equals("mpde")) {
+        		properties.getIncrementalProperties().setMpde(true);
+        	} else if (type.equals("meanPath")) {
+        		properties.getIncrementalProperties().setMeanPath(true);
+        	} else if (type.equals("medianPath")) {
+        		properties.getIncrementalProperties().setMedianPath(true);
+        	}
+            String adaptive = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "adaptive", "");
+        	if (adaptive.equals("true")) {
+        		properties.getIncrementalProperties().setAdaptive(true);
+        	} else {
+        		properties.getIncrementalProperties().setAdaptive(false);
+        	}
+        	String numPaths = SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "numPaths", "");
+        	if (!numPaths.equals("")) {
+        		properties.getIncrementalProperties().setNumPaths(Integer.parseInt(numPaths));
+        	}
+        }
       }
     } else if (kisaoId.equals(GlobalConstants.KISAO_SSA_CR)) {
       properties.setSsa();
@@ -209,6 +251,24 @@ public class PropertiesUtil {
     } else {
       properties.setNone();
     }
+    
+    // Parse advanced properties
+    properties.getAdvancedProperties().setRap1(PropertiesUtil.parseDouble(
+    		SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "rapid1", 
+    				IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.rapid1"))));
+    properties.getAdvancedProperties().setRap2(PropertiesUtil.parseDouble(
+    		SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "rapid2", 
+    				IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.rapid2"))));
+    properties.getAdvancedProperties().setQss(PropertiesUtil.parseDouble(
+    		SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "qssa", 
+    				IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.qssa"))));
+    properties.getAdvancedProperties().setCon(Integer.parseInt(
+    		SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "maxConc", 
+    				IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.concentration"))));
+    properties.getAdvancedProperties().setStoichAmp(PropertiesUtil.parseDouble(
+    		SEDMLutilities.getSEDBaseAnnotation(algorithm, "analysis", "stoichAmp", 
+    				IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.amplification"))));
+    
     for (AlgorithmParameter ap : algorithm.getListOfAlgorithmParameters()) {
       if (ap.getKisaoID().equals(GlobalConstants.KISAO_MINIMUM_STEP_SIZE)) {
         properties.getSimulationProperties().setMinTimeStep(PropertiesUtil.parseDouble(ap.getValue()));

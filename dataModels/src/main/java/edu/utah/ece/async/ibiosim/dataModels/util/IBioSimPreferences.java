@@ -281,55 +281,55 @@ public enum IBioSimPreferences {
 		if (modelPreferences.get(modelPreference) == null) {
 			modelPreferences.put(modelPreference, Preferences.userRoot().get(modelPreference, ""));
 			if (modelPreferences.get(modelPreference).equals("")) {
-				if (modelPreferences.getOrDefault("biosim.gcm.KREP_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KREP_VALUE")) {
 					modelPreferences.put("biosim.gcm.KREP_VALUE", ".5");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KACT_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KACT_VALUE")) {
 					modelPreferences.put("biosim.gcm.KACT_VALUE", ".0033");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.PROMOTER_COUNT_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.PROMOTER_COUNT_VALUE")) {
 					modelPreferences.put("biosim.gcm.PROMOTER_COUNT_VALUE", "2");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KBASAL_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KBASAL_VALUE")) {
 					modelPreferences.put("biosim.gcm.KBASAL_VALUE", ".0001");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.OCR_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.OCR_VALUE")) {
 					modelPreferences.put("biosim.gcm.OCR_VALUE", ".05");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KDECAY_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KDECAY_VALUE")) {
 					modelPreferences.put("biosim.gcm.KDECAY_VALUE", ".0075");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KECDECAY_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KECDECAY_VALUE")) {
 					modelPreferences.put("biosim.gcm.KECDECAY_VALUE", ".005");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.RNAP_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.RNAP_VALUE")) {
 					modelPreferences.put("biosim.gcm.RNAP_VALUE", "30");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.RNAP_BINDING_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.RNAP_BINDING_VALUE")) {
 					modelPreferences.put("biosim.gcm.RNAP_BINDING_VALUE", ".033");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE")) {
 					modelPreferences.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "1");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.STOICHIOMETRY_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.STOICHIOMETRY_VALUE")) {
 					modelPreferences.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KCOMPLEX_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KCOMPLEX_VALUE")) {
 					modelPreferences.put("biosim.gcm.KCOMPLEX_VALUE", "0.05");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.COOPERATIVITY_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.COOPERATIVITY_VALUE")) {
 					modelPreferences.put("biosim.gcm.COOPERATIVITY_VALUE", "2");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.ACTIVED_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.ACTIVED_VALUE")) {
 					modelPreferences.put("biosim.gcm.ACTIVED_VALUE", ".25");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.FORWARD_MEMDIFF_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.FORWARD_MEMDIFF_VALUE")) {
 					modelPreferences.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", "1.0");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.REVERSE_MEMDIFF_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.REVERSE_MEMDIFF_VALUE")) {
 					modelPreferences.put("biosim.gcm.REVERSE_MEMDIFF_VALUE", "0.01");
 				}
-				if (modelPreferences.getOrDefault("biosim.gcm.KECDIFF_VALUE", "").equals("")) {
+				if (modelPreference.equals("biosim.gcm.KECDIFF_VALUE")) {
 					modelPreferences.put("biosim.gcm.KECDIFF_VALUE", "1.0");
 				}
 			}
@@ -348,59 +348,65 @@ public enum IBioSimPreferences {
 		if (analysisPreferences.get(analysisPreference) == null) {
 			analysisPreferences.put(analysisPreference, Preferences.userRoot().get(analysisPreference, ""));
 			if (analysisPreferences.get(analysisPreference).equals("")) {
-				if (analysisPreferences.getOrDefault("biosim.sim.abs", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.command")) {
+					analysisPreferences.put("biosim.sim.abs", "");
+				}
+				if (analysisPreference.equals("biosim.sim.abs")) {
 					analysisPreferences.put("biosim.sim.abs", "None");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.type", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.type")) {
 					analysisPreferences.put("biosim.sim.type", "ODE");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.sim", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.sim")) {
 					analysisPreferences.put("biosim.sim.sim", "rkf45");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.initial.time", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.initial.time")) {
 					analysisPreferences.put("biosim.sim.initial.time", "0.0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.output.start.time", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.output.start.time")) {
 					analysisPreferences.put("biosim.sim.output.start.time", "0.0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.limit", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.limit")) {
 					analysisPreferences.put("biosim.sim.limit", "100.0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.useInterval", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.useInterval")) {
 					analysisPreferences.put("biosim.sim.useInterval", "Print Interval");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.interval", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.interval")) {
 					analysisPreferences.put("biosim.sim.interval", "1.0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.step", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.step")) {
 					analysisPreferences.put("biosim.sim.step", "inf");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.min.step", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.min.step")) {
 					analysisPreferences.put("biosim.sim.min.step", "0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.error", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.error")) {
 					analysisPreferences.put("biosim.sim.error", "1.0E-9");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.relative.error", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.relative.error")) {
 					analysisPreferences.put("biosim.sim.relative.error", "0.0");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.seed", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.seed")) {
 					analysisPreferences.put("biosim.sim.seed", "314159");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.runs", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.runs")) {
 					analysisPreferences.put("biosim.sim.runs", "1");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.rapid1", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.rapid1")) {
 					analysisPreferences.put("biosim.sim.rapid1", "0.1");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.rapid2", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.rapid2")) {
 					analysisPreferences.put("biosim.sim.rapid2", "0.1");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.qssa", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.qssa")) {
 					analysisPreferences.put("biosim.sim.qssa", "0.1");
 				}
-				if (analysisPreferences.getOrDefault("biosim.sim.concentration", "").equals("")) {
+				if (analysisPreference.equals("biosim.sim.concentration")) {
 					analysisPreferences.put("biosim.sim.concentration", "15");
+				}
+				if (analysisPreference.equals("biosim.sim.amplification")) {
+					analysisPreferences.put("biosim.sim.amplification", "1.0");
 				}
 			}
 		}
@@ -418,43 +424,43 @@ public enum IBioSimPreferences {
 		if (learnPreferences.get(learnPreference) == null) {
 			learnPreferences.put(learnPreference, Preferences.userRoot().get(learnPreference, ""));
 			if (learnPreferences.get(learnPreference).equals("")) {
-				if (learnPreferences.getOrDefault("biosim.learn.tn", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.tn")) {
 					learnPreferences.put("biosim.learn.tn", "2");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.tj", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.tj")) {
 					learnPreferences.put("biosim.learn.tj", "2");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.ti", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.ti")) {
 					learnPreferences.put("biosim.learn.ti", "0.5");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.bins", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.bins")) {
 					learnPreferences.put("biosim.learn.bins", "4");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.equaldata", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.equaldata")) {
 					learnPreferences.put("biosim.learn.equaldata", "Equal Data Per Bins");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.autolevels", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.autolevels")) {
 					learnPreferences.put("biosim.learn.autolevels", "Auto");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.ta", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.ta")) {
 					learnPreferences.put("biosim.learn.ta", "1.15");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.tr", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.tr")) {
 					learnPreferences.put("biosim.learn.tr", "0.75");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.tm", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.tm")) {
 					learnPreferences.put("biosim.learn.tm", "0.0");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.tt", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.tt")) {
 					learnPreferences.put("biosim.learn.tt", "0.025");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.debug", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.debug")) {
 					learnPreferences.put("biosim.learn.debug", "0");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.succpred", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.succpred")) {
 					learnPreferences.put("biosim.learn.succpred", "Successors");
 				}
-				if (learnPreferences.getOrDefault("biosim.learn.findbaseprob", "").equals("")) {
+				if (learnPreference.equals("biosim.learn.findbaseprob")) {
 					learnPreferences.put("biosim.learn.findbaseprob", "False");
 				}
 			}
@@ -473,16 +479,16 @@ public enum IBioSimPreferences {
 		if (synthesisPreferences.get(synthesisPreference) == null) {
 			synthesisPreferences.put(synthesisPreference, Preferences.userRoot().get(synthesisPreference, ""));
 			if (synthesisPreferences.get(synthesisPreference).equals("")) {
-				if (synthesisPreferences.getOrDefault(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, "").equals("")) {
+				if (synthesisPreference.equals(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE)) {
 					synthesisPreferences.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
 				}
-				if (synthesisPreferences.getOrDefault(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("")) {
+				if (synthesisPreference.equals(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE)) {
 					synthesisPreferences.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
 				}
-				if (synthesisPreferences.getOrDefault(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, "").equals("")) {
+				if (synthesisPreference.equals(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE)) {
 					synthesisPreferences.put(GlobalConstants.CONSTRUCT_ASSEMBLY_PREFERENCE, GlobalConstants.CONSTRUCT_ASSEMBLY_DEFAULT);
 				}
-				if (synthesisPreferences.getOrDefault(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("")) {
+				if (synthesisPreference.equals(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE)) {
 					synthesisPreferences.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
 				}
 			}

@@ -24,8 +24,9 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.math3.util.FastMath;
+
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableBoolean;
-import odk.lang.FastMath;
 
 /**
  * 
@@ -622,8 +623,7 @@ public class SimulatorSSACR extends Simulator
 		{
 
 			double propensity = reactionToPropensityMap.get(reaction);
-			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
-			int group = frexpResult.exponent;
+			int group = Math.getExponent((float) (propensity / minPropensity));
 
 			groupToTotalGroupPropensityMap.adjustValue(group, propensity);
 			groupToReactionSetList.get(group).add(reaction);
@@ -792,8 +792,7 @@ public class SimulatorSSACR extends Simulator
 				groupToReactionSetList.get(0).add(reaction);
 			}
 
-			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
-			int group = frexpResult.exponent;
+			int group = Math.getExponent((float) (propensity / minPropensity));
 
 			groupToReactionSetList.get(group).add(reaction);
 			reactionToGroupMap.put(reaction, group);
@@ -1062,8 +1061,7 @@ public class SimulatorSSACR extends Simulator
 				if (newPropensity > groupToPropensityCeilingMap.get(oldGroup) || newPropensity < groupToPropensityFloorMap.get(oldGroup))
 				{
 
-					org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
-					int group = frexpResult.exponent;
+					int group = Math.getExponent(newPropensity / minPropensity);
 
 					// if the group is one that currently exists
 					if (group < numGroups)

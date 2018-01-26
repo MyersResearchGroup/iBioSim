@@ -60,6 +60,8 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
  *  <li>Optional:</li>
  *  <ul>
  *    <li>-d [value]: project directory</li>
+ *    <li>-p [value]: loads a properties file</li>
+ *    <li>-outDir [value]: where the output should be stored </li>
  *    <li>-ti [value]: non-negative double initial simulation time</li>
  *    <li>-tl [value]: non-negative double simulation time limit</li>
  *    <li>-ot [value]: non-negative double for output time</li>
@@ -97,10 +99,13 @@ public class Analysis implements BioObserver
   private static final String r = "Number of Runs";
   private static final String sim = "Simulation";
   private static final String data = "Graph Data Type";
-  
+
   private String sedML = null;
   private String propertiesFile = null;
   private String omex = null;
+
+  private boolean isSetRoot = false;
+
   private HashMap<String, String> propertiesMap;
   private final AnalysisProperties properties;
 
@@ -114,6 +119,8 @@ public class Analysis implements BioObserver
     System.err.println("\t input: combine archive, sed-ml, or sbml file.");
     System.err.println("Options:\n");
     System.err.println("\t -d [value]: project directory");
+    System.err.println("\t -p [value]: loads a properties file");
+    System.err.println("\t -outDir [value]: where the output should be stored");
     System.err.println("\t -ti [value]: initial simulation time");
     System.err.println("\t -tl [value]: simulation time limit");
     System.err.println("\t -ot [value]: output time");
@@ -139,28 +146,6 @@ public class Analysis implements BioObserver
       usage();
     }
 
-    // Last argument should be a SED-ML file, Combine Archive, or SBML model
-    if(args[args.length - 1].endsWith(".xml"))
-    {
-      analysis.properties.setModelFile(args[args.length - 1]);
-      analysis.properties.setId(args[args.length - 1].replace(".xml", ""));
-    }
-    else if(args[args.length - 1].endsWith(".omex"))
-    {
-      analysis.properties.setId(args[args.length - 1].replace(".omex", ""));
-      analysis.omex = args[args.length - 1];
-    }
-    else if(args[args.length - 1].endsWith(".sedml"))
-    {
-      analysis.properties.setId(args[args.length - 1].replace(".sedml", ""));
-      analysis.sedML = args[args.length - 1];
-    }
-    else
-    {
-      usage();
-    }
-
-
     // Optional arguments should have a value
     if((args.length - 1) % 2 > 0)
     {
@@ -178,6 +163,7 @@ public class Analysis implements BioObserver
       {
       case "-d":
         analysis.properties.setRoot(value);
+        analysis.isSetRoot = true;
         break;
       case "-p":
         if(value.endsWith(".properties"))
@@ -225,11 +211,21 @@ public class Analysis implements BioObserver
       case "-data":
         analysis.propertiesMap.put(data, value);
         break;
+      case "-outDir":
+        analysis.properties.setOutDir(value);
+        File file = new File(value);
+        file.mkdirs();
+        break;
       default:
         usage();
       }
     }
-    
+
+
+    // Last argument should be a SED-ML file, Combine Archive, or SBML model
+    readInput(analysis, args[args.length - 1]);
+
+
     try 
     {
       analysis.performAnalysis();
@@ -243,9 +239,7 @@ public class Analysis implements BioObserver
   private Analysis()
   {
     properties = new AnalysisProperties("", "", "", false);
-    
     properties.addObserver(this);
-    
     propertiesMap = new HashMap<String, String>();
   }
 
@@ -256,7 +250,7 @@ public class Analysis implements BioObserver
     if(omex != null)
     {
       List<String> sedMLs = unpackageArchive(omex);
-      
+
       for(String sedML : sedMLs)
       {
         runSEDML(sedML, properties, run, propertiesMap); 
@@ -272,9 +266,81 @@ public class Analysis implements BioObserver
       {
         AnalysisPropertiesLoader.loadPropertiesFile(properties);
       }
-      loadUserValues(properties, propertiesMap);
+      loadUserValues(propertiesMap);
+      AnalysisPropertiesWriter.createProperties(properties);
       run.execute();
     }
+  }
+
+  private static void readInput(Analysis analysis, String filename)
+  {
+    if(!analysis.isSetRoot)
+    {
+      loadInput(analysis, filename);
+    }
+    else
+    {
+      loadInput(analysis, analysis.properties.getRoot() + File.separator + filename);
+    }
+  }
+  
+  private static void loadInput(Analysis analysis, String filename)
+  {
+    File file = new File(filename);
+    AnalysisProperties properties = analysis.properties;
+    if(file.exists())
+    {
+      properties.setRoot(file.getParent());
+      String name = file.getName();
+      if(isSBML(file))
+      {
+        properties.setModelFile(name);
+      }
+      else if(isSEDML(file))
+      {
+        analysis.sedML = name;
+        properties.setId(name.replaceAll("[.][\\w]+", ""));
+      }
+      else if(filename.endsWith(".omex"))
+      {
+        analysis.omex = name;
+        properties.setId(name.replaceAll("[.][\\w]+", ""));
+      }
+      else
+      {
+        usage();
+      }
+    }
+    else
+    {
+      usage();
+    }
+  }
+
+  private static boolean isSBML(File file)
+  {
+    try 
+    {
+      SBMLReader.read(file);
+    } 
+    catch (Exception e) 
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private static boolean isSEDML(File file)
+  {
+    try 
+    {
+      Libsedml.readDocument(file);
+    } 
+    catch (Exception e) 
+    {
+      return false;
+    }
+    return true;
   }
 
   private List<String> unpackageArchive(String omex) throws IOException
@@ -294,7 +360,7 @@ public class Analysis implements BioObserver
 
       return listOfSedML;
     }
-    
+
     // read description of the archive itself
     System.out.println ("found " + ca.getDescriptions ().size ()
       + " meta data entries describing the archive.");
@@ -312,18 +378,18 @@ public class Analysis implements BioObserver
     ca.close();
     return listOfSedML;
   }
-  
+
   private SBMLDocument applyChanges(SEDMLDocument sedmlDoc, SBMLDocument sbmlDoc, org.jlibsedml.Model model)
-		  throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
-	  SedML sedml = sedmlDoc.getSedMLModel();
-	  if (sedml.getModelWithId(model.getSource()) != null) {
-		  sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, sedml.getModelWithId(model.getSource()));
-	  }
-	  SBMLWriter Xwriter = new SBMLWriter();
-	  SBMLReader Xreader = new SBMLReader();
-	  sbmlDoc = Xreader
-			  .readSBMLFromString(sedmlDoc.getChangedModel(model.getId(), Xwriter.writeSBMLToString(sbmlDoc)));
-	  return sbmlDoc;
+      throws SBMLException, XPathExpressionException, XMLStreamException, XMLException {
+    SedML sedml = sedmlDoc.getSedMLModel();
+    if (sedml.getModelWithId(model.getSource()) != null) {
+      sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, sedml.getModelWithId(model.getSource()));
+    }
+    SBMLWriter Xwriter = new SBMLWriter();
+    SBMLReader Xreader = new SBMLReader();
+    sbmlDoc = Xreader
+        .readSBMLFromString(sedmlDoc.getChangedModel(model.getId(), Xwriter.writeSBMLToString(sbmlDoc)));
+    return sbmlDoc;
   }
 
   private void runSEDML(String sedML, AnalysisProperties properties, Run run, HashMap<String, String> userValues) throws Exception
@@ -337,36 +403,36 @@ public class Analysis implements BioObserver
     {
       /* Load from SED-ML */
       properties.setId(task.getId());
-      
+
       org.jlibsedml.Model model = sedml.getModelWithId(task.getModelReference());
       String modelSource = sedml.getModelWithId(task.getModelReference()).getSource();
       while (sedml.getModelWithId(modelSource)!=null) {
         modelSource = sedml.getModelWithId(modelSource).getSource();
       }
       if (modelSource.indexOf("/")!=-1) {
-    	  modelSource = modelSource.substring(modelSource.lastIndexOf("/")+1);
+        modelSource = modelSource.substring(modelSource.lastIndexOf("/")+1);
       }
       SBMLDocument sbmlDoc = SBMLReader.read(new File(root + File.separator + modelSource));
       if (model.getListOfChanges().size() != 0) {
-    	  try {
-    		  sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, model);
-    	  } catch (Exception e) {
-    		  // TODO Auto-generated catch block
-    		  e.printStackTrace();
-    	  }
+        try {
+          sbmlDoc = applyChanges(sedmlDoc, sbmlDoc, model);
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       } 
       SBMLWriter Xwriter = new SBMLWriter();
       Xwriter.write(sbmlDoc, root + File.separator + modelSource + "_");	
-      
+
       properties.setModelFile(modelSource);
       AnalysisPropertiesLoader.loadSEDML(sedmlDoc, "", properties);
-//      File analysisDir = new File(root + File.separator + task.getId());
+      //      File analysisDir = new File(root + File.separator + task.getId());
       /* Replace values with properties given by user */
-      loadUserValues(properties, userValues);
+      loadUserValues(userValues);
       File analysisDir = new File(properties.getDirectory());
       if (!analysisDir.exists()) 
       {
-    	  new File(properties.getDirectory()).mkdir();
+        new File(properties.getDirectory()).mkdir();
       }
       /* Flattening happens here */
       BioModel biomodel =  BioModel.createBioModel(root, this);
@@ -382,15 +448,15 @@ public class Analysis implements BioObserver
     {
       if (output.isPlot2d()) 
       {
-//        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-//          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+        //        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+        //          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
         GraphData.createTSDGraph(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
           properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       } 
       else if (output.isReport()) 
       {
-//        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
-//          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+        //        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+        //          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
         GraphData.createHistogram(sedmlDoc,properties.getSimulationProperties().getPrinter_id(),root,null,output.getId(),
           properties.getDirectory() + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
       }
@@ -399,7 +465,7 @@ public class Analysis implements BioObserver
 
 
 
-  private static void loadUserValues(AnalysisProperties properties, HashMap<String, String> userValues)
+  private void loadUserValues(HashMap<String, String> userValues)
   {
     SimulationProperties simProperties = properties.getSimulationProperties();
     for(String key : userValues.keySet())
@@ -451,30 +517,37 @@ public class Analysis implements BioObserver
         if(value.equals("ode"))
         {
           properties.setSim("rkf45");
+          properties.setOde();
         }
         else if(value.equals("hode"))
         {
           properties.setSim("Runge-Kutta-Fehlberg (Hierarchical)");
+          properties.setOde();
         }
         else if(value.equals("ssa"))
         {
           properties.setSim("gillespie");
+          properties.setSsa();
         }
         else if(value.equals("hssa"))
         {
           properties.setSim("SSA-Direct (Hierarchical)");
+          properties.setSsa();
         }
         else if(value.equals("dfba"))
         {
           properties.setSim("Mixed-Hierarchical");
+          properties.setSsa();
         }
         else if(value.equals("jode"))
         {
           properties.setSim("Runge-Kutta-Fehlberg (Dynamic)");
+          properties.setOde();
         }
         else if(value.equals("jssa"))
         {
           properties.setSim("SSA-Direct (Dynamic)");
+          properties.setOde();
         }
         else
         {

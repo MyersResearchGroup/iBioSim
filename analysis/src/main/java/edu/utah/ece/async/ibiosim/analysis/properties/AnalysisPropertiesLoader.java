@@ -834,60 +834,40 @@ public class AnalysisPropertiesLoader {
         i++;
       }
       
-      properties.getAdvancedProperties().setPostAbs(getLists);
-
-      if (load.containsKey("reb2sac.rapid.equilibrium.condition.1"))
-      {
-        advProperties.setRap1(PropertiesUtil.parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.1")));
-      }
-      if (load.containsKey("reb2sac.rapid.equilibrium.condition.2"))
-      {
-        advProperties.setRap2(PropertiesUtil.parseDouble(load.getProperty("reb2sac.rapid.equilibrium.condition.2")));
-      }
-      if (load.containsKey("reb2sac.qssa.condition.1"))
-      {
-        advProperties.setQss(PropertiesUtil.parseDouble(load.getProperty("reb2sac.qssa.condition.1")));
-      }
-      if (load.containsKey("reb2sac.operator.max.concentration.threshold"))
-      {
-        advProperties.setCon(Integer.parseInt(load.getProperty("reb2sac.operator.max.concentration.threshold")));
-      }
-      if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value"))
-      {
-        advProperties.setStoichAmp(PropertiesUtil.parseDouble(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value")));
-      }
-      if (load.containsKey("reb2sac.iSSA.number.paths"))
-      {
-        properties.getIncrementalProperties().setNumPaths(Integer.parseInt(load.getProperty("reb2sac.iSSA.number.paths")));
-      }
-      if (load.containsKey("reb2sac.iSSA.type"))
-      {
-        String type = load.getProperty("reb2sac.iSSA.type");
-        if (type.equals("mpde"))
-        {
-          properties.getIncrementalProperties().setMpde(true);
-        }
-        else if (type.equals("medianPath"))
-        {
-          properties.getIncrementalProperties().setMedianPath(true);
-        }
-        else
-        {
-          properties.getIncrementalProperties().setMeanPath(true);
-        }
-      }
-      if (load.containsKey("reb2sac.iSSA.adaptive"))
-      {
-        String type = load.getProperty("reb2sac.iSSA.adaptive");
-        if (type.equals("true"))
-        {
-          properties.getIncrementalProperties().setAdaptive(true);
-        }
-        else
-        {
-          properties.getIncrementalProperties().setAdaptive(false);
-        }
-      }
+//      properties.getAdvancedProperties().setPostAbs(getLists);
+//
+//      if (load.containsKey("reb2sac.iSSA.number.paths"))
+//      {
+//    	  properties.getIncrementalProperties().setNumPaths(Integer.parseInt(load.getProperty("reb2sac.iSSA.number.paths")));
+//      }
+//      if (load.containsKey("reb2sac.iSSA.type"))
+//      {
+//    	  String type = load.getProperty("reb2sac.iSSA.type");
+//    	  if (type.equals("mpde"))
+//    	  {
+//    		  properties.getIncrementalProperties().setMpde(true);
+//    	  }
+//    	  else if (type.equals("medianPath"))
+//    	  {
+//    		  properties.getIncrementalProperties().setMedianPath(true);
+//    	  }
+//    	  else
+//    	  {
+//    		  properties.getIncrementalProperties().setMeanPath(true);
+//    	  }
+//      }
+//      if (load.containsKey("reb2sac.iSSA.adaptive"))
+//      {
+//    	  String type = load.getProperty("reb2sac.iSSA.adaptive");
+//    	  if (type.equals("true"))
+//    	  {
+//    		  properties.getIncrementalProperties().setAdaptive(true);
+//    	  }
+//    	  else
+//    	  {
+//    		  properties.getIncrementalProperties().setAdaptive(false);
+//    	  }
+//      }
     }
     else
     {

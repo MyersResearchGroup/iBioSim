@@ -51,6 +51,7 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 	private JTextField rapid2;
 	private JTextField qssa;
 	private JTextField concentration;
+	private JTextField amplification;
 	private JComboBox useInterval;
 	private JTextField simCommand;
 	private JComboBox sim;
@@ -205,12 +206,13 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 		rapid2 = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.rapid2"));
 		qssa = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.qssa"));
 		concentration = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.concentration"));
+		amplification = new JTextField(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.amplification"));
 		
 		choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 		useInterval = new JComboBox(choices);
 		useInterval.setSelectedItem(IBioSimPreferences.INSTANCE.getAnalysisPreference("biosim.sim.useInterval"));
 
-		JPanel analysisLabels = new JPanel(new GridLayout(18, 1));
+		JPanel analysisLabels = new JPanel(new GridLayout(19, 1));
 		analysisLabels.add(new JLabel("Simulation Command:"));
 		analysisLabels.add(new JLabel("Abstraction:"));
 		analysisLabels.add(new JLabel("Simulation Type:"));
@@ -229,8 +231,9 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
 		analysisLabels.add(new JLabel("QSSA Condition:"));
 		analysisLabels.add(new JLabel("Max Concentration Threshold:"));
+		analysisLabels.add(new JLabel("Grid Diffusion Stoichiometry Amplification:"));
 
-		JPanel analysisFields = new JPanel(new GridLayout(18, 1));
+		JPanel analysisFields = new JPanel(new GridLayout(19, 1));
 		analysisFields.add(simCommand);
 		analysisFields.add(abs);
 		analysisFields.add(type);
@@ -249,6 +252,7 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 		analysisFields.add(rapid2);
 		analysisFields.add(qssa);
 		analysisFields.add(concentration);
+		analysisFields.add(amplification);
 		
 		JButton restoreAn = new JButton("Restore Defaults");
 		restoreAn.addActionListener(new ActionListener() {
@@ -273,6 +277,7 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 				rapid2.setText("0.1");
 				qssa.setText("0.1");
 				concentration.setText("15");
+				amplification.setText("1.0");
 			}
 		});	
 
@@ -331,6 +336,8 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.qssa", qssa.getText().trim());
 			Integer.parseInt(concentration.getText().trim());
 			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.concentration", concentration.getText().trim());
+			Double.parseDouble(amplification.getText().trim());
+			IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.amplification", amplification.getText().trim());
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Numeric analysis preference given non-numeric value.", 

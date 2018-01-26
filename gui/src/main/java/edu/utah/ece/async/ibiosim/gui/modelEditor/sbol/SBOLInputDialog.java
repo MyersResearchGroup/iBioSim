@@ -379,7 +379,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		{
 			int row = table.convertRowIndexToModel(r);
 			TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
-			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
+			//outputDoc.setDefaultURIprefix(comp.getSBOLDocument().getDefaultURIprefix());
 			try 
 			{
 				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
