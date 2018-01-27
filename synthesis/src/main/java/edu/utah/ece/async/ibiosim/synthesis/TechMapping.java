@@ -3,6 +3,8 @@ package edu.utah.ece.async.ibiosim.synthesis;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,7 +129,7 @@ public class TechMapping {
 			{
 				SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultPrefix);
 				SBOLDocument libDoc = SBOLUtility.loadSBOLFile(sbolLibDir, defaultPrefix);
-				
+
 				SBOLDocument sbolDoc_sol = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
 				sbolDoc_sol.write(new File(outFileName));
 			}
@@ -139,7 +141,7 @@ public class TechMapping {
 					sbolLibFiles.add(sbolGate);
 				}
 				SBOLFileManager fileManager = new SBOLFileManager(sbolLibFiles, defaultPrefix);
-				
+
 				// Create a gate graph for each SBML library file that was read in
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 
@@ -166,11 +168,27 @@ public class TechMapping {
 				String specFileName = new File(specFile).getName();
 				BioModel specModel = new BioModel(specFile); 
 				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager);
-				
+
 				Properties synthProps = createDefaultSynthesisProperties(specFileName);
 				Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 				List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
 				List<String> solutionFileIDs;
+				
+				String synthFilePath = specFileName;
+				try 
+				{
+					solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath, specFileName);
+				} 
+				catch (XMLStreamException e) 
+				{
+					System.err.println("ERROR: Invalid XML file.");
+					e.printStackTrace();
+				} 
+				catch (BioSimException e) 
+				{
+					System.err.println("ERROR: " + e.getMessage());
+					e.printStackTrace();
+				}
 			}
 		} 
 		catch (FileNotFoundException e) 
@@ -199,8 +217,8 @@ public class TechMapping {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 
 	/**
 	 * Get default fields to set the Synthesis View panel by storing the fields in a property file.
@@ -221,12 +239,137 @@ public class TechMapping {
 				prefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
 		return synthProps;
 	}
-	
-	public static void exportSBMLTechMap(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
-			SBOLFileManager fileManager, String synthFilePath)
+
+	public static boolean compareModels(BioModel subModel1, BioModel subModel2) 
 	{
-		//TODO: 
+		String hash1 = edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
+		String hash2 = edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
+		return hash1 == hash2;
 	}
+
+	public static List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
+			SBOLFileManager fileManager, String synthFilePath, String specFile) throws XMLStreamException, IOException, BioSimException, SBOLValidationException, SBOLConversionException
+	{
+		List<BioModel> solutionModels = new LinkedList<BioModel>();
+		Set<String> solutionFileIDs = new HashSet<String>();
+
+		for (List<SynthesisGraph> solutionGraphs : solutions) 
+		{
+			solutionFileIDs.addAll(importSolutionSubModels(solutionGraphs, synthFilePath, specFile));
+			solutionFileIDs.add(importSolutionDNAComponents(solutionGraphs, fileManager, synthFilePath, specFile));
+		}
+
+		int idIndex = 0;
+		for (List<SynthesisGraph> solutionGraphs : solutions) 
+		{
+			System.out.println(solutionGraphs.toString());
+			BioModel solutionModel = new BioModel(synthFilePath);
+			solutionModel.createSBMLDocument("tempID_" + idIndex, false, false);	
+			idIndex++;
+			Synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
+			solutionModels.add(solutionModel);
+		}
+
+		List<String> orderedSolnFileIDs = new LinkedList<String>();
+		idIndex = 0;
+		for (BioModel solutionModel : solutionModels) 
+		{
+			String solutionID = spec.getModelFileID().replace(".xml", "");
+			do 
+			{
+				idIndex++;
+			} 
+			while (solutionFileIDs.contains(solutionID + "_" + idIndex + ".xml"));
+
+			solutionModel.setSBMLFile(solutionID + "_" + idIndex + ".xml");
+			solutionModel.getSBMLDocument().getModel().setId(solutionID + "_" + idIndex);
+
+			solutionModel.save(synthFilePath + File.separator + solutionID + "_" + idIndex + ".xml");
+
+			orderedSolnFileIDs.add(solutionID + "_" + idIndex + ".xml");
+		}
+		orderedSolnFileIDs.addAll(solutionFileIDs);
+		return orderedSolnFileIDs;
+	}
+
+	private static Set<String> importSolutionSubModels(List<SynthesisGraph> solutionGraphs, String synthFilePath, String specFile) throws XMLStreamException, IOException, BioSimException 
+	{
+		HashMap<String, SynthesisGraph> solutionFileToGraph = new HashMap<String, SynthesisGraph>();
+		Set<String> clashingFileIDs = new HashSet<String>();
+
+		for (SynthesisGraph solutionGraph : solutionGraphs) 
+		{
+			BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
+
+			solutionSubModel.load(solutionGraph.getModelFileID());
+			if (solutionFileToGraph.containsKey(solutionGraph.getModelFileID())) 
+			{
+				SynthesisGraph clashingGraph = solutionFileToGraph.get(solutionGraph.getModelFileID());
+				BioModel clashingSubModel = new BioModel(clashingGraph.getProjectPath());
+
+				clashingSubModel.load(clashingGraph.getModelFileID());
+
+				if (!compareModels(solutionSubModel, clashingSubModel)) 
+				{
+					clashingFileIDs.add(solutionGraph.getModelFileID());
+					solutionFileToGraph.remove(solutionGraph.getModelFileID());
+					solutionFileToGraph.put(flattenProjectIntoModelFileID(solutionSubModel, solutionFileToGraph.keySet()), 
+							solutionGraph);
+					solutionFileToGraph.put(flattenProjectIntoModelFileID(clashingSubModel, solutionFileToGraph.keySet()), 
+							clashingGraph);
+				}
+			} 
+			else if (clashingFileIDs.contains(solutionGraph.getModelFileID())) 
+				solutionFileToGraph.put(flattenProjectIntoModelFileID(solutionSubModel, solutionFileToGraph.keySet()), 
+						solutionGraph);
+			else
+				solutionFileToGraph.put(solutionGraph.getModelFileID(), solutionGraph);
+		}
+
+		for (String subModelFileID : solutionFileToGraph.keySet()) 
+		{
+			SynthesisGraph solutionGraph = solutionFileToGraph.get(subModelFileID);
+			BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
+			solutionSubModel.load(solutionGraph.getModelFileID());
+			solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID.replace(".xml", ""));
+			solutionSubModel.save(synthFilePath + File.separator + subModelFileID);
+			solutionGraph.setModelFileID(subModelFileID);
+		}
+
+		return solutionFileToGraph.keySet();
+	}
+
+	private static String flattenProjectIntoModelFileID(BioModel biomodel, Set<String> modelFileIDs) 
+	{
+		String[] splitPath = biomodel.getPath().split(File.separator);
+		String flatModelFileID = splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
+		int fileIndex = 0;
+		while (modelFileIDs.contains(flatModelFileID)) 
+		{
+			fileIndex++;
+			flatModelFileID = splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile().replace(".xml", "") 
+					+ "_" + fileIndex + ".xml";
+		}
+		return splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
+	}
+
+	private static String importSolutionDNAComponents(List<SynthesisGraph> solutionGraphs, SBOLFileManager fileManager, 
+			String synthFilePath, String specFile) throws SBOLValidationException, FileNotFoundException, SBOLException, SBOLConversionException 
+	{
+		Set<URI> compURIs = new HashSet<URI>();
+		for (SynthesisGraph solutionGraph : solutionGraphs) 
+		{
+			for (URI compURI : solutionGraph.getCompURIs())
+				if (!compURIs.contains(compURI))
+					compURIs.add(compURI);
+		}
+		String sbolFileID = specFile.replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
+
+		SBOLFileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
+				synthFilePath + File.separator + sbolFileID);
+		return sbolFileID;
+	}
+
 
 	private static void usage() 
 	{
@@ -244,7 +387,7 @@ public class TechMapping {
 		System.err.println("-ld: directory to multiple SBOL or SBML library files");
 		System.err.println("-dot produced SBOL technology mapping solution in dot format.");
 	}
-	
-	
+
+
 
 }

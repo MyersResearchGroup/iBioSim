@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,6 +48,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
+import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -454,7 +456,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		{
 			try
 			{
-				//Find all .sbol files and create an SBOLDocument to its corresponding .sbol file.
+				//Find all .sbol files and store into a collection of files (SBOLFileManager)
 				Set<String> sbolFilePaths = new HashSet<String>();
 				for (String libFilePath : libFilePaths) 
 					for (String fileID : new File(libFilePath).list())
@@ -555,7 +557,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		{	
 			try 
 			{
-				//NOTE: if there are more than one library file provided, convert them into one SBOL file.
 				String specFile = rootFilePath + File.separator + specText.getText();
 				File f = new File(specFile);
 				SBMLDocument sbmlSpec = SBMLReader.read(f);
@@ -566,11 +567,27 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				
 				SBML2SBOL.convert_SBML2SBOL(specDoc, specFile, sbmlSpec, f.getName(), null, defaultURIPrefix);
 				
+				//TODO: if there are more than one library file provided, convert them into one SBOL file.
 				String libDir = libFilePaths.iterator().next();
 				SBOLDocument libDoc = SBOLUtility.loadFromDir(libDir, defaultURIPrefix);
 				
 				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-				gui.generateSBMLFromSBOL(solution, gui.getSBOLFile());
+				String solution_dir = synthFilePath;
+				List<String> solutionFileIDs = new ArrayList<String>();
+				for (ModuleDefinition moduleDef : solution.getRootModuleDefinitions())
+				{
+					try 
+					{
+						List<BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
+						solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
+						
+					} 
+					catch (BioSimException e) 
+					{
+						e.printStackTrace();
+					}
+				} 
+				return solutionFileIDs;
 			} 
 			catch (SBOLValidationException e) 
 			{
@@ -705,7 +722,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	          JOptionPane.ERROR_MESSAGE);
 	        e.printStackTrace();
 	      }
-				if (!compareModels(solutionSubModel, clashingSubModel)) {
+				if (!TechMapping.compareModels(solutionSubModel, clashingSubModel)) {
 					clashingFileIDs.add(solutionGraph.getModelFileID());
 					solutionFileToGraph.remove(solutionGraph.getModelFileID());
 					solutionFileToGraph.put(flattenProjectIntoModelFileID(solutionSubModel, solutionFileToGraph.keySet()), 
@@ -753,12 +770,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					+ "_" + fileIndex + ".xml";
 		}
 		return splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
-	}
-
-	private static boolean compareModels(BioModel subModel1, BioModel subModel2) {
-		String hash1 = edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.MD5(subModel1.getSBMLDocument());
-		String hash2 = edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.MD5(subModel2.getSBMLDocument());
-		return hash1 == hash2;
 	}
 
 	private String importSolutionDNAComponents(List<SynthesisGraph> solutionGraphs, SBOLFileManager fileManager, 

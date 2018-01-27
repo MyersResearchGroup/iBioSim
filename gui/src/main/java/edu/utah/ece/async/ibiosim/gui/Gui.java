@@ -7312,15 +7312,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
 				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
 		actionPerformed(projectSynthesized);
-		if (!synthView.getRootDirectory().equals(root)) {
-			// String outputFileID = synthView.getSpecFileID();
-			// int version = 1;
-			// while(!overwrite(root + separator + outputFileID, outputFileID))
-			// {
-			// outputFileID = synthView.getSpecFileID().replace(".xml", "") +
-			// "_" + version + ".xml";
-			// version++;
-			// }
+		if (!synthView.getRootDirectory().equals(root)) 
+		{
 			List<String> solutionFileIDs = synthView.run(root);
 			if (solutionFileIDs.size() > 0) {
 				for (String solutionFileID : solutionFileIDs) {
