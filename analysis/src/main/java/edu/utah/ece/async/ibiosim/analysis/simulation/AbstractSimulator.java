@@ -24,8 +24,11 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
  * @version $Rev$
  * @version %I%
  */
-public abstract class AbstractSimulator extends CoreObservable implements ParentSimulator{
+public abstract class AbstractSimulator extends CoreObservable implements ParentSimulator
+{
 
   protected final Message message = new Message();
+  
+  
   
 }

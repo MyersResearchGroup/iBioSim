@@ -24,6 +24,8 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
@@ -46,74 +48,49 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
   private boolean                isSingleStep;
   private HighamHall54Integrator odecalc;
-  private double                 relativeError, absoluteError;
   private DifferentialEquations  de;
   private final VectorWrapper    vectorWrapper;
+  private final boolean print;
+  
+  public HierarchicalODERKSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
+    super(properties, SimType.HODE);
+    this.vectorWrapper = new VectorWrapper();
 
-
-  public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
-    double timeLimit) throws IOException, XMLStreamException, BioSimException {
-    this(SBMLFileName, rootDirectory, rootDirectory, 0, timeLimit,
-      Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY, 0,
-      null, 1, 1e-6, 1e-9, "amount", 0, 0, false);
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(),
+      simProperties.getAbsError(), simProperties.getRelError());
     isInitialized = false;
-    isSingleStep = true;
-    this.printTime.setValue(Double.POSITIVE_INFINITY);
+    isSingleStep = false;
+    
+    print = true;
+    
   }
-
-
-  public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
-    String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-    long randomSeed, double printInterval,
-    double stoichAmpValue, String[] interestingSpecies,
-    int numSteps, double relError, double absError, String quantityType,
-     double initialTime, double outputStartTime)
-        throws IOException, XMLStreamException, BioSimException {
-    this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit,
-      maxTimeStep, randomSeed, printInterval, stoichAmpValue,
-      interestingSpecies, numSteps, relError, absError, quantityType,
-       initialTime, outputStartTime, true);
-    this.isInitialized = false;
-    this.isSingleStep = false;
-  }
-
-
-  public HierarchicalODERKSimulator(String SBMLFileName, String rootDirectory,
-    String outputDirectory, int runs, double timeLimit, double maxTimeStep,
-    long randomSeed, double printInterval,
-    double stoichAmpValue, String[] interestingSpecies,
-    int numSteps, double relError, double absError, String quantityType,
-    double initialTime, double outputStartTime,
+  
+  public HierarchicalODERKSimulator(AnalysisProperties properties,
     boolean print) throws IOException, XMLStreamException, BioSimException {
-    super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs,
-      timeLimit, maxTimeStep, 0.0, printInterval, stoichAmpValue,
-      interestingSpecies, quantityType, initialTime,
-      outputStartTime, SimType.HODE);
-    this.relativeError = relError;
-    this.absoluteError = absError;
-    this.isSingleStep = false;
-    this.absoluteError = absoluteError == 0 ? 1e-12 : absoluteError;
-    this.relativeError = absoluteError == 0 ? 1e-9 : relativeError;
-    this.printTime.setValue(outputStartTime);
-    this.vectorWrapper = new VectorWrapper(initValues);
-    if (numSteps > 0) {
-      setPrintInterval(timeLimit / numSteps);
-    }
-    odecalc = new HighamHall54Integrator(getMinTimeStep(), getMaxTimeStep(),
-      absoluteError, relativeError);
+    super(properties, SimType.HODE);
+    this.vectorWrapper = new VectorWrapper();
+
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(),
+      simProperties.getAbsError(), simProperties.getRelError());
     isInitialized = false;
+    isSingleStep = false;
+    this.print = print;
+    
   }
 
 
   public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim,
-    HierarchicalModel topmodel) throws IOException, XMLStreamException {
+    HierarchicalModel topmodel) throws IOException, XMLStreamException 
+  {
     super(sim);
-    this.relativeError = 1e-6;
-    this.absoluteError = 1e-6;
-    this.odecalc = new HighamHall54Integrator(getMinTimeStep(),
-      getMaxTimeStep(), absoluteError, relativeError);
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    this.odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(),
+      simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
     this.isInitialized = true;
     this.isSingleStep = true;
+    print = false;
     this.printTime.setValue(0);
     this.vectorWrapper = sim.getVectorWrapper();
     de = new DifferentialEquations();
@@ -121,12 +98,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       HierarchicalEventHandler handler = new HierarchicalEventHandler();
       HierarchicalTriggeredEventHandler triggeredHandler =
           new HierarchicalTriggeredEventHandler();
-      odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
-      odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
+      odecalc.addEventHandler(handler, simProperties.getPrintInterval(), 1e-20, 10000);
+      odecalc.addEventHandler(triggeredHandler, simProperties.getPrintInterval(), 1e-20,
         10000);
       triggeredEventList =
           new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
       computeEvents();
+
     }
   }
 
@@ -146,8 +124,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   public void initialize(long randomSeed, int runNumber)
       throws IOException, XMLStreamException {
     if (!isInitialized) {
+      SimulationProperties simProperties = properties.getSimulationProperties();
       currProgress = 0;
-      setCurrentTime(getInitialTime());
+      setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
       de = new DifferentialEquations();
       computeFixedPoint();
@@ -155,8 +134,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
         HierarchicalEventHandler handler = new HierarchicalEventHandler();
         HierarchicalTriggeredEventHandler triggeredHandler =
             new HierarchicalTriggeredEventHandler();
-        odecalc.addEventHandler(handler, getPrintInterval(), 1e-20, 10000);
-        odecalc.addEventHandler(triggeredHandler, getPrintInterval(), 1e-20,
+        odecalc.addEventHandler(handler, simProperties.getPrintInterval(), 1e-20, 10000);
+        odecalc.addEventHandler(triggeredHandler, simProperties.getPrintInterval(), 1e-20,
           10000);
         triggeredEventList =
             new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
@@ -175,19 +154,23 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     if (!isInitialized) {
         initialize(0, 1);
     }
+
+    SimulationProperties simProperties = properties.getSimulationProperties();
     double nextEndTime = 0;
-    while (currentTime.getValue() < getTimeLimit() && !isCancelFlag()) {
+    double timeLimit = simProperties.getTimeLimit();
+    double maxTimeStep = simProperties.getMaxTimeStep();
+    while (currentTime.getValue() < timeLimit && !isCancelFlag()) {
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
       // return;
       // }
-      nextEndTime = getRoundedDouble(currentTime.getValue() + getMaxTimeStep());
+      nextEndTime = getRoundedDouble(currentTime.getValue() + maxTimeStep);
       
       if (nextEndTime > printTime.getValue()) {
         nextEndTime = printTime.getValue();
       }
-      if (nextEndTime > getTimeLimit()) {
-        nextEndTime = getTimeLimit();
+      if (nextEndTime > timeLimit) {
+        nextEndTime = timeLimit;
       }
       if (vectorWrapper.getSize() > 0) {
         try {

@@ -20,6 +20,8 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
 import edu.utah.ece.async.ibiosim.learn.genenet.Experiments;
@@ -110,7 +112,9 @@ public class ObjectiveSqureError extends Objective
 		List<List<Double>> experiment = this.experiment.getExperiments().get(0);
 
 		HierarchicalODERKSimulator odeSim = (HierarchicalODERKSimulator) sim;
-
+		AnalysisProperties properties = odeSim.getProperties();
+		SimulationProperties simProperties = properties.getSimulationProperties();
+		
 		for (int i = 1; i < speciesCollection.length; i++)
 		{
 			odeSim.setTopLevelValue(speciesCollection[i], experiment.get(0).get(i));
@@ -123,7 +127,7 @@ public class ObjectiveSqureError extends Objective
 		for (int i = 0; i < experiment.size() - 1; i++)
 		{
 
-			odeSim.setTimeLimit(experiment.get(i + 1).get(0));
+		  simProperties.setTimeLimit(experiment.get(i + 1).get(0));
 			try 
 			{
         odeSim.simulate();
@@ -144,7 +148,7 @@ public class ObjectiveSqureError extends Objective
 
 		odeSim.setCurrentTime(0);
 
-		odeSim.setTimeLimit(0);
+		simProperties.setTimeLimit(0);
 
 		odeSim.setupForNewRun(0);
 

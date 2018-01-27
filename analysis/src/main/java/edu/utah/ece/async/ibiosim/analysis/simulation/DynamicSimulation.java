@@ -98,18 +98,17 @@ public class DynamicSimulation extends CoreObservable
         simulator.addObservable(this);
         break;
       case HIERARCHICAL_DIRECT:
-        simulator = new HierarchicalSSADirectSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue,  interestingSpecies, quantityType, initialTime, outputStartTime);
+        simulator = new HierarchicalSSADirectSimulator(properties);
         simulator.addObservable(this);
         break;
       case HIERARCHICAL_RK:
-        simulator = new HierarchicalODERKSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType, initialTime,
-          outputStartTime);
+        simulator = new HierarchicalODERKSimulator(properties);
         simulator.addObservable(this);
         break;
       case HIERARCHICAL_HYBRID:
         break;
       case HIERARCHICAL_MIXED:
-        simulator = new HierarchicalMixedSimulator(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime);
+        simulator = new HierarchicalMixedSimulator(properties);
         simulator.addObservable(this);
         break;
       default:
@@ -139,11 +138,11 @@ public class DynamicSimulation extends CoreObservable
           }
         }
         
-        System.gc();
+        //System.gc();
         //double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
         ///double val2 = System.currentTimeMillis();
 
-        System.runFinalization();
+        //System.runFinalization();
 
 
         //message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");

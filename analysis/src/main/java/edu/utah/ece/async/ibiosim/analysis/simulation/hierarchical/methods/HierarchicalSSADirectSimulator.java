@@ -20,6 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
@@ -46,20 +48,19 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
   private long			randomSeed;
 
-  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, 
-    String[] interestingSpecies, String quantityType,  double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
+  public HierarchicalSSADirectSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException
   {
 
-    this(SBMLFileName, rootDirectory, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, true);
+    super(properties, SimType.HSSA);
+    this.print = true;
+
   }
-
-  public HierarchicalSSADirectSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue, 
-    String[] interestingSpecies, String quantityType, double initialTime, double outputStartTime, boolean print) throws IOException, XMLStreamException, BioSimException
+  
+  public HierarchicalSSADirectSimulator(AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException
   {
 
-    super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, SimType.HSSA);
+    super(properties, SimType.HSSA);
     this.print = print;
-    this.randomSeed = randomSeed;
 
   }
 
@@ -69,9 +70,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   {
     if (!isInitialized)
     {
+      SimulationProperties simProperties = properties.getSimulationProperties();
       currProgress = 0;
       
-      setCurrentTime(getInitialTime());
+      setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HSSA);
       computeFixedPoint();
 
@@ -114,7 +116,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   @Override
   public void setupForNewRun(int newRun) throws IOException
   {
-    setCurrentTime(getInitialTime());
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    
+    setCurrentTime(simProperties.getInitialTime());
     setupForOutput(newRun);
   }
 
@@ -122,8 +126,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   public void simulate() throws IOException, XMLStreamException
   {
 
+    SimulationProperties simProperties = properties.getSimulationProperties();
     double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
-
+    double timeLimit = simProperties.getTimeLimit();
+    double maxTimeStep = simProperties.getMaxTimeStep();
     if (isSbmlHasErrorsFlag())
     {
       return;
@@ -133,10 +139,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
         this.initialize(randomSeed, 1);
     }
-    printTime.setValue(getOutputStartTime());
+    printTime.setValue(simProperties.getOutputStartTime());
     previousTime = 0;
 
-    while (currentTime.getValue(0) < getTimeLimit() && !isCancelFlag())
+    while (currentTime.getValue(0) < timeLimit && !isCancelFlag())
     {
       //			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       //			{
@@ -150,7 +156,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       delta_t = computeNextTimeStep(r1, totalPropensity);
       nextReactionTime = currentTime.getValue(0) + delta_t;
       nextEventTime = getNextEventTime();
-      nextMaxTime = currentTime.getValue(0) + getMaxTimeStep();
+      nextMaxTime = currentTime.getValue(0) + maxTimeStep;
       previousTime = currentTime.getValue(0);
 
       if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime)
@@ -166,7 +172,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
         setCurrentTime(nextMaxTime);
       }
 
-      if (currentTime.getValue() > getTimeLimit())
+      if (currentTime.getValue() > timeLimit)
       {
         break;
       }
@@ -192,7 +198,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
     if (!isCancelFlag())
     {
-      setCurrentTime(getTimeLimit());
+      setCurrentTime(timeLimit);
       update(false, true, true, r2, previousTime);
 
       if (print)

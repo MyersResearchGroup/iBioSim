@@ -33,6 +33,7 @@ import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
@@ -73,10 +74,10 @@ public class ModelSetup
    */
   public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException
   {
-    
-    SBMLDocument document = sim.getDocument();
+    AnalysisProperties properties = sim.getProperties();
+    SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
     Model model = document.getModel();
-    String rootPath = sim.getRootDirectory();
+    String rootPath = properties.getRoot();
     HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
     sim.setTopmodel(hierarchicalModel);
      

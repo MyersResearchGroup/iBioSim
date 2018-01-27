@@ -23,6 +23,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
@@ -47,10 +49,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	private VectorWrapper wrapper;
 	// private HierarchicalSimulation ssaSim;
 
-	public HierarchicalMixedSimulator(String SBMLFileName, String rootDirectory, String outputDirectory, int runs, double timeLimit, double maxTimeStep, double minTimeStep, long randomSeed, double printInterval, double stoichAmpValue,
-			String[] interestingSpecies, String quantityType, double initialTime, double outputStartTime) throws IOException, XMLStreamException, BioSimException
+	public HierarchicalMixedSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException
 	{
-		super(SBMLFileName, rootDirectory, outputDirectory, randomSeed, runs, timeLimit, maxTimeStep, minTimeStep, printInterval, stoichAmpValue, interestingSpecies, quantityType, initialTime, outputStartTime, SimType.MIXED);
+		super(properties, SimType.MIXED);
 
 	}
 
@@ -61,7 +62,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		{
 		  currProgress = 0;
 			setCurrentTime(0);
-			this.wrapper = new VectorWrapper(initValues); 
+			this.wrapper = new VectorWrapper(); 
 
 			
 			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
@@ -85,10 +86,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 		double nextEndTime = currentTime.getValue(0);
     fbaTime = nextEndTime;
 		double dt = getTopLevelValue("dt");
-
+		SimulationProperties simProperties = properties.getSimulationProperties();
+		double timeLimit = simProperties.getTimeLimit();
+		double maxTimeStep = simProperties.getMaxTimeStep();
 		while (nextEndTime < timeLimit)
 		{
-			nextEndTime = nextEndTime + getMaxTimeStep();
+			nextEndTime = nextEndTime + maxTimeStep;
 
 			if(nextEndTime > fbaTime)
 			{
@@ -100,12 +103,12 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 				nextEndTime = printTime.getValue();
 			}
 
-			if (nextEndTime > getTimeLimit())
+			if (nextEndTime > timeLimit)
 			{
-				nextEndTime = getTimeLimit();
+				nextEndTime = timeLimit;
 			}
 
-			odeSim.setTimeLimit(nextEndTime);
+			simProperties.setTimeLimit(nextEndTime);
 			
 			if(nextEndTime <= fbaTime)
 			{
@@ -122,7 +125,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 			printToFile();
 		}
-		
+
+		//Restore
+    simProperties.setTimeLimit(timeLimit);
 		closeWriter();
 	}
 

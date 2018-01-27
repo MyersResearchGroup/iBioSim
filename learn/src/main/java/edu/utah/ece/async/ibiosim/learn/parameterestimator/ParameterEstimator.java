@@ -25,6 +25,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -74,14 +75,14 @@ public class ParameterEstimator
 	 */
 	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, BioSimException
 	{
-
+	  AnalysisProperties properties = new AnalysisProperties("", SBMLFileName, root, false);
 		int numberofparameters = parameterList.size();
 		int sp = 0;
 		int n = experiments.getExperiments().get(0).size() - 1;
 		double ep = experiments.getExperiments().get(0).get(n).get(0);
 		double[] lowerbounds = new double[numberofparameters];
 		double[] upperbounds = new double[numberofparameters];
-		HierarchicalSimulation sim = new HierarchicalODERKSimulator(SBMLFileName, root, 0);
+		HierarchicalSimulation sim = new HierarchicalODERKSimulator(properties, false);
 		sim.initialize(randomSeed, 0);
 
 		for (int i = 0; i < numberofparameters; i++)

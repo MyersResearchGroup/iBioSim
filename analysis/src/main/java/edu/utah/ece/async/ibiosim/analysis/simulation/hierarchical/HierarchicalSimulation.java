@@ -29,6 +29,8 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
@@ -66,26 +68,14 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
 
   protected final VariableNode      currentTime;
   protected final VariableNode            printTime;
+  protected final AnalysisProperties properties;
+  
   private boolean             cancelFlag;
   private int               currentRun;
   private Set<String>           interestingSpecies;
-  private double              maxTimeStep;
-  private double              minTimeStep;
-  private String              outputDirectory;
   private boolean             printConcentrations;
-  private HashSet<String>         printConcentrationSpecies;
-  private double              printInterval;
-  private String              SBMLFileName;
   private boolean             sbmlHasErrorsFlag;
-  private boolean             stoichAmpBoolean;
-  private double              stoichAmpGridValue;
-  protected double            timeLimit;
-  private String              rootDirectory;
-  private SBMLDocument          document;
   private String              abstraction;
-  private int               totalRuns;
-  protected final ArrayList<Double> initValues;
-  protected double            initTotalPropensity;
   protected PriorityQueue<TriggeredEventNode>    triggeredEventList;
   protected boolean           isInitialized;
 
@@ -97,7 +87,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
 
   protected List<HierarchicalModel>     modules;
   protected FunctionNode        totalPropensity;
-  private double              initialTime, outputStartTime;
 
   private HierarchicalWriter writer;
 
@@ -107,21 +96,14 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   final private StateType atomicType;
   final private StateType parentType;
   
-  public HierarchicalSimulation(String SBMLFileName, String rootDirectory, String outputDirectory, long randomSeed, int runs, double timeLimit, double maxTimeStep, double minTimeStep, double printInterval, double stoichAmpValue,  String[] interestingSpecies,
-    String quantityType, double initialTime, double outputStartTime, SimType type) throws XMLStreamException, IOException, BioSimException
+  public HierarchicalSimulation(AnalysisProperties properties, SimType type) throws XMLStreamException, IOException, BioSimException
   {
-    this.SBMLFileName = SBMLFileName;
-    this.timeLimit = timeLimit;
-    this.maxTimeStep = maxTimeStep;
-    this.minTimeStep = minTimeStep;
-    this.printInterval = printInterval;
     this.printTime = new VariableNode("_printTime", StateType.SCALAR);
     this.printTime.setValue(0);
-    this.rootDirectory = rootDirectory;
-    this.outputDirectory = outputDirectory;
-    this.printConcentrationSpecies = new HashSet<String>();
     
     this.parentType = StateType.SPARSE;
+    this.type = type;
+    
     if(type == SimType.HODE || type == SimType.MIXED)
     {
       this.atomicType = StateType.VECTOR;
@@ -130,92 +112,33 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     {
       this.atomicType = StateType.SCALAR; 
     }
-    
-    if(interestingSpecies != null && interestingSpecies.length > 0)
-    {
-      this.interestingSpecies = new HashSet<String>();
-      for(String species : interestingSpecies)
-      {
-        this.interestingSpecies.add(species);
-      }
-    }
 
-    this.maxProgress = timeLimit * runs;
-    this.document = SBMLReader.read(new File(SBMLFileName));
-    this.totalRuns = runs;
-    this.type = type;
+    this.properties = properties;
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    this.maxProgress = simProperties.getTimeLimit() * simProperties.getRun();
     this.topmodel = new HierarchicalModel("topmodel", 0);
     this.currentTime = new VariableNode("_time", StateType.SCALAR);
     this.hasEvents = false;
     this.currentRun = 1;
-    this.randomNumberGenerator = new Random(randomSeed);
-    this.initialTime = initialTime;
-    this.outputStartTime = outputStartTime;
-    this.initValues = new ArrayList<Double>();
+    this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
     this.addPrintVariable("time", printTime, 0, false);
 
     this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
-
-    if (quantityType != null)
-    {
-      String[] printConcentration = quantityType.replaceAll(" ", "").split(",");
-
-      for (String s : printConcentration)
-      {
-        printConcentrationSpecies.add(s);
-      }
-    }
-
-    if (stoichAmpValue <= 1.0)
-    {
-      stoichAmpBoolean = false;
-    }
-    else
-    {
-      stoichAmpBoolean = true;
-      stoichAmpGridValue = stoichAmpValue;
-    }
-
-    SBMLErrorLog errors = document.getErrorLog();
-
-    if (document.getErrorCount() > 0)
-    {
-      String errorString = "";
-
-      for (int i = 0; i < errors.getErrorCount(); i++)
-      {
-        errorString += errors.getError(i);
-      }
-
-
-      throw new BioSimException("The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString, "Error!");
-    }
-
   }
 
   public HierarchicalSimulation(HierarchicalSimulation copy)
   {
-    this.SBMLFileName = copy.SBMLFileName;
-    this.timeLimit = copy.timeLimit;
-    this.maxTimeStep = copy.maxTimeStep;
-    this.minTimeStep = copy.minTimeStep;
-    this.printInterval = copy.printInterval;
+    this.properties = copy.properties;
     this.printTime = copy.printTime;
-    this.rootDirectory = copy.rootDirectory;
-    this.outputDirectory = copy.outputDirectory;
-    this.printConcentrationSpecies = copy.printConcentrationSpecies;
     this.interestingSpecies = copy.interestingSpecies;
-    this.document = copy.document;
     this.abstraction = copy.abstraction;
-    this.totalRuns = copy.totalRuns;
     this.type = copy.type;
     this.isGrid = copy.isGrid;
     this.topmodel = copy.topmodel;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
-    this.initValues = copy.initValues;
     this.hasEvents = copy.hasEvents;
     this.atomicType = copy.atomicType;
     this.parentType = copy.parentType;
@@ -291,51 +214,11 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   }
 
   /**
-   * @return the maxTimeStep
-   */
-  public double getMaxTimeStep()
-  {
-    return maxTimeStep;
-  }
-
-  /**
-   * @return the minTimeStep
-   */
-  public double getMinTimeStep()
-  {
-    return minTimeStep;
-  }
-
-  /**
-   * @return the outputDirectory
-   */
-  public String getOutputDirectory()
-  {
-    return outputDirectory;
-  }
-
-  /**
    * @return the printConcentrations
    */
   public boolean isPrintConcentrations()
   {
     return printConcentrations;
-  }
-
-  /**
-   * @return the printConcentrationSpecies
-   */
-  public HashSet<String> getPrintConcentrationSpecies()
-  {
-    return printConcentrationSpecies;
-  }
-
-  /**
-   * @return the printInterval
-   */
-  public double getPrintInterval()
-  {
-    return printInterval;
   }
 
   /**
@@ -354,13 +237,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return SBML_VERSION;
   }
 
-  /**
-   * @return the sBMLFileName
-   */
-  public String getSBMLFileName()
-  {
-    return SBMLFileName;
-  }
 
   /**
    * @return the sbmlHasErrorsFlag
@@ -370,37 +246,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return sbmlHasErrorsFlag;
   }
 
-  /**
-   * @return the stoichAmpBoolean
-   */
-  public boolean isStoichAmpBoolean()
-  {
-    return stoichAmpBoolean;
-  }
-
-  /**
-   * @return the stoichAmpGridValue
-   */
-  public double getStoichAmpGridValue()
-  {
-    return stoichAmpGridValue;
-  }
-
-  /**
-   * @return the timeLimit
-   */
-  public double getTimeLimit()
-  {
-    return timeLimit;
-  }
-
-  /**
-   * @return the rootDirectory
-   */
-  public String getRootDirectory()
-  {
-    return rootDirectory;
-  }
 
   /**
    * @param cancelFlag
@@ -438,32 +283,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.interestingSpecies = interestingSpecies;
   }
 
-  /**
-   * @param maxTimeStep
-   *            the maxTimeStep to set
-   */
-  public void setMaxTimeStep(double maxTimeStep)
-  {
-    this.maxTimeStep = maxTimeStep;
-  }
-
-  /**
-   * @param minTimeStep
-   *            the minTimeStep to set
-   */
-  public void setMinTimeStep(double minTimeStep)
-  {
-    this.minTimeStep = minTimeStep;
-  }
-
-  /**
-   * @param outputDirectory
-   *            the outputDirectory to set
-   */
-  public void setOutputDirectory(String outputDirectory)
-  {
-    this.outputDirectory = outputDirectory;
-  }
 
   /**
    * @param printConcentrations
@@ -474,32 +293,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.printConcentrations = printConcentrations;
   }
 
-  /**
-   * @param printConcentrationSpecies
-   *            the printConcentrationSpecies to set
-   */
-  public void setPrintConcentrationSpecies(HashSet<String> printConcentrationSpecies)
-  {
-    this.printConcentrationSpecies = printConcentrationSpecies;
-  }
-
-  /**
-   * @param printInterval
-   *            the printInterval to set
-   */
-  public void setPrintInterval(double printInterval)
-  {
-    this.printInterval = printInterval;
-  }
-
-  /**
-   * @param sBMLFileName
-   *            the sBMLFileName to set
-   */
-  public void setSBMLFileName(String sBMLFileName)
-  {
-    SBMLFileName = sBMLFileName;
-  }
 
   /**
    * @param sbmlHasErrorsFlag
@@ -508,59 +301,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag)
   {
     this.sbmlHasErrorsFlag = sbmlHasErrorsFlag;
-  }
-
-  /**
-   * @param stoichAmpBoolean
-   *            the stoichAmpBoolean to set
-   */
-  public void setStoichAmpBoolean(boolean stoichAmpBoolean)
-  {
-    this.stoichAmpBoolean = stoichAmpBoolean;
-  }
-
-  /**
-   * @param stoichAmpGridValue
-   *            the stoichAmpGridValue to set
-   */
-  public void setStoichAmpGridValue(double stoichAmpGridValue)
-  {
-    this.stoichAmpGridValue = stoichAmpGridValue;
-  }
-
-  /**
-   * @param timeLimit
-   *            the timeLimit to set
-   */
-  public void setTimeLimit(double timeLimit)
-  {
-    this.timeLimit = timeLimit;
-  }
-
-  /**
-   * @param rootDirectory
-   *            the rootDirectory to set
-   */
-  public void setRootDirectory(String rootDirectory)
-  {
-    this.rootDirectory = rootDirectory;
-  }
-
-  /**
-   * @return the document
-   */
-  public SBMLDocument getDocument()
-  {
-    return document;
-  }
-
-  /**
-   * @param document
-   *            the document to set
-   */
-  public void setDocument(SBMLDocument document)
-  {
-    this.document = document;
   }
 
   /**
@@ -581,14 +321,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.abstraction = abstraction;
   }
 
-  /**
-   * 
-   * @return
-   */
-  public int getTotalRuns()
-  {
-    return totalRuns;
-  }
 
   /**
    * @return the randomNumberGenerator
@@ -651,18 +383,8 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   protected void setupForOutput(int currentRun) throws IOException
   {
     setCurrentRun(currentRun);
-    writer.init(getOutputDirectory() + File.separator + "run-" + currentRun + ".tsd");
+    writer.init(properties.getDirectory() + File.separator + "run-" + currentRun + ".tsd");
 
-  }
-
-  public double getInitialTime()
-  {
-    return initialTime;
-  }
-
-  public double getOutputStartTime()
-  {
-    return outputStartTime;
   }
 
   /**
@@ -673,6 +395,11 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return totalPropensity != null ? totalPropensity.getVariable().getValue() : 0;
   }
 
+  public AnalysisProperties getProperties()
+  {
+    return properties;
+  }
+  
   public void setTopLevelValue(String variable, double value)
   {
     if (topmodel != null)
@@ -708,7 +435,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   }
   protected void printToFile()
   {
-    while (currentTime.getValue() >= printTime.getValue() && printTime.getValue() <= getTimeLimit())
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    double timeLimit = simProperties.getTimeLimit();
+    while (currentTime.getValue() >= printTime.getValue() && printTime.getValue() <= timeLimit)
     {
       try
       {
@@ -719,8 +448,8 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
         e.printStackTrace();
       }
 
-      currProgress += getPrintInterval();
-      printTime.setValue(getRoundedDouble(printTime.getValue() + getPrintInterval()));
+      currProgress += simProperties.getPrintInterval();
+      printTime.setValue(getRoundedDouble(printTime.getValue() + simProperties.getPrintInterval()));
 
       message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
       parent.send(RequestType.REQUEST_PROGRESS, message);

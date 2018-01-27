@@ -645,7 +645,7 @@ public class CoreSetup
       String printVariable = container.getPrefix() + species.getId();
       node = (SpeciesNode) modelstate.getNode(species.getId());
 
-      if(sim.getPrintConcentrationSpecies().contains(printVariable))
+      if(sim.getProperties().getSimulationProperties().getPrinter_track_quantity().equals("concentration"))
       {
         isConcentration = true;
       }

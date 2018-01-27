@@ -14,6 +14,7 @@
 
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,14 +32,14 @@ public class VectorWrapper {
   private int size;
   private List<Double> initValues;
   
-  public VectorWrapper(List<Double> initValues)
+  public VectorWrapper()
   {
     this.size = 0;
     this.values = null;
     this.values = null;
     this.initValues = null;
     this.isSet = false;
-    this.initValues = initValues;
+    this.initValues = new ArrayList<Double>();
   }
 
   public void setValues(double[] vector)
