@@ -567,11 +567,17 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				
 				SBML2SBOL.convert_SBML2SBOL(specDoc, specFile, sbmlSpec, f.getName(), null, defaultURIPrefix);
 				
-				//TODO: if there are more than one library file provided, convert them into one SBOL file.
-				String libDir = libFilePaths.iterator().next();
-				SBOLDocument libDoc = SBOLUtility.loadFromDir(libDir, defaultURIPrefix);
+				// Note: If there are more than one library file provided, convert them into one SBOL file.
+				SBOLDocument libDoc = new SBOLDocument();
+				for(String sbolDir : libFilePaths)
+				{
+					SBOLDocument sbolDoc = SBOLUtility.loadFromDir(sbolDir, defaultURIPrefix);
+					libDoc.createCopy(sbolDoc);
+				}
 				
 				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
+				
+				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;
 				List<String> solutionFileIDs = new ArrayList<String>();
 				for (ModuleDefinition moduleDef : solution.getRootModuleDefinitions())
@@ -580,7 +586,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					{
 						List<BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
 						solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
-						
 					} 
 					catch (BioSimException e) 
 					{
