@@ -203,7 +203,7 @@ public class SBOLFileManager {
 					SBOLUtility.addDNAComponent(c, sbolDoc, false);
 			}
 			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
-			System.out.println("Wrote sbolAnnot to this file: " + sbolFilePath);
+			//System.out.println("Wrote sbolAnnot to this file: " + sbolFilePath);
 		}
 	}
 	

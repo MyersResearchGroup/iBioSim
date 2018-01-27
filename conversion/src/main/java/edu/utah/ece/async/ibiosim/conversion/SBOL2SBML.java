@@ -354,7 +354,7 @@ public class SBOL2SBML {
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(localSpecies));
 		Port port = subTargetModel.getPortByIdRef(getDisplayID(remoteSpecies));
 		if (port==null) {
-			System.out.println("Cannot find "+getDisplayID(remoteSpecies));
+			System.err.println("Cannot find "+getDisplayID(remoteSpecies));
 			//return;
 		}
 

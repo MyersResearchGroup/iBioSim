@@ -111,8 +111,8 @@ public class Validate
         numberOfErrors = document.checkConsistency();
       } else {
         numberOfErrors = document.checkConsistency();
-        System.out.println(libsbml.LIBSBML_DOTTED_VERSION);
-        System.out.println("ERROR: please update libsbml.");
+        System.err.println(libsbml.LIBSBML_DOTTED_VERSION);
+        System.err.println("ERROR: please update libsbml.");
       }
       for (int i = 0; i < numberOfErrors; i++)
       {

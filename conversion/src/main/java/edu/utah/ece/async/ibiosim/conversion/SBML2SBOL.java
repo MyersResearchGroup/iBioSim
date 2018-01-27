@@ -624,7 +624,7 @@ public class SBML2SBOL {
 				} else {
 					subModel = sbmlComp.getListOfModelDefinitions().get(modelRef);
 					if (subModel==null) {
-						System.out.println("Cannot find "+modelRef);
+						System.err.println("Cannot find "+modelRef);
 					} else {
 						if (!comps.contains(modelRef)) {
 							comps.add(modelRef);

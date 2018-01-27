@@ -2113,11 +2113,11 @@ public class SBMLutilities extends CoreObservable
 		{
 			if (math.isOperator())
 			{
-				System.out.println("Operator " + math.getName() + " is not currently supported.");
+				System.err.println("Operator " + math.getName() + " is not currently supported.");
 			}
 			else
 			{
-				System.out.println(math.getName() + " is not currently supported.");
+				System.err.println(math.getName() + " is not currently supported.");
 			}
 		}
 		return "";
@@ -4266,11 +4266,11 @@ public class SBMLutilities extends CoreObservable
 		{
 			if (math.isOperator())
 			{
-				System.out.println("Operator " + math.getName() + " is not currently supported.");
+				System.err.println("Operator " + math.getName() + " is not currently supported.");
 			}
 			else
 			{
-				System.out.println(math.getName() + " is not currently supported.");
+				System.err.println(math.getName() + " is not currently supported.");
 			}
 		}
 		return false;
@@ -4473,11 +4473,11 @@ public class SBMLutilities extends CoreObservable
 		{
 			if (math.isOperator())
 			{
-				System.out.println("Operator " + math.getName() + " is not currently supported.");
+				System.err.println("Operator " + math.getName() + " is not currently supported.");
 			}
 			else
 			{
-				System.out.println(math.getName() + " is not currently supported.");
+				System.err.println(math.getName() + " is not currently supported.");
 			}
 		}
 		return "";
