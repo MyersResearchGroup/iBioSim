@@ -25,21 +25,18 @@ public class ConstraintNode extends HierarchicalNode
 {
 
 	private String	id;
-	private int		failures;
 
 	public ConstraintNode(String id, HierarchicalNode copy)
 	{
 		super(Type.PLUS);
 		this.addChild(copy);
 		this.id = id;
-		this.failures = 0;
 	}
 
 	private ConstraintNode(ConstraintNode constraintNode)
 	{
 		super(constraintNode);
 		this.id = constraintNode.id;
-		this.failures = constraintNode.failures;
 	}
 
 	public String getName()
@@ -47,9 +44,9 @@ public class ConstraintNode extends HierarchicalNode
 		return id;
 	}
 
-	public int getNumberOfFailures()
+	public double getNumberOfFailures(int index)
 	{
-		return failures;
+		return state.getState(index).getStateValue();
 	}
 
 	public boolean evaluateConstraint(int index)
@@ -58,7 +55,7 @@ public class ConstraintNode extends HierarchicalNode
 		boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
 		if (!value)
 		{
-			failures++;
+			state.setStateValue(index, state.getStateValue(index) + 1);
 		}
 		return value;
 	}
