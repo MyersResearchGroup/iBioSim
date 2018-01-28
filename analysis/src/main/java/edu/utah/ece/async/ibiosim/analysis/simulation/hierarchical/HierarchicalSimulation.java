@@ -383,7 +383,12 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   protected void setupForOutput(int currentRun) throws IOException
   {
     setCurrentRun(currentRun);
-    writer.init(properties.getDirectory() + File.separator + "run-" + currentRun + ".tsd");
+    String outputDirectory = properties.getOutDir();
+    if(outputDirectory.equals("."))
+    {
+      outputDirectory = properties.getDirectory();
+    }
+    writer.init(outputDirectory + File.separator + "run-" + currentRun + ".tsd");
 
   }
 

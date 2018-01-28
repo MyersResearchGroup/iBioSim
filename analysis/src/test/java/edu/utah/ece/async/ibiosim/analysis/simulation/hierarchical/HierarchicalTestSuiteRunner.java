@@ -73,8 +73,9 @@ public class HierarchicalTestSuiteRunner
 
     DynamicSimulation simulator;
 
-    properties = new AnalysisProperties("", "", "" , false);
-    
+    properties = new AnalysisProperties("", "", args[0] , false);
+
+    properties.setOutDir(args[1]);
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
     
     int start = 1;
@@ -101,10 +102,8 @@ public class HierarchicalTestSuiteRunner
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
-      String root = args[0] + File.separator + testcase;
-      properties.setRoot(root);
 
-      properties.setId("");
+      properties.setId(testcase);
       
       properties.setModelFile(testcase + "-sbml-l3v1.xml");
       String filename = properties.getFilename();
@@ -245,8 +244,6 @@ public class HierarchicalTestSuiteRunner
 
   private static void readSettings(String filename)
   {
-
-    
     File f = new File(filename);
     Properties p = new Properties();
     FileInputStream in;
