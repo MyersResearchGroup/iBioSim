@@ -14,6 +14,7 @@ import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -39,16 +40,18 @@ public class TechMapping {
 		String outFileName = "";
 		String defaultPrefix = "";
 
-		boolean sbml = false;
-		boolean sbol = false;
+		boolean sbmlTechMap = false;
+		boolean sbolTechMap = false;
 		boolean outSBML = false;
 		boolean outSBOL = false;
 
-
 		boolean greedySol = false;
 		boolean exactSol = false;
+		boolean branch_bound = false;
+		
 		boolean createDotFile = false;
 
+		int num_sol = 0;
 		int index = 0;
 
 		for(; index< args.length; index++)
@@ -84,6 +87,13 @@ public class TechMapping {
 				}
 				specFile = args[++index];
 				break;
+			case "-sVal":
+				if(index+1 >= args.length || args[index+1].equals("-"))
+				{
+					usage();
+				}
+				num_sol = Integer.parseInt(args[++index]);
+				break;
 			case "-o":
 				if(index+1 >= args.length || args[index+1].equals("-"))
 				{
@@ -91,17 +101,26 @@ public class TechMapping {
 				}
 				outFileName = args[++index];
 				break;
+			case "-bs":
+				branch_bound = true;
+				break;
+			case "-es":
+				exactSol = true;
+				break;
+			case "-gs":
+				greedySol = true;
+				break;
 			case "-sbml":
-				sbml = true;
+				sbmlTechMap = true;
 				break;
 			case "-sbol":
-				sbml = true;
+				sbolTechMap = true;
 				break;
 			case "-osbml":
-				sbml = true;
+				outSBML = true;
 				break;
 			case "-osbol":
-				sbml = true;
+				outSBOL = true;
 				break;
 			case "-p":
 				if(index+1 >= args.length || args[index+1].equals("-"))
@@ -125,15 +144,32 @@ public class TechMapping {
 
 		try 
 		{
-			if(sbol)
+			if(sbolTechMap)
 			{
 				SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultPrefix);
 				SBOLDocument libDoc = SBOLUtility.loadSBOLFile(sbolLibDir, defaultPrefix);
 
 				SBOLDocument sbolDoc_sol = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-				sbolDoc_sol.write(new File(outFileName));
+				if(outSBOL)
+				{
+					sbolDoc_sol.write(new File(outFileName));
+				}
+				else if (outSBML)
+				{
+					// TODO: Write solution to one SBML file
+					for (ModuleDefinition moduleDef : sbolDoc_sol.getRootModuleDefinitions())
+					{
+//						List<BioModel> models = SBOL2SBML.generateModel(outFileName, moduleDef, sbolDoc_sol);
+//						SBMLutilities.exportSBMLModels(models, outputDir, outFileName, false, true, true);
+					}
+				}
+				else
+				{
+					// Write to command line
+					sbolDoc_sol.write(System.out);
+				}
 			}
-			else if (sbml)
+			else if (sbmlTechMap)
 			{
 				Set<String> sbolLibFiles = new HashSet<String>();
 				for(String sbolGate : new File(sbolLibDir).list())

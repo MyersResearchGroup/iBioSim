@@ -87,7 +87,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private String synthID; // ID of synthesis file
 	private String separator; 
 	private String rootFilePath; // Path to the iBioSim project
-	
+
 	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
 	private Gui gui;
@@ -95,7 +95,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JTextField specText;
 	private List<String> libFilePaths;
 	private JList<String> libList; // The path to all the gate library files.
-	
+
 	private JScrollPane libScroll;
 	private JButton addLibButton, removeLibButton;
 	private JComboBox methodBox;
@@ -120,7 +120,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		this.separator = separator;
 		this.rootFilePath = rootFilePath;
 		this.log = log;
-		
+
 		new File(rootFilePath + separator + synthID).mkdir(); // Create the synthesis directory
 		JPanel optionsPanel = constructOptionsPanel(); // Create the UI for the synthesis view
 		addTab("Synthesis Options", optionsPanel); // Create a tab in the iBioSim workspace for technology mapping
@@ -277,7 +277,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		loadSynthesisOptions();
 	}
 
-	
+
 
 	/**
 	 * Save the fields needed for SBML (Nic's) Technology mapping in the property file
@@ -388,7 +388,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	{
 		//Go to the directory where this iBioSim project is located.
 		File startDirectory = new File(Preferences.userRoot().get("biosim.general.project_dir", ""));
-		
+
 		//Retrieve the user's selected directory where the library of gates are stored.
 		String libFilePath = Utility.browse(frame, startDirectory, null, 
 				JFileChooser.DIRECTORIES_ONLY, "Open", -1);
@@ -442,7 +442,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	@Override
 	public void run() { 
-		
+
 	}
 
 	/**
@@ -468,7 +468,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
 				//boolean flatImport = libFilePaths.size() > 1;
-				
+
 				/* Find .xml files for the available library of gates and create a bioModel for each file then load 
 				 * them to the synthesis graph library.
 				 * This is where the loading of the SBML library takes place. 
@@ -490,10 +490,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 								e.printStackTrace();
 							}
 							catch (BioSimException e) {
-				        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-				          JOptionPane.ERROR_MESSAGE);
-				        e.printStackTrace();
-				      }
+								JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+										JOptionPane.ERROR_MESSAGE);
+								e.printStackTrace();
+							}
 							graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
 						}
 					}
@@ -511,24 +511,25 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				} 
 				catch (BioSimException e) 
 				{
-			        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-			          JOptionPane.ERROR_MESSAGE);
-			        e.printStackTrace();
-			    }
-				
+					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+
 				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
 
 
 				Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 				List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
 				List<String> solutionFileIDs;
-				
+
 				solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
 				return solutionFileIDs;
 			}
 			catch (SBOLValidationException e) 
 			{
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
+						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 				return null;
 			} 
@@ -540,16 +541,19 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			} 
 			catch (FileNotFoundException e) 
 			{
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to locate input file(s).", "File Not Found",
+						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} 
 			catch (IOException e) 
 			{
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write SBOL file", "File Not Found",
+						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} 
 			catch (SBOLConversionException e) {
-				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
+						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
 		}
@@ -560,13 +564,13 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				String specFile = rootFilePath + File.separator + specText.getText();
 				File f = new File(specFile);
 				SBMLDocument sbmlSpec = SBMLReader.read(f);
-				
+
 				String defaultURIPrefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
 				SBOLDocument specDoc = new SBOLDocument();
 				specDoc.setDefaultURIprefix(defaultURIPrefix);
-				
+
 				SBML2SBOL.convert_SBML2SBOL(specDoc, specFile, sbmlSpec, f.getName(), null, defaultURIPrefix);
-				
+
 				// Note: If there are more than one library file provided, convert them into one SBOL file.
 				SBOLDocument libDoc = new SBOLDocument();
 				for(String sbolDir : libFilePaths)
@@ -574,23 +578,16 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					SBOLDocument sbolDoc = SBOLUtility.loadFromDir(sbolDir, defaultURIPrefix);
 					libDoc.createCopy(sbolDoc);
 				}
-				
+
 				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-				
+
 				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;
 				List<String> solutionFileIDs = new ArrayList<String>();
 				for (ModuleDefinition moduleDef : solution.getRootModuleDefinitions())
 				{
-					try 
-					{
-						List<BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
-						solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
-					} 
-					catch (BioSimException e) 
-					{
-						e.printStackTrace();
-					}
+					List<BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
+					solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
 				} 
 				return solutionFileIDs;
 			} 
@@ -623,8 +620,16 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
-			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
+			} 
+			catch (XMLStreamException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write XML file.", "XML file Exception",
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} 
+			catch (BioSimException e) 
+			{
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
 		}
@@ -655,10 +660,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				e.printStackTrace();
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 			solutionModels.add(solutionModel);
 		}
 		List<String> orderedSolnFileIDs = new LinkedList<String>();
@@ -680,10 +685,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				e.printStackTrace();
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 			orderedSolnFileIDs.add(solutionID + "_" + idIndex + ".xml");
 		}
 		orderedSolnFileIDs.addAll(solutionFileIDs);
@@ -706,10 +711,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				e.printStackTrace();
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 			if (solutionFileToGraph.containsKey(solutionGraph.getModelFileID())) {
 				SynthesisGraph clashingGraph = solutionFileToGraph.get(solutionGraph.getModelFileID());
 				BioModel clashingSubModel = new BioModel(clashingGraph.getProjectPath());
@@ -723,10 +728,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					e.printStackTrace();
 				}
 				catch (BioSimException e) {
-	        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-	          JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
-	      }
+					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
 				if (!TechMapping.compareModels(solutionSubModel, clashingSubModel)) {
 					clashingFileIDs.add(solutionGraph.getModelFileID());
 					solutionFileToGraph.remove(solutionGraph.getModelFileID());
@@ -758,10 +763,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			e.printStackTrace();
 		}
 		catch (BioSimException e) {
-      JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-        JOptionPane.ERROR_MESSAGE);
-      e.printStackTrace();
-    }
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
 		return solutionFileToGraph.keySet();
 	}
 
