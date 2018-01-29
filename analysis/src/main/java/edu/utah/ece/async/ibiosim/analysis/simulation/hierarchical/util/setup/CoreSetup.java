@@ -98,6 +98,8 @@ public class CoreSetup
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
     VariableNode node;
+    int index = modelstate.getIndex();
+    
     for (Compartment compartment : model.getListOfCompartments())
     {
       ReplacementSetup.setupReplacement(sim, compartment, wrapper,VariableType.VARIABLE, container);
@@ -110,7 +112,8 @@ public class CoreSetup
         node = new VariableNode(compartmentID);
         modelstate.addMappingNode(compartmentID, node);
       }
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      //TODO: change this
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
@@ -125,11 +128,10 @@ public class CoreSetup
       }
       else
       {
-        int index = modelstate.getIndex();
         node.createState(sim.getAtomicType(), wrapper);
         modelstate.addVariable(node);
         node.getState().addState(index, 0);
-        if(sim.getInterestingSpecies() == null)
+        if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
         {
           sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
         }
@@ -142,7 +144,7 @@ public class CoreSetup
       else
       {
         node.setValue(modelstate.getIndex(), compartment.getSize());
-        node.setIsSetInitialValue(true);
+        node.getState().getState(index).setIsSetInitialValue(true);
       }
     }
   }
@@ -155,6 +157,7 @@ public class CoreSetup
 
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     for (Constraint constraint : model.getListOfConstraints())
     {
 
@@ -171,7 +174,7 @@ public class CoreSetup
 
       if(math != null)
       {
-        HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER);  
+        HierarchicalNode constraintNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER, index);  
         modelstate.addConstraint(id, constraintNode);
       }
 
@@ -184,6 +187,7 @@ public class CoreSetup
   private static void setupEventAssignments(HierarchicalSimulation sim, ModelContainer container, EventNode eventNode, Event event)
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     for (EventAssignment eventAssignment : event.getListOfEventAssignments())
     {
       String id = eventAssignment.isSetMetaId() ? eventAssignment.getMetaId() : eventAssignment.toString();
@@ -198,8 +202,8 @@ public class CoreSetup
         ASTNode math = eventAssignment.getMath();
         VariableNode variableNode = modelstate.getNode(eventAssignment.getVariable());
 
-        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.ASSIGNMENT);
-        assignmentNode = convertConcentrationUnits(variableNode, assignmentNode);
+        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.ASSIGNMENT, index);
+        assignmentNode = convertConcentrationUnits(variableNode, assignmentNode, index);
         FunctionNode eventAssignmentNode = new FunctionNode(variableNode, assignmentNode);
         eventNode.addEventAssignment(eventAssignmentNode);
       }
@@ -234,16 +238,19 @@ public class CoreSetup
 
         Trigger trigger = event.getTrigger();
         ASTNode triggerMath = trigger.getMath();
-        HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap, InterpreterType.OTHER);
+        HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, variableToNodeMap, InterpreterType.OTHER, index);
 
         EventNode node = modelstate.addEvent(triggerNode);
         node.addEventState(index);
 
+        node.createState(StateType.SPARSE, null);
+        node.getState().addState(index, 0);
+        
         boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
         boolean isPersistent = trigger.isSetPersistent() ? trigger.getPersistent() : false;
         boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
-        node.setUseTriggerValue(useValuesFromTrigger);
-        node.setPersistent(isPersistent);
+        node.getState().getState(index).setUseTriggerValue(useValuesFromTrigger);
+        node.getState().getState(index).setPersistent(isPersistent);
 
         if (!initValue)
         {
@@ -261,7 +268,7 @@ public class CoreSetup
           if (!(priority.isSetMetaId() && modelstate.isDeletedByMetaId(priority.getMetaId())) && priority.isSetMath())
           {
             ASTNode math = priority.getMath();
-            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math,  variableToNodeMap, InterpreterType.OTHER);
+            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math,  variableToNodeMap, InterpreterType.OTHER, index);
             node.setPriorityValue(priorityNode);
           }
 
@@ -273,7 +280,7 @@ public class CoreSetup
           if (!(delay.isSetMetaId() && modelstate.isDeletedByMetaId(delay.getMetaId())) && delay.isSetMath())
           {
             ASTNode math = delay.getMath();
-            HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap, InterpreterType.OTHER);
+            HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap, InterpreterType.OTHER, index);
             node.setDelayValue(delayNode);
           }
         }
@@ -290,6 +297,7 @@ public class CoreSetup
   {
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     for (InitialAssignment initAssignment : model.getListOfInitialAssignments())
     {
       String id = initAssignment.isSetMetaId() ? initAssignment.getMetaId() : initAssignment.toString();
@@ -306,13 +314,13 @@ public class CoreSetup
         String variable = initAssignment.getVariable();
         VariableNode variableNode = modelstate.getNode(variable);
         ASTNode math = initAssignment.getMath();
-        HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER);
+        HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), InterpreterType.OTHER, index);
 
         if (variableNode.isSpecies())
         {
           SpeciesNode node = (SpeciesNode) variableNode;
 
-          if (!node.hasOnlySubstance())
+          if (!node.getState().getState(index).hasOnlySubstance())
           {
             HierarchicalNode amountNode = new HierarchicalNode(Type.TIMES);
             amountNode.addChild(initAssignNode);
@@ -322,7 +330,7 @@ public class CoreSetup
         }
 
         FunctionNode node = new FunctionNode(variableNode, initAssignNode);
-        variableNode.setHasInitRule(true);
+        variableNode.getState().getState(index).setHasInitRule(true);
         node.setIsInitAssignment(true);
         modelstate.addInitAssignment(node);
       }
@@ -337,6 +345,7 @@ public class CoreSetup
   {
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     VariableNode node;
 
     for (Parameter parameter : model.getListOfParameters())
@@ -351,18 +360,18 @@ public class CoreSetup
       {
         node = new VariableNode(parameter.getId());
         modelstate.addMappingNode(parameter.getId(), node);
-        int index = modelstate.getIndex();
         node.createState(sim.getAtomicType(), wrapper);
         node.getState().addState(index, 0);
 
       }
 
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      //TODO: change this
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
-      if(sim.getInterestingSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
@@ -380,7 +389,8 @@ public class CoreSetup
       if(parameter.isSetValue())
       {
         node.setValue(modelstate.getIndex(), parameter.getValue());
-        node.setIsSetInitialValue(true);
+        
+        node.getState().getState(index).setIsSetInitialValue(true);
       }
       
     }
@@ -390,6 +400,7 @@ public class CoreSetup
   private static void setupProduct(HierarchicalSimulation sim, ModelContainer container, ReactionNode reaction, String productID, SpeciesReference product, VectorWrapper wrapper)
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     String id = product.isSetMetaId() ? product.getMetaId() : product.toString();
 
     ReplacementSetup.setupReplacement(sim, product, id, container);
@@ -424,7 +435,8 @@ public class CoreSetup
       speciesReferenceNode.setName(product.getId());
       if (!product.getConstant())
       {
-        speciesReferenceNode.setIsVariableConstant(false);
+        
+        speciesReferenceNode.getState().getState(index).setIsVariableConstant(false);
         modelstate.addVariable(speciesReferenceNode );
       }	
 
@@ -438,7 +450,7 @@ public class CoreSetup
   {
     HierarchicalModel modelstate = container.getHierarchicalModel();
     String id = reactant.isSetMetaId() ? reactant.getMetaId() : reactant.toString();
-
+    int index = modelstate.getIndex();
     ReplacementSetup.setupReplacement(sim, reactant,id, container);
     if (reactant.isSetId() && modelstate.isDeletedBySId(reactant.getId()))
     {
@@ -471,7 +483,7 @@ public class CoreSetup
 
       if (!reactant.getConstant())
       {
-        speciesReferenceNode.setIsVariableConstant(false);
+        speciesReferenceNode.getState().getState(index).setIsVariableConstant(false);
         modelstate.addVariable(speciesReferenceNode );
       }
 
@@ -498,7 +510,7 @@ public class CoreSetup
         reactionNode = modelstate.addReaction(reaction.getId());
         reactionNode.createState(sim.getAtomicType(), wrapper);
       }
-      if(sim.getInterestingSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
       {
 
         String printVariable = container.getPrefix() + reaction.getId();
@@ -563,6 +575,7 @@ public class CoreSetup
   {
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     Map<String, VariableNode> variableToNodes = modelstate.getVariableToNodeMap();
     for (Rule rule : model.getListOfRules())
     {
@@ -580,11 +593,11 @@ public class CoreSetup
         {
           ASTNode math = assignRule.getMath();
           VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
-          HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode, InterpreterType.ASSIGNMENT);
-          assignRuleNode = convertConcentrationUnits(variableNode, assignRuleNode);
+          HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, variableNode, InterpreterType.ASSIGNMENT, index);
+          assignRuleNode = convertConcentrationUnits(variableNode, assignRuleNode, index);
           FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
           modelstate.addAssignRule(node);
-          variableNode.setHasRule(true);
+          variableNode.getState().getState(index).setHasRule(true);
         }
       }
       else if (rule.isRate())
@@ -595,8 +608,8 @@ public class CoreSetup
 
           ASTNode math = rateRule.getMath();
           VariableNode variableNode = variableToNodes.get(rateRule.getVariable());
-          HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes, InterpreterType.RATE);
-          rateNode = convertConcentrationUnits(variableNode, rateNode);
+          HierarchicalNode rateNode = MathInterpreter.parseASTNode(math, variableToNodes, InterpreterType.RATE, index);
+          rateNode = convertConcentrationUnits(variableNode, rateNode, index);
           variableNode.setRateRule(rateNode);
         }
       }
@@ -605,7 +618,7 @@ public class CoreSetup
 
   private static void setupSingleNonRevReaction(HierarchicalSimulation sim, HierarchicalModel modelstate, ReactionNode reactionNode, ASTNode reactionFormula, Model model)
   {
-    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode, InterpreterType.RATE);
+    HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(), reactionNode, InterpreterType.RATE, modelstate.getIndex());
     reactionNode.setForwardRate(math);
   }
 
@@ -614,14 +627,14 @@ public class CoreSetup
     ASTNode[] splitMath = HierarchicalUtilities.splitMath(reactionFormula);
     if (splitMath == null)
     {
-      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
+      HierarchicalNode math = MathInterpreter.parseASTNode(reactionFormula, null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE, modelstate.getIndex());
       reactionNode.setForwardRate(math);
     }
     else
     {
-      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
+      HierarchicalNode forwardRate = MathInterpreter.parseASTNode(splitMath[0], null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE, modelstate.getIndex());
       reactionNode.setForwardRate(forwardRate);
-      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE);
+      HierarchicalNode reverseRate = MathInterpreter.parseASTNode(splitMath[1],  null, modelstate.getVariableToNodeMap(), reactionNode.getLocalParameters(),  reactionNode, InterpreterType.RATE, modelstate.getIndex());
       reactionNode.setReverseRate(reverseRate);
 
     }
@@ -635,6 +648,7 @@ public class CoreSetup
   {
     Model model = container.getModel();
     HierarchicalModel modelstate = container.getHierarchicalModel();
+    int index = modelstate.getIndex();
     SpeciesNode node;
     boolean isConcentration = false;
     for (Species species : model.getListOfSpecies())
@@ -655,17 +669,16 @@ public class CoreSetup
         node = new SpeciesNode(species.getId());
 
         node.createState(sim.getAtomicType(), wrapper);
-        node.createSpeciesTemplate();
         modelstate.addMappingNode(species.getId(), node);
       }
 
 
-      if(sim.getInterestingSpecies() != null && sim.getInterestingSpecies().contains(printVariable))
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
 
-      if(sim.getInterestingSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
@@ -684,8 +697,8 @@ public class CoreSetup
       boolean isBoundary = species.getBoundaryCondition();
       boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
 
-      node.setBoundaryCondition(isBoundary);
-      node.setHasOnlySubstance(isOnlySubstance);
+      node.getState().getState(index).setBoundaryCondition(isBoundary);
+      node.getState().getState(index).setHasOnlySubstance(isOnlySubstance);
 
       VariableNode compartment = modelstate.getNode(species.getCompartment());
       node.setCompartment(compartment);
@@ -693,7 +706,7 @@ public class CoreSetup
       if (species.isSetInitialAmount())
       {
         node.setValue(modelstate.getIndex(), species.getInitialAmount());
-        node.setIsSetInitialValue(true);
+        node.getState().getState(index).setIsSetInitialValue(true);
       }
       else if (species.isSetInitialConcentration())
       {
@@ -702,20 +715,20 @@ public class CoreSetup
         initConcentration.addChild(compartment);
         FunctionNode functionNode = new FunctionNode(node, initConcentration);
         modelstate.addInitConcentration(functionNode);
-        node.setHasAmountUnits(false);
-        node.setIsSetInitialValue(true);
+        node.getState().getState(index).setHasAmountUnits(false);
+        node.getState().getState(index).setIsSetInitialValue(true);
       }
     }
   }
   
-  private static HierarchicalNode convertConcentrationUnits(VariableNode var, HierarchicalNode math)
+  private static HierarchicalNode convertConcentrationUnits(VariableNode var, HierarchicalNode math, int index)
   {
     HierarchicalNode convert = math;
     if(var.isSpecies())
     {
       SpeciesNode speciesNode = (SpeciesNode) var;
       
-      if(!speciesNode.hasOnlySubstance())
+      if(!speciesNode.getState().getState(index).hasOnlySubstance())
       {
         convert = new HierarchicalNode(Type.TIMES);
         convert.addChild(speciesNode.getCompartment());

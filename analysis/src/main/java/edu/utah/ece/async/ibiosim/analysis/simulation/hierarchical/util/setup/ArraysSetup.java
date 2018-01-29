@@ -79,8 +79,7 @@ public class ArraysSetup
 
 	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type)
 	{
-	  Model model = container.getModel();
-	  
+	  int index = modelstate.getIndex();
 		HierarchicalNode refObj = null;
 		EventNode eventNode = null;
 		FunctionNode eventAssignNode = null;
@@ -91,17 +90,17 @@ public class ArraysSetup
 			switch (type)
 			{
 			case EVENT:
-				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
+				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER, index);
 				eventNode = new EventNode(refObj);
 				eventNode.setArrayNode(arrayNode);
 				return eventNode;
 			case EVENTASSIGNMENT:
-				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
+				refObj = MathInterpreter.parseASTNode(math, modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER, index);
 				eventAssignNode = new FunctionNode(refObj);
 				eventAssignNode.setArrayNode(arrayNode);
 				return eventAssignNode;
 			default:
-				refObj = MathInterpreter.parseASTNode(math,  modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
+				refObj = MathInterpreter.parseASTNode(math,  modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER, index);
 				refObj.setArrayNode(arrayNode);
 				return refObj;
 			}
@@ -197,7 +196,7 @@ public class ArraysSetup
 	{
 
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
-
+		
 		if (plugin == null)
 		{
 			return;
@@ -285,14 +284,14 @@ public class ArraysSetup
 	{
 	  Model model = container.getModel(); 
 		int maxIndex = getMaxArrayDim(plugin, attribute);
-
+		int modelIndex = modelstate.getIndex();
 		HierarchicalNode selector = new HierarchicalNode(Type.FUNCTION_SELECTOR);
 		selector.addChild(modelstate.getNode(referencedNode));
 
 		for (int i = maxIndex; i >= 0; i--)
 		{
 			Index index = plugin.getIndex(i, attribute);
-			HierarchicalNode indexMath = MathInterpreter.parseASTNode(index.getMath(), modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER);
+			HierarchicalNode indexMath = MathInterpreter.parseASTNode(index.getMath(), modelstate.getVariableToNodeMap(), arrayNode.getDimensionMap(), InterpreterType.OTHER, modelIndex);
 			selector.addChild(indexMath);
 		}
 

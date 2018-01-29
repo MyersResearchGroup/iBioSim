@@ -55,7 +55,7 @@ public class HierarchicalTestSuiteRunner
 {
   static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
   static AnalysisProperties properties;
-  static boolean verbose = false;
+  static boolean verbose = true;
   
   /**
    * @param args

@@ -34,8 +34,6 @@ public class EventNode extends HierarchicalNode
   private HierarchicalNode	delayValue;
   private HierarchicalNode	priorityValue;
 
-  private boolean				isPersistent;
-  private boolean				useTriggerValue;
 
   private List<FunctionNode>	eventAssignments;
   private Map<Integer, EventState> eventState;
@@ -67,26 +65,6 @@ public class EventNode extends HierarchicalNode
   public void setDelayValue(HierarchicalNode delayValue)
   {
     this.delayValue = delayValue;
-  }
-
-  public boolean isPersistent()
-  {
-    return isPersistent;
-  }
-
-  public void setPersistent(boolean isPersistent)
-  {
-    this.isPersistent = isPersistent;
-  }
-
-  public boolean isUseTriggerValue()
-  {
-    return useTriggerValue;
-  }
-
-  public void setUseTriggerValue(boolean useTriggerValue)
-  {
-    this.useTriggerValue = useTriggerValue;
   }
 
   public double getMaxDisabledTime(int index)

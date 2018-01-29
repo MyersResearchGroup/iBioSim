@@ -26,7 +26,6 @@ public class SpeciesNode extends VariableNode
 
   private VariableNode		compartment;
   private HierarchicalNode	odeRate;
-  private SpeciesTemplate speciesTemplates;
 
   public SpeciesNode(String name)
   {
@@ -54,31 +53,6 @@ public class SpeciesNode extends VariableNode
   public double getConcentration(int index)
   {
     return this.getValue(index) / compartment.getValue(index);
-  }
-
-  public void createSpeciesTemplate()
-  {
-    speciesTemplates = new SpeciesTemplate();
-  }
-
-  public boolean isBoundaryCondition()
-  {
-    return speciesTemplates.isBoundary;
-  }
-
-  public void setBoundaryCondition(boolean isBoundary)
-  {
-    speciesTemplates.isBoundary = isBoundary;
-  }
-  
-  public boolean hasOnlySubstance()
-  {
-    return speciesTemplates.hasOnlySubstance;
-  }
-
-  public void setHasOnlySubstance(boolean substance)
-  {
-    speciesTemplates.hasOnlySubstance = substance;
   }
 
   public HierarchicalNode getODERate()
@@ -133,7 +107,7 @@ public class SpeciesNode extends VariableNode
     if (rateRule != null)
     {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
-      if (!speciesTemplates.hasOnlySubstance )
+      if (!state.getState(index).hasOnlySubstance() )
       {
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
@@ -143,7 +117,7 @@ public class SpeciesNode extends VariableNode
         }
       }
     }
-    else if (odeRate != null && !speciesTemplates.isBoundary)
+    else if (odeRate != null && !state.getState(index).isBoundaryCondition())
     {
       rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
@@ -157,11 +131,4 @@ public class SpeciesNode extends VariableNode
     return new SpeciesNode(this);
   }
 
-  private class SpeciesTemplate
-  {
-
-    boolean       isBoundary;
-    boolean       hasOnlySubstance;
-
-  }
 }

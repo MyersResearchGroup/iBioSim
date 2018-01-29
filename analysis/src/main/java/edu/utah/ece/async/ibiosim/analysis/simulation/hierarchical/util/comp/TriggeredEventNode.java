@@ -91,7 +91,7 @@ public class TriggeredEventNode
     if (fireTime <= time)
     {
 
-      if (!parent.isPersistent())
+      if (!parent.getState().getState(index).isPersistent())
       {
         if (hasFlipped)
         {
@@ -99,7 +99,7 @@ public class TriggeredEventNode
         }
       }
 
-      if (!parent.isUseTriggerValue())
+      if (!parent.getState().getState(index).isUseTriggerValue())
       {
         double[] eventAssignments = parent.computeEventAssignmentValues(index, time);
         

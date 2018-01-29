@@ -161,7 +161,7 @@ public class ReactionNode extends VariableNode
     {
       double stoichiometry = specRef.getStoichiometry(index);
       SpeciesNode speciesNode = specRef.getSpecies();
-      if(!speciesNode.isBoundaryCondition())
+      if(!speciesNode.getState().getState(index).isBoundaryCondition())
       {
         speciesNode.setValue(index, speciesNode.getValue(index) + multiplier* stoichiometry);
       }

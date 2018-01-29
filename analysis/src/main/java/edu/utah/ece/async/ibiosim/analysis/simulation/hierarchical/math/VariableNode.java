@@ -30,11 +30,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 public class VariableNode extends HierarchicalNode
 {
 
-  protected boolean			isVariableConstant;
-  protected boolean hasRule;
-  protected boolean hasInitRule;
-  protected boolean hasAmountUnits;
-  protected boolean     isSetInitialValue;
   
   private List<ReactionNode>	reactionDependents;
   protected HierarchicalNode rateRule;
@@ -43,7 +38,6 @@ public class VariableNode extends HierarchicalNode
   {
     super(Type.NAME);
     this.name = name;
-    this.hasAmountUnits = true;
   }
 
   public VariableNode(String name, StateType type)
@@ -51,15 +45,12 @@ public class VariableNode extends HierarchicalNode
     super(Type.NAME);
     this.name = name;
     this.state = new ValueState();
-    this.hasAmountUnits = true;
   }
 
   public VariableNode(VariableNode copy)
   {
     super(copy);
     this.name = copy.name;
-    this.isVariableConstant = copy.isVariableConstant;
-    this.hasAmountUnits = copy.hasAmountUnits;
   }
 
   public List<ReactionNode> getReactionDependents()
@@ -76,20 +67,12 @@ public class VariableNode extends HierarchicalNode
     reactionDependents.add(dependency);
   }
 
-  public void setIsVariableConstant(boolean isConstant)
-  {
-    this.isVariableConstant = isConstant;
-  }
 
-  public boolean isVariableConstant()
-  {
-    return isVariableConstant;
-  }
 
   @Override
   public void setRateValue(int index, double value)
   {
-    if(!isVariableConstant)
+    if(!state.getState(index).isVariableConstant())
     {
       state.setRateValue(index, value);
     }
@@ -98,7 +81,7 @@ public class VariableNode extends HierarchicalNode
   @Override
   public void setValue(int index, double value)
   {
-    if(!isVariableConstant)
+    if(!state.getState(index).isVariableConstant())
     {
       state.getState(index).setStateValue(value);
     }
@@ -139,50 +122,9 @@ public class VariableNode extends HierarchicalNode
     return new VariableNode(this);
   }
 
-  public void setHasRule(boolean hasRule)
-  {
-    this.hasRule = hasRule;
-  }
-
-  public boolean hasRule()
-  {
-    return hasRule;
-  }
-
-  public void setHasInitRule(boolean hasInitRule)
-  {
-    this.hasInitRule = hasInitRule;
-  }
-
-  public boolean hasInitRule()
-  {
-    return hasInitRule;
-  }
-
   public void setName(String name)
   {
     this.name = name;
   }
-
-  public boolean hasAmountUnits()
-  {
-    return this.hasAmountUnits;
-  }
-  
-  public void setHasAmountUnits(boolean hasAmountUnits)
-  {
-    this.hasAmountUnits = hasAmountUnits;
-  }
-  
-  public void setIsSetInitialValue(boolean isSetInitialValue)
-  {
-    this.isSetInitialValue = isSetInitialValue;
-  }
-  
-  public boolean isSetInitialValue()
-  {
-    return this.isSetInitialValue;
-  }
-  
   
 }

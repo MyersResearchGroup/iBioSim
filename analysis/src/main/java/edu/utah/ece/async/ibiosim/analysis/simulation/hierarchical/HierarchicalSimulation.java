@@ -72,7 +72,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   
   private boolean             cancelFlag;
   private int               currentRun;
-  private Set<String>           interestingSpecies;
   private boolean             printConcentrations;
   private boolean             sbmlHasErrorsFlag;
   private String              abstraction;
@@ -132,7 +131,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   {
     this.properties = copy.properties;
     this.printTime = copy.printTime;
-    this.interestingSpecies = copy.interestingSpecies;
     this.abstraction = copy.abstraction;
     this.type = copy.type;
     this.isGrid = copy.isGrid;
@@ -205,13 +203,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     return currentTime;
   }
 
-  /**
-   * @return the interestingSpecies
-   */
-  public Set<String> getInterestingSpecies()
-  {
-    return interestingSpecies;
-  }
 
   /**
    * @return the printConcentrations
@@ -274,14 +265,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.currentTime.setValue(currentTime);
   }
 
-  /**
-   * @param interestingSpecies
-   *            the interestingSpecies to set
-   */
-  public void setInterestingSpecies(Set<String> interestingSpecies)
-  {
-    this.interestingSpecies = interestingSpecies;
-  }
+
 
 
   /**
@@ -521,7 +505,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
           TriggeredEventNode triggered = new TriggeredEventNode(index, event);
           triggered.setPriority(event.evaluatePriority(index));
           triggered.setFireTime(currentTime.getValue() + event.evaluateFireTime(index));
-          if(event.isUseTriggerValue())
+          if(event.getState().getState(index).isUseTriggerValue())
           {
             double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getValue());
             
@@ -532,7 +516,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
             
           }
           triggeredEventList.add(triggered);
-          if(!event.isPersistent())
+          if(!event.getState().getState(index).isPersistent())
           {
             event.addTriggeredEvent(index, triggered);
           }
@@ -587,9 +571,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     while (changed)
     {
       changed = false;
-
+      
       for(HierarchicalModel modelstate : this.modules)
       {
+        int index = modelstate.getIndex();
         if(modelstate.getAssignRules() != null)
         {
           for(FunctionNode node : modelstate.getAssignRules())
@@ -610,7 +595,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
         {
           for(FunctionNode node : modelstate.getInitConcentration())
           {
-            if(!node.getVariable().hasRule() && !node.getVariable().hasInitRule())
+            if(!node.getVariable().getState().getState(index).hasRule() && !node.getVariable().getState().getState(index).hasInitRule())
             {
               changed = changed | node.computeFunction(modelstate.getIndex());
             }

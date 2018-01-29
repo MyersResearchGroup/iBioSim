@@ -279,7 +279,6 @@ public class ReplacementSetup
 	    if(varType == VariableType.SPECIES)
 	    {
 	      node = new SpeciesNode(id);
-	      ((SpeciesNode)node).createSpeciesTemplate();
 	    }
 	    else if(varType == VariableType.REACTION)
 	    {
