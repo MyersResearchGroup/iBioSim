@@ -98,9 +98,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			  nextEndTime = fbaTime;
 			}
 			
-			if (nextEndTime > printTime.getValue())
+			if (nextEndTime > printTime)
 			{
-				nextEndTime = printTime.getValue();
+				nextEndTime = printTime;
 			}
 
 			if (nextEndTime > timeLimit)

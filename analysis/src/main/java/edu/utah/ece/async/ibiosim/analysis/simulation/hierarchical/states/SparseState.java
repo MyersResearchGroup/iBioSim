@@ -70,10 +70,5 @@ public class SparseState extends TreeState
     return mapOfStates.containsKey(index);
   }
 
-  @Override
-  public void copyState(int from, int to) {
-    mapOfStates.put(to, mapOfStates.get(from));
-    
-  }
 
 }

@@ -269,63 +269,20 @@ public class ReplacementSetup
   
 	private static void performReplacement(HierarchicalSimulation sim, String id, HierarchicalModel top, String subId, HierarchicalModel sub, VectorWrapper wrapper, VariableType varType, boolean isReplacedBy)
 	{
-	  boolean hasTopNode = top.containsNode(id);
-	  boolean hasSubNode = sub.containsNode(subId);
+	  VariableNode topNode = top.getNode(id);
+	  VariableNode subNode = sub.getNode(subId);
 	  
-	  VariableNode node = null;
-	  
-	  if(!hasTopNode && !hasSubNode)
+	  if(isReplacedBy)
 	  {
-	    if(varType == VariableType.SPECIES)
-	    {
-	      node = new SpeciesNode(id);
-	    }
-	    else if(varType == VariableType.REACTION)
-	    {
-	      node = new ReactionNode(id);
-	    }
-	    else if(varType == VariableType.VARIABLE)
-	    {
-	      node = new VariableNode(id);
-	    }
-
-      top.addMappingNode(id, node);
-      sub.addMappingNode(subId, node);
-      
-	    HierarchicalState state = node.createState(sim.getCollectionType(), wrapper);
-      HierarchicalState child = null;
-	    if(sim.getAtomicType() == StateType.VECTOR)
-	    {
-	      child = new VectorState(wrapper);
-	    }
-	    else
-	    {
-	      child = new ValueState();
-	    }
-	    state.addState(top.getIndex(), child);
-	    state.addState(sub.getIndex(), child);
+	    top.addDeletedBySid(id);
+	    topNode.getState().addState(top.getIndex(), subNode.getState().getState(sub.getIndex()));
 	  }
-	  else if(!hasTopNode && hasSubNode)
-    {
-      node = sub.getNode(subId);
-      top.addMappingNode(id, node);
-      node.getState().copyState(sub.getIndex(), top.getIndex());
-    }
 	  else
 	  {
-	    node = top.getNode(id);
-      sub.addMappingNode(subId, node);
-      node.getState().copyState(top.getIndex(), sub.getIndex());
+	    sub.addDeletedBySid(subId);
+	    subNode.getState().addState(sub.getIndex(), topNode.getState().getState(top.getIndex()));
 	  }
 	  
-    if(isReplacedBy)
-    {
-      top.addDeletedBySid(id);
-    }
-    else
-    {
-      sub.addDeletedBySid(subId);
-    }
 	}
 
 

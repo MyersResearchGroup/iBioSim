@@ -68,4 +68,5 @@ public abstract class TreeState extends HierarchicalState{
  
   protected abstract boolean containsChild(int index);
  
+  public void update(){}
 }

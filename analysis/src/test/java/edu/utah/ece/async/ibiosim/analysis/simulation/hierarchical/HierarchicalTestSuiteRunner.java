@@ -258,7 +258,7 @@ public class HierarchicalTestSuiteRunner
       double relativeError = Double.valueOf(p.getProperty("relative"));
       double absoluteError = Double.valueOf(p.getProperty("absolute"));
       int numSteps = Integer.valueOf(p.getProperty("steps"));
-      
+      simProperties.setPrintInterval(timeLimit/numSteps);
       simProperties.setTimeLimit(timeLimit);
       simProperties.setRelError(relativeError);
       simProperties.setAbsError(absoluteError);

@@ -98,12 +98,5 @@ public class DenseState extends TreeState
     return true;
   }
 
-  @Override
-  public void copyState(int from, int to) {
-    addState(to - 1 , null);
-    listOfStates.add(listOfStates.get(from));
-    
-  }
-
 
 }

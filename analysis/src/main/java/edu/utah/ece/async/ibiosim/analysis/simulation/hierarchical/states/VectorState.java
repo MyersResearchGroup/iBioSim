@@ -29,32 +29,37 @@ public class VectorState extends HierarchicalState{
   public VectorState(VectorWrapper vectorState)
   {
     this.vectorState = vectorState;
-    this.vectorIndex = vectorState.incrementSize();
+    this.vectorIndex = -1;
   }
 
   @Override
   public double getStateValue() {
-    if(vectorState.isSet())
+    if(vectorState.isSet() && vectorIndex >= 0)
     {
       return vectorState.getValues()[vectorIndex];
     }
     else
     {
-      return vectorState.getInitValues().get(vectorIndex);
+      return value;
     }
   }
 
   @Override
   public void setStateValue(double value) {
-    if(vectorState.isSet())
+    if(vectorState.isSet() && vectorIndex >= 0)
     {
       vectorState.getValues()[vectorIndex] = value;
     }
     else
     {
-      vectorState.getInitValues().set(vectorIndex, value);
+      this.value = value;
     }
     
+  }
+  
+  public void setIndex(int index)
+  {
+    this.vectorIndex = index;
   }
 
   @Override
@@ -76,7 +81,8 @@ public class VectorState extends HierarchicalState{
   }
 
   @Override
-  public void setStateValue(int index, double value) {
+  public void setStateValue(int index, double value) 
+  {
     setStateValue(value);
   }
   
@@ -99,14 +105,16 @@ public class VectorState extends HierarchicalState{
       vectorState.getRates()[vectorIndex] = value;
     }
   }
-
+  
   @Override
   public boolean isSetRate(int index) {
     return vectorState.isSet() && vectorState.getRates() != null;
   }
+  
 
-  @Override
-  public void copyState(int from, int to) {
-   
+  public void update()
+  {
+    vectorIndex = vectorState.incrementSize();
   }
+
 }

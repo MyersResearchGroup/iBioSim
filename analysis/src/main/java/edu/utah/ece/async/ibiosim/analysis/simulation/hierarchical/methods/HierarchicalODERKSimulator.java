@@ -46,7 +46,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  */
 public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
-  private boolean                isSingleStep;
   private HighamHall54Integrator odecalc;
   private DifferentialEquations  de;
   private final VectorWrapper    vectorWrapper;
@@ -60,8 +59,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(),
       simProperties.getAbsError(), simProperties.getRelError());
     isInitialized = false;
-    isSingleStep = false;
-    
     print = true;
     
   }
@@ -75,7 +72,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(),
       simProperties.getAbsError(), simProperties.getRelError());
     isInitialized = false;
-    isSingleStep = false;
     this.print = print;
     
   }
@@ -89,9 +85,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     this.odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(),
       simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
     this.isInitialized = true;
-    this.isSingleStep = true;
     print = false;
-    this.printTime.setValue(0);
+    this.printTime = 0;
     this.vectorWrapper = sim.getVectorWrapper();
     de = new DifferentialEquations();
     if (sim.hasEvents()) {
@@ -129,6 +124,8 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
       de = new DifferentialEquations();
+      vectorWrapper.initStateValues();
+      restoreInitialState();
       computeFixedPoint();
       if (hasEvents()) {
         HierarchicalEventHandler handler = new HierarchicalEventHandler();
@@ -141,7 +138,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
             new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
         computeEvents();
       }
-      if (!isSingleStep) {
+      if (print) {
         setupForOutput(runNumber);
       }
       isInitialized = true;
@@ -159,15 +156,16 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     double nextEndTime = 0;
     double timeLimit = simProperties.getTimeLimit();
     double maxTimeStep = simProperties.getMaxTimeStep();
-    while (currentTime.getValue() < timeLimit && !isCancelFlag()) {
+    while (currentTime.getValue() < timeLimit && !isCancelFlag()) 
+    {
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
       // return;
       // }
       nextEndTime = getRoundedDouble(currentTime.getValue() + maxTimeStep);
       
-      if (nextEndTime > printTime.getValue()) {
-        nextEndTime = printTime.getValue();
+      if (nextEndTime > printTime) {
+        nextEndTime = printTime;
       }
       if (nextEndTime > timeLimit) {
         nextEndTime = timeLimit;
@@ -187,11 +185,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       } else {
         setCurrentTime(nextEndTime);
       }
-      if (!isSingleStep) {
+      if (print) {
         printToFile();
       }
     }
-    if (!isSingleStep) 
+    if (print) 
     {
       printToFile();
       //closeWriter();

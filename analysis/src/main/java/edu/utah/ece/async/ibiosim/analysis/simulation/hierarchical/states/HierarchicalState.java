@@ -25,6 +25,7 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 public abstract class HierarchicalState
 {
   protected double  value;
+  protected double  initValue;
   private Attribute attributes = new Attribute();
   
   public enum StateType
@@ -60,8 +61,19 @@ public abstract class HierarchicalState
 
   public abstract boolean isSetRate(int index);
 
-  public abstract void copyState(int from, int to);
-
+  public abstract void update();
+  
+  public void setInitialValue(double value)
+  {
+    this.value = value;
+    this.initValue = value;
+  }
+  
+  public void restoreInitialValue()
+  {
+    setStateValue(initValue);
+  }
+  
   public boolean isPersistent()
   {
     if(attributes != null)
@@ -206,23 +218,24 @@ public abstract class HierarchicalState
     }
   }
 
-  public void setIsSetInitialValue(boolean isSetInitialValue)
+  public boolean hasRate()
   {
     if(attributes != null)
     {
-    attributes.isSetInitialValue = isSetInitialValue;
-    }
-  }
-
-  public boolean isSetInitialValue()
-  {
-    if(attributes != null)
-    {
-    return attributes.isSetInitialValue;
+    return attributes.hasRate;
     }
     return false;
   }
-
+  
+  public void setHasRate(boolean hasRate)
+  {
+    if(attributes != null)
+    {
+      attributes.hasRate = hasRate;
+      update();
+    }
+  }
+  
   private class Attribute 
   {
 
@@ -234,6 +247,6 @@ public abstract class HierarchicalState
     boolean hasRule;
     boolean hasInitRule;
     boolean hasAmountUnits;
-    boolean isSetInitialValue;
+    boolean hasRate;
   }
 }

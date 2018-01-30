@@ -18,16 +18,12 @@ import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.Model;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.NumberNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter.InterpreterType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionDefNode;
 
 /**

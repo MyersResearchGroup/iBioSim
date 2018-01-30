@@ -139,7 +139,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
         this.initialize(randomSeed, 1);
     }
-    printTime.setValue(simProperties.getOutputStartTime());
+    printTime = simProperties.getOutputStartTime();
     previousTime = 0;
 
     while (currentTime.getValue(0) < timeLimit && !isCancelFlag())

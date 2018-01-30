@@ -84,11 +84,7 @@ public class ValueState extends HierarchicalState
   public void setRateValue(int index, double value) {
   }
 
-  @Override
-  public void copyState(int from, int to) {
-    // TODO Auto-generated method stub
-    
-  }
 
+  public void update(){}
   
 }

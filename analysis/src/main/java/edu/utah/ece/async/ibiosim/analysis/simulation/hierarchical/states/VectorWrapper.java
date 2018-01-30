@@ -14,9 +14,6 @@
 
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 
  *
@@ -30,16 +27,13 @@ public class VectorWrapper {
   private double[] rates;
   private boolean isSet;
   private int size;
-  private List<Double> initValues;
   
   public VectorWrapper()
   {
     this.size = 0;
     this.values = null;
     this.values = null;
-    this.initValues = null;
     this.isSet = false;
-    this.initValues = new ArrayList<Double>();
   }
 
   public void setValues(double[] vector)
@@ -62,21 +56,11 @@ public class VectorWrapper {
     return this.rates;
   }
 
-  public void setSize(int size)
-  {
-    this.size = size;
-  }
-
   public int incrementSize()
   {
     int index = size;
     
     size++;
-    
-    while(initValues.size() < size)
-    {
-      initValues.add(0.0);
-    }
     
     return index;
   }
@@ -91,21 +75,10 @@ public class VectorWrapper {
     return isSet;
   }
   
-  
-  public List<Double> getInitValues()
-  {
-    return initValues;
-  }
-  
+
   public void initStateValues()
   {
     this.values = new double[size];
-    
-    for(int i = 0; i < size; ++i)
-    {
-      values[i] = initValues.get(i);
-    }
-    
     isSet = true;
   }
 

@@ -58,16 +58,13 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 public abstract class HierarchicalSimulation extends AbstractSimulator
 {
 
-  final private int SBML_LEVEL    = 3;
-  final private int SBML_VERSION  = 1;
-
   public static enum SimType
   {
     HSSA, HODE, FBA, MIXED, NONE;
   }
 
   protected final VariableNode      currentTime;
-  protected final VariableNode            printTime;
+  protected double            printTime;
   protected final AnalysisProperties properties;
   
   private boolean             cancelFlag;
@@ -97,8 +94,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   
   public HierarchicalSimulation(AnalysisProperties properties, SimType type) throws XMLStreamException, IOException, BioSimException
   {
-    this.printTime = new VariableNode("_printTime", StateType.SCALAR);
-    this.printTime.setValue(0);
+    this.printTime = 0;
     
     this.parentType = StateType.SPARSE;
     this.type = type;
@@ -121,7 +117,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
-    this.addPrintVariable("time", printTime, 0, false);
 
     this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
@@ -211,23 +206,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   {
     return printConcentrations;
   }
-
-  /**
-   * @return the sBML_LEVEL
-   */
-  public int getSBML_LEVEL()
-  {
-    return SBML_LEVEL;
-  }
-
-  /**
-   * @return the sBML_VERSION
-   */
-  public int getSBML_VERSION()
-  {
-    return SBML_VERSION;
-  }
-
 
   /**
    * @return the sbmlHasErrorsFlag
@@ -375,6 +353,17 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
     writer.init(outputDirectory + File.separator + "run-" + currentRun + ".tsd");
 
   }
+  
+  protected void restoreInitialState()
+  {
+    for(HierarchicalModel hierarchicalModel : modules)
+    {
+      for(VariableNode node : hierarchicalModel.getListOfVariables())
+      {
+        node.getState().restoreInitialValue();
+      }
+    }
+  }
 
   /**
    * Returns the total propensity of all model states.
@@ -426,7 +415,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   {
     SimulationProperties simProperties = properties.getSimulationProperties();
     double timeLimit = simProperties.getTimeLimit();
-    while (currentTime.getValue() >= printTime.getValue() && printTime.getValue() <= timeLimit)
+    while (currentTime.getValue() >= printTime && printTime <= timeLimit)
     {
       try
       {
@@ -438,7 +427,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
       }
 
       currProgress += simProperties.getPrintInterval();
-      printTime.setValue(getRoundedDouble(printTime.getValue() + simProperties.getPrintInterval()));
+      printTime = getRoundedDouble(printTime + simProperties.getPrintInterval());
 
       message.setInteger((int)(Math.ceil(100*currProgress/maxProgress)));
       parent.send(RequestType.REQUEST_PROGRESS, message);

@@ -166,16 +166,12 @@ public class ModelSetup
       type = StateType.VECTOR;
     }
     
-    
+
     for(ModelContainer container : listOfContainers)
     {
+      container.getHierarchicalModel().addMappingNode("_time", time);
+      CoreSetup.initializeCore(sim, container, type, wrapper, isSSA);
       ReplacementSetup.setupDeletion(container);
-      CoreSetup.initializeVariables(sim, container, type, time, wrapper, isSSA);
-    }
-    
-    for(ModelContainer container : listOfContainers)
-    {
-      CoreSetup.initializeMath(sim, container, type, time, wrapper, isSSA);
     }
     
     if(wrapper != null)
