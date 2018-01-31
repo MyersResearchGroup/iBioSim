@@ -24,8 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.sbolstandard.core2.AccessType;
-import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.DirectionType;
+import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
@@ -35,7 +36,6 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
  * 
@@ -49,9 +49,6 @@ public class Synthesis
 {
 	private static List<SBOLGraph> _libraryGraph; 
 	private static SBOLGraph _specificationGraph; 
-	//TODO: Make sure to alter path for different users or computer used
-	private String OUTPUT_PATH = "/Users/tramynguyen/Desktop/SBOL/"; 
-	private String OUTPUT_FILE_NAME = "Technology_Mapping_Solution.sbol";
 
 	public Synthesis()
 	{
@@ -60,51 +57,46 @@ public class Synthesis
 	}
 
 
-	public void createSBOLGraph(String fileName, boolean isLibraryFile, String defaultURIPrefix)
+	public void createSBOLGraph(SBOLDocument sbolDoc, boolean isLibraryFile)
 	{
-		try
+		for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 		{
-			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fileName, defaultURIPrefix);
-			for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
-			{
-				SBOLGraph sbolGraph = new SBOLGraph();
-				sbolGraph.createGraph(m);
-				sbolGraph.topologicalSort();
-				if(isLibraryFile)
-					_libraryGraph.add(sbolGraph);
-				else
-					_specificationGraph = sbolGraph; 
-			}
+			SBOLGraph sbolGraph = new SBOLGraph();
+			sbolGraph.createGraph(sbolDoc, m);
+			sbolGraph.topologicalSort();
+			if(isLibraryFile)
+				_libraryGraph.add(sbolGraph);
+			else
+				_specificationGraph = sbolGraph; 
 		}
-		catch (Throwable e)
-		{
-			e.printStackTrace();
-		}
+
 	}
-	
+
 	public void createSBOLGraph(File library, File specification, String defaultURIPrefix) throws SBOLValidationException, IOException, SBOLConversionException
 	{
 		_libraryGraph.add(createSBOLGraph(library, defaultURIPrefix));
 		_specificationGraph = createSBOLGraph(specification, defaultURIPrefix);
 	}
-	
+
 	public SBOLGraph createSBOLGraph(File fileName, String defaultURIPrefix) throws SBOLValidationException, IOException, SBOLConversionException{
 		SBOLDocument sbolDoc = SBOLReader.read(fileName);
 		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
 		SBOLGraph sbolGraph = new SBOLGraph();
 		for(ModuleDefinition m : sbolDoc.getModuleDefinitions())
 		{
-			sbolGraph.createGraph(m);
+			sbolGraph.createGraph(sbolDoc, m);
 			sbolGraph.topologicalSort(); 
 		}
 		return sbolGraph;
 	}
-	
+
 	public void setLibraryGateScores(List<SBOLGraph> library)
 	{
 		for(SBOLGraph g: library)
 		{
-			//TODO
+			SynthesisNode node = g.getOutputNode();
+			int score = node.getSequence().length() - 1;
+			node.setScore(score);
 		}
 	}
 
@@ -134,7 +126,7 @@ public class Synthesis
 						if(totalScore < n.getScore()) 
 						{
 							n.setScore(totalScore); //update speciGraph with new libGate score
-							
+
 							if(!matches.containsKey(n))
 							{
 								matches.put(n, new LinkedList<WeightedGraph>());
@@ -154,7 +146,7 @@ public class Synthesis
 								//base off of score values
 								//Assuming every time add new gate to list, the list should be already ordered
 								LinkedList<WeightedGraph> list = matches.get(n);
-								
+
 								for(int i = list.size()-1; i >= 0; i--)
 								{
 									if(list.get(i).getWeight() <= totalScore)
@@ -349,51 +341,50 @@ public class Synthesis
 			System.out.println(g.getOutputNode().toString());
 		}
 	}
-	
-	public void getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph, String defaultURIPrefix)
+
+	public SBOLDocument getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph, String defaultURIPrefix) throws SBOLValidationException
 	{
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(defaultURIPrefix);
-		try {
-			getSBOLfromTechMap(null, sbolDoc, solution, specificationGraph.getOutputNode());
-		}
-		catch (SBOLValidationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
-		try
-		{
-			//Technology_Mapping_Solution
-//			sbolDoc.write(System.out);
-			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_ModDef");
+		getSBOLfromTechMap(null, sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
+
+		return sbolDoc;
+
 	}
 
-	private void getSBOLfromTechMap(Component comp, SBOLDocument sbolDoc, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
+	private void getSBOLfromTechMap(FunctionalComponent comp, SBOLDocument sbolDoc, ModuleDefinition solModDef, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
 	{
-		//Grab the gate that matches the spec graph
+		//Grab the gate that matches the spec. graph
 		SBOLGraph coveredLibGate = solution.get(specNode);
-		//TODO: does it matter what node is used to create a copy of the moduleDefinition from, when it is referring to the same library gate?
-		ModuleDefinition gateMD = (ModuleDefinition) sbolDoc.createCopy(coveredLibGate.getOutputNode().getModuleDefinition());
-		Module module = gateMD.createModule(gateMD.getDisplayId()+"_module", gateMD.getIdentity());
-		if(comp != null)
+
+		SynthesisNode gateOutNode = coveredLibGate.getOutputNode();
+		SBOLDocument gateSBOLDoc = gateOutNode.getSBOLDocument();
+		ModuleDefinition gateMD = gateOutNode.getModuleDefinition();
+
+		//Copy each gate into an SBOLDocument that will act as the solution of tech. map
+		gateSBOLDoc.createRecursiveCopy(sbolDoc, gateMD);
+
+		//Create an SBOL Module for every gate mapped to the solution
+		Module gateModule = solModDef.createModule(gateMD.getDisplayId()+ "_module", gateMD.getIdentity());
+
+		// Tech. map solution is converted to SBOL data format from output node and traverses downward to input nodes
+		// of the design specification. If comp is null, then conversion is at output node.
+		if(comp == null)
 		{
-			URI libGateURI = coveredLibGate.getOutputNode().getFunctionalComponent().getIdentity();
-			comp.createMapsTo(comp.getDisplayId()+"_outputMapsTo", RefinementType.USELOCAL, comp.getIdentity(), libGateURI);
-			module.createMapsTo(module.getDisplayId()+"_outputMapsTo", RefinementType.USEREMOTE, libGateURI, comp.getIdentity());
+			ComponentDefinition gateOutCD = gateOutNode.getComponentDefinition();
+			String fc_id = gateOutCD.getDisplayId();
+			comp = solModDef.createFunctionalComponent(fc_id + "_FunctionalComponent", AccessType.PUBLIC, gateOutCD.getIdentity(), DirectionType.INOUT);
 		}
-		List<SynthesisNode> specLeafNodes = getEndNodes(specNode, coveredLibGate.getOutputNode());
-		List<SynthesisNode> libLeafNodes = getEndNodes(coveredLibGate.getOutputNode(), coveredLibGate.getOutputNode());
+
+		URI libGateURI = gateOutNode.getFunctionalComponent().getIdentity();
+		gateModule.createMapsTo(gateModule.getDisplayId()+"_outputMapsTo", RefinementType.USEREMOTE, comp.getIdentity(), libGateURI);
+
+
+		List<SynthesisNode> specLeafNodes = getEndNodes(specNode, gateOutNode);
+		List<SynthesisNode> libLeafNodes = getEndNodes(gateOutNode, gateOutNode);
 
 		for(int i = 0; i < specLeafNodes.size(); i++)
 		{
@@ -401,12 +392,14 @@ public class Synthesis
 			SynthesisNode libLeaf = libLeafNodes.get(i); 
 			if(solution.containsKey(specLeaf))
 			{
-				ComponentDefinition topCD = sbolDoc.createComponentDefinition(specLeaf.getComponentDefinition().getDisplayId(), ComponentDefinition.PROTEIN);
-				Component topC = topCD.createComponent(topCD.getDisplayId()+"_component", AccessType.PUBLIC, topCD.getIdentity());
-				topC.createMapsTo(topC.getDisplayId()+"_MapsTo"+i, RefinementType.USELOCAL, topC.getIdentity(), libLeaf.getFunctionalComponent().getIdentity());
-				module.createMapsTo(module.getDisplayId()+"_MapsTo"+i, RefinementType.USEREMOTE, libLeaf.getFunctionalComponent().getIdentity(), topC.getIdentity());
-				getSBOLfromTechMap(topC, sbolDoc, solution, specLeaf);
-			
+				ComponentDefinition leafGateCD = libLeaf.getComponentDefinition();
+				FunctionalComponent leafGateFC = libLeaf.getFunctionalComponent();
+				String fc_id = leafGateCD.getDisplayId();
+				FunctionalComponent topFC = solModDef.createFunctionalComponent(fc_id + "_FunctionalComponent", AccessType.PUBLIC, leafGateCD.getIdentity(), DirectionType.INOUT);
+				gateModule.createMapsTo(gateModule.getDisplayId() + "_MapsTo" + i, RefinementType.USELOCAL, topFC.getIdentity(), leafGateFC.getIdentity());
+
+				getSBOLfromTechMap(topFC, sbolDoc, solModDef, solution, specLeaf);
+
 			}
 		}
 	}

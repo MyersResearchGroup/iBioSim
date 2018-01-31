@@ -205,13 +205,15 @@ public class SBMLutilities extends CoreObservable
 	{
 		SBMLWriter.write(target.getSBMLDocument(), System.out, ' ', (short) 4);
 	}
+
 	
 	/**
 	 * Export a list of BioModels to the specified output directory.
 	 * @param models - The list of BioModels
 	 * @param outputDir - The output directory to store the SBML files
-	 * @throws IOException  Unable to write file to SBML.
+	 * @return The list of SBML models that were exported into xml files.
 	 * @throws XMLStreamException Invalid XML file
+	 * @throws IOException Unable to write file to SBML.
 	 * @throws BioSimException - if sbml model is invalid.
 	 */
 	public static ArrayList<String> exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException, BioSimException
