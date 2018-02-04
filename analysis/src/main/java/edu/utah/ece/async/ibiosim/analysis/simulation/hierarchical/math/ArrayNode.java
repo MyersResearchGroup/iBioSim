@@ -79,7 +79,7 @@ public class ArrayNode extends HierarchicalNode
 	{
 		if (arrayDim < dimensionList.size())
 		{
-			dimensionList.get(arrayDim).setValue(index, value);
+			dimensionList.get(arrayDim).getState().getState(index).setStateValue(value);
 		}
 	}
 

@@ -96,7 +96,7 @@ public class ReactionNode extends VariableNode
 
   public boolean computePropensity(int index)
   {
-    double oldValue = getValue(index);
+    double oldValue = state.getState(index).getStateValue();
     double newValue = 0;
 
     if (forwardRate != null)
@@ -111,7 +111,7 @@ public class ReactionNode extends VariableNode
       newValue = newValue + reverseRateValue;
     }
 
-    setValue(index, newValue);
+    state.getState(index).setStateValue(newValue);
 
     return oldValue != newValue;
   }
@@ -163,7 +163,7 @@ public class ReactionNode extends VariableNode
       SpeciesNode speciesNode = specRef.getSpecies();
       if(!speciesNode.getState().getState(index).isBoundaryCondition())
       {
-        speciesNode.setValue(index, speciesNode.getValue(index) + multiplier* stoichiometry);
+        speciesNode.getState().getState(index).setStateValue(speciesNode.getState().getState(index).getStateValue() + multiplier* stoichiometry);
       }
     }
   }
@@ -174,7 +174,7 @@ public class ReactionNode extends VariableNode
     {
       for (SpeciesReferenceNode specRef : reactants)
       {
-        if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
+        if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue())
         {
           return false;
         }
@@ -190,7 +190,7 @@ public class ReactionNode extends VariableNode
     {
       for (SpeciesReferenceNode specRef : reactants)
       {
-        if (specRef.getSpecies().getValue(index) < specRef.getValue(index))
+        if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue())
         {
           return false;
         }

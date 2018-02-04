@@ -23,6 +23,13 @@ import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.DenseState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.SparseState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
 
 
@@ -97,4 +104,30 @@ public class HierarchicalUtilities
 		return plus.getChildCount() > 0 && minus.getChildCount() > 0 ? result : null;
 	}
 
+	public static HierarchicalState createState(StateType type, VectorWrapper wrapper)
+  {
+    HierarchicalState state = null;
+    
+    if(type == StateType.VECTOR)
+    {
+      state = new VectorState(wrapper);
+    }
+    else if (type == StateType.DENSE)
+    {
+      state = new ValueState();
+    }
+    else if (type == StateType.SPARSE)
+    {
+      state = new SparseState();
+    }
+    else if(type == StateType.DENSE)
+    {
+      state = new DenseState();
+    }
+    else if(type == StateType.SCALAR)
+    {
+      state = new ValueState();
+    }
+    return state;
+  }
 }

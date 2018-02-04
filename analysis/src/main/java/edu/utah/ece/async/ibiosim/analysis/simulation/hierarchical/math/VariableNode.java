@@ -68,25 +68,6 @@ public class VariableNode extends HierarchicalNode
   }
 
 
-
-  @Override
-  public void setRateValue(int index, double value)
-  {
-    if(!state.getState(index).isVariableConstant())
-    {
-      state.setRateValue(index, value);
-    }
-  }
-
-  @Override
-  public void setValue(int index, double value)
-  {
-    if(!state.getState(index).isVariableConstant())
-    {
-      state.getState(index).setStateValue(value);
-    }
-  }
-
   @Override
   public double computeRateOfChange(int index)
   {
@@ -94,7 +75,6 @@ public class VariableNode extends HierarchicalNode
     if (rateRule != null)
     {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
-      state.setRateValue(index, rate);
     }
     return rate;
   }

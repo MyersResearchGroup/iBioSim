@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * 
  *
@@ -55,7 +57,8 @@ public class ConstraintNode extends HierarchicalNode
 		boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
 		if (!value)
 		{
-			state.setStateValue(index, state.getStateValue(index) + 1);
+		  HierarchicalState childState = state.getState(index);
+		  childState.getState(index).setStateValue(childState.getStateValue() + 1);
 		}
 		return value;
 	}

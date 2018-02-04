@@ -60,7 +60,7 @@ public final class Evaluator
     }
     else if (node.isNumber())
     {
-      return evaluateNumber(node, index);
+      return evaluateNumber(node);
     }
     else if (node.isName())
     {
@@ -610,10 +610,10 @@ public final class Evaluator
     case FUNCTION_RATEOF:
     {
       HierarchicalNode value = node.getChild(0);
-      if(value.getState().isSetRate(index))
-      {
-        return value.getRate();
-      }
+//      if(value.getState().getState(index).isSetRate())
+//      {
+//        return value.getRate();
+//      }
       return value.computeRateOfChange(index);
 
     }
@@ -674,14 +674,14 @@ public final class Evaluator
     }
   }
 
-  private static double evaluateNumber(HierarchicalNode node, int index)
+  private static double evaluateNumber(HierarchicalNode node)
   {
-    return node.getValue();
+    return node.getState().getStateValue();
   }
 
   private static double evaluateName(HierarchicalNode node, int index)
   {
-    double value = node.getValue(index);
+    double value = node.getState().getState(index).getStateValue();
     return value;
   }
 

@@ -101,7 +101,7 @@ public abstract class HierarchicalWriter {
       }
       else
       {
-        value = node.getValue(index);
+        value = node.getState().getState(index).getStateValue();
       }
       
       return String.valueOf(value);

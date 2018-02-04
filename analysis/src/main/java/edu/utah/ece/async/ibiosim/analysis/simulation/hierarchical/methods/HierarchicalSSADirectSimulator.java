@@ -141,23 +141,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     }
     printTime = simProperties.getOutputStartTime();
     previousTime = 0;
-
-    while (currentTime.getValue(0) < timeLimit && !isCancelFlag())
+    
+    while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag())
     {
       //			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       //			{
       //				return;
       //			}
-
+      double currentTime = this.currentTime.getState().getStateValue();
       r1 = getRandomNumberGenerator().nextDouble();
       r2 = getRandomNumberGenerator().nextDouble();
       computePropensities();
       totalPropensity = getTotalPropensity();
       delta_t = computeNextTimeStep(r1, totalPropensity);
-      nextReactionTime = currentTime.getValue(0) + delta_t;
+      nextReactionTime = currentTime + delta_t;
       nextEventTime = getNextEventTime();
-      nextMaxTime = currentTime.getValue(0) + maxTimeStep;
-      previousTime = currentTime.getValue(0);
+      nextMaxTime = currentTime + maxTimeStep;
+      previousTime = currentTime;
 
       if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime)
       {
@@ -172,7 +172,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
         setCurrentTime(nextMaxTime);
       }
 
-      if (currentTime.getValue() > timeLimit)
+      if (currentTime > timeLimit)
       {
         break;
       }
@@ -182,11 +182,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
         printToFile();
       }
 
-      if (currentTime.getValue(0) == nextReactionTime)
+      if (currentTime == nextReactionTime)
       {
         update(true, false, false, r2, previousTime);
       }
-      else if (currentTime.getValue(0) == nextEventTime)
+      else if (currentTime == nextEventTime)
       {
         update(false, false, true, r2, previousTime);
       }
@@ -265,7 +265,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
       for(ReactionNode node : model.getReactions())
       {
-        sum += node.getValue(model.getIndex());
+        sum += node.getState().getState(model.getIndex()).getStateValue();
 
         if(sum >= threshold)
         {

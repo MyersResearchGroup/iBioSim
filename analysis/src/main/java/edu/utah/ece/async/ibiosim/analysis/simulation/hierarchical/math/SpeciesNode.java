@@ -52,7 +52,7 @@ public class SpeciesNode extends VariableNode
 
   public double getConcentration(int index)
   {
-    return this.getValue(index) / compartment.getValue(index);
+    return this.getState().getState(index).getStateValue() / compartment.getState().getState(index).getStateValue();
   }
 
   public HierarchicalNode getODERate()
@@ -95,12 +95,6 @@ public class SpeciesNode extends VariableNode
 
 
   @Override
-  public void setValue(int index, double value)
-  {
-    state.getState(index).setStateValue(value);
-  }
-
-  @Override
   public double computeRateOfChange(int index)
   {
     double rate = 0;
@@ -112,8 +106,8 @@ public class SpeciesNode extends VariableNode
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0)
         {
-          double c = compartment.getValue(index);
-          rate = rate + getValue(index)  * compartmentChange / c;
+          double c = compartment.getState().getState(index).getStateValue();
+          rate = rate + state.getState(index).getStateValue()  * compartmentChange / c;
         }
       }
     }

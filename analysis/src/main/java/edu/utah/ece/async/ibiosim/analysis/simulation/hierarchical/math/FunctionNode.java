@@ -13,9 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 
  *
@@ -94,9 +91,9 @@ public class FunctionNode extends HierarchicalNode
 
     if(!(this.isInitialAssignment && variable.state.getState(index).hasRule()))
     {
-      double oldValue = variable.getValue(index);
+      double oldValue = variable.getState().getState(index).getStateValue();
       double newValue = Evaluator.evaluateExpressionRecursive(this, index);
-      variable.setValue(index, newValue);
+      variable.getState().getState(index).setStateValue(newValue);
       boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
       changed = !isNaN && oldValue != newValue;
     }

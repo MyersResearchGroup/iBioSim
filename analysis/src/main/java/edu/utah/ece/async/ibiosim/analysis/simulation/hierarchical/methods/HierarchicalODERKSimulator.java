@@ -156,13 +156,13 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     double nextEndTime = 0;
     double timeLimit = simProperties.getTimeLimit();
     double maxTimeStep = simProperties.getMaxTimeStep();
-    while (currentTime.getValue() < timeLimit && !isCancelFlag()) 
+    while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag()) 
     {
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
       // return;
       // }
-      nextEndTime = getRoundedDouble(currentTime.getValue() + maxTimeStep);
+      nextEndTime = getRoundedDouble(currentTime.getState().getStateValue() + maxTimeStep);
       
       if (nextEndTime > printTime) {
         nextEndTime = printTime;
@@ -172,7 +172,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       }
       if (vectorWrapper.getSize() > 0) {
         try {
-          odecalc.integrate(de, currentTime.getValue(),
+          odecalc.integrate(de, currentTime.getState().getStateValue(),
             vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
          
           computeAssignmentRules();
@@ -222,9 +222,9 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
         for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          double oldValue = node.getRate(index);
-          node.setRateValue(index, node.computeRateOfChange(index));
-          double newValue = node.getRate(index);
+          double oldValue = node.getState().getState(index).getRateValue();
+          node.getState().getState(index).setRateValue(node.computeRateOfChange(index));
+          double newValue = node.getState().getState(index).getRateValue();
           hasChanged |= newValue != oldValue;
         }
       }
@@ -245,7 +245,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     @Override
     public double g(double t, double[] y) {
       double returnValue = -value;
-      currentTime.setValue(t);
+      currentTime.getState().setStateValue(t);
       vectorWrapper.setValues(y);
       computeRates();
       for (HierarchicalModel modelstate : modules) {
@@ -263,7 +263,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     @Override
     public Action eventOccurred(double t, double[] y, boolean increasing) {
       value = -value;
-      currentTime.setValue(t);
+      currentTime.getState().setStateValue(t);
       vectorWrapper.setValues(y);
       computeRates();
       for (HierarchicalModel modelstate : modules) {
@@ -298,7 +298,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
     @Override
     public double g(double t, double[] y) {
-      currentTime.setValue(t);
+      currentTime.getState().setStateValue(t);
       computeRates();
       if (!triggeredEventList.isEmpty()) {
         if (triggeredEventList.peek().getFireTime() <= t) {
@@ -312,7 +312,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     @Override
     public Action eventOccurred(double t, double[] y, boolean increasing) {
       value = -value;
-      currentTime.setValue(t);
+      currentTime.getState().setStateValue(t);
       vectorWrapper.setValues(y);
       computeRates();
       computeEvents();

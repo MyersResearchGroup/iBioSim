@@ -34,11 +34,6 @@ public class SparseState extends TreeState
     mapOfStates = new HashMap<Integer, HierarchicalState>();
   }
   
-  @Override
-  public void addState(int index, double value)
-  {
-    mapOfStates.put(index, new ValueState(value));
-  }
 
   @Override
   public HierarchicalState getState(int index)
@@ -68,6 +63,26 @@ public class SparseState extends TreeState
   @Override
   protected boolean containsChild(int index) {
     return mapOfStates.containsKey(index);
+  }
+
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+   mapOfStates.put(index, state);
+    
+  }
+
+
+  @Override
+  public double getRateValue() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+
+  @Override
+  public void setRateValue(double value) {
+    // TODO Auto-generated method stub
+    
   }
 
 

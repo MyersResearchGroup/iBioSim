@@ -67,54 +67,32 @@ public class VectorState extends HierarchicalState{
   }
 
   @Override
-  public void addState(int index, double value) {
-  }
-
-  @Override
   public HierarchicalState getState(int index) {
     return this;
   }
 
-  @Override
-  public double getStateValue(int index) {
-    return getStateValue();
-  }
 
-  @Override
-  public void setStateValue(int index, double value) 
-  {
-    setStateValue(value);
-  }
   
   @Override
-  public double getRateValue(int index) {
-    if(isSetRate(index))
-    {
-      return vectorState.getRates()[vectorIndex];
-    }
-    else
-    {
-      return 0;
-    }
-  }
+  public double getRateValue() {
+    return vectorState.getRates()[vectorIndex];
 
-  @Override
-  public void setRateValue(int index, double value) {
-    if(isSetRate(index))
-    {
-      vectorState.getRates()[vectorIndex] = value;
-    }
   }
-  
-  @Override
-  public boolean isSetRate(int index) {
-    return vectorState.isSet() && vectorState.getRates() != null;
-  }
-  
 
   public void update()
   {
     vectorIndex = vectorState.incrementSize();
+  }
+
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void setRateValue(double value) {
+    vectorState.getRates()[vectorIndex] = value;
   }
 
 }

@@ -74,7 +74,7 @@ class HierarchicalFBASimulator extends HierarchicalSimulation
 		HierarchicalModel topmodel = getTopmodel();
 		for (String reaction : flux.keySet())
 		{
-			topmodel.getNode(reaction).setValue(topmodel.getIndex(), flux.get(reaction));
+			topmodel.getNode(reaction).getState().getState(topmodel.getIndex()).setStateValue(flux.get(reaction));
 		}
 
 	}
@@ -120,7 +120,7 @@ class HierarchicalFBASimulator extends HierarchicalSimulation
 		for (String name : values.keySet())
 		{
 		  VariableNode node = topmodel.getNode(name);
-      double value = node.getValue(topmodel.getIndex());
+      double value = node.getState().getState(topmodel.getIndex()).getStateValue();
       if(Math.abs(value) <= 1e-6)
       {
         value = 0;

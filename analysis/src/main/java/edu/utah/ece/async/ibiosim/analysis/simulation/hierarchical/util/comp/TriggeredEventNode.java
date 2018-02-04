@@ -115,7 +115,7 @@ public class TriggeredEventNode
         {
           FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
           VariableNode variable = eventAssignmentNode.getVariable();
-          variable.setValue(index, assignmentValues[i]);
+          variable.getState().getState(index).setStateValue(assignmentValues[i]);
         }
       }
     }

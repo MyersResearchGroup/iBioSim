@@ -28,7 +28,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.CompConstants;
-import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
@@ -43,7 +42,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Vector
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
  * 
@@ -74,6 +72,8 @@ public class ModelSetup
    */
   public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException
   {
+
+    List<ModelContainer> listOfContainers = new ArrayList<ModelContainer>();
     AnalysisProperties properties = sim.getProperties();
     SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
     Model model = document.getModel();
@@ -82,11 +82,10 @@ public class ModelSetup
     sim.setTopmodel(hierarchicalModel);
      
     LinkedList<ModelContainer> unproc = new LinkedList<ModelContainer>();
-    List<ModelContainer> listOfContainers = new ArrayList<ModelContainer>();
-    //TODO: Map<String, ModelContainer> templateFromSource;
     
     unproc.push(new ModelContainer(model, hierarchicalModel, null, type));
     int count = 0;
+    
     while(!unproc.isEmpty())
     {
       ModelContainer container = unproc.pop();
@@ -140,14 +139,14 @@ public class ModelSetup
             if (model != null)
             {
               hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
-              
               unproc.push(new ModelContainer(model, hierarchicalModel, container, type));
             }
           }
         }
       }
     }
-    initializeModelStates(sim, listOfContainers, sim.getCurrentTime(), type, wrapper);
+    
+    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
     
     if (sim instanceof HierarchicalMixedSimulator)
     {
@@ -155,30 +154,7 @@ public class ModelSetup
     }
   }
 
-  private static void initializeModelStates(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, ModelType modelType, VectorWrapper wrapper) throws IOException
-  {
-    StateType type = StateType.SCALAR;
-
-    boolean isSSA = modelType == ModelType.HSSA;
-    
-    if(modelType == ModelType.HODE)
-    {
-      type = StateType.VECTOR;
-    }
-    
-
-    for(ModelContainer container : listOfContainers)
-    {
-      container.getHierarchicalModel().addMappingNode("_time", time);
-      CoreSetup.initializeCore(sim, container, type, wrapper, isSSA);
-      ReplacementSetup.setupDeletion(container);
-    }
-    
-    if(wrapper != null)
-    {
-      wrapper.initStateValues();
-    }
-  }
+ 
 
   private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException
   {

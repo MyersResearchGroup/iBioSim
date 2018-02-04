@@ -41,21 +41,6 @@ public class DenseState extends TreeState
   }
 
   @Override
-  public void addState(int index, double value)
-  {
-    if (listOfStates == null)
-    {
-      listOfStates = new ArrayList<HierarchicalState>();
-    }
-
-    while (index > listOfStates.size())
-    {
-      listOfStates.add(new ValueState());
-    }
-
-  }
-
-  @Override
   public HierarchicalState getState(int index)
   {
     return listOfStates.get(index);
@@ -96,6 +81,30 @@ public class DenseState extends TreeState
       return false;
     }
     return true;
+  }
+
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+    if(listOfStates.size() <= index)
+    {
+      addState(index, state);
+    }
+    else
+    {
+      listOfStates.set(index, state);
+    }
+    
+  }
+
+  @Override
+  public double getRateValue() {
+    return 0;
+  }
+
+  @Override
+  public void setRateValue(double value) {
+    // TODO Auto-generated method stub
+    
   }
 
 

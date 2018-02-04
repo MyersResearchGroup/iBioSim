@@ -60,7 +60,7 @@ public class SpeciesReferenceNode extends VariableNode
 
 	public double getStoichiometry(int index)
 	{
-		return getValue(index);
+		return state.getState(index).getStateValue();
 	}
 
 	public SpeciesNode getSpecies()

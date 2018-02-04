@@ -36,12 +36,6 @@ public class ValueState extends HierarchicalState
   }
 
   @Override
-  public void addState(int index, double value)
-  {
-    // can't have children
-  }
-
-  @Override
   public HierarchicalState getState(int index)
   {
     // can't have children
@@ -59,32 +53,24 @@ public class ValueState extends HierarchicalState
     
     return String.valueOf(value);
   }
+
+  public void update(){}
+
   @Override
-  public double getStateValue(int index) {
-    return value;
+  public void replaceState(int index, HierarchicalState state) {
+   
   }
 
   @Override
-  public void setStateValue(int index, double value) {
-    this.value = value;
-  }
-  
-  @Override
-  public double getRateValue(int index) {
+  public double getRateValue() {
+    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public boolean isSetRate(int index)
-  {
-    return false;
+  public void setRateValue(double value) {
+    // TODO Auto-generated method stub
+    
   }
-
-  @Override
-  public void setRateValue(int index, double value) {
-  }
-
-
-  public void update(){}
   
 }

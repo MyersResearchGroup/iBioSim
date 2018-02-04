@@ -143,66 +143,13 @@ public class HierarchicalNode extends AbstractHierarchicalNode
   {
     return arrayNode;
   }
-
-  public HierarchicalState createState(StateType type, VectorWrapper wrapper)
-  {
-    if(type == StateType.VECTOR)
-    {
-      state = new VectorState(wrapper);
-    }
-    else if (type == StateType.DENSE)
-    {
-      state = new ValueState();
-    }
-    else if (type == StateType.SPARSE)
-    {
-      state = new SparseState();
-    }
-    else if(type == StateType.DENSE)
-    {
-      state = new DenseState();
-    }
-    else if(type == StateType.SCALAR)
-    {
-      state = new ValueState();
-    }
-    return state;
-  }
-
-  public void setValue(double value)
-  {
-    state.setStateValue(value);
-  }
   
-  public void setValue(int index, double value)
+  public void setState(HierarchicalState state)
   {
-    state.getState(index).setStateValue(value);
-  }
-  
-  public double getValue()
-  {
-    return state.getStateValue();
-  }
-  
-  public double getValue(int index)
-  {
-    return state.getStateValue(index);
-  }
-  
-  public double getRate()
-  {
-    return state.getRateValue(0);
-  }
-  
-  public double getRate(int index)
-  {
-    return state.getRateValue(index);
-  }
-
-
-  public void setRateValue(int index, double value)
-  {
-    state.setRateValue(index, value);
+    if(this.state == null)
+    {
+      this.state = state;
+    }
   }
   
   public HierarchicalState getState()

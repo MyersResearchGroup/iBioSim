@@ -435,9 +435,9 @@ public final class HierarchicalModel
 	  boolean hasChanged = false;
 	  for(ReactionNode node : reactions)
     {
-	    double oldValue = node.getValue(index);
+	    double oldValue = node.getState().getState(index).getStateValue();
       node.computePropensity(index);
-      double newValue = node.getValue(index);
+      double newValue = node.getState().getState(index).getStateValue();
       
       hasChanged = hasChanged | oldValue != newValue;
     }
