@@ -27,11 +27,6 @@ import java.util.prefs.Preferences;
 
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
-import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.DnaSequence;
-import org.sbolstandard.core.impl.DnaComponentImpl;
-import org.sbolstandard.core.impl.DnaSequenceImpl;
-import org.sbolstandard.core.util.SequenceOntology;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
@@ -50,6 +45,7 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceConstraint;
+import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -974,72 +970,72 @@ public class SBOLTestFactory {
 		return gateLibrary;
 	}
 	
-	public static Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary, String defaultURIPrefix) {
-		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
-		DnaComponent previousCDS = null;
-		Random rGen = new Random();
-		try {
-			DnaComponent sbolRBS = createTestDNAComponent(
-					new URI(defaultURIPrefix + "/" + "RBS"),
-					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
-			libraryComps.add(sbolRBS);
-			DnaComponent sbolTT = createTestDNAComponent(
-					new URI(defaultURIPrefix + "/" + "TT"),
-					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
-			libraryComps.add(sbolTT);
-			for (int i = 0; i < gateLibrary.size(); i++) {
-				BioModel gateModel = gateLibrary.get(i);
-				String gateID = gateModel.getSBMLDocument().getModel().getId();
-				for (String promoterID : gateModel.getPromoters()) {
-					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
-					DnaComponent sbolPromoter = createTestDNAComponent(
-							new URI(defaultURIPrefix + "/" + gateID + "_" + promoterID), 
-							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
-							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
-					libraryComps.add(sbolPromoter);
-					List<URI> annotationObject = new LinkedList<URI>();
-					annotationObject.add(sbolPromoter.getURI());
-					AnnotationUtility.setSBOLAnnotation(sbmlPromoter, 
-							new SBOLAnnotation(sbmlPromoter.getMetaId(), annotationObject, 
-									GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND));
-				}
-				boolean isFirstCDS = true;
-				for (String speciesID : gateModel.getInputSpecies()) {
-					Species sbmlSpecies = gateModel.getSBMLDocument().getModel().getSpecies(speciesID);
-					DnaComponent sbolCDS;
-					if (isFirstCDS) {
-						if (i % cdsCopyNum > 0) { 
-							sbolCDS = previousCDS;
-						} else {
-							sbolCDS = createTestDNAComponent(
-									new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
-									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
-									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
-							libraryComps.add(sbolCDS);
-							previousCDS = sbolCDS;
-						}
-						isFirstCDS = false;
-					} else {
-						sbolCDS = createTestDNAComponent(
-								new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
-								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
-								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
-						libraryComps.add(sbolCDS);
-					}
-					List<URI> annotationObject = new LinkedList<URI>();
-					annotationObject.add(sbolRBS.getURI());
-					annotationObject.add(sbolCDS.getURI());
-					annotationObject.add(sbolTT.getURI());
-					AnnotationUtility.setSBOLAnnotation(sbmlSpecies, 
-							new SBOLAnnotation(sbmlSpecies.getMetaId(), annotationObject));
-				}
-					
-			}
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return libraryComps;
-	}
+//	public static Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary, String defaultURIPrefix) {
+//		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
+//		DnaComponent previousCDS = null;
+//		Random rGen = new Random();
+//		try {
+//			DnaComponent sbolRBS = createTestDNAComponent(
+//					new URI(defaultURIPrefix + "/" + "RBS"),
+//					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
+//			libraryComps.add(sbolRBS);
+//			DnaComponent sbolTT = createTestDNAComponent(
+//					new URI(defaultURIPrefix + "/" + "TT"),
+//					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
+//			libraryComps.add(sbolTT);
+//			for (int i = 0; i < gateLibrary.size(); i++) {
+//				BioModel gateModel = gateLibrary.get(i);
+//				String gateID = gateModel.getSBMLDocument().getModel().getId();
+//				for (String promoterID : gateModel.getPromoters()) {
+//					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
+//					DnaComponent sbolPromoter = createTestDNAComponent(
+//							new URI(defaultURIPrefix + "/" + gateID + "_" + promoterID), 
+//							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
+//							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
+//					libraryComps.add(sbolPromoter);
+//					List<URI> annotationObject = new LinkedList<URI>();
+//					annotationObject.add(sbolPromoter.getURI());
+//					AnnotationUtility.setSBOLAnnotation(sbmlPromoter, 
+//							new SBOLAnnotation(sbmlPromoter.getMetaId(), annotationObject, 
+//									GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND));
+//				}
+//				boolean isFirstCDS = true;
+//				for (String speciesID : gateModel.getInputSpecies()) {
+//					Species sbmlSpecies = gateModel.getSBMLDocument().getModel().getSpecies(speciesID);
+//					DnaComponent sbolCDS;
+//					if (isFirstCDS) {
+//						if (i % cdsCopyNum > 0) { 
+//							sbolCDS = previousCDS;
+//						} else {
+//							sbolCDS = createTestDNAComponent(
+//									new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
+//									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
+//									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
+//							libraryComps.add(sbolCDS);
+//							previousCDS = sbolCDS;
+//						}
+//						isFirstCDS = false;
+//					} else {
+//						sbolCDS = createTestDNAComponent(
+//								new URI(defaultURIPrefix + "/" + gateID + "_" + speciesID),
+//								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
+//								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
+//						libraryComps.add(sbolCDS);
+//					}
+//					List<URI> annotationObject = new LinkedList<URI>();
+//					annotationObject.add(sbolRBS.getURI());
+//					annotationObject.add(sbolCDS.getURI());
+//					annotationObject.add(sbolTT.getURI());
+//					AnnotationUtility.setSBOLAnnotation(sbmlSpecies, 
+//							new SBOLAnnotation(sbmlSpecies.getMetaId(), annotationObject));
+//				}
+//					
+//			}
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
+//		return libraryComps;
+//	}
 	
 //	public Set<DnaComponent> annotateTestLibrary(int crossGateTotal, int avgCDSCopyNum, int sdCDSCopyNum,
 //			List<BioModel> gateLibrary) {
@@ -1140,27 +1136,27 @@ public class SBOLTestFactory {
 		return gateModel;
 	}
 	
-	private static DnaComponent createTestDNAComponent(URI uri, String displayID, String soType, Random rGen,
-			int avgSize, int sdSize) {
-		DnaComponent dnaComp = new DnaComponentImpl();
-		dnaComp.setURI(uri);
-		dnaComp.setDisplayId(displayID);
-		dnaComp.addType(SequenceOntology.type(soType));
-		DnaSequence dnaSeq = new DnaSequenceImpl();
-		try {
-			dnaSeq.setURI(new URI(uri.toString() + "_seq"));
-		int size;
-		do {
-			size = (int) Math.round(avgSize + sdSize*rGen.nextGaussian());
-		} while (size <= 0);
-		dnaSeq.setNucleotides(createTestNucleotides(size));
-		dnaComp.setDnaSequence(dnaSeq);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return dnaComp;
-		
-	}
+//	private static DnaComponent createTestDNAComponent(URI uri, String displayID, String soType, Random rGen,
+//			int avgSize, int sdSize) {
+//		DnaComponent dnaComp = new DnaComponentImpl();
+//		dnaComp.setURI(uri);
+//		dnaComp.setDisplayId(displayID);
+//		dnaComp.addType(SequenceOntology.type(soType));
+//		DnaSequence dnaSeq = new DnaSequenceImpl();
+//		try {
+//			dnaSeq.setURI(new URI(uri.toString() + "_seq"));
+//		int size;
+//		do {
+//			size = (int) Math.round(avgSize + sdSize*rGen.nextGaussian());
+//		} while (size <= 0);
+//		dnaSeq.setNucleotides(createTestNucleotides(size));
+//		dnaComp.setDnaSequence(dnaSeq);
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
+//		return dnaComp;
+//		
+//	}
 	
 	private static String createTestNucleotides(int size) {
 		StringBuilder sb = new StringBuilder(size);

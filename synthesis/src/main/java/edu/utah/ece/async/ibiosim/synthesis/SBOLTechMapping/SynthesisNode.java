@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.Sequence;
 
 /**
  * 
@@ -36,22 +39,36 @@ public class SynthesisNode
 	private List<SynthesisNode> children; 
 	private FunctionalComponent functionalComponent; //Represent each vertex node
 	private ComponentDefinition componentDefinition; //Use to store the type for each vertex node
+	private String sequence;
 	private ModuleDefinition moduleDefinition; //Represent each gate
+	private SBOLDocument sbolDoc; //SBOLDocument where the SBOL objects are referred to
 	private URI compDefType; 
 	private double score; 
 	private List<SynthesisNode> parents;
-	private Map<SynthesisNode, URI> relations; //TODO: MIGHT NOT NEED
+	private Map<SynthesisNode, URI> relations; 
 	private int degree; 
 	private boolean visited; 
 	
-	public SynthesisNode(ModuleDefinition md, FunctionalComponent fc, int uniqueId)
+	public SynthesisNode(SBOLDocument sbolDoc, ModuleDefinition md, FunctionalComponent fc, int uniqueId)
 	{
 		this.children = new ArrayList<SynthesisNode>();
 		this.parents = new ArrayList<SynthesisNode>();
+		
 		this.functionalComponent = fc;
-		this.componentDefinition = fc.getDefinition(); 
+		
+		ComponentDefinition compDef = fc.getDefinition();
+		this.componentDefinition = compDef;
+		this.compDefType = compDef.getTypes().iterator().next();
+		Set<Sequence> sequences = compDef.getSequences();
+		String completeSeq = "";
+		for(Sequence s: sequences)
+		{
+			completeSeq = completeSeq + s.getElements();
+		}
+		this.sequence = completeSeq;
 		this.moduleDefinition = md;
-		this.compDefType = fc.getDefinition().getTypes().iterator().next();
+		this.sbolDoc = sbolDoc;
+		
 		this.relations = new HashMap<SynthesisNode, URI>();
 		this.degree = 0; 
 		this.visited = false; 
@@ -61,6 +78,7 @@ public class SynthesisNode
 	{
 		children.add(node);
 	}
+	
 	public void addParent(SynthesisNode node)
 	{
 		parents.add(node);
@@ -106,9 +124,19 @@ public class SynthesisNode
 		return this.componentDefinition;
 	}
 	
+	public String getSequence()
+	{
+		return this.sequence;
+	}
+	
 	public ModuleDefinition getModuleDefinition()
 	{
 		return this.moduleDefinition;
+	}
+	
+	public SBOLDocument getSBOLDocument()
+	{
+		return this.sbolDoc;
 	}
 	
 	public FunctionalComponent getFunctionalComponent()
