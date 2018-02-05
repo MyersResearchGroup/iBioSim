@@ -1182,7 +1182,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 											.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
 											.replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
-							AnalysisThread thread = new AnalysisThread(analysisView);
+							sweepTwo = sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+									.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
+							AnalysisThread thread = new AnalysisThread(analysisView, sweepTwo);
 							String simStem = stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
                   .replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
                   .replace(",", "");
@@ -1202,11 +1204,13 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")
 										.replace("=", "_").replaceAll("-", "_").replace(".","_"))
 												.mkdir();
-						analysisView.setFileStem(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_")
-										.replaceAll("-", "_").replace(".","_"));
+//						analysisView.setFileStem(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+//										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_")
+//										.replaceAll("-", "_").replace(".","_"));
 						createSBML(stem, sweep, analysisMethod);
-						AnalysisThread thread = new AnalysisThread(analysisView);
+						sweep = sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+								.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
+						AnalysisThread thread = new AnalysisThread(analysisView, sweep);
 						thread.start(false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
@@ -1227,7 +1231,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 //					new File(path + File.separator + simName + File.separator + stem).mkdir();
 //				}
 				if (createSBML(stem, ".", analysisMethod)) {
-						new AnalysisThread(analysisView).start(true);
+						new AnalysisThread(analysisView, ".").start(true);
 				}
 				// analysisView.emptyFrames();
 			}
@@ -1754,7 +1758,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 			}
 		}
 		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
-				.replace("\"", "").replace(" ", "_").replace(",", "");
+				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}

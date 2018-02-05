@@ -3811,7 +3811,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	    AnalysisPropertiesWriter.createProperties(properties);
 		Run run = new Run(properties);
 	    run.addObserver(this);
-	    run.execute();
+	    run.execute(properties.getDirectory(),properties.getFilename());
 	}
 
 	private HashMap<String, String> importModels(String path, SedML sedml, ArchiveComponents ac)
