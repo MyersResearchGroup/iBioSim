@@ -1182,7 +1182,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 											.replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
 											.replace(",", "")).mkdir();
 							createSBML(stem, sweepTwo, analysisMethod);
-							AnalysisThread thread = new AnalysisThread(analysisView);
+							sweepTwo = sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+									.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
+							AnalysisThread thread = new AnalysisThread(analysisView, sweepTwo);
 							String simStem = stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "")
                   .replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_")
                   .replace(",", "");
@@ -1202,11 +1204,13 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")
 										.replace("=", "_").replaceAll("-", "_").replace(".","_"))
 												.mkdir();
-						analysisView.setFileStem(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
-										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_")
-										.replaceAll("-", "_").replace(".","_"));
+//						analysisView.setFileStem(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
+//										.replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "").replace("=", "_")
+//										.replaceAll("-", "_").replace(".","_"));
 						createSBML(stem, sweep, analysisMethod);
-						AnalysisThread thread = new AnalysisThread(analysisView);
+						sweep = sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+								.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
+						AnalysisThread thread = new AnalysisThread(analysisView, sweep);
 						thread.start(false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "")
@@ -1227,7 +1231,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 //					new File(path + File.separator + simName + File.separator + stem).mkdir();
 //				}
 				if (createSBML(stem, ".", analysisMethod)) {
-						new AnalysisThread(analysisView).start(true);
+						new AnalysisThread(analysisView, ".").start(true);
 				}
 				// analysisView.emptyFrames();
 			}
@@ -1753,11 +1757,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				}
 			}
 		}
-		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
-				.replace("\"", "").replace(" ", "_").replace(",", "");
-		if (direct.equals(".") && !stem.equals("")) {
+		if (direct.equals(".") /*&& !stem.equals("")*/) {
 			direct = "";
 		}
+		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
 		if (analysisMethod != null && !analysisMethod.contains("Hierarchical") && !analysisMethod.contains("Mixed")) {
 			SBMLDocument sbml;
 			try {
@@ -1774,11 +1778,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				return false;
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-        return false;
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				return false;
+			}
 			if (sbml == null) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -1849,10 +1853,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				e.printStackTrace();
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}

@@ -65,14 +65,14 @@ public class DynamicSimulation extends CoreObservable
     message = new Message();
   }
 
-  public void simulate(AnalysisProperties properties)
+  public void simulate(AnalysisProperties properties,String filename)
   {
     SimulationProperties simProperties = properties.getSimulationProperties();
 
     try
     {
 
-      String SBMLFileName = properties.getFilename(), outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
+      String SBMLFileName = filename, outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
       double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
           initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
       long randomSeed = simProperties.getRndSeed();

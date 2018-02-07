@@ -108,7 +108,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private JCheckBox showRootDefs;
 	private JRadioButton showModDefs, showCompDefs;
 	
-	private JButton openSBOLDesigner, openVPRGenerator, optionsButton, cancelButton;
+	private JButton openSBOLDesigner, openVPRGenerator, optionsButton; //, cancelButton;
 
 	private SBOLDocument sbolDesigns;
 	
