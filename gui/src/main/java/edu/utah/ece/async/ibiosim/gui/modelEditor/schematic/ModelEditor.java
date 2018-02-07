@@ -1757,11 +1757,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				}
 			}
 		}
-		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
-				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
-		if (direct.equals(".") && !stem.equals("")) {
+		if (direct.equals(".") /*&& !stem.equals("")*/) {
 			direct = "";
 		}
+		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+				.replace("\"", "").replace(" ", "_").replace(",", "").replace("=","_").replace(".", "_");
 		if (analysisMethod != null && !analysisMethod.contains("Hierarchical") && !analysisMethod.contains("Mixed")) {
 			SBMLDocument sbml;
 			try {
@@ -1778,11 +1778,11 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				return false;
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-        return false;
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				return false;
+			}
 			if (sbml == null) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File",
 						JOptionPane.ERROR_MESSAGE);
@@ -1853,10 +1853,10 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				e.printStackTrace();
 			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}
