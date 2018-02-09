@@ -187,9 +187,9 @@ public class StaticDependencySets {
 	public void buildDisableByStealingToken() {
 		// To avoid duplicated calls for this method, i.e.buildOtherTransDisableSeedTran and buildSeedTranDisableOtherTrans,
 		// only proceed to build the disableByStealingToken set if it is not empty. 
-		if (!disableByStealingToken.isEmpty()) {
+//		if (!disableByStealingToken.isEmpty()) {
 			if (seedTran.hasConflict()) {
-				if (!isSelfLoop()) {
+				//if (!isSelfLoop()) {
 					if (allTransToLpnProcs.get(seedTran).getStateMachineFlag()) {
 						outerloop:for (Transition tranInConflict : seedTran.getConflictSet()) {
 							// In a state machine, if tranInConflict and seedTran have disjoint enabling conditions, 
@@ -231,8 +231,8 @@ public class StaticDependencySets {
 					}
 					writeStringWithEndOfLineToPORDebugFile("");
 				}
-			}
-		}
+//			}
+//		}
 	}
 
 	private boolean isSelfLoop() {

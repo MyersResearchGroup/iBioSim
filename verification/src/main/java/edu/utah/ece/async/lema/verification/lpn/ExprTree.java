@@ -4283,6 +4283,8 @@ public class ExprTree {
 				}
 			} else if (op.equals("+")) {
 				return left + right;
+			} else if (op.equals("-")) {
+				return left - right;
 			} else if (op.equals("*")) {
 				return left * right;
 			} else if (op.equals("/")) {
