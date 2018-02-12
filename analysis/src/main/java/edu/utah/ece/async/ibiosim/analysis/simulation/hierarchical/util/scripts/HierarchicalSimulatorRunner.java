@@ -130,7 +130,7 @@ public class HierarchicalSimulatorRunner
 			try
 			{
 
-				simulator.simulate(properties);
+				simulator.simulate(properties,properties.getFilename());
 
 				TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
 				tsdp.outputCSV(outputDirectory + testcase + ".csv");
@@ -186,11 +186,11 @@ public class HierarchicalSimulatorRunner
 					double t2 = System.currentTimeMillis();
 					System.out.println("Flattening time: " + (t2 - t1) / 1000);
 
-					simulator.simulate(properties);
+					simulator.simulate(properties,properties.getFilename());
 				}
 				else
 				{
-					simulator.simulate(properties);
+					simulator.simulate(properties,properties.getFilename());
 				}
 
 			}

@@ -101,19 +101,17 @@ public class Run extends CoreObservable implements ActionListener
    * @throws InterruptedException - thred problem
    * @throws BioSimException - something went wrong with the analysis
    */
-  public int execute() throws IOException, XMLStreamException, InterruptedException, BioSimException
+  public int execute(String outDir, String filename) throws IOException, XMLStreamException, InterruptedException, BioSimException
   {
     Runtime exec = Runtime.getRuntime();
     int exitValue = 255;
     long time1, time2;
-
-    String filename = properties.getFilename();
     
-    work = new File(properties.getDirectory());
+    work = new File(outDir);
     
     if (properties.isNary() && properties.isGui() && (properties.isSsa() || properties.isXhtml() || properties.isDot()))
     {
-      exitValue =  executeNary();
+      exitValue =  executeNary(filename);
     }
 
     if (properties.isNary() && !properties.isGui() && !properties.getSim().contains("markov-chain-analysis") && properties.getSimulationProperties().getRun() == 1)
@@ -126,42 +124,42 @@ public class Run extends CoreObservable implements ActionListener
     else if (properties.isFba())
     {
       time1 = System.nanoTime();
-      exitValue =  executeFBA( );
+      exitValue =  executeFBA(filename);
     }
     else if (properties.isSbml())
     {
       time1 = System.nanoTime();
-      exitValue = executeSBML();
+      exitValue = executeSBML(filename);
     }
     else if (properties.isDot())
     {
       time1 = System.nanoTime();
-      exitValue =  executeDot();
+      exitValue =  executeDot(filename);
     }
     else if (properties.isXhtml())
     {
       time1 = System.nanoTime();
-      exitValue = executeXhtml( );
+      exitValue = executeXhtml(filename);
     }
     else if (properties.getSim().equals("atacs"))
     {
       time1 = System.nanoTime();
-      exitValue = executeAtacs( );
+      exitValue = executeAtacs();
     }
     else if (properties.getSim().equals("prism"))
     {
       time1 = System.nanoTime();
-      exitValue = executePrism( );
+      exitValue = executePrism(filename);
     }
     else if (properties.getSim().contains("markov-chain-analysis") || properties.getSim().equals("reachability-analysis"))
     {
       time1 = System.nanoTime();
-      exitValue = executeMarkov();
+      exitValue = executeMarkov(filename);
     }
     else
     {
       time1 = System.nanoTime();
-      exitValue = executeSimulation();
+      exitValue = executeSimulation(filename);
 
     }
 
@@ -197,7 +195,7 @@ public class Run extends CoreObservable implements ActionListener
     }
   }
 
-  private int executeFBA() throws XMLStreamException, IOException, BioSimException
+  private int executeFBA(String filename) throws XMLStreamException, IOException, BioSimException
   {
     int exitValue = 255;
 
@@ -272,21 +270,20 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeMarkov() throws XMLStreamException, IOException, InterruptedException, BioSimException
+  private int executeMarkov(String filename) throws XMLStreamException, IOException, InterruptedException, BioSimException
   {
     String prop = null;
     LPN lhpnFile = null;
     String root = properties.getRoot();
-    String filename = properties.getFilename();
     String sim = properties.getSim();
-    if (properties.getFilename().contains(".lpn"))
+    if (filename.contains(".lpn"))
     {
       lhpnFile = new LPN();
       lhpnFile.load(root + File.separator + filename);
     }
     else
     {
-      new File( properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
+      new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
@@ -312,8 +309,8 @@ public class Run extends CoreObservable implements ActionListener
           new File(properties.getRoot() + File.separator + "running").delete();
           return 0;
         }
-        lhpnFile.save(properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
-        this.message.setLog("Saving SBML file as LPN:\n" + properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+        lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+        this.message.setLog("Saving SBML file as LPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
       }
       else
       {
@@ -434,7 +431,7 @@ public class Run extends CoreObservable implements ActionListener
     return 0;
   }
 
-  private int executeNary() throws XMLStreamException, IOException, BioSimException
+  private int executeNary(String filename) throws XMLStreamException, IOException, BioSimException
   {
     String modelFile = properties.getModelFile();
     String directory = properties.getDirectory();
@@ -489,10 +486,10 @@ public class Run extends CoreObservable implements ActionListener
     return 0;
   }
 
-  private int executeSimulation() throws IOException, InterruptedException, XMLStreamException, BioSimException
+  private int executeSimulation(String filename) throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
     int exitValue = 0;
-    String SBMLFileName = properties.getFilename();
+    String SBMLFileName = filename;
     String[] env = Executables.envp;
     String sim = properties.getSim();
 
@@ -549,11 +546,11 @@ public class Run extends CoreObservable implements ActionListener
     }
     else if (sim.equals("prism"))
     {
-      exitValue = executePrism();
+      exitValue = executePrism(filename);
     }
     else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis"))
     {
-      exitValue = executeMarkov();
+      exitValue = executeMarkov(filename);
     }
     else
     {
@@ -563,13 +560,13 @@ public class Run extends CoreObservable implements ActionListener
 
     if(runJava)
     {
-      dynSim.simulate(properties);
+      dynSim.simulate(properties,filename);
 
       new File(properties.getRoot() + File.separator + "running").delete();
     }
     else
     {
-      String[] command = properties.getReb2sacCommand();
+      String[] command = properties.getReb2sacCommand(filename);
       
       message.setLog("Executing:\n" + SBMLutilities.commandString(command) + "\n");
       
@@ -605,7 +602,7 @@ public class Run extends CoreObservable implements ActionListener
 
     return exitValue;
   }
-  private int executePrism() throws IOException, InterruptedException, XMLStreamException, BioSimException
+  private int executePrism(String filename) throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
     int exitValue = 255;
     String prop = null;
@@ -613,19 +610,19 @@ public class Run extends CoreObservable implements ActionListener
     String out = null;
     LPN lhpnFile = null;
     String root = properties.getRoot();
-    if (properties.getFilename().contains(".lpn"))
+    if (filename.contains(".lpn"))
     {
       lhpnFile = new LPN();
-      lhpnFile.load(properties.getRoot() + File.separator + properties.getFilename());
+      lhpnFile.load(properties.getRoot() + File.separator + filename);
     }
     else
     {
-      new File(properties.getFilename().replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
+      new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
       ArrayList<String> specs = new ArrayList<String>();
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
       BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
-      bioModel.load(root + File.separator + properties.getFilename());
+      bioModel.load(root + File.separator + filename);
       if (bioModel.flattenModel(true) != null)
       {
         if (!properties.getVerificationProperties().getLpnProperty().equals(""))
@@ -644,11 +641,11 @@ public class Run extends CoreObservable implements ActionListener
           new File(properties.getRoot() + File.separator + "running").delete();
           return 0;
         }
-        message.setLog("Saving SBML file as PRISM file:\n" + properties.getFilename().replace(".xml", ".prism"));
+        message.setLog("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism"));
         this.notifyObservers(message);
-        message.setLog("Saving PRISM Property file:\n" + properties.getFilename().replace(".xml", ".pctl"));
+        message.setLog("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl"));
         this.notifyObservers(message);
-        LPN.convertLPN2PRISM(logFile, lhpnFile, properties.getFilename().replace(".xml", ".prism"), 
+        LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), 
           bioModel.getSBMLDocument());
         Preferences biosimrc = Preferences.userRoot();
         String prismCmd = biosimrc.get("biosim.general.prism", "");
@@ -729,23 +726,23 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeDot() throws IOException, InterruptedException, BioSimException
+  private int executeDot(String filename) throws IOException, InterruptedException, BioSimException
   {
     int exitValue= 255;
     String[] command;
-    String outputFileName = properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".dot";
+    String outputFileName = filename.replace(".sbml", "").replace(".xml", "") + ".dot";
     if (properties.isNary())
     {
       LPN lhpnFile = new LPN();
-      lhpnFile.load(properties.getFilename().replace(".sbml", "").replace(".xml", "") + ".lpn");
+      lhpnFile.load(filename.replace(".sbml", "").replace(".xml", "") + ".lpn");
       lhpnFile.printDot(outputFileName);
       exitValue = 0;
     }
-    else if (properties.getFilename().contains(".lpn"))
+    else if (filename.contains(".lpn"))
     {
       LPN lhpnFile = new LPN();
       try {
-        lhpnFile.load(properties.getFilename());
+        lhpnFile.load(filename);
       } catch (BioSimException e) {
         e.printStackTrace();
       }
@@ -786,10 +783,10 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeXhtml() throws IOException, InterruptedException
+  private int executeXhtml(String filename) throws IOException, InterruptedException
   {
     int exitValue = 0;
-    Simulator.expandArrays( properties.getFilename(), 1);
+    Simulator.expandArrays( filename, 1);
 
     String[] command = properties.getXhtmlCommand();
     message.setLog("Executing:\n" + SBMLutilities.commandString(command));
@@ -811,7 +808,7 @@ public class Run extends CoreObservable implements ActionListener
     return exitValue;
   }
 
-  private int executeSBML() throws IOException, HeadlessException, XMLStreamException, InterruptedException, BioSimException
+  private int executeSBML(String filename) throws IOException, HeadlessException, XMLStreamException, InterruptedException, BioSimException
   {
     int exitValue = 255;
 
@@ -958,7 +955,6 @@ public class Run extends CoreObservable implements ActionListener
       }
       else
       {
-        String filename = properties.getFilename();
         if (reb2sacAbstraction() && (properties.isAbs() || properties.isNary()))
         {
           String[] command = properties.getSbmlCommand(sbmlName);

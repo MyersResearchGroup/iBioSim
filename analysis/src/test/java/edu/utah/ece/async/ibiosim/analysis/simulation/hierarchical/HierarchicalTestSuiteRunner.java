@@ -145,7 +145,7 @@ public class HierarchicalTestSuiteRunner
       try
       {
 
-        simulator.simulate(properties);
+        simulator.simulate(properties,properties.getFilename());
 
         TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
         tsdp.outputCSV(outputDirectory + testcase + ".csv");

@@ -150,7 +150,12 @@ public class ObjectiveSqureError extends Objective
 
 		simProperties.setTimeLimit(0);
 
-		odeSim.setupForNewRun(0);
+		try {
+      odeSim.setupForNewRun(0);
+    } catch (IOException e) {
+      // TODO fix this later
+      e.printStackTrace();
+    }
 
 		return new Result(sum);
 	}

@@ -117,8 +117,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   public void setupForNewRun(int newRun) throws IOException
   {
     SimulationProperties simProperties = properties.getSimulationProperties();
-    
     setCurrentTime(simProperties.getInitialTime());
+    restoreInitialState();
     setupForOutput(newRun);
   }
 

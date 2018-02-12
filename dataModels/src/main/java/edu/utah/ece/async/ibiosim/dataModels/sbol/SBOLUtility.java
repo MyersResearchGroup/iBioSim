@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -103,6 +104,40 @@ public class SBOLUtility
 			throw new SBOLException("ERROR: The input SBOL file produced a null SBOLDocument.", "Null SBOLDocument");
 		}
 		return sbolDoc;
+	}
+	
+	public static SBOLDocument loadMultSBOLFile(List<String> files, String defaultPrefix) throws SBOLValidationException, IOException, SBOLConversionException
+	{
+		SBOLDocument sbolDoc = new SBOLDocument();
+		sbolDoc.setDefaultURIprefix(defaultPrefix);
+		
+		for(String filePath : files)
+		{
+			SBOLDocument currentDoc = SBOLReader.read(filePath);
+			sbolDoc.createCopy(currentDoc);
+		}
+		
+		return sbolDoc;
+	}
+	
+	public static SBOLDocument loadFromDir(String directory, String defaultPrefix) throws SBOLException, SBOLValidationException, IOException, SBOLConversionException
+	{
+		File files = new File(directory); 
+		List<String> sbolFiles = new ArrayList<String>();
+		boolean isDirectory = files.isDirectory();
+		if(!isDirectory)
+		{
+			System.err.println("ERROR: This flag must be set as a directory where multiple SBOL library files are located");
+			throw new SBOLException("ERROR: This is not a directory containing SBOL files.", "Invalid Path for A Directory");
+		}
+
+		for (File eachFile : files.listFiles()) 
+		{
+			sbolFiles.add(eachFile.getAbsolutePath());
+		}
+
+		return loadMultSBOLFile(sbolFiles, defaultPrefix);
+	
 	}
 
 	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 
@@ -450,19 +485,27 @@ public class SBOLUtility
 		return null;
 	}
 
-	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
+	/**
+	 * Retrieve property file for synthesis view 
+	 * 
+	 * @param synthFilePath - Path to property file for synthesis view
+	 * @param separator - a separator to handle directory
+	 * @param frame - the UI frame that this synthesis view is operating on.
+	 * @return The property file for synthesis view
+	 * @throws IOException - Synthesis specification property is missing.
+	 */
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) throws IOException {
 		Properties synthProps = new Properties();
 		for (String synthFileID : new File(synthFilePath).list())
-			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
-				try {
+		{
+			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) 
+			{
 					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
 					synthProps.load(propStreamIn);
 					propStreamIn.close();
 					return synthProps;
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-				}
 			}	
+		}
 		return synthProps;
 	}
 

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.PriorityQueue;
 import javax.xml.stream.XMLStreamException;
@@ -158,6 +159,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     double maxTimeStep = simProperties.getMaxTimeStep();
     while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag()) 
     {
+
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
       // return;
@@ -199,7 +201,11 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
 
   @Override
-  public void setupForNewRun(int newRun) {
+  public void setupForNewRun(int newRun) throws IOException 
+  {
+    setCurrentTime(properties.getSimulationProperties().getInitialTime());
+    restoreInitialState();
+    setupForOutput(newRun);
   }
 
 

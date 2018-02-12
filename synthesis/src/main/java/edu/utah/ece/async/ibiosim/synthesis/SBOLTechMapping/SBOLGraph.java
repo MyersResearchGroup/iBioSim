@@ -29,6 +29,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 /**
@@ -43,6 +44,7 @@ public class SBOLGraph
 {
 	private Map<URI, SynthesisNode> _nodes; 
 	private List<SynthesisNode> _root; 
+	private int _score;
 	int uniqueId = 0;
 	private List<SynthesisNode> _topologicalSortNodes;
 
@@ -50,6 +52,7 @@ public class SBOLGraph
 	{
 		_nodes = new HashMap<URI, SynthesisNode>();
 		_root = new ArrayList<SynthesisNode>();
+		_score = 0;
 		_topologicalSortNodes = new ArrayList<SynthesisNode>();
 	}
 
@@ -58,29 +61,28 @@ public class SBOLGraph
 	 * for the graph.
 	 * @param md
 	 */
-	// TODO: SBO terms seem out-of-date here
-	public void createGraph(ModuleDefinition md)
+	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md)
 	{
 
 		for(FunctionalComponent f : md.getFunctionalComponents())
 		{
 			if(!_nodes.containsKey(f.getIdentity()))
 			{
-				SynthesisNode node = new SynthesisNode(md, f, uniqueId++);
+				SynthesisNode node = new SynthesisNode(sbolDoc, md, f, uniqueId++);
 				_nodes.put(f.getIdentity(), node);
 			}	
 		}
 		for(Interaction i : md.getInteractions())
 		{
 			URI type = i.getTypes().iterator().next();
-			if(type.equals(SystemsBiologyOntology.GENETIC_SUPPRESSION))
+			if(type.equals(SystemsBiologyOntology.INHIBITION))
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.INHIBITED))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -93,17 +95,17 @@ public class SBOLGraph
 				{
 					addChild(u, promoter);
 					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_SUPPRESSION);
+					addRelationship(promoter, u, SystemsBiologyOntology.INHIBITION);
 				}
 			}
-			else if(type.equals(SystemsBiologyOntology.GENETIC_ENHANCEMENT))
+			else if(type.equals(SystemsBiologyOntology.STIMULATION))
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.TEMPLATE))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -116,17 +118,17 @@ public class SBOLGraph
 				{
 					addChild(u, promoter);
 					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_ENHANCEMENT);
+					addRelationship(promoter, u, SystemsBiologyOntology.STIMULATION);
 				}
 			}
-			else //SystemsBiologyOntology.GENETIC_PRODUCTION
+			else if(type.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) //SystemsBiologyOntology.GENETIC_PRODUCTION
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.PROMOTER))
+					if(role.equals(SystemsBiologyOntology.TEMPLATE))
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -139,8 +141,12 @@ public class SBOLGraph
 				{
 					addChild(promoter, u);
 					addParent(promoter, u);
-					addRelationship(promoter, u, SystemsBiologyOntology.GENETIC_PRODUCTION);
+					addRelationship(promoter, u, SystemsBiologyOntology.PRODUCTION);
 				}
+			}
+			else
+			{
+				System.out.println("Unidentified Interaction occurred: " + type);
 			}
 		}
 
@@ -153,6 +159,11 @@ public class SBOLGraph
 			node.setDegree(getDegree(node, node.getDegree()));
 		}
 
+	}
+	
+	public void setScore(int value)
+	{
+		_score = value;
 	}
 	
 	/**

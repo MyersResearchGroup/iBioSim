@@ -78,7 +78,10 @@ public class VectorWrapper {
 
   public void initStateValues()
   {
-    this.values = new double[size];
+    if(values == null)
+    {
+      this.values = new double[size];
+    }
     isSet = true;
   }
 

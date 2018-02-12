@@ -50,42 +50,45 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.ParameterEstimator;
 /**
  * Command line method for running the learn jar file.  
  * <p>
- * Requirements:
+ *  <b>Requirements:</b>
+ * </p>
  * <p>
- * inputfile: full path to the input SBML file.
+ *  <b>inputfile:</b> full path to the input SBML file.
+ * </p>
  * <p>
- * directory: directory where the experimental data is located.
+ *  <b>directory:</b> directory where the experimental data is located.
+ * </p>
  * <p>
- * Options:
- * <p>
+ *  <b>Options:</b>
+ * </p>
  * <ul>
- * <li>-e: when specified, the program will run parameter estimation.</li>
- * <li>-l: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
- * <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
- * <li>--sbml [name]: outputs an sbml file with the specified name (e.g. learn.xml). </li>
- * <li>-ta [num]: Sets the activation threshold.  Default 1.15</li>
- * <li>-tr [num]: Sets the repression threshold.  Default 0.75</li>
- * <li>-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5</li>
- * <li>-tm [num]: Sets how close IVs must be in score to be considered for combination.  Default 0.01</li>
- * <li>-tn [num]: Sets minimum number of parents to allow through in SelectInitialParents. Default 2</li>
- * <li>-tj [num]: Sets the max parents of merged influence vectors, Default 2</li>
- * <li>-tt [num]: Sets how fast the bound is relaxed for ta and tr, Default 0.025</li>
- * <li>-d [num]:  Sets the debug or output level.  Default 0</li>
- * <li>-wr [num]: Sets how much larger a number must be to be considered as a rise.  Default 1</li>
- * <li>-ws [num]: Sets how far the TSD points are when compared.  Default 1</li>
- * <li>-nb [num]: Sets how many bins are used in the evaluation.  Default 4</li>
- * <li>--lvl:     Writes out the suggested levels for every species.</li>
- * <li>--readLevels: Reads the levels from level.lvl file for every species.</li>
- * <li>--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.</li>
- * <li>--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal</li>
- * <li>--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.</li>
- * <li>--cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n</li>
- * <li>--score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept</li>
- * <li>--output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed</li>
- * <li>-binNumbers: Equal spacing per bin</li>
- * <li>-noSUCC: to not use successors in calculating probabilities</li>
- * <li>-PRED: use predecessors in calculating probabilities</li>
- * <li>-basicFBP: to use the basic FindBaseProb function</li>
+ *  <li>-e: when specified, the program will run parameter estimation.</li>
+ *  <li>-l: when specified, parameter estimation will use the estimate the value of the parameters in the list.</li>
+ *  <li>--cpp: runs the C++ GeneNet. Default is the Java version. </li>
+ *  <li>--sbml [name]: outputs an sbml file with the specified name (e.g. learn.xml). </li>
+ *  <li>-ta [num]: Sets the activation threshold.  Default 1.15</li>
+ *  <li>-tr [num]: Sets the repression threshold.  Default 0.75</li>
+ *  <li>-ti [num]: Sets how high a score must be to be considered a parent.  Default 0.5</li>
+ *  <li>-tm [num]: Sets how close IVs must be in score to be considered for combination.  Default 0.01</li>
+ *  <li>-tn [num]: Sets minimum number of parents to allow through in SelectInitialParents. Default 2</li>
+ *  <li>-tj [num]: Sets the max parents of merged influence vectors, Default 2</li>
+ *  <li>-tt [num]: Sets how fast the bound is relaxed for ta and tr, Default 0.025</li>
+ *  <li>-d [num]:  Sets the debug or output level.  Default 0</li>
+ *  <li>-wr [num]: Sets how much larger a number must be to be considered as a rise.  Default 1</li>
+ *  <li>-ws [num]: Sets how far the TSD points are when compared.  Default 1</li>
+ *  <li>-nb [num]: Sets how many bins are used in the evaluation.  Default 4</li>
+ *  <li>--lvl:     Writes out the suggested levels for every species.</li>
+ *  <li>--readLevels: Reads the levels from level.lvl file for every species.</li>
+ *  <li>--cpp_harshenBoundsOnTie:  Determines if harsher bounds are used when parents tie in CPP.</li>
+ *  <li>--cpp_cmp_output_donotInvertSortOrder: Sets the inverted sort order in the 3 places back to normal</li>
+ *  <li>--cpp_seedParents  Determines if parents should be ranked by score, not tsd order in CPP.</li>
+ *  <li>--cmp_score_mustNotWinMajority:  Determines if score should be used when following conditions are not met a &gt; r+n || r &gt; a + n</li>
+ *  <li>--score_donotTossSingleRatioParents:   Determines if single ratio parents should be kept</li>
+ *  <li>--output_donotTossChangedInfluenceSingleParents: Determines if parents that change influence should not be tossed</li>
+ *  <li>-binNumbers: Equal spacing per bin</li>
+ *  <li>-noSUCC: to not use successors in calculating probabilities</li>
+ *  <li>-PRED: use predecessors in calculating probabilities</li>
+ *  <li>-basicFBP: to use the basic FindBaseProb function</li>
  * </ul>
  * 
  * @author Leandro Watanabe
