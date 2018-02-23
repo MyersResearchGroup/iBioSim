@@ -95,4 +95,9 @@ public class VectorState extends HierarchicalState{
     vectorState.getRates()[vectorIndex] = value;
   }
 
+  @Override
+  public void restoreInitialValue() {
+    vectorState.getValues()[vectorIndex] = value;
+  }
+
 }

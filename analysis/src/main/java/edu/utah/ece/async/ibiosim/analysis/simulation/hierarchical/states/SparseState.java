@@ -86,4 +86,14 @@ public class SparseState extends TreeState
   }
 
 
+  @Override
+  public void restoreInitialValue() {
+    for(Integer key : mapOfStates.keySet())
+    {
+      mapOfStates.get(key).restoreInitialValue();
+    }
+    
+  }
+
+
 }

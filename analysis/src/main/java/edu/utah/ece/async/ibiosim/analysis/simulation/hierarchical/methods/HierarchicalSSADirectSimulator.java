@@ -159,17 +159,22 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       nextMaxTime = currentTime + maxTimeStep;
       previousTime = currentTime;
 
+      if(nextMaxTime > printTime)
+      {
+        nextMaxTime = printTime;
+      }
+      
       if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime)
       {
-        setCurrentTime(nextReactionTime);
+        currentTime = nextReactionTime;
       }
       else if (nextEventTime <= nextMaxTime)
       {
-        setCurrentTime(nextEventTime);
+        currentTime = nextEventTime;
       }
       else
       {
-        setCurrentTime(nextMaxTime);
+        currentTime = nextMaxTime;
       }
 
       if (currentTime > timeLimit)
@@ -182,6 +187,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
         printToFile();
       }
 
+      setCurrentTime(currentTime);
       if (currentTime == nextReactionTime)
       {
         update(true, false, false, r2, previousTime);

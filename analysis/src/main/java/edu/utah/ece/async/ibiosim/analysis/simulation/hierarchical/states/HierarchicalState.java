@@ -61,10 +61,7 @@ public abstract class HierarchicalState
     this.initValue = value;
   }
   
-  public void restoreInitialValue()
-  {
-    setStateValue(initValue);
-  }
+  public abstract void restoreInitialValue();
   
   public boolean isPersistent()
   {

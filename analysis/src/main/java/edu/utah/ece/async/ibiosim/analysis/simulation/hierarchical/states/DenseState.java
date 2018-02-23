@@ -107,5 +107,13 @@ public class DenseState extends TreeState
     
   }
 
+  @Override
+  public void restoreInitialValue() {
+    for(HierarchicalState state : listOfStates)
+    {
+      state.restoreInitialValue();
+    }
+  }
+
 
 }

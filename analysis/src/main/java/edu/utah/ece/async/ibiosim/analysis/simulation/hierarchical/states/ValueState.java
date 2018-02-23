@@ -72,5 +72,11 @@ public class ValueState extends HierarchicalState
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void restoreInitialValue() {
+   this.value = initValue;
+    
+  }
   
 }

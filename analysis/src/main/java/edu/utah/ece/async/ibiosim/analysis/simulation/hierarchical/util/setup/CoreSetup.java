@@ -70,7 +70,8 @@ public class CoreSetup
   static void initializeCore(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, VectorWrapper wrapper) throws IOException
   {
     List<NodeReplacement> listOfReplacements = new ArrayList<NodeReplacement>();
-
+    sim.addPrintVariable("time", time, 0, false);
+    
     for(ModelContainer container : listOfContainers)
     {
       ReplacementSetup.setupDeletion(container);
@@ -126,13 +127,11 @@ public class CoreSetup
       String compartmentID = compartment.getId();
       VariableNode node =  new VariableNode(compartmentID);
 
-
-      //TODO: change this
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
-      else if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
@@ -176,14 +175,12 @@ public class CoreSetup
 
       String printVariable = container.getPrefix() + parameter.getId();
 
-
-      //TODO: change this
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
 
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
@@ -220,12 +217,12 @@ public class CoreSetup
       }
 
 
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() != null && sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
 
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
@@ -545,7 +542,7 @@ public class CoreSetup
         setupProduct(sim, container, node, product.getSpecies(), product, wrapper);
       }
 
-      if(sim.getProperties().getSimulationProperties().getIntSpecies() == null)
+      if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         String printVariable = container.getPrefix() + reaction.getId();
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
