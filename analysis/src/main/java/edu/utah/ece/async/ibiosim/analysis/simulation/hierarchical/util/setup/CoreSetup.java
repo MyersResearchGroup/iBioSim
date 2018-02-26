@@ -137,7 +137,12 @@ public class CoreSetup
       }
 
       modelstate.addMappingNode(compartmentID, node);
-
+      
+      if(!compartment.isConstant())
+      {
+        modelstate.addVariable(node);
+      }
+      
       node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
       node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
 
@@ -189,6 +194,11 @@ public class CoreSetup
       {
         node.getState().getState(index).setInitialValue(parameter.getValue());
       }
+      
+      if(!parameter.isConstant())
+      {
+        modelstate.addVariable(node);
+      }
 
     }
   }
@@ -225,6 +235,11 @@ public class CoreSetup
       if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
+      } 
+      
+      if(!species.isConstant())
+      {
+        modelstate.addVariable(node);
       }
 
       boolean isBoundary = species.getBoundaryCondition();

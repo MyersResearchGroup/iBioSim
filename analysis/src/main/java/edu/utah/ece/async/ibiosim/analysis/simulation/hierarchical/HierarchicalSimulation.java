@@ -356,11 +356,19 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   
   protected void restoreInitialState()
   {
+
+    triggeredEventList.clear();
     for(HierarchicalModel hierarchicalModel : modules)
     {
+      int index = hierarchicalModel.getIndex();
       for(VariableNode node : hierarchicalModel.getListOfVariables())
       {
-        node.getState().restoreInitialValue();
+        node.getState().getState(index).restoreInitialValue();
+      }
+      
+      for(EventNode node : hierarchicalModel.getEvents())
+      {
+        node.resetEvents(index);
       }
     }
   }

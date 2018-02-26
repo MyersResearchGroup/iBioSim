@@ -193,6 +193,11 @@ public class EventNode extends HierarchicalNode
     return eventAssignments;
   }
   
+  public void resetEvents(int index)
+  {
+     eventState.get(index).reset();
+  }
+  
   private class EventState {
     private double        maxDisabledTime;
     private double        minEnabledTime;
@@ -203,6 +208,13 @@ public class EventNode extends HierarchicalNode
       this.maxDisabledTime = Double.NEGATIVE_INFINITY;
       this.minEnabledTime = Double.POSITIVE_INFINITY;
       this.nonPersistentEvents = new LinkedList<TriggeredEventNode>();
+    }
+    
+    public void reset()
+    {
+      this.maxDisabledTime = 0;
+      this.minEnabledTime = Double.POSITIVE_INFINITY;
+      this.nonPersistentEvents.clear();
     }
 
   }

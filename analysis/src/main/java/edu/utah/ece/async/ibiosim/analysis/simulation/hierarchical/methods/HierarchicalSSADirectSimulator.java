@@ -75,7 +75,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       
       setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HSSA);
-      computeFixedPoint();
 
       for(HierarchicalModel model : this.getListOfHierarchicalModels())
       {
@@ -86,7 +85,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       {
         triggeredEventList =
             new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
-        computeEvents();
+
       }
 
       setupForOutput(runNumber);
@@ -139,9 +138,12 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     {
         this.initialize(randomSeed, 1);
     }
+
+    computeFixedPoint();
     printTime = simProperties.getOutputStartTime();
     previousTime = 0;
-    
+    computeEvents();
+
     while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag())
     {
       //			if (!HierarchicalUtilities.evaluateConstraints(constraintList))
