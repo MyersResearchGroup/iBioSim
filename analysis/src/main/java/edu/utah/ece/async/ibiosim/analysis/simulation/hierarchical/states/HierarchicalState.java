@@ -53,8 +53,6 @@ public abstract class HierarchicalState
   
   public abstract HierarchicalState getState(int index);
   
-  public abstract void update();
-  
   public void setInitialValue(double value)
   {
     this.value = value;
@@ -221,7 +219,6 @@ public abstract class HierarchicalState
     if(attributes != null)
     {
       attributes.hasRate = hasRate;
-      update();
     }
   }
   

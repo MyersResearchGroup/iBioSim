@@ -42,6 +42,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Vector
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * 
@@ -58,8 +59,9 @@ public class ModelSetup
    * 
    * @throws IOException
    * @throws XMLStreamException
+   * @throws BioSimException 
    */
-  public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException
+  public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException, BioSimException
   {
     setupModels(sim, type, null);
   }
@@ -69,8 +71,9 @@ public class ModelSetup
    * 
    * @throws IOException
    * @throws XMLStreamException
+   * @throws BioSimException 
    */
-  public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException
+  public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException, BioSimException
   {
 
     List<ModelContainer> listOfContainers = new ArrayList<ModelContainer>();
@@ -156,7 +159,7 @@ public class ModelSetup
 
  
 
-  private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException
+  private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException, BioSimException
   {
 
     List<HierarchicalModel> listOfODEModels = new ArrayList<HierarchicalModel>();

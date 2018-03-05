@@ -24,6 +24,7 @@ import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.learn.genenet.Experiments;
 import edu.utah.ece.async.ibiosim.learn.genenet.SpeciesCollection;
 
@@ -138,7 +139,7 @@ public class ObjectiveSqureError extends Objective
           sum = sum + tmp;
         }
       } 
-			catch (XMLStreamException | IOException e) 
+			catch (XMLStreamException | IOException | BioSimException e) 
 			{
 			  sum = Double.MAX_VALUE;
       } 

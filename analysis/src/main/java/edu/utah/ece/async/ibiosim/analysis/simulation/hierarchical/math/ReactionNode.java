@@ -107,7 +107,7 @@ public class ReactionNode extends VariableNode
 
     if (reverseRate != null)
     {
-      double reverseRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+      double reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
       newValue = newValue + reverseRateValue;
     }
 

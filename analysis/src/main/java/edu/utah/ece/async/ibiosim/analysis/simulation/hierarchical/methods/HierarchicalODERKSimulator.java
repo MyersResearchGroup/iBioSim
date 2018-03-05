@@ -77,34 +77,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     
   }
 
-
-  public HierarchicalODERKSimulator(HierarchicalMixedSimulator sim,
-    HierarchicalModel topmodel) throws IOException, XMLStreamException 
-  {
-    super(sim);
-    SimulationProperties simProperties = properties.getSimulationProperties();
-    this.odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(),
-      simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
-    this.isInitialized = true;
-    print = false;
-    this.printTime = 0;
-    this.vectorWrapper = sim.getVectorWrapper();
-    de = new DifferentialEquations();
-    if (sim.hasEvents()) {
-      HierarchicalEventHandler handler = new HierarchicalEventHandler();
-      HierarchicalTriggeredEventHandler triggeredHandler =
-          new HierarchicalTriggeredEventHandler();
-      odecalc.addEventHandler(handler, simProperties.getPrintInterval(), 1e-20, 10000);
-      odecalc.addEventHandler(triggeredHandler, simProperties.getPrintInterval(), 1e-20,
-        10000);
-      triggeredEventList =
-          new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
-      computeEvents();
-
-    }
-  }
-
-
   @Override
   public void cancel() {
     setCancelFlag(true);
@@ -118,7 +90,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
   @Override
   public void initialize(long randomSeed, int runNumber)
-      throws IOException, XMLStreamException {
+      throws IOException, XMLStreamException, BioSimException {
     if (!isInitialized) {
       SimulationProperties simProperties = properties.getSimulationProperties();
       currProgress = 0;
@@ -148,7 +120,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 
 
   @Override
-  public void simulate() throws IOException, XMLStreamException {
+  public void simulate() throws IOException, XMLStreamException, BioSimException {
     if (!isInitialized) {
         initialize(0, 1);
     }

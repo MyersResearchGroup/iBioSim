@@ -29,12 +29,12 @@ public class VectorState extends HierarchicalState{
   public VectorState(VectorWrapper vectorState)
   {
     this.vectorState = vectorState;
-    this.vectorIndex = -1;
+    this.vectorIndex = vectorState.incrementSize();
   }
 
   @Override
   public double getStateValue() {
-    if(vectorState.isSet() && vectorIndex >= 0)
+    if(vectorState.isSet())
     {
       return vectorState.getValues()[vectorIndex];
     }
@@ -46,7 +46,7 @@ public class VectorState extends HierarchicalState{
 
   @Override
   public void setStateValue(double value) {
-    if(vectorState.isSet() && vectorIndex >= 0)
+    if(vectorState.isSet())
     {
       vectorState.getValues()[vectorIndex] = value;
     }
@@ -55,11 +55,6 @@ public class VectorState extends HierarchicalState{
       this.value = value;
     }
     
-  }
-  
-  public void setIndex(int index)
-  {
-    this.vectorIndex = index;
   }
 
   @Override
@@ -79,11 +74,6 @@ public class VectorState extends HierarchicalState{
 
   }
 
-  public void update()
-  {
-    vectorIndex = vectorState.incrementSize();
-  }
-
   @Override
   public void replaceState(int index, HierarchicalState state) {
     // TODO Auto-generated method stub
@@ -97,7 +87,7 @@ public class VectorState extends HierarchicalState{
 
   @Override
   public void restoreInitialValue() {
-    vectorState.getValues()[vectorIndex] = value;
+    vectorState.getValues()[vectorIndex] = initValue;
   }
 
 }

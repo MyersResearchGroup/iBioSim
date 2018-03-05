@@ -46,8 +46,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 {
   private final boolean	print;
 
-  private long			randomSeed;
-
   public HierarchicalSSADirectSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException
   {
 
@@ -66,7 +64,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
 
   @Override
-  public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
+  public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException
   {
     if (!isInitialized)
     {
@@ -122,7 +120,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
   }
 
   @Override
-  public void simulate() throws IOException, XMLStreamException
+  public void simulate() throws IOException, XMLStreamException, BioSimException
   {
 
     SimulationProperties simProperties = properties.getSimulationProperties();
@@ -136,7 +134,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
     if (!isInitialized)
     {
-        this.initialize(randomSeed, 1);
+        this.initialize(properties.getSimulationProperties().getRndSeed(), 1);
     }
 
     computeFixedPoint();

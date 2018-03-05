@@ -17,6 +17,8 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+
 /**
  * 
  *
@@ -30,7 +32,7 @@ public interface ParentSimulator
 	/**
 	 * 
 	 */
-	public abstract void simulate() throws IOException, XMLStreamException;
+	public abstract void simulate() throws IOException, XMLStreamException, BioSimException;
 
 	/**
 	 * 
@@ -60,5 +62,5 @@ public interface ParentSimulator
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	public abstract void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException;
+	public abstract void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException;
 }

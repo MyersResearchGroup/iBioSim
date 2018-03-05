@@ -56,7 +56,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	}
 
 	@Override
-	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
+	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException
 	{
 		if (!isInitialized)
 		{
@@ -76,7 +76,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	}
 
 	@Override
-	public void simulate() throws IOException, XMLStreamException
+	public void simulate() throws IOException, XMLStreamException, BioSimException
 	{
 
 		if (!isInitialized)
@@ -147,9 +147,10 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 	  fbaTime = 0;
 	}
 
-	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException
+	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException, BioSimException
 	{
-			odeSim = new HierarchicalODERKSimulator(this, topmodel);
+			odeSim = new HierarchicalODERKSimulator(this.properties, false);
+			odeSim.setTopmodel(topmodel);
 			odeSim.setListOfHierarchicalModels(odeModels);
 	}
 
