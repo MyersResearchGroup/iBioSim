@@ -76,6 +76,15 @@ public class EventNode extends HierarchicalNode
   {
     eventState.get(index).maxDisabledTime = maxDisabledTime;
   }
+  
+  public void setInitialTrue(int index, boolean isInitialTrue)
+  {
+    eventState.get(index).isInitialTrue = isInitialTrue;
+    if(!isInitialTrue)
+    {
+      eventState.get(index).maxDisabledTime = 0;
+    }
+  }
 
   public double getMinEnabledTime(int index)
   {
@@ -201,6 +210,7 @@ public class EventNode extends HierarchicalNode
   private class EventState {
     private double        maxDisabledTime;
     private double        minEnabledTime;
+    private boolean  isInitialTrue;
     private LinkedList<TriggeredEventNode> nonPersistentEvents;
     
     public EventState()
@@ -212,7 +222,14 @@ public class EventNode extends HierarchicalNode
     
     public void reset()
     {
-      this.maxDisabledTime = 0;
+      if(isInitialTrue)
+      {
+        this.maxDisabledTime = Double.NEGATIVE_INFINITY;
+      }
+      else
+      {
+        this.maxDisabledTime = 0;
+      }
       this.minEnabledTime = Double.POSITIVE_INFINITY;
       this.nonPersistentEvents.clear();
     }

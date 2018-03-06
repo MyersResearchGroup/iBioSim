@@ -74,6 +74,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HSSA);
 
+      computeFixedPoint();
       for(HierarchicalModel model : this.getListOfHierarchicalModels())
       {
         totalPropensity.addChild(model.getPropensity().getVariable());
@@ -83,7 +84,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       {
         triggeredEventList =
             new PriorityQueue<TriggeredEventNode>(1, new HierarchicalEventComparator());
-
+        computeEvents();
       }
 
       setupForOutput(runNumber);
@@ -116,6 +117,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     SimulationProperties simProperties = properties.getSimulationProperties();
     setCurrentTime(simProperties.getInitialTime());
     restoreInitialState();
+    computeFixedPoint();
     setupForOutput(newRun);
   }
 
@@ -137,10 +139,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
         this.initialize(properties.getSimulationProperties().getRndSeed(), 1);
     }
 
-    computeFixedPoint();
     printTime = simProperties.getOutputStartTime();
     previousTime = 0;
-    computeEvents();
 
     while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag())
     {
@@ -153,16 +153,11 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       r2 = getRandomNumberGenerator().nextDouble();
       computePropensities();
       totalPropensity = getTotalPropensity();
-      delta_t = computeNextTimeStep(r1, totalPropensity);
+      delta_t = Math.log(1 / r1) / totalPropensity;
       nextReactionTime = currentTime + delta_t;
       nextEventTime = getNextEventTime();
       nextMaxTime = currentTime + maxTimeStep;
       previousTime = currentTime;
-
-      if(nextMaxTime > printTime)
-      {
-        nextMaxTime = printTime;
-      }
       
       if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime)
       {
@@ -251,12 +246,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     
     this.totalPropensity.computeFunction(0);
   }
-
-  private double computeNextTimeStep(double r1, double totalPropensity)
-  {
-    return Math.log(1 / r1) / totalPropensity;
-  }
-
   
   private void fireRateRules(double previousTime)
   {

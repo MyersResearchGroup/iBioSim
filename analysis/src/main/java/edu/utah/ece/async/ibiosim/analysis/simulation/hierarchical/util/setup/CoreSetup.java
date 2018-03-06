@@ -135,17 +135,20 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
-
+      node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
       modelstate.addMappingNode(compartmentID, node);
       
       if(!compartment.isConstant())
       {
         modelstate.addVariable(node);
+        node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
+      }
+      else
+      {
+        node.getState().addState(index, HierarchicalUtilities.createState(StateType.SCALAR, wrapper));
       }
       
-      node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
-      node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
-
+      
       if (Double.isNaN(compartment.getSize()))
       {
         node.getState().getState(index).setInitialValue(1);
@@ -176,8 +179,7 @@ public class CoreSetup
       node = new VariableNode(parameterId);
       modelstate.addMappingNode(parameter.getId(), node);
       node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
-      node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
-
+    
       String printVariable = container.getPrefix() + parameter.getId();
 
       if(sim.getProperties().getSimulationProperties().getIntSpecies().contains(printVariable))
@@ -189,17 +191,21 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), false);
       }
+      
+      if(!parameter.isConstant())
+      {
+        modelstate.addVariable(node);
+        node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
+      }
+      else
+      {
+        node.getState().addState(index, HierarchicalUtilities.createState(StateType.SCALAR, wrapper));
+      }
 
       if(parameter.isSetValue())
       {
         node.getState().getState(index).setInitialValue(parameter.getValue());
       }
-      
-      if(!parameter.isConstant())
-      {
-        modelstate.addVariable(node);
-      }
-
     }
   }
 
@@ -231,22 +237,24 @@ public class CoreSetup
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       }
-
-      if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
+      else if(sim.getProperties().getSimulationProperties().getIntSpecies().size() == 0 )
       {
         sim.addPrintVariable(printVariable, node, modelstate.getIndex(), isConcentration);
       } 
-      
-      if(!species.isConstant())
-      {
-        modelstate.addVariable(node);
-      }
 
       boolean isBoundary = species.getBoundaryCondition();
       boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
       node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
-      node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
-
+      
+      if(!species.isConstant())
+      {
+        modelstate.addVariable(node);
+        node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
+      }
+      else
+      {
+        node.getState().addState(index, HierarchicalUtilities.createState(StateType.SCALAR, wrapper));
+      }
       node.getState().getState(index).setBoundaryCondition(isBoundary);
       node.getState().getState(index).setHasOnlySubstance(isOnlySubstance);
 
@@ -284,8 +292,16 @@ public class CoreSetup
     SpeciesReferenceNode node = new SpeciesReferenceNode();
 
     node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
-    node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
 
+    if(!product.isConstant())
+    {
+      modelstate.addVariable(node);
+      node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
+    }
+    else
+    {
+      node.getState().addState(index, HierarchicalUtilities.createState(StateType.SCALAR, wrapper));
+    }
     node.getState().getState(modelstate.getIndex()).setInitialValue(stoichiometryValue);
 
     SpeciesNode species = (SpeciesNode) modelstate.getNode(product.getSpecies());
@@ -323,8 +339,15 @@ public class CoreSetup
     SpeciesReferenceNode node = new SpeciesReferenceNode();
 
     node.setState(HierarchicalUtilities.createState(sim.getCollectionType(), wrapper));
-    node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
-
+    if(!reactant.isConstant())
+    {
+      modelstate.addVariable(node);
+      node.getState().addState(index, HierarchicalUtilities.createState(sim.getAtomicType(), wrapper));
+    }
+    else
+    {
+      node.getState().addState(index, HierarchicalUtilities.createState(StateType.SCALAR, wrapper));
+    }
     node.getState().getState(modelstate.getIndex()).setInitialValue(stoichiometryValue);
 
     SpeciesNode species = (SpeciesNode) modelstate.getNode(reactant.getSpecies());
@@ -457,15 +480,8 @@ public class CoreSetup
         boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
         node.getState().getState(index).setUseTriggerValue(useValuesFromTrigger);
         node.getState().getState(index).setPersistent(isPersistent);
+        node.setInitialTrue(index, initValue);
 
-        if (!initValue)
-        {
-          node.setMaxDisabledTime(index, 0);
-          if (node.computeTrigger(modelstate.getIndex()))
-          {
-            node.setMinEnabledTime(index, 0);
-          }
-        }
         if (event.isSetPriority())
         {
           Priority priority = event.getPriority();

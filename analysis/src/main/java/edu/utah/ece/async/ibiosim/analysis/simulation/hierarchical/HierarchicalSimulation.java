@@ -494,12 +494,14 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
 
   protected void checkEvents()
   {
+
+    double time = currentTime.getState().getStateValue();
     for(HierarchicalModel model : modules)
     {
       int index = model.getIndex();
       for (EventNode event : model.getEvents())
       {
-        if(event.isTriggeredAtTime(currentTime.getState().getStateValue(), index))
+        if(event.isTriggeredAtTime(time, index))
         {
           event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
           event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
