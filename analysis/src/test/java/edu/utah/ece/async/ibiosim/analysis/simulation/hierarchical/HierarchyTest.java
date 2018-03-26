@@ -25,7 +25,6 @@ public class HierarchyTest {
     properties = new AnalysisProperties("", "", root, false);
   }
 
-
   @Test
   public void test_basic_setup() {
     try {
@@ -40,6 +39,38 @@ public class HierarchyTest {
       assertEquals(model.getNode("S2").getState().getState(0).getStateValue(), 0, 0);
       assertEquals(model.getNode("compartment").getState().getState(0).getStateValue(), 1, 0);
       assertEquals(model.getNode("k1").getState().getState(0).getStateValue(), 1, 0);
+    } catch (IOException | XMLStreamException | BioSimException e) {
+      fail("Could not initialize");
+    }
+  }
+  
+  @Test
+  public void test_assignment_rule() {
+    try {
+      properties.setModelFile("00029-sbml-l3v2.xml");
+      HierarchicalSimulation simulator = new HierarchicalSSADirectSimulator(properties);
+      ModelSetup.setupModels(simulator, ModelType.NONE);
+      assertEquals(simulator.getListOfHierarchicalModels().size(), 1);
+      
+      HierarchicalModel model = simulator.getListOfHierarchicalModels().get(0);
+      assertEquals(model.getAssignRules().size(), 1);
+      assertEquals(model.getAssignRules().get(0).getVariable().getName(), "S1");
+    } catch (IOException | XMLStreamException | BioSimException e) {
+      fail("Could not initialize");
+    }
+  }
+  
+  @Test
+  public void test_rate_rule() {
+    try {
+      properties.setModelFile("00163-sbml-l3v2.xml");
+      HierarchicalSimulation simulator = new HierarchicalSSADirectSimulator(properties);
+      ModelSetup.setupModels(simulator, ModelType.NONE);
+      assertEquals(simulator.getListOfHierarchicalModels().size(), 1);
+      
+      HierarchicalModel model = simulator.getListOfHierarchicalModels().get(0);
+      assertNotNull(model.getNode("S1").getRateRule());
+      assertNotNull(model.getNode("S2").getRateRule());
     } catch (IOException | XMLStreamException | BioSimException e) {
       fail("Could not initialize");
     }
