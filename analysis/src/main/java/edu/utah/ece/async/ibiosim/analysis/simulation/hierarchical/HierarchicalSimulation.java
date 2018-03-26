@@ -17,17 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
-
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLErrorLog;
-import org.sbml.jsbml.SBMLReader;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
@@ -69,15 +63,11 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   
   private boolean             cancelFlag;
   private int               currentRun;
-  private boolean             printConcentrations;
-  private boolean             sbmlHasErrorsFlag;
-  private String              abstraction;
   protected PriorityQueue<TriggeredEventNode>    triggeredEventList;
   protected boolean           isInitialized;
 
   protected boolean hasEvents;
 
-  private boolean             isGrid;
   private Random              randomNumberGenerator;
   private HierarchicalModel       topmodel;
 
@@ -126,9 +116,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   {
     this.properties = copy.properties;
     this.printTime = copy.printTime;
-    this.abstraction = copy.abstraction;
     this.type = copy.type;
-    this.isGrid = copy.isGrid;
     this.topmodel = copy.topmodel;
     this.currentTime = copy.currentTime;
     this.randomNumberGenerator = copy.randomNumberGenerator;
@@ -177,7 +165,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   /**
    * @return the cancelFlag
    */
-  public boolean isCancelFlag()
+  protected boolean isCancelFlag()
   {
     return cancelFlag;
   }
@@ -196,23 +184,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   public VariableNode getCurrentTime()
   {
     return currentTime;
-  }
-
-
-  /**
-   * @return the printConcentrations
-   */
-  public boolean isPrintConcentrations()
-  {
-    return printConcentrations;
-  }
-
-  /**
-   * @return the sbmlHasErrorsFlag
-   */
-  public boolean isSbmlHasErrorsFlag()
-  {
-    return sbmlHasErrorsFlag;
   }
 
 
@@ -244,52 +215,12 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   }
 
 
-
-
-  /**
-   * @param printConcentrations
-   *            the printConcentrations to set
-   */
-  public void setPrintConcentrations(boolean printConcentrations)
-  {
-    this.printConcentrations = printConcentrations;
-  }
-
-
-  /**
-   * @param sbmlHasErrorsFlag
-   *            the sbmlHasErrorsFlag to set
-   */
-  public void setSbmlHasErrorsFlag(boolean sbmlHasErrorsFlag)
-  {
-    this.sbmlHasErrorsFlag = sbmlHasErrorsFlag;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public String getAbstraction()
-  {
-    return abstraction;
-  }
-
-  /**
-   * 
-   * @param abstraction
-   */
-  public void setAbstraction(String abstraction)
-  {
-    this.abstraction = abstraction;
-  }
-
-
   /**
    * @return the randomNumberGenerator
    */
-  public Random getRandomNumberGenerator()
+  protected double getRandom()
   {
-    return randomNumberGenerator;
+    return randomNumberGenerator.nextDouble();
   }
 
 
@@ -300,22 +231,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator
   public HierarchicalModel getTopmodel()
   {
     return topmodel;
-  }
-
-  /**
-   * @return the isGrid
-   */
-  public boolean isGrid()
-  {
-    return isGrid;
-  }
-  /**
-   * @param isGrid
-   *            the isGrid to set
-   */
-  public void setGrid(boolean isGrid)
-  {
-    this.isGrid = isGrid;
   }
 
   /**

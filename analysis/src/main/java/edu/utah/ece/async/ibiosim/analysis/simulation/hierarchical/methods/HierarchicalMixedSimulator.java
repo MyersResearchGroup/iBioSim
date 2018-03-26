@@ -55,7 +55,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 	}
 
-	@Override
 	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException
 	{
 		if (!isInitialized)
@@ -133,11 +132,6 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 
 	@Override
 	public void cancel()
-	{
-	}
-
-	@Override
-	public void clear()
 	{
 	}
 

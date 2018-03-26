@@ -44,18 +44,6 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.sres.SRES;
  */
 public class ParameterEstimator
 {
-	static double				relativeError		= 1e-6;
-	static double				absoluteError		= 1e-9;
-	static int					numSteps;
-	static double				maxTimeStep			= Double.POSITIVE_INFINITY;
-	static double				minTimeStep			= 0.0;
-	static long					randomSeed			= 0;
-	static int					runs				= 1;
-	static double				stoichAmpValue		= 1.0;
-	static boolean				genStats			= false;
-	static String				selectedSimulator	= "";
-	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
-	static String				quantityType		= "amount";
 
 	/**
 	 * This function is used to execute parameter estimation from a given SBML file. The input model serves
@@ -83,7 +71,6 @@ public class ParameterEstimator
 		double[] lowerbounds = new double[numberofparameters];
 		double[] upperbounds = new double[numberofparameters];
 		HierarchicalSimulation sim = new HierarchicalODERKSimulator(properties, false);
-		sim.initialize(randomSeed, 0);
 
 		for (int i = 0; i < numberofparameters; i++)
 		{

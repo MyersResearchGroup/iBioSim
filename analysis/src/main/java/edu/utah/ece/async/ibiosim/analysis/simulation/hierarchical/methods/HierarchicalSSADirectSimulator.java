@@ -62,8 +62,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
 
   }
 
-
-  @Override
   public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException
   {
     if (!isInitialized)
@@ -102,15 +100,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     setCancelFlag(true);
   }
 
-  /**
-   * clears data structures for new run
-   */
-  @Override
-  public void clear()
-  {
-
-  }
-
   @Override
   public void setupForNewRun(int newRun) throws IOException
   {
@@ -129,10 +118,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
     double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
     double timeLimit = simProperties.getTimeLimit();
     double maxTimeStep = simProperties.getMaxTimeStep();
-    if (isSbmlHasErrorsFlag())
-    {
-      return;
-    }
 
     if (!isInitialized)
     {
@@ -149,8 +134,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation
       //				return;
       //			}
       double currentTime = this.currentTime.getState().getStateValue();
-      r1 = getRandomNumberGenerator().nextDouble();
-      r2 = getRandomNumberGenerator().nextDouble();
+      r1 = getRandom();
+      r2 = getRandom();
       computePropensities();
       totalPropensity = getTotalPropensity();
       delta_t = Math.log(1 / r1) / totalPropensity;

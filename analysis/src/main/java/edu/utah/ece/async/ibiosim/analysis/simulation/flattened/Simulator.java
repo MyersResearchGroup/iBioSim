@@ -525,7 +525,6 @@ public abstract class Simulator extends AbstractSimulator
 	/**
 	 * clears data structures for new run
 	 */
-	@Override
 	public abstract void clear();
 
 	/**

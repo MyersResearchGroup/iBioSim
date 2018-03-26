@@ -81,14 +81,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   public void cancel() {
     setCancelFlag(true);
   }
-
-
-  @Override
-  public void clear() {
-  }
-
-
-  @Override
+  
   public void initialize(long randomSeed, int runNumber)
       throws IOException, XMLStreamException, BioSimException {
     if (!isInitialized) {

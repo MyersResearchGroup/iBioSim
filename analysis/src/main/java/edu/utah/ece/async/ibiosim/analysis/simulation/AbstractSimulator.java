@@ -13,7 +13,12 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
+
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
@@ -24,11 +29,30 @@ import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
  * @version $Rev$
  * @version %I%
  */
-public abstract class AbstractSimulator extends CoreObservable implements ParentSimulator
+public abstract class AbstractSimulator extends CoreObservable
 {
+  protected final Message message = new Message(); 
+  
+  /**
+   * 
+   */
+  public abstract void simulate() throws IOException, XMLStreamException, BioSimException;
 
-  protected final Message message = new Message();
-  
-  
-  
+  /**
+   * 
+   */
+  public abstract void cancel();
+
+
+  /**
+   * 
+   * @param newRun
+   */
+  public abstract void setupForNewRun(int newRun) throws IOException;
+
+  /**
+   * 
+   */
+  public abstract void printStatisticsTSD();
+
 }

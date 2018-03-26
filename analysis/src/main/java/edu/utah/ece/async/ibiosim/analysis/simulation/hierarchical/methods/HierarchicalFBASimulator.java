@@ -87,13 +87,6 @@ class HierarchicalFBASimulator extends HierarchicalSimulation
 	}
 
 	@Override
-	public void clear()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setupForNewRun(int newRun)
 	{
 		// TODO Auto-generated method stub
@@ -104,12 +97,6 @@ class HierarchicalFBASimulator extends HierarchicalSimulation
 	public void printStatisticsTSD()
 	{
 		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException
-	{
 
 	}
 
