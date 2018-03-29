@@ -20,12 +20,12 @@ import java.net.URI;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.virtualparts.VPRException;
+import org.virtualparts.VPRTripleStoreException;
+import org.virtualparts.data.SBOLInteractionAdder_GeneCentric;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import uk.ac.ncl.ico2s.VPRException;
-import uk.ac.ncl.ico2s.VPRTripleStoreException;
-import uk.ac.ncl.ico2s.sbolstack.SBOLInteractionAdder_GeneCentric;
 
 /**
  * Perform VPR Model Generation

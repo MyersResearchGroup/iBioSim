@@ -77,7 +77,7 @@ public final class AnalysisProperties extends CoreObservable
   private final String[] hse2Command = new String[]{Executables.reb2sacExecutable, "--target.encoding=hse2", null};
   private final String[] atacsCommand = new String[]{"atacs", "-T0.000001", "-oqoflhsgllvA", null, "out.hse"};
   private final String[] sbmlCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=sbml", null, null};
-  private final String[] reb2sacCommand = new String[]{Executables.reb2sacExecutable, null,null };
+  private final String[] reb2sacCommand = new String[]{Executables.reb2sacExecutable, null,null, null };
   private final String[] dotCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=dot",  null, null};
   private final String[] xhtmlCommand = new String[]{Executables.reb2sacExecutable, "--target.encoding=xhtml", null, null};
   private final String[] openBrowserCommand = new String[2];
@@ -738,10 +738,11 @@ public final class AnalysisProperties extends CoreObservable
    * 
    * @return command for reb2sac simulation.
    */
-  public String[] getReb2sacCommand()
+  public String[] getReb2sacCommand(String filename)
   {
     reb2sacCommand[1] = "--target.encoding=" + sim;
-    reb2sacCommand[2] = filename;
+    reb2sacCommand[2] = "--reb2sac.properties.file=" + this.getPropertiesFilename();
+    reb2sacCommand[3] = filename;
     return reb2sacCommand;
   }
   

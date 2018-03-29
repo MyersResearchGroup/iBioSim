@@ -37,10 +37,9 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLIdentityManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 
 /**
- * 
- *
- * @author Nicholas Roehner
+ * This class is used for storing multiple SBOLDocuments to its corresponding SBOL file path.
  * @author Tramy Nguyen
+ * @author Nicholas Roehner
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -53,6 +52,16 @@ public class SBOLFileManager {
 	private boolean sbolFilesAreLoaded = true;
 	private String locatedFilePath;
 	
+	/**
+	 * 
+	 * @param sbolFilePaths - The directory to the SBOL file(s).
+	 * @param defaultURIPrefix - The default URI prefix to be set to each SBOLDocument.
+	 * @throws SBOLException
+	 * @throws FileNotFoundException
+	 * @throws SBOLValidationException
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 */
 	public SBOLFileManager(Set<String> sbolFilePaths, String defaultURIPrefix) throws SBOLException, FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException 
 	{
 		if (sbolFilePaths.size() == 0) 
@@ -75,37 +84,15 @@ public class SBOLFileManager {
 				String fileName = f.getName().replace(".sbol", "");
 				SBOLReader.setURIPrefix(defaultURIPrefix + "/" + fileName);
 				SBOLDocument sbolDoc = SBOLReader.read(new FileInputStream(sbolFilePath));
+				
 				if (sbolDoc != null) 
-				{
-					//store each sbol document to its corresponding sbol file path to fileDocMap to keep track of which sbol 
-					//document belong to which sbol file.
+				{	
+					/*
+					 *store each sbol document to its corresponding sbol file path to fileDocMap to keep track 
+					 *of which sbol document belong to which sbol file. 
+					 */
 					fileDocMap.put(sbolFilePath, sbolDoc); 
-					for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
-					{
-						if(SBOLDOC.getComponentDefinition(c.getIdentity()) == null) 
-						{
-							try {
-								SBOLDOC.createCopy(c);
-							}
-							catch (SBOLValidationException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-					for(Sequence s : sbolDoc.getSequences())
-					{
-						if(SBOLDOC.getSequence(s.getIdentity()) == null) 
-						{
-							try {
-								SBOLDOC.createCopy(s);
-							}
-							catch (SBOLValidationException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
+					SBOLUtility.copyAllTopLevels(sbolDoc, SBOLDOC);
 				} 
 				else
 					sbolFilesAreLoaded = false;
@@ -203,7 +190,7 @@ public class SBOLFileManager {
 					SBOLUtility.addDNAComponent(c, sbolDoc, false);
 			}
 			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
-			System.out.println("Wrote sbolAnnot to this file: " + sbolFilePath);
+			//System.out.println("Wrote sbolAnnot to this file: " + sbolFilePath);
 		}
 	}
 	

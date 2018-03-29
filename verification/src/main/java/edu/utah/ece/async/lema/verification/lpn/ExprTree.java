@@ -1628,9 +1628,9 @@ public class ExprTree {
 		} else {
 			if (isit == 'n') {
 				if (uvalue == 0) {
-					result = "FALSE";
+					result = "false";
 				} else {
-					result = "TRUE";
+					result = "true";
 				}
 			}
 		}
@@ -2810,15 +2810,15 @@ public class ExprTree {
 				if (verilog)
 					result = "0";
 				else
-					result = "FALSE";
+					result = "false";
 			} else if (uvalue == 1 && lvalue == 1) {
 				if (verilog)
 					result = "1";
 				else
-					result = "TRUE";
+					result = "true";
 			} else {
 				if (sbmlFlag)
-					result = "TRUE";
+					result = "true";
 				else
 					result = "UNKNOWN";
 			}

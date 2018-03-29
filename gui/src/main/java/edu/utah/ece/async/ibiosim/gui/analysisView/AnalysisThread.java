@@ -24,10 +24,13 @@ public class AnalysisThread extends Thread {
 	private AnalysisView analysisView;
 
 	private boolean refresh;
+	
+	private String direct = ".";
 
-	public AnalysisThread(AnalysisView analysisView) {
+	public AnalysisThread(AnalysisView analysisView, String direct) {
 		super(analysisView);
 		this.analysisView = analysisView;
+		this.direct = direct;
 	}
 
 	public void start(boolean refresh) {
@@ -37,6 +40,6 @@ public class AnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		analysisView.run(refresh);
+		analysisView.run(refresh,direct);
 	}
 }

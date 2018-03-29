@@ -268,7 +268,7 @@ public class Analysis implements BioObserver
       }
       loadUserValues(propertiesMap);
       AnalysisPropertiesWriter.createProperties(properties);
-      run.execute();
+      run.execute(properties.getDirectory(),properties.getFilename());
     }
   }
 
@@ -442,7 +442,7 @@ public class Analysis implements BioObserver
       String newFilename = root + File.separator + task.getId() + File.separator + modelSource;
       SBMLWriter.write(flatten, newFilename, ' ', (short) 2);
       AnalysisPropertiesWriter.createProperties(properties);
-      run.execute();
+      run.execute(properties.getDirectory(),properties.getFilename());
     }
     for (Output output : sedml.getOutputs()) 
     {

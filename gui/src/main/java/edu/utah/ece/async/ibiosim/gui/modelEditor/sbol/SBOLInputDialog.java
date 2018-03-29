@@ -108,7 +108,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private JCheckBox showRootDefs;
 	private JRadioButton showModDefs, showCompDefs;
 	
-	private JButton openSBOLDesigner, openVPRGenerator, optionsButton, cancelButton;
+	private JButton openSBOLDesigner, openVPRGenerator, optionsButton; //, cancelButton;
 
 	private SBOLDocument sbolDesigns;
 	
@@ -265,12 +265,6 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					}
 					File file = SBOLUtils.setupFile();
 					
-					JOptionPane.showMessageDialog(Gui.frame, "Warning! You are about to remove the following SBOL component from the SBOL library file: \n"
-							+ "SBOL library file at: " + file.getAbsolutePath() + "\n"
-							+ "SBOL id: " + deletedObject.getIdentity() + "\n"
-							+ "SBOL displayId: " + deletedObject.getDisplayId() + "\n"
-							+ "SBOL name: " + deletedObject.getName());
-					
 					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
 				} catch (Exception e1) {
@@ -385,7 +379,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		{
 			int row = table.convertRowIndexToModel(r);
 			TopLevel comp = ((TopLevelTableModel) table.getModel()).getElement(row); 
-			outputDoc.setDefaultURIprefix(comp.getDocument().getDefaultURIprefix());
+			//outputDoc.setDefaultURIprefix(comp.getSBOLDocument().getDefaultURIprefix());
 			try 
 			{
 				outputDoc.createCopy(sbolDesigns.createRecursiveCopy(comp));
@@ -397,6 +391,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 					} 
 				}
 				*/
+				
 			} 
 			catch (SBOLValidationException e) 
 			{

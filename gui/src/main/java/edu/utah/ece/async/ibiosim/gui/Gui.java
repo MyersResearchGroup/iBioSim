@@ -151,6 +151,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
+import org.virtualparts.VPRException;
+import org.virtualparts.VPRTripleStoreException;
 
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
@@ -170,8 +172,6 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import uk.ac.ebi.biomodels.ws.BioModelsWSException;
-import uk.ac.ncl.ico2s.VPRException;
-import uk.ac.ncl.ico2s.VPRTripleStoreException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
@@ -1184,6 +1184,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				System.out.println(filename);
+				e1.printStackTrace();
+				
 				return;
 			}
 			root = filename;
@@ -1512,21 +1515,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Utility.submitBugReport("");
 		} else if (e.getSource() == manual) {
 			try {
-				String directory = "";
 				String theFile = "";
-				theFile = "iBioSim.html";
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				if (System.getProperty("os.name").contentEquals("Linux")
-						|| System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					directory = ENVVAR + "/docs/";
-				} else {
-					directory = ENVVAR + "\\docs\\";
-				}
-				File work = new File(directory);
-				log.addText("Executing:\n" + command + " " + directory + theFile + "\n");
+				theFile = "http://www.async.ece.utah.edu/tools/BioSim/docs/iBioSim.html";
+				log.addText("Executing:\n" + command + " " + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec(command + " " + theFile, null, work);
+				exec.exec(command + " " + theFile);
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -3816,7 +3811,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	    AnalysisPropertiesWriter.createProperties(properties);
 		Run run = new Run(properties);
 	    run.addObserver(this);
-	    run.execute();
+	    run.execute(properties.getDirectory(),properties.getFilename());
 	}
 
 	private HashMap<String, String> importModels(String path, SedML sedml, ArchiveComponents ac)
@@ -3998,6 +3993,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		readSBOLDocument();
 		return sbolDocument;
 	}
+	
+	/**
+	 * Retrieves the SBOL library file located in the iBioSim workspace.
+	 * @return The full path to the SBOL library file.
+	 */
+	public String getSBOLFile()
+	{
+		return root + File.separator + currentProjectId + ".sbol";
+	}
 
 	/**
 	 * Return True if the current SBOLDocument in the current iBioSim workspace
@@ -4017,7 +4021,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * 
 	 */
 	protected void readSBOLDocument() {
-		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
+		String sbolFilename = getSBOLFile();
 		File sbolFile = new File(sbolFilename);
 		if (sbolFile.exists()) 
 		{
@@ -4073,7 +4077,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * workspace as an SBOL file.
 	 */
 	public void writeSBOLDocument() {
-		String sbolFilename = root + File.separator + currentProjectId + ".sbol";
+		String sbolFilename = getSBOLFile();
 		try {
 			sbolDocument.write(sbolFilename);
 		} catch (IOException e) {
@@ -6094,7 +6098,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @param filePath - The file location where the SBOL document is located.
 	 * @return The number of SBML models that was converted from SBOL. 
 	 */
-	private int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+	public int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
 		int numGeneratedSBML = 0;
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
@@ -7308,15 +7312,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
 				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
 		actionPerformed(projectSynthesized);
-		if (!synthView.getRootDirectory().equals(root)) {
-			// String outputFileID = synthView.getSpecFileID();
-			// int version = 1;
-			// while(!overwrite(root + separator + outputFileID, outputFileID))
-			// {
-			// outputFileID = synthView.getSpecFileID().replace(".xml", "") +
-			// "_" + version + ".xml";
-			// version++;
-			// }
+		if (!synthView.getRootDirectory().equals(root)) 
+		{
 			List<String> solutionFileIDs = synthView.run(root);
 			if (solutionFileIDs.size() > 0) {
 				for (String solutionFileID : solutionFileIDs) {
@@ -7338,19 +7335,27 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	/**
+	 * Create a synthesis tab to perform technology mapping in the iBioSim workspace
+	 */
 	private void createSBOLSynthesisView() {
 		String specFileID = GlobalConstants.getFilename(tree.getFile());
 		String defaultSynthID = specFileID.replace(".xml", "");
 		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
 				"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
-		if (synthID != null) {
-			if (synthID.length() == 0) {
+		if (synthID != null) 
+		{
+			if (synthID.length() == 0) 
+			{
 				synthID = defaultSynthID;
-			} else {
+			} 
+			else 
+			{
 				synthID = synthID.trim();
 			}
-			if (overwrite(root + File.separator + synthID, synthID)) {
-				SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
+			if (overwrite(root + File.separator + synthID, synthID)) 
+			{
+				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7358,15 +7363,27 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	/**
+	 * Open up the Synthesis View and load up the fields that were stored in the property file 
+	 */
 	private void openSBOLSynthesisView() {
-		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator,
-				frame);
-		if (synthProps != null) {
-			String synthID = GlobalConstants.getFilename(tree.getFile());
-			SynthesisView synthView = new SynthesisView(synthID, File.separator, root, log);
-			synthView.loadSynthesisProperties(synthProps);
-			addTab(synthID, synthView, null);
+		//Properties synthProps;
+		try 
+		{
+			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
+			if (synthProps != null) {
+				String synthID = GlobalConstants.getFilename(tree.getFile());
+				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
+				synthView.loadSynthesisProperties(synthProps);
+				addTab(synthID, synthView, null);
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
 	protected void createAnalysisView(String modelFile, boolean lema) throws Exception {
@@ -8678,6 +8695,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return true;
 	}
 
+	/**
+	 * Check if the given name for the file to be created and the path of the file already exist within the iBioSim 
+	 * project workspace. If the file name exist, the user will be ask to overwrite the existing file. 
+	 * 
+	 * @param fullPath - The full path of the file to be created.
+	 * @param name - The name of the file to be created
+	 * @return True if the method complete successfully. Otherwise, false is returned if the user did not want to overwrite the existing file
+	 */
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			String[] views = canDelete(name);
@@ -8830,20 +8855,34 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					} catch (Exception e) {
 						check = "";
 					}
-				} else if (new File(
-						root + File.separator + s + File.separator + s + ".sbolsynth.properties")
-						.exists()) {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
-							root + File.separator + s, File.separator, Gui.frame);
-					if (synthProps != null) {
-						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
-							check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-						} else {
-							JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
-									"Missing Property", JOptionPane.ERROR_MESSAGE);
+				} 
+				else if (new File(root + File.separator + s + File.separator + s + ".sbolsynth.properties").exists()) 
+				{
+					try 
+					{
+						Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
+								root + File.separator + s, File.separator, Gui.frame);
+						if (synthProps != null) 
+						{
+							if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) 
+							{
+								check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+							} 
+							else 
+							{
+								JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.",
+										"Missing Property", JOptionPane.ERROR_MESSAGE);
+							}
+						} 
+						else 
+						{
+							check = "";
 						}
-					} else {
-						check = "";
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				check = check.replace(".gcm", ".xml");

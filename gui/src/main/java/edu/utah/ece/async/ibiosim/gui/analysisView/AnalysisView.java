@@ -839,7 +839,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
    * @throws XMLStreamException
    * @throws NumberFormatException
    */
-  public void run(boolean refresh)
+  public void run(boolean refresh, String direct)
   {
     if (!save())
     {
@@ -848,6 +848,12 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     String root = properties.getRoot();
     String outDir = properties.getDirectory();
     String simName = properties.getSim();
+    String filename = properties.getFilename();
+    
+    if (direct!=null && !direct.equals(".")) {
+    	outDir = outDir + File.separator + direct;
+    	filename = outDir + File.separator + properties.getModelFile();
+    }
 
     if (monteCarlo.isSelected() || ODE.isSelected())
     {
@@ -894,7 +900,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
     }
     try {
-      exit = runProgram.execute();
+      exit = runProgram.execute(outDir,filename);
       if (stateAbstraction.isSelected() && modelEditor == null && !simName.contains("markov-chain-analysis") && exit == 0)
       {
         //      simProp = simProp.replace("\\", "/");
@@ -1451,7 +1457,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   {
     String simName = properties.getId();
 
-    String outDir = properties.getDirectory();
+    String outDir = properties.getDirectory();   // TODO: not sure about this for sweeps
+    String filename = properties.getFilename();  // TODO: not sure about this for sweeps
     String printer_id = "tsd.printer";
     String printer_track_quantity = "amount";
     if (concentrations.isSelected())
@@ -1465,6 +1472,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
   {
     boolean ignoreSweep = false;
     String modelFile = properties.getModelFile();
+    String filename = properties.getFilename();  // TODO: not sure about this for sweeps
 
     if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected())
     {
@@ -1537,7 +1545,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       {
         try {
           LPN lhpnFile = new LPN();
-          lhpnFile.load(properties.getFilename());
+          lhpnFile.load(filename);
           Abstraction abst = new Abstraction(lhpnFile, properties.getVerificationProperties().getAbsProperty());
           abst.abstractSTG(false);
           abst.save(properties.getDirectory() + File.separator + modelFile);
@@ -1577,7 +1585,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       }
       t1.setFilename(properties.getDirectory() + File.separator + modelFile.replace(".lpn", ".xml"));
       t1.outputSBML();
-      new AnalysisThread(this).start(true);
+      new AnalysisThread(this, ".").start(true);
     }
   }
 
@@ -2225,7 +2233,11 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     qssa.setText(properties.getAdvancedProperties().getQss()+"");
     maxCon.setText(properties.getAdvancedProperties().getCon()+"");
     diffStoichAmp.setText(properties.getAdvancedProperties().getStoichAmp()+"");
-    bifurcation.setSelectedIndex(properties.getIncrementalProperties().getNumPaths()-1);
+    if (properties.getIncrementalProperties().getNumPaths()-1 == 1) {
+    	bifurcation.setSelectedIndex(1);
+    } else {
+    	bifurcation.setSelectedIndex(0);
+    }
     if (properties.getIncrementalProperties().isMpde()) {
     	mpde.doClick();
     } else if (properties.getIncrementalProperties().isMedianPath()) {

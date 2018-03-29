@@ -32,7 +32,7 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 /**
- * 
+ * Class to create a graph resembling a genetic regulatory network used for SBML Technology Mapping.
  *
  * @author Nicholas Roehner
  * @author Chris Myers
@@ -41,11 +41,14 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
  */
 public class SynthesisGraph {
 
-	private String projectPath;
-	private String modelFileID;
-	private String submodelID;
-	//NOTE: hold the list of value nodes that connect/point to the key node.
-	private HashMap<SynthesisNode, List<SynthesisNode>> edges;  //NOTE: This is the library for the graph. This library will be initialized in constructGraph()
+	private String projectPath; //Directory path to the SBML Model
+	private String modelFileID; //SBML model ID of each library gate file
+	private String submodelID; //
+	
+	/* Hold the list of value nodes that connect/point to the key node.
+	 * for each library gate.
+	 */
+	private HashMap<SynthesisNode, List<SynthesisNode>> edges;  
 	private int nucleotideCount;
 	private Set<String> signals;
 	private Set<URI> compURIs;
@@ -53,16 +56,23 @@ public class SynthesisGraph {
 	private List<SynthesisNode> inputs;
 	private List<String> paths;
 	
-	public SynthesisGraph(BioModel biomodel, SBOLFileManager fileManager) throws SBOLException {
+	/**
+	 * Constructor used to build a graph to resemble a genetic regulatory network for SBML technology mapping.
+	 * @param biomodel - The BioModel used to build into a SynthesisGraph
+	 * @param fileManager - The SBOLFileManager that keep track where the location of the gate library files are located.
+	 * @throws SBOLException
+	 */
+	public SynthesisGraph(BioModel biomodel, SBOLFileManager fileManager) throws SBOLException 
+	{
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		projectPath = biomodel.getPath();
 		modelFileID = biomodel.getSBMLFile();
+		
 		//NOTE: create reaction graph from the sbml model and return all nodes that makes up transcription and complex formation reaction
 		Set<SynthesisNode> nodes = constructGraph(sbmlModel, fileManager); 
-		decomposeGraph(nodes); //TODO: decomposeGraph creates the diff gates?
-		output = identifyOutput(nodes);
+		decomposeGraph(nodes); //Decompose graph to NOT or NOR gate
+		output = identifyOutput(nodes); //figure out the output node for each gate
 		paths = buildPaths(getOutput()); 
-//		print();
 	}
 	
 	private void decomposeGraph(Set<SynthesisNode> nodes) {
