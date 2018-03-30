@@ -279,7 +279,7 @@ public class Run extends CoreObservable implements ActionListener
     if (filename.contains(".lpn"))
     {
       lhpnFile = new LPN();
-      lhpnFile.load(root + File.separator + filename);
+      lhpnFile.load(filename);
     }
     else
     {
@@ -288,11 +288,12 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
 
-      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
-      bioModel.load(root + File.separator + filename);
+      BioModel bioModel = BioModel.createBioModel(properties.getDirectory(), this);
+      bioModel.load(filename);
       if (bioModel.flattenModel(true) != null)
       {
-        if (!properties.getVerificationProperties().getLpnProperty().equals(""))
+        if (properties.getVerificationProperties().getLpnProperty()!=null &&
+        		!properties.getVerificationProperties().getLpnProperty().equals(""))
         {
           prop = properties.getVerificationProperties().getLpnProperty();
         }
@@ -349,7 +350,7 @@ public class Run extends CoreObservable implements ActionListener
         else
         {
           BioModel gcm = BioModel.createBioModel(root, this);
-          gcm.load(root + File.separator + filename);
+          gcm.load(filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
           {

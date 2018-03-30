@@ -486,7 +486,8 @@ public class BioModel extends CoreObservable{
 				formula.replaceChild(i, replaceParams(formula.getChild(i), parameters));
 			}
 		}
-		else if (parameters.keySet().contains(formula.getName())) {
+		else if (!formula.isNumber() && !formula.isOperator() 
+				&& parameters.keySet().contains(formula.getName())) {
 			return SBMLutilities.myParseFormula(parameters.get(formula.getName()));
 		}
 		return formula;

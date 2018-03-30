@@ -110,7 +110,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 				createStateVector(variables, allVariables), copyAllVariables(allVariables));
 		// markings.add(state);
 		counter++;
-		progress.setString("States found: " + counter);
+		if (progress != null) {
+			progress.setString("States found: " + counter);
+		}
 		stateGraph.add(state);// .put(createStateVector(variables,
 		// allVariables), markings);
 		markings.add(stateGraph.size() - 1);
@@ -272,7 +274,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 				}
 				state.setPersistentTransitions(persistentTrans.toArray(new String[0]));
 				counter++;
-				progress.setString("States found: " + counter);
+				if (progress != null) {
+					progress.setString("States found: " + counter);
+				}
 				stateGraph.add(state);// .put(createStateVector(variables,
 				// allVariables), markings);
 				markings.add(stateGraph.size() - 1);
