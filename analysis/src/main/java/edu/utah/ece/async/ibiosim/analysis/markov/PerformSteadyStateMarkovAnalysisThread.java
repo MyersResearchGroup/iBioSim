@@ -55,9 +55,9 @@ public class PerformSteadyStateMarkovAnalysisThread extends Thread {
 	@Override
 	public void run() {
 		try {
-      sg.performSteadyStateMarkovianAnalysis(tolerance, conditions, null, progress);
-    } catch (BioSimException e) {
-      e.printStackTrace();
-    }
+			sg.performSteadyStateMarkovianAnalysis(tolerance, conditions, null, progress);
+		} catch (BioSimException e) {
+			e.printStackTrace();
+		}
 	}
 }

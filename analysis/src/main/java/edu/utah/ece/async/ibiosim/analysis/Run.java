@@ -279,7 +279,7 @@ public class Run extends CoreObservable implements ActionListener
     if (filename.contains(".lpn"))
     {
       lhpnFile = new LPN();
-      lhpnFile.load(root + File.separator + filename);
+      lhpnFile.load(filename);
     }
     else
     {
@@ -288,11 +288,12 @@ public class Run extends CoreObservable implements ActionListener
       ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
       retrieveSpeciesAndConLevels(specs, conLevel);
 
-      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
-      bioModel.load(root + File.separator + filename);
+      BioModel bioModel = BioModel.createBioModel(properties.getDirectory(), this);
+      bioModel.load(filename);
       if (bioModel.flattenModel(true) != null)
       {
-        if (!properties.getVerificationProperties().getLpnProperty().equals(""))
+        if (properties.getVerificationProperties().getLpnProperty()!=null &&
+        		!properties.getVerificationProperties().getLpnProperty().equals(""))
         {
           prop = properties.getVerificationProperties().getLpnProperty();
         }
@@ -349,7 +350,7 @@ public class Run extends CoreObservable implements ActionListener
         else
         {
           BioModel gcm = BioModel.createBioModel(root, this);
-          gcm.load(root + File.separator + filename);
+          gcm.load(filename);
           ArrayList<Property> propList = new ArrayList<Property>();
           if (prop == null)
           {
@@ -359,7 +360,7 @@ public class Run extends CoreObservable implements ActionListener
               String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
               if (constraint.startsWith("St("))
               {
-                propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));
+                propList.add(sg.createProperty(m.getConstraint(num).getMetaId(), Translator.convertProperty(m.getConstraint(num).getMath())));
               }
             }
           }
@@ -371,7 +372,7 @@ public class Run extends CoreObservable implements ActionListener
           String simrep = sg.getMarkovResults();
           if (simrep != null)
           {
-            FileOutputStream simrepstream = new FileOutputStream(new File(root + File.separator + "sim-rep.txt"));
+            FileOutputStream simrepstream = new FileOutputStream(new File(properties.getDirectory() + File.separator + "sim-rep.txt"));
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
@@ -417,7 +418,7 @@ public class Run extends CoreObservable implements ActionListener
           String simrep = sg.getMarkovResults();
           if (simrep != null)
           {
-            FileOutputStream simrepstream = new FileOutputStream(new File(properties.getRoot() + File.separator + "sim-rep.txt"));
+            FileOutputStream simrepstream = new FileOutputStream(new File(properties.getDirectory() + File.separator + "sim-rep.txt"));
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
@@ -602,128 +603,131 @@ public class Run extends CoreObservable implements ActionListener
 
     return exitValue;
   }
+  
   private int executePrism(String filename) throws IOException, InterruptedException, XMLStreamException, BioSimException
   {
-    int exitValue = 255;
-    String prop = null;
-    String directory = null;
-    String out = null;
-    LPN lhpnFile = null;
-    String root = properties.getRoot();
-    if (filename.contains(".lpn"))
-    {
-      lhpnFile = new LPN();
-      lhpnFile.load(properties.getRoot() + File.separator + filename);
-    }
-    else
-    {
-      new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
-      ArrayList<String> specs = new ArrayList<String>();
-      ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-      retrieveSpeciesAndConLevels(specs, conLevel);
-      BioModel bioModel = BioModel.createBioModel(properties.getRoot(), this);
-      bioModel.load(root + File.separator + filename);
-      if (bioModel.flattenModel(true) != null)
-      {
-        if (!properties.getVerificationProperties().getLpnProperty().equals(""))
-        {
-          prop = properties.getVerificationProperties().getLpnProperty();
-        }
-        else
-        {
-          prop = properties.getVerificationProperties().getConstraintProperty();
-        }
-        MutableString mutProp = new MutableString(prop);
-        lhpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
-        prop = mutProp.getString();
-        if (lhpnFile == null)
-        {
-          new File(properties.getRoot() + File.separator + "running").delete();
-          return 0;
-        }
-        message.setLog("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism"));
-        this.notifyObservers(message);
-        message.setLog("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl"));
-        this.notifyObservers(message);
-        LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), 
-          bioModel.getSBMLDocument());
-        Preferences biosimrc = Preferences.userRoot();
-        String prismCmd = biosimrc.get("biosim.general.prism", "");
-        message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
-        this.notifyObservers(message);
-        reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
-        String error = "", result = "", fullLog = "";
-        try
-        {
-          InputStream reb = reb2sac.getInputStream();
-          InputStreamReader isr = new InputStreamReader(reb);
-          BufferedReader br = new BufferedReader(isr);
-          String line;
-          while ((line = br.readLine()) != null)
-          {
-            fullLog += line + '\n';
-            if (line.startsWith("Result:"))
-            {
-              result = line + '\n';
-            }
-          }
-          InputStream reb2 = reb2sac.getErrorStream();
-          int read = reb2.read();
-          while (read != -1)
-          {
-            error += (char) read;
-            read = reb2.read();
-          }
-          br.close();
-          isr.close();
-          reb.close();
-          reb2.close();
-        }
-        catch (Exception e)
-        {
-          // e.printStackTrace();
-        }
-        if (reb2sac != null)
-        {
-          exitValue = reb2sac.waitFor();
-        }
-        if (!error.equals(""))
-        {
-          message.setLog("Errors:\n" + error + "\n");
+	  int exitValue = 255;
+	  String prop = null;
+	  String directory = properties.getDirectory() + File.separator;
+	  String out = properties.getModelFile().replace(".xml", "").replaceAll(".lpn", "").replaceAll(".sbml", "");
+	  LPN lhpnFile = null;
+	  //String root = properties.getRoot();
+	  if (filename.contains(".lpn"))
+	  {
+		  lhpnFile = new LPN();
+		  lhpnFile.load(properties.getRoot() + File.separator + filename);
+	  }
+	  else
+	  {
+		  new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
+		  ArrayList<String> specs = new ArrayList<String>();
+		  ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+		  retrieveSpeciesAndConLevels(specs, conLevel);
+		  BioModel bioModel = BioModel.createBioModel(properties.getDirectory(), this);
+		  bioModel.load(filename);
+		  if (bioModel.flattenModel(true) != null)
+		  {
+			  if (properties.getVerificationProperties().getLpnProperty()!=null &&
+					  !properties.getVerificationProperties().getLpnProperty().equals(""))
+			  {
+				  prop = properties.getVerificationProperties().getLpnProperty();
+			  }
+			  else
+			  {
+				  prop = properties.getVerificationProperties().getConstraintProperty();
+			  }
+			  MutableString mutProp = new MutableString(prop);
+			  lhpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
+			  prop = mutProp.getString();
+			  if (lhpnFile == null)
+			  {
+				  new File(properties.getRoot() + File.separator + "running").delete();
+				  return 0;
+			  }
+			  message.setLog("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism"));
+			  this.notifyObservers(message);
+			  message.setLog("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl"));
+			  this.notifyObservers(message);
+			  LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), 
+					  bioModel.getSBMLDocument());
+			  Preferences biosimrc = Preferences.userRoot();
+			  String prismCmd = biosimrc.get("biosim.general.prism", "");
+			  message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
+			  this.notifyObservers(message);
+			  reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
+			  String error = "", result = "", fullLog = "";
+			  try
+			  {
+				  InputStream reb = reb2sac.getInputStream();
+				  InputStreamReader isr = new InputStreamReader(reb);
+				  BufferedReader br = new BufferedReader(isr);
+				  String line;
+				  while ((line = br.readLine()) != null)
+				  {
+					  fullLog += line + '\n';
+					  if (line.startsWith("Result:"))
+					  {
+						  result = line + '\n';
+					  }
+				  }
+				  InputStream reb2 = reb2sac.getErrorStream();
+				  int read = reb2.read();
+				  while (read != -1)
+				  {
+					  error += (char) read;
+					  read = reb2.read();
+				  }
+				  br.close();
+				  isr.close();
+				  reb.close();
+				  reb2.close();
+			  }
+			  catch (Exception e)
+			  {
+				  // e.printStackTrace();
+			  }
+			  if (reb2sac != null)
+			  {
+				  exitValue = reb2sac.waitFor();
+			  }
+			  if (!error.equals(""))
+			  {
+				  message.setLog("Errors:\n" + error + "\n");
 
-          this.notifyObservers(message);
-        }
-        else if (!result.equals(""))
-        {
-          message.setLog(result);
-          this.notifyObservers(message);
-        }
-        else
-        {
-          throw new BioSimException("Verification Failed!", "Verification could not be executed. Something went wrong.");
-        }
+				  this.notifyObservers(message);
+			  }
+			  else if (!result.equals(""))
+			  {
+				  message.setLog(result);
+				  this.notifyObservers(message);
+			  }
+			  else
+			  {
+				  throw new BioSimException("Verification Failed!", "Verification could not be executed. Something went wrong.");
+			  }
 
-        exitValue = 0;
-      }
-      else
-      {
-        new File(directory + File.separator + "running").delete();
-        logFile.close();
-        exitValue = 0;
-      }
-    }
+			  exitValue = 0;
+		  }
+		  else
+		  {
+			  new File(directory + File.separator + "running").delete();
+			  logFile.close();
+			  exitValue = 0;
+		  }
+	  }
 
-    if (reb2sac != null)
-    {
-      exitValue = reb2sac.waitFor();
-    }
+	  if (reb2sac != null)
+	  {
+		  exitValue = reb2sac.waitFor();
+	  }
 
-    Preferences biosimrc = Preferences.userRoot();
-    String prismCmd = biosimrc.get("biosim.general.prism", "");
-    message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
-    this.notifyObservers(message);
-    exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
-    return exitValue;
+	  // TODO: seems redundant
+//	  Preferences biosimrc = Preferences.userRoot();
+//	  String prismCmd = biosimrc.get("biosim.general.prism", "");
+//	  message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
+//	  this.notifyObservers(message);
+//	  exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
+	  return exitValue;
   }
 
   private int executeDot(String filename) throws IOException, InterruptedException, BioSimException
