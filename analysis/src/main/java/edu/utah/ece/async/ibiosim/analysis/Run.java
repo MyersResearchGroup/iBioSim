@@ -721,11 +721,12 @@ public class Run extends CoreObservable implements ActionListener
 		  exitValue = reb2sac.waitFor();
 	  }
 
-	  Preferences biosimrc = Preferences.userRoot();
-	  String prismCmd = biosimrc.get("biosim.general.prism", "");
-	  message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
-	  this.notifyObservers(message);
-	  exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
+	  // TODO: seems redundant
+//	  Preferences biosimrc = Preferences.userRoot();
+//	  String prismCmd = biosimrc.get("biosim.general.prism", "");
+//	  message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl");
+//	  this.notifyObservers(message);
+//	  exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
 	  return exitValue;
   }
 
