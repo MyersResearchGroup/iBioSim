@@ -652,9 +652,19 @@ public class Run extends CoreObservable implements ActionListener
 					  bioModel.getSBMLDocument());
 			  Preferences biosimrc = Preferences.userRoot();
 			  String prismCmd = biosimrc.get("biosim.general.prism", "");
-			  message.setLog("Executing:\n" + prismCmd + " " + directory + out + ".prism" + " " + directory + out + ".pctl"); 
+			  if (prismCmd.contains("$prism")) {
+				  prismCmd = prismCmd.replace("$prism", directory + out + ".prism");
+			  } else {
+				  prismCmd = prismCmd + " " + directory + out + ".prism";
+			  }
+			  if (prismCmd.contains("$pctl")) {
+				  prismCmd = prismCmd.replace("$pctl", directory + out + ".pctl");
+			  } else {
+				  prismCmd = prismCmd + " " + directory + out + ".pctl";
+			  }
+			  message.setLog("Executing:\n" + prismCmd); 
 			  this.notifyObservers(message);
-			  reb2sac = exec.exec(prismCmd + " " + out + ".prism" + " " + out + ".pctl", null, work);
+			  reb2sac = exec.exec(prismCmd, null, work);
 			  String error = "", result = "", fullLog = "";
 			  try
 			  {
@@ -665,7 +675,7 @@ public class Run extends CoreObservable implements ActionListener
 				  while ((line = br.readLine()) != null)
 				  {
 					  fullLog += line + '\n';
-					  if (line.startsWith("Result:"))
+					  if (line.startsWith("Result"))
 					  {
 						  result = line + '\n';
 					  }
