@@ -850,6 +850,8 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     String simName = properties.getSim();
     String filename = properties.getFilename();
     
+    
+    
     if (direct!=null && !direct.equals(".")) {
     	outDir = outDir + File.separator + direct;
     	filename = outDir + File.separator + properties.getModelFile();
@@ -857,28 +859,21 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
 
     if (monteCarlo.isSelected() || ODE.isSelected())
     {
-      if (append.isSelected())
-      {
-        String[] searchForRunFiles = new File(outDir).list();
-        for (String s : searchForRunFiles)
-        {
-          if (s.length() > 3 && new File(outDir + File.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
-          {
-            new File(root + File.separator + outDir + File.separator + s).delete();
-          }
-        }
-      }
-      else
-      {
-        String[] searchForRunFiles = new File(outDir).list();
-        for (String s : searchForRunFiles)
-        {
-          if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(outDir + File.separator + s).isFile())
-          {
-            new File(outDir + File.separator + s).delete();
-          }
-        }
-      }
+    	String[] searchForRunFiles = new File(outDir).list();
+    	for (String s : searchForRunFiles)
+    	{
+    		if (s.length() > 3 && new File(outDir + File.separator + s).isFile() && (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd")))
+    		{
+    			new File(outDir + File.separator + s).delete();
+    		}
+    		if (!append.isSelected()) {
+    			if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(outDir + File.separator + s).isFile())
+    			{
+    				new File(outDir + File.separator + s).delete();
+    			}
+
+    		}
+    	}
     }
     progress = new JProgressBar(0, 100);
     progressCancel = new JButton("Cancel");
