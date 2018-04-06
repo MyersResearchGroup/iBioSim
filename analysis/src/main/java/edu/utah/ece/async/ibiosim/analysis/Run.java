@@ -108,6 +108,7 @@ public class Run extends CoreObservable implements ActionListener
     long time1, time2;
     
     work = new File(outDir);
+    new FileWriter(new File(outDir + File.separator + "running")).close();
     
     if (properties.isNary() && properties.isGui() && (properties.isSsa() || properties.isXhtml() || properties.isDot()))
     {
@@ -307,7 +308,7 @@ public class Run extends CoreObservable implements ActionListener
         prop = mutProp.getString();
         if (lhpnFile == null)
         {
-          new File(properties.getRoot() + File.separator + "running").delete();
+          new File(properties.getDirectory() + File.separator + "running").delete();
           return 0;
         }
         lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
@@ -315,7 +316,7 @@ public class Run extends CoreObservable implements ActionListener
       }
       else
       {
-        new File(properties.getRoot() + File.separator + "running").delete();
+        new File(properties.getDirectory() + File.separator + "running").delete();
         return 0;
       }
     }
@@ -376,6 +377,8 @@ public class Run extends CoreObservable implements ActionListener
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
+          sg.outputTSD(properties.getDirectory() + File.separator + "percent-term-time.tsd");
+          // TODO
           //          if(view)
           //          {
           //            viewStateGraph(filename, theFile, directory, sg);
@@ -563,7 +566,7 @@ public class Run extends CoreObservable implements ActionListener
     {
       dynSim.simulate(properties,filename);
 
-      new File(properties.getRoot() + File.separator + "running").delete();
+      new File(properties.getDirectory() + File.separator + "running").delete();
     }
     else
     {
@@ -641,7 +644,7 @@ public class Run extends CoreObservable implements ActionListener
 			  prop = mutProp.getString();
 			  if (lhpnFile == null)
 			  {
-				  new File(properties.getRoot() + File.separator + "running").delete();
+				  new File(properties.getDirectory() + File.separator + "running").delete();
 				  return 0;
 			  }
 			  message.setLog("Saving SBML file as PRISM file:\n" + filename.replace(".xml", ".prism"));
