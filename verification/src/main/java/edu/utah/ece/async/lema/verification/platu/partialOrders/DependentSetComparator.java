@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import edu.utah.ece.async.lema.verification.lpn.Transition;
 import edu.utah.ece.async.lema.verification.platu.main.Options;
+import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
  * 
@@ -86,6 +87,28 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 					}
 //				}
 			}
+			
+			////////////////////////////////TEMP CHANGE FOR BIRTH-DEATH PROCESS///////////////////
+			else { // Stochastic model
+				
+				LPN lpn0 = dep0.getSeed().getLpn();
+				LPN lpn1 = dep1.getSeed().getLpn();
+				
+				//  Variable vector
+				int[] variableVector0 = dep0.getCurStateArr()[lpn0.getLpnIndex()].getVariableVector();
+				HashMap<String, String> currentValuesAsString0 = lpn0.getAllVarsWithValuesAsString(variableVector0);
+				double rate0 = dep0.getSeed().getTransitionRateTree().evaluateExpr(currentValuesAsString0);
+				
+				//  Variable vector
+				int[] variableVector1 = dep1.getCurStateArr()[lpn1.getLpnIndex()].getVariableVector();
+				HashMap<String, String> currentValuesAsString1 = lpn1.getAllVarsWithValuesAsString(variableVector1);
+				double rate1 = dep1.getSeed().getTransitionRateTree().evaluateExpr(currentValuesAsString1);
+				
+				if(rate0 > rate1) return -1;
+				else if(rate0 < rate1) return 1;
+			}
+			//////////////////////////////END////////////////////////////////////////////////////////////
+			
 			// TODO: Add condition to compare the average transition rates.
 			return 0;
 		}	

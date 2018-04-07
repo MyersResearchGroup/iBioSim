@@ -16,6 +16,7 @@ package edu.utah.ece.async.lema.verification.platu.partialOrders;
 import java.util.HashSet;
 
 import edu.utah.ece.async.lema.verification.lpn.Transition;
+import edu.utah.ece.async.lema.verification.platu.stategraph.State;
 
 /**
  * 
@@ -30,11 +31,26 @@ public class DependentSet {
 	Transition seed;
 	boolean enabledTranIsDummy;
 	
-	public DependentSet(HashSet<Transition> dependent, Transition enabledTran2, boolean enabledTranIsDummy) {
+	////////////////////////////////TEMP CHANGE FOR BIRTH-DEATH PROCESS///////////////////
+	State[] curStateArray;
+	
+//	public DependentSet(HashSet<Transition> dependent, Transition enabledTran2, boolean enabledTranIsDummy) {
+//		this.dependent = dependent;
+//		this.seed = enabledTran2;
+//		this.enabledTranIsDummy = enabledTranIsDummy;
+//	}
+	public DependentSet(State[] curstatearr, HashSet<Transition> dependent, Transition enabledTran2, boolean enabledTranIsDummy) {
 		this.dependent = dependent;
 		this.seed = enabledTran2;
 		this.enabledTranIsDummy = enabledTranIsDummy;
+		this.curStateArray = curstatearr;
 	}
+	
+	public State[] getCurStateArr() {
+		return curStateArray;
+	}
+	
+	//////////////////////////////////////END//////////////////////////////////////////////////////
 
 	public HashSet<Transition> getDependent() {
 		return dependent;

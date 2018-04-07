@@ -1958,7 +1958,7 @@ public class Analysis extends CoreObservable{
 				//	  				DependentSet dependentSet = new DependentSet(newNextPersistent, seed, 
 				//	  						isDummyTran(sgList[seed.getLpnIndex()].getLpn().getTransition(seed.getTranIndex()).getName()));
 				//					_______________________________________________________________________
-				DependentSet dependentSet = new DependentSet(dependent, seed, isDummyTran(seed.getLabel())); 	  						
+				DependentSet dependentSet = new DependentSet(curStateArray, dependent, seed, isDummyTran(seed.getLabel())); 	  						
 				dependentSetQueue.add(dependentSet);
 			}
 			cachedNecessarySets.clear();
@@ -4846,7 +4846,7 @@ public class Analysis extends CoreObservable{
     		// TODO: temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
     		if(isDummyTran(enabledTran.getLabel()))
     			enabledIsDummy = true;
-    		DependentSet dependentSet = new DependentSet(dependent, enabledTran, enabledIsDummy);
+    		DependentSet dependentSet = new DependentSet(curStateArray, dependent, enabledTran, enabledIsDummy);
     		dependentSetQueue.add(dependentSet);
     	}    	
     	ready = dependentSetQueue.poll().getDependent();
@@ -4947,9 +4947,33 @@ public class Analysis extends CoreObservable{
     	if (seed.isPersistent()) {
     		seedTranIsPersistent = true;
     	}
-		HashSet<Transition> disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
-		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
-			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
+		
+    	//////////TEMP CHANGES FOR BIRTH-DEATH PROCESS//////////////
+//    	HashSet<Transition> disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
+//		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
+//			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
+    	
+    	double epsilon = 2.0;
+    	HashSet<Transition> disableSet = new HashSet<Transition>(); 
+		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran = new HashSet<Transition>();
+		
+		LPN seedLPN = seed.getLpn();
+		//  Variable vector
+		int[] variableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector();
+		HashMap<String, String> currentValuesAsString = seedLPN.getAllVarsWithValuesAsString(variableVector);
+		double seedRate = seed.getTransitionRateTree().evaluateExpr(currentValuesAsString);
+		
+		for(Transition otherTran: seedLPN.getAllTransitions()) {
+			if(seed == otherTran) continue;
+			double otherRate = otherTran.getTransitionRateTree().evaluateExpr(currentValuesAsString);
+			if( (Math.max(seedRate, otherRate)/Math.min(seedRate, otherRate)) <= epsilon) {
+				dependent.add(otherTran);
+			}
+			
+		}
+	
+		////////////////////////////////////////////////////////////////////////////////////////////
+				
 		if (Options.getDebugMode()) {
 			System.out.println("@ beginning of computeDependent, consider transition " + seed.getFullLabel());
 			printIntegerSet(disableSet, "Disable set for " + seed.getFullLabel());
