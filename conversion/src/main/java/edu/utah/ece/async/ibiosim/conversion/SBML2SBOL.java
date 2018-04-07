@@ -137,7 +137,9 @@ public class SBML2SBOL {
 	 * @throws IOException - Input Exception occurred. 
 	 * @throws SBOLConversionException - SBOL conversion exception occurred when reading in the referenced SBOL files.
 	 */
-	public static void convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
+	public static URI convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, 
+			SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) 
+					throws SBOLValidationException, XMLStreamException, IOException, SBOLConversionException {
 
 		//Load all SBOL files given from user to store reference SBOL objects
 		SBOLDocument sbol_Library = new SBOLDocument();
@@ -149,7 +151,7 @@ public class SBML2SBOL {
 		sbolDoc.setDefaultURIprefix(sbolURIPrefix);
 		sbolDoc.setComplete(false);
 
-		parseSBMLModel("file:" + fileName, externalSBMLPath, sbmlDoc, sbmlDoc.getModel(), sbolDoc, sbol_Library); 
+		return parseSBMLModel("file:" + fileName, externalSBMLPath, sbmlDoc, sbmlDoc.getModel(), sbolDoc, sbol_Library); 
 	}
 	
 	/**
@@ -169,7 +171,7 @@ public class SBML2SBOL {
 	 * @throws XMLStreamException - Invalid XML file.
 	 * @throws IOException - Input Exception occurred. 
 	 */
-	private static void parseSBMLModel(String source, String externalSBMLPath, SBMLDocument sbmlDoc, Model model, SBOLDocument sbolDoc, SBOLDocument sbol_Library) throws SBOLValidationException, XMLStreamException, IOException 
+	private static URI parseSBMLModel(String source, String externalSBMLPath, SBMLDocument sbmlDoc, Model model, SBOLDocument sbolDoc, SBOLDocument sbol_Library) throws SBOLValidationException, XMLStreamException, IOException 
 	{
 		//String modelId = model.getId();
 		URI sourceURI  = URI.create(source);
@@ -178,6 +180,12 @@ public class SBML2SBOL {
 
 		org.sbolstandard.core2.Model sbolModel = sbolDoc.getModel(model.getId() + "_model", VERSION);
 		if (sbolModel!=null) {
+			// TODO: should not need to generate SBOL if Model already exists
+			for (ModuleDefinition md : sbolDoc.getModuleDefinitions()) {
+				if (md.getModelURIs().contains(sbolModel.getIdentity())) {
+					return md.getIdentity();
+				}
+			}
 			sbolDoc.removeModel(sbolModel);
 		}
 		
@@ -225,6 +233,8 @@ public class SBML2SBOL {
 		}
 
 		extractSubModels(source, externalSBMLPath, sbmlDoc, sbol_Library, sbolDoc, moduleDef, model);
+		
+		return moduleDef.getIdentity();
 	}
 	
 
@@ -613,13 +623,14 @@ public class SBML2SBOL {
 				String modelRef = sbmlCompModel.getListOfSubmodels().get(subModelId).getModelRef();
 				ExternalModelDefinition extModelRef = sbmlComp.getListOfExternalModelDefinitions().get(modelRef);
 				Model subModel = null;
+				URI moduleDefIdentity = null;
 				if (extModelRef!=null) {
 					String extModel = extModelRef.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 					SBMLDocument subDocument = SBMLReader.read(new File(externalSBMLPath + File.separator + extModel));
 					subModel = subDocument.getModel();
 					if (!comps.contains(modelRef)) {
 						comps.add(modelRef);
-						parseSBMLModel("file:"+extModelRef.getSource(), externalSBMLPath, subDocument, subModel, sbolDoc, sbol_Library);
+						moduleDefIdentity = parseSBMLModel("file:"+extModelRef.getSource(), externalSBMLPath, subDocument, subModel, sbolDoc, sbol_Library);
 					}
 				} else {
 					subModel = sbmlComp.getListOfModelDefinitions().get(modelRef);
@@ -628,12 +639,12 @@ public class SBML2SBOL {
 					} else {
 						if (!comps.contains(modelRef)) {
 							comps.add(modelRef);
-							parseSBMLModel("file:"+source, externalSBMLPath, sbmlDoc,subModel,sbolDoc, sbol_Library);
+							moduleDefIdentity = parseSBMLModel("file:"+source, externalSBMLPath, sbmlDoc,subModel,sbolDoc, sbol_Library);
 						}
 					}	
 				}	
 				
-				Module m = moduleDef.createModule(subModelId, subModel.getId()+"_md", VERSION);
+				Module m = moduleDef.createModule(subModelId, moduleDefIdentity);
 
 				for (int j = 0; j < model.getSpeciesCount(); j++) 
 				{

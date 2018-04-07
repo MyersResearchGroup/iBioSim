@@ -39,6 +39,7 @@ import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
+import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.MapsTo;
@@ -102,13 +103,18 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
+	 * @throws SBOLValidationException 
 	 */
-	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException {
+	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
 		List<BioModel> models = new LinkedList<BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
 		targetModel.createSBMLDocument(getDisplayID(moduleDef), false, false);
+		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(getDisplayID(moduleDef)+"_model", "1", 
+				URI.create("file:" + getDisplayID(moduleDef) + ".xml"), 
+				EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
+		moduleDef.addModel(sbolModel);
 
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
@@ -322,9 +328,10 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file.
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong the with SBML model.
+	 * @throws SBOLValidationException 
 	 */
 	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) throws XMLStreamException, IOException, BioSimException {
+			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);

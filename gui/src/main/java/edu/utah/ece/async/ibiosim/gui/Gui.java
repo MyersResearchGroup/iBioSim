@@ -140,15 +140,21 @@ import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
+import org.sbolstandard.core2.Activity;
+import org.sbolstandard.core2.Association;
+import org.sbolstandard.core2.Attachment;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.GenericTopLevel;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.Plan;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
 import org.virtualparts.VPRException;
@@ -180,12 +186,14 @@ import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
+import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.GCM2SBML;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
+import edu.utah.ece.async.ibiosim.dataModels.graphData.GraphData;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
@@ -336,7 +344,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	protected static final String		iBioSimVersion		= "3.0.0-beta";	
+	protected static final String		iBioSimVersion		= "3.0.0";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
@@ -2301,7 +2309,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					SBOLReader.setKeepGoing(true);
 					sbolDoc = SBOLReader
 							.read(root + File.separator + ((SBOLDesignerPlugin) comp).getFileName());
-					checkSBOL(sbolDoc, true);
+					checkSBOL(sbolDoc, true, true);
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Error Validating SBOL File.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -4114,6 +4122,69 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			writeSEDMLDocument();
 		}
 	}
+	
+	public void createIBioSimActivity() throws Exception {
+		Activity iBioSimActivity = sbolDocument.getActivity(currentProjectId + "_iBioSim_activity", "1");
+		if (iBioSimActivity==null) {
+			iBioSimActivity = sbolDocument.createActivity(currentProjectId + "_iBioSim_activity", "1");
+			Association association = iBioSimActivity.createAssociation("association", 
+					URI.create("https://synbiohub.org/public/SBOL_Software/iBioSim/"+iBioSimVersion));
+			Plan plan = sbolDocument.createPlan(currentProjectId + "_plan", "1");
+			association.setPlan(plan.getIdentity());
+			Attachment sedmlFile = sbolDocument.createAttachment(currentProjectId + "_sedml", "1", 
+					URI.create("file:" + currentProjectId + ".sedml"));
+			sedmlFile.setName(currentProjectId + ".sedml"); 
+			sedmlFile.setFormat(URI.create("http://identifiers.org/combine.specifications/sed-ml.level-1.version-2"));
+			plan.addAttachment(sedmlFile);
+		}
+		iBioSimActivity.clearUsages();
+		SedML sedmlModel = sedmlDocument.getSedMLModel();
+		for (org.jlibsedml.Model model : sedmlModel.getModels()) {
+			String modelId = model.getSource().replace(".xml","_model");
+			BioModel biomodel = new BioModel(root);
+			biomodel.load(root + File.separator + model.getSource());
+			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
+			URI moduleId = SBML2SBOL.convert_SBML2SBOL(sbolDocument, root, biomodel.getSBMLDocument(), biomodel.getSBMLFile(),
+					getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), defaultURIprefix);
+//				simModel = sbolDocument.createModel(modelId, "1", URI.create("file:"+model.getSource()),
+//						EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
+			iBioSimActivity.createUsage(modelId+"_usage", moduleId);
+		}
+	    for (Output output : sedmlModel.getOutputs()) 
+	    {
+	      if (output.isPlot2d()) 
+	      {
+	        //        GraphData.createTSDGraph(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+	        //          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+	        GraphData.createTSDGraph(sedmlDocument,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+	          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+	        Attachment pngFile = sbolDocument.getAttachment(output.getId()+"_png","1");
+	        if (pngFile==null) {
+	        	pngFile = sbolDocument.createAttachment(output.getId()+"_png", "1", 
+	        			URI.create("file:"+output.getId()+".png"));
+	        	pngFile.setFormat(URI.create("http://identifiers.org/edam/format_3603"));
+	        	pngFile.setName(output.getId()+".png");
+	        	pngFile.addWasGeneratedBy(iBioSimActivity.getIdentity());
+	        }
+	      } 
+	      else if (output.isReport()) 
+	      {
+	        //        GraphData.createHistogram(sedmlDoc,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+	        //          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+	        GraphData.createHistogram(sedmlDocument,GraphData.TSD_DATA_TYPE,root,null,output.getId(),
+	          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
+	        Attachment pngFile = sbolDocument.getAttachment(output.getId()+"_png","1");
+	        if (pngFile==null) {
+	        	pngFile = sbolDocument.createAttachment(output.getId()+"_png", "1", 
+	        			URI.create("file:"+output.getId()+".png"));
+	        	pngFile.setFormat(URI.create("http://identifiers.org/edam/format_3603"));
+	        	pngFile.setName(output.getId()+".png");
+	        	pngFile.addWasGeneratedBy(iBioSimActivity.getIdentity());
+	        }
+	      }
+	    }
+		writeSBOLDocument();
+	}
 
 	public void writeSEDMLDocument() {
 		String sedmlFilename = root + File.separator + currentProjectId + ".sedml";
@@ -4413,7 +4484,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		if (filename.endsWith(".xml")) {
 			File modelFile = new File(filename);
 			archive.addEntry(baseDir, modelFile, 
-					URI.create("http://identifiers.org/combine.specifications/sbml.level-3.version-1.core"));
+					URI.create("http://identifiers.org/combine.specifications/sbml.level-3.version-2.core"));
 		} else if (filename.endsWith(".sbol")) {
 			File sbolFile = new File(filename);
 			archive.addEntry(baseDir, sbolFile,
@@ -4563,6 +4634,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				file.delete();
 			}
 			if (fileType.equals("Archive")) {
+				createIBioSimActivity();
 				createCombineArchive(file,null);
 				SBOLDesign.uploadDesign(Gui.frame,null,file);
 			} else if (fileType.equals("Model")) {
@@ -4623,8 +4695,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-	private boolean checkSBOL(SBOLDocument sbolDoc, boolean bestPractice) {
-		SBOLValidate.validateSBOL(sbolDoc, true, true, bestPractice);
+	private boolean checkSBOL(SBOLDocument sbolDoc, boolean complete, boolean bestPractice) {
+		SBOLValidate.validateSBOL(sbolDoc, complete, true, bestPractice);
 		if (SBOLReader.getNumErrors() > 0 || SBOLValidate.getNumErrors() > 0) {
 			JTextArea messageArea = new JTextArea();
 			messageArea.append("SBOL contains the errors listed below. ");
@@ -4657,13 +4729,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			SBOLReader.setURIPrefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			SBOLDocument sbolDoc = SBOLReader.read(sbolFile);
 			sbolDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-			if (!checkSBOL(sbolDoc, false))
+			if (!checkSBOL(sbolDoc, false, false))
 				return;
 			log.addText("Importing " + sbolFile + " into the project's SBOL library.");
 			String filePath = filename.trim();
 			org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
+			inputSBOLDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 			int numGeneratedSBML = generateSBMLFromSBOL(inputSBOLDoc, filePath);
-			getSBOLDocument().read(sbolFile);
+			getSBOLDocument().createCopy(inputSBOLDoc);
 			writeSBOLDocument();
 			JOptionPane.showMessageDialog(frame, "Successfully Imported SBOL file containing: \n"
 					+ inputSBOLDoc.getComponentDefinitions().size() + " ComponentDefinitions.\n"
@@ -6120,10 +6193,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						e.printStackTrace();
 					}
 					catch (BioSimException e) {
-		        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-		          JOptionPane.ERROR_MESSAGE);
-		        e.printStackTrace();
-		      }
+						JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+								JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+					}
+					catch (SBOLValidationException e) {
+						JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "SBOL Validation Exception",
+								JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+					}
 				}
 			}
 		} catch (IOException e) {
