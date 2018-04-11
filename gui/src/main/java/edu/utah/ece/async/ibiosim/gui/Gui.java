@@ -4560,7 +4560,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 	
-	public String downloadAttachment(GenericTopLevel attachment) throws SynBioHubException, IOException {
+	public String downloadAttachment(Attachment attachment) throws SynBioHubException, IOException {
 		SynBioHubFrontends frontends = new SynBioHubFrontends();
 		for (Registry registry : Registries.get()) {
 			if (attachment.getIdentity().toString().startsWith(registry.getUriPrefix())) {
@@ -4605,7 +4605,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				generateSBMLFromSBOL(selection, root);
 				// TODO: update to attachment class
 				String sedmlFile = null;
-				for (GenericTopLevel attachment : selection.getGenericTopLevels()) {
+				for (Attachment attachment : selection.getAttachments()) {
 					String filename = downloadAttachment(attachment);
 					if (filename.endsWith(".sedml")) {
 						sedmlFile = filename;
