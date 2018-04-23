@@ -112,7 +112,7 @@ public class ProbStaticDependencySets extends StaticDependencySets {
 //						if (seedTranDelayTree.getChange(anotherTran.getAssignments())=='X') 
 //							writeStringWithEndOfLineToPORDebugFile("Reason is " + seedTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");					
 					}	
-					otherTransModifySeedTranRate.add(anotherTran);
+					//otherTransModifySeedTranRate.add(anotherTran);
 				}
 			}
 		}
@@ -151,6 +151,32 @@ public class ProbStaticDependencySets extends StaticDependencySets {
 		seedTranDisableOtherTransSet.addAll(seedTranOtherTransModifySameVars);
 		seedTranDisableOtherTransSet.addAll(seedTranModifyOtherTranRate);
 		return seedTranDisableOtherTransSet;
+	}
+	
+	// TEMP//
+	public HashSet<Transition> getSeedOtherTokenConflictTrans() {
+		HashSet<Transition> seedOtherTokenConflictTransSet = new HashSet<Transition>();
+		seedOtherTokenConflictTransSet.addAll(disableByStealingToken);
+		return seedOtherTokenConflictTransSet;
+	}
+
+	public HashSet<Transition> getSeedOtherSetEnablingFalse(boolean seedTranIsPersistent) {
+		HashSet<Transition> seedOtherSetEnablingFalseSet = new HashSet<Transition>();
+
+		seedOtherSetEnablingFalseSet.addAll(otherTransModifySeedTranAssign);
+		seedOtherSetEnablingFalseSet.addAll(seedTranModifyOtherTranAssign);
+		
+		seedOtherSetEnablingFalseSet.addAll(seedTranOtherTransModifySameVars);
+		
+		seedOtherSetEnablingFalseSet.addAll(seedTranSetOtherTranEnablingFalse);
+		if (!seedTranIsPersistent) {
+			seedOtherSetEnablingFalseSet.addAll(otherTransSetSeedTranEnablingFalse);
+		}
+				
+		seedOtherSetEnablingFalseSet.addAll(seedTranModifyOtherTranRate);
+		seedOtherSetEnablingFalseSet.addAll(otherTransModifySeedTranRate);
+		
+		return seedOtherSetEnablingFalseSet;
 	}
 	
 }

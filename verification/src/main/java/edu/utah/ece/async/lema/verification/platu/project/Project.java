@@ -342,7 +342,7 @@ public class Project extends CoreObservable{
 			double timeStep = 100.0;
 			double absError = 1.0e-9;		
 			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";
 			// --- end of toggle_switch ---
 		
 			// === C-element circuits ===
