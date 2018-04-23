@@ -425,6 +425,8 @@ public class Run extends CoreObservable implements ActionListener
             simrepstream.write((simrep).getBytes());
             simrepstream.close();
           }
+          sg.outputTSD(properties.getDirectory() + File.separator + "percent-term-time.tsd");
+          // TODO
           //          if(view)
           //          {
           //            viewStateGraph(filename, theFile, directory, sg);

@@ -1955,7 +1955,7 @@ public class GraphData extends CoreObservable {
 			}
 		}
 		NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-		if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
+		if (minY == maxY || minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
 		else {
@@ -1969,7 +1969,7 @@ public class GraphData extends CoreObservable {
 		}
 		axis.setAutoTickUnitSelection(true);
 		axis = (NumberAxis) plot.getDomainAxis();
-		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
+		if (minX == maxX || minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
 		else {
