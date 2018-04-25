@@ -4987,72 +4987,42 @@ public class Analysis extends CoreObservable{
     		seedTranIsPersistent = true;
     	}
 		
-    	//////////TEMP CHANGES FOR BIRTH-DEATH PROCESS//////////////
-//    	HashSet<Transition> disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
-//		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
-//			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
+    	HashSet<Transition> disableSet = new HashSet<Transition>();
+    	HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
+			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
     	
-    	double epsilon = 2.0;
-    	HashSet<Transition> disableSet = new HashSet<Transition>(); 
-		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran = new HashSet<Transition>();
+    	if (!Options.getMarkovianModelFlag()) { // If this is not a Markovian Model, we are using the dependency analysis to determine the ample set 
+    		disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
+    		
+    	}
+    	else { // If this is a Markovian model, we are using the rate based ample selection 
+    	
+    		double epsilon = 2.0;
+    		
+    		LPN seedLPN = seed.getLpn();
 		
-		LPN seedLPN = seed.getLpn();
-		
-		//  Variable vector
-		int[] variableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector();
-		HashMap<String, String> currentValuesAsString = seedLPN.getAllVarsWithValuesAsString(variableVector);
+    		//  Variable vector
+    		int[] variableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector();
+    		HashMap<String, String> currentValuesAsString = seedLPN.getAllVarsWithValuesAsString(variableVector);
 
-		// Rate for seed transition
-		double seedRate = seed.getTransitionRateTree().evaluateExpr(currentValuesAsString);
+    		// Rate for seed transition
+    		double seedRate = seed.getTransitionRateTree().evaluateExpr(currentValuesAsString);
 
-		//  Variable vector update for SeedTran
-		int[] newSeedVariableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector().clone();
-		for (String key : currentValuesAsString.keySet()) {
-			if (seedLPN.getBoolAssignTree(seed.getLabel(), key) != null) {
-				int newValue = (int)seedLPN.getBoolAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
-				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
-			}
+    		//  Variable vector update for SeedTran
+    		int[] newSeedVariableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector().clone();
+    		for (String key : currentValuesAsString.keySet()) {
+    			if (seedLPN.getBoolAssignTree(seed.getLabel(), key) != null) {
+    				int newValue = (int)seedLPN.getBoolAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
+    				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
+    			}
 			
-			if (seedLPN.getIntAssignTree(seed.getLabel(), key) != null) {
-				int newValue = (int)seedLPN.getIntAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
-				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
-			}
-		}
+    			if (seedLPN.getIntAssignTree(seed.getLabel(), key) != null) {
+    				int newValue = (int)seedLPN.getIntAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
+    				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
+    			}
+    		}
 
-		if (Options.getMarkovianModelFlag()) {
 			for(Transition potentialDepTran: ((ProbStaticDependencySets) staticDependency.get(seed)).getSeedOtherSetEnablingFalse(seedTranIsPersistent)) {
-				
-				//////We are not checking this for now: All enabling conditions are <code>true</code>. 
-//				// Enable Condition Evaluation after Firing Seed
-//				// If false => seedTran Disables thisTran
-//				int potentialDepTranSt = (int) seedLPN.getEnablingTree(potentialDepTran.getLabel()).evaluateExpr(seedLPN.getAllVarsWithValuesAsString(newSeedVariableVector));
-//				if(potentialDepTranSt == 0) {
-//					disableSet.add(potentialDepTran);
-//					continue;
-//				}
-//				
-//				//  Variable vector update for potentialDepTran
-//				int[] newPotentialDepVariableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector().clone();
-//			    for (String key : currentValuesAsString.keySet()) {
-//			    		
-//		    		if (seedLPN.getBoolAssignTree(potentialDepTran.getLabel(), key) != null) {
-//		    			int newValue = (int)seedLPN.getBoolAssignTree(potentialDepTran.getLabel(), key).evaluateExpr(currentValuesAsString);
-//		    			newPotentialDepVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
-//		    		}
-//		    		
-//		    		if (seedLPN.getIntAssignTree(potentialDepTran.getLabel(), key) != null) {
-//		    			int newValue = (int)seedLPN.getIntAssignTree(potentialDepTran.getLabel(), key).evaluateExpr(currentValuesAsString);
-//		    			newPotentialDepVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
-//		    		}
-//		    	}
-//			    
-//			    // Enable Condition Evaluation after Firing potentialDepTran
-//				// If false => thisTran Disables seedTran
-//				int seedTranSt = (int) seedLPN.getEnablingTree(seed.getLabel()).evaluateExpr(seedLPN.getAllVarsWithValuesAsString(newPotentialDepVariableVector));
-//				if(seedTranSt == 0) {
-//					disableSet.add(potentialDepTran);
-//					continue;
-//				}
 				
 				// Rate comparison
 				double potentialDepTranRate = potentialDepTran.getTransitionRateTree().evaluateExpr(currentValuesAsString);
@@ -5064,6 +5034,7 @@ public class Analysis extends CoreObservable{
 			// Add conflict set to disable set
 			disableSet.addAll(((ProbStaticDependencySets) staticDependency.get(seed)).getSeedOtherTokenConflictTrans());
 		}
+		
 	
 		////////////////////////////////////////////////////////////////////////////////////////////
 				
