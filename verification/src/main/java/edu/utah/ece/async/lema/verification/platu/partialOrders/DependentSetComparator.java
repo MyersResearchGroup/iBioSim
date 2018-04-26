@@ -97,15 +97,35 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 				//  Variable vector
 				int[] variableVector0 = dep0.getCurStateArr()[lpn0.getLpnIndex()].getVariableVector();
 				HashMap<String, String> currentValuesAsString0 = lpn0.getAllVarsWithValuesAsString(variableVector0);
-				double rate0 = dep0.getSeed().getTransitionRateTree().evaluateExpr(currentValuesAsString0);
-				
+				double rateSum0 = 0.0;
+				for(Transition tempTran: dep0.getDependent()) {
+					rateSum0 += tempTran.getTransitionRateTree().evaluateExpr(currentValuesAsString0);
+				}
+				double averageRate0 = rateSum0/dep0.getDependent().size();
+
 				//  Variable vector
 				int[] variableVector1 = dep1.getCurStateArr()[lpn1.getLpnIndex()].getVariableVector();
 				HashMap<String, String> currentValuesAsString1 = lpn1.getAllVarsWithValuesAsString(variableVector1);
-				double rate1 = dep1.getSeed().getTransitionRateTree().evaluateExpr(currentValuesAsString1);
+
+
+				double rateSum1 = 0.0;
+				for(Transition tempTran: dep1.getDependent()) {
+					rateSum1 += tempTran.getTransitionRateTree().evaluateExpr(currentValuesAsString1);
+				}
+				double averageRate1 = rateSum1/dep1.getDependent().size();
+
+
+				if(averageRate0 > averageRate1) return -1;
+				else if(averageRate0 < averageRate1) return 1;
+				else
+				{
+					if (tranFiringFreqMap.get(dep0.getSeed()) < tranFiringFreqMap.get(dep1.getSeed()))
+						return -1;
+					else if (tranFiringFreqMap.get(dep0.getSeed()) > tranFiringFreqMap.get(dep1.getSeed()))
+						return 1;
+					
+				}
 				
-				if(rate0 > rate1) return -1;
-				else if(rate0 < rate1) return 1;
 			}
 			//////////////////////////////END////////////////////////////////////////////////////////////
 			
