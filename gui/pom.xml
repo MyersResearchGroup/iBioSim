@@ -154,7 +154,7 @@
         <dependency>
             <groupId>edu.utah.ece.async.sboldesigner</groupId>
             <artifactId>SBOLDesigner</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0</version>
         </dependency>
 
 

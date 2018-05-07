@@ -302,7 +302,25 @@ public class Run extends CoreObservable implements ActionListener
         {
           prop = properties.getVerificationProperties().getConstraintProperty();
         }
-
+        
+        // TODO: this is temporary hack
+        // Just takes first, but should be chosen from list
+        if (sim.equals("transient-markov-chain-analysis")) {
+        	if (prop == null)
+        	{
+        		Model m = bioModel.getSBMLDocument().getModel();
+        		for (int num = 0; num < m.getConstraintCount(); num++)
+        		{
+        			String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+        			if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U("))
+        			{
+        				prop = Translator.convertProperty(m.getConstraint(num).getMath());
+        				break;
+        			}
+        		}
+        	}
+        }
+        
         MutableString mutProp = new MutableString(prop);
         lhpnFile = LPN.convertToLHPN(specs, conLevel, mutProp, bioModel);
         prop = mutProp.getString();
