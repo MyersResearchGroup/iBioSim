@@ -37,10 +37,13 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
  */
 public class VPRModelGenerator {
 
+	
 	/**
 	 * Perform VPR model generation. 
 	 * @param selectedRepo - The specified synbiohub repository the user wants VPR model generator to connect to. 
 	 * @param generatedModel - The file to generate the model from.
+	 * @param rootModuleID - Name of the top level genetic circuit to be constructed by VPR.
+	 * 
 	 * @return The generated model.
 	 * @throws SBOLValidationException
 	 * @throws IOException - Unable to read or write the given SBOLDocument
@@ -48,14 +51,21 @@ public class VPRModelGenerator {
 	 * @throws VPRException - Unable to perform VPR Model Generation on the given SBOLDocument.
 	 * @throws VPRTripleStoreException - Unable to perform VPR Model Generation on the given SBOLDocument.
 	 */
-	public static SBOLDocument generateModel(String selectedRepo, SBOLDocument generatedModel) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
+	public static SBOLDocument generateModel(String selectedRepo, SBOLDocument generatedModel, String rootModuleID) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{ 
 		//"https://synbiohub.org/sparql"
 		String endpoint = selectedRepo + "/sparql";
-		SBOLInteractionAdder_GeneCentric interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
+		SBOLInteractionAdder_GeneCentric interactionAdder = null;
+		if(!rootModuleID.isEmpty() && rootModuleID != null)
+		{
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID);
+		}
+		else
+		{
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
+		}
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
-		
 	}
 	
 	public static void main(String[] args) 
@@ -100,6 +110,13 @@ public class VPRModelGenerator {
 				}
 				sbolURIPre = args[++index];
 				break;
+			case "-circuitId":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				sbolURIPre = args[++index];
+				break;
 			default:
 				fullInputFileName = args[index];
 			}
@@ -127,7 +144,7 @@ public class VPRModelGenerator {
 		try 
 		{
 			SBOLDocument inputSBOL = SBOLUtility.loadSBOLFile(fullInputFileName, sbolURIPre);
-			SBOLDocument outputSBOL = generateModel(selectedRepo, inputSBOL);
+			SBOLDocument outputSBOL = generateModel(selectedRepo, inputSBOL, null);
 			if(!noOutput)
 			{
 				if(outputFileName.isEmpty())
