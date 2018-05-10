@@ -1268,10 +1268,11 @@ public class LPN extends CoreObservable {
 
 	public void addBoolAssign(String transition, String variable,
 			String assignment) {
-		if (!variables.contains(variable)) {
+		Variable var = new Variable(variable, "integer", "unknown", Variable.OUTPUT);
+		if (!variables.contains(var)) {
 			addOutput(variable, "unknown");
 		}
-		transitions.get(transition).addIntAssign(variable, assignment);
+		transitions.get(transition).addBoolAssign(variable, assignment);
 	}
 
 	public void addRateAssign(String transition, String variable, String rate) {
