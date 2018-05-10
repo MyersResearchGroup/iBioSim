@@ -5960,6 +5960,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			chosenDesign = s.getSelection();
 		}
 		
+		
 		if(s.isVPRGenerator())
 		{
 			runVPRGenerator(filePath, fileName, chosenDesign);
@@ -5983,6 +5984,22 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 			if(chosenDesign != null)
 			{
+				String circuitID = "";
+				if(chosenDesign.getRootComponentDefinitions().size() > 1)
+				{
+					circuitID = JOptionPane.showInputDialog(frame, "Enter Circuit ID to be automated from VPR: " , "Circuit ID",
+							JOptionPane.PLAIN_MESSAGE);
+					if(circuitID == null)   
+					{
+					    return; //Cancel was selected
+					} else if("".equals(circuitID)){
+						
+						JOptionPane.showMessageDialog(frame, "You selected more than one design to call VPR so you must provide a circuit ID to create the top level circuit for your designs.", "Invalid Entry. Entry Cannot Be Empty.", JOptionPane.ERROR_MESSAGE);
+					    return;
+					}
+					
+				}
+				
 				String selectedRepo = getSelectedRepo();
 				if(selectedRepo == null)
 				{
@@ -5990,7 +6007,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					return;
 				}
 				
-				VPRModelGenerator.generateModel(selectedRepo, chosenDesign, null);
+				VPRModelGenerator.generateModel(selectedRepo, chosenDesign, circuitID);
 				//update SBOL library file with newly generated components that vpr model generator created.
 				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
 				generateSBMLFromSBOL(chosenDesign, filePath);
