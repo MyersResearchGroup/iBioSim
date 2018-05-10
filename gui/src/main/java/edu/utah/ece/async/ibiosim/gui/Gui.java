@@ -5990,7 +5990,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					return;
 				}
 				
-				VPRModelGenerator.generateModel(selectedRepo, chosenDesign);
+				VPRModelGenerator.generateModel(selectedRepo, chosenDesign, null);
 				//update SBOL library file with newly generated components that vpr model generator created.
 				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
 				generateSBMLFromSBOL(chosenDesign, filePath);
