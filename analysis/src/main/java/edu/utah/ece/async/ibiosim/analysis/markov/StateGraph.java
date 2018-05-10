@@ -110,7 +110,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 				createStateVector(variables, allVariables), copyAllVariables(allVariables));
 		// markings.add(state);
 		counter++;
-		progress.setString("States found: " + counter);
+		if (progress != null) {
+			progress.setString("States found: " + counter);
+		}
 		stateGraph.add(state);// .put(createStateVector(variables,
 		// allVariables), markings);
 		markings.add(stateGraph.size() - 1);
@@ -272,7 +274,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 				}
 				state.setPersistentTransitions(persistentTrans.toArray(new String[0]));
 				counter++;
-				progress.setString("States found: " + counter);
+				if (progress != null) {
+					progress.setString("States found: " + counter);
+				}
 				stateGraph.add(state);// .put(createStateVector(variables,
 				// allVariables), markings);
 				markings.add(stateGraph.size() - 1);
@@ -421,16 +425,22 @@ public class StateGraph extends CoreObservable implements Runnable {
 		else if (condition != null) {
 			condition[0] = removeNesting(error, timeStep, condition[0], progress);
 			condition[1] = removeNesting(error, timeStep, condition[1], progress);
-			progress.setString(null);
+			if (progress!=null) {
+				progress.setString(null);
+			}
 			double nextPrint = printInterval;
 			if (condition[3].equals("inf")) {
-				progress.setIndeterminate(true);
+				if (progress!=null) {
+					progress.setIndeterminate(true);
+				}
 			}
 			else {
 				ExprTree expr = new ExprTree(lhpn);
 				expr.token = expr.intexpr_gettok(condition[3]);
 				expr.intexpr_L(condition[3]);
-				progress.setMaximum((int) expr.evaluateExpr(null));
+				if (progress!=null) {
+					progress.setMaximum((int) expr.evaluateExpr(null));
+				}
 			}
 			enableAllTransitions();
 			State initial = getInitialState();
@@ -741,7 +751,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 			return false;
 		}
 		else {
-			progress.setMaximum((int) timeLimit);
+			if (progress!=null) {
+				progress.setMaximum((int) timeLimit);
+			}
 			State initial = getInitialState();
 			if (initial != null) {
 				initial.setCurrentProb(1.0);
@@ -777,7 +789,9 @@ public class StateGraph extends CoreObservable implements Runnable {
 						}
 					}
 					stop = !performTransientMarkovianAnalysis(step, Gamma, K, progress);
-					progress.setValue((int) i);
+					if (progress!=null) {
+						progress.setValue((int) i);
+					}
 					if (stop) {
 						return false;
 					}

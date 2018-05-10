@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1572,7 +1573,13 @@ public class Analysis extends CoreObservable{
 			printTransList(initStrongStubbornTrans, "+++++++ Push trans onto lpnTranStack @ 1++++++++");
 			drawDependencyGraphs(lpnList);
 		}		
-		updateLocalStrongStubbornSetTbl(initStrongStubbornTrans, sgList, initStateArray);		
+		updateLocalStrongStubbornSetTbl(initStrongStubbornTrans, sgList, initStateArray);
+		
+		
+		HashSet<Transition> initFiredTranSet = new HashSet<Transition>();
+		for (Transition t : initStrongStubbornTrans) 
+			initFiredTranSet.add(t);
+		
 		main_while_loop: while (failure == false && stateStack.size() != 0) {
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -1600,7 +1607,7 @@ public class Analysis extends CoreObservable{
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
 			}
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
-			LinkedList<Transition> curStrongStubbornTrans = lpnTranStack.peek();
+		    LinkedList<Transition> curStrongStubbornTrans = lpnTranStack.peek();
 			firedFailure = failureTranIsEnabled(curStrongStubbornTrans); // Null means no failure.			
 //			if(firedFailure != null){
 //				return null;
@@ -1676,7 +1683,37 @@ public class Analysis extends CoreObservable{
 						((ProbGlobalState) stateStackTop).addNextGlobalTranRate(t, tranRate);
 					}
 				}
-			}			
+			}
+			
+//			/////////////////// THAKUR ////////////////////////////////////////////////
+//			
+//			HashSet<Transition> nextFiredTranSet = new HashSet<Transition>();
+//			HashSet<Transition> curFiredTranSet = new HashSet<Transition>();
+//			for (Transition t : nextStrongStubbornTrans) 
+//				nextFiredTranSet.add(t);						
+//			for (State curSt : curStateArray) {
+//				if (curSt.getStateGraph().getEnabledSetTbl().get(curSt) != null) {
+//					curFiredTranSet.addAll(curSt.getStateGraph().getEnabledSetTbl().get(curSt));
+//				}
+//				
+//			}
+//			
+//			if(!nextFiredTranSet.equals(curFiredTranSet))
+//			{
+//				
+//				System.out.print(Arrays.toString(nextStateArray[0].getVariableVector()));
+//				System.out.print(" => { ");
+//				for (Transition t : nextFiredTranSet)
+//				{
+//					System.out.print(t.getLabel() + ", ");
+//					
+//				}
+//				System.out.println(" }");
+//					
+//			}
+//			
+//			
+//			/////////////////// END ////////////////////////////////////////////////			
 			
 			// Moved earlier. 
 //			PrjState nextPrjState;
@@ -1922,7 +1959,7 @@ public class Analysis extends CoreObservable{
 			HashSet<Transition> curStateReduced = setSubstraction(curStateEnabled, curStateStrongStubbornSet);
 			HashSet<Transition> oldNextStateStrongStubbornSet = new HashSet<Transition>();
 			DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq, sgList.length-1); 
-			PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(nextStateEnabled.size(), depComp);
+			PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(curStateEnabled.size(), depComp);
 			if (Options.getDebugMode())
 				printStateArray(nextStateArray,"******* nextStateArray *******");    			
 			for (int lpnIndex=0; lpnIndex < sgList.length; lpnIndex++) {
@@ -1943,7 +1980,9 @@ public class Analysis extends CoreObservable{
 			boolean isCycleClosingStrongStubbornComputation = true;
 			for (Transition seed : ignored) {
 				HashSet<Transition> dependent = new HashSet<Transition>();
-				dependent = computeDependent(curStateArray,seed,dependent,nextStateEnabled,isCycleClosingStrongStubbornComputation); 				    				
+				
+				// Thakur: If we expanding the state from current state, nextStateEnabled should be curStateEnabled
+				dependent = computeDependent(curStateArray,seed,dependent,curStateEnabled,isCycleClosingStrongStubbornComputation); 				    				
 				if (Options.getDebugMode()) {
 					printIntegerSet(dependent, "------ dependent set for ignored transition " + seed.getFullLabel() + " ------");
 				}
@@ -1958,7 +1997,7 @@ public class Analysis extends CoreObservable{
 				//	  				DependentSet dependentSet = new DependentSet(newNextPersistent, seed, 
 				//	  						isDummyTran(sgList[seed.getLpnIndex()].getLpn().getTransition(seed.getTranIndex()).getName()));
 				//					_______________________________________________________________________
-				DependentSet dependentSet = new DependentSet(dependent, seed, isDummyTran(seed.getLabel())); 	  						
+				DependentSet dependentSet = new DependentSet(curStateArray, dependent, seed, isDummyTran(seed.getLabel())); 	  						
 				dependentSetQueue.add(dependentSet);
 			}
 			cachedNecessarySets.clear();
@@ -4846,7 +4885,7 @@ public class Analysis extends CoreObservable{
     		// TODO: temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
     		if(isDummyTran(enabledTran.getLabel()))
     			enabledIsDummy = true;
-    		DependentSet dependentSet = new DependentSet(dependent, enabledTran, enabledIsDummy);
+    		DependentSet dependentSet = new DependentSet(curStateArray, dependent, enabledTran, enabledIsDummy);
     		dependentSetQueue.add(dependentSet);
     	}    	
     	ready = dependentSetQueue.poll().getDependent();
@@ -4947,9 +4986,58 @@ public class Analysis extends CoreObservable{
     	if (seed.isPersistent()) {
     		seedTranIsPersistent = true;
     	}
-		HashSet<Transition> disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
-		HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
+		
+    	HashSet<Transition> disableSet = new HashSet<Transition>();
+    	HashSet<Transition> otherTransDisableEnabledPeristentSeedTran 
 			= staticDependency.get(seed).getOtherTransDisableSeedTran(seedTranIsPersistent);
+    	
+    	if (!Options.getMarkovianModelFlag()) { // If this is not a Markovian Model, we are using the dependency analysis to determine the ample set 
+    		disableSet = staticDependency.get(seed).getDisableSet(seedTranIsPersistent); 
+    		
+    	}
+    	else { // If this is a Markovian model, we are using the rate based ample selection 
+    	
+    		double epsilon = 2.0;
+    		
+    		LPN seedLPN = seed.getLpn();
+		
+    		//  Variable vector
+    		int[] variableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector();
+    		HashMap<String, String> currentValuesAsString = seedLPN.getAllVarsWithValuesAsString(variableVector);
+
+    		// Rate for seed transition
+    		double seedRate = seed.getTransitionRateTree().evaluateExpr(currentValuesAsString);
+
+    		//  Variable vector update for SeedTran
+    		int[] newSeedVariableVector = curStateArray[seedLPN.getLpnIndex()].getVariableVector().clone();
+    		for (String key : currentValuesAsString.keySet()) {
+    			if (seedLPN.getBoolAssignTree(seed.getLabel(), key) != null) {
+    				int newValue = (int)seedLPN.getBoolAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
+    				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
+    			}
+			
+    			if (seedLPN.getIntAssignTree(seed.getLabel(), key) != null) {
+    				int newValue = (int)seedLPN.getIntAssignTree(seed.getLabel(), key).evaluateExpr(currentValuesAsString);
+    				newSeedVariableVector[seedLPN.getVarIndexMap().get(key)] = newValue;
+    			}
+    		}
+
+			for(Transition potentialDepTran: ((ProbStaticDependencySets) staticDependency.get(seed)).getSeedOtherSetEnablingFalse(seedTranIsPersistent)) {
+				
+				// Rate comparison
+				double potentialDepTranRate = potentialDepTran.getTransitionRateTree().evaluateExpr(currentValuesAsString);
+				if( (Math.max(seedRate, potentialDepTranRate)/Math.min(seedRate, potentialDepTranRate)) <= epsilon) {
+					disableSet.add(potentialDepTran);
+				}
+		 	}
+		 			
+			// Add conflict set to disable set
+			disableSet.addAll(((ProbStaticDependencySets) staticDependency.get(seed)).getSeedOtherTokenConflictTrans());
+		}
+		
+	
+		////////////////////////////////////////////////////////////////////////////////////////////
+				
 		if (Options.getDebugMode()) {
 			System.out.println("@ beginning of computeDependent, consider transition " + seed.getFullLabel());
 			printIntegerSet(disableSet, "Disable set for " + seed.getFullLabel());

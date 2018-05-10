@@ -4693,8 +4693,10 @@ public class Graph extends PanelObservable implements ActionListener, MouseListe
 				if (taskId==null) {
 					taskIdStr = id[1].replace("(","").replace(")","");
 				} 
-				DataGenerator dataGen = SEDMLutilities.getDataGenerator(sedml,id[0],name,"",taskIdStr,"reaction",null);
-				DataSet ds = new DataSet("d_"+plotId+"_"+id[0],name,graphData.getProbGraphed().get(i).getSpecies(),dataGen.getId());
+				String cleanId = id[0].replaceAll("[^a-zA-Z0-9_]", "_");
+				cleanId = cleanId.replace(" ", "_");
+				DataGenerator dataGen = SEDMLutilities.getDataGenerator(sedml,cleanId,name,"",taskIdStr,"reaction",null);
+				DataSet ds = new DataSet("d_"+plotId+"_"+cleanId,name,graphData.getProbGraphed().get(i).getSpecies(),dataGen.getId());
 
 				para = new Element("dataSet");
 				para.setNamespace(Namespace.getNamespace("http://www.async.ece.utah.edu/iBioSim"));

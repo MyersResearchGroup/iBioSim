@@ -1658,9 +1658,9 @@ public class SBMLutilities extends CoreObservable
 							relation = "=";
 						else if (math.getChild(0).getType() == ASTNode.Type.RELATIONAL_NEQ) 
 							relation = "!=";
-						if (math.getName().equals("PF")) {
+						if (math.getName().equals("PF")||math.getName().equals("F")) {
 							result += "F" + relation + bound + " " + first;
-						} else if (math.getName().equals("PG")) {
+						} else if (math.getName().equals("PG")||math.getName().equals("G")) {
 							result += "G" + relation + bound + " " + first;
 						} else {
 							result += first + " " + "U" + relation + bound + " " +

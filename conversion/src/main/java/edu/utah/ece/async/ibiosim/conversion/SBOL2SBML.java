@@ -36,8 +36,10 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
+import org.sbolstandard.core2.EDAMOntology;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.MapsTo;
@@ -101,13 +103,18 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
+	 * @throws SBOLValidationException 
 	 */
-	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException {
+	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
 		List<BioModel> models = new LinkedList<BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
 		targetModel.createSBMLDocument(getDisplayID(moduleDef), false, false);
+		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(getDisplayID(moduleDef)+"_model", "1", 
+				URI.create("file:" + getDisplayID(moduleDef) + ".xml"), 
+				EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
+		moduleDef.addModel(sbolModel);
 
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
@@ -321,9 +328,10 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file.
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong the with SBML model.
+	 * @throws SBOLValidationException 
 	 */
 	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) throws XMLStreamException, IOException, BioSimException {
+			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
 		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
@@ -453,13 +461,52 @@ public class SBOL2SBML {
 	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
 	 */
 	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-		targetModel.createPromoter(getDisplayID(promoter), -1, -1, true, false, null);
-		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(promoter));
 
-		// Annotate SBML promoter species with SBOL component and component definition
-		ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
-		if (compDef!=null) {
-			annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+		// Count promoters
+		int promoterCnt = 0;
+		if (promoter.getDefinition() != null) {
+			ComponentDefinition tuCD = promoter.getDefinition();
+			for (Component comp : tuCD.getComponents()) {
+				if (comp.getDefinition() != null) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+						promoterCnt++;
+					}
+				}
+			}
+		}
+		System.out.println(getDisplayID(promoter) + " has " + promoterCnt + " promoters");
+		
+		for (int i = 0; i < promoterCnt; i++) {
+			
+			String promoterId = getDisplayID(promoter);
+			
+			// Use the id of the actual promoter
+			if (promoterCnt > 1) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					int j = 0;
+					for (Component comp : tuCD.getComponents()) {
+						if (comp.getDefinition() != null) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+								if (i==j) {
+									promoterId = getDisplayID(comp.getDefinition());
+									break;
+								}
+								j++;
+							}
+						}
+					}
+				}
+			}
+			
+			targetModel.createPromoter(promoterId, -1, -1, true, false, null);
+			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(promoterId);
+
+			// Annotate SBML promoter species with SBOL component and component definition
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+			}
 		}
 	}
 
@@ -601,33 +648,97 @@ public class SBOL2SBML {
 
 		String rxnID = "";
 		if (productions!=null) {
-			for (Interaction production : productions)
-				rxnID = rxnID + "_" + getDisplayID(production);
+			for (Interaction production : productions) {
+				if (rxnID.equals("")) {
+					rxnID = getDisplayID(production);
+				} else {
+					rxnID = rxnID + "_" + getDisplayID(production);
+				}
+			}
 		} else {
 			rxnID = promoter.getDisplayId() + "_Production";
 		}
-		//rxnID = rxnID.substring(1);
-		Reaction productionRxn = targetModel.createProductionReaction(getDisplayID(promoter), rxnID, null, null, null, null, 
-				null, null, false, null);
+		
+		// Count promoters
+		int promoterCnt = 0;
+		if (promoter.getDefinition() != null) {
+			ComponentDefinition tuCD = promoter.getDefinition();
+			for (Component comp : tuCD.getComponents()) {
+				if (comp.getDefinition() != null) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+						promoterCnt++;
+					}
+				}
+			}
+		}
 
-		// Annotate SBML production reaction with SBOL production interactions
-		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-		if (productions!=null) productionsRegulations.addAll(productions);
-		productionsRegulations.addAll(activations);
-		productionsRegulations.addAll(repressions);
-		if (!productionsRegulations.isEmpty())
-			annotateRxn(productionRxn, productionsRegulations);
-		if (!partici.isEmpty()) 
-			annotateSpeciesReference(productionRxn.getModifier(0), partici);
+		for (int i = 0; i < promoterCnt; i++) {
+			
+			String rxnIDi = rxnID; 
+			if (promoterCnt > 1) rxnIDi += "_" + i;
+			
+			String promoterId = getDisplayID(promoter);
+			
+			// Use the id of the actual promoter
+			if (promoterCnt > 1) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					int j = 0;
+					for (Component comp : tuCD.getComponents()) {
+						if (comp.getDefinition() != null) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+								if (i==j) {
+									promoterId = getDisplayID(comp.getDefinition());
+									break;
+								}
+								j++;
+							}
+						}
+					}
+				}
+			}
+		
+			Reaction productionRxn = targetModel.createProductionReaction(promoterId, rxnIDi, null, null, null, null, 
+					null, null, false, null);
 
-		for (Participation activator : activators)
-			generateActivatorReference(activator, promoter, moduleDef, productionRxn, targetModel);
+			// Annotate SBML production reaction with SBOL production interactions
+			List<Interaction> productionsRegulations = new LinkedList<Interaction>();
+			if (productions!=null) productionsRegulations.addAll(productions);
+			productionsRegulations.addAll(activations);
+			productionsRegulations.addAll(repressions);
+			if (!productionsRegulations.isEmpty())
+				annotateRxn(productionRxn, productionsRegulations);
+			if (!partici.isEmpty()) 
+				annotateSpeciesReference(productionRxn.getModifier(0), partici);
 
-		for (Participation repressor : repressors)
-			generateRepressorReference(repressor, promoter, moduleDef, productionRxn, targetModel);
+			if (promoterCnt > 1) {
+				int j = 0;
 
-		for (Participation product : products)
-			generateProductReference(product, promoter, moduleDef, productionRxn, targetModel);
+				for (Participation activator : activators) {
+					if (i==j) {
+						generateActivatorReference(activator, promoterId, moduleDef, productionRxn, targetModel);
+					}
+					j++;
+				}
+
+				for (Participation repressor : repressors) {
+					if (i==j) {
+						generateRepressorReference(repressor, promoterId, moduleDef, productionRxn, targetModel);
+					}
+					j++;
+				}
+			} else {
+				for (Participation activator : activators)
+					generateActivatorReference(activator, promoterId, moduleDef, productionRxn, targetModel);
+
+				for (Participation repressor : repressors)
+					generateRepressorReference(repressor, promoterId, moduleDef, productionRxn, targetModel);
+			}
+			
+			for (Participation product : products)
+				generateProductReference(product, promoterId, moduleDef, productionRxn, targetModel);
+
+		}
 
 		//Note: find the resulting ComponentDefinition that creates or result in the production reaction to annotate in its equivalent
 		// SBML species. 
@@ -646,16 +757,16 @@ public class SBOL2SBML {
 	 * Convert SBOL participation that takes on the role of activator into its equivalent SBML SpeciesReference.
 	 * 
 	 * @param activator - The SBOL participation to be annotated as SBML SpeciesReference.
-	 * @param promoter - The SBOL FunctionalComponent promoter of the activator.
+	 * @param promoterId - The promoter id for the activator.
 	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
 	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted activator SBOL Participation.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	private static void generateActivatorReference(Participation activator, FunctionalComponent promoter, 
+	private static void generateActivatorReference(Participation activator, String promoterId, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(activator.getParticipantURI());
 
-		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
+		targetModel.addActivatorToProductionReaction(promoterId,  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
 
 		// Annotate SBML activator species reference with SBOL activator participation
@@ -668,15 +779,15 @@ public class SBOL2SBML {
 	 * Convert SBOL participation that takes on the role of repressor into its equivalent SBML SpeciesReference.
 	 * 
 	 * @param repressor - The SBOL participation to be annotated as SBML SpeciesReference.
-	 * @param promoter - The SBOL FunctionalComponent promoter of the repressor.
+	 * @param promoterId - The promoter id of the repressor.
 	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
 	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted repressor SBOL Participation.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	private static void generateRepressorReference(Participation repressor, FunctionalComponent promoter, 
+	private static void generateRepressorReference(Participation repressor, String promoterId, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent tf = moduleDef.getFunctionalComponent(repressor.getParticipantURI());
-		targetModel.addRepressorToProductionReaction(getDisplayID(promoter),  
+		targetModel.addRepressorToProductionReaction(promoterId,  
 				getDisplayID(tf), "none", productionRxn, null, null, null);
 
 		// Annotate SBML repressor species reference with SBOL repressor participation
@@ -689,15 +800,15 @@ public class SBOL2SBML {
 	 * Convert SBOL participation that takes on the role of product into its equivalent SBML SpeciesReference.
 	 * 
 	 * @param product - The SBOL participation to be annotated as SBML SpeciesReference.
-	 * @param promoter - The SBOL FunctionalComponent promoter of the product.
+	 * @param promoter - The promoter id for the product.
 	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL Participation.
 	 * @param productionRxn - The SBML reaction that will store the SpeciesReference created from the converted activation/product SBOL Participation.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	private static void generateProductReference(Participation product, FunctionalComponent promoter, 
+	private static void generateProductReference(Participation product, String promoterId, 
 			ModuleDefinition moduleDef, Reaction productionRxn, BioModel targetModel) {
 		FunctionalComponent protein = moduleDef.getFunctionalComponent(product.getParticipantURI());
-		targetModel.addActivatorToProductionReaction(getDisplayID(promoter),  
+		targetModel.addActivatorToProductionReaction(promoterId,  
 				"none", getDisplayID(protein), productionRxn, null, null, null);
 
 		// Annotate SBML product species reference with SBOL product participation

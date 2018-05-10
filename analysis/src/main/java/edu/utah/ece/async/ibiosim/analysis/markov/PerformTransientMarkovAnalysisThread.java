@@ -50,8 +50,10 @@ public class PerformTransientMarkovAnalysisThread extends Thread {
 		this.error = error;
 		this.condition = condition;
 		this.globallyTrue = globallyTrue;
-		progress.setIndeterminate(false);
-		progress.setString(null);
+		if (progress != null) {
+			progress.setIndeterminate(false);
+			progress.setString(null);
+		}
 		super.start();
 	}
 

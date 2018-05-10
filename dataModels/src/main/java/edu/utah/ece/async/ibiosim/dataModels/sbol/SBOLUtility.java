@@ -214,7 +214,7 @@ public class SBOLUtility
 			if(!targetTopLevelObj.equals(sourceTopLevObj))
 			{
 				throw new SBOLException("The target SBOL file with this TopLevel Identity: " + targetTopLevelObj.getIdentity() +
-						"does not match the content of the source SBOL TopLevel Identity: " + sourceTopLevObj.getIdentity(), 
+						"\ndoes not match the content of the source SBOL TopLevel Identity: " + sourceTopLevObj.getIdentity(), 
 						"SBOL Content Not Equal");
 			}
 		}

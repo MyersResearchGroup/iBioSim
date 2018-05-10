@@ -263,7 +263,9 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 						
 						deletedObject = comp;
 					}
-					File file = SBOLUtils.setupFile();
+					// This is not the right file path in iBioSim
+					//File file = SBOLUtils.setupFile();
+					File file = new File(filePath + fileName);
 					
 					SBOLWriter.write(sbolDesigns, new FileOutputStream(file));
 					updateTable();
