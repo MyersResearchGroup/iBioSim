@@ -31,12 +31,12 @@ public class HierarchicalUtilities {
 	/**
 	 * File separator constant.
 	 */
-	public static final String separator = (File.separator.equals ("\\")) ? "\\\\" : File.separator;
+	public static final String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
 
 	/**
 	 * iBioSim-specific function definitions for distributions.
 	 */
-	public static final Set<String> ibiosimFunctionDefinitions = new HashSet<> (Arrays.asList ("uniform", "exponential", "gamma", "chisq", "lognormal", "laplace", "cauchy", "poisson", "binomial", "bernoulli", "normal"));
+	public static final Set<String> ibiosimFunctionDefinitions = new HashSet<>(Arrays.asList("uniform", "exponential", "gamma", "chisq", "lognormal", "laplace", "cauchy", "poisson", "binomial", "bernoulli", "normal"));
 
 	/**
 	 * Get progress status as a percentage to completion.

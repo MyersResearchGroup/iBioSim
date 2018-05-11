@@ -37,7 +37,7 @@ public abstract class HierarchicalWriter {
 	protected boolean isSet;
 
 	public HierarchicalWriter () {
-		listOfStates = new ArrayList<> ();
+		listOfStates = new ArrayList<>();
 		isSet = false;
 	}
 
@@ -92,7 +92,7 @@ public abstract class HierarchicalWriter {
 	 *          - whether to be normalize relative to the compartment value.
 	 */
 	protected void addNode (HierarchicalNode node, int index, boolean isConcentration) {
-		listOfStates.add (new WriterNode (node, index, isConcentration));
+		listOfStates.add(new WriterNode(node, index, isConcentration));
 	}
 
 	/**
@@ -115,14 +115,14 @@ public abstract class HierarchicalWriter {
 		@Override
 		public String toString () {
 			double value = 0;
-			if (isConcentration && node.isSpecies ()) {
+			if (isConcentration && node.isSpecies()) {
 				SpeciesNode species = (SpeciesNode) node;
-				value = species.getConcentration (index);
+				value = species.getConcentration(index);
 			} else {
-				value = node.getState ().getState (index).getStateValue ();
+				value = node.getState().getState(index).getStateValue();
 			}
 
-			return String.valueOf (value);
+			return String.valueOf(value);
 		}
 	}
 

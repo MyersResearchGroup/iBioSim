@@ -32,52 +32,52 @@ public class HierarchicalCSVWriter extends HierarchicalWriter {
 	private final char separator;
 
 	public HierarchicalCSVWriter () {
-		super ();
+		super();
 		this.separator = ',';
-		this.header = new StringBuilder ();
+		this.header = new StringBuilder();
 	}
 
 	@Override
 	public void print () throws IOException {
-		bufferedWriter.write ("\n");
-		if (listOfStates.size () > 0) {
-			bufferedWriter.write (String.valueOf (listOfStates.get (0).toString ()));
+		bufferedWriter.write("\n");
+		if (listOfStates.size() > 0) {
+			bufferedWriter.write(String.valueOf(listOfStates.get(0).toString()));
 
-			for (int i = 1; i < this.listOfStates.size (); ++i) {
-				bufferedWriter.write (String.valueOf (separator) + listOfStates.get (i).toString ());
+			for (int i = 1; i < this.listOfStates.size(); ++i) {
+				bufferedWriter.write(String.valueOf(separator) + listOfStates.get(i).toString());
 			}
 		}
 
-		bufferedWriter.flush ();
+		bufferedWriter.flush();
 	}
 
 	@Override
 	public void addVariable (String id, HierarchicalNode node, int index, boolean isConcentration) {
-		if (header.length () == 0) {
-			header.append (id);
+		if (header.length() == 0) {
+			header.append(id);
 		} else {
-			header.append (separator + id);
+			header.append(separator + id);
 		}
 
-		addNode (node, index, isConcentration);
+		addNode(node, index, isConcentration);
 	}
 
 	@Override
 	public void init (String filename) throws IOException {
-		if (!isSet && header.length () > 0) {
+		if (!isSet && header.length() > 0) {
 			isSet = true;
 		}
 		if (isSet) {
-			writer = new FileWriter (filename);
-			bufferedWriter = new BufferedWriter (writer);
-			bufferedWriter.write (header.toString ());
-			bufferedWriter.flush ();
+			writer = new FileWriter(filename);
+			bufferedWriter = new BufferedWriter(writer);
+			bufferedWriter.write(header.toString());
+			bufferedWriter.flush();
 		}
 	}
 
 	@Override
 	public void close () throws IOException {
-		bufferedWriter.write (")");
-		bufferedWriter.close ();
+		bufferedWriter.write(")");
+		bufferedWriter.close();
 	}
 }

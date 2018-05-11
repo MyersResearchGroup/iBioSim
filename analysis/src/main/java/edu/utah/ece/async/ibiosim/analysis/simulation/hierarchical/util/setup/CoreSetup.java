@@ -410,7 +410,7 @@ public class CoreSetup {
 					if (!(priority.isSetMetaId () && modelstate.isDeletedByMetaId (priority.getMetaId ())) && priority.isSetMath ()) {
 						ASTNode math = priority.getMath ();
 						HierarchicalNode priorityNode = MathInterpreter.parseASTNode (math, variableToNodeMap, InterpreterType.OTHER, index);
-						node.setPriorityValue (priorityNode);
+						node.setPriority (priorityNode);
 					}
 				}
 				if (event.isSetDelay ()) {
@@ -418,7 +418,7 @@ public class CoreSetup {
 					if (!(delay.isSetMetaId () && modelstate.isDeletedByMetaId (delay.getMetaId ())) && delay.isSetMath ()) {
 						ASTNode math = delay.getMath ();
 						HierarchicalNode delayNode = MathInterpreter.parseASTNode (math, variableToNodeMap, InterpreterType.OTHER, index);
-						node.setDelayValue (delayNode);
+						node.setDelay (delayNode);
 					}
 				}
 				setupEventAssignments (sim, container, node, event);

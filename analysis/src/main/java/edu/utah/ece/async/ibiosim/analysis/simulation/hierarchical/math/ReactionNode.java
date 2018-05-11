@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,216 +9,228 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * 
+ * A node that represents SBML Reactions.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class ReactionNode extends VariableNode
-{
+public class ReactionNode extends VariableNode {
 
-  private List<SpeciesReferenceNode>	reactants;
-  private List<SpeciesReferenceNode>	products;
-  private Map<String, VariableNode> 	localParameters;
-  private HierarchicalNode			forwardRate;
-  private HierarchicalNode      reverseRate;
+	private List<SpeciesReferenceNode> reactants;
+	private List<SpeciesReferenceNode> products;
+	private Map<String, VariableNode> localParameters;
+	private HierarchicalNode forwardRate;
+	private HierarchicalNode reverseRate;
 
-  public ReactionNode(String name)
-  {
-    super(name);
-    varType = VariableType.REACTION;
-  }
+	public ReactionNode (String name) {
+		super(name);
+		varType = VariableType.REACTION;
+	}
 
-  public ReactionNode(ReactionNode copy)
-  {
-    super(copy);
-    varType = VariableType.REACTION;
-    this.reactants = copy.reactants;
-    this.products = copy.products;
-    this.localParameters = copy.localParameters;
-    this.forwardRate = copy.forwardRate;
-  }
+	public ReactionNode (ReactionNode copy) {
+		super(copy);
+		varType = VariableType.REACTION;
+		this.reactants = copy.reactants;
+		this.products = copy.products;
+		this.localParameters = copy.localParameters;
+		this.forwardRate = copy.forwardRate;
+	}
 
-  public void addReactant(SpeciesReferenceNode speciesRef)
-  {
-    if (reactants == null)
-    {
-      reactants = new ArrayList<SpeciesReferenceNode>();
-    }
-    speciesRef.getSpecies().addReactionDependency(this);
-    reactants.add(speciesRef);
-  }
+	/**
+	 * Adds a reaction reactant.
+	 *
+	 * @param speciesRef
+	 *          - the species reference node.
+	 */
+	public void addReactant(SpeciesReferenceNode speciesRef) {
+		if (reactants == null) {
+			reactants = new ArrayList<>();
+		}
+		speciesRef.getSpecies().addReactionDependency(this);
+		reactants.add(speciesRef);
+	}
 
-  public void addProduct(SpeciesReferenceNode speciesRef)
-  {
-    if (products == null)
-    {
-      products = new ArrayList<SpeciesReferenceNode>();
-    }
+	/**
+	 * Adds a reaction product.
+	 *
+	 * @param speciesRef
+	 *          - the species reference node.
+	 */
+	public void addProduct(SpeciesReferenceNode speciesRef) {
+		if (products == null) {
+			products = new ArrayList<>();
+		}
 
-    speciesRef.getSpecies().addReactionDependency(this);
-    products.add(speciesRef);
-  }
+		speciesRef.getSpecies().addReactionDependency(this);
+		products.add(speciesRef);
+	}
 
-  public void setForwardRate(HierarchicalNode kineticLaw)
-  {
-    this.forwardRate = kineticLaw;
-  }
+	/**
+	 * Sets the forward reaction rate.
+	 *
+	 * @param kineticLaw
+	 *          - the rate equation.
+	 */
+	public void setForwardRate(HierarchicalNode kineticLaw) {
+		this.forwardRate = kineticLaw;
+	}
 
-  public void setReverseRate(HierarchicalNode kineticLaw)
-  {
-    this.reverseRate = kineticLaw;
-  }
+	/**
+	 * Sets the reverse reaction rate.
+	 *
+	 * @param kineticLaw
+	 *          - the rate equation.
+	 */
+	public void setReverseRate(HierarchicalNode kineticLaw) {
+		this.reverseRate = kineticLaw;
+	}
 
-  public HierarchicalNode getForwardRate()
-  {
-    return forwardRate;
-  }
+	/**
+	 * Gets the forward reaction rate.
+	 *
+	 * @return the forward reaction rate node.
+	 */
+	public HierarchicalNode getForwardRate() {
+		return forwardRate;
+	}
 
-  public HierarchicalNode getReverseRate()
-  {
-    return reverseRate;
-  }
+	/**
+	 * Gets the reverse reaction rate.
+	 *
+	 * @return the reverse reaction rate node.
+	 */
+	public HierarchicalNode getReverseRate() {
+		return reverseRate;
+	}
 
-  public boolean computePropensity(int index)
-  {
-    double oldValue = state.getState(index).getStateValue();
-    double newValue = 0;
+	/**
+	 * Computes the reaction propensity.
+	 *
+	 * @param index
+	 *          - the model index.
+	 */
+	public boolean computePropensity(int index) {
+		double oldValue = state.getState(index).getStateValue();
+		double newValue = 0;
 
-    if (forwardRate != null)
-    {
-      double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
-      newValue = forwardRateValue;
-    }
+		if (forwardRate != null) {
+			double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+			newValue = forwardRateValue;
+		}
 
-    if (reverseRate != null)
-    {
-      double reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
-      newValue = newValue + reverseRateValue;
-    }
+		if (reverseRate != null) {
+			double reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
+			newValue = newValue + reverseRateValue;
+		}
 
-    state.getState(index).setStateValue(newValue);
+		state.getState(index).setStateValue(newValue);
 
-    return oldValue != newValue;
-  }
+		return oldValue != newValue;
+	}
 
+	/**
+	 * Executes the reaction and updates the species participating in the reaction.
+	 *
+	 * @param index
+	 *          - the model index.
+	 * @param threshold
+	 *          - the threshold to select whether to fire the forward or reverse reaction.
+	 */
+	public void fireReaction(int index, double threshold) {
+		boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
+		if (isForward) {
+			if (computeNotEnoughEnoughMoleculesFd(index)) {
+				if (reactants != null) {
 
+					updateSpeciesReference(reactants, index, -1);
+				}
 
-  public void fireReaction(int index, double threshold)
-  {
+				if (products != null) {
+					updateSpeciesReference(products, index, 1);
+				}
+			}
+		} else {
+			if (computeNotEnoughEnoughMoleculesRv(index)) {
+				if (reactants != null) {
+					updateSpeciesReference(reactants, index, 1);
+				}
 
-    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
-    if(isForward)
-    {
-      if (computeNotEnoughEnoughMoleculesFd(index))
-      {
-        if (reactants != null)
-        {
+				if (products != null) {
+					updateSpeciesReference(products, index, -1);
+				}
+			}
+		}
+	}
 
-          updateSpeciesReference(reactants, index, -1);
-        }
+	private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier) {
+		for (SpeciesReferenceNode specRef : specRefs) {
+			double stoichiometry = specRef.getStoichiometry(index);
+			SpeciesNode speciesNode = specRef.getSpecies();
+			if (!speciesNode.getState().getState(index).isBoundaryCondition()) {
+				speciesNode.getState().getState(index).setStateValue(speciesNode.getState().getState(index).getStateValue() + multiplier * stoichiometry);
+			}
+		}
+	}
 
-        if (products != null)
-        {
-          updateSpeciesReference(products, index, 1);
-        }
-      }
-    }
-    else
-    {
-      if (computeNotEnoughEnoughMoleculesRv(index))
-      {
-        if (reactants != null)
-        {
-          updateSpeciesReference(reactants, index, 1);
-        }
+	private boolean computeNotEnoughEnoughMoleculesFd(int index) {
+		if (reactants != null) {
+			for (SpeciesReferenceNode specRef : reactants) {
+				if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue()) { return false; }
+			}
+		}
 
-        if (products != null)
-        {
-          updateSpeciesReference(products, index, -1);
-        }
-      }
-    }
-  }
+		return true;
+	}
 
-  private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier)
-  {
-    for (SpeciesReferenceNode specRef : specRefs)
-    {
-      double stoichiometry = specRef.getStoichiometry(index);
-      SpeciesNode speciesNode = specRef.getSpecies();
-      if(!speciesNode.getState().getState(index).isBoundaryCondition())
-      {
-        speciesNode.getState().getState(index).setStateValue(speciesNode.getState().getState(index).getStateValue() + multiplier* stoichiometry);
-      }
-    }
-  }
+	private boolean computeNotEnoughEnoughMoleculesRv(int index) {
+		if (reactants != null) {
+			for (SpeciesReferenceNode specRef : reactants) {
+				if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue()) { return false; }
+			}
+		}
 
-  private boolean computeNotEnoughEnoughMoleculesFd(int index)
-  {
-    if (reactants != null)
-    {
-      for (SpeciesReferenceNode specRef : reactants)
-      {
-        if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue())
-        {
-          return false;
-        }
-      }
-    }
+		return true;
+	}
 
-    return true;
-  }
+	/**
+	 * Adds a local parameter.
+	 *
+	 * @param id
+	 *          - the id of the local parameter.
+	 * @param node
+	 *          - the local parameter node.
+	 */
+	public void addLocalParameter(String id, VariableNode node) {
+		if (localParameters == null) {
+			localParameters = new HashMap<>();
+		}
+		localParameters.put(id, node);
+	}
 
-  private boolean computeNotEnoughEnoughMoleculesRv(int index)
-  {
-    if (reactants != null)
-    {
-      for (SpeciesReferenceNode specRef : reactants)
-      {
-        if (specRef.getSpecies().getState().getState(index).getStateValue() < specRef.getState().getState(index).getStateValue())
-        {
-          return false;
-        }
-      }
-    }
+	/**
+	 * Gets the map for local parameters.
+	 *
+	 * @return the map for local parameters.
+	 */
+	public Map<String, VariableNode> getLocalParameters() {
+		return localParameters;
+	}
 
-    return true;
-  }
-
-  public void addLocalParameter(String id, VariableNode node)
-  {
-    if(localParameters == null)
-    {
-      localParameters = new HashMap<String, VariableNode>();
-    }
-    localParameters.put(id, node);
-  }
-
-  public Map<String, VariableNode> getLocalParameters()
-  {
-    return localParameters;
-  }
-
-  @Override
-  public ReactionNode clone()
-  {
-    return new ReactionNode(this);
-  }
-
+	@Override
+	public ReactionNode clone() {
+		return new ReactionNode(this);
+	}
 
 }
