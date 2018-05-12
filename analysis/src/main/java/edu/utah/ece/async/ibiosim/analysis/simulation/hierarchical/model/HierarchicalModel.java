@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ * 
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ * 
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model;
 
@@ -21,78 +21,70 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.sbml.jsbml.Model;
-
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
- * 
+ * This class represents an SBML model.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public final class HierarchicalModel
-{
+public final class HierarchicalModel {
 
-	public static enum ModelType
-	{
+	public static enum ModelType {
 		HSSA, HODE, HFBA, NONE;
 	}
 
-	private ModelType					type;
+	private ModelType type;
 
-	private Set<String>					deletedBySId;
-	private Set<String>					deletedByMetaId;
+	private Set<String> deletedBySId;
+	private Set<String> deletedByMetaId;
 
-	private List<EventNode>				events;
-	private List<ReactionNode>			reactions;
-	private List<VariableNode>			arrays;
-	private List<ConstraintNode>		constraints;
+	private final List<EventNode> events;
+	private final List<ReactionNode> reactions;
+	private final List<VariableNode> arrays;
+	private final List<ConstraintNode> constraints;
 	private List<FunctionNode> initConcentrations;
 	private List<FunctionNode> initAssignments;
 	private List<FunctionNode> assignRules;
 	private List<VariableNode> variables;
 
-	private Map<String, VariableNode>	idToNode;
+	private final Map<String, VariableNode> idToNode;
 
+	private String ID;
+	protected int index;
+	private double maxPropensity;
+	private double minPropensity;
+	private FunctionNode propensity;
 
-	private String        ID;
-	protected int       index;
-	private double        maxPropensity;
-	private double        minPropensity;
-	private FunctionNode  propensity;
+	private Map<String, HierarchicalModel> idToSubmodel;
 
-	private Map<String, HierarchicalModel>	idToSubmodel;
-
-	public HierarchicalModel(String submodelID, int index)
-	{
+	public HierarchicalModel (String submodelID, int index) {
 
 		this.ID = submodelID;
 		this.index = index;
 		this.minPropensity = Double.MAX_VALUE / 10.0;
 		this.maxPropensity = Double.MIN_VALUE / 10.0;
-		
-		this.idToNode = new HashMap<String, VariableNode>();
-		this.variables = new ArrayList<VariableNode>();
-		this.events = new LinkedList<EventNode>();
-		this.constraints = new ArrayList<ConstraintNode>();
-		this.reactions = new ArrayList<ReactionNode>();
-		this.arrays = new ArrayList<VariableNode>();
+
+		this.idToNode = new HashMap<>();
+		this.variables = new ArrayList<>();
+		this.events = new LinkedList<>();
+		this.constraints = new ArrayList<>();
+		this.reactions = new ArrayList<>();
+		this.arrays = new ArrayList<>();
 		this.propensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 	}
 
-	public HierarchicalModel(HierarchicalModel state)
-	{
+	public HierarchicalModel (HierarchicalModel state) {
 		this.type = state.type;
 		// TODO: fix this
 		this.deletedBySId = state.deletedBySId;
@@ -108,74 +100,62 @@ public final class HierarchicalModel
 		this.maxPropensity = state.maxPropensity;
 		this.index = state.index;
 
-		if (state.propensity != null)
-		{
+		if (state.propensity != null) {
 			this.propensity = state.propensity;
 		}
 	}
 
-	public void clear()
-	{
+	public void clear() {
 
 	}
 
 	@Override
-	public HierarchicalModel clone()
-	{
+	public HierarchicalModel clone() {
 		return new HierarchicalModel(this);
 	}
-	
-	public VariableNode addVariable(VariableNode node)
-	{
-	  variables.add(node);
-	  return node;
+
+	public VariableNode addVariable(VariableNode node) {
+		variables.add(node);
+		return node;
 	}
 
-	public List<VariableNode> getListOfVariables()
-	{
-	  return variables;
+	public List<VariableNode> getListOfVariables() {
+		return variables;
 	}
-	
-	public Map<String, VariableNode> getVariableToNodeMap()
-	{
+
+	public Map<String, VariableNode> getVariableToNodeMap() {
 		return idToNode;
 	}
 
-	public ReactionNode addReaction(String variable)
-	{
+	public ReactionNode addReaction(String variable) {
 		ReactionNode node = new ReactionNode(variable);
 		addReaction(node);
 		return node;
 	}
 
-	public void addReaction(ReactionNode node)
-	{
+	public void addReaction(ReactionNode node) {
 		reactions.add(node);
 		idToNode.put(node.getName(), node);
 	}
 
-	public EventNode addEvent(HierarchicalNode triggerNode)
-	{
+	public EventNode addEvent(HierarchicalNode triggerNode) {
 
 		EventNode node = new EventNode(triggerNode);
 		addEvent(node);
 		return node;
 	}
 
-	public void addEvent(EventNode node)
-	{
+	public void addEvent(EventNode node) {
 		events.add(node);
 	}
 
-	public VariableNode addArray(VariableNode node)
-	{
+	public VariableNode addArray(VariableNode node) {
 		arrays.add(node);
 		idToNode.put(node.getName(), node);
 		return node;
 	}
 
-	public ConstraintNode addConstraint(String variable, HierarchicalNode node)
-	{
+	public ConstraintNode addConstraint(String variable, HierarchicalNode node) {
 		ConstraintNode constraintNode = new ConstraintNode(variable, node);
 
 		constraints.add(constraintNode);
@@ -183,275 +163,215 @@ public final class HierarchicalModel
 		return constraintNode;
 	}
 
-	public List<ConstraintNode> getListOfConstraints()
-	{
+	public List<ConstraintNode> getListOfConstraints() {
 		return constraints;
 	}
 
-	public void addMappingNode(String variable, VariableNode node)
-	{
+	public void addMappingNode(String variable, VariableNode node) {
 		idToNode.put(variable, node);
 	}
 
-	public boolean containsNode(String variable)
-  {
-    return idToNode.containsKey(variable);
-  }
-	
-	public VariableNode getNode(String variable)
-	{
+	public boolean containsNode(String variable) {
+		return idToNode.containsKey(variable);
+	}
+
+	public VariableNode getNode(String variable) {
 		return idToNode.get(variable);
 	}
 
-	public List<ConstraintNode> getConstraints()
-	{
+	public List<ConstraintNode> getConstraints() {
 		return constraints;
 	}
 
-	public ConstraintNode getConstraint(int index)
-	{
+	public ConstraintNode getConstraint(int index) {
 		return constraints.get(index);
 	}
 
-	public void addDeletedBySid(String id)
-	{
+	public void addDeletedBySid(String id) {
 
-		if (deletedBySId == null)
-		{
-			deletedBySId = new HashSet<String>();
+		if (deletedBySId == null) {
+			deletedBySId = new HashSet<>();
 		}
 
 		deletedBySId.add(id);
 	}
 
-	public void addDeletedByMetaId(String metaid)
-	{
+	public void addDeletedByMetaId(String metaid) {
 
-		if (deletedByMetaId == null)
-		{
-			deletedByMetaId = new HashSet<String>();
+		if (deletedByMetaId == null) {
+			deletedByMetaId = new HashSet<>();
 		}
 
 		deletedByMetaId.add(metaid);
 	}
 
-	public boolean isDeletedBySId(String sid)
-	{
+	public boolean isDeletedBySId(String sid) {
 
-		if (deletedBySId == null)
-		{
-			return false;
-		}
+		if (deletedBySId == null) { return false; }
 
 		return deletedBySId.contains(sid);
 	}
 
-	public boolean isDeletedByMetaId(String metaid)
-	{
+	public boolean isDeletedByMetaId(String metaid) {
 
-		if (deletedByMetaId == null)
-		{
-			return false;
-		}
+		if (deletedByMetaId == null) { return false; }
 
 		return deletedByMetaId.contains(metaid);
 	}
 
-	public List<VariableNode> getArrays()
-	{
+	public List<VariableNode> getArrays() {
 		return arrays;
 	}
 
-	public List<ReactionNode> getReactions()
-	{
+	public List<ReactionNode> getReactions() {
 		return reactions;
 	}
 
-	public ReactionNode getReaction(int index)
-	{
+	public ReactionNode getReaction(int index) {
 		return reactions.get(index);
 	}
 
-	public List<EventNode> getEvents()
-	{
+	public List<EventNode> getEvents() {
 		return events;
 	}
 
-	public EventNode getEvent(int index)
-	{
+	public EventNode getEvent(int index) {
 		return events.get(index);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "ModelState [ID=" + getID() + "]";
 	}
 
-	public ModelType getModelType()
-	{
+	public ModelType getModelType() {
 		return type;
 	}
 
-	public void setModelType(ModelType type)
-	{
+	public void setModelType(ModelType type) {
 		this.type = type;
 	}
 
-	
-	public String getID()
-	{
+	public String getID() {
 		return ID;
 	}
 
-	public double getMaxPropensity()
-	{
+	public double getMaxPropensity() {
 		return maxPropensity;
 	}
 
-	public double getMinPropensity()
-	{
+	public double getMinPropensity() {
 		return minPropensity;
 	}
 
-	public FunctionNode getPropensity()
-	{
+	public FunctionNode getPropensity() {
 		return propensity;
 	}
 
-	public void setID(String iD)
-	{
+	public void setID(String iD) {
 		ID = iD;
 	}
 
-	public void setMaxPropensity(double maxPropensity)
-	{
+	public void setMaxPropensity(double maxPropensity) {
 		this.maxPropensity = maxPropensity;
 	}
 
-	public void setMinPropensity(double minPropensity)
-	{
+	public void setMinPropensity(double minPropensity) {
 		this.minPropensity = minPropensity;
 	}
 
-	public int getIndex()
-	{
+	public int getIndex() {
 		return index;
 	}
 
-	public void addInitConcentration(FunctionNode node)
-  {
-    if(initConcentrations == null)
-    {
-      initConcentrations = new ArrayList<FunctionNode>();
-    }
+	public void addInitConcentration(FunctionNode node) {
+		if (initConcentrations == null) {
+			initConcentrations = new ArrayList<>();
+		}
 
-    initConcentrations.add(node);
-  }
+		initConcentrations.add(node);
+	}
 
-	public void addInitAssignment(FunctionNode node)
-	{
-		if(initAssignments == null)
-		{
-			initAssignments = new ArrayList<FunctionNode>();
+	public void addInitAssignment(FunctionNode node) {
+		if (initAssignments == null) {
+			initAssignments = new ArrayList<>();
 		}
 
 		initAssignments.add(node);
 	}
 
-	public void addAssignRule(FunctionNode node)
-	{
-		if(assignRules == null)
-		{
-			assignRules = new ArrayList<FunctionNode>();
+	public void addAssignRule(FunctionNode node) {
+		if (assignRules == null) {
+			assignRules = new ArrayList<>();
 		}
 		assignRules.add(node);
 	}
 
-	public List<FunctionNode> getInitAssignments() 
-	{
+	public List<FunctionNode> getInitAssignments() {
 		return initAssignments;
 	}
 
-	public List<FunctionNode> getInitConcentration() 
-  {
-    return initConcentrations;
-  }
+	public List<FunctionNode> getInitConcentration() {
+		return initConcentrations;
+	}
 
-	public void setInitAssignments(List<FunctionNode> initAssignments) 
-	{
+	public void setInitAssignments(List<FunctionNode> initAssignments) {
 		this.initAssignments = initAssignments;
 	}
 
-
-	public List<FunctionNode> getAssignRules() 
-	{
+	public List<FunctionNode> getAssignRules() {
 		return assignRules;
 	}
 
-
-	public void setAssignRules(List<FunctionNode> assignRules) 
-	{
+	public void setAssignRules(List<FunctionNode> assignRules) {
 		this.assignRules = assignRules;
 	}
-	
-	public void addSubmodel(HierarchicalModel submodel)
-	{
-		if(idToSubmodel == null)
-		{
-			idToSubmodel = new HashMap<String, HierarchicalModel>();
+
+	public void addSubmodel(HierarchicalModel submodel) {
+		if (idToSubmodel == null) {
+			idToSubmodel = new HashMap<>();
 		}
-		
+
 		idToSubmodel.put(submodel.getID(), submodel);
 	}
-	
-	public HierarchicalModel getSubmodel(String id)
-	{
+
+	public HierarchicalModel getSubmodel(String id) {
 		HierarchicalModel submodel = null;
-		if(idToSubmodel != null)
-		{
+		if (idToSubmodel != null) {
 			submodel = idToSubmodel.get(id);
 		}
 		return submodel;
 	}
-	
-	public boolean containsSubmodel(String id)
-	{
-		
-		if(idToSubmodel != null)
-		{
-			return idToSubmodel.containsKey(id);
-		}
+
+	public boolean containsSubmodel(String id) {
+
+		if (idToSubmodel != null) { return idToSubmodel.containsKey(id); }
 		return false;
 	}
-	
-	public boolean computePropensities()
-	{
-	  boolean hasChanged = false;
-	  for(ReactionNode node : reactions)
-    {
-	    double oldValue = node.getState().getState(index).getStateValue();
-      node.computePropensity(index);
-      double newValue = node.getState().getState(index).getStateValue();
-      
-      hasChanged = hasChanged | oldValue != newValue;
-    }
-	  
-	  return hasChanged;
+
+	public boolean computePropensities() {
+		boolean hasChanged = false;
+		for (ReactionNode node : reactions) {
+			double oldValue = node.getState().getState(index).getStateValue();
+			node.computePropensity(index);
+			double newValue = node.getState().getState(index).getStateValue();
+
+			hasChanged = hasChanged | oldValue != newValue;
+		}
+
+		return hasChanged;
 	}
 
-	public void removeSubmodel(String id)
-	{
-	  idToSubmodel.remove(id);
+	public void removeSubmodel(String id) {
+		idToSubmodel.remove(id);
 	}
-	
-	public void insertPropensity(ReactionNode reaction)
-	{
-	    this.propensity.addChild(reaction);
+
+	public void insertPropensity(ReactionNode reaction) {
+		this.propensity.addChild(reaction);
 	}
 }

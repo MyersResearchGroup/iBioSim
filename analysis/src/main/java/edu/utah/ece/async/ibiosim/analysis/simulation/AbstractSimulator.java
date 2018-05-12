@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ * 
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ * 
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
@@ -22,37 +22,36 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 
 /**
- * 
+ * Base class of a Simulator class.
+ *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version $Rev$
  * @version %I%
  */
-public abstract class AbstractSimulator extends CoreObservable
-{
-  protected final Message message = new Message(); 
-  
-  /**
-   * 
-   */
-  public abstract void simulate() throws IOException, XMLStreamException, BioSimException;
+public abstract class AbstractSimulator extends CoreObservable {
+	protected final Message message = new Message();
 
-  /**
-   * 
-   */
-  public abstract void cancel();
+	/**
+	 * 
+	 */
+	public abstract void simulate() throws IOException, XMLStreamException, BioSimException;
 
+	/**
+	 * 
+	 */
+	public abstract void cancel();
 
-  /**
-   * 
-   * @param newRun
-   */
-  public abstract void setupForNewRun(int newRun) throws IOException;
+	/**
+	 * 
+	 * @param newRun
+	 */
+	public abstract void setupForNewRun(int newRun) throws IOException;
 
-  /**
-   * 
-   */
-  public abstract void printStatisticsTSD();
+	/**
+	 * 
+	 */
+	public abstract void printStatisticsTSD();
 
 }

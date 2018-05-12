@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
@@ -28,186 +28,161 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.Hiera
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable.RequestType;
 
 /**
- * 
+ * Used to run a simulation method.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class DynamicSimulation extends CoreObservable
-{
+public class DynamicSimulation extends CoreObservable {
 
-  // simulator type
-  private final SimulationType	simulatorType;
-  private final Message message;
+	// simulator type
+	private final SimulationType simulatorType;
+	private final Message message;
 
-  // the simulator object
-  private AbstractSimulator			simulator;
-  private boolean					cancelFlag;
-  private boolean					statisticsFlag;
+	// the simulator object
+	private AbstractSimulator simulator;
+	private boolean cancelFlag;
+	private boolean statisticsFlag;
 
+	public static enum SimulationType {
+		CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK, HIERARCHICAL_MIXED;
+	}
 
-  public static enum SimulationType
-  {
-    CR, DIRECT, RK, HIERARCHICAL_DIRECT, HIERARCHICAL_HYBRID, HIERARCHICAL_RK, HIERARCHICAL_MIXED;
-  }
+	/**
+	 * constructor; sets the simulator type
+	 */
+	public DynamicSimulation (SimulationType type) {
+		simulatorType = type;
+		message = new Message();
+	}
 
-  /**
-   * constructor; sets the simulator type
-   */
-  public DynamicSimulation(SimulationType type)
-  {
-    simulatorType = type;
-    message = new Message();
-  }
+	public void simulate(AnalysisProperties properties, String filename) {
+		SimulationProperties simProperties = properties.getSimulationProperties();
 
-  public void simulate(AnalysisProperties properties,String filename)
-  {
-    SimulationProperties simProperties = properties.getSimulationProperties();
+		try {
 
-    try
-    {
+			String SBMLFileName = filename, outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir();
+			properties.getRoot();
+			String quantityType = simProperties.getPrinter_track_quantity();
+			double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp();
+			simProperties.getOutputStartTime();
+			double absError = simProperties.getAbsError(), relError = simProperties.getRelError();
+			simProperties.getInitialTime();
+			long randomSeed = simProperties.getRndSeed();
+			String[] interestingSpecies = simProperties.getIntSpecies().toArray(new String[simProperties.getIntSpecies().size()]);
+			int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
+			if (numSteps == 0) {
+				numSteps = (int) (timeLimit / printInterval);
+			}
+			switch (simulatorType) {
+			case RK:
 
-      String SBMLFileName = filename, outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir(), rootDirectory = properties.getRoot(), quantityType = simProperties.getPrinter_track_quantity();
-      double timeLimit = simProperties.getTimeLimit(), maxTimeStep = simProperties.getMaxTimeStep(), minTimeStep = simProperties.getMinTimeStep(), printInterval = simProperties.getPrintInterval(), stoichAmpValue = properties.getAdvancedProperties().getStoichAmp(),
-          initialTime = simProperties.getInitialTime(), outputStartTime = simProperties.getOutputStartTime(), absError = simProperties.getAbsError(), relError = simProperties.getRelError();
-      long randomSeed = simProperties.getRndSeed();
-      String[] interestingSpecies = simProperties.getIntSpecies().toArray(new String[simProperties.getIntSpecies().size()]);
-      int runs = simProperties.getRun(), numSteps = simProperties.getNumSteps();
-      if(numSteps == 0)
-      {
-        numSteps = (int)(timeLimit/printInterval);
-      }
-      switch (simulatorType)
-      {
-      case RK:
-        
-        simulator = new SimulatorODERK(SBMLFileName,  outputDirectory,  runs,  timeLimit,  maxTimeStep,  randomSeed,  printInterval,  stoichAmpValue, interestingSpecies,  numSteps,  relError,  absError, quantityType);
-        simulator.addObservable(this);
-        break;
-      case CR:
-        simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
-        simulator.addObservable(this);
-        break;
-      case DIRECT:
-        simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed,  printInterval, stoichAmpValue, interestingSpecies, quantityType);
-        simulator.addObservable(this);
-        break;
-      case HIERARCHICAL_DIRECT:
-        simulator = new HierarchicalSSADirectSimulator(properties);
-        simulator.addObservable(this);
-        break;
-      case HIERARCHICAL_RK:
-        simulator = new HierarchicalODERKSimulator(properties);
-        simulator.addObservable(this);
-        break;
-      case HIERARCHICAL_HYBRID:
-        break;
-      case HIERARCHICAL_MIXED:
-        simulator = new HierarchicalMixedSimulator(properties);
-        simulator.addObservable(this);
-        break;
-      default:
-        message.setLog("The simulation selection was invalid.");
-        notifyObservers(message);
-        return;
-      }
-      
-      //double val1 = System.currentTimeMillis();
+				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType);
+				simulator.addObservable(this);
+				break;
+			case CR:
+				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType);
+				simulator.addObservable(this);
+				break;
+			case DIRECT:
+				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, minTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, quantityType);
+				simulator.addObservable(this);
+				break;
+			case HIERARCHICAL_DIRECT:
+				simulator = new HierarchicalSSADirectSimulator(properties);
+				simulator.addObservable(this);
+				break;
+			case HIERARCHICAL_RK:
+				simulator = new HierarchicalODERKSimulator(properties);
+				simulator.addObservable(this);
+				break;
+			case HIERARCHICAL_HYBRID:
+				break;
+			case HIERARCHICAL_MIXED:
+				simulator = new HierarchicalMixedSimulator(properties);
+				simulator.addObservable(this);
+				break;
+			default:
+				message.setLog("The simulation selection was invalid.");
+				notifyObservers(message);
+				return;
+			}
 
-      //Runtime runtime = Runtime.getRuntime();
-      //double mb = 1024 * 1024;
-      for (int run = 1; run <= runs; ++run)
-      {
+			// double val1 = System.currentTimeMillis();
 
-        if (cancelFlag == true)
-        {
-          break;
-        }
+			// Runtime runtime = Runtime.getRuntime();
+			// double mb = 1024 * 1024;
+			for (int run = 1; run <= runs; ++run) {
 
-        if (simulator != null)
-        {
-          simulator.simulate();
-          if ((runs - run) >= 1)
-          {
-            simulator.setupForNewRun(run + 1);
-          }
-        }
-        
-        //System.gc();
-        //double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-        ///double val2 = System.currentTimeMillis();
+				if (cancelFlag == true) {
+					break;
+				}
 
-        //System.runFinalization();
+				if (simulator != null) {
+					simulator.simulate();
+					if ((runs - run) >= 1) {
+						simulator.setupForNewRun(run + 1);
+					}
+				}
 
+				// System.gc();
+				// double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
+				/// double val2 = System.currentTimeMillis();
 
-        //message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
-        //notifyObservers(message);
+				// System.runFinalization();
 
-        if (cancelFlag == false && statisticsFlag == true)
-        {
+				// message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
+				// notifyObservers(message);
 
-          if (simulator != null)
-          {
-            simulator.printStatisticsTSD();
-          }
+				if (cancelFlag == false && statisticsFlag == true) {
 
-        }
-      }
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-      return;
-    }
-    catch (XMLStreamException e)
-    {
-      e.printStackTrace();
-      return;
-    }
-    catch (BioSimException e)
-    {
-      e.printStackTrace();
-      return;
-    }
-   
+					if (simulator != null) {
+						simulator.printStatisticsTSD();
+					}
 
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		catch (XMLStreamException e) {
+			e.printStackTrace();
+			return;
+		}
+		catch (BioSimException e) {
+			e.printStackTrace();
+			return;
+		}
 
-  }
+	}
 
-  /**
-   * cancels the simulation on the next iteration called from outside the
-   * class when the user closes the progress bar dialog
-   */
-  public void cancel()
-  {
+	/**
+	 * cancels the simulation on the next iteration called from outside the
+	 * class when the user closes the progress bar dialog
+	 */
+	public void cancel() {
 
-    if (simulator != null)
-    {
+		if (simulator != null) {
 
-      simulator.cancel();
+			simulator.cancel();
 
+			cancelFlag = true;
 
-      cancelFlag = true;
+			message.setCancel();
+			notifyObservers(message);
+		}
+	}
 
-      message.setCancel();
-      notifyObservers(message);
-    }
-  }
-  
-  @Override
-  public boolean send(RequestType type, Message message)
-  {
-    if(parent != null)
-    {
-      return parent.send(type, message);
-    }
-    return true;
-  }
-
+	@Override
+	public boolean send(RequestType type, Message message) {
+		if (parent != null) { return parent.send(type, message); }
+		return true;
+	}
 
 }

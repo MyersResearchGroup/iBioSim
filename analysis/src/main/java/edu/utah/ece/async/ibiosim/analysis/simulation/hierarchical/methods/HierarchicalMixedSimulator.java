@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods;
 
@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
@@ -33,87 +31,86 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.Mo
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
- * 
+ * Hierarchical simulator that allows the coupling of ODE simulation and FBA.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public final class HierarchicalMixedSimulator extends HierarchicalSimulation
-{
+public final class HierarchicalMixedSimulator extends HierarchicalSimulation {
 
-  private double fbaTime;
-	private HierarchicalFBASimulator	fbaSim;
-	private HierarchicalODERKSimulator	odeSim;
+	private double fbaTime;
+	private HierarchicalFBASimulator fbaSim;
+	private HierarchicalODERKSimulator odeSim;
 	private VectorWrapper wrapper;
 	// private HierarchicalSimulation ssaSim;
 
-	public HierarchicalMixedSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException
-	{
+	public HierarchicalMixedSimulator (AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
 		super(properties, SimType.MIXED);
 
 	}
 
-	public void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException, BioSimException
-	{
-		if (!isInitialized)
-		{
-		  currProgress = 0;
+	/**
+	 * Initializes the simulator.
+	 *
+	 * @param runNumber
+	 *          - the run index.
+	 * @throws IOException
+	 *           - if there is a problem with the model file.
+	 * @throws XMLStreamException
+	 *           - if there is a problem parsing the SBML file.
+	 * @throws BioSimException
+	 *           - if an error occur in the initialization.
+	 */
+	public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
+		if (!isInitialized) {
+			currProgress = 0;
 			setCurrentTime(0);
-			this.wrapper = new VectorWrapper(); 
+			this.wrapper = new VectorWrapper();
 
-			
 			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
 			computeFixedPoint();
 
-
-      setupForOutput(runNumber);
+			setupForOutput(runNumber);
 			isInitialized = true;
 		}
 
 	}
 
 	@Override
-	public void simulate() throws IOException, XMLStreamException, BioSimException
-	{
+	public void simulate() throws IOException, XMLStreamException, BioSimException {
 
-		if (!isInitialized)
-		{
-				initialize(0, getCurrentRun());
+		if (!isInitialized) {
+			initialize(getCurrentRun());
 		}
 		double nextEndTime = currentTime.getState().getStateValue();
-    fbaTime = nextEndTime;
+		fbaTime = nextEndTime;
 		double dt = getTopLevelValue("dt");
 		SimulationProperties simProperties = properties.getSimulationProperties();
 		double timeLimit = simProperties.getTimeLimit();
 		double maxTimeStep = simProperties.getMaxTimeStep();
-		while (nextEndTime < timeLimit)
-		{
+		while (nextEndTime < timeLimit) {
 			nextEndTime = nextEndTime + maxTimeStep;
 
-			if(nextEndTime > fbaTime)
-			{
-			  nextEndTime = fbaTime;
+			if (nextEndTime > fbaTime) {
+				nextEndTime = fbaTime;
 			}
-			
-			if (nextEndTime > printTime)
-			{
+
+			if (nextEndTime > printTime) {
 				nextEndTime = printTime;
 			}
 
-			if (nextEndTime > timeLimit)
-			{
+			if (nextEndTime > timeLimit) {
 				nextEndTime = timeLimit;
 			}
 
 			simProperties.setTimeLimit(nextEndTime);
-			
-			if(nextEndTime <= fbaTime)
-			{
-	      fbaSim.simulate();
 
-        fbaTime = nextEndTime + dt;
+			if (nextEndTime <= fbaTime) {
+				fbaSim.simulate();
+
+				fbaTime = nextEndTime + dt;
 			}
 
 			computeAssignmentRules();
@@ -125,50 +122,63 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation
 			printToFile();
 		}
 
-		//Restore
-    simProperties.setTimeLimit(timeLimit);
+		// Restore
+		simProperties.setTimeLimit(timeLimit);
 		closeWriter();
 	}
 
 	@Override
-	public void cancel()
-	{
-	}
+	public void cancel() {}
 
 	@Override
-	public void setupForNewRun(int newRun)
-	{
-	  fbaTime = 0;
+	public void setupForNewRun(int newRun) {
+		fbaTime = 0;
 	}
 
-	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException, BioSimException
-	{
-			odeSim = new HierarchicalODERKSimulator(this.properties, false);
-			odeSim.setTopmodel(topmodel);
-			odeSim.setListOfHierarchicalModels(odeModels);
+	/**
+	 * Sets the ODE part of the simulator.
+	 *
+	 * @param topmodel
+	 * @param odeModels
+	 * @throws IOException
+	 * @throws XMLStreamException
+	 * @throws BioSimException
+	 */
+	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException, BioSimException {
+		odeSim = new HierarchicalODERKSimulator(this.properties, false);
+		odeSim.setTopmodel(topmodel);
+		odeSim.setListOfHierarchicalModels(odeModels);
 	}
 
-	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels)
-	{
+	/**
+	 * Sets the SSA part of the simulator.
+	 *
+	 * @param topmodel
+	 * @param submodels
+	 */
+	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) {
 		// TODO:
 	}
 
-	public void createFBASim(HierarchicalModel topmodel, Model model)
-	{
+	/**
+	 * Sets the FBA part of the simulator.
+	 * 
+	 * @param topmodel
+	 * @param model
+	 */
+	public void createFBASim(HierarchicalModel topmodel, Model model) {
 		fbaSim = new HierarchicalFBASimulator(this, topmodel);
 		fbaSim.setFBA(model);
 	}
 
 	@Override
-	public void printStatisticsTSD()
-	{
+	public void printStatisticsTSD() {
 		// TODO Auto-generated method stub
 
 	}
-	
-	VectorWrapper getVectorWrapper()
-	{
-	  return this.wrapper;
+
+	VectorWrapper getVectorWrapper() {
+		return this.wrapper;
 	}
 
 }
