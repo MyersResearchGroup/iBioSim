@@ -38,7 +38,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 
 /**
  * 

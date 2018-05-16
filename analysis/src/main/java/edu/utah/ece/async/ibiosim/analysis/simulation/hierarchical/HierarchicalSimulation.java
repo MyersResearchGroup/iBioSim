@@ -354,9 +354,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
 				if (event.isTriggeredAtTime(time, index)) {
 					event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
 					event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
-					TriggeredEventNode triggered = new TriggeredEventNode(index, event);
+					double fireTime = currentTime.getState().getStateValue() + event.evaluateFireTime(index);
+					TriggeredEventNode triggered = new TriggeredEventNode(index, fireTime, event);
 					triggered.setPriority(event.evaluatePriority(index));
-					triggered.setFireTime(currentTime.getState().getStateValue() + event.evaluateFireTime(index));
 					if (event.getState().getState(index).isUseTriggerValue()) {
 						double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getState().getStateValue());
 
@@ -386,10 +386,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
 
 			if (triggeredEventList != null && !triggeredEventList.isEmpty()) {
 				TriggeredEventNode eventState = triggeredEventList.peek();
-				int index = eventState.getIndex();
 				if (eventState.getFireTime() <= time) {
 					triggeredEventList.poll();
-					eventState.fireEvent(index, time);
+					eventState.fireEvent(time);
 					reevaluatePriorities();
 					changed = true;
 				} else {

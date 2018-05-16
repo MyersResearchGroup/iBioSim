@@ -41,7 +41,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.Hierarc
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**

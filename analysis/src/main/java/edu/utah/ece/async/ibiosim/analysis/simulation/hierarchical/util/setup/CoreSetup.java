@@ -56,7 +56,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Sparse
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ModelContainer;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter.InterpreterType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
