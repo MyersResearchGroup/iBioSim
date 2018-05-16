@@ -34,7 +34,7 @@ public class HierarchyTest {
       assertEquals(simulator.getListOfHierarchicalModels().size(), 1);
       
       HierarchicalModel model = simulator.getListOfHierarchicalModels().get(0);
-      assertEquals(model.getReactions().size(), 1);
+      assertEquals(model.getListOfReactions().size(), 1);
       assertEquals(model.getNode("S1").getState().getState(0).getStateValue(), 0.00015, 1e-9);
       assertEquals(model.getNode("S2").getState().getState(0).getStateValue(), 0, 0);
       assertEquals(model.getNode("compartment").getState().getState(0).getStateValue(), 1, 0);
@@ -53,8 +53,8 @@ public class HierarchyTest {
       assertEquals(simulator.getListOfHierarchicalModels().size(), 1);
       
       HierarchicalModel model = simulator.getListOfHierarchicalModels().get(0);
-      assertEquals(model.getAssignRules().size(), 1);
-      assertEquals(model.getAssignRules().get(0).getVariable().getName(), "S1");
+      assertEquals(model.getListOfAssignmentRules().size(), 1);
+      assertEquals(model.getListOfAssignmentRules().get(0).getVariable().getName(), "S1");
     } catch (IOException | XMLStreamException | BioSimException e) {
       fail("Could not initialize");
     }

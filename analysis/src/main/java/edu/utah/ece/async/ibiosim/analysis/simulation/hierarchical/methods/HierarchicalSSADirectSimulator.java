@@ -200,7 +200,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
 
 	private void computePropensities() {
 		for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
-			for (ReactionNode node : modelstate.getReactions()) {
+			for (ReactionNode node : modelstate.getListOfReactions()) {
 				node.computePropensity(modelstate.getIndex());
 			}
 			modelstate.getPropensity().computeFunction(modelstate.getIndex());
@@ -217,7 +217,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
 		double sum = 0;
 		double threshold = getTotalPropensity() * r2;
 		for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-			for (ReactionNode node : model.getReactions()) {
+			for (ReactionNode node : model.getListOfReactions()) {
 				sum += node.getState().getState(model.getIndex()).getStateValue();
 
 				if (sum >= threshold) {

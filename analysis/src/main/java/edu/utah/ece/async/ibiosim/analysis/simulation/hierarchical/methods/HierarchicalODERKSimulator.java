@@ -215,7 +215,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 			computeRates();
 			for (HierarchicalModel modelstate : modules) {
 				int index = modelstate.getIndex();
-				for (EventNode event : modelstate.getEvents()) {
+				for (EventNode event : modelstate.getListOfEvents()) {
 					if (event.isTriggeredAtTime(t, index)) {
 						returnValue = value;
 					}
@@ -232,7 +232,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
 			computeRates();
 			for (HierarchicalModel modelstate : modules) {
 				int index = modelstate.getIndex();
-				for (EventNode event : modelstate.getEvents()) {
+				for (EventNode event : modelstate.getListOfEvents()) {
 					if (event.getMaxDisabledTime(index) > t) {
 						event.setMaxDisabledTime(index, t);
 					}
