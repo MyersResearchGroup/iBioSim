@@ -263,7 +263,7 @@ public class CoreSetup {
 			node.setName(product.getId());
 			if (!product.getConstant()) {
 
-				node.getState().getState(index).setIsVariableConstant(false);
+				node.getState().getState(index).setConstant(false);
 				modelstate.addVariable(node);
 			}
 
@@ -302,7 +302,7 @@ public class CoreSetup {
 			node.setName(reactant.getId());
 
 			if (!reactant.getConstant()) {
-				node.getState().getState(index).setIsVariableConstant(false);
+				node.getState().getState(index).setConstant(false);
 				modelstate.addVariable(node);
 			}
 
