@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 
@@ -37,21 +37,21 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter.InterpreterType;
 
 /**
- *
+ * Setups up arrays in the hierarchical simulator.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class ArraysSetup {
+class ArraysSetup {
 
 	private static final String compartmentAttr = "compartment";
 	private static final String symbolAttr = "symbol";
 	private static final String variableAttr = "variable";
 	private static final String speciesAttr = "species";
 
-	public static boolean checkArray(SBase sbase) {
+	static boolean checkArray(SBase sbase) {
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
 
 		if (plugin == null) { return false; }
@@ -59,15 +59,15 @@ public class ArraysSetup {
 		return plugin.getNumDimensions() > 0;
 	}
 
-	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, ArraysType type) {
+	static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, ArraysType type) {
 		setupDimensions(modelstate, sbase, node, null, type);
 	}
 
-	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, ArraysType type) {
+	static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, ArraysType type) {
 		setupDimensions(modelstate, sbase, node, null, type);
 	}
 
-	public static HierarchicalNode setupDimensions(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type) {
+	static HierarchicalNode setupDimensions(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ASTNode math, HierarchicalNode parent, ArraysType type) {
 		int index = modelstate.getIndex();
 		HierarchicalNode refObj = null;
 		EventNode eventNode = null;
@@ -96,7 +96,7 @@ public class ArraysSetup {
 		return null;
 	}
 
-	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, HierarchicalNode parent, ArraysType type) {
+	static void setupDimensions(HierarchicalModel modelstate, SBase sbase, VariableNode node, HierarchicalNode parent, ArraysType type) {
 		ArrayNode arrayNode = setupArrayDimensions(modelstate, sbase, parent, type);
 
 		if (arrayNode != null) {
@@ -105,7 +105,7 @@ public class ArraysSetup {
 
 	}
 
-	public static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, HierarchicalNode parent, ArraysType type) {
+	static void setupDimensions(HierarchicalModel modelstate, SBase sbase, HierarchicalNode node, HierarchicalNode parent, ArraysType type) {
 		ArrayNode arrayNode = setupArrayDimensions(modelstate, sbase, parent, type);
 
 		if (arrayNode != null) {
@@ -154,7 +154,7 @@ public class ArraysSetup {
 		return 0;
 	}
 
-	public static void linkDimensionSize(HierarchicalModel modelstate) {
+	static void linkDimensionSize(HierarchicalModel modelstate) {
 		for (VariableNode var : modelstate.getArrays()) {
 			ArrayNode node = var.getArrayNode();
 			for (int j = node.getNumDimensions(); j >= 0; j--) {
@@ -163,7 +163,7 @@ public class ArraysSetup {
 		}
 	}
 
-	public static void setupIndices(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ArrayNode arrayNode, ArraysType type) {
+	static void setupIndices(HierarchicalModel modelstate, ModelContainer container, SBase sbase, ArrayNode arrayNode, ArraysType type) {
 
 		ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
 
@@ -210,19 +210,19 @@ public class ArraysSetup {
 		}
 	}
 
-	public static void expandArrays(HierarchicalModel modelstate) {
+	static void expandArrays(HierarchicalModel modelstate) {
 		for (VariableNode node : modelstate.getArrays()) {
 			expandArray(modelstate, node);
 		}
 
 	}
 
-	public static void expandArray(HierarchicalModel modelstate, HierarchicalNode node) {
+	static void expandArray(HierarchicalModel modelstate, HierarchicalNode node) {
 		ArrayNode arrayNode = node.getArrayNode();
 		setupArrays(arrayNode.getNumDimensions() - 1, modelstate, node, null, arrayNode, new int[arrayNode.getNumDimensions()], arrayNode.getArraysType());
 	}
 
-	public static void expandArray(HierarchicalModel modelstate, HierarchicalNode node, HierarchicalNode parent) {
+	static void expandArray(HierarchicalModel modelstate, HierarchicalNode node, HierarchicalNode parent) {
 		ArrayNode arrayNode = node.getArrayNode();
 		setupArrays(arrayNode.getNumDimensions() - 1, modelstate, node, parent, arrayNode, new int[arrayNode.getNumDimensions()], arrayNode.getArraysType());
 	}

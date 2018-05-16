@@ -68,7 +68,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class CoreSetup {
+class CoreSetup {
 
 	static void initializeCore(HierarchicalSimulation sim, List<ModelContainer> listOfContainers, VariableNode time, VectorWrapper wrapper) throws IOException {
 		List<NodeReplacement> listOfReplacements = new ArrayList<>();

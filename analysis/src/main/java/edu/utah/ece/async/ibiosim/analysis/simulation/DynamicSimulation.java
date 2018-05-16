@@ -53,7 +53,7 @@ public class DynamicSimulation extends CoreObservable {
 	}
 
 	/**
-	 * constructor; sets the simulator type
+	 * Constructs a dynamic simulation object.
 	 */
 	public DynamicSimulation (SimulationType type) {
 		simulatorType = type;
@@ -112,10 +112,6 @@ public class DynamicSimulation extends CoreObservable {
 				return;
 			}
 
-			// double val1 = System.currentTimeMillis();
-
-			// Runtime runtime = Runtime.getRuntime();
-			// double mb = 1024 * 1024;
 			for (int run = 1; run <= runs; ++run) {
 
 				if (cancelFlag == true) {
@@ -128,15 +124,6 @@ public class DynamicSimulation extends CoreObservable {
 						simulator.setupForNewRun(run + 1);
 					}
 				}
-
-				// System.gc();
-				// double mem = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-				/// double val2 = System.currentTimeMillis();
-
-				// System.runFinalization();
-
-				// message.setLog("Memory used: " + (mem) + "MB, Simulation Time: " + (val2 - val1) / 1000 + "secs");
-				// notifyObservers(message);
 
 				if (cancelFlag == false && statisticsFlag == true) {
 
@@ -163,17 +150,13 @@ public class DynamicSimulation extends CoreObservable {
 	}
 
 	/**
-	 * cancels the simulation on the next iteration called from outside the
+	 * Cancels the simulation on the next iteration called from outside the
 	 * class when the user closes the progress bar dialog
 	 */
 	public void cancel() {
-
 		if (simulator != null) {
-
 			simulator.cancel();
-
 			cancelFlag = true;
-
 			message.setCancel();
 			notifyObservers(message);
 		}

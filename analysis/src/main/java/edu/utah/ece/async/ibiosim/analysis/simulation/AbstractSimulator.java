@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation;
 
@@ -34,23 +34,25 @@ public abstract class AbstractSimulator extends CoreObservable {
 	protected final Message message = new Message();
 
 	/**
-	 * 
+	 * Simulates the given model.
 	 */
 	public abstract void simulate() throws IOException, XMLStreamException, BioSimException;
 
 	/**
-	 * 
+	 * Stops simulation.
 	 */
 	public abstract void cancel();
 
 	/**
-	 * 
+	 * Sets up a new run.
+	 *
 	 * @param newRun
+	 *          - the run index.
 	 */
 	public abstract void setupForNewRun(int newRun) throws IOException;
 
 	/**
-	 * 
+	 * Prints statistics from simulation.
 	 */
 	public abstract void printStatisticsTSD();
 

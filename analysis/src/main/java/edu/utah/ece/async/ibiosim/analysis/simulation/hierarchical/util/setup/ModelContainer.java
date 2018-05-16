@@ -33,7 +33,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class ModelContainer {
+class ModelContainer {
 	private final Model model;
 	private final HierarchicalModel hierarchicalModel;
 	private CompSBMLDocumentPlugin compDoc;
