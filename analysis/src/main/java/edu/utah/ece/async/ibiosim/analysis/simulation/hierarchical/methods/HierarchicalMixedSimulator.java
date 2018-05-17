@@ -40,145 +40,156 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  */
 public final class HierarchicalMixedSimulator extends HierarchicalSimulation {
 
-	private double fbaTime;
-	private HierarchicalFBASimulator fbaSim;
-	private HierarchicalODERKSimulator odeSim;
-	private VectorWrapper wrapper;
-	// private HierarchicalSimulation ssaSim;
+  private double fbaTime;
+  private HierarchicalFBASimulator fbaSim;
+  private HierarchicalODERKSimulator odeSim;
+  private VectorWrapper wrapper;
+  // private HierarchicalSimulation ssaSim;
 
-	public HierarchicalMixedSimulator (AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
-		super(properties, SimType.MIXED);
+  /**
+   * Creates an instance of a mixed simulator.
+   *
+   * @param properties
+   *          - the analysis properties.
+   * @throws IOException
+   *           - if there is a problem with the model file.
+   * @throws XMLStreamException
+   *           - if there is a problem parsing the SBML file.
+   * @throws BioSimException
+   *           - if an error occur in the initialization.
+   */
+  public HierarchicalMixedSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
+    super(properties, SimType.MIXED);
+  }
 
-	}
+  /**
+   * Initializes the simulator.
+   *
+   * @param runNumber
+   *          - the run index.
+   * @throws IOException
+   *           - if there is a problem with the model file.
+   * @throws XMLStreamException
+   *           - if there is a problem parsing the SBML file.
+   * @throws BioSimException
+   *           - if an error occur in the initialization.
+   */
+  public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
+    if (!isInitialized) {
+      currProgress = 0;
+      setCurrentTime(0);
+      this.wrapper = new VectorWrapper();
 
-	/**
-	 * Initializes the simulator.
-	 *
-	 * @param runNumber
-	 *          - the run index.
-	 * @throws IOException
-	 *           - if there is a problem with the model file.
-	 * @throws XMLStreamException
-	 *           - if there is a problem parsing the SBML file.
-	 * @throws BioSimException
-	 *           - if an error occur in the initialization.
-	 */
-	public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
-		if (!isInitialized) {
-			currProgress = 0;
-			setCurrentTime(0);
-			this.wrapper = new VectorWrapper();
+      ModelSetup.setupModels(this, ModelType.HODE, wrapper);
+      computeFixedPoint();
 
-			ModelSetup.setupModels(this, ModelType.HODE, wrapper);
-			computeFixedPoint();
+      setupForOutput(runNumber);
+      isInitialized = true;
+    }
 
-			setupForOutput(runNumber);
-			isInitialized = true;
-		}
+  }
 
-	}
+  @Override
+  public void simulate() throws IOException, XMLStreamException, BioSimException {
 
-	@Override
-	public void simulate() throws IOException, XMLStreamException, BioSimException {
+    if (!isInitialized) {
+      initialize(getCurrentRun());
+    }
+    double nextEndTime = currentTime.getState().getStateValue();
+    fbaTime = nextEndTime;
+    double dt = getTopLevelValue("dt");
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    double timeLimit = simProperties.getTimeLimit();
+    double maxTimeStep = simProperties.getMaxTimeStep();
+    while (nextEndTime < timeLimit) {
+      nextEndTime = nextEndTime + maxTimeStep;
 
-		if (!isInitialized) {
-			initialize(getCurrentRun());
-		}
-		double nextEndTime = currentTime.getState().getStateValue();
-		fbaTime = nextEndTime;
-		double dt = getTopLevelValue("dt");
-		SimulationProperties simProperties = properties.getSimulationProperties();
-		double timeLimit = simProperties.getTimeLimit();
-		double maxTimeStep = simProperties.getMaxTimeStep();
-		while (nextEndTime < timeLimit) {
-			nextEndTime = nextEndTime + maxTimeStep;
+      if (nextEndTime > fbaTime) {
+        nextEndTime = fbaTime;
+      }
 
-			if (nextEndTime > fbaTime) {
-				nextEndTime = fbaTime;
-			}
+      if (nextEndTime > printTime) {
+        nextEndTime = printTime;
+      }
 
-			if (nextEndTime > printTime) {
-				nextEndTime = printTime;
-			}
+      if (nextEndTime > timeLimit) {
+        nextEndTime = timeLimit;
+      }
 
-			if (nextEndTime > timeLimit) {
-				nextEndTime = timeLimit;
-			}
+      simProperties.setTimeLimit(nextEndTime);
 
-			simProperties.setTimeLimit(nextEndTime);
+      if (nextEndTime <= fbaTime) {
+        fbaSim.simulate();
 
-			if (nextEndTime <= fbaTime) {
-				fbaSim.simulate();
+        fbaTime = nextEndTime + dt;
+      }
 
-				fbaTime = nextEndTime + dt;
-			}
+      computeAssignmentRules();
 
-			computeAssignmentRules();
+      odeSim.simulate();
 
-			odeSim.simulate();
+      currentTime.getState().setStateValue(nextEndTime);
 
-			currentTime.getState().setStateValue(nextEndTime);
+      printToFile();
+    }
 
-			printToFile();
-		}
+    // Restore
+    simProperties.setTimeLimit(timeLimit);
+    closeWriter();
+  }
 
-		// Restore
-		simProperties.setTimeLimit(timeLimit);
-		closeWriter();
-	}
+  @Override
+  public void cancel() {}
 
-	@Override
-	public void cancel() {}
+  @Override
+  public void setupForNewRun(int newRun) {
+    fbaTime = 0;
+  }
 
-	@Override
-	public void setupForNewRun(int newRun) {
-		fbaTime = 0;
-	}
+  /**
+   * Sets the ODE part of the simulator.
+   *
+   * @param topmodel
+   * @param odeModels
+   * @throws IOException
+   * @throws XMLStreamException
+   * @throws BioSimException
+   */
+  public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException, BioSimException {
+    odeSim = new HierarchicalODERKSimulator(this.properties, false);
+    odeSim.setTopmodel(topmodel);
+    odeSim.setListOfHierarchicalModels(odeModels);
+  }
 
-	/**
-	 * Sets the ODE part of the simulator.
-	 *
-	 * @param topmodel
-	 * @param odeModels
-	 * @throws IOException
-	 * @throws XMLStreamException
-	 * @throws BioSimException
-	 */
-	public void createODESim(HierarchicalModel topmodel, List<HierarchicalModel> odeModels) throws IOException, XMLStreamException, BioSimException {
-		odeSim = new HierarchicalODERKSimulator(this.properties, false);
-		odeSim.setTopmodel(topmodel);
-		odeSim.setListOfHierarchicalModels(odeModels);
-	}
+  /**
+   * Sets the SSA part of the simulator.
+   *
+   * @param topmodel
+   * @param submodels
+   */
+  public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) {
+    // TODO:
+  }
 
-	/**
-	 * Sets the SSA part of the simulator.
-	 *
-	 * @param topmodel
-	 * @param submodels
-	 */
-	public void createSSASim(HierarchicalModel topmodel, Map<String, HierarchicalModel> submodels) {
-		// TODO:
-	}
+  /**
+   * Sets the FBA part of the simulator.
+   *
+   * @param topmodel
+   * @param model
+   */
+  public void createFBASim(HierarchicalModel topmodel, Model model) {
+    fbaSim = new HierarchicalFBASimulator(this, topmodel);
+    fbaSim.setFBA(model);
+  }
 
-	/**
-	 * Sets the FBA part of the simulator.
-	 * 
-	 * @param topmodel
-	 * @param model
-	 */
-	public void createFBASim(HierarchicalModel topmodel, Model model) {
-		fbaSim = new HierarchicalFBASimulator(this, topmodel);
-		fbaSim.setFBA(model);
-	}
+  @Override
+  public void printStatisticsTSD() {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void printStatisticsTSD() {
-		// TODO Auto-generated method stub
+  }
 
-	}
-
-	VectorWrapper getVectorWrapper() {
-		return this.wrapper;
-	}
+  VectorWrapper getVectorWrapper() {
+    return this.wrapper;
+  }
 
 }

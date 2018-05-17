@@ -37,201 +37,211 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @version %I%
  */
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
-	private final boolean print;
+  private final boolean print;
 
-	public HierarchicalSSADirectSimulator (AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
+  /**
+   * Creates an instance of a SSA simulator.
+   *
+   * @param properties
+   *          - the analysis properties.
+   * @throws IOException
+   *           - if there is a problem with the model file.
+   * @throws XMLStreamException
+   *           - if there is a problem parsing the SBML file.
+   * @throws BioSimException
+   *           - if an error occur in the initialization.
+   */
+  public HierarchicalSSADirectSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
+    super(properties, SimType.HSSA);
+    this.print = true;
 
-		super(properties, SimType.HSSA);
-		this.print = true;
+  }
 
-	}
+  /**
+   * Creates an instance of an ODE simulator.
+   *
+   * @param properties
+   *          - the analysis properties.
+   * @param print
+   *          - whether to save the output.
+   * @throws IOException
+   *           - if there is a problem with the model file.
+   * @throws XMLStreamException
+   *           - if there is a problem parsing the SBML file.
+   * @throws BioSimException
+   *           - if an error occur in the initialization.
+   */
+  public HierarchicalSSADirectSimulator(AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException {
+    super(properties, SimType.HSSA);
+    this.print = print;
 
-	public HierarchicalSSADirectSimulator (AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException {
+  }
 
-		super(properties, SimType.HSSA);
-		this.print = print;
+  /**
+   * Initializes the simulator.
+   *
+   * @param runNumber
+   *          - the run index.
+   * @throws IOException
+   *           - if there is a problem with the model file.
+   * @throws XMLStreamException
+   *           - if there is a problem parsing the SBML file.
+   * @throws BioSimException
+   *           - if an error occur in the initialization.
+   */
+  public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
+    if (!isInitialized) {
+      SimulationProperties simProperties = properties.getSimulationProperties();
+      currProgress = 0;
 
-	}
+      setCurrentTime(simProperties.getInitialTime());
+      ModelSetup.setupModels(this, ModelType.HSSA);
 
-	/**
-	 * Initializes the simulator.
-	 *
-	 * @param runNumber
-	 *          - the run index.
-	 * @throws IOException
-	 *           - if there is a problem with the model file.
-	 * @throws XMLStreamException
-	 *           - if there is a problem parsing the SBML file.
-	 * @throws BioSimException
-	 *           - if an error occur in the initialization.
-	 */
-	public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
-		if (!isInitialized) {
-			SimulationProperties simProperties = properties.getSimulationProperties();
-			currProgress = 0;
+      computeFixedPoint();
+      for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
+        totalPropensity.addChild(model.getPropensity().getVariable());
+      }
+      totalPropensity.computeFunction(0);
+      if (hasEvents) {
+        triggeredEventList = new PriorityQueue<>(1, new HierarchicalEventComparator());
+        computeEvents();
+      }
 
-			setCurrentTime(simProperties.getInitialTime());
-			ModelSetup.setupModels(this, ModelType.HSSA);
+      setupForOutput(runNumber);
+      isInitialized = true;
+    }
 
-			computeFixedPoint();
-			for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-				totalPropensity.addChild(model.getPropensity().getVariable());
-			}
-			totalPropensity.computeFunction(0);
-			if (hasEvents) {
-				triggeredEventList = new PriorityQueue<>(1, new HierarchicalEventComparator());
-				computeEvents();
-			}
+  }
 
-			setupForOutput(runNumber);
-			isInitialized = true;
-		}
+  @Override
+  public void cancel() {
+    this.cancel = true;
+  }
 
-	}
+  @Override
+  public void setupForNewRun(int newRun) throws IOException {
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    setCurrentTime(simProperties.getInitialTime());
+    restoreInitialState();
+    computeFixedPoint();
+    setupForOutput(newRun);
+  }
 
-	/**
-	 * cancels the current run
-	 */
-	@Override
-	public void cancel() {
-		setCancelFlag(true);
-	}
+  @Override
+  public void simulate() throws IOException, XMLStreamException, BioSimException {
 
-	@Override
-	public void setupForNewRun(int newRun) throws IOException {
-		SimulationProperties simProperties = properties.getSimulationProperties();
-		setCurrentTime(simProperties.getInitialTime());
-		restoreInitialState();
-		computeFixedPoint();
-		setupForOutput(newRun);
-	}
+    SimulationProperties simProperties = properties.getSimulationProperties();
+    double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
+    double timeLimit = simProperties.getTimeLimit();
+    double maxTimeStep = simProperties.getMaxTimeStep();
 
-	@Override
-	public void simulate() throws IOException, XMLStreamException, BioSimException {
+    if (!isInitialized) {
+      this.initialize(1);
+    }
 
-		SimulationProperties simProperties = properties.getSimulationProperties();
-		double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
-		double timeLimit = simProperties.getTimeLimit();
-		double maxTimeStep = simProperties.getMaxTimeStep();
+    printTime = simProperties.getOutputStartTime();
+    previousTime = 0;
 
-		if (!isInitialized) {
-			this.initialize(1);
-		}
+    while (currentTime.getState().getStateValue() < timeLimit && !cancel) {
+      // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
+      // {
+      // return;
+      // }
+      double currentTime = this.currentTime.getState().getStateValue();
+      r1 = getRandom();
+      r2 = getRandom();
+      computePropensities();
+      totalPropensity = getTotalPropensity();
+      delta_t = Math.log(1 / r1) / totalPropensity;
+      nextReactionTime = currentTime + delta_t;
+      nextEventTime = getNextEventTime();
+      nextMaxTime = currentTime + maxTimeStep;
+      previousTime = currentTime;
 
-		printTime = simProperties.getOutputStartTime();
-		previousTime = 0;
+      if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime) {
+        currentTime = nextReactionTime;
+      } else if (nextEventTime <= nextMaxTime) {
+        currentTime = nextEventTime;
+      } else {
+        currentTime = nextMaxTime;
+      }
 
-		while (currentTime.getState().getStateValue() < timeLimit && !isCancelFlag()) {
-			// if (!HierarchicalUtilities.evaluateConstraints(constraintList))
-			// {
-			// return;
-			// }
-			double currentTime = this.currentTime.getState().getStateValue();
-			r1 = getRandom();
-			r2 = getRandom();
-			computePropensities();
-			totalPropensity = getTotalPropensity();
-			delta_t = Math.log(1 / r1) / totalPropensity;
-			nextReactionTime = currentTime + delta_t;
-			nextEventTime = getNextEventTime();
-			nextMaxTime = currentTime + maxTimeStep;
-			previousTime = currentTime;
+      if (currentTime > timeLimit) {
+        break;
+      }
 
-			if (nextReactionTime < nextEventTime && nextReactionTime < nextMaxTime) {
-				currentTime = nextReactionTime;
-			} else if (nextEventTime <= nextMaxTime) {
-				currentTime = nextEventTime;
-			} else {
-				currentTime = nextMaxTime;
-			}
+      if (print) {
+        printToFile();
+      }
 
-			if (currentTime > timeLimit) {
-				break;
-			}
+      setCurrentTime(currentTime);
+      if (currentTime == nextReactionTime) {
+        update(true, false, false, r2, previousTime);
+      } else if (currentTime == nextEventTime) {
+        update(false, false, true, r2, previousTime);
+      } else {
+        update(false, true, false, r2, previousTime);
+      }
+    }
 
-			if (print) {
-				printToFile();
-			}
+    if (!cancel) {
+      setCurrentTime(timeLimit);
+      update(false, true, true, r2, previousTime);
+      if (print) {
+        printToFile();
+      }
+    }
+    closeWriter();
+  }
 
-			setCurrentTime(currentTime);
-			if (currentTime == nextReactionTime) {
-				update(true, false, false, r2, previousTime);
-			} else if (currentTime == nextEventTime) {
-				update(false, false, true, r2, previousTime);
-			} else {
-				update(false, true, false, r2, previousTime);
-			}
-		}
+  @Override
+  public void printStatisticsTSD() {
 
-		if (!isCancelFlag()) {
-			setCurrentTime(timeLimit);
-			update(false, true, true, r2, previousTime);
+  }
 
-			if (print) {
-				printToFile();
-			}
+  private void update(boolean reaction, boolean rateRule, boolean events, double r2, double previousTime) {
+    if (reaction) {
+      selectAndPerformReaction(r2);
+    }
+    if (rateRule) {
+      fireRateRules(previousTime);
+    }
+    if (events) {
+      computeEvents();
+    }
+    computeAssignmentRules();
+  }
 
-		}
+  private void computePropensities() {
+    for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
+      for (ReactionNode node : modelstate.getListOfReactions()) {
+        node.computePropensity(modelstate.getIndex());
+      }
+      modelstate.getPropensity().computeFunction(modelstate.getIndex());
+    }
+    this.totalPropensity.computeFunction(0);
+  }
 
-		closeWriter();
-	}
+  private void fireRateRules(double previousTime) {}
 
-	@Override
-	public void printStatisticsTSD() {
+  private void selectAndPerformReaction(double r2) {
+    double sum = 0;
+    double threshold = getTotalPropensity() * r2;
+    for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
+      for (ReactionNode node : model.getListOfReactions()) {
+        sum += node.getState().getState(model.getIndex()).getStateValue();
 
-	}
+        if (sum >= threshold) {
+          node.fireReaction(model.getIndex(), sum - threshold);
+          return;
+        }
+      }
+    }
+  }
 
-	private void update(boolean reaction, boolean rateRule, boolean events, double r2, double previousTime) {
-		if (reaction) {
-			selectAndPerformReaction(r2);
-		}
-
-		if (rateRule) {
-			fireRateRules(previousTime);
-		}
-
-		if (events) {
-			computeEvents();
-		}
-
-		computeAssignmentRules();
-
-	}
-
-	private void computePropensities() {
-		for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
-			for (ReactionNode node : modelstate.getListOfReactions()) {
-				node.computePropensity(modelstate.getIndex());
-			}
-			modelstate.getPropensity().computeFunction(modelstate.getIndex());
-		}
-
-		this.totalPropensity.computeFunction(0);
-	}
-
-	private void fireRateRules(double previousTime) {
-
-	}
-
-	private void selectAndPerformReaction(double r2) {
-		double sum = 0;
-		double threshold = getTotalPropensity() * r2;
-		for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-			for (ReactionNode node : model.getListOfReactions()) {
-				sum += node.getState().getState(model.getIndex()).getStateValue();
-
-				if (sum >= threshold) {
-					node.fireReaction(model.getIndex(), sum - threshold);
-					return;
-				}
-			}
-		}
-
-	}
-
-	private double getNextEventTime() {
-		checkEvents();
-		if (triggeredEventList != null && !triggeredEventList.isEmpty()) { return triggeredEventList.peek().getFireTime(); }
-		return Double.POSITIVE_INFINITY;
-	}
+  private double getNextEventTime() {
+    checkEvents();
+    if (triggeredEventList != null && !triggeredEventList.isEmpty()) { return triggeredEventList.peek().getFireTime(); }
+    return Double.POSITIVE_INFINITY;
+  }
 }
