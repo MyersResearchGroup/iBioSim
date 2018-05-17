@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis;
 
@@ -82,7 +82,7 @@ public class Run extends CoreObservable implements ActionListener {
 	 * The Run class is a wrapper for all of the analysis methods. The run configurations are
 	 * specified by an {@link AnalysisProperties}, which describes the type of analysis to run
 	 * and the simulation parameters.
-	 * 
+	 *
 	 * @param properties
 	 *          - the analysis properties object that stores the simulation parameters.
 	 */
@@ -93,9 +93,9 @@ public class Run extends CoreObservable implements ActionListener {
 	/**
 	 * When Run is executed, it loads up the parameters from {@link AnalysisProperties} and performs
 	 * analysis.
-	 * 
+	 *
 	 * @return error code. Value 0 indicates a success run.
-	 * 
+	 *
 	 * @throws IOException
 	 *           - io problem
 	 * @throws XMLStreamException
