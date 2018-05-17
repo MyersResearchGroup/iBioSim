@@ -28,7 +28,8 @@ import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import junit.framework.Assert;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class ModelGeneratorTests extends ConversionAbstractTests{
 
@@ -60,18 +61,18 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 		try {
 			SBOLDocument inSBOL = SBOLUtility.loadSBOLFile(sbolDir + "inverterExample.xml", uriPrefix);
 			SBOLDocument goldenSBOL = SBOLUtility.loadSBOLFile(sbolDir + "inverterExample_output.xml", uriPrefix);
-			SBOLDocument generatedSBOL = edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.generateModel(selectedRepo, inSBOL);
-			Assert.assertTrue(goldenSBOL.equals(generatedSBOL));
+			SBOLDocument generatedSBOL = edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.generateModel(selectedRepo, inSBOL, null);
+			assertTrue(goldenSBOL.equals(generatedSBOL));
 			
 			ModuleDefinition design1 = generatedSBOL.getModuleDefinition("design1_module", "1");
-			Assert.assertTrue(design1.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
+			assertTrue(design1.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
 			
 			ModuleDefinition design2 = generatedSBOL.getModuleDefinition("design2_module", "1");
-			Assert.assertTrue(design2.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
+			assertTrue(design2.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
 			
 			ModuleDefinition topModel = generatedSBOL.getModuleDefinition(URI.create("https://synbiohub.org/public/bsu/design1_design2_module"));
-			Assert.assertTrue(topModel.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
-			Assert.assertTrue(topModel.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
+			assertTrue(topModel.getFunctionalComponent("BO_10845").getDirection().equals(DirectionType.INOUT));
+			assertTrue(topModel.getFunctionalComponent("BO_11410").getDirection().equals(DirectionType.INOUT));
 		} 
 		catch (FileNotFoundException e1) 
 		{
