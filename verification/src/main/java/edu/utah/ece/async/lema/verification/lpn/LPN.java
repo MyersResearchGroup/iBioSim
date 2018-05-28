@@ -345,10 +345,10 @@ public class LPN extends CoreObservable {
 						}
 						if (!rate.equals("") || !reactionProductions.equals("")) {
 							if (rate.equals("")) {
-								rate = "(" + reactionProductions + ")";
+								rate = "(" + np + "*(" + reactionProductions + "))";
 							}
 							else if (!reactionProductions.equals("")) {
-								rate = "(" + rate + "+" + reactionProductions + ")";
+								rate = "(" + rate + "+" + np + "*(" + reactionProductions + "))";
 							}
 							LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 							LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
