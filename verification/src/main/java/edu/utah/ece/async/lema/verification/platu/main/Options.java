@@ -52,7 +52,38 @@ public class Options {
 //		BEHAVIORAL // POR based on dependency relation by behavioral analysis
 //		};
 //	private static String POR = "off";
-		
+
+	/**
+	 * Export model in Prism Explicit Model Format
+	 * File1: <name>.sta => State values
+	 * File2: <name>.tra => Transition matrix
+	 * File3: <name>.lab => Initial states and deadlock states
+	 */
+	
+	private static boolean exportPrismModelFlag = false;
+	
+	public static void setExportPrismModelFlag(boolean flag) {
+		exportPrismModelFlag = flag;
+	}
+	
+	public static boolean getExportPrismModelFlag() {
+		return exportPrismModelFlag;
+	}
+	
+	/**
+	 * Probabilistic state search termination value
+	 * Defined by kappa in command line argument
+	 */
+	private static double reachabilityThreshold = 1e-9;
+	
+	public static void setReachabilityThreshold(double kappa) {
+		reachabilityThreshold = kappa;
+	}
+	
+	public static double getReachabilityThreshold() {
+		return reachabilityThreshold;
+	}
+	
 	/**
 	 * Partial order reduction options for ample set computation (not including ample computation for cycle closing check).
 	 * @author Zhen Zhang
@@ -62,6 +93,7 @@ public class Options {
 		TB, // POR with trace-back
 		TBOFF, // POR without trace-back
 		BEHAVIORAL, // POR with behavioral analysis
+		PROB,            // Search based on path probability: Only applicable to Markovian Model: reachabilityThreshold given by kappa.
 		OFF // No POR
 		}
 	private static String POR = "off";

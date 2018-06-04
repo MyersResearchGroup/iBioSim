@@ -13,21 +13,20 @@
  *******************************************************************************/
 package edu.utah.ece.async.lema.verification.platu.logicAnalysis;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 import java.util.PriorityQueue;
 import java.util.Stack;
-
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
@@ -61,6 +60,7 @@ import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.
 import edu.utah.ece.async.lema.verification.timed_state_exploration.zoneProject.Zone;
 
 import java.util.Queue;
+import java.util.Random;
 import java.util.Iterator;
  
 /**
@@ -209,8 +209,311 @@ public class Analysis extends CoreObservable{
 			}
 		}
 	}
-	
 
+	/**
+	 * Probabilistic bfs search.
+	 * Explore the states iff the path probability of current state is greater than the reachabilityThreshold.
+	 * 		PathProb = Accumulate all path probabilities leading to the state 
+	 * @param sgList
+	 * @param start 
+	 * @param curLocalStateArray
+	 * @param enabledArray
+	 */		
+	public StateSetInterface searchProb_bfs(final StateGraph[] sgList, final State[] initStateArray) {
+		System.out.println("-------- Reachability Analysis ---------");
+		System.out.println("---> calling function searchProb_bfs");
+		
+		if(!Options.getMarkovianModelFlag()) {
+			System.err.println("---> ERROR: Not a Markovian Model.");
+			return null;
+			
+		}
+				
+		double peakUsedMem = 0;
+		double peakTotalMem = 0;
+		boolean failure = false;
+		int tranFiringCnt = 0;
+		int numLpns = sgList.length;
+		Transition firedFailure = null;
+		
+		
+		PrjState initPrjState;		
+		initPrjState = new ProbGlobalState(initStateArray);
+		
+		Queue<PrjState> stateQueue = new LinkedList<>();
+		StateSetInterface prjStateSet = generateStateSet();
+		((ProbGlobalStateSet) prjStateSet).setInitState(initPrjState);		
+		
+		constructDstLpnList(sgList);
+		if (Options.getDebugMode())
+			printDstLpnList(sgList);		
+            
+		
+		
+		int prevStateCount = prjStateSet.size();
+		int iterationCount = 1;
+		((ProbGlobalState) initPrjState).setCurReachabilityProb(1.0);
+		
+		// create random object
+        Random RNG = new Random(System.currentTimeMillis());
+        
+		while(true) {
+			
+			iterations = 0;
+			tranFiringCnt = 0;
+			
+			((ProbGlobalState) initPrjState).setVisitedInIterationK(iterationCount);
+			
+			prjStateSet.add(initPrjState);
+			stateQueue.add(initPrjState);
+				
+			main_while_loop: while (failure == false && stateQueue.size() != 0) {
+				if (Options.getDebugMode()) {				
+					System.out.println("~~~~~~~~~~~ loop begins ~~~~~~~~~~~");
+				}
+					
+				long curTotalMem = Runtime.getRuntime().totalMemory();
+				long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+	
+				if (curTotalMem > peakTotalMem)
+					peakTotalMem = curTotalMem;
+	
+				if (curUsedMem > peakUsedMem)
+					peakUsedMem = curUsedMem;
+	
+				if (stateQueue.size() > max_stack_depth)
+					max_stack_depth = stateQueue.size();
+				
+				/* Increase global iteration */
+				iterations++;
+				if (iterations % 100000 == 0) {
+					System.out.println("\t---> #iteration " + iterations
+							+ "> # LPN transition firings: " + tranFiringCnt
+							+ ", # of prjStates found: " + prjStateSet.size()
+							+ ", stack_depth: " + stateQueue.size()
+							+ " used memory: " + (float) curUsedMem / 1000000
+							+ " free memory: "
+							+ (float) Runtime.getRuntime().freeMemory() / 1000000);
+				}
+				
+				
+				PrjState curPrjState = stateQueue.remove();
+				State[] curStateArray = curPrjState.toStateArray();
+				
+				// Build transition rate map on global state.
+				if (Options.getMarkovianModelFlag()) {
+					for (State localSt : curPrjState.toStateArray()) {					
+						for (Transition t : localSt.getEnabledTransitions()) {
+							double tranRate = ((ProbLocalStateGraph) localSt.getLpn().getStateGraph()).getTranRate(localSt, t);
+							((ProbGlobalState) curPrjState).addNextGlobalTranRate(t, tranRate);
+						}
+					}
+				}
+				
+				for(int lpnIdx=0; lpnIdx<numLpns; lpnIdx++) {
+				
+					LpnTranList curEnabled;
+					curEnabled = StateGraph.getEnabledFromTranVector(curStateArray[lpnIdx]);
+					
+					firedFailure = failureTranIsEnabled(curEnabled); // Null means no failures.
+					if(firedFailure != null){
+						failure = true;
+						break main_while_loop;
+					}
+					
+					int numEnabledTran = curEnabled.size();
+					for(int i=0; i < numEnabledTran; ++i) {
+						
+						//int randomIndex = RNG.nextInt(curEnabled.size());
+						//Transition firedTran = curEnabled.remove(randomIndex);
+						
+						Transition firedTran = curEnabled.removeLast();
+						
+						State[] nextStateArray;
+						PrjState nextPrjState; // Moved this definition up. Timing Change.
+						nextStateArray = sgList[lpnIdx].fire(sgList, curStateArray, firedTran);
+						nextPrjState = new ProbGlobalState(nextStateArray);
+						tranFiringCnt++;
+						
+						boolean	existingState;
+						existingState = prjStateSet.contains(nextPrjState); 
+						
+						if((((ProbGlobalState) curPrjState).getCurReachabilityProb() < Options.getReachabilityThreshold())) {
+							if (existingState == true) {
+								
+								PrjState nextPrjStInStateSet = ((ProbGlobalStateSet) prjStateSet).get(nextPrjState);
+								curPrjState.addNextGlobalState(firedTran, nextPrjStInStateSet);
+								
+								/* Update the probability stats */
+								((ProbGlobalState) curPrjState).computeTotalOutgoingTranRate();
+								double tranProb = ((ProbGlobalState) curPrjState).getOutPathProb(firedTran);
+								
+								((ProbGlobalState) nextPrjStInStateSet).updateSuccessorTranProbMap((ProbGlobalState) curPrjState, tranProb);
+								
+								((ProbGlobalState) nextPrjStInStateSet).computeNextReachabilityProb();
+								
+								/* Set Explored flag for this iteration and add to the queue*/
+								
+								if(!((ProbGlobalState) nextPrjStInStateSet).isVisitedInIterationK(iterationCount)) {
+									
+									((ProbGlobalState) nextPrjStInStateSet).setVisitedInIterationK(iterationCount);
+									stateQueue.add(nextPrjStInStateSet);
+								}
+							}
+						}
+						else {
+							
+							if (existingState == false) {								
+								prjStateSet.add(nextPrjState);
+							}
+							
+							PrjState nextPrjStInStateSet = ((ProbGlobalStateSet) prjStateSet).get(nextPrjState);
+							curPrjState.addNextGlobalState(firedTran, nextPrjStInStateSet);
+							
+							/* Update the probability stats */
+							((ProbGlobalState) curPrjState).computeTotalOutgoingTranRate();
+							double tranProb = ((ProbGlobalState) curPrjState).getOutPathProb(firedTran);
+							
+							((ProbGlobalState) nextPrjStInStateSet).updateSuccessorTranProbMap((ProbGlobalState) curPrjState, tranProb);
+							
+							((ProbGlobalState) nextPrjStInStateSet).computeNextReachabilityProb();
+							
+							/* Set Explored flag for this iteration and add to the queue*/
+							
+							if(!((ProbGlobalState) nextPrjStInStateSet).isVisitedInIterationK(iterationCount)) {
+								
+								((ProbGlobalState) nextPrjStInStateSet).setVisitedInIterationK(iterationCount);
+								stateQueue.add(nextPrjStInStateSet);
+							}
+						}
+						
+//						boolean	existingState;
+//						existingState = prjStateSet.contains(nextPrjState); 
+//						if (existingState == false) {
+//							
+//							if((((ProbGlobalState) curPrjState).getCurReachabilityProb() > Options.getReachabilityThreshold())) {
+//									
+//								curPrjState.addNextGlobalState(firedTran, nextPrjState);
+//								
+//								/* Update the probability stats */
+//								((ProbGlobalState) curPrjState).computeTotalOutgoingTranRate();
+//								double tranProb = ((ProbGlobalState) curPrjState).getOutPathProb(firedTran);
+//								
+//								((ProbGlobalState) nextPrjState).updateSuccessorTranProbMap((ProbGlobalState) curPrjState, tranProb);
+//								
+//								((ProbGlobalState) nextPrjState).computeNextReachabilityProb();
+//								
+//								((ProbGlobalState) nextPrjState).isVisitedInIterationK(iterationCount);
+//								
+//								prjStateSet.add(nextPrjState);
+//								stateQueue.add(nextPrjState);
+//								
+//							}
+//						}
+//						else { // existingState == true
+//							
+//							PrjState nextPrjStInStateSet = ((ProbGlobalStateSet) prjStateSet).get(nextPrjState);
+//							curPrjState.addNextGlobalState(firedTran, nextPrjStInStateSet);
+//							
+//							/* Update the probability stats */
+//							((ProbGlobalState) curPrjState).computeTotalOutgoingTranRate();
+//							double tranProb = ((ProbGlobalState) curPrjState).getOutPathProb(firedTran);
+//							
+//							((ProbGlobalState) nextPrjStInStateSet).updateSuccessorTranProbMap((ProbGlobalState) curPrjState, tranProb);
+//							
+//							((ProbGlobalState) nextPrjStInStateSet).computeNextReachabilityProb();
+//							
+//							/* Set Explored flag for this iteration and add to the queue*/
+//							
+//							if(!((ProbGlobalState) nextPrjStInStateSet).isVisitedInIterationK(iterationCount)) {
+//								stateQueue.add(nextPrjStInStateSet);
+//							}
+//							
+//						}
+					}
+				}
+				
+			}
+			
+			assert(stateQueue.size() == 0);
+			
+			int curStateCount = prjStateSet.size();
+			
+			if(prevStateCount == curStateCount) {
+				
+				if(Options.getExportPrismModelFlag()) {
+					exportExplicitPrismModel(initPrjState ,prjStateSet);
+				}
+				
+				break;
+			}
+			
+			/* Prepare next iteration */
+			for(PrjState LocalSt : prjStateSet) {
+				
+				((ProbGlobalState) LocalSt).setNextReachabilityProbToCurrent();
+			}
+			
+			prevStateCount = curStateCount;
+			iterationCount++;
+			
+			if (iterationCount % 100 == 0) {
+				
+				System.out.println("---> #GlobalIteration " + iterationCount
+						+ "> # LPN transition firings: " + tranFiringCnt
+						+ ", # of prjStates found: " + prjStateSet.size());
+			}
+		}
+		
+		double totalStateCnt = 0;
+		totalStateCnt = prjStateSet.size();
+		System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
+			+ ", # of prjStates found: " + totalStateCnt			
+			+ ", max_stack_depth: " + max_stack_depth 
+			+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
+			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
+		if(Options.getTimingAnalysisFlag()){// && !failure){
+			if(!failure){
+				if(Options.get_displayResults()){
+				  message.setErrorDialog("Success", "Verification was successful.");
+				  this.notifyObservers(message);
+				}
+				System.out.println("Verification was successful");
+			}
+			else{
+				System.out.println("************ System failed. ***********");
+				if(firedFailure != null){
+					if(Options.get_displayResults()){
+
+	          message.setErrorDialog("Error", "Failure transition " + firedFailure.getLabel() + " is enabled.");
+	          this.notifyObservers(message);
+					}
+					System.out.println("The failure transition" + firedFailure.getLabel() + "fired.");
+				}
+				else{
+					if(Options.get_displayResults()){
+
+            message.setErrorDialog("Error",    "System failed for reason other\nthan a failure transition.");
+            this.notifyObservers(message);
+					}
+				}
+			}
+			System.out.println(prjStateSet.toString());
+			
+			
+		}
+		if (Options.getOutputLogFlag()) 
+			writePerformanceResultsToLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
+		if (Options.getOutputSgFlag()) {
+			System.out.println("outputSGPath = "  + Options.getPrjSgPath());
+			
+			//drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
+			//drawReducedStateGraph(initPrjState);
+			drawGlobalStateGraph(initPrjState, prjStateSet);			
+		}	
+		return prjStateSet;
+	}
+	
 	/**
 	 * An iterative implement of findsg_recursive().
 	 * 
@@ -1119,6 +1422,114 @@ public class Analysis extends CoreObservable{
 		reducedStateGraph.drawPetrifySG("Reduced_merged.sg");
 	}
 	
+	/**
+	 * Produces Prism sta, tra and lab files from the global state set
+	 * @param initGlobalState
+	 * @param globalStateSet
+	 */
+	
+	public static void exportExplicitPrismModel(PrjState initGlobalState, StateSetInterface globalStateSet) {
+		
+		if(initGlobalState.toStateArray().length > 1) {
+			System.err.println("Error producing Prism Model. Only one LPN file is supported currently.");
+			return;
+		}
+		
+		try {
+			
+			String statesFileName = null;
+			String tranMatrixFileName = null;
+			String labelFileName = null;
+			
+			/* Open .sta File */
+			statesFileName = Options.getPrjSgPath() + "_" + Options.getReachabilityThreshold() + ".sta";
+			
+			/* Open .tra File */
+			tranMatrixFileName = Options.getPrjSgPath() + "_" + Options.getReachabilityThreshold() + ".tra";
+			
+			/* Open .lab File */
+			labelFileName = Options.getPrjSgPath() + "_" + Options.getReachabilityThreshold() + ".lab";
+			
+					
+			BufferedWriter statesFile = new BufferedWriter(new FileWriter(statesFileName));
+			
+			String[] variableNames = initGlobalState.toStateArray()[0].getLpn().getVariables();
+			
+			HashMap<String, Integer> statesIdLookup = new HashMap<String, Integer>();
+			int stateCount = 0;
+			int tranCount = 0;
+			
+			/* Write variable names */
+			statesFile.write("(");
+			for(int ii=0; ii<variableNames.length;ii++) {
+				
+				if(ii==0)	statesFile.write(variableNames[ii]);
+				else	statesFile.write("," + variableNames[ii]);
+			}
+			statesFile.write(")\n");
+			
+			/* Write state ids and values */
+			for(PrjState LocalSt : globalStateSet) {
+				
+				statesIdLookup.put(LocalSt.getLabel(), stateCount);
+				
+				statesFile.write(stateCount + ":(");
+				for(int ii=0; ii<variableNames.length;ii++) {
+					
+					if(ii==0)	statesFile.write("" + LocalSt.toStateArray()[0].getCurrentValue(variableNames[ii]));
+					else	statesFile.write("," + LocalSt.toStateArray()[0].getCurrentValue(variableNames[ii]));
+				}
+				statesFile.write(")\n");
+				
+				stateCount++;
+			}
+			
+			statesFile.close();
+			
+			BufferedWriter tranMatrixFile = new BufferedWriter(new FileWriter(tranMatrixFileName));
+			
+			/* Write transition matrix and rates */
+			for(PrjState LocalSt : globalStateSet) {
+				
+				HashMap<Transition, PrjState> nxtGlobalStateMap = LocalSt.getNextGlobalStateMap();
+				
+				for(Transition tran_out: nxtGlobalStateMap.keySet()) {
+					tranMatrixFile.write(statesIdLookup.get(LocalSt.getLabel()) + " " + statesIdLookup.get(nxtGlobalStateMap.get(tran_out).getLabel()) + " " + ((ProbGlobalState) LocalSt).getOutgoingTranRate(tran_out) + "\n");
+					tranCount++;
+				}
+			}
+			
+			tranMatrixFile.close();	
+			
+			/* Add state count and transition count at the beginning*/
+			/* Read all */
+			BufferedReader tranMatrixFileReader = new BufferedReader(new FileReader(tranMatrixFileName));
+			String result = "";
+			String line = "";
+			while( (line = tranMatrixFileReader.readLine()) != null){
+			 result = result + line + "\n"; 
+			}
+			tranMatrixFileReader.close();
+			
+			/* Write appended value */
+			tranMatrixFile = new BufferedWriter(new FileWriter(tranMatrixFileName));
+			result = stateCount + "," + tranCount + "\n" + result;
+			tranMatrixFile.write(result);
+			tranMatrixFile.close();	
+			
+			/* Write label files : Deadlock and initial states */
+			BufferedWriter labelFile = new BufferedWriter(new FileWriter(labelFileName));
+			labelFile.write("0=\"init\" 1=\"deadlock\"\n");
+			labelFile.write(statesIdLookup.get(initGlobalState.getLabel())+": 0\n");
+			labelFile.close();
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error producing Prism Model");
+		}	
+	}
+	
 	
 	/**
 	 * Produces DOT files for visualizing the global state graph. <p>
@@ -1176,7 +1587,8 @@ public class Analysis extends CoreObservable{
 				curEnabledTrans = curEnabledTrans.substring(curEnabledTrans.indexOf(",")+1, curEnabledTrans.length());		
 				if (Options.getMarkovianModelFlag()) {
 					// State probability after steady state analysis.
-					curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurrentProb());
+					//curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurrentProb());
+					curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurReachabilityProb());
 				}
 				if(Options.getTimingAnalysisFlag()){
 					TimedPrjState timedState = (TimedPrjState) curGlobalState;
@@ -1207,6 +1619,7 @@ public class Analysis extends CoreObservable{
 					else {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
 								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\nProb = " + curGlobalStateProb + "\", style=\"rounded, filled\"]\n");
+//						out.write(curGlobalStateLabel + "[pos=\""+ curVarValues + "\", label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" + "\\nProb = " + curGlobalStateProb + "\", style=\"rounded, filled\"]\n");
 					}											
 				}
 				else { // non-initial global state(s)
@@ -1217,6 +1630,7 @@ public class Analysis extends CoreObservable{
 					else {
 						out.write(curGlobalStateLabel + "[label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" 
 								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\nProb = " + curGlobalStateProb + "\"]\n");
+//						out.write(curGlobalStateLabel + "[pos=\""+ curVarValues + "\", label=\"" + curGlobalStateLabel + "\\n<"+curVarValues+">" + "\\nProb = " + curGlobalStateProb + "\"]\n");
 					}												
 				}
 				for (Transition outTran : curGlobalState.getNextGlobalStateMap().keySet()) {					

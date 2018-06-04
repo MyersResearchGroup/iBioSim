@@ -42,14 +42,13 @@ public class MarkovianAnalysis implements Runnable{
 	private DataParser probData;
 	private int waitingThreads, threadCount;
 	private boolean phase1, phase2;	
-	/**
-	 * This list includes names for all variables created during analysis of nested probability
-	 * (name format:  "Pr" + nestedPropString.hashCode() or "St" + nestedPropString.hashCode()
-	 */
-	private ArrayList<String> nestedProbIDs;	
+	
+//	private ArrayList<String> nestedProbIDs;	
 	/**
 	 * This list includes the names of all LPN discrete (integer) variables.
 	 * Variables that are created during analysis of nested properties will be added to this list too.
+	 * Variables created during analysis of nested probability
+	 * (name format:  "Pr" + nestedPropString.hashCode() or "St" + nestedPropString.hashCode()
 	 */
 	private ArrayList<String> varNameList;
 	
@@ -64,6 +63,9 @@ public class MarkovianAnalysis implements Runnable{
 				if (!varNameList.contains(intVarName))
 					varNameList.add(intVarName);
 		}
+		
+		computeTransitionRateSum();
+		
 	}	
 	
 	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> props,
@@ -95,7 +97,7 @@ public class MarkovianAnalysis implements Runnable{
 		boolean change = false;
 		boolean converged = false;
 		int counter = 0;
-		computeTransitionRateSum();
+		//computeTransitionRateSum();
 		// Set initial probability and period for all global states.		
 		if (!stop) {
 			for (PrjState m : globalStateSet.keySet()) {
@@ -192,6 +194,29 @@ public class MarkovianAnalysis implements Runnable{
 		for (PrjState curGlobalSt : globalStateSet.keySet()) {
 			double curProb = ((ProbGlobalState) curGlobalSt).getCurrentProb();
 			((ProbGlobalState) curGlobalSt).setCurrentProb(curProb/normalizationFactor);
+		}
+		
+		
+		HashMap<String, Double> output = new HashMap<String, Double>();
+        for (Property cond : conditions) {
+            String prop = cond.getProperty();
+            if (prop.startsWith("St")) {
+            	prop = prop.substring(5, prop.length()-1);
+            }
+            double prob = 0;
+            for (PrjState curGlobalSt : globalStateSet.keySet()) {
+                ExprTree expr = new ExprTree(varNameList);
+                expr.token = expr.intexpr_gettok(prop);
+                expr.intexpr_L(prop);
+                if (expr.evaluateExpr(((ProbGlobalState) curGlobalSt).getVariables()) == 1.0) {
+                    prob += ((ProbGlobalState) curGlobalSt).getCurrentProb();
+                }
+            }
+            output.put(cond.getLabel().trim(), prob);
+        }
+		
+		for(String propLabel: output.keySet()){
+			System.out.println("\nSteady State Value: " + propLabel + ": " + output.get(propLabel));
 		}
 		//printStateSetStatus(globalStateSet, "end of steady state analysis");		
 		return true;
@@ -390,8 +415,8 @@ public class MarkovianAnalysis implements Runnable{
 		}
 		String[] condition = Translator.getProbpropParts(prop.substring(5, prop.length() - 1));
 		String id = "Pr" + Math.abs(prop.hashCode());
-		if (!this.nestedProbIDs.contains(id)) {
-			nestedProbIDs.add(id);			
+		if (!this.varNameList.contains(id)) {
+			varNameList.add(id);			
 			boolean globallyTrue = false;
 			if (prop.contains("PF")) {
 				condition[0] = "true";
@@ -569,7 +594,7 @@ public class MarkovianAnalysis implements Runnable{
 			double error, String[] condition, JProgressBar progress, boolean globallyTrue) throws BioSimException {
 		// Moved the test for the ability to perform Markovian analysis to the run method in Verification.java, 
 		// where LPN(s) are loaded or generated from decomposition.	
-		computeTransitionRateSum();
+		//computeTransitionRateSum();
 		if (condition != null) {
 			condition[0] = removeNesting(error, timeStep, condition[0], progress);
 			condition[1] = removeNesting(error, timeStep, condition[1], progress);

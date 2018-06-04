@@ -52,6 +52,11 @@ public class VerificationCommandLine {
 					Options.setCycleClosingMthd("behavioral");					
 					Options.setCycleClosingStrongStubbornMethd("cctb");				
 				}
+				else if(args[i].contains("-porProb")){
+					Options.setPOR("Prob");
+					System.out.println("State search based on reachability Probability of the path. reachabilityThreshold value is defiend by kappa.");
+					
+				}
 				else if (args[i].equals("-porbehavioral")) {
 					Options.setPOR("behavioral");
 					Options.setCycleClosingMthd("behavioral");
@@ -61,6 +66,16 @@ public class VerificationCommandLine {
 					Options.setPOR("tboff");
 					Options.setCycleClosingMthd("behavioral");
 					Options.setCycleClosingStrongStubbornMethd("cctboff");
+				}
+				else if(args[i].contains("-kappa=")){
+					double kappa = Double.parseDouble(args[i].trim().substring(7));
+					Options.setReachabilityThreshold(kappa);
+					System.out.println("Reachability Threshold(kappa) is: " + kappa);
+				}
+				else if(args[i].contains("-exportPrismModel")){
+					Options.setExportPrismModelFlag(true);
+					System.out.println("Export Prism sta, tra and lab files.");
+					
 				}
 				// Directory should be provided as an argument starting with -dir.
 				else if (args[i].contains("-dir=")) { 

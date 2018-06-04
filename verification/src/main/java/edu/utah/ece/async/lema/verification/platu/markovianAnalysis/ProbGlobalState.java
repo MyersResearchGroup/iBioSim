@@ -14,6 +14,7 @@
 package edu.utah.ece.async.lema.verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import edu.utah.ece.async.lema.verification.lpn.Transition;
@@ -61,6 +62,22 @@ public class ProbGlobalState extends PrjState {
 	private boolean isAbsorbing;
 	
 	
+	/**
+	 *  New fields added to do the probabilistic search 
+	 *  curReachabilityProb
+	 *  nextReachabilityProb
+	 *	totalOutgoingTranRate
+	 *  successorTranProbMap
+	 *	lastVisitIteration
+	 */
+	
+	private double curReachabilityProb;
+	private double nextReachabilityProb;
+	private double totalOutgoingTranRate;
+	//private HashMap<ProbGlobalState, Double> successorTranProbMap;
+	private HashMap<PrjState, Double> successorTranProbMap;
+	private int lastVisitIteration;
+	
 	
 	public ProbGlobalState(State[] other) {
 		super(other);
@@ -69,6 +86,13 @@ public class ProbGlobalState extends PrjState {
 		nextGlobalTranRateMap = new HashMap<Transition, Double>();
 		lock = new Semaphore(1);
 		isAbsorbing = false;
+		
+		/* Probabilistic search */
+		curReachabilityProb = -1.0;
+		nextReachabilityProb = 0.0;
+		totalOutgoingTranRate = 0.0;
+		successorTranProbMap = new HashMap<PrjState, Double>();
+		lastVisitIteration = 0;
 	}
 	
 	public boolean isAbsorbing() {
@@ -285,4 +309,68 @@ public class ProbGlobalState extends PrjState {
 	public void addNextGlobalTranRate(Transition t, double tranRate) {
 		this.nextGlobalTranRateMap.put(t, tranRate);		
 	}
+	
+	/* Probabilistic search */
+	public double getCurReachabilityProb() {
+		
+		if(curReachabilityProb < 0.0) return nextReachabilityProb;
+		
+		return curReachabilityProb;
+		
+		
+	}
+	
+	public void setCurReachabilityProb(double reachProb) {
+		curReachabilityProb = reachProb;
+	}
+	
+	
+	public void setNextReachabilityProbToCurrent() {
+		curReachabilityProb = nextReachabilityProb;
+	}
+	
+	public void computeNextReachabilityProb() {
+		nextReachabilityProb = 0.0;
+		
+		for(PrjState successor: successorTranProbMap.keySet()) {
+			nextReachabilityProb += ((ProbGlobalState) successor).getCurReachabilityProb() * successorTranProbMap.get(successor);
+		}
+	}
+	
+	public void updateSuccessorTranProbMap(PrjState prjState, double tranProb) {
+		successorTranProbMap.put(prjState, tranProb);
+	}
+	
+	public Set<PrjState> getSuccessorList() {
+		return successorTranProbMap.keySet();
+	}
+	
+	public void computeTotalOutgoingTranRate() {
+		totalOutgoingTranRate = 0.0;
+		for (Transition tran : nextGlobalTranRateMap.keySet()) {			
+			totalOutgoingTranRate += nextGlobalTranRateMap.get(tran);
+		}
+	}
+	
+	public double getOutPathProb(Transition tran) {
+		double tranProb = 0.0;
+		if (totalOutgoingTranRate != 0)
+			tranProb = getOutgoingTranRate(tran)/totalOutgoingTranRate;
+		else
+			tranProb = 0.0;
+		return tranProb;
+	}
+	
+	
+	public boolean isVisitedInIterationK(int K) {
+		
+		return ((lastVisitIteration < K) ? false : true);
+	}
+	
+	public void setVisitedInIterationK(int K) {
+		
+		lastVisitIteration = K;
+	}
+	
+	
 }

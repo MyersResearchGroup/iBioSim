@@ -42,6 +42,7 @@ import edu.utah.ece.async.lema.verification.platu.markovianAnalysis.MarkovianAna
 import edu.utah.ece.async.lema.verification.platu.markovianAnalysis.PerfromTransientMarkovAnalysisThread;
 import edu.utah.ece.async.lema.verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import edu.utah.ece.async.lema.verification.platu.markovianAnalysis.ProbLocalStateGraph;
+import edu.utah.ece.async.lema.verification.platu.markovianAnalysis.Property;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.LPNTranRelation;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.PlatuLPN;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.io.Instance;
@@ -299,11 +300,17 @@ public class Project extends CoreObservable{
 		else { // Probabilistic model
 			// ====== TEMP ========
 			ProbGlobalStateSet globalStateSet = null;
-			if (Options.getPOR().toLowerCase().equals("off")) {
+			
+			if (Options.getPOR().equals("Prob")) {
+				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchProb_bfs(sgArray, initStateArray);
+				
+			}
+			else if (Options.getPOR().toLowerCase().equals("off")) {
 				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
 			}
 			else if (Options.getPOR().toLowerCase().equals("tb")) {
 				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
+				 
 			}
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 				//CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
@@ -311,6 +318,8 @@ public class Project extends CoreObservable{
 				// TODO: (temp) Temporarily disable POR behavioral analysis on prob. models.
 				//globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
 			}
+			
+			
 			long elapsedTimeMillisReachability = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSecReachability = elapsedTimeMillisReachability/1000F;
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSecReachability + " sec");			
@@ -331,17 +340,47 @@ public class Project extends CoreObservable{
 //			// ------------------------------------------------------------
 			
 			// -------------------- Temp: transient analysis --------------
-			System.out.println("--------- Transient Analysis ---------");
+			System.out.println("--------- Steady State Analysis ---------");
 			long startTransientAnalysis = System.currentTimeMillis();
 			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
 			
-
-			// --- toggle_switch ---
-			double timeLimit = 5000.0;
-			double printInterval = 100.0;			
+//			// --- Dual Feedback Oscillator -- //
+			double timeLimit = 50000.0;
+			double printInterval = 10.0;			
 			double timeStep = 100.0;
-			double absError = 1.0e-9;		
-			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+			double absError = 1.0e-9;
+			
+//			String prop = "Pr=?{PF[<=1000]((LacI<20)&(TetR>40))}";
+
+			
+//			String prop0 = "St=?{(((AraC>=60)&(Pr=?{F[<=1000](AraC<60)}>=0.95))|((AraC<60)&(Pr=?{F[<=1000](AraC>=60)}>=0.95)))}";
+//			String prop1 = "St=?{(((AraC>=60)&(Pr=?{F[<=4000](AraC<60)}>=0.5))|((AraC<60)&(Pr=?{F[<=4000](AraC>=60)}>=0.5)))}";
+//			String prop2 = "St=?{(((AraC>=60)&(Pr=?{F[<=3000](AraC<60)}>=0.95))|((AraC<60)&(Pr=?{F[<=3000](AraC>=60)}>=0.95)))}";
+//			String prop3 = "St=?{(((AraC>=60)&(Pr=?{F[<=4000](AraC<60)}>=0.95))|((AraC<60)&(Pr=?{F[<=4000](AraC>=60)}>=0.95)))}";
+			
+//			if(true) return;
+			
+			String prop0 = "St=?{(LacI=0)}";
+			
+			ArrayList<Property> props = new ArrayList<Property>();
+			props.add(new Property("Constraint0", prop0));
+//			props.add(new Property("Constraint1", prop1));
+//			props.add(new Property("Constraint2", prop2));
+//			props.add(new Property("Constraint3", prop3));
+//			
+			
+			PrjState initPrjState = globalStateSet.getInitialState();
+			JProgressBar progress = new JProgressBar(0, 100);
+//			markovianAnalysis.performSteadyStateMarkovianAnalysis(absError, props, initPrjState, progress);
+			
+			// --- Dual Feedback Oscillator -- //
+//			
+//			// --- toggle_switch ---
+//			double timeLimit = 5000.0;
+//			double printInterval = 100.0;			
+//			double timeStep = 100.0;
+//			double absError = 1.0e-9;		
+//			String prop = "Pr=?{PF[<=1000](AraC>=60)}";
 			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";
 			// --- end of toggle_switch ---
 		
@@ -364,32 +403,34 @@ public class Project extends CoreObservable{
 ////////			
 ////////			
 //			// ========================================
-			JProgressBar progress = new JProgressBar(0, 100);
-
-			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
-					markovianAnalysis, progress);			
-			String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-			boolean globallyTrue = false;
-			if (prop.contains("PF")) {
-				condition[0] = "true";
-			}
-			else if (prop.contains("PG")) {
-				condition[0] = "true";
-				globallyTrue = true;
-			}
-			performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+//			JProgressBar progress = new JProgressBar(0, 100);
+//
+//			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
+//					markovianAnalysis, progress);			
+//			String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+//			boolean globallyTrue = false;
+//			if (prop.contains("PF")) {
+//				condition[0] = "true";
+//			}
+//			else if (prop.contains("PG")) {
+//				condition[0] = "true";
+//				globallyTrue = true;
+//			}
+//			performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+//			
+//			try {
+//				performMarkovAnalysisThread.join();
+//			} catch (InterruptedException e) {
+//				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
+//				e.printStackTrace();
+//			}
 			
-			try {
-				performMarkovAnalysisThread.join();
-			} catch (InterruptedException e) {
-				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
-				e.printStackTrace();
-			}
+			
 			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
 			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
 			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
 			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
-			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
+			System.out.println("\n---> total runtime for Steady state analysis: " + elapsedTimeSecTransient + " sec");
 			// ------------------------------------------------------------
 //			
 //			// -------------------- Temp: nested analysis --------------
