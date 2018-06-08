@@ -170,7 +170,7 @@ public class GlobalConstants {
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = 
 			SO_PROMOTER + "(" + SO_RBS + "," + SO_CDS + ")+" + SO_TERMINATOR + "+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
-	public static final String SBOL_AUTHORITY_DEFAULT = "http://dummy.org";
+	public static final String SBOL_AUTHORITY_DEFAULT = "http://dummy.org/";
 	public static final String CONSTRUCT_ASSEMBLY_DEFAULT = "False";
 	public static final String CONSTRUCT_ASSEMBLY_PREFERENCE = "biosim.assembly.validation";
 	public static final String CONSTRUCT_VALIDATION_DEFAULT = "False";
