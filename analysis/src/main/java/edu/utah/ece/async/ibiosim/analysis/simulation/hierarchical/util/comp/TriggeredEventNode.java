@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
@@ -17,108 +17,130 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNod
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 
-public class TriggeredEventNode 
-{
-  private double priority;
-  private double fireTime;
-  private double[] assignmentValues;
-  private int index;
-  private EventNode parent;
-  private boolean hasFlipped;
-  
-  public TriggeredEventNode(int index, EventNode parent)
-  {
-    this.fireTime = Double.POSITIVE_INFINITY;
-    this.parent = parent;
-    this.index = index;
-    this.hasFlipped = false;
-  }
+/**
+ * Container for events that have been triggered.
+ *
+ * @author Leandro Watanabe
+ * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
+ * @version %I%
+ */
+public class TriggeredEventNode {
+	private double priority;
+	private double[] assignmentValues;
+	private final int index;
+	private final double fireTime;
+	private final EventNode parent;
+	private boolean hasFlipped;
 
-  public int getIndex()
-  {
-    return index;
-  }
-  
-  public double getFireTime() {
-    return fireTime;
-  }
+	public TriggeredEventNode (int index, double fireTime, EventNode parent) {
+		this.parent = parent;
+		this.index = index;
+		this.hasFlipped = false;
+		this.fireTime = fireTime;
+	}
 
-  
-  public void setFireTime(double fireTime) {
-    this.fireTime = fireTime;
-  }
+	/**
+	 * Gets the index of the model that had the event triggered.
+	 *
+	 * @return the model index.
+	 */
+	public int getIndex() {
+		return index;
+	}
 
-  public double getPriority() {
-    return priority;
-  }
+	/**
+	 * Gets the firing time of the triggered event.
+	 *
+	 * @return the fire time.
+	 */
+	public double getFireTime() {
+		return fireTime;
+	}
 
-  
-  public void setPriority(double priority) {
-    this.priority = priority;
-  }
-  
-  public EventNode getParent() {
-    return parent;
-  }
+	/**
+	 * Gets the triggered event priority.
+	 *
+	 * @return the priority.
+	 */
+	public double getPriority() {
+		return priority;
+	}
 
-  
-  public void setParent(EventNode parent) {
-    this.parent = parent;
-  }
+	/**
+	 * Sets the priority of the triggered event.
+	 *
+	 * @param priority
+	 *          - the new priority.
+	 */
+	public void setPriority(double priority) {
+		this.priority = priority;
+	}
 
-  
-  public double[] getAssignmentValues() {
-    return assignmentValues;
-  }
+	/**
+	 * Gets the reference to the triggered event node.
+	 *
+	 * @return the event node.
+	 */
+	public EventNode getParent() {
+		return parent;
+	}
 
-  public void setFlipped()
-  {
-      hasFlipped = true;
-  }
-  
-  public boolean getFlipped()
-  {
-    return hasFlipped;
-  }
-  
-  public void setAssignmentValues(double[] assignmentValues) {
-    this.assignmentValues = assignmentValues;
-  }
-  
-  public void fireEvent(int index, double time)
-  {
-    
-    if (fireTime <= time)
-    {
+	/**
+	 * Gets the assignment values.
+	 *
+	 * @return the assignment values.
+	 */
+	public double[] getAssignmentValues() {
+		return assignmentValues;
+	}
 
-      if (!parent.isPersistent())
-      {
-        if (hasFlipped)
-        {
-          return;
-        }
-      }
+	/**
+	 * Checks if the event has its triggering condition changing to false before firing.
+	 */
+	public void setFlipped() {
+		hasFlipped = true;
+	}
 
-      if (!parent.isUseTriggerValue())
-      {
-        double[] eventAssignments = parent.computeEventAssignmentValues(index, time);
-        
-        if(eventAssignments != null)
-        {
-          setAssignmentValues(eventAssignments);  
-        }
-      }
-      
-      if(assignmentValues != null)
-      {
-        for (int i = 0; i < parent.getEventAssignments().size(); i++)
-        {
-          FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
-          VariableNode variable = eventAssignmentNode.getVariable();
-          variable.setValue(index, assignmentValues[i]);
-        }
-      }
-    }
+	/**
+	 * Sets the event assignment values.
+	 *
+	 * @param assignmentValues
+	 *          - the evaluated event assignments.
+	 */
+	public void setAssignmentValues(double[] assignmentValues) {
+		this.assignmentValues = assignmentValues;
+	}
 
-  }
+	/**
+	 * Fire the event and perform the event assignments.
+	 *
+	 * @param time
+	 *          - current time.
+	 */
+	public void fireEvent(double time) {
+
+		if (fireTime <= time) {
+
+			if (!parent.getState().getState(index).isPersistent()) {
+				if (hasFlipped) { return; }
+			}
+
+			if (!parent.getState().getState(index).isUseTriggerValue()) {
+				double[] eventAssignments = parent.computeEventAssignmentValues(index, time);
+
+				if (eventAssignments != null) {
+					setAssignmentValues(eventAssignments);
+				}
+			}
+
+			if (assignmentValues != null) {
+				for (int i = 0; i < parent.getEventAssignments().size(); i++) {
+					FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
+					VariableNode variable = eventAssignmentNode.getVariable();
+					variable.getState().getState(index).setStateValue(assignmentValues[i]);
+				}
+			}
+		}
+
+	}
 }

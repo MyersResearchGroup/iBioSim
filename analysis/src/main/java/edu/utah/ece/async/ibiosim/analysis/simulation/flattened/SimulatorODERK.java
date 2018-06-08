@@ -67,7 +67,6 @@ public class SimulatorODERK extends Simulator
 		initialize(randomSeed, 1);
 	}
 
-	@Override
 	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 

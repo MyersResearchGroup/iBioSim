@@ -55,7 +55,7 @@ public class HierarchicalTestSuiteRunner
 {
   static Set<String> unsupportedTags = new HashSet<String>(Arrays.asList("fbc:Objective", "CSymbolDelay", "StoichiometryMath", "FastReaction", "AlgebraicRule", "ConversionFactors", "comp:ConversionFactor", "comp:ExtentConversionFactor", "comp:TimeConversionFactor",  "RandomEventExecution"));
   static AnalysisProperties properties;
-  static boolean verbose = false;
+  static boolean verbose = true;
   
   /**
    * @param args
@@ -73,8 +73,9 @@ public class HierarchicalTestSuiteRunner
 
     DynamicSimulation simulator;
 
-    properties = new AnalysisProperties("", "", "" , false);
-    
+    properties = new AnalysisProperties("", "", args[0] , false);
+
+    properties.setOutDir(args[1]);
     String separator = (File.separator.equals("\\")) ? "\\\\" : File.separator;
     
     int start = 1;
@@ -101,10 +102,8 @@ public class HierarchicalTestSuiteRunner
       String idcase = String.valueOf(start);
       String testcase = "00000".substring(0, 5-idcase.length()) + idcase;
       System.out.println("Running " + testcase);
-      String root = args[0] + File.separator + testcase;
-      properties.setRoot(root);
 
-      properties.setId("");
+      properties.setId(testcase);
       
       properties.setModelFile(testcase + "-sbml-l3v1.xml");
       String filename = properties.getFilename();
@@ -245,8 +244,6 @@ public class HierarchicalTestSuiteRunner
 
   private static void readSettings(String filename)
   {
-
-    
     File f = new File(filename);
     Properties p = new Properties();
     FileInputStream in;
@@ -261,7 +258,7 @@ public class HierarchicalTestSuiteRunner
       double relativeError = Double.valueOf(p.getProperty("relative"));
       double absoluteError = Double.valueOf(p.getProperty("absolute"));
       int numSteps = Integer.valueOf(p.getProperty("steps"));
-      
+      simProperties.setPrintInterval(timeLimit/numSteps);
       simProperties.setTimeLimit(timeLimit);
       simProperties.setRelError(relativeError);
       simProperties.setAbsError(absoluteError);

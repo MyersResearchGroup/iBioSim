@@ -277,21 +277,22 @@ public class AbstractionEngine {
 							r.addModifier(Utility.ModifierSpeciesReference(activator));
 						}
 						if (sbmlMode) {
-							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*RNAP*((Ka__"
+							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*Kao__" + activator + "_" + promoter.getId() + "*RNAP*((Ka__"
 									+ activator + "_" + promoter.getId() + "*" + expression
 									+ ")^nc__" + activator + "_" + promoter.getId() + "))";
-							actBottom += "+(Kao__" + promoter.getId() + "*RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
+							actBottom += "+(Kao__" + activator + "_" + promoter.getId() + "*RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
 									+ expression + ")^nc__" + activator + "_" + promoter.getId()
 									+ ")";
 							Utility.Parameter(kl,"nc__" + activator + "_" + promoter.getId(), nc, "dimensionless");
 							Utility.Parameter(kl,"Ka__" + activator + "_" + promoter.getId(), Ka, GeneticNetwork.getMoleParameter(2));
+							Utility.Parameter(kl,"Kao__" + activator + "_" + promoter.getId(), Kao, GeneticNetwork.getMoleParameter(2));
 							Utility.Parameter(kl,"ka__" + activator + "_" + promoter.getId(), ka, GeneticNetwork.getMoleTimeParameter(1));
 						}
 						else {
 							promRate += "+(" + ka + "*" + Kao + "*" + RNAP + "*((" + Ka + "*" + expression
 									+ ")^" + nc + "))";
-							actBottom += "+(" + Kao + "*" + RNAP + "*" + "(" + Ka + "*" + expression + ")^" + nc
-									+ ")";
+							actBottom += "+(" + Kao + "*" + RNAP + "*" + "((" + Ka + "*" + expression + ")^" + nc
+									+ "))";
 						}
 					}
 				}

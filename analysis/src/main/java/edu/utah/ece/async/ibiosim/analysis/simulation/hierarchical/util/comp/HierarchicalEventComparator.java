@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,46 +9,37 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- *  
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import java.util.Comparator;
 
 /**
- * 
+ * Comparator for events. Events with smaller scheduled firing time takes precendence over the others.
+ * If events are scheduled to fire at the same time, then the priorities are used to decide which event to fire.
+ * That is, the event with the highest priority will fire first. If events have the same priority, then it's a random
+ * choice.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalEventComparator implements Comparator<TriggeredEventNode>
-{
+public class HierarchicalEventComparator implements Comparator<TriggeredEventNode> {
 	@Override
-	public int compare(TriggeredEventNode event1, TriggeredEventNode event2)
-	{
-		if (event1.getFireTime() > event2.getFireTime())
-		{
+	public int compare(TriggeredEventNode event1, TriggeredEventNode event2) {
+		if (event1.getFireTime() > event2.getFireTime()) {
 			return 1;
-		}
-		else if (event1.getFireTime() < event2.getFireTime())
-		{
+		} else if (event1.getFireTime() < event2.getFireTime()) {
 			return -1;
-		}
-		else
-		{
+		} else {
 
-			if (event1.getPriority() > event2.getPriority())
-			{
+			if (event1.getPriority() > event2.getPriority()) {
 				return -1;
-			}
-			else if (event1.getPriority() < event2.getPriority())
-			{
+			} else if (event1.getPriority() < event2.getPriority()) {
 				return 1;
-			}
-			else
-			{
+			} else {
 				return Math.random() >= 0.5 ? 1 : -1;
 			}
 

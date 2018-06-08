@@ -225,7 +225,6 @@ public class SimulatorSSADirect extends Simulator
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	@Override
 	public void initialize(long randomSeed, int runNumber) throws IOException
 	{
 

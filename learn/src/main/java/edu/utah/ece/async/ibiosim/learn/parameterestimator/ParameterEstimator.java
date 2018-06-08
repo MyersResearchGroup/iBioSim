@@ -25,6 +25,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
+import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalODERKSimulator;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -43,18 +44,6 @@ import edu.utah.ece.async.ibiosim.learn.parameterestimator.methods.sres.SRES;
  */
 public class ParameterEstimator
 {
-	static double				relativeError		= 1e-6;
-	static double				absoluteError		= 1e-9;
-	static int					numSteps;
-	static double				maxTimeStep			= Double.POSITIVE_INFINITY;
-	static double				minTimeStep			= 0.0;
-	static long					randomSeed			= 0;
-	static int					runs				= 1;
-	static double				stoichAmpValue		= 1.0;
-	static boolean				genStats			= false;
-	static String				selectedSimulator	= "";
-	static ArrayList<String>	interestingSpecies	= new ArrayList<String>();
-	static String				quantityType		= "amount";
 
 	/**
 	 * This function is used to execute parameter estimation from a given SBML file. The input model serves
@@ -74,15 +63,14 @@ public class ParameterEstimator
 	 */
 	public static SBMLDocument estimate(String SBMLFileName, String root, List<String> parameterList, Experiments experiments, SpeciesCollection speciesCollection) throws IOException, XMLStreamException, BioSimException
 	{
-
+	  AnalysisProperties properties = new AnalysisProperties("", SBMLFileName, root, false);
 		int numberofparameters = parameterList.size();
 		int sp = 0;
 		int n = experiments.getExperiments().get(0).size() - 1;
 		double ep = experiments.getExperiments().get(0).get(n).get(0);
 		double[] lowerbounds = new double[numberofparameters];
 		double[] upperbounds = new double[numberofparameters];
-		HierarchicalSimulation sim = new HierarchicalODERKSimulator(SBMLFileName, root, 0);
-		sim.initialize(randomSeed, 0);
+		HierarchicalSimulation sim = new HierarchicalODERKSimulator(properties, false);
 
 		for (int i = 0; i < numberofparameters; i++)
 		{
