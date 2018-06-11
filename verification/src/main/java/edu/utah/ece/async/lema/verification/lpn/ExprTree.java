@@ -978,7 +978,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			newresult.intexpr_T(expr);
+			newresult.intexpr_W(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -997,36 +997,36 @@ public class ExprTree {
 			}
 			intexpr_C(expr);
 			break;
-		case '^':
-			(token) = intexpr_gettok(expr);
-			newresult.token = token;
-			newresult.tokvalue = tokvalue;
-			newresult.position = position;
-			newresult.intexpr_T(expr);
-			token = newresult.token;
-			position = newresult.position;
-			// simplify if operands are static
-			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))
-					&& ((this).lvalue == (this).uvalue)
-					&& (newresult.lvalue == newresult.uvalue)
-					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
-					&& (newresult.lvalue != INFIN)
-					&& (newresult.lvalue != -INFIN)) {
-				(this).isit = 'n';
-				(this).lvalue = Math.pow(lvalue, newresult.lvalue);
-				(this).uvalue = (this).lvalue;
-			} else {
-				setNodeValues((this), newresult, "^", 'a');
-			}
-			intexpr_C(expr);
-			break;
+//		case '^':
+//			(token) = intexpr_gettok(expr);
+//			newresult.token = token;
+//			newresult.tokvalue = tokvalue;
+//			newresult.position = position;
+//			newresult.intexpr_T(expr);
+//			token = newresult.token;
+//			position = newresult.position;
+//			// simplify if operands are static
+//			if (((newresult.isit == 'n') || (newresult.isit == 't'))
+//					&& (((this).isit == 'n') || ((this).isit == 't'))
+//					&& ((this).lvalue == (this).uvalue)
+//					&& (newresult.lvalue == newresult.uvalue)
+//					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+//					&& (newresult.lvalue != INFIN)
+//					&& (newresult.lvalue != -INFIN)) {
+//				(this).isit = 'n';
+//				(this).lvalue = Math.pow(lvalue, newresult.lvalue);
+//				(this).uvalue = (this).lvalue;
+//			} else {
+//				setNodeValues((this), newresult, "^", 'a');
+//			}
+//			intexpr_C(expr);
+//			break;
 		case '/':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			newresult.intexpr_T(expr);
+			newresult.intexpr_W(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1050,7 +1050,7 @@ public class ExprTree {
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
-			newresult.intexpr_T(expr);
+			newresult.intexpr_W(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1085,7 +1085,7 @@ public class ExprTree {
 			break;
 		case '(':
 		case WORD:
-			newresult.intexpr_T(expr);
+			newresult.intexpr_W(expr);
 			token = newresult.token;
 			position = newresult.position;
 			// simplify if operands are static
@@ -1103,6 +1103,77 @@ public class ExprTree {
 				setNodeValues((this), newresult, "*", 'a');
 			}
 			intexpr_C(expr);
+			break;
+
+		default:
+			throw new IllegalArgumentException("ERROR: Expected a * or /\n");
+		}
+	}
+	
+
+	public void intexpr_V(String expr) {
+		newresult = new ExprTree(this);
+		switch (token) {
+		case '^':
+			(token) = intexpr_gettok(expr);
+			newresult.token = token;
+			newresult.tokvalue = tokvalue;
+			newresult.position = position;
+			newresult.intexpr_T(expr);
+			token = newresult.token;
+			position = newresult.position;
+			// simplify if operands are static
+			if (((newresult.isit == 'n') || (newresult.isit == 't'))
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
+				(this).isit = 'n';
+				(this).lvalue = Math.pow(lvalue, newresult.lvalue);
+				(this).uvalue = (this).lvalue;
+			} else {
+				setNodeValues((this), newresult, "^", 'a');
+			}
+			intexpr_V(expr);
+			break;
+		case '*':
+		case '/':
+		case '%':
+		case '-':
+		case ')':
+		case '[':
+		case ']':
+		case '|':
+		case '&':
+		case '=':
+		case '<':
+		case '>':
+		case ',':
+		case IMPLIES:
+		case END_OF_STRING:
+			break;
+		case '(':
+		case WORD:
+			newresult.intexpr_T(expr);
+			token = newresult.token;
+			position = newresult.position;
+			// simplify if operands are static
+			if (((newresult.isit == 'n') || (newresult.isit == 't'))
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
+				(this).isit = 'n';
+				(this).lvalue = (this).lvalue * newresult.lvalue;
+				(this).uvalue = (this).lvalue;
+			} else {
+				setNodeValues((this), newresult, "*", 'a');
+			}
+			intexpr_V(expr);
 			break;
 
 		default:
@@ -1183,13 +1254,27 @@ public class ExprTree {
 		case WORD:
 		case '(':
 		case '-':
-			intexpr_T(expr);
+			intexpr_W(expr);
 			intexpr_C(expr);
 			break;
 		default:
 			throw new IllegalArgumentException("S:ERROR: Expected a ID, Number, (, or -\n");
 		}
 	}
+	
+	public void intexpr_W(String expr) {
+		switch (token) {
+		case WORD:
+		case '(':
+		case '-':
+			intexpr_T(expr);
+			intexpr_V(expr);
+			break;
+		default:
+			throw new IllegalArgumentException("S:ERROR: Expected a ID, Number, (, or -\n");
+		}
+	}
+
 
 	public void intexpr_R(String expr) {
 		switch (token) {
