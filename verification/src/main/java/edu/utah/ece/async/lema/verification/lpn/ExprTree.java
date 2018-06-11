@@ -1106,7 +1106,7 @@ public class ExprTree {
 			break;
 
 		default:
-			throw new IllegalArgumentException("ERROR: Expected a * or /\n");
+			throw new IllegalArgumentException("ERROR: Expected a ID, *, /, or #\n");
 		}
 	}
 	
@@ -1141,6 +1141,7 @@ public class ExprTree {
 		case '*':
 		case '/':
 		case '%':
+		case '+':
 		case '-':
 		case ')':
 		case '[':
@@ -1177,7 +1178,7 @@ public class ExprTree {
 			break;
 
 		default:
-			throw new IllegalArgumentException("ERROR: Expected a * or /\n");
+			throw new IllegalArgumentException("ERROR: Expected ID or ^\n");
 		}
 	}
 

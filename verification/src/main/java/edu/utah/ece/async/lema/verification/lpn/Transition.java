@@ -273,8 +273,8 @@ public class Transition extends CoreObservable {
 			return true;
 		} catch (IllegalArgumentException e) {
 		  message.setErrorDialog("Parse Error in Property", String.format("Error parsing %s\n",delay)+e.getMessage());
-      this.notifyObservers(message);
-			return false;
+		  this.notifyObservers(message);
+		  return false;
 		}
 	}
 
