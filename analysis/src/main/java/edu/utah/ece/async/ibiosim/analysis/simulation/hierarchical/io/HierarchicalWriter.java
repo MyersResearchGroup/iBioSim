@@ -122,7 +122,7 @@ public abstract class HierarchicalWriter {
         SpeciesNode species = (SpeciesNode) node;
         value = species.getConcentration(index);
       } else {
-        value = node.getState().getState(index).getStateValue();
+        value = node.getState().getChild(index).getValue();
       }
 
       return String.valueOf(value);

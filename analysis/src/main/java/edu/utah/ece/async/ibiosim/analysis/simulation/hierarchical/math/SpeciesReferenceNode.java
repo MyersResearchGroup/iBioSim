@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
 /**
  * A node that represents SBML Species References.
  *
@@ -22,55 +24,56 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
  * @version %I%
  */
 public class SpeciesReferenceNode extends VariableNode {
-	private SpeciesNode species;
+  private SpeciesNode species;
+  private List<HierarchicalNode> speciesIndices;
 
-	public SpeciesReferenceNode () {
-		super("none");
-	}
+  public SpeciesReferenceNode() {
+    super("none");
+  }
 
-	public SpeciesReferenceNode (String id, double value) {
-		super(id);
-	}
+  public SpeciesReferenceNode(String id, double value) {
+    super(id);
+  }
 
-	public SpeciesReferenceNode (SpeciesReferenceNode copy) {
-		super(copy);
-		this.species = copy.species.clone();
-	}
+  public SpeciesReferenceNode(SpeciesReferenceNode copy) {
+    super(copy);
+    this.species = copy.species.clone();
+  }
 
-	/**
-	 * Sets the species that this reference is associated to.
-	 *
-	 * @param species
-	 *          - the species node.
-	 */
-	public void setSpecies(SpeciesNode species) {
-		this.species = species;
-	}
+  /**
+   * Sets the species that this reference is associated to.
+   *
+   * @param species
+   *          - the species node.
+   */
+  public void setSpecies(SpeciesNode species) {
+    this.species = species;
+  }
 
-	/**
-	 * Returns the stoichiometry of the species reference.
-	 *
-	 * @param index
-	 *          - the model index.
-	 *
-	 * @return the stoichiometry.
-	 */
-	public double getStoichiometry(int index) {
-		return state.getState(index).getStateValue();
-	}
+  /**
+   * Returns the stoichiometry of the species reference.
+   *
+   * @param index
+   *          - the model index.
+   *
+   * @return the stoichiometry.
+   */
+  public double getStoichiometry(int index) {
+    return state.getChild(index).getValue();
+  }
 
-	/**
-	 * Get the species that this species reference is associated to.
-	 *
-	 * @return the associates species.
-	 */
-	public SpeciesNode getSpecies() {
-		return species;
-	}
+  /**
+   * Get the species that this species reference is associated to.
+   *
+   * @return the associates species.
+   */
+  public SpeciesNode getSpecies() {
+    return species;
+  }
 
-	@Override
-	public SpeciesReferenceNode clone() {
-		return new SpeciesReferenceNode(this);
-	}
+  @Override
+  public SpeciesReferenceNode clone() {
+    return new SpeciesReferenceNode(this);
+  }
 
 }

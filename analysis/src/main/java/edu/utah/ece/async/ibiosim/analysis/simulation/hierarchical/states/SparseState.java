@@ -33,7 +33,7 @@ public class SparseState extends TreeState {
 	}
 
 	@Override
-	public HierarchicalState getState(int index) {
+	public HierarchicalState getChild(int index) {
 		return mapOfStates.get(index);
 	}
 

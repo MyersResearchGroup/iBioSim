@@ -24,7 +24,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalS
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.HierarchicalEventComparator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
@@ -103,7 +102,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       }
       totalPropensity.computeFunction(0);
       if (hasEvents) {
-        triggeredEventList = new PriorityQueue<>(1, new HierarchicalEventComparator());
+        triggeredEventList = new PriorityQueue<>(1);
         computeEvents();
       }
 
@@ -142,12 +141,16 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
     printTime = simProperties.getOutputStartTime();
     previousTime = 0;
 
-    while (currentTime.getState().getStateValue() < timeLimit && !cancel) {
+    while (currentTime.getState().getValue() < timeLimit) {
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
       // return;
       // }
-      double currentTime = this.currentTime.getState().getStateValue();
+
+      if (cancel) {
+        break;
+      }
+      double currentTime = this.currentTime.getState().getValue();
       r1 = getRandom();
       r2 = getRandom();
       computePropensities();
@@ -229,7 +232,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
     double threshold = getTotalPropensity() * r2;
     for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
       for (ReactionNode node : model.getListOfReactions()) {
-        sum += node.getState().getState(model.getIndex()).getStateValue();
+        sum += node.getValue(model.getIndex());
 
         if (sum >= threshold) {
           node.fireReaction(model.getIndex(), sum - threshold);

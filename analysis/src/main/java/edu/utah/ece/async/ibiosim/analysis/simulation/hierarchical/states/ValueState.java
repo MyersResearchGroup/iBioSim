@@ -33,7 +33,7 @@ public class ValueState extends HierarchicalState {
 	}
 
 	@Override
-	public HierarchicalState getState(int index) {
+	public HierarchicalState getChild(int index) {
 		// can't have children
 		return this;
 	}

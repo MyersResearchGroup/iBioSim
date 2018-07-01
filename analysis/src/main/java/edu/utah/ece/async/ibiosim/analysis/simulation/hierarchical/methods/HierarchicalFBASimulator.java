@@ -69,9 +69,8 @@ class HierarchicalFBASimulator extends HierarchicalSimulation {
   private void retrieveFbaState() {
     Map<String, Double> flux = fba.getFluxes();
     for (String reaction : flux.keySet()) {
-      topmodel.getNode(reaction).getState().getState(topmodel.getIndex()).setStateValue(flux.get(reaction));
+      topmodel.getNode(reaction).setValue(topmodel.getIndex(), flux.get(reaction));
     }
-
   }
 
   @Override
@@ -98,7 +97,7 @@ class HierarchicalFBASimulator extends HierarchicalSimulation {
   void getState() {
     for (String name : values.keySet()) {
       VariableNode node = topmodel.getNode(name);
-      double value = node.getState().getState(topmodel.getIndex()).getStateValue();
+      double value = node.getValue(topmodel.getIndex());
       if (Math.abs(value) <= 1e-6) {
         value = 0;
       }

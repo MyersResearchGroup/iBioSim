@@ -95,7 +95,7 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation {
     if (!isInitialized) {
       initialize(getCurrentRun());
     }
-    double nextEndTime = currentTime.getState().getStateValue();
+    double nextEndTime = currentTime.getState().getValue();
     fbaTime = nextEndTime;
     double dt = getTopLevelValue("dt");
     SimulationProperties simProperties = properties.getSimulationProperties();
@@ -123,13 +123,9 @@ public final class HierarchicalMixedSimulator extends HierarchicalSimulation {
 
         fbaTime = nextEndTime + dt;
       }
-
       computeAssignmentRules();
-
       odeSim.simulate();
-
-      currentTime.getState().setStateValue(nextEndTime);
-
+      setCurrentTime(nextEndTime);
       printToFile();
     }
 

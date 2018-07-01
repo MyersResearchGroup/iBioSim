@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
-
 /**
  * A node that represents SBML Constraints.
  *
@@ -25,56 +23,55 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class ConstraintNode extends HierarchicalNode {
 
-	private final String id;
+  private final String id;
 
-	public ConstraintNode (String id, HierarchicalNode copy) {
-		super(Type.PLUS);
-		this.addChild(copy);
-		this.id = id;
-	}
+  public ConstraintNode(String id, HierarchicalNode copy) {
+    super(Type.PLUS);
+    this.addChild(copy);
+    this.id = id;
+  }
 
-	private ConstraintNode (ConstraintNode constraintNode) {
-		super(constraintNode);
-		this.id = constraintNode.id;
-	}
+  private ConstraintNode(ConstraintNode constraintNode) {
+    super(constraintNode);
+    this.id = constraintNode.id;
+  }
 
-	@Override
-	public String getName() {
-		return id;
-	}
+  @Override
+  public String getName() {
+    return id;
+  }
 
-	/**
-	 * Gets the number of times that the constraint has been
-	 * evaluated to false.
-	 *
-	 * @param index
-	 *          - the model index.
-	 *
-	 * @return the number of failures.
-	 */
-	public double getNumberOfFailures(int index) {
-		return state.getState(index).getStateValue();
-	}
+  /**
+   * Gets the number of times that the constraint has been
+   * evaluated to false.
+   *
+   * @param index
+   *          - the model index.
+   *
+   * @return the number of failures.
+   */
+  public double getNumberOfFailures(int index) {
+    return state.getChild(index).getValue();
+  }
 
-	/**
-	 * Checks whether the constraint is true or false.
-	 *
-	 * @param index
-	 *          - the model index.
-	 *
-	 * @return the result of the evaluation.
-	 */
-	public boolean evaluateConstraint(int index) {
-		boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
-		if (!value) {
-			HierarchicalState childState = state.getState(index);
-			childState.getState(index).setStateValue(childState.getStateValue() + 1);
-		}
-		return value;
-	}
+  /**
+   * Checks whether the constraint is true or false.
+   *
+   * @param index
+   *          - the model index.
+   *
+   * @return the result of the evaluation.
+   */
+  public boolean evaluateConstraint(int index) {
+    boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
+    if (!value) {
+      setValue(index, getValue(index) + 1);
+    }
+    return value;
+  }
 
-	@Override
-	public ConstraintNode clone() {
-		return new ConstraintNode(this);
-	}
+  @Override
+  public ConstraintNode clone() {
+    return new ConstraintNode(this);
+  }
 }
