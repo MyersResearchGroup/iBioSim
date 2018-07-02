@@ -27,11 +27,11 @@ import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;

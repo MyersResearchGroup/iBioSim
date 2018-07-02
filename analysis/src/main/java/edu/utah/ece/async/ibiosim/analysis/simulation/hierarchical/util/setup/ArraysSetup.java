@@ -19,8 +19,8 @@ import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 
 /**
  * Setups up arrays in the hierarchical simulator.

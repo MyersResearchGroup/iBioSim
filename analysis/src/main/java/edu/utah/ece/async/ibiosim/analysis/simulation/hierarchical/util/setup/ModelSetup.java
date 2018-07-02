@@ -31,10 +31,10 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;

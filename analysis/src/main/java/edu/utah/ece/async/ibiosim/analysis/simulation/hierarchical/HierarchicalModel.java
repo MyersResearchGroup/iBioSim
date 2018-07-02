@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model;
+package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical;
 
 import java.util.ArrayList;
 import java.util.HashMap;

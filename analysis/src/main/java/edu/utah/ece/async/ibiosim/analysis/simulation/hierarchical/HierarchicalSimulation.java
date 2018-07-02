@@ -35,7 +35,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Function
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;

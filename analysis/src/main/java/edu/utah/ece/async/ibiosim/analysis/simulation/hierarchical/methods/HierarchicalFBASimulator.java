@@ -20,9 +20,9 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 
 import edu.utah.ece.async.ibiosim.analysis.fba.FluxBalanceAnalysis;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 
 /**
  * Flux-Balance analyzer.

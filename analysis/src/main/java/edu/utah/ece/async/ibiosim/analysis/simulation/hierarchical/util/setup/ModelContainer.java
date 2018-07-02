@@ -21,8 +21,8 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**

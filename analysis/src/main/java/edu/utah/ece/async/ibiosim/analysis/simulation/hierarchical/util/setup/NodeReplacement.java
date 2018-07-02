@@ -1,6 +1,6 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 
 /**
  * Pairs a replacing element to the element being replaced, as well as their corresponding models.

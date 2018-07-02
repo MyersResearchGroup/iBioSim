@@ -10,9 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalSSADirectSimulator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 

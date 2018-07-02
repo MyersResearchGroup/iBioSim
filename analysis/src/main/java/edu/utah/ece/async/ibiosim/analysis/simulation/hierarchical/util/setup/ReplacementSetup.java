@@ -27,8 +27,8 @@ import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 
 /**

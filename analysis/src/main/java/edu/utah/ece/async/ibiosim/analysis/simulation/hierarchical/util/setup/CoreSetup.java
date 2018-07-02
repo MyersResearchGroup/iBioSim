@@ -38,7 +38,9 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Trigger;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
@@ -47,8 +49,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Reaction
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesReferenceNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.DenseState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
