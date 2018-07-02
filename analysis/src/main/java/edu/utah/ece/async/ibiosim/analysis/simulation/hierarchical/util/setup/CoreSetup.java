@@ -39,8 +39,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Trigger;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
@@ -483,7 +483,6 @@ class CoreSetup {
 
       node.setState(createState(sim.getCollectionType(), wrapper));
       node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-
       node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(0);
 
       KineticLaw kineticLaw = reaction.getKineticLaw();

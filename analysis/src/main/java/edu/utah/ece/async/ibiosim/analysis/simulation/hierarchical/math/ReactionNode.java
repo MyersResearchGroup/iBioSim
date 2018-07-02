@@ -122,7 +122,6 @@ public class ReactionNode extends VariableNode {
    *          - the model index.
    */
   public boolean computePropensity(int index) {
-    double oldValue = state.getChild(index).getValue();
     double newValue = 0;
 
     if (forwardRate != null) {
@@ -135,9 +134,7 @@ public class ReactionNode extends VariableNode {
       newValue = newValue + reverseRateValue;
     }
 
-    setValue(index, newValue);
-
-    return oldValue != newValue;
+    return setValue(index, newValue);
   }
 
   /**

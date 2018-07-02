@@ -228,16 +228,19 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
    *          - index of submodel.
    * @param listOfIndices
    *          - the array indices.
-   * @return the value of selected variable.
+   * @return if the value has changed.
    */
-  public void setValue(int modelIndex, List<Integer> listOfIndices, double value) {
+  public boolean setValue(int modelIndex, List<Integer> listOfIndices, double value) {
     HierarchicalState variableState = state.getChild(modelIndex);
     if (listOfIndices != null) {
       for (int i = listOfIndices.size() - 1; i >= 0; i--) {
         variableState = variableState.getChild(listOfIndices.get(i));
       }
     }
+    double oldValue = variableState.getValue();
     variableState.setStateValue(value);
+
+    return oldValue != value;
   }
 
   /**
@@ -245,12 +248,10 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
    *
    * @param modelIndex
    *          - index of submodel.
-   * @param listOfIndices
-   *          - the array indices.
-   * @return the value of selected variable.
+   * @return if the value has changed.
    */
-  public void setValue(int modelIndex, double value) {
-    setValue(modelIndex, null, value);
+  public boolean setValue(int modelIndex, double value) {
+    return setValue(modelIndex, null, value);
   }
 
 }

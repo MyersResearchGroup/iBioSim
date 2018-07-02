@@ -227,8 +227,9 @@ public class HierarchicalTestSuiteRunner {
         simProperties.addIntSpecies(intSpecies);
       }
 
-      String quantityType = p.getProperty("concentration");
-      simProperties.setPrinter_track_quantity(quantityType);
+      if (p.getProperty("concentration").length() > 0) {
+        simProperties.setPrinter_track_quantity("concentration");
+      }
       double printInterval = timeLimit / numSteps;
       simProperties.setPrintInterval(printInterval);
     }

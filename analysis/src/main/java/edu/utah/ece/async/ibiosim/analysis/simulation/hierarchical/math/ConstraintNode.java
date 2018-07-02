@@ -66,8 +66,9 @@ public class ConstraintNode extends HierarchicalNode {
     boolean value = Evaluator.evaluateExpressionRecursive(this, index) > 0;
     if (!value) {
       setValue(index, getValue(index) + 1);
+      return true;
     }
-    return value;
+    return false;
   }
 
   @Override

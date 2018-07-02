@@ -127,10 +127,11 @@ public class SpeciesNode extends VariableNode {
     if (rateRule != null) {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
       if (!state.getChild(index).hasOnlySubstance()) {
+        double c = compartment.getValue(index);
+        rate = rate * c;
         double compartmentChange = compartment.computeRateOfChange(index);
         if (compartmentChange != 0) {
-          double c = compartment.getValue(index);
-          rate = rate + state.getChild(index).getValue() * compartmentChange / c;
+          rate = rate + getValue(index) * compartmentChange / c;
         }
       }
     } else if (odeRate != null && !state.getChild(index).isBoundaryCondition()) {
@@ -145,15 +146,6 @@ public class SpeciesNode extends VariableNode {
     return new SpeciesNode(this);
   }
 
-  /**
-   * Get value from arrayed variable.
-   *
-   * @param modelIndex
-   *          - index of submodel.
-   * @param listOfIndices
-   *          - the array indices.
-   * @return the value of selected variable.
-   */
   @Override
   public double getValue(int modelIndex, List<Integer> listOfIndices) {
     HierarchicalState variableState = state.getChild(modelIndex);
@@ -169,6 +161,26 @@ public class SpeciesNode extends VariableNode {
       speciesValue = speciesValue / compartmentValue;
     }
     return speciesValue;
+  }
+
+  @Override
+  public boolean setValue(int modelIndex, List<Integer> listOfIndices, double value) {
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfIndices != null) {
+      for (int i = listOfIndices.size() - 1; i >= 0; i--) {
+        variableState = variableState.getChild(listOfIndices.get(i));
+      }
+    }
+
+    if (!variableState.hasOnlySubstance()) {
+      double compartmentValue = compartment.getValue(modelIndex);
+      value = value * compartmentValue;
+    }
+
+    double oldValue = variableState.getValue();
+    variableState.setStateValue(value);
+
+    return oldValue != value;
   }
 
 }
