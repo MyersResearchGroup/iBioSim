@@ -16,12 +16,16 @@ package edu.utah.ece.async.ibiosim.conversion;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
+import org.virtualparts.data.QueryParameters;
 import org.virtualparts.data.SBOLInteractionAdder_GeneCentric;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
@@ -53,16 +57,34 @@ public class VPRModelGenerator {
 	 */
 	public static SBOLDocument generateModel(String selectedRepo, SBOLDocument generatedModel, String rootModuleID) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException
 	{ 
-		//"https://synbiohub.org/sparql"
+		// TODO: perhaps should remove selectedRepo, but instead compare URIs to all registries in the 
+		// list of registries, then for each repo/collection found in the list of CDs, make a separate call
+		// to VPR
+		List<URI> collections=new ArrayList<URI>();
+		for (ComponentDefinition cd : generatedModel.getComponentDefinitions()) {
+			if (cd.getIdentity().toString().startsWith(selectedRepo)) {
+				String collectionURI = cd.getPersistentIdentity().toString();
+				collectionURI = collectionURI.substring(0, collectionURI.lastIndexOf('/')); 
+				String collectionId = collectionURI.substring(collectionURI.lastIndexOf('/')+1);
+				collectionURI = collectionURI + '/' + collectionId + "_collection/" + cd.getVersion();
+				if (!collections.contains(collectionURI)) {
+					collections.add(URI.create(collectionURI));
+				}
+			}
+		}
+
 		String endpoint = selectedRepo + "/sparql";
 		SBOLInteractionAdder_GeneCentric interactionAdder = null;
+		QueryParameters params=new QueryParameters();
+		params.setCollectionURIs(collections);
+		
 		if(!rootModuleID.isEmpty() && rootModuleID != null)
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID);
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID, params);
 		}
 		else
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint));
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), "TopModule", params);
 		}
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
