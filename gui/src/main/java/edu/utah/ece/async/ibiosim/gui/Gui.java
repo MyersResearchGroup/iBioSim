@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -144,8 +145,6 @@ import org.sbolstandard.core2.Activity;
 import org.sbolstandard.core2.Association;
 import org.sbolstandard.core2.Attachment;
 import org.sbolstandard.core2.ComponentDefinition;
-import org.sbolstandard.core2.EDAMOntology;
-import org.sbolstandard.core2.GenericTopLevel;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Plan;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -154,7 +153,6 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
-import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
 import org.virtualparts.VPRException;
@@ -217,6 +215,7 @@ import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
+import edu.utah.ece.async.ibiosim.gui.util.OSXHandlers;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
@@ -350,42 +349,19 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	protected SBOLDocument			sbolDocument		= null;
 
-	public void OSXSetup() {
-		Application app = Application.getApplication();
-
-		app.setAboutHandler(new AboutHandler() {
-			public void handleAbout(AboutEvent ae) {
-				about();
-			}
-		});
-
-		app.setPreferencesHandler(new PreferencesHandler() {
-			public void handlePreferences(PreferencesEvent pe) {
-				PreferencesDialog.showPreferences(frame);
-				//EditPreferences editPreferences = new EditPreferences(frame, async);
-				//editPreferences.preferences();
-				tree.setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
-				if (sbolDocument != null) {
-					sbolDocument.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-				}
-			}
-		});
-
-		app.setQuitHandler(new QuitHandler() {
-			public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
-				exit();
-			}
-		});
-	}
-
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
+	 * @throws InstantiationException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws NoSuchMethodException 
+	 * @throws ClassNotFoundException 
 	 * 
 	 * @throws Exception
 	 */
-	public Gui() {
+	public Gui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 
 		ENVVAR = System.getenv("BIOSIM");
@@ -900,7 +876,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		help.add(manual);
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			OSXSetup();
+			OSXHandlers osxHandlers = new OSXHandlers(this);
+			osxHandlers.addEventHandlers();
 		} else {
 			edit.addSeparator();
 			edit.add(pref);
@@ -1048,7 +1025,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return true;
 	}
 
-	private void about() {
+	public void about() {
 		final JFrame f = new JFrame("About");
 		JLabel name;
 		JLabel version;
@@ -1172,8 +1149,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			File f = new File(filename);
 			if (f.exists()) {
 				Object[] options = { "Overwrite", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, "File already exists." + "\nDo you want to overwrite?",
-						"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int value = JOptionPane.showOptionDialog(frame, "WARNING: Folder " + filename + " already exists!\n" + 
+				"Overwriting a folder will delete ALL the files in this folder.\n" +
+				"Are you absolutely sure that you want to overwrite this folder?",
+						"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
 				if (value == JOptionPane.YES_OPTION) {
 					File dir = new File(filename);
 					if (dir.isDirectory()) {
@@ -3998,6 +3977,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @return The current SBOLDocument.
 	 */
 	public SBOLDocument getSBOLDocument() {
+		if (root==null) return null;
 		readSBOLDocument();
 		return sbolDocument;
 	}
@@ -5987,7 +5967,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				String circuitID = "";
 				if(chosenDesign.getRootComponentDefinitions().size() > 1)
 				{
-					circuitID = JOptionPane.showInputDialog(frame, "Enter Circuit ID to be automated from VPR: " , "Circuit ID",
+					circuitID = JOptionPane.showInputDialog(frame, "Enter ID for generated circuit model: " , "Model ID",
 							JOptionPane.PLAIN_MESSAGE);
 					if(circuitID == null)   
 					{
@@ -6009,8 +5989,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign, circuitID);
 				//update SBOL library file with newly generated components that vpr model generator created.
-				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
 				generateSBMLFromSBOL(chosenDesign, filePath);
+				// TODO: should be using libSBOLj for this
+				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
 				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
@@ -9200,8 +9181,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
   /**
    * This is the main method. It excecutes the BioSim GUI FrontEnd program.
+ * @throws InstantiationException 
+ * @throws InvocationTargetException 
+ * @throws IllegalAccessException 
+ * @throws NoSuchMethodException 
+ * @throws ClassNotFoundException 
    */
-  public static void main(String args[]) {
+  public static void main(String args[]) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 	  String message = "";
 
 	  if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
