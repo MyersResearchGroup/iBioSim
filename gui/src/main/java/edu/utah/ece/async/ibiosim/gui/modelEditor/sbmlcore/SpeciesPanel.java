@@ -660,13 +660,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				try {
 					// check the threshold values for validity
 					for (String threshold : thresholdText.trim().split(",")) {
+						if (Integer.parseInt(threshold.trim())<=0) {
+							JOptionPane.showMessageDialog(Gui.frame,"Threshold values must be comma-separated positive integers", "Error", JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
 						thresholdValues.add(Integer.parseInt(threshold.trim()));
 					}
 				}
 				catch (NumberFormatException e) {
-	
-				  JOptionPane.showMessageDialog(Gui.frame,"Error", "Threshold values must be comma-separated integers", JOptionPane.ERROR_MESSAGE);
-					return false;
+
+					  JOptionPane.showMessageDialog(Gui.frame,"Threshold values must be comma-separated positive integers", "Error", JOptionPane.ERROR_MESSAGE);
+						return false;
 				}
 	
 				Integer[] threshVals = thresholdValues.toArray(new Integer[0]);
