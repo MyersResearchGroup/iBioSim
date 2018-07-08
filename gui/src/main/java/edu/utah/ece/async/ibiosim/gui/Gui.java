@@ -361,7 +361,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * 
 	 * @throws Exception
 	 */
-	public Gui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public Gui() {
+	}
+	
+	public void openGui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException { 
 		Thread.setDefaultUncaughtExceptionHandler(new Utility.UncaughtExceptionHandler());
 
 		ENVVAR = System.getenv("BIOSIM");
@@ -9240,7 +9243,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		  JOptionPane.showMessageDialog(null , message , "No Domain Set" , JOptionPane.ERROR_MESSAGE);
 		  PreferencesDialog.showPreferences(frame);
 	  }
-	  new Gui();
+	  Gui gui = new Gui();
+	  gui.openGui();
   }
 
 }
