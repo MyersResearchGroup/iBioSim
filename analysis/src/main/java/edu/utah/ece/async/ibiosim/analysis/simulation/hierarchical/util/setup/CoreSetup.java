@@ -41,9 +41,7 @@ import org.sbml.jsbml.Trigger;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
@@ -56,6 +54,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Sparse
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Function;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.RateSplitterInterpreter;
 
@@ -220,12 +219,7 @@ class CoreSetup {
       if (species.isSetInitialAmount()) {
         node.getState().getChild(index).setInitialValue(species.getInitialAmount());
       } else if (species.isSetInitialConcentration()) {
-        HierarchicalNode initConcentration = new HierarchicalNode(Type.TIMES);
-        initConcentration.addChild(new HierarchicalNode(species.getInitialConcentration()));
-        initConcentration.addChild(compartment);
-        FunctionNode functionNode = new FunctionNode(node, initConcentration);
-        hierarchicalModel.addInitialConcentration(functionNode);
-        node.getState().getChild(index).setHasAmountUnits(false);
+        hierarchicalModel.addInitialConcentration(node, species.getInitialConcentration(), index);
       }
     }
   }
@@ -353,7 +347,7 @@ class CoreSetup {
         VariableNode variableNode = hierarchicalModel.getNode(eventAssignment.getVariable());
 
         HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, hierarchicalModel.getVariableToNodeMap(), index);
-        FunctionNode eventAssignmentNode = new FunctionNode(variableNode, assignmentNode);
+        Function eventAssignmentNode = new Function(variableNode, assignmentNode);
         eventNode.addEventAssignment(eventAssignmentNode);
       }
 
@@ -439,18 +433,7 @@ class CoreSetup {
         ASTNode math = initAssignment.getMath();
         HierarchicalNode initAssignNode = MathInterpreter.parseASTNode(math, hierarchicalModel.getVariableToNodeMap(), index);
 
-        if (variableNode.isSpecies()) {
-          SpeciesNode node = (SpeciesNode) variableNode;
-
-          if (!node.getState().getChild(index).hasOnlySubstance()) {
-            HierarchicalNode amountNode = new HierarchicalNode(Type.TIMES);
-            amountNode.addChild(initAssignNode);
-            amountNode.addChild(node.getCompartment());
-            initAssignNode = amountNode;
-          }
-        }
-
-        FunctionNode node = new FunctionNode(variableNode, initAssignNode);
+        Function node = new Function(variableNode, initAssignNode);
         variableNode.getState().getChild(index).setHasInitRule(true);
         node.setIsInitAssignment(true);
         hierarchicalModel.addInitAssignment(node);
@@ -540,7 +523,7 @@ class CoreSetup {
           ASTNode math = assignRule.getMath();
           VariableNode variableNode = variableToNodes.get(assignRule.getVariable());
           HierarchicalNode assignRuleNode = MathInterpreter.parseASTNode(math, variableToNodes, index);
-          FunctionNode node = new FunctionNode(variableNode, assignRuleNode);
+          Function node = new Function(variableNode, assignRuleNode);
           hierarchicalModel.addAssignRule(node);
           variableNode.getState().getChild(index).setHasRule(true);
         }

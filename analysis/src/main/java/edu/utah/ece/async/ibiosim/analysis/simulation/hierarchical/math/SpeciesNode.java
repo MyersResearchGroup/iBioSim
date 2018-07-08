@@ -59,15 +59,13 @@ public class SpeciesNode extends VariableNode {
     return compartment;
   }
 
-  /**
-   * Gets the concentration value of the species.
-   *
-   * @param index
-   *          - the model index.
-   * @return the concentration value.
-   */
-  public double getConcentration(int index) {
-    return getValue(index) / compartment.getValue(index);
+  @Override
+  public double report(int index, boolean concentration) {
+    double value = state.getChild(index).getValue();
+    if (concentration) {
+      value = value / compartment.getValue(index);
+    }
+    return value;
   }
 
   /**

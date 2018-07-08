@@ -25,6 +25,8 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 public abstract class HierarchicalState {
   protected double value;
   protected double initValue;
+  protected double initConcentration;
+
   private final Attribute attributes = new Attribute();
 
   /**
@@ -271,28 +273,6 @@ public abstract class HierarchicalState {
   }
 
   /**
-   * Checks if the node has amount units.
-   *
-   * @return true if the node has amount units.
-   */
-  public boolean hasAmountUnits() {
-    if (attributes != null) { return attributes.hasAmountUnits; }
-    return false;
-  }
-
-  /**
-   * Sets the has amount units flag.
-   *
-   * @param hasAmountUnits
-   *          - true if the species has amount units.
-   */
-  public void setHasAmountUnits(boolean hasAmountUnits) {
-    if (attributes != null) {
-      attributes.hasAmountUnits = hasAmountUnits;
-    }
-  }
-
-  /**
    * Checks if the node has a rate rule.
    *
    * @return true if the node has a rate rule.
@@ -322,7 +302,6 @@ public abstract class HierarchicalState {
     boolean isVariableConstant = false;
     boolean hasRule = false;
     boolean hasInitRule = false;
-    boolean hasAmountUnits = false;
     boolean hasRate = false;
   }
 }

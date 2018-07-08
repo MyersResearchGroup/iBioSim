@@ -229,7 +229,10 @@ public class HierarchicalTestSuiteRunner {
 
       if (p.getProperty("concentration").length() > 0) {
         simProperties.setPrinter_track_quantity("concentration");
+      } else {
+        simProperties.setPrinter_track_quantity("amount");
       }
+
       double printInterval = timeLimit / numSteps;
       simProperties.setPrintInterval(printInterval);
     }
@@ -253,7 +256,7 @@ public class HierarchicalTestSuiteRunner {
         elements = line.split(",");
 
         for (int i = 0; i < elements.length; i++) {
-          table.addDataEntry(i, Double.valueOf(elements[i]));
+          table.addDataEntry(i, Double.valueOf(elements[i].replace("INF", "Infinity")));
         }
       }
       scanner.close();

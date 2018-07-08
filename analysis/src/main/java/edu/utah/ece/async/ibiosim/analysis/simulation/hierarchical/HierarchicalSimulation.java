@@ -31,12 +31,13 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.Hierarchic
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEventNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Function;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEvent;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
@@ -71,8 +72,8 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   protected double printTime;
   protected HierarchicalModel topmodel;
   protected final AnalysisProperties properties;
-  protected FunctionNode totalPropensity;
-  protected PriorityQueue<TriggeredEventNode> triggeredEventList;
+  protected Function totalPropensity;
+  protected PriorityQueue<TriggeredEvent> triggeredEventList;
 
   /**
    * Constructs a new simulation instance.
@@ -110,7 +111,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
 
-    this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
+    this.totalPropensity = new Function(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
   }
 
@@ -342,7 +343,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
           event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
           event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
           double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
-          TriggeredEventNode triggered = new TriggeredEventNode(index, fireTime, event);
+          TriggeredEvent triggered = new TriggeredEvent(index, fireTime, event);
           triggered.setPriority(event.evaluatePriority(index));
           if (event.getState().getChild(index).isUseTriggerValue()) {
             double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getState().getValue());
@@ -374,7 +375,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       changed = false;
       for (HierarchicalModel modelstate : this.modules) {
         if (modelstate.getListOfAssignmentRules() != null) {
-          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
+          for (Function node : modelstate.getListOfAssignmentRules()) {
             changed = changed | node.computeFunction(modelstate.getIndex());
           }
         }
@@ -392,7 +393,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       checkEvents();
 
       if (triggeredEventList != null && !triggeredEventList.isEmpty()) {
-        TriggeredEventNode eventState = triggeredEventList.peek();
+        TriggeredEvent eventState = triggeredEventList.peek();
         if (eventState.getFireTime() <= time) {
           triggeredEventList.poll();
           eventState.fireEvent(time);
@@ -420,23 +421,24 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       changed = false;
 
       for (HierarchicalModel modelstate : this.modules) {
-        int index = modelstate.getIndex();
+        modelstate.getIndex();
         if (modelstate.getListOfAssignmentRules() != null) {
-          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
+          for (Function node : modelstate.getListOfAssignmentRules()) {
             changed = changed | node.computeFunction(modelstate.getIndex());
           }
         }
 
         if (modelstate.getListOfInitialAssignments() != null) {
-          for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
+          for (Function node : modelstate.getListOfInitialAssignments()) {
             changed = changed | node.computeFunction(modelstate.getIndex());
           }
         }
 
         if (modelstate.getListOfInitialConcentrations() != null) {
-          for (FunctionNode node : modelstate.getListOfInitialConcentrations()) {
-            if (!node.getVariable().getState().getChild(index).hasRule() && !node.getVariable().getState().getChild(index).hasInitRule()) {
-              changed = changed | node.computeFunction(modelstate.getIndex());
+          for (SpeciesConcentration concentration : modelstate.getListOfInitialConcentrations()) {
+
+            if (!concentration.hasRule()) {
+              changed = changed | concentration.computeValue();
             }
           }
         }
@@ -498,9 +500,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   }
 
   protected void reevaluatePriorities() {
-    PriorityQueue<TriggeredEventNode> tmp = new PriorityQueue<>(1);
+    PriorityQueue<TriggeredEvent> tmp = new PriorityQueue<>(1);
     while (triggeredEventList != null && !triggeredEventList.isEmpty()) {
-      TriggeredEventNode eventState = triggeredEventList.poll();
+      TriggeredEvent eventState = triggeredEventList.poll();
       EventNode event = eventState.getParent();
       int index = eventState.getIndex();
       eventState.setPriority(event.evaluatePriority(index));

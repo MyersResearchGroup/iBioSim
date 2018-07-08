@@ -14,7 +14,6 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 
 /**
@@ -24,7 +23,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Variable
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class TriggeredEventNode implements Comparable<TriggeredEventNode> {
+public class TriggeredEvent implements Comparable<TriggeredEvent> {
   private double priority;
   private double[] assignmentValues;
   private final int index;
@@ -32,7 +31,7 @@ public class TriggeredEventNode implements Comparable<TriggeredEventNode> {
   private final EventNode parent;
   private boolean hasFlipped;
 
-  public TriggeredEventNode(int index, double fireTime, EventNode parent) {
+  public TriggeredEvent(int index, double fireTime, EventNode parent) {
     this.parent = parent;
     this.index = index;
     this.hasFlipped = false;
@@ -135,7 +134,7 @@ public class TriggeredEventNode implements Comparable<TriggeredEventNode> {
 
       if (assignmentValues != null) {
         for (int i = 0; i < parent.getEventAssignments().size(); i++) {
-          FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
+          Function eventAssignmentNode = parent.getEventAssignments().get(i);
           VariableNode variable = eventAssignmentNode.getVariable();
           variable.setValue(index, assignmentValues[i]);
         }
@@ -145,7 +144,7 @@ public class TriggeredEventNode implements Comparable<TriggeredEventNode> {
   }
 
   @Override
-  public int compareTo(TriggeredEventNode event2) {
+  public int compareTo(TriggeredEvent event2) {
     if (this.getFireTime() > event2.getFireTime()) {
       return 1;
     } else if (this.getFireTime() < event2.getFireTime()) {

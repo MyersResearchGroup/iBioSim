@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 
 /**
  * Base class for writing hierarchical simulator results.
@@ -117,15 +116,7 @@ public abstract class HierarchicalWriter {
 
     @Override
     public String toString() {
-      double value = 0;
-      if (isConcentration && node.isSpecies()) {
-        SpeciesNode species = (SpeciesNode) node;
-        value = species.getConcentration(index);
-      } else {
-        value = node.getState().getChild(index).getValue();
-      }
-
-      return String.valueOf(value);
+      return String.valueOf(node.report(index, isConcentration));
     }
   }
 

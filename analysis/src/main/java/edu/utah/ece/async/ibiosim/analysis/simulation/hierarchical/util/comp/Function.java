@@ -11,9 +11,13 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
+package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import java.util.List;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Evaluator;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 
 /**
  * A node that represents SBML Initial assignments and SBML Assignment Rules.
@@ -23,52 +27,47 @@ import java.util.List;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class FunctionNode extends HierarchicalNode {
+public class Function {
 
-  private VariableNode variable;
+  private final VariableNode variable;
+  private final HierarchicalNode functionMath;
   private boolean isInitialAssignment;
   private List<HierarchicalNode> variableIndices;
 
-  public FunctionNode(VariableNode variable, HierarchicalNode math) {
-    this(math);
+  public Function(VariableNode variable, HierarchicalNode math) {
+    this.functionMath = math;
     this.variable = variable;
   }
 
-  public FunctionNode(Type type) {
-    super(type);
-  }
-
-  public FunctionNode(HierarchicalNode math) {
-    super(math.getType());
-    if (math.getNumOfChild() > 0) {
-      for (HierarchicalNode node : math.getChildren()) {
-        this.addChild(node);
-      }
-    }
-    if (math.state != null) {
-      this.state = math.state;
-    }
-    this.name = math.name;
-
-  }
-
-  public FunctionNode(FunctionNode math) {
-    super(math);
+  public Function(Function math) {
     this.variable = math.variable;
+    this.functionMath = math.functionMath;
   }
 
+  /**
+   * Gets the variable node associated with this function.
+   *
+   * @return the variable.
+   */
   public VariableNode getVariable() {
     return variable;
   }
 
-  public void setVariable(VariableNode variable) {
-    this.variable = variable;
-  }
-
+  /**
+   * Sets a flag to indicate whether this function is an initial assignment.
+   *
+   * @param initAssign
+   *          - whether this is an initial assignment.
+   */
   public void setIsInitAssignment(boolean initAssign) {
     this.isInitialAssignment = initAssign;
   }
 
+  /**
+   * Checks if this function is an initial assignment.
+   *
+   * @return true if this function is an initial assignment and false otherwise.
+   */
   public boolean isInitAssignment() {
     return this.isInitialAssignment;
   }
@@ -83,13 +82,21 @@ public class FunctionNode extends HierarchicalNode {
   public boolean computeFunction(int index) {
     boolean changed = false;
 
-    if (!(this.isInitialAssignment && variable.state.getChild(index).hasRule())) {
-
-      double newValue = Evaluator.evaluateExpressionRecursive(this, index);
+    if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule())) {
+      double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
       changed = variable.setValue(index, newValue);
     }
 
     return changed;
+  }
+
+  /**
+   * Gets the math associated with this function.
+   *
+   * @return the right-hand side of this function.
+   */
+  public HierarchicalNode getMath() {
+    return functionMath;
   }
 
 }

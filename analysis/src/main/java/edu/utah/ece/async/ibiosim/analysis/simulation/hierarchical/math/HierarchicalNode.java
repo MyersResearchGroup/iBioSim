@@ -240,7 +240,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
     double oldValue = variableState.getValue();
     variableState.setStateValue(value);
 
-    return oldValue != value;
+    return oldValue != value && !Double.isNaN(oldValue) && !Double.isNaN(value);
   }
 
   /**
@@ -252,6 +252,16 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
    */
   public boolean setValue(int modelIndex, double value) {
     return setValue(modelIndex, null, value);
+  }
+
+  /**
+   *
+   * @param index
+   * @param concentration
+   * @return
+   */
+  public double report(int index, boolean concentration) {
+    return state.getChild(index).getValue();
   }
 
 }
