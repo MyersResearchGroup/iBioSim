@@ -990,12 +990,10 @@ public class Zone implements Equivalence{
 				String contValue = v.getInitValue();
 				IntervalPair bound = parseRate(contValue);
 				// Set upper bound (DBM entry (0, x) where x is the index of the variable v).
-				setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, ltPair, 
-						ContinuousUtilities.chkDiv(bound.get_UpperBound(),range.get_LowerBound(),true));
+				setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, ltPair, bound.get_UpperBound());
 				
 				// Set lower bound (DBM entry (x, 0) where x is the index of the variable v).
-				setDbmEntryByPair(ltPair, LPNTransitionPair.ZERO_TIMER_PAIR, 
-						ContinuousUtilities.chkDiv(-1*bound.get_LowerBound(),range.get_LowerBound(),true));
+				setDbmEntryByPair(ltPair, LPNTransitionPair.ZERO_TIMER_PAIR, -1*bound.get_LowerBound());
 				
 				
 				

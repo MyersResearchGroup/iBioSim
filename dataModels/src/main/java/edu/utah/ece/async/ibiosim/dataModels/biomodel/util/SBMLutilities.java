@@ -5267,7 +5267,7 @@ public class SBMLutilities extends CoreObservable
 					double upperBound = FastMath.max(leftChildValue, rightChildValue);
 
 					//return prng.nextDouble(lowerBound, upperBound);
-					return ((upperBound-lowerBound) / 2);
+					return ((upperBound+lowerBound) / 2);
 				}
 				else if (nodeName.equals("exponential"))
 				{
