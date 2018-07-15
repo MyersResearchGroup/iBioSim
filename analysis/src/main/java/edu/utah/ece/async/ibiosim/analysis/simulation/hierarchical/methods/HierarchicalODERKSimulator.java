@@ -28,8 +28,8 @@ import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
@@ -124,7 +124,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
       de = new DifferentialEquations();
       vectorWrapper.initStateValues();
-      restoreInitialState();
       computeFixedPoint();
       if (hasEvents()) {
         HierarchicalEventHandler handler = new HierarchicalEventHandler();
@@ -204,25 +203,19 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   }
 
   private void computeRates() {
-    boolean hasChanged = true;
 
-    while (hasChanged) {
-      hasChanged = false;
-      for (HierarchicalModel hierarchicalModel : modules) {
-        hasChanged |= hierarchicalModel.computePropensities();
-      }
-
-      for (HierarchicalModel hierarchicalModel : modules) {
-        int index = hierarchicalModel.getIndex();
-        for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          double oldValue = node.getState().getChild(index).getRateValue();
-          node.getState().getChild(index).setRateValue(node.computeRateOfChange(index));
-          double newValue = node.getState().getChild(index).getRateValue();
-          hasChanged |= newValue != oldValue;
-        }
-      }
-      computeAssignmentRules();
+    for (HierarchicalModel hierarchicalModel : modules) {
+      hierarchicalModel.computePropensities();
     }
+
+    for (HierarchicalModel hierarchicalModel : modules) {
+      int index = hierarchicalModel.getIndex();
+      for (VariableNode node : hierarchicalModel.getListOfVariables()) {
+        node.computeRate(index);
+      }
+    }
+    computeAssignmentRules();
+
   }
 
   private class HierarchicalEventHandler implements EventHandler {

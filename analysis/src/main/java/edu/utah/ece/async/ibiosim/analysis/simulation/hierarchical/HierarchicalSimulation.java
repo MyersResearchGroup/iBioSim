@@ -251,7 +251,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
    */
   public double getTopLevelValue(String variable) {
     if (topmodel != null) {
-      VariableNode variableNode = topmodel.getNode(variable);
+      HierarchicalNode variableNode = topmodel.getNode(variable);
       if (variableNode != null) { return variableNode.getValue(0); }
     }
 
@@ -317,7 +317,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
    */
   public void setTopLevelValue(String variable, double value) {
     if (topmodel != null) {
-      VariableNode variableNode = topmodel.getNode(variable);
+      HierarchicalNode variableNode = topmodel.getNode(variable);
       if (variableNode != null) {
         variableNode.setValue(0, value);
       }
@@ -339,7 +339,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     for (HierarchicalModel model : modules) {
       int index = model.getIndex();
       for (EventNode event : model.getListOfEvents()) {
-        if (event.isTriggeredAtTime(time, index)) {
+        if (!event.isDeleted(index) && event.isTriggeredAtTime(time, index)) {
           event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
           event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
           double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
@@ -421,16 +421,16 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       changed = false;
 
       for (HierarchicalModel modelstate : this.modules) {
-        modelstate.getIndex();
+        int index = modelstate.getIndex();
         if (modelstate.getListOfAssignmentRules() != null) {
           for (Function node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.computeFunction(modelstate.getIndex());
+            changed = changed | node.computeFunction(index);
           }
         }
 
         if (modelstate.getListOfInitialAssignments() != null) {
           for (Function node : modelstate.getListOfInitialAssignments()) {
-            changed = changed | node.computeFunction(modelstate.getIndex());
+            changed = changed | node.computeFunction(index);
           }
         }
 
@@ -445,10 +445,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
 
         if (modelstate.getListOfReactions() != null) {
           for (ReactionNode node : modelstate.getListOfReactions()) {
-            changed = changed | node.computePropensity(modelstate.getIndex());
+            changed = changed | node.computePropensity(index);
           }
 
-          modelstate.getPropensity().computeFunction(modelstate.getIndex());
+          modelstate.getPropensity().computeFunction(index);
         }
       }
     }

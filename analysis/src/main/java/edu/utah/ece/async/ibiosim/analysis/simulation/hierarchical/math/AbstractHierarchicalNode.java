@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.HashSet;
+
 /**
  * @author Leandro Watanabe
  * @author Chris Myers
@@ -37,6 +39,7 @@ public abstract class AbstractHierarchicalNode {
   };
 
   private final Type type;
+  private HashSet<Integer> deletedElements;
   private String metaId;
   protected String name;
   protected VariableType varType;
@@ -50,8 +53,6 @@ public abstract class AbstractHierarchicalNode {
     this.type = copy.type;
     this.varType = VariableType.NONE;
   }
-
-  public abstract double computeRateOfChange(int index);
 
   /**
    * Gets the type of the node.
@@ -188,5 +189,29 @@ public abstract class AbstractHierarchicalNode {
    */
   public void setName(String name) {
     this.name = name;
+  }
+
+  /**
+   * Mark an element from the given submodel index as deleted.
+   *
+   * @param index
+   *          - the index of the model.
+   */
+  public void deleteElement(int index) {
+    if (deletedElements == null) {
+      this.deletedElements = new HashSet<>();
+    }
+    this.deletedElements.add(index);
+  }
+
+  /**
+   * Checks if the element has been deleted.
+   *
+   * @param index
+   *          - the index of the model.
+   * @return true if element is deleted.
+   */
+  public boolean isDeleted(int index) {
+    return deletedElements != null ? deletedElements.contains(index) : false;
   }
 }

@@ -22,7 +22,7 @@ import org.sbml.jsbml.Parameter;
 import edu.utah.ece.async.ibiosim.analysis.fba.FluxBalanceAnalysis;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 
 /**
  * Flux-Balance analyzer.
@@ -96,7 +96,7 @@ class HierarchicalFBASimulator extends HierarchicalSimulation {
    */
   void getState() {
     for (String name : values.keySet()) {
-      VariableNode node = topmodel.getNode(name);
+      HierarchicalNode node = topmodel.getNode(name);
       double value = node.getValue(topmodel.getIndex());
       if (Math.abs(value) <= 1e-6) {
         value = 0;

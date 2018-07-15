@@ -15,11 +15,9 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
@@ -48,19 +46,16 @@ public final class HierarchicalModel {
 
   private ModelType type;
 
-  private Set<String> deletedBySId;
-  private Set<String> deletedByMetaId;
-
   private final List<EventNode> events;
   private final List<ReactionNode> reactions;
-  private final List<VariableNode> arrays;
   private final List<ConstraintNode> constraints;
   private List<SpeciesConcentration> initialConcentrations;
   private List<Function> initialAssignments;
   private List<Function> assigmentnRules;
   private List<VariableNode> variables;
 
-  private final Map<String, VariableNode> idToNode;
+  private final Map<String, HierarchicalNode> idToNode;
+  private Map<String, HierarchicalNode> metaidToNode;
 
   private final String ID;
   protected int index;
@@ -74,22 +69,20 @@ public final class HierarchicalModel {
     this.index = index;
 
     this.idToNode = new HashMap<>();
+    this.metaidToNode = new HashMap<>();
+
     this.variables = new ArrayList<>();
     this.events = new LinkedList<>();
     this.constraints = new ArrayList<>();
     this.reactions = new ArrayList<>();
-    this.arrays = new ArrayList<>();
     this.propensity = new Function(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
   }
 
   public HierarchicalModel(HierarchicalModel state) {
     this.type = state.type;
     // TODO: fix this
-    this.deletedBySId = state.deletedBySId;
-    this.deletedByMetaId = state.deletedByMetaId;
     this.events = state.events;
     this.reactions = state.reactions;
-    this.arrays = state.arrays;
     this.constraints = state.constraints;
     this.idToNode = state.idToNode;
 
@@ -130,7 +123,7 @@ public final class HierarchicalModel {
    *
    * @return the map of variable nodes.
    */
-  public Map<String, VariableNode> getVariableToNodeMap() {
+  public Map<String, HierarchicalNode> getVariableToNodeMap() {
     return idToNode;
   }
 
@@ -213,8 +206,20 @@ public final class HierarchicalModel {
    * @param node
    *          - the variable node.
    */
-  public void addMappingNode(String variable, VariableNode node) {
+  public void addMappingNode(String variable, HierarchicalNode node) {
     idToNode.put(variable, node);
+  }
+
+  /**
+   * Maps a variable metaid to its corresponding node.
+   *
+   * @param metaId
+   *          - the variable meta id.
+   * @param node
+   *          - the variable node.
+   */
+  public void addMappingNodeByMetaId(String metaId, HierarchicalNode node) {
+    metaidToNode.put(metaId, node);
   }
 
   /**
@@ -235,75 +240,19 @@ public final class HierarchicalModel {
    *          - the id of the node.
    * @return the node with the given id.
    */
-  public VariableNode getNode(String variable) {
+  public HierarchicalNode getNode(String variable) {
     return idToNode.get(variable);
   }
 
   /**
-   * Adds an element id to the list of deleted elements.
+   * Gets a node from a meta id.
    *
-   * @param id
-   *          - the variable id.
+   * @param variable
+   *          - the id of the node.
+   * @return the node with the given id.
    */
-  public void addDeletedBySid(String id) {
-    if (deletedBySId == null) {
-      deletedBySId = new HashSet<>();
-    }
-    deletedBySId.add(id);
-  }
-
-  /**
-   * Adds an element's meta id to the list of deleted elements.
-   *
-   * @param metaid
-   *          - the meta id of an SBML object.
-   */
-  public void addDeletedByMetaId(String metaid) {
-
-    if (deletedByMetaId == null) {
-      deletedByMetaId = new HashSet<>();
-    }
-
-    deletedByMetaId.add(metaid);
-  }
-
-  /**
-   * Checks if an element is deleted by id.
-   *
-   * @param sid
-   *          - the id of the element.
-   *
-   * @return true if the element is deleted by id. False otherwise.
-   */
-  public boolean isDeletedBySId(String sid) {
-
-    if (deletedBySId == null) { return false; }
-
-    return deletedBySId.contains(sid);
-  }
-
-  /**
-   * Checks if an element is deleted by meta id.
-   *
-   * @param metaid
-   *          - the meta id of the element.
-   *
-   * @return true if the element is deleted by meta id. False otherwise.
-   */
-  public boolean isDeletedByMetaId(String metaid) {
-
-    if (deletedByMetaId == null) { return false; }
-
-    return deletedByMetaId.contains(metaid);
-  }
-
-  /**
-   * Gets elements that are arrays.
-   *
-   * @return the list of array elements.
-   */
-  public List<VariableNode> getArrays() {
-    return arrays;
+  public HierarchicalNode getNodeByMetaId(String metaid) {
+    return metaidToNode.get(metaid);
   }
 
   /**

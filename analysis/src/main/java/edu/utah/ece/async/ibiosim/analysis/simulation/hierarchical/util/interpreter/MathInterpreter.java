@@ -22,7 +22,6 @@ import org.sbml.jsbml.FunctionDefinition;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionDefNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 
 /**
@@ -48,7 +47,7 @@ public final class MathInterpreter {
    *          - the index of the model.
    * @return the converted HierarchicalNode.
    */
-  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, VariableNode> variableToNodes, int index) {
+  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> variableToNodes, int index) {
     return parseASTNode(math, null, variableToNodes, null, index);
   }
 
@@ -69,7 +68,7 @@ public final class MathInterpreter {
    *          - the math type.
    * @return the converted HierarchicalNode.
    */
-  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> args, Map<String, VariableNode> variableToNodes, Map<String, VariableNode> dimensionNodes, int index) {
+  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> args, Map<String, HierarchicalNode> variableToNodes, Map<String, HierarchicalNode> dimensionNodes, int index) {
 
     HierarchicalNode node;
 
@@ -264,27 +263,7 @@ public final class MathInterpreter {
       break;
     case FUNCTION_RATE_OF:
       node = new HierarchicalNode(Type.FUNCTION_RATEOF);
-      HierarchicalNode rateOf = parseASTNode(math.getChild(0), args, variableToNodes, dimensionNodes, index);
-      if (rateOf.isName()) {
-        node.addChild(rateOf);
-      } else if (rateOf.getType() == Type.DIVIDE) {
-        if (rateOf.getChild(0).isName() && rateOf.getChild(1).isName()) {
-          VariableNode c1 = (VariableNode) rateOf.getChild(0);
-          VariableNode c2 = (VariableNode) rateOf.getChild(1);
-
-          if (c2.getRateRule() != null) {
-            rateOf = new HierarchicalNode(Type.DIVIDE);
-            rateOf.addChild(c1.getRateRule());
-            rateOf.addChild(c2);
-          } else {
-            node.addChild(c1);
-            rateOf = new HierarchicalNode(Type.DIVIDE);
-            rateOf.addChild(node);
-            rateOf.addChild(c2);
-          }
-          node = rateOf;
-        }
-      }
+      node.addChild(parseASTNode(math.getChild(0), args, variableToNodes, dimensionNodes, index));
       break;
     case FUNCTION_REM:
       node = new HierarchicalNode(Type.FUNCTION_REM);

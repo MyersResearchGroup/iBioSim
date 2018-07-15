@@ -13,6 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
@@ -28,16 +29,21 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 public class SpeciesNode extends VariableNode {
 
   private VariableNode compartment;
-  private HierarchicalNode odeRate;
+  private final List<HierarchicalNode> reactants;
+  private final List<HierarchicalNode> products;
 
   public SpeciesNode(String name) {
     super(name);
+    reactants = new ArrayList<>();
+    products = new ArrayList<>();
     varType = VariableType.SPECIES;
   }
 
   public SpeciesNode(SpeciesNode copy) {
     super(copy);
     this.compartment = copy.compartment;
+    this.reactants = copy.reactants;
+    this.products = copy.products;
   }
 
   /**
@@ -69,15 +75,6 @@ public class SpeciesNode extends VariableNode {
   }
 
   /**
-   * Gets the ODE for the species.
-   *
-   * @return the rate of change for the species.
-   */
-  public HierarchicalNode getODERate() {
-    return odeRate;
-  }
-
-  /**
    * Updates the ODE for this species. This function inserts a given reaction rate to the ODE of the species as an
    * addition. When a species is a product in a reaction, the species increases when the reaction fires.
    *
@@ -87,14 +84,10 @@ public class SpeciesNode extends VariableNode {
    *          - the species reference node that indicates the stoichiometry.
    */
   public void addODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode) {
-    if (odeRate == null) {
-      odeRate = new HierarchicalNode(Type.PLUS);
-    }
-
     HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
     reactionRate.addChild(reactionNode);
     reactionRate.addChild(specRefNode);
-    odeRate.addChild(reactionRate);
+    products.add(reactionRate);
   }
 
   /**
@@ -107,36 +100,39 @@ public class SpeciesNode extends VariableNode {
    *          - the species reference node that indicates the stoichiometry.
    */
   public void subtractODERate(ReactionNode reactionNode, SpeciesReferenceNode specRefNode) {
-    if (odeRate == null) {
-      odeRate = new HierarchicalNode(Type.PLUS);
-    }
-
-    HierarchicalNode sub = new HierarchicalNode(Type.MINUS);
     HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
     reactionRate.addChild(reactionNode);
     reactionRate.addChild(specRefNode);
-    sub.addChild(reactionRate);
-    odeRate.addChild(sub);
+    reactants.add(reactionRate);
   }
 
   @Override
-  public double computeRateOfChange(int index) {
+  public void computeRate(int index) {
     double rate = 0;
     if (rateRule != null) {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
       if (!state.getChild(index).hasOnlySubstance()) {
         double c = compartment.getValue(index);
         rate = rate * c;
-        double compartmentChange = compartment.computeRateOfChange(index);
+        compartment.computeRate(index);
+        double compartmentChange = compartment.getState().getChild(index).getRateValue();
         if (compartmentChange != 0) {
           rate = rate + getValue(index) * compartmentChange / c;
         }
       }
-    } else if (odeRate != null && !state.getChild(index).isBoundaryCondition()) {
-      rate = Evaluator.evaluateExpressionRecursive(odeRate, index);
     }
 
-    return rate;
+    if (!state.getChild(index).isBoundaryCondition()) {
+      for (HierarchicalNode consume : reactants) {
+        rate -= Evaluator.evaluateExpressionRecursive(consume, index);
+      }
+      for (HierarchicalNode produce : products) {
+        rate += Evaluator.evaluateExpressionRecursive(produce, index);
+      }
+    }
+
+    HierarchicalState state = getState().getChild(index);
+    state.setRateValue(rate);
   }
 
   @Override

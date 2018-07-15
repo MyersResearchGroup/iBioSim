@@ -30,7 +30,7 @@ public class ReactionNode extends VariableNode {
 
   private List<SpeciesReferenceNode> reactants;
   private List<SpeciesReferenceNode> products;
-  private Map<String, VariableNode> localParameters;
+  private Map<String, HierarchicalNode> localParameters;
   private HierarchicalNode forwardRate;
   private HierarchicalNode reverseRate;
 
@@ -221,7 +221,7 @@ public class ReactionNode extends VariableNode {
    *
    * @return the map for local parameters.
    */
-  public Map<String, VariableNode> getLocalParameters() {
+  public Map<String, HierarchicalNode> getLocalParameters() {
     return localParameters;
   }
 

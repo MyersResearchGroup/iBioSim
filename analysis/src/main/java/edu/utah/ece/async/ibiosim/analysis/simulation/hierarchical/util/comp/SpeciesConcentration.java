@@ -15,6 +15,7 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  *
@@ -25,8 +26,9 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesN
 public class SpeciesConcentration {
 
   private final SpeciesNode species;
+  private final HierarchicalState speciesState;
   private final double initialConcentration;
-  private int index;
+  private final int index;
 
   /**
    *
@@ -37,6 +39,8 @@ public class SpeciesConcentration {
   public SpeciesConcentration(SpeciesNode species, double concentration, int index) {
     this.species = species;
     this.initialConcentration = concentration;
+    this.index = index;
+    this.speciesState = species.getState().getChild(index);
   }
 
   /**
@@ -44,11 +48,15 @@ public class SpeciesConcentration {
    * @return
    */
   public boolean computeValue() {
-    double currentValue = species.getState().getChild(index).getValue();
-    double compartmentValue = species.getCompartment().getState().getChild(index).getValue();
-    double value = initialConcentration * compartmentValue;
-    species.getState().getChild(index).setStateValue(value);
-    return value != currentValue;
+    HierarchicalState speciesState = species.getState().getChild(index);
+    if (this.speciesState == speciesState) {
+      double currentValue = speciesState.getValue();
+      double compartmentValue = species.getCompartment().getState().getChild(index).getValue();
+      double value = initialConcentration * compartmentValue;
+      speciesState.setStateValue(value);
+      return value != currentValue;
+    }
+    return false;
   }
 
   public boolean hasRule() {

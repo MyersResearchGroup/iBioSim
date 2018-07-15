@@ -463,11 +463,7 @@ public final class Evaluator {
     }
     case FUNCTION_RATEOF: {
       HierarchicalNode value = node.getChild(index);
-      // if(value.getState().getState(index).isSetRate())
-      // {
-      // return value.getRate();
-      // }
-      return value.computeRateOfChange(index);
+      return value.getState().getChild(index).getRateValue();
 
     }
     case FUNCTION_MIN: {

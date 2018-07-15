@@ -17,7 +17,6 @@ import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Evaluator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 
 /**
  * A node that represents SBML Initial assignments and SBML Assignment Rules.
@@ -29,12 +28,12 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Variable
  */
 public class Function {
 
-  private final VariableNode variable;
+  private final HierarchicalNode variable;
   private final HierarchicalNode functionMath;
   private boolean isInitialAssignment;
   private List<HierarchicalNode> variableIndices;
 
-  public Function(VariableNode variable, HierarchicalNode math) {
+  public Function(HierarchicalNode variable, HierarchicalNode math) {
     this.functionMath = math;
     this.variable = variable;
   }
@@ -49,7 +48,7 @@ public class Function {
    *
    * @return the variable.
    */
-  public VariableNode getVariable() {
+  public HierarchicalNode getVariable() {
     return variable;
   }
 
@@ -82,7 +81,7 @@ public class Function {
   public boolean computeFunction(int index) {
     boolean changed = false;
 
-    if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule())) {
+    if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !functionMath.isDeleted(index)) {
       double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
       changed = variable.setValue(index, newValue);
     }

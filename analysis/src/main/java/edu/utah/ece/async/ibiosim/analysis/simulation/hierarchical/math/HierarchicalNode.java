@@ -183,11 +183,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
     }
   }
 
-  @Override
-  public double computeRateOfChange(int index) {
-    return 0;
-  }
-
   /**
    * Get value from arrayed variable.
    *

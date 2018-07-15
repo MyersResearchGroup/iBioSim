@@ -23,18 +23,23 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  */
 public class VectorState extends HierarchicalState {
 
-  private final int vectorIndex;
-  private final VectorWrapper vectorState;
+  private int vectorIndex;
+  private final VectorWrapper wrapper;
 
-  public VectorState(VectorWrapper vectorState) {
-    this.vectorState = vectorState;
-    this.vectorIndex = vectorState.incrementSize();
+  public VectorState(VectorWrapper wrapper) {
+    this.wrapper = wrapper;
+    this.vectorIndex = -1;
+    wrapper.addVectorState(this);
+  }
+
+  void initializeVectorIndex() {
+    this.vectorIndex = wrapper.incrementSize();
   }
 
   @Override
   public double getValue() {
-    if (vectorState.isSet()) {
-      return vectorState.getValues()[vectorIndex];
+    if (wrapper.isSet()) {
+      return wrapper.getValues()[vectorIndex];
     } else {
       return value;
     }
@@ -42,8 +47,8 @@ public class VectorState extends HierarchicalState {
 
   @Override
   public void setStateValue(double value) {
-    if (vectorState.isSet()) {
-      vectorState.getValues()[vectorIndex] = value;
+    if (wrapper.isSet()) {
+      wrapper.getValues()[vectorIndex] = value;
     } else {
       this.value = value;
     }
@@ -59,7 +64,7 @@ public class VectorState extends HierarchicalState {
 
   @Override
   public double getRateValue() {
-    return vectorState.getRates()[vectorIndex];
+    return wrapper.getRates()[vectorIndex];
 
   }
 
@@ -71,12 +76,17 @@ public class VectorState extends HierarchicalState {
 
   @Override
   public void setRateValue(double value) {
-    vectorState.getRates()[vectorIndex] = value;
+    wrapper.getRates()[vectorIndex] = value;
   }
 
   @Override
   public void restoreInitialValue() {
-    vectorState.getValues()[vectorIndex] = initValue;
+    wrapper.getValues()[vectorIndex] = initValue;
   }
 
+  @Override
+  public String toString() {
+    if (wrapper.isSet()) { return String.valueOf(wrapper.getValues()[vectorIndex]); }
+    return "NaN";
+  }
 }

@@ -26,6 +26,7 @@ public abstract class HierarchicalState {
   protected double value;
   protected double initValue;
   protected double initConcentration;
+  protected boolean isReplaced;
 
   private final Attribute attributes = new Attribute();
 
@@ -35,6 +36,14 @@ public abstract class HierarchicalState {
   public enum StateType {
     DENSE, SPARSE, SCALAR, VECTOR
   };
+
+  public boolean isReplaced() {
+    return isReplaced;
+  }
+
+  public void setReplaced(boolean isReplaced) {
+    this.isReplaced = isReplaced;
+  }
 
   /**
    * Gets the state value.
