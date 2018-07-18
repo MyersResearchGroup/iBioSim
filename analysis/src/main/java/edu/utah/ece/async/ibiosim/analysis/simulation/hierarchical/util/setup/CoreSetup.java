@@ -44,6 +44,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalM
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.LocalVariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesReferenceNode;
@@ -105,27 +106,40 @@ class CoreSetup {
   }
 
   private static void performReplacements(List<NodeReplacement> listOfReplacements) {
+    HierarchicalModel topModel, subModel;
+    HierarchicalNode topNode, subNode;
+    HierarchicalState topState, subState;
+    List<NodeReplacement> dependencies;
     HashMap<HierarchicalState, List<NodeReplacement>> stateDependencies = new HashMap<>();
 
     for (int i = listOfReplacements.size() - 1; i >= 0; i--) {
       NodeReplacement replacement = listOfReplacements.get(i);
-      HierarchicalModel topModel = replacement.replacingModel;
-      HierarchicalNode topNode = topModel.getNode(replacement.replacingVariable);
-      HierarchicalState topState = topNode.getState().getChild(topModel.getIndex());
 
-      HierarchicalModel subModel = replacement.replacedModel;
-      HierarchicalNode subNode = subModel.getNode(replacement.replacedVariable);
-      HierarchicalState subState = subNode.getState().getChild(subModel.getIndex());
+      topModel = replacement.replacingModel;
+      if (replacement.isTopMetaId) {
+        topNode = topModel.getNodeByMetaId(replacement.replacingVariable);
+      } else {
+        topNode = topModel.getNode(replacement.replacingVariable);
+      }
+      topState = topNode.getState().getChild(topModel.getIndex());
 
-      List<NodeReplacement> dependencies;
+      subModel = replacement.replacedModel;
+      if (replacement.isSubMetaId) {
+        subNode = subModel.getNodeByMetaId(replacement.replacedVariable);
+      } else {
+        subNode = subModel.getNode(replacement.replacedVariable);
+      }
+      subState = subNode.getState().getChild(subModel.getIndex());
 
       if (stateDependencies.containsKey(subState)) {
         dependencies = stateDependencies.remove(subState);
       } else {
         dependencies = new ArrayList<>();
       }
+
       subState.setReplaced(true);
       subNode.getState().replaceState(subModel.getIndex(), topState);
+
       for (NodeReplacement dependency : dependencies) {
         subModel = dependency.replacedModel;
         subNode = subModel.getNode(dependency.replacedVariable);
@@ -274,7 +288,8 @@ class CoreSetup {
 
     double stoichiometryValue = Double.isNaN(product.getStoichiometry()) ? 1 : product.getStoichiometry();
 
-    SpeciesReferenceNode node = new SpeciesReferenceNode();
+    SpeciesNode species = (SpeciesNode) hierarchicalModel.getNode(product.getSpecies());
+    SpeciesReferenceNode node = new SpeciesReferenceNode(species);
 
     node.setState(createState(sim.getCollectionType(), wrapper));
 
@@ -286,8 +301,6 @@ class CoreSetup {
     }
     node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(stoichiometryValue);
 
-    SpeciesNode species = (SpeciesNode) hierarchicalModel.getNode(product.getSpecies());
-    node.setSpecies(species);
     reaction.addProduct(node);
 
     if (id != null) {
@@ -313,7 +326,10 @@ class CoreSetup {
     ReplacementSetup.setupObjectReplacement(sim, reactant, id, metaid, container, listOfDeletions);
 
     double stoichiometryValue = Double.isNaN(reactant.getStoichiometry()) ? 1 : reactant.getStoichiometry();
-    SpeciesReferenceNode node = new SpeciesReferenceNode();
+
+    SpeciesNode species = (SpeciesNode) hierarchicalModel.getNode(reactant.getSpecies());
+
+    SpeciesReferenceNode node = new SpeciesReferenceNode(species);
 
     node.setState(createState(sim.getCollectionType(), wrapper));
     if (!reactant.isConstant()) {
@@ -324,8 +340,6 @@ class CoreSetup {
     }
     node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(stoichiometryValue);
 
-    SpeciesNode species = (SpeciesNode) hierarchicalModel.getNode(reactant.getSpecies());
-    node.setSpecies(species);
     reaction.addReactant(node);
 
     if (id != null) {
@@ -367,8 +381,8 @@ class CoreSetup {
     HierarchicalModel hierarchicalModel = container.getHierarchicalModel();
     int index = hierarchicalModel.getIndex();
     for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
-      String id = eventAssignment.isSetId() ? eventAssignment.getId() : null;
-      String metaid = eventAssignment.isSetMetaId() ? eventAssignment.getMetaId() : null;
+      String id = eventAssignment.getId();
+      String metaid = eventAssignment.getMetaId();
       ReplacementSetup.setupObjectReplacement(sim, eventAssignment, id, metaid, container, listOfDeletions);
       if (eventAssignment.isSetMath()) {
         ASTNode math = eventAssignment.getMath();
@@ -377,6 +391,13 @@ class CoreSetup {
         HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, hierarchicalModel.getVariableToNodeMap(), index);
         Function eventAssignmentNode = new Function(variableNode, assignmentNode);
         eventNode.addEventAssignment(eventAssignmentNode);
+
+        if (id != null) {
+          hierarchicalModel.addMappingNode(id, assignmentNode);
+        }
+        if (metaid != null) {
+          hierarchicalModel.addMappingNodeByMetaId(metaid, assignmentNode);
+        }
       }
 
     }
@@ -424,14 +445,24 @@ class CoreSetup {
         if (event.isSetPriority()) {
           Priority priority = event.getPriority();
           ASTNode math = priority.getMath();
-          HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
-          node.setPriority(priorityNode);
+          if (math != null) {
+            HierarchicalNode priorityNode = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
+            node.setPriority(priorityNode);
+            if (priority.isSetMetaId()) {
+              hierarchicalModel.addMappingNodeByMetaId(priority.getMetaId(), priorityNode);
+            }
+          }
         }
         if (event.isSetDelay()) {
           Delay delay = event.getDelay();
           ASTNode math = delay.getMath();
-          HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
-          node.setDelay(delayNode);
+          if (math != null) {
+            HierarchicalNode delayNode = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
+            node.setDelay(delayNode);
+            if (delay.isSetMetaId()) {
+              hierarchicalModel.addMappingNodeByMetaId(delay.getMetaId(), delayNode);
+            }
+          }
         }
         setupEventAssignments(sim, container, node, event, listOfDeletions);
       }
@@ -494,11 +525,7 @@ class CoreSetup {
       KineticLaw kineticLaw = reaction.getKineticLaw();
       if (kineticLaw != null) {
         for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
-
-          String id = localParameter.getId();
-          VariableNode localParam = new VariableNode(id, StateType.SCALAR);
-          localParam.setValue(index, localParameter.getValue());
-          node.addLocalParameter(id, localParam);
+          setupLocalParameters(sim, hierarchicalModel, localParameter, node, wrapper, listOfReplacements);
         }
         if (kineticLaw.isSetMath()) {
           ASTNode reactionFormula = kineticLaw.getMath();
@@ -523,6 +550,25 @@ class CoreSetup {
 
   }
 
+  private static void setupLocalParameters(HierarchicalSimulation sim, HierarchicalModel hierarchicalModel, LocalParameter localParameter, ReactionNode node, VectorWrapper wrapper, List<NodeReplacement> listOfReplacements) {
+    int index = hierarchicalModel.getIndex();
+    String id = localParameter.getId();
+    LocalVariableNode localParam = new LocalVariableNode(id);
+    localParam.setState(createState(sim.getCollectionType(), wrapper));
+    localParam.getState().addState(index, createState(StateType.SCALAR, wrapper));
+    localParam.setValue(index, localParameter.getValue());
+    node.addLocalParameter(id, localParam);
+
+    if (localParameter.isSetMetaId()) {
+      hierarchicalModel.addMappingNodeByMetaId(localParameter.getMetaId(), localParam);
+    }
+
+    HierarchicalNode globalParameter = hierarchicalModel.getNode(id);
+    if (globalParameter != null) {
+      localParam.setGlobalVariable(globalParameter);
+    }
+  }
+
   private static void setupRules(HierarchicalSimulation sim, ModelContainer container, List<NodeDeletion> listOfDeletions) {
     Model model = container.getModel();
     HierarchicalModel hierarchicalModel = container.getHierarchicalModel();
@@ -542,7 +588,7 @@ class CoreSetup {
           variableNode.getState().getChild(index).setHasRule(true);
           if (assignRule.isSetMetaId()) {
             ReplacementSetup.setupObjectReplacement(sim, rule, id, metaid, container, listOfDeletions);
-            hierarchicalModel.addMappingNodeByMetaId(id, assignRuleNode);
+            hierarchicalModel.addMappingNodeByMetaId(metaid, assignRuleNode);
           }
         }
       } else if (rule.isRate()) {
@@ -557,7 +603,7 @@ class CoreSetup {
           }
           if (rateRule.isSetMetaId()) {
             ReplacementSetup.setupObjectReplacement(sim, rule, id, metaid, container, listOfDeletions);
-            hierarchicalModel.addMappingNodeByMetaId(id, rateNode);
+            hierarchicalModel.addMappingNodeByMetaId(metaid, rateNode);
           }
         }
       }

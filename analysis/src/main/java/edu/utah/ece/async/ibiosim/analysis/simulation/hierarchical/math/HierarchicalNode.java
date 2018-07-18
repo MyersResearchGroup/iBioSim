@@ -15,6 +15,7 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueS
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalNode extends AbstractHierarchicalNode {
+public class HierarchicalNode extends AbstractHierarchicalNode implements Iterable<HierarchicalNode> {
   private List<HierarchicalNode> children;
   private Map<String, ArrayDimensionNode> mapOfDimensions;
   private List<ArrayDimensionNode> listOfDimensions;
@@ -257,6 +258,21 @@ public class HierarchicalNode extends AbstractHierarchicalNode {
    */
   public double report(int index, boolean concentration) {
     return state.getChild(index).getValue();
+  }
+
+  @Override
+  public Iterator<HierarchicalNode> iterator() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public double computeRate(int index) {
+    return 0;
   }
 
 }

@@ -122,14 +122,9 @@ public class VectorWrapper {
       for (int i = 0; i < size; i++) {
         values[i] = initialValues.get(i);
       }
-
     }
   }
 
-  /**
-   *
-   * @param vectorState
-   */
   void addVectorState(VectorState vectorState) {
     listOfVectorStates.add(vectorState);
   }

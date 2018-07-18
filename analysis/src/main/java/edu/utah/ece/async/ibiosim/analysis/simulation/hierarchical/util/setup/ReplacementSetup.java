@@ -178,6 +178,9 @@ class ReplacementSetup {
     HierarchicalModel sub = top.getSubmodel(subModelId);
     CompModelPlugin compModel = container.getChild(subModelId).getCompModel();
     String subId = null;
+    boolean isSubMetaId = false;
+    boolean isTopMetaId = false;
+
     if (element.isSetIdRef()) {
       if (sub.containsSubmodel(element.getIdRef())) {
         sub = sub.getSubmodel(element.getIdRef());
@@ -196,12 +199,20 @@ class ReplacementSetup {
     } else if (element.isSetPortRef()) {
       Port port = compModel.getListOfPorts().get(element.getPortRef());
       subId = port.getIdRef();
+    } else if (element.isSetMetaIdRef()) {
+      subId = element.getMetaIdRef();
+      if (isReplacedBy) {
+        isTopMetaId = true;
+      } else {
+        isSubMetaId = true;
+      }
     }
+
     if (subId != null) {
       if (isReplacedBy) {
-        listOfReplacements.add(new NodeReplacement(sub, top, subId, id));
+        listOfReplacements.add(new NodeReplacement(sub, top, subId, id, isTopMetaId, isSubMetaId));
       } else {
-        listOfReplacements.add(new NodeReplacement(top, sub, id, subId));
+        listOfReplacements.add(new NodeReplacement(top, sub, id, subId, isTopMetaId, isSubMetaId));
       }
     }
   }

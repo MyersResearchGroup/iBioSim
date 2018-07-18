@@ -44,10 +44,9 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
+public final class HierarchicalODERKSimulator extends HierarchicalSimulation implements FirstOrderDifferentialEquations {
 
   private final HighamHall54Integrator odecalc;
-  private DifferentialEquations de;
   private final VectorWrapper vectorWrapper;
   private final boolean print;
 
@@ -65,13 +64,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
    */
   public HierarchicalODERKSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
     super(properties, SimType.HODE);
-    this.vectorWrapper = new VectorWrapper();
 
     SimulationProperties simProperties = properties.getSimulationProperties();
-    odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
-    isInitialized = false;
-    print = true;
-
+    this.vectorWrapper = new VectorWrapper();
+    this.odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
+    this.isInitialized = false;
+    this.print = true;
   }
 
   /**
@@ -90,13 +88,12 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
    */
   public HierarchicalODERKSimulator(AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException {
     super(properties, SimType.HODE);
-    this.vectorWrapper = new VectorWrapper();
 
     SimulationProperties simProperties = properties.getSimulationProperties();
-    odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
-    isInitialized = false;
+    this.vectorWrapper = new VectorWrapper();
+    this.odecalc = new HighamHall54Integrator(simProperties.getMinTimeStep(), simProperties.getMaxTimeStep(), simProperties.getAbsError(), simProperties.getRelError());
+    this.isInitialized = false;
     this.print = print;
-
   }
 
   @Override
@@ -118,11 +115,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
    */
   public void initialize(int runNumber) throws IOException, XMLStreamException, BioSimException {
     if (!isInitialized) {
-      SimulationProperties simProperties = properties.getSimulationProperties();
       currProgress = 0;
+      SimulationProperties simProperties = properties.getSimulationProperties();
       setCurrentTime(simProperties.getInitialTime());
       ModelSetup.setupModels(this, ModelType.HODE, vectorWrapper);
-      de = new DifferentialEquations();
       vectorWrapper.initStateValues();
       computeFixedPoint();
       if (hasEvents()) {
@@ -166,8 +162,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       }
       if (vectorWrapper.getSize() > 0) {
         try {
-          odecalc.integrate(de, currentTime.getState().getValue(), vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
-
+          odecalc.integrate(this, currentTime.getState().getValue(), vectorWrapper.getValues(), nextEndTime, vectorWrapper.getValues());
           computeAssignmentRules();
         }
         catch (NumberIsTooSmallException e) {
@@ -187,7 +182,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
       printToFile();
       // closeWriter();
     }
-
   }
 
   @Override
@@ -198,24 +192,43 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
   }
 
   @Override
-  public void printStatisticsTSD() {
-    // TODO Auto-generated method stub
-  }
+  public void printStatisticsTSD() {}
 
   private void computeRates() {
+    vectorWrapper.getRates();
+    boolean changed = true;
 
-    for (HierarchicalModel hierarchicalModel : modules) {
-      hierarchicalModel.computePropensities();
-    }
-
-    for (HierarchicalModel hierarchicalModel : modules) {
-      int index = hierarchicalModel.getIndex();
-      for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-        node.computeRate(index);
+    while (changed) {
+      changed = false;
+      for (HierarchicalModel hierarchicalModel : modules) {
+        changed |= hierarchicalModel.computePropensities();
       }
-    }
-    computeAssignmentRules();
 
+      for (HierarchicalModel hierarchicalModel : modules) {
+        int index = hierarchicalModel.getIndex();
+        for (VariableNode node : hierarchicalModel.getListOfVariables()) {
+          node.computeRate(index);
+        }
+      }
+
+      computeAssignmentRules();
+    }
+
+  }
+
+  @Override
+  public int getDimension() {
+    return vectorWrapper.getSize();
+  }
+
+  @Override
+  public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException {
+    if (Double.isNaN(t)) { throw new MaxCountExceededException(t); }
+
+    setCurrentTime(t);
+    vectorWrapper.setValues(y);
+    vectorWrapper.setRates(yDot);
+    computeRates();
   }
 
   private class HierarchicalEventHandler implements EventHandler {
@@ -256,7 +269,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
           }
         }
       }
-
       computeEvents();
       return EventHandler.Action.STOP;
     }
@@ -293,29 +305,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation {
     }
 
     @Override
-    public void resetState(double t, double[] y) {
-      // TODO Auto-generated method stub
-    }
-  }
-
-  private class DifferentialEquations implements FirstOrderDifferentialEquations {
-
-    @Override
-    public int getDimension() {
-      return vectorWrapper.getSize();
-    }
-
-    @Override
-    public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException {
-
-      if (Double.isNaN(t)) { throw new MaxCountExceededException(t); }
-
-      setCurrentTime(t);
-      vectorWrapper.setValues(y);
-      computeAssignmentRules();
-      vectorWrapper.setRates(yDot);
-      computeRates();
-    }
-
+    public void resetState(double t, double[] y) {}
   }
 }

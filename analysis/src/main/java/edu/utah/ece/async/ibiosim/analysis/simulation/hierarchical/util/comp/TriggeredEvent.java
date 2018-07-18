@@ -135,8 +135,10 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
       if (assignmentValues != null) {
         for (int i = 0; i < parent.getEventAssignments().size(); i++) {
           Function eventAssignmentNode = parent.getEventAssignments().get(i);
-          HierarchicalNode variable = eventAssignmentNode.getVariable();
-          variable.setValue(index, assignmentValues[i]);
+          if (!eventAssignmentNode.getMath().isDeleted(index)) {
+            HierarchicalNode variable = eventAssignmentNode.getVariable();
+            variable.setValue(index, assignmentValues[i]);
+          }
         }
       }
     }

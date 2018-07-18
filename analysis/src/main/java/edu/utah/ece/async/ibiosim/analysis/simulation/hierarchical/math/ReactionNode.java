@@ -58,7 +58,7 @@ public class ReactionNode extends VariableNode {
     if (reactants == null) {
       reactants = new ArrayList<>();
     }
-    speciesRef.getSpecies().addReactionDependency(this);
+
     reactants.add(speciesRef);
   }
 
@@ -73,7 +73,6 @@ public class ReactionNode extends VariableNode {
       products = new ArrayList<>();
     }
 
-    speciesRef.getSpecies().addReactionDependency(this);
     products.add(speciesRef);
   }
 

@@ -13,10 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 
@@ -31,7 +27,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueS
  */
 public class VariableNode extends HierarchicalNode {
 
-  private List<ReactionNode> reactionDependents;
   protected HierarchicalNode rateRule;
 
   public VariableNode(String name) {
@@ -50,39 +45,13 @@ public class VariableNode extends HierarchicalNode {
     this.name = copy.name;
   }
 
-  /**
-   * Returns the list of reactions that this species participates.
-   *
-   * @return list of reactions that this species participates.
-   */
-  public List<ReactionNode> getReactionDependents() {
-    return reactionDependents;
-  }
-
-  /**
-   * Add a reaction to the list of reactions that are affected by this species.
-   *
-   * @param dependency
-   *          - list of reactions that depend on this species.
-   */
-  public void addReactionDependency(ReactionNode dependency) {
-    if (reactionDependents == null) {
-      reactionDependents = new ArrayList<>();
-    }
-    reactionDependents.add(dependency);
-  }
-
-  /**
-   *
-   * @param index
-   * @return
-   */
-  public void computeRate(int index) {
+  @Override
+  public double computeRate(int index) {
+    double rate = 0;
     if (rateRule != null && !rateRule.isDeleted(index)) {
-      double value = Evaluator.evaluateExpressionRecursive(rateRule, index);
-      HierarchicalState state = getState().getChild(index);
-      state.setRateValue(value);
+      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
     }
+    return rate;
   }
 
   /**

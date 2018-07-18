@@ -10,15 +10,19 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalM
  * @version %I%
  */
 class NodeReplacement {
-	HierarchicalModel replacingModel;
-	HierarchicalModel replacedModel;
-	String replacingVariable;
-	String replacedVariable;
+  HierarchicalModel replacingModel;
+  HierarchicalModel replacedModel;
+  String replacingVariable;
+  String replacedVariable;
+  boolean isTopMetaId;
+  boolean isSubMetaId;
 
-	NodeReplacement (HierarchicalModel top, HierarchicalModel sub, String topVariable, String subVariable) {
-		this.replacingModel = top;
-		this.replacedModel = sub;
-		this.replacingVariable = topVariable;
-		this.replacedVariable = subVariable;
-	}
+  NodeReplacement(HierarchicalModel top, HierarchicalModel sub, String topVariable, String subVariable, boolean isTopMetaId, boolean isSubMetaId) {
+    this.replacingModel = top;
+    this.replacedModel = sub;
+    this.replacingVariable = topVariable;
+    this.replacedVariable = subVariable;
+    this.isTopMetaId = isTopMetaId;
+    this.isSubMetaId = isSubMetaId;
+  }
 }

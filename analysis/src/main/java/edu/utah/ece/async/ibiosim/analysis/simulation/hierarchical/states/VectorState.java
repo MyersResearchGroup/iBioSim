@@ -32,6 +32,10 @@ public class VectorState extends HierarchicalState {
     wrapper.addVectorState(this);
   }
 
+  public int getIndex() {
+    return vectorIndex;
+  }
+
   void initializeVectorIndex() {
     this.vectorIndex = wrapper.incrementSize();
   }

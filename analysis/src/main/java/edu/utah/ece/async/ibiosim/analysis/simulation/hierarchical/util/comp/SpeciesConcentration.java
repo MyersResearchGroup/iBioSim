@@ -51,7 +51,7 @@ public class SpeciesConcentration {
     HierarchicalState speciesState = species.getState().getChild(index);
     if (this.speciesState == speciesState) {
       double currentValue = speciesState.getValue();
-      double compartmentValue = species.getCompartment().getState().getChild(index).getValue();
+      double compartmentValue = species.getCompartment().getValue(index);
       double value = initialConcentration * compartmentValue;
       speciesState.setStateValue(value);
       return value != currentValue;

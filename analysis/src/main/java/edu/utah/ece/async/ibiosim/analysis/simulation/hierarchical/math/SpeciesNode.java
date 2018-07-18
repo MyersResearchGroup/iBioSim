@@ -107,7 +107,7 @@ public class SpeciesNode extends VariableNode {
   }
 
   @Override
-  public void computeRate(int index) {
+  public double computeRate(int index) {
     double rate = 0;
     if (rateRule != null) {
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
@@ -120,9 +120,7 @@ public class SpeciesNode extends VariableNode {
           rate = rate + getValue(index) * compartmentChange / c;
         }
       }
-    }
-
-    if (!state.getChild(index).isBoundaryCondition()) {
+    } else if (!state.getChild(index).isBoundaryCondition()) {
       for (HierarchicalNode consume : reactants) {
         rate -= Evaluator.evaluateExpressionRecursive(consume, index);
       }
@@ -131,8 +129,7 @@ public class SpeciesNode extends VariableNode {
       }
     }
 
-    HierarchicalState state = getState().getChild(index);
-    state.setRateValue(rate);
+    return rate;
   }
 
   @Override

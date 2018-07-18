@@ -178,7 +178,7 @@ public class EventNode extends HierarchicalNode {
    */
   public double evaluateFireTime(int index) {
     double fireTime = 0;
-    if (delay != null) {
+    if (delay != null && !delay.isDeleted(index)) {
       fireTime = Evaluator.evaluateExpressionRecursive(delay, index);
     }
     return fireTime;
@@ -194,7 +194,7 @@ public class EventNode extends HierarchicalNode {
    */
   public double evaluatePriority(int index) {
     double priorityValue = 0;
-    if (priority != null) {
+    if (priority != null && !priority.isDeleted(index)) {
       priorityValue = Evaluator.evaluateExpressionRecursive(priority, index);
     }
     return priorityValue;

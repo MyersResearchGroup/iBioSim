@@ -32,8 +32,8 @@ import org.sbml.jsbml.ext.comp.Submodel;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
@@ -90,7 +90,6 @@ public class ModelSetup {
     AnalysisProperties properties = sim.getProperties();
     SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
     Model model = document.getModel();
-    String rootPath = properties.getRoot();
     HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
     sim.setTopmodel(hierarchicalModel);
 
@@ -112,7 +111,7 @@ public class ModelSetup {
             if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null) {
               ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
               String source = ext.getSource();
-              String extDef = rootPath + HierarchicalUtilities.separator + source;
+              String extDef = properties.getDirectory() + HierarchicalUtilities.separator + source;
               SBMLDocument extDoc = SBMLReader.read(new File(extDef));
               model = extDoc.getModel();
               compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
@@ -121,7 +120,7 @@ public class ModelSetup {
                 if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null) {
                   ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
                   source = ext.getSource().replace("file:", "");
-                  extDef = rootPath + HierarchicalUtilities.separator + source;
+                  extDef = properties.getDirectory() + HierarchicalUtilities.separator + source;
                   extDoc = SBMLReader.read(new File(extDef));
                   model = extDoc.getModel();
                   compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
