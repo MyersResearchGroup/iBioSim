@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class VectorWrapper {
 
-  private final List<VectorState> listOfVectorStates;
+  private List<VectorState> listOfVectorStates;
   private double[] values;
   private double[] rates;
   private int size;
@@ -118,7 +118,9 @@ public class VectorWrapper {
           initialValues.add(state.initValue);
         }
       }
+      this.listOfVectorStates = null;
       this.values = new double[size];
+      this.rates = new double[size];
       for (int i = 0; i < size; i++) {
         values[i] = initialValues.get(i);
       }
@@ -126,7 +128,9 @@ public class VectorWrapper {
   }
 
   void addVectorState(VectorState vectorState) {
-    listOfVectorStates.add(vectorState);
+    if (values == null) {
+      listOfVectorStates.add(vectorState);
+    }
   }
 
 }

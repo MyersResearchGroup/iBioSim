@@ -46,12 +46,16 @@ public class VariableNode extends HierarchicalNode {
   }
 
   @Override
-  public double computeRate(int index) {
+  public boolean computeRate(int index) {
     double rate = 0;
+    boolean changed = false;
     if (rateRule != null && !rateRule.isDeleted(index)) {
+      double oldValue = state.getChild(index).getRateValue();
       rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
+      state.getChild(index).setRateValue(rate);
+      changed = oldValue != rate;
     }
-    return rate;
+    return changed;
   }
 
   /**

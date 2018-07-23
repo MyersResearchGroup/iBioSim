@@ -271,8 +271,8 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
    * @param index
    * @return
    */
-  public double computeRate(int index) {
-    return 0;
+  public boolean computeRate(int index) {
+    return false;
   }
 
 }

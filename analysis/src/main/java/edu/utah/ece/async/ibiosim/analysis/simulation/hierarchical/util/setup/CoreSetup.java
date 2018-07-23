@@ -313,7 +313,7 @@ class CoreSetup {
 
       hierarchicalModel.addMappingNode(id, node);
     }
-    species.addODERate(reaction, node);
+    species.addODERate(index, reaction, node);
     species.getState().getChild(index).setHasRate(true);
     hierarchicalModel.addVariable(species);
   }
@@ -352,7 +352,7 @@ class CoreSetup {
 
       hierarchicalModel.addMappingNode(reactant.getId(), node);
     }
-    species.subtractODERate(reaction, node);
+    species.subtractODERate(index, reaction, node);
     species.getState().getChild(index).setHasRate(true);
     hierarchicalModel.addVariable(species);
   }

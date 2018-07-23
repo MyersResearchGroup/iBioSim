@@ -450,6 +450,11 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
 
           modelstate.getPropensity().computeFunction(index);
         }
+        if (modelstate.getListOfVariables() != null) {
+          for (VariableNode node : modelstate.getListOfVariables()) {
+            changed |= node.computeRate(index);
+          }
+        }
       }
     }
   }

@@ -195,7 +195,6 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
   public void printStatisticsTSD() {}
 
   private void computeRates() {
-    vectorWrapper.getRates();
     boolean changed = true;
 
     while (changed) {
@@ -207,7 +206,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
         for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          node.computeRate(index);
+          changed |= node.computeRate(index);
         }
       }
 
