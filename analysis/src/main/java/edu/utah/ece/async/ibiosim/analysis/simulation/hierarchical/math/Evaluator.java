@@ -25,6 +25,8 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.util.FastMath;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * Functions to evaluate math.
  *
@@ -462,8 +464,20 @@ public final class Evaluator {
 
     }
     case FUNCTION_RATEOF: {
-      HierarchicalNode value = node.getChild(index);
-      return value.getState().getChild(index).getRateValue();
+      HierarchicalNode rateNode = node.getChild(index);
+      HierarchicalState rateState = rateNode.getState().getChild(index);
+      double rateValue = rateState.getRateValue();
+      if (!rateState.hasOnlySubstance()) {
+        HierarchicalNode compartmentNode = rateNode.getCompartment();
+        HierarchicalState compartmentState = compartmentNode.getState().getChild(index);
+        double compartmentValue = compartmentState.getValue();
+        rateValue = rateValue / compartmentState.getValue();
+
+        if (compartmentState.getRateValue() != 0) {
+          rateValue = rateValue - rateState.getValue() * compartmentState.getRateValue() / (compartmentValue * compartmentValue);
+        }
+      }
+      return rateValue;
 
     }
     case FUNCTION_MIN: {
