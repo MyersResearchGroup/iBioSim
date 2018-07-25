@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * A node that represents SBML Reactions.
  *
@@ -58,7 +60,6 @@ public class ReactionNode extends VariableNode {
     if (reactants == null) {
       reactants = new ArrayList<>();
     }
-
     reactants.add(speciesRef);
   }
 
@@ -72,7 +73,6 @@ public class ReactionNode extends VariableNode {
     if (products == null) {
       products = new ArrayList<>();
     }
-
     products.add(speciesRef);
   }
 
@@ -121,19 +121,62 @@ public class ReactionNode extends VariableNode {
    *          - the model index.
    */
   public boolean computePropensity(int index) {
-    double newValue = 0;
 
-    if (forwardRate != null) {
-      double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
-      newValue = forwardRateValue;
+    boolean changed = false;
+    if (!isDeleted(index)) {
+      double newValue = 0;
+      if (forwardRate != null) {
+        double forwardRateValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+        newValue = forwardRateValue;
+      }
+
+      if (reverseRate != null) {
+        double reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
+        newValue = newValue + reverseRateValue;
+      }
+      changed = setValue(index, newValue);
+      updateSpeciesRate(index);
     }
 
-    if (reverseRate != null) {
-      double reverseRateValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
-      newValue = newValue + reverseRateValue;
+    return changed;
+  }
+
+  /**
+   *
+   * @param newValue
+   * @param oldValue
+   * @param index
+   */
+  public void updateSpeciesRate(int index) {
+
+    double value = getValue(index);
+    if (reactants != null) {
+      for (SpeciesReferenceNode specRef : reactants) {
+        SpeciesNode speciesNode = specRef.getSpecies();
+        HierarchicalState state = speciesNode.getState().getChild(index);
+        if (!state.isBoundaryCondition()) {
+          double stoichiometry = specRef.getValue(index);
+          double currentRate = speciesNode.getState().getChild(index).getRateValue();
+          double rateChange = value * stoichiometry;
+          double newRate = currentRate - rateChange;
+          state.setRateValue(newRate);
+        }
+      }
     }
 
-    return setValue(index, newValue);
+    if (products != null) {
+      for (SpeciesReferenceNode specRef : products) {
+        SpeciesNode speciesNode = specRef.getSpecies();
+        HierarchicalState state = speciesNode.getState().getChild(index);
+        if (!state.isBoundaryCondition()) {
+          double stoichiometry = specRef.getValue(index);
+          double currentRate = speciesNode.getState().getChild(index).getRateValue();
+          double rateChange = value * stoichiometry;
+          double newRate = currentRate + rateChange;
+          state.setRateValue(newRate);
+        }
+      }
+    }
   }
 
   /**
@@ -149,7 +192,6 @@ public class ReactionNode extends VariableNode {
     if (isForward) {
       if (computeNotEnoughEnoughMoleculesFd(index)) {
         if (reactants != null) {
-
           updateSpeciesReference(reactants, index, -1);
         }
 
@@ -172,7 +214,7 @@ public class ReactionNode extends VariableNode {
 
   private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier) {
     for (SpeciesReferenceNode specRef : specRefs) {
-      double stoichiometry = specRef.getStoichiometry(index);
+      double stoichiometry = specRef.getValue(index);
       SpeciesNode speciesNode = specRef.getSpecies();
       if (!speciesNode.getState().getChild(index).isBoundaryCondition()) {
         speciesNode.setValue(index, speciesNode.getValue(index) + multiplier * stoichiometry);

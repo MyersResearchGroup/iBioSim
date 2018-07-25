@@ -24,28 +24,17 @@ import java.util.List;
  * @version %I%
  */
 public class SpeciesReferenceNode extends VariableNode {
-  private SpeciesNode species;
+  private final SpeciesNode species;
   private List<HierarchicalNode> speciesIndices;
 
   public SpeciesReferenceNode(SpeciesNode species) {
     super(species.name);
+    this.species = species;
   }
 
   public SpeciesReferenceNode(SpeciesReferenceNode copy) {
     super(copy);
     this.species = copy.species.clone();
-  }
-
-  /**
-   * Returns the stoichiometry of the species reference.
-   *
-   * @param index
-   *          - the model index.
-   *
-   * @return the stoichiometry.
-   */
-  public double getStoichiometry(int index) {
-    return state.getChild(index).getValue();
   }
 
   /**

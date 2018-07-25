@@ -49,12 +49,8 @@ public class SpeciesNode extends VariableNode {
     this.compartment = compartment;
   }
 
-  /**
-   * Gets the compartment of the species.
-   *
-   * @return the compartment.
-   */
-  public VariableNode getCompartment() {
+  @Override
+  public HierarchicalNode getCompartment() {
     return compartment;
   }
 
@@ -65,64 +61,6 @@ public class SpeciesNode extends VariableNode {
       value = value / compartment.getValue(index);
     }
     return value;
-  }
-
-  /**
-   * Updates the ODE for this species. This function inserts a given reaction rate to the ODE of the species as an
-   * addition. When a species is a product in a reaction, the species increases when the reaction fires.
-   *
-   * @param reactionNode
-   *          - the reaction that affects the species.
-   * @param specRefNode
-   *          - the species reference node that indicates the stoichiometry.
-   */
-  public void addODERate(int index, ReactionNode reactionNode, SpeciesReferenceNode specRefNode) {
-    HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
-    reactionRate.addChild(reactionNode);
-    reactionRate.addChild(specRefNode);
-
-    HierarchicalState state = this.state.getChild(index);
-    state.addProduct(index, reactionRate);
-  }
-
-  /**
-   * Updates the ODE for this species. This function inserts a given reaction rate to the ODE of the species as a
-   * subtraction. When a species is a reactant in a reaction, the species decreases when the reaction fires.
-   *
-   * @param reactionNode
-   *          - the reaction that affects the species.
-   * @param specRefNode
-   *          - the species reference node that indicates the stoichiometry.
-   */
-  public void subtractODERate(int index, ReactionNode reactionNode, SpeciesReferenceNode specRefNode) {
-    HierarchicalNode reactionRate = new HierarchicalNode(Type.TIMES);
-    reactionRate.addChild(reactionNode);
-    reactionRate.addChild(specRefNode);
-    HierarchicalState state = this.state.getChild(index);
-    state.addReactant(index, reactionRate);
-  }
-
-  @Override
-  public boolean computeRate(int index) {
-    double rate = 0;
-    double oldValue = state.getChild(index).getRateValue();
-    HierarchicalState state = this.state.getChild(index);
-    if (rateRule != null) {
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
-      if (!state.hasOnlySubstance()) {
-        double c = compartment.getValue(index);
-        rate = rate * c;
-        compartment.computeRate(index);
-        double compartmentChange = compartment.getState().getChild(index).getRateValue();
-        if (compartmentChange != 0) {
-          rate = rate + state.getValue() * compartmentChange / c;
-        }
-      }
-    } else if (!state.isBoundaryCondition()) {
-      rate = state.computeRateOfChange();
-    }
-    state.getChild(index).setRateValue(rate);
-    return rate != oldValue;
   }
 
   @Override

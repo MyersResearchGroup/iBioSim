@@ -31,7 +31,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalM
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -199,18 +199,22 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
 
     while (changed) {
       changed = false;
-      for (HierarchicalModel hierarchicalModel : modules) {
-        changed |= hierarchicalModel.computePropensities();
-      }
-
+      resetRateValues();
       for (HierarchicalModel hierarchicalModel : modules) {
         int index = hierarchicalModel.getIndex();
-        for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-          changed |= node.computeRate(index);
+        if (hierarchicalModel.getListOfAssignmentRules() != null) {
+          for (FunctionNode node : hierarchicalModel.getListOfAssignmentRules()) {
+            changed = changed | node.updateVariable(hierarchicalModel.getIndex());
+          }
         }
-      }
 
-      computeAssignmentRules();
+        if (hierarchicalModel.getListOfRateRules() != null) {
+          for (FunctionNode rateRule : hierarchicalModel.getListOfRateRules()) {
+            rateRule.updateRate(index);
+          }
+        }
+        changed |= hierarchicalModel.computePropensities();
+      }
     }
 
   }
@@ -223,11 +227,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
   @Override
   public void computeDerivatives(double t, double[] y, double[] yDot) throws MaxCountExceededException, DimensionMismatchException {
     if (Double.isNaN(t)) { throw new MaxCountExceededException(t); }
-
     setCurrentTime(t);
     vectorWrapper.setValues(y);
-    vectorWrapper.setRates(yDot);
     computeRates();
+    System.arraycopy(vectorWrapper.getRates(), 0, yDot, 0, yDot.length);
   }
 
   private class HierarchicalEventHandler implements EventHandler {

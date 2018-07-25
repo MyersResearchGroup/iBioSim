@@ -251,6 +251,81 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
   }
 
   /**
+   * Get value from arrayed variable.
+   *
+   * @param modelIndex
+   *          - index of submodel.
+   * @param listOfIndices
+   *          - the array indices.
+   * @return the value of selected variable.
+   */
+  public double getRate(int modelIndex, List<Integer> listOfIndices) {
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfIndices != null) {
+      for (int i = listOfIndices.size() - 1; i >= 0; i--) {
+        variableState = variableState.getChild(listOfIndices.get(i));
+      }
+    }
+
+    return variableState.getRateValue();
+  }
+
+  /**
+   * Get value from scalar variable.
+   *
+   * @param modelIndex
+   *          - index of submodel.
+   * @param listOfIndices
+   *          - the array indices.
+   * @return the value of selected variable.
+   */
+  public double getRate(int modelIndex) {
+    return getRate(modelIndex, null);
+  }
+
+  /**
+   * Get value from arrayed variable.
+   *
+   * @param modelIndex
+   *          - index of submodel.
+   * @param listOfIndices
+   *          - the array indices.
+   * @return if the value has changed.
+   */
+  public boolean setRate(int modelIndex, List<Integer> listOfIndices, double value) {
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfIndices != null) {
+      for (int i = listOfIndices.size() - 1; i >= 0; i--) {
+        variableState = variableState.getChild(listOfIndices.get(i));
+      }
+    }
+    double oldValue = variableState.getRateValue();
+    variableState.setRateValue(value);
+
+    return oldValue != value && !Double.isNaN(oldValue) && !Double.isNaN(value);
+  }
+
+  /**
+   * Get value from arrayed variable.
+   *
+   * @param modelIndex
+   *          - index of submodel.
+   * @return if the value has changed.
+   */
+  public boolean setRate(int modelIndex, double value) {
+    return setRate(modelIndex, null, value);
+  }
+
+  /**
+   * Gets the compartment where this node belongs to.
+   *
+   * @return the compartment.
+   */
+  public HierarchicalNode getCompartment() {
+    return null;
+  }
+
+  /**
    *
    * @param index
    * @param concentration
@@ -264,15 +339,6 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
   public Iterator<HierarchicalNode> iterator() {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  /**
-   *
-   * @param index
-   * @return
-   */
-  public boolean computeRate(int index) {
-    return false;
   }
 
 }

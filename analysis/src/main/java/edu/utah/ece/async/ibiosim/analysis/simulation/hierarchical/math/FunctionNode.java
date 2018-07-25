@@ -11,12 +11,11 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
+package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.List;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Evaluator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  * A node that represents SBML Initial assignments and SBML Assignment Rules.
@@ -26,19 +25,21 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Hierarch
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class Function {
+public class FunctionNode extends HierarchicalNode {
 
   private final HierarchicalNode variable;
   private final HierarchicalNode functionMath;
   private boolean isInitialAssignment;
   private List<HierarchicalNode> variableIndices;
 
-  public Function(HierarchicalNode variable, HierarchicalNode math) {
+  public FunctionNode(HierarchicalNode variable, HierarchicalNode math) {
+    super(Type.FUNCTION);
     this.functionMath = math;
     this.variable = variable;
   }
 
-  public Function(Function math) {
+  public FunctionNode(FunctionNode math) {
+    super(Type.FUNCTION);
     this.variable = math.variable;
     this.functionMath = math.functionMath;
   }
@@ -78,15 +79,51 @@ public class Function {
    *          - the model index.
    * @return true if the value has changed. False otherwise.
    */
-  public boolean computeFunction(int index) {
+  public boolean updateVariable(int index) {
     boolean changed = false;
 
-    if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !functionMath.isDeleted(index)) {
-      double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
-      changed = variable.setValue(index, newValue);
+    if (variable != null) {
+      if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !isDeleted(index)) {
+        double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
+        changed = variable.setValue(index, newValue);
+      }
     }
 
     return changed;
+  }
+
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public void updateRate(int index) {
+    double rate = 0;
+    if (variable != null) {
+      if (!isDeleted(index)) {
+        HierarchicalState variableState = variable.getState().getChild(index);
+        rate = Evaluator.evaluateExpressionRecursive(functionMath, index);
+        if (!variableState.hasOnlySubstance()) {
+          HierarchicalNode compartment = variable.getCompartment();
+          double c = compartment.getValue(index);
+          rate = rate * c;
+          double compartmentChange = compartment.getState().getChild(index).getRateValue();
+          if (compartmentChange != 0) {
+            rate = rate + variableState.getValue() * compartmentChange / c;
+          }
+        }
+        variable.setRate(index, rate);
+      }
+    }
+  }
+
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public double computeFunction(int index) {
+    return Evaluator.evaluateExpressionRecursive(functionMath, index);
   }
 
   /**

@@ -14,6 +14,7 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 
 /**
@@ -134,8 +135,8 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
 
       if (assignmentValues != null) {
         for (int i = 0; i < parent.getEventAssignments().size(); i++) {
-          Function eventAssignmentNode = parent.getEventAssignments().get(i);
-          if (!eventAssignmentNode.getMath().isDeleted(index)) {
+          FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
+          if (!eventAssignmentNode.isDeleted(index)) {
             HierarchicalNode variable = eventAssignmentNode.getVariable();
             variable.setValue(index, assignmentValues[i]);
           }

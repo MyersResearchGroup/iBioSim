@@ -22,12 +22,12 @@ import java.util.Map;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Function;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
 
 /**
@@ -46,15 +46,17 @@ public final class HierarchicalModel {
 
   private String ID;
   protected int index;
-  private Function propensity;
+  private FunctionNode propensity;
   private ModelType type;
 
-  private List<Function> assigmentnRules;
+  private List<FunctionNode> assigmentnRules;
   private List<ConstraintNode> constraints;
   private List<EventNode> events;
-  private List<Function> initialAssignments;
+  private List<FunctionNode> initialAssignments;
+  private List<FunctionNode> rateRules;
   private List<SpeciesConcentration> initialConcentrations;
   private List<ReactionNode> reactions;
+  private List<SpeciesNode> species;
   private List<VariableNode> variables;
 
   private Map<String, HierarchicalNode> idToNode;
@@ -73,10 +75,11 @@ public final class HierarchicalModel {
     this.metaidToNode = new HashMap<>();
 
     this.variables = new ArrayList<>();
+    this.species = new ArrayList<>();
     this.events = new LinkedList<>();
     this.constraints = new ArrayList<>();
     this.reactions = new ArrayList<>();
-    this.propensity = new Function(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
+    this.propensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
   }
 
   /**
@@ -85,7 +88,7 @@ public final class HierarchicalModel {
    * @param node
    *          - the assignment rule.
    */
-  public void addAssignRule(Function node) {
+  public void addAssignRule(FunctionNode node) {
     if (assigmentnRules == null) {
       assigmentnRules = new ArrayList<>();
     }
@@ -121,7 +124,7 @@ public final class HierarchicalModel {
    * @param node
    *          - the assignment node.
    */
-  public void addInitAssignment(Function node) {
+  public void addInitAssignment(FunctionNode node) {
     if (initialAssignments == null) {
       initialAssignments = new ArrayList<>();
     }
@@ -177,6 +180,13 @@ public final class HierarchicalModel {
     idToNode.put(node.getName(), node);
   }
 
+  public void addRateRule(FunctionNode node) {
+    if (rateRules == null) {
+      rateRules = new ArrayList<>();
+    }
+    rateRules.add(node);
+  }
+
   /**
    * Adds a {@link HierarchicalModel} as a submodel.
    *
@@ -213,11 +223,7 @@ public final class HierarchicalModel {
   public boolean computePropensities() {
     boolean hasChanged = false;
     for (ReactionNode node : reactions) {
-      double oldValue = node.getValue(index);
-      node.computePropensity(index);
-      double newValue = node.getValue(index);
-
-      hasChanged = hasChanged | oldValue != newValue;
+      hasChanged = hasChanged | node.computePropensity(index);
     }
 
     return hasChanged;
@@ -295,7 +301,7 @@ public final class HierarchicalModel {
    *
    * @return the list of assignment rules.
    */
-  public List<Function> getListOfAssignmentRules() {
+  public List<FunctionNode> getListOfAssignmentRules() {
     return assigmentnRules;
   }
 
@@ -322,7 +328,7 @@ public final class HierarchicalModel {
    *
    * @return the list of initial assignments.
    */
-  public List<Function> getListOfInitialAssignments() {
+  public List<FunctionNode> getListOfInitialAssignments() {
     return initialAssignments;
   }
 
@@ -333,6 +339,15 @@ public final class HierarchicalModel {
    */
   public List<SpeciesConcentration> getListOfInitialConcentrations() {
     return initialConcentrations;
+  }
+
+  /**
+   * Gets the list of assignment rules.
+   *
+   * @return the list of assignment rules.
+   */
+  public List<FunctionNode> getListOfRateRules() {
+    return rateRules;
   }
 
   /**
@@ -389,7 +404,7 @@ public final class HierarchicalModel {
    *
    * @return the total model propensity.
    */
-  public Function getPropensity() {
+  public FunctionNode getPropensity() {
     return propensity;
   }
 

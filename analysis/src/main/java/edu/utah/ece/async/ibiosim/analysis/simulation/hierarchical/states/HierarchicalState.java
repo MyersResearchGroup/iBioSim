@@ -14,13 +14,6 @@
 
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Evaluator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.NodeContext;
-
 /**
  * Base class for the representation of state variables.
  *
@@ -35,8 +28,6 @@ public abstract class HierarchicalState {
   protected double initConcentration;
   protected boolean isReplaced;
 
-  private List<NodeContext> reactants;
-  private List<NodeContext> products;
   private final Attribute attributes = new Attribute();
 
   /**
@@ -310,35 +301,6 @@ public abstract class HierarchicalState {
     if (attributes != null) {
       attributes.hasRate = hasRate;
     }
-  }
-
-  public void addReactant(int index, HierarchicalNode node) {
-    if (reactants == null) {
-      reactants = new ArrayList<>();
-    }
-    reactants.add(new NodeContext(node, index));
-  }
-
-  public void addProduct(int index, HierarchicalNode node) {
-    if (products == null) {
-      products = new ArrayList<>();
-    }
-    products.add(new NodeContext(node, index));
-  }
-
-  public double computeRateOfChange() {
-    double rate = 0;
-    if (products != null) {
-      for (NodeContext nodeContext : products) {
-        rate += Evaluator.evaluateExpressionRecursive(nodeContext.getNode(), nodeContext.getIndex());
-      }
-    }
-    if (reactants != null) {
-      for (NodeContext nodeContext : reactants) {
-        rate -= Evaluator.evaluateExpressionRecursive(nodeContext.getNode(), nodeContext.getIndex());
-      }
-    }
-    return rate;
   }
 
   private class Attribute {

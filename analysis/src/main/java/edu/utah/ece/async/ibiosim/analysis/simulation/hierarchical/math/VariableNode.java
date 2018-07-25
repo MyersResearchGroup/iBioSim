@@ -27,8 +27,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueS
  */
 public class VariableNode extends HierarchicalNode {
 
-  protected HierarchicalNode rateRule;
-
   public VariableNode(String name) {
     super(Type.NAME);
     this.name = name;
@@ -43,38 +41,6 @@ public class VariableNode extends HierarchicalNode {
   public VariableNode(VariableNode copy) {
     super(copy);
     this.name = copy.name;
-  }
-
-  @Override
-  public boolean computeRate(int index) {
-    double rate = 0;
-    boolean changed = false;
-    if (rateRule != null && !rateRule.isDeleted(index)) {
-      double oldValue = state.getChild(index).getRateValue();
-      rate = Evaluator.evaluateExpressionRecursive(rateRule, index);
-      state.getChild(index).setRateValue(rate);
-      changed = oldValue != rate;
-    }
-    return changed;
-  }
-
-  /**
-   * Sets the rate rule of the variable.
-   *
-   * @param rateRule
-   *          - the rate rule.
-   */
-  public void setRateRule(HierarchicalNode rateRule) {
-    this.rateRule = rateRule;
-  }
-
-  /**
-   * Gets the rate rule of the variable
-   *
-   * @return the rate rule.
-   */
-  public HierarchicalNode getRateRule() {
-    return rateRule;
   }
 
   @Override

@@ -31,11 +31,11 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.Hierarchic
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Function;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEvent;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -72,7 +72,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   protected double printTime;
   protected HierarchicalModel topmodel;
   protected final AnalysisProperties properties;
-  protected Function totalPropensity;
+  protected FunctionNode totalPropensity;
   protected PriorityQueue<TriggeredEvent> triggeredEventList;
 
   /**
@@ -111,7 +111,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
 
-    this.totalPropensity = new Function(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
+    this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
 
   }
 
@@ -375,8 +375,8 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       changed = false;
       for (HierarchicalModel modelstate : this.modules) {
         if (modelstate.getListOfAssignmentRules() != null) {
-          for (Function node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.computeFunction(modelstate.getIndex());
+          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
+            changed = changed | node.updateVariable(modelstate.getIndex());
           }
         }
       }
@@ -423,14 +423,19 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       for (HierarchicalModel modelstate : this.modules) {
         int index = modelstate.getIndex();
         if (modelstate.getListOfAssignmentRules() != null) {
-          for (Function node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.computeFunction(index);
+          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
+            changed = changed | node.updateVariable(index);
           }
         }
 
+        if (modelstate.getListOfRateRules() != null) {
+          for (FunctionNode rateRule : modelstate.getListOfRateRules()) {
+            rateRule.updateRate(index);
+          }
+        }
         if (modelstate.getListOfInitialAssignments() != null) {
-          for (Function node : modelstate.getListOfInitialAssignments()) {
-            changed = changed | node.computeFunction(index);
+          for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
+            changed = changed | node.updateVariable(index);
           }
         }
 
@@ -448,12 +453,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
             changed = changed | node.computePropensity(index);
           }
 
-          modelstate.getPropensity().computeFunction(index);
-        }
-        if (modelstate.getListOfVariables() != null) {
-          for (VariableNode node : modelstate.getListOfVariables()) {
-            changed |= node.computeRate(index);
-          }
+          modelstate.getPropensity().updateVariable(index);
         }
       }
     }
@@ -514,6 +514,15 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       tmp.add(eventState);
     }
     triggeredEventList = tmp;
+  }
+
+  protected void resetRateValues() {
+    for (HierarchicalModel hierarchicalModel : modules) {
+      int index = hierarchicalModel.getIndex();
+      for (VariableNode node : hierarchicalModel.getListOfVariables()) {
+        node.getState().getChild(index).setRateValue(0);
+      }
+    }
   }
 
   protected void restoreInitialState() {

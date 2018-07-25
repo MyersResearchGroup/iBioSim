@@ -100,7 +100,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
         totalPropensity.getMath().addChild(model.getPropensity().getVariable());
       }
-      totalPropensity.computeFunction(0);
+      totalPropensity.updateVariable(0);
       if (hasEvents) {
         triggeredEventList = new PriorityQueue<>(1);
         computeEvents();
@@ -220,9 +220,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       for (ReactionNode node : modelstate.getListOfReactions()) {
         node.computePropensity(modelstate.getIndex());
       }
-      modelstate.getPropensity().computeFunction(modelstate.getIndex());
+      modelstate.getPropensity().updateVariable(modelstate.getIndex());
     }
-    this.totalPropensity.computeFunction(0);
+    this.totalPropensity.updateVariable(0);
   }
 
   private void fireRateRules(double previousTime) {}

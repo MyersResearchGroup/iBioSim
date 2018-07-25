@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Function;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEvent;
 
 /**
@@ -31,10 +30,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.Tri
  * @version %I%
  */
 public class EventNode extends HierarchicalNode {
-  private HierarchicalNode delay;
-  private HierarchicalNode priority;
+  private FunctionNode delay;
+  private FunctionNode priority;
 
-  private List<Function> eventAssignments;
+  private List<FunctionNode> eventAssignments;
   private final Map<Integer, EventState> eventState;
 
   public EventNode(HierarchicalNode trigger) {
@@ -82,7 +81,7 @@ public class EventNode extends HierarchicalNode {
    * @param delay
    *          - the new value of the delay.
    */
-  public void setDelay(HierarchicalNode delay) {
+  public void setDelay(FunctionNode delay) {
     this.delay = delay;
   }
 
@@ -161,7 +160,7 @@ public class EventNode extends HierarchicalNode {
    *          - the event assignment that will be executed when the event is fired.
    *
    */
-  public void addEventAssignment(Function eventAssignmentNode) {
+  public void addEventAssignment(FunctionNode eventAssignmentNode) {
     if (eventAssignments == null) {
       eventAssignments = new ArrayList<>();
     }
@@ -179,7 +178,7 @@ public class EventNode extends HierarchicalNode {
   public double evaluateFireTime(int index) {
     double fireTime = 0;
     if (delay != null && !delay.isDeleted(index)) {
-      fireTime = Evaluator.evaluateExpressionRecursive(delay, index);
+      fireTime = Evaluator.evaluateExpressionRecursive(delay.getMath(), index);
     }
     return fireTime;
   }
@@ -195,7 +194,7 @@ public class EventNode extends HierarchicalNode {
   public double evaluatePriority(int index) {
     double priorityValue = 0;
     if (priority != null && !priority.isDeleted(index)) {
-      priorityValue = Evaluator.evaluateExpressionRecursive(priority, index);
+      priorityValue = Evaluator.evaluateExpressionRecursive(priority.getMath(), index);
     }
     return priorityValue;
   }
@@ -215,7 +214,7 @@ public class EventNode extends HierarchicalNode {
     if (eventAssignments != null) {
       assignmentValues = new double[eventAssignments.size()];
       for (int i = 0; i < eventAssignments.size(); i++) {
-        Function eventAssignmentNode = eventAssignments.get(i);
+        FunctionNode eventAssignmentNode = eventAssignments.get(i);
         double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode.getMath(), index);
         assignmentValues[i] = value;
       }
@@ -270,7 +269,7 @@ public class EventNode extends HierarchicalNode {
    * @param priority
    *          - the event priority node.
    */
-  public void setPriority(HierarchicalNode priority) {
+  public void setPriority(FunctionNode priority) {
     this.priority = priority;
   }
 
@@ -279,7 +278,7 @@ public class EventNode extends HierarchicalNode {
    *
    * @return the list of event assignments.
    */
-  public List<Function> getEventAssignments() {
+  public List<FunctionNode> getEventAssignments() {
     return eventAssignments;
   }
 
