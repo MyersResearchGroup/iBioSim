@@ -111,7 +111,7 @@ public class ModelSetup {
             if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null) {
               ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
               String source = ext.getSource();
-              String extDef = properties.getDirectory() + HierarchicalUtilities.separator + source;
+              String extDef = properties.getRoot() + HierarchicalUtilities.separator + source;
               SBMLDocument extDoc = SBMLReader.read(new File(extDef));
               model = extDoc.getModel();
               compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
@@ -120,7 +120,7 @@ public class ModelSetup {
                 if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null) {
                   ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
                   source = ext.getSource().replace("file:", "");
-                  extDef = properties.getDirectory() + HierarchicalUtilities.separator + source;
+                  extDef = properties.getRoot() + HierarchicalUtilities.separator + source;
                   extDoc = SBMLReader.read(new File(extDef));
                   model = extDoc.getModel();
                   compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);

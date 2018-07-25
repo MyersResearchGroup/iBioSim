@@ -28,6 +28,10 @@ public abstract class HierarchicalState {
   protected double initConcentration;
   protected boolean isReplaced;
 
+  boolean hasRule = false;
+  boolean hasInitRule = false;
+  boolean hasRate = false;
+
   private final Attribute attributes = new Attribute();
 
   /**
@@ -244,9 +248,7 @@ public abstract class HierarchicalState {
    *          - true if variable has a rate rule.
    */
   public void setHasRule(boolean hasRule) {
-    if (attributes != null) {
-      attributes.hasRule = hasRule;
-    }
+    this.hasRule = hasRule;
   }
 
   /**
@@ -255,8 +257,7 @@ public abstract class HierarchicalState {
    * @return true if the node has rule
    */
   public boolean hasRule() {
-    if (attributes != null) { return attributes.hasRule; }
-    return false;
+    return hasRule;
   }
 
   /**
@@ -266,9 +267,8 @@ public abstract class HierarchicalState {
    *          - true if variable has initial assignment.
    */
   public void setHasInitRule(boolean hasInitRule) {
-    if (attributes != null) {
-      attributes.hasInitRule = hasInitRule;
-    }
+    this.hasInitRule = hasInitRule;
+
   }
 
   /**
@@ -277,8 +277,7 @@ public abstract class HierarchicalState {
    * @return true if the node has initial assignment.
    */
   public boolean hasInitRule() {
-    if (attributes != null) { return attributes.hasInitRule; }
-    return false;
+    return hasInitRule;
   }
 
   /**
@@ -287,8 +286,7 @@ public abstract class HierarchicalState {
    * @return true if the node has a rate rule.
    */
   public boolean hasRate() {
-    if (attributes != null) { return attributes.hasRate; }
-    return false;
+    return this.hasRate;
   }
 
   /**
@@ -298,9 +296,7 @@ public abstract class HierarchicalState {
    *          - true if the variable has a rate rule.
    */
   public void setHasRate(boolean hasRate) {
-    if (attributes != null) {
-      attributes.hasRate = hasRate;
-    }
+    this.hasRate = hasRate;
   }
 
   private class Attribute {
@@ -309,8 +305,5 @@ public abstract class HierarchicalState {
     boolean isPersistent = false;
     boolean useTriggerValue = false;
     boolean isVariableConstant = false;
-    boolean hasRule = false;
-    boolean hasInitRule = false;
-    boolean hasRate = false;
   }
 }

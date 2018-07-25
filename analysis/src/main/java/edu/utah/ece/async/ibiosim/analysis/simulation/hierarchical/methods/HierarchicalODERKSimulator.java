@@ -210,7 +210,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
 
         if (hierarchicalModel.getListOfRateRules() != null) {
           for (FunctionNode rateRule : hierarchicalModel.getListOfRateRules()) {
-            rateRule.updateRate(index);
+            changed = changed | rateRule.updateRate(index);
           }
         }
         changed |= hierarchicalModel.computePropensities();

@@ -97,8 +97,9 @@ public class FunctionNode extends HierarchicalNode {
    * @param index
    * @return
    */
-  public void updateRate(int index) {
+  public boolean updateRate(int index) {
     double rate = 0;
+    boolean changed = false;
     if (variable != null) {
       if (!isDeleted(index)) {
         HierarchicalState variableState = variable.getState().getChild(index);
@@ -112,9 +113,10 @@ public class FunctionNode extends HierarchicalNode {
             rate = rate + variableState.getValue() * compartmentChange / c;
           }
         }
-        variable.setRate(index, rate);
+        changed = variable.setRate(index, rate);
       }
     }
+    return changed;
   }
 
   /**

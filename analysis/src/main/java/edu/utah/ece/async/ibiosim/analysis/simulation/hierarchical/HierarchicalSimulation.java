@@ -35,6 +35,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Function
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEvent;
@@ -419,25 +420,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
 
     while (changed) {
       changed = false;
-
+      resetRateValues();
       for (HierarchicalModel modelstate : this.modules) {
         int index = modelstate.getIndex();
-        if (modelstate.getListOfAssignmentRules() != null) {
-          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(index);
-          }
-        }
-
-        if (modelstate.getListOfRateRules() != null) {
-          for (FunctionNode rateRule : modelstate.getListOfRateRules()) {
-            rateRule.updateRate(index);
-          }
-        }
-        if (modelstate.getListOfInitialAssignments() != null) {
-          for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
-            changed = changed | node.updateVariable(index);
-          }
-        }
 
         if (modelstate.getListOfInitialConcentrations() != null) {
           for (SpeciesConcentration concentration : modelstate.getListOfInitialConcentrations()) {
@@ -448,12 +433,30 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
           }
         }
 
+        if (modelstate.getListOfRateRules() != null) {
+          for (FunctionNode rateRule : modelstate.getListOfRateRules()) {
+            rateRule.updateRate(index);
+          }
+        }
+
         if (modelstate.getListOfReactions() != null) {
           for (ReactionNode node : modelstate.getListOfReactions()) {
             changed = changed | node.computePropensity(index);
           }
 
           modelstate.getPropensity().updateVariable(index);
+        }
+
+        if (modelstate.getListOfAssignmentRules() != null) {
+          for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
+            changed = changed | node.updateVariable(index);
+          }
+        }
+
+        if (modelstate.getListOfInitialAssignments() != null) {
+          for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
+            changed = changed | node.updateVariable(index);
+          }
         }
       }
     }
@@ -520,7 +523,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     for (HierarchicalModel hierarchicalModel : modules) {
       int index = hierarchicalModel.getIndex();
       for (VariableNode node : hierarchicalModel.getListOfVariables()) {
-        node.getState().getChild(index).setRateValue(0);
+        HierarchicalState state = node.getState().getChild(index);
+        if (!state.hasRate()) {
+          state.setRateValue(0);
+        }
       }
     }
   }

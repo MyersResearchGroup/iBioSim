@@ -57,7 +57,7 @@ public class HierarchicalTestSuiteRunner {
     }
 
     DynamicSimulation simulator;
-
+    String root = args[0];
     properties = new AnalysisProperties("", "", args[0], false);
 
     properties.setOutDir(args[1]);
@@ -86,7 +86,7 @@ public class HierarchicalTestSuiteRunner {
       String testcase = "00000".substring(0, 5 - idcase.length()) + idcase;
       System.out.println("Running " + testcase);
 
-      properties.setId(testcase);
+      properties.setRoot(root + File.separator + testcase);
 
       properties.setModelFile(testcase + "-sbml-l3v1.xml");
       String filename = properties.getFilename();

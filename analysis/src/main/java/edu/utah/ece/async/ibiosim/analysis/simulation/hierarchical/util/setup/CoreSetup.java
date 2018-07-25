@@ -131,6 +131,10 @@ class CoreSetup {
       }
       subState = subNode.getState().getChild(subModel.getIndex());
 
+      topState.setHasInitRule(topState.hasInitRule() || subState.hasInitRule());
+      topState.setHasRate(topState.hasRate() || subState.hasRate());
+      topState.setHasRule(topState.hasRule() || subState.hasRule());
+
       if (stateDependencies.containsKey(subState)) {
         dependencies = stateDependencies.remove(subState);
       } else {
@@ -514,7 +518,7 @@ class CoreSetup {
       }
 
       node.setState(createState(sim.getCollectionType(), wrapper));
-      node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+      node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(0);
 
       KineticLaw kineticLaw = reaction.getKineticLaw();
