@@ -502,8 +502,10 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       currProgress += simProperties.getPrintInterval();
       printTime = getRoundedDouble(printTime + simProperties.getPrintInterval());
 
-      message.setInteger((int) (Math.ceil(100 * currProgress / maxProgress)));
-      parent.send(RequestType.REQUEST_PROGRESS, message);
+      if (parent != null) {
+        message.setInteger((int) (Math.ceil(100 * currProgress / maxProgress)));
+        parent.send(RequestType.REQUEST_PROGRESS, message);
+      }
     }
   }
 
