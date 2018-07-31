@@ -32,6 +32,10 @@ public class ValueState extends HierarchicalState {
     this.value = value;
   }
 
+  ValueState(ValueState copy) {
+    super(copy);
+  }
+
   @Override
   public HierarchicalState getChild(int index) {
     // can't have children
@@ -72,5 +76,10 @@ public class ValueState extends HierarchicalState {
   public void restoreInitialValue() {
     this.value = initValue;
 
+  }
+
+  @Override
+  public ValueState clone() {
+    return new ValueState(this);
   }
 }

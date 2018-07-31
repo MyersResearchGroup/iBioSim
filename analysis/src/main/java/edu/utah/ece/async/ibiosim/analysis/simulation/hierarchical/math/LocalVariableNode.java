@@ -63,4 +63,9 @@ public class LocalVariableNode extends VariableNode {
   public void setGlobalVariable(HierarchicalNode variable) {
     this.globalVariable = variable;
   }
+
+  @Override
+  public boolean isLocalVariable() {
+    return true;
+  }
 }

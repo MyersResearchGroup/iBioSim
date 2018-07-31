@@ -26,76 +26,88 @@ import java.util.List;
  * @version %I%
  */
 public class DenseState extends TreeState {
-	private List<HierarchicalState> listOfStates;
+  private List<HierarchicalState> listOfStates;
 
-	public DenseState () {
-		this.listOfStates = new ArrayList<>(1);
-	}
+  public DenseState() {
+    super();
+    this.listOfStates = new ArrayList<>(1);
+  }
 
-	public DenseState (int capacity) {
-		this.listOfStates = new ArrayList<>(capacity);
-	}
+  public DenseState(int capacity) {
+    super();
+    this.listOfStates = new ArrayList<>(capacity);
+  }
 
-	@Override
-	public HierarchicalState getChild(int index) {
-		return listOfStates.get(index);
-	}
+  DenseState(DenseState copy) {
+    super(copy);
+    this.listOfStates = copy.listOfStates;
+  }
 
-	@Override
-	public void addState(int index, HierarchicalState state) {
-		if (listOfStates == null) {
-			listOfStates = new ArrayList<>();
-		}
+  @Override
+  public HierarchicalState getChild(int index) {
+    return listOfStates.get(index);
+  }
 
-		while (index > listOfStates.size()) {
-			listOfStates.add(state);
-		}
+  @Override
+  public void addState(int index, HierarchicalState state) {
+    if (listOfStates == null) {
+      listOfStates = new ArrayList<>();
+    }
 
-	}
+    while (index > listOfStates.size()) {
+      listOfStates.add(state);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		if (listOfStates != null) {
-			for (int i = 0; i < listOfStates.size(); i++) {
-				builder.append("{" + i + ":" + listOfStates.get(i) + "}");
-			}
-		}
-		return builder.toString();
-	}
+  }
 
-	@Override
-	protected boolean containsChild(int index) {
-		if (listOfStates.size() <= index) { return false; }
-		return true;
-	}
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    if (listOfStates != null) {
+      for (int i = 0; i < listOfStates.size(); i++) {
+        builder.append("{" + i + ":" + listOfStates.get(i) + "}");
+      }
+    }
+    return builder.toString();
+  }
 
-	@Override
-	public void replaceState(int index, HierarchicalState state) {
-		if (listOfStates.size() <= index) {
-			addState(index, state);
-		} else {
-			listOfStates.set(index, state);
-		}
+  @Override
+  protected boolean containsChild(int index) {
+    if (listOfStates.size() <= index) { return false; }
+    return true;
+  }
 
-	}
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+    if (listOfStates.size() <= index) {
+      addState(index, state);
+    } else {
+      listOfStates.set(index, state);
+    }
 
-	@Override
-	public double getRateValue() {
-		return 0;
-	}
+  }
 
-	@Override
-	public void setRateValue(double value) {
-		// TODO Auto-generated method stub
+  @Override
+  public double getRateValue() {
+    return 0;
+  }
 
-	}
+  @Override
+  public void setRateValue(double value) {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void restoreInitialValue() {
-		for (HierarchicalState state : listOfStates) {
-			state.restoreInitialValue();
-		}
-	}
+  }
+
+  @Override
+  public void restoreInitialValue() {
+    for (HierarchicalState state : listOfStates) {
+      state.restoreInitialValue();
+    }
+  }
+
+  @Override
+  public DenseState clone() {
+    return new DenseState(this);
+  }
 
 }

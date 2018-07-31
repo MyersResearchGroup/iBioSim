@@ -53,4 +53,12 @@ public class VariableNode extends HierarchicalNode {
     return new VariableNode(this);
   }
 
+  /**
+   *
+   * @return
+   */
+  public boolean isLocalVariable() {
+    return false;
+  }
+
 }

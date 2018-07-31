@@ -43,6 +43,13 @@ public class SpeciesConcentration {
     this.speciesState = species.getState().getChild(index);
   }
 
+  public SpeciesConcentration(SpeciesConcentration copy, int index) {
+    this.species = copy.species;
+    this.initialConcentration = copy.initialConcentration;
+    this.index = index;
+    this.speciesState = species.getState().getChild(index);
+  }
+
   /**
    *
    * @return

@@ -17,8 +17,10 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -86,6 +88,7 @@ public class ModelSetup {
    */
   public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException, BioSimException {
 
+    Map<String, SBMLDocument> sourceMap = new HashMap<>();
     List<ModelContainer> listOfContainers = new ArrayList<>();
     AnalysisProperties properties = sim.getProperties();
     SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
@@ -110,9 +113,9 @@ public class ModelSetup {
           if (compDoc != null) {
             if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null) {
               ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
+
               String source = ext.getSource();
-              String extDef = properties.getRoot() + HierarchicalUtilities.separator + source;
-              SBMLDocument extDoc = SBMLReader.read(new File(extDef));
+              SBMLDocument extDoc = getDocument(source, properties, sourceMap);
               model = extDoc.getModel();
               compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
 
@@ -120,8 +123,7 @@ public class ModelSetup {
                 if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null) {
                   ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
                   source = ext.getSource().replace("file:", "");
-                  extDef = properties.getRoot() + HierarchicalUtilities.separator + source;
-                  extDoc = SBMLReader.read(new File(extDef));
+                  extDoc = getDocument(source, properties, sourceMap);
                   model = extDoc.getModel();
                   compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
                 } else if (compDoc.getModelDefinition(ext.getModelRef()) != null) {
@@ -145,6 +147,7 @@ public class ModelSetup {
     }
 
     CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
+    ReplacementSetup.initializeComp(listOfContainers);
 
     if (sim instanceof HierarchicalMixedSimulator) {
       initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
@@ -165,6 +168,18 @@ public class ModelSetup {
     }
 
     sim.createODESim(listOfContainers.get(0).getHierarchicalModel(), listOfODEModels);
+  }
+
+  private static SBMLDocument getDocument(String source, AnalysisProperties properties, Map<String, SBMLDocument> sourceMap) throws XMLStreamException, IOException {
+    SBMLDocument extDoc = null;
+    String extDef = String.join(HierarchicalUtilities.separator, properties.getRoot(), source);
+    if (sourceMap.containsKey(source)) {
+      extDoc = sourceMap.get(source);
+    } else {
+      extDoc = SBMLReader.read(new File(extDef));
+      sourceMap.put(source, extDoc);
+    }
+    return extDoc;
   }
 
 }

@@ -29,7 +29,13 @@ public class SparseState extends TreeState {
   private final Map<Integer, HierarchicalState> mapOfStates;
 
   public SparseState() {
+    super();
     mapOfStates = new HashMap<>();
+  }
+
+  SparseState(SparseState state) {
+    super(state);
+    this.mapOfStates = state.mapOfStates;
   }
 
   @Override
@@ -65,15 +71,11 @@ public class SparseState extends TreeState {
 
   @Override
   public double getRateValue() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public void setRateValue(double value) {
-    // TODO Auto-generated method stub
-
-  }
+  public void setRateValue(double value) {}
 
   @Override
   public void restoreInitialValue() {
@@ -81,6 +83,11 @@ public class SparseState extends TreeState {
       state.restoreInitialValue();
     }
 
+  }
+
+  @Override
+  public SparseState clone() {
+    return new SparseState(this);
   }
 
 }

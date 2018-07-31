@@ -27,7 +27,10 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Hierarch
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.DeletionNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ReplacementNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
 
 /**
@@ -44,9 +47,9 @@ public final class HierarchicalModel {
     HSSA, HODE, HFBA, NONE;
   }
 
-  private String ID;
+  private final String ID;
   protected int index;
-  private FunctionNode propensity;
+  private final FunctionNode propensity;
   private ModelType type;
 
   private List<FunctionNode> assigmentnRules;
@@ -56,16 +59,15 @@ public final class HierarchicalModel {
   private List<FunctionNode> rateRules;
   private List<SpeciesConcentration> initialConcentrations;
   private List<ReactionNode> reactions;
-  private List<SpeciesNode> species;
   private List<VariableNode> variables;
+  private List<VariableNode> constants;
 
   private Map<String, HierarchicalNode> idToNode;
   private Map<String, HierarchicalNode> metaidToNode;
   private Map<String, HierarchicalModel> idToSubmodel;
 
-  public HierarchicalModel(HierarchicalModel state) {
-    // TODO: implement this
-  }
+  private List<ReplacementNode> replacements;
+  private List<DeletionNode> deletions;
 
   public HierarchicalModel(String submodelID, int index) {
     this.ID = submodelID;
@@ -75,10 +77,13 @@ public final class HierarchicalModel {
     this.metaidToNode = new HashMap<>();
 
     this.variables = new ArrayList<>();
-    this.species = new ArrayList<>();
+    this.constants = new ArrayList<>();
     this.events = new LinkedList<>();
     this.constraints = new ArrayList<>();
     this.reactions = new ArrayList<>();
+    this.replacements = new ArrayList<>();
+    this.deletions = new ArrayList<>();
+
     this.propensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
   }
 
@@ -106,6 +111,10 @@ public final class HierarchicalModel {
   public void addConstraint(String id, HierarchicalNode node) {
     ConstraintNode constraintNode = new ConstraintNode(id, node);
     constraints.add(constraintNode);
+  }
+
+  public void addDeletion(DeletionNode node) {
+    deletions.add(node);
   }
 
   /**
@@ -180,6 +189,14 @@ public final class HierarchicalModel {
     idToNode.put(node.getName(), node);
   }
 
+  /**
+   *
+   * @param node
+   */
+  public void addReplacement(ReplacementNode node) {
+    replacements.add(node);
+  }
+
   public void addRateRule(FunctionNode node) {
     if (rateRules == null) {
       rateRules = new ArrayList<>();
@@ -210,9 +227,14 @@ public final class HierarchicalModel {
     variables.add(node);
   }
 
-  @Override
-  public HierarchicalModel clone() {
-    return new HierarchicalModel(this);
+  /**
+   * Adds a constant to the model.
+   *
+   * @param node
+   *          - variable node.
+   */
+  public void addConstant(VariableNode node) {
+    constants.add(node);
   }
 
   /**
@@ -249,6 +271,57 @@ public final class HierarchicalModel {
    */
   public boolean containsSubmodel(String id) {
     return idToSubmodel != null ? idToSubmodel.containsKey(id) : false;
+  }
+
+  /**
+   * Initializes the model as a copy of another model.
+   *
+   */
+  public void initializeFromCopy(HierarchicalModel copy) {
+
+    int copyIndex = copy.index;
+
+    this.type = copy.type;
+    this.assigmentnRules = copy.assigmentnRules;
+    this.constraints = copy.constraints;
+    this.events = copy.events;
+    this.initialAssignments = copy.initialAssignments;
+    this.rateRules = copy.rateRules;
+
+    this.idToNode = copy.idToNode;
+    this.metaidToNode = copy.metaidToNode;
+    this.replacements = copy.replacements;
+    this.deletions = copy.deletions;
+
+    this.reactions = copy.reactions;
+    this.variables = copy.variables;
+    this.constants = copy.constants;
+
+    for (HierarchicalNode variable : variables) {
+      HierarchicalState state = variable.getState();
+      HierarchicalState copyState = state.getChild(copyIndex);
+      state.addState(index, copyState.clone());
+    }
+
+    for (HierarchicalNode reaction : reactions) {
+      HierarchicalState state = reaction.getState();
+      HierarchicalState copyState = state.getChild(copyIndex);
+      state.addState(index, copyState.clone());
+    }
+
+    for (HierarchicalNode constant : constants) {
+      HierarchicalState state = constant.getState();
+      HierarchicalState copyState = state.getChild(copyIndex);
+      state.addState(index, copyState.clone());
+    }
+
+    if (copy.initialConcentrations != null) {
+      this.initialConcentrations = new ArrayList<>();
+      for (int i = 0; i < copy.initialConcentrations.size(); i++) {
+        SpeciesConcentration concentration = copy.initialConcentrations.get(i);
+        initialConcentrations.add(new SpeciesConcentration(concentration, index));
+      }
+    }
   }
 
   /**
@@ -306,12 +379,28 @@ public final class HierarchicalModel {
   }
 
   /**
+   *
+   * @return
+   */
+  public List<VariableNode> getListOfConstants() {
+    return constants;
+  }
+
+  /**
    * Gets the list of constraints of the model.
    *
    * @return the list of constraints.
    */
   public List<ConstraintNode> getListOfConstraints() {
     return constraints;
+  }
+
+  /**
+   *
+   * @return
+   */
+  public List<DeletionNode> getListOfDeletions() {
+    return deletions;
   }
 
   /**
@@ -357,6 +446,14 @@ public final class HierarchicalModel {
    */
   public List<ReactionNode> getListOfReactions() {
     return reactions;
+  }
+
+  /**
+   *
+   * @return
+   */
+  public List<ReplacementNode> getListOfReplacements() {
+    return replacements;
   }
 
   /**

@@ -32,6 +32,13 @@ public class VectorState extends HierarchicalState {
     wrapper.addVectorState(this);
   }
 
+  VectorState(VectorState copy) {
+    super(copy);
+    this.vectorIndex = -1;
+    this.wrapper = copy.wrapper;
+    wrapper.addVectorState(this);
+  }
+
   public int getIndex() {
     return vectorIndex;
   }
@@ -92,5 +99,10 @@ public class VectorState extends HierarchicalState {
   public String toString() {
     if (wrapper.isSet()) { return String.valueOf(wrapper.getValues()[vectorIndex]); }
     return "NaN";
+  }
+
+  @Override
+  public VectorState clone() {
+    return new VectorState(this);
   }
 }

@@ -22,17 +22,26 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class HierarchicalState {
-  protected double value;
-  protected double initValue;
-  protected double initConcentration;
+public abstract class HierarchicalState implements Cloneable {
+  protected double value, initValue, initConcentration;
   protected boolean isReplaced;
+  private boolean hasRule, hasInitRule, hasRate;
 
-  boolean hasRule = false;
-  boolean hasInitRule = false;
-  boolean hasRate = false;
+  private final Attribute attributes;
 
-  private final Attribute attributes = new Attribute();
+  public HierarchicalState() {
+    attributes = new Attribute();
+  }
+
+  HierarchicalState(HierarchicalState copy) {
+    this.attributes = copy.attributes;
+    this.value = copy.value;
+    this.initValue = copy.initValue;
+    this.initConcentration = copy.initConcentration;
+    this.hasInitRule = copy.hasInitRule;
+    this.hasRate = copy.hasRate;
+    this.initConcentration = copy.initConcentration;
+  }
 
   /**
    * The representation type of the state variable.
@@ -299,6 +308,9 @@ public abstract class HierarchicalState {
     this.hasRate = hasRate;
   }
 
+  @Override
+  public abstract HierarchicalState clone();
+
   private class Attribute {
     boolean isBoundary = false;
     boolean hasOnlySubstance = true;
@@ -306,4 +318,5 @@ public abstract class HierarchicalState {
     boolean useTriggerValue = false;
     boolean isVariableConstant = false;
   }
+
 }
