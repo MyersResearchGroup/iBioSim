@@ -34,7 +34,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * Linux: ```iBioSim.linux64```
 
 
-## [Optional] Installing iBioSim for development
+## [Optional] Installing iBioSim for Development
 
 ### Pre-installation Requirements
 1. [Create](https://github.com/) a GitHub account.
@@ -46,7 +46,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 
 
 ### Importing iBioSim to Eclipse
-1. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
+1. Clone the iBioSim (https://github.com/MyersResearchGroup/iBioSim.git) project (e.g. ```git clone https://github.com/MyersResearchGroup/iBioSim.git```) to a location of your preference.
 2. Open up your Eclipse workspace that you want to import your iBioSim project to.
 3. Select Import from the File Menu.
 4. When given the option to select which project import, select ```Existing Maven Projects``` under Maven
@@ -81,4 +81,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/)
 4. After compiling or downloading reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim.
+
+### Building iBioSim.
+1. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```)
    
