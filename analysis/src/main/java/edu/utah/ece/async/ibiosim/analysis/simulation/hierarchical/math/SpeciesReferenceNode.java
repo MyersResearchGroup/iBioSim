@@ -28,7 +28,7 @@ public class SpeciesReferenceNode extends VariableNode {
   private List<HierarchicalNode> speciesIndices;
 
   public SpeciesReferenceNode(SpeciesNode species) {
-    super(species.name);
+    super("");
     this.species = species;
   }
 
@@ -49,6 +49,11 @@ public class SpeciesReferenceNode extends VariableNode {
   @Override
   public SpeciesReferenceNode clone() {
     return new SpeciesReferenceNode(this);
+  }
+
+  @Override
+  public boolean isLocalVariable() {
+    return true;
   }
 
 }

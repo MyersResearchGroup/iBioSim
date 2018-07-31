@@ -61,4 +61,8 @@ public class VariableNode extends HierarchicalNode {
     return false;
   }
 
+  public boolean isSetName() {
+    return name != null && name.length() > 0;
+  }
+
 }

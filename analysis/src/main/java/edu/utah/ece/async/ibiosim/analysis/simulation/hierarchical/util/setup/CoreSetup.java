@@ -90,7 +90,6 @@ class CoreSetup {
         setupInitialAssignments(sim, container);
         initializedModel.put(container, container.getHierarchicalModel());
       }
-
       setupPrintableVariables(sim, container);
     }
   }
@@ -102,13 +101,12 @@ class CoreSetup {
     String prefix = container.getPrefix();
     List<String> interestingSpecies = sim.getProperties().getSimulationProperties().getIntSpecies();
     boolean isConcentration = sim.getProperties().getSimulationProperties().getPrinter_track_quantity().equals("concentration");
-    for (HierarchicalNode variable : model.getListOfVariables()) {
+    for (VariableNode variable : model.getListOfVariables()) {
       //
       String printVariable = String.join("", prefix, variable.getName());
       if (interestingSpecies.contains(printVariable)) {
         sim.addPrintVariable(printVariable, variable, index, isConcentration && variable.isSpecies());
-      }
-      if (interestingSpecies.size() == 0) {
+      } else if (variable.isSetName() && interestingSpecies.size() == 0) {
         sim.addPrintVariable(printVariable, variable, index, isConcentration && variable.isSpecies());
       }
     }
@@ -118,8 +116,7 @@ class CoreSetup {
       String printVariable = String.join("", prefix, reaction.getName());
       if (interestingSpecies.contains(printVariable)) {
         sim.addPrintVariable(printVariable, reaction, index, false);
-      }
-      if (interestingSpecies.size() == 0) {
+      } else if (interestingSpecies.size() == 0) {
         sim.addPrintVariable(printVariable, reaction, index, false);
       }
     }
@@ -130,8 +127,7 @@ class CoreSetup {
         String printVariable = String.join("", prefix, constant.getName());
         if (interestingSpecies.contains(printVariable)) {
           sim.addPrintVariable(printVariable, constant, index, isConcentration && constant.isSpecies());
-        }
-        if (interestingSpecies.size() == 0) {
+        } else if (!constant.isLocalVariable() && interestingSpecies.size() == 0) {
           sim.addPrintVariable(printVariable, constant, index, isConcentration && constant.isSpecies());
         }
       }

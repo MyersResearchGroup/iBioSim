@@ -49,7 +49,7 @@ public final class HierarchicalModel {
 
   private final String ID;
   protected int index;
-  private final FunctionNode propensity;
+  private FunctionNode propensity;
   private ModelType type;
 
   private List<FunctionNode> assigmentnRules;
@@ -84,7 +84,7 @@ public final class HierarchicalModel {
     this.replacements = new ArrayList<>();
     this.deletions = new ArrayList<>();
 
-    this.propensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
+    this.propensity = new FunctionNode(new VariableNode("_propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
   }
 
   /**
@@ -296,6 +296,7 @@ public final class HierarchicalModel {
     this.reactions = copy.reactions;
     this.variables = copy.variables;
     this.constants = copy.constants;
+    this.propensity = copy.propensity;
 
     for (HierarchicalNode variable : variables) {
       HierarchicalState state = variable.getState();
@@ -304,6 +305,7 @@ public final class HierarchicalModel {
     }
 
     for (HierarchicalNode reaction : reactions) {
+
       HierarchicalState state = reaction.getState();
       HierarchicalState copyState = state.getChild(copyIndex);
       state.addState(index, copyState.clone());

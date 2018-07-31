@@ -37,6 +37,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  */
 public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   private final boolean print;
+  private double totalPropensity;
 
   /**
    * Creates an instance of a SSA simulator.
@@ -97,10 +98,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       ModelSetup.setupModels(this, ModelType.HSSA);
 
       computeFixedPoint();
-      for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-        totalPropensity.getMath().addChild(model.getPropensity().getVariable());
-      }
-      totalPropensity.updateVariable(0);
+
       if (hasEvents) {
         triggeredEventList = new PriorityQueue<>(1);
         computeEvents();
@@ -130,7 +128,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   public void simulate() throws IOException, XMLStreamException, BioSimException {
 
     SimulationProperties simProperties = properties.getSimulationProperties();
-    double r1 = 0, r2 = 0, totalPropensity = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
+    double r1 = 0, r2 = 0, delta_t = 0, nextReactionTime = 0, previousTime = 0, nextEventTime = 0, nextMaxTime = 0;
     double timeLimit = simProperties.getTimeLimit();
     double maxTimeStep = simProperties.getMaxTimeStep();
 
@@ -154,7 +152,6 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       r1 = getRandom();
       r2 = getRandom();
       computePropensities();
-      totalPropensity = getTotalPropensity();
       delta_t = Math.log(1 / r1) / totalPropensity;
       nextReactionTime = currentTime + delta_t;
       nextEventTime = getNextEventTime();
@@ -216,20 +213,23 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   }
 
   private void computePropensities() {
+    totalPropensity = 0;
     for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
+      int index = modelstate.getIndex();
       for (ReactionNode node : modelstate.getListOfReactions()) {
-        node.computePropensity(modelstate.getIndex());
+        node.computePropensity(index);
       }
-      modelstate.getPropensity().updateVariable(modelstate.getIndex());
+      modelstate.getPropensity().updateVariable(index);
+
+      totalPropensity += modelstate.getPropensity().getVariable().getValue(index);
     }
-    this.totalPropensity.updateVariable(0);
   }
 
   private void fireRateRules(double previousTime) {}
 
   private void selectAndPerformReaction(double r2) {
     double sum = 0;
-    double threshold = getTotalPropensity() * r2;
+    double threshold = totalPropensity * r2;
     for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
       for (ReactionNode node : model.getListOfReactions()) {
         sum += node.getValue(model.getIndex());

@@ -28,7 +28,6 @@ import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.AbstractSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalTSDWriter;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.io.HierarchicalWriter;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
@@ -73,7 +72,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   protected double printTime;
   protected HierarchicalModel topmodel;
   protected final AnalysisProperties properties;
-  protected FunctionNode totalPropensity;
   protected PriorityQueue<TriggeredEvent> triggeredEventList;
 
   /**
@@ -111,9 +109,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
-
-    this.totalPropensity = new FunctionNode(new VariableNode("propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
-
   }
 
   /**
@@ -477,13 +472,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       bd = null;
     }
     return value;
-  }
-
-  /**
-   * Returns the total propensity of all model states.
-   */
-  protected double getTotalPropensity() {
-    return totalPropensity != null ? totalPropensity.getVariable().getState().getValue() : 0;
   }
 
   protected void printToFile() {
