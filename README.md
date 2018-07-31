@@ -71,6 +71,9 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
   * If you are running on Mac OS X, also set the following:
     * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.
+  
+### Building iBioSim
+1. Go to the directory where the iBioSim is checked out and perform ```mvn clean install``` (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ### [Optional] Building reb2sac and GeneNet dependencies
 1. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. 
@@ -82,6 +85,5 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/)
 4. After compiling or downloading reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim.
 
-### Building iBioSim
-1. Go to the directory where the iBioSim is checked out and perform ```mvn clean install```. This will install the local non-Maven dependencies into your local repository and then build iBioSim. (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```)
+
    
