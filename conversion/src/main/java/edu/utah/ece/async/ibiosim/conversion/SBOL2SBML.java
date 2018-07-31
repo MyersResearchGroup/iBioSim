@@ -105,23 +105,26 @@ public class SBOL2SBML {
 	 * @throws BioSimException - if something is wrong with the SBML model.
 	 * @throws SBOLValidationException 
 	 */
-	public static List<BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
+	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
-		List<BioModel> models = new LinkedList<BioModel>();
+		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
 		targetModel.createSBMLDocument(getDisplayID(moduleDef), false, false);
-		org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(getDisplayID(moduleDef)+"_model", "1", 
-				URI.create("file:" + getDisplayID(moduleDef) + ".xml"), 
-				EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
-		moduleDef.addModel(sbolModel);
-
+		if (sbolDoc.getModel(getDisplayID(moduleDef)+"_model", "1")==null) {
+			org.sbolstandard.core2.Model sbolModel = sbolDoc.createModel(getDisplayID(moduleDef)+"_model", "1", 
+					URI.create("file:" + getDisplayID(moduleDef) + ".xml"), 
+					EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
+			moduleDef.addModel(sbolModel);
+		}
+		
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
 		SBOLAnnotation modelAnno = new SBOLAnnotation(sbmlModel.getMetaId(), 
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 
+		// TODO: add moduleDef flattening here
 		for (FunctionalComponent comp : moduleDef.getFunctionalComponents()) { 
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
@@ -130,7 +133,7 @@ public class SBOL2SBML {
 				} else if (isOutputComponent(comp)){
 					generateOutputPort(comp, targetModel);
 				}
-			} else if (isPromoterComponent(comp, sbolDoc)) {
+			} else if (isPromoterComponent(moduleDef, comp, sbolDoc)) {
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
@@ -242,7 +245,7 @@ public class SBOL2SBML {
 		}
 
 		for (FunctionalComponent promoter : moduleDef.getFunctionalComponents()) { 
-			if (isPromoterComponent(promoter, sbolDoc)) {
+			if (isPromoterComponent(moduleDef, promoter, sbolDoc)) {
 				if (!promoterToActivators.containsKey(promoter))
 					promoterToActivators.put(promoter, new LinkedList<Participation>());
 				if (!promoterToRepressors.containsKey(promoter))
@@ -270,14 +273,18 @@ public class SBOL2SBML {
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDef) + ".xml")) {
 				generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+			} if ((subTargetModel=models.get(getDisplayID(subModuleDef)))!=null) {
+				generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 			} else {
-				List<BioModel> subModels = generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, targetModel);
-				models.addAll(subModels);
+				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, targetModel);
+				for (String key : subModels.keySet()) {
+					models.put(key,subModels.get(key));
+				}
 			}
 		}
 		
 		
-		models.add(targetModel);
+		models.put(getDisplayID(moduleDef),targetModel);
 		return models;
 	}
 
@@ -330,12 +337,12 @@ public class SBOL2SBML {
 	 * @throws BioSimException - if something is wrong the with SBML model.
 	 * @throws SBOLValidationException 
 	 */
-	private static List<BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
+	private static HashMap<String,BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
-		List<BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
-		BioModel subTargetModel = subModels.get(subModels.size()-1);
+		HashMap<String,BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
+		BioModel subTargetModel = subModels.get(getDisplayID(subModuleDef));
 		
 		//Perform replacement and replacedBy with each subModules to its referenced ModuleDefinition.
 		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
@@ -461,14 +468,15 @@ public class SBOL2SBML {
 	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
 	 */
 	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-
+	
 		// Count promoters
 		int promoterCnt = 0;
 		if (promoter.getDefinition() != null) {
 			ComponentDefinition tuCD = promoter.getDefinition();
 			for (Component comp : tuCD.getComponents()) {
 				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
+							comp.getDefinition().getRoles().contains(SequenceOntology.OPERATOR)) {
 						promoterCnt++;
 					}
 				}
@@ -499,9 +507,11 @@ public class SBOL2SBML {
 				}
 			}
 			
-			targetModel.createPromoter(promoterId, -1, -1, true, false, null);
+			if (targetModel.getSBMLDocument().getModel().getSpecies(promoterId)==null) {
+				targetModel.createPromoter(promoterId, -1, -1, true, false, null);
+			}
 			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(promoterId);
-
+			
 			// Annotate SBML promoter species with SBOL component and component definition
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
 			if (compDef!=null) {
@@ -601,7 +611,7 @@ public class SBOL2SBML {
 		boolean onPort = (complexSpecies.getDirection().equals(DirectionType.IN) 
 				|| complexSpecies.getDirection().equals(DirectionType.OUT));
 		Reaction complexFormationRxn = targetModel.createComplexReaction(getDisplayID(complexSpecies), null, onPort);
-		complexFormationRxn.setId(getDisplayID(complexFormation));
+		//complexFormationRxn.setId(getDisplayID(complexFormation));
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), complexFormationRxn, 1);
 
 		// Annotate SBML complex formation reaction with SBOL interaction
@@ -665,7 +675,8 @@ public class SBOL2SBML {
 			ComponentDefinition tuCD = promoter.getDefinition();
 			for (Component comp : tuCD.getComponents()) {
 				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
+							comp.getDefinition().getRoles().contains(SequenceOntology.OPERATOR)) {
 						promoterCnt++;
 					}
 				}
@@ -1014,6 +1025,8 @@ public class SBOL2SBML {
 	 * @return True if the given FunctionalComponent is a valid output SBML component. False otherwise.
 	 */
 	private static boolean isOutputComponent(FunctionalComponent comp) {
+		// TODO: hack to avoid mapping promoters
+		if (comp.getDefinition().getTypes().contains(ComponentDefinition.DNA)) return false;
 		return comp.getDirection().equals(DirectionType.OUT) || comp.getDirection().equals(DirectionType.INOUT);
 	}
 
@@ -1093,10 +1106,25 @@ public class SBOL2SBML {
 	 * @param sbolDoc  - The SBOL Document to check if the given FunctionalComponent exist.
 	 * @return True if the given FunctionalComponent is a valid promoter. False otherwise.
 	 */
-	private static boolean isPromoterComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+	private static boolean isPromoterComponent(ModuleDefinition moduleDef, 
+			FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
-		return isPromoterDefinition(compDef);
+
+		// TODO: hack to avoid adding promoters with no interactions
+		if (isPromoterDefinition(compDef)) {
+			boolean foundParticipation = false;
+			for (Interaction interaction : moduleDef.getInteractions()) {
+				for (Participation participation : interaction.getParticipations()) {
+					if (participation.getParticipant().equals(comp)) {
+						foundParticipation = true;
+						break;
+					}
+				}
+			}
+			return foundParticipation;
+		}
+		return false;
 	}
 
 	/**
@@ -1292,7 +1320,7 @@ public class SBOL2SBML {
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER)||
-						partici.containsRole(SystemsBiologyOntology.TEMPLATE)) && isPromoterComponent(comp, sbolDoc))
+						partici.containsRole(SystemsBiologyOntology.TEMPLATE)) && isPromoterComponent(moduleDef, comp, sbolDoc))
 					hasPromoter = true;
 				else if (partici.containsRole(SystemsBiologyOntology.PRODUCT) && 
 						(isProteinComponent(comp, sbolDoc)||isRNAComponent(comp, sbolDoc)))
@@ -1325,7 +1353,7 @@ public class SBOL2SBML {
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER)||
-						partici.containsRole(SystemsBiologyOntology.STIMULATED)) && isPromoterComponent(comp, sbolDoc))
+						partici.containsRole(SystemsBiologyOntology.STIMULATED)) && isPromoterComponent(moduleDef, comp, sbolDoc))
 					hasActivated = true;
 				else if (partici.containsRole(SystemsBiologyOntology.STIMULATOR) /*&& isTFComponent(comp, sbolDoc)*/)
 					hasActivator = true;
@@ -1354,7 +1382,7 @@ public class SBOL2SBML {
 			for (Participation partici : interact.getParticipations()) {
 				FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 				if ((partici.containsRole(SystemsBiologyOntology.PROMOTER) ||
-						partici.containsRole(SystemsBiologyOntology.INHIBITED)) && isPromoterComponent(comp, sbolDoc))
+						partici.containsRole(SystemsBiologyOntology.INHIBITED)) && isPromoterComponent(moduleDef, comp, sbolDoc))
 					hasRepressed = true;
 				else if (partici.containsRole(SystemsBiologyOntology.INHIBITOR) )
 					hasRepressor = true;
@@ -1439,8 +1467,8 @@ public class SBOL2SBML {
 
 				if(uri!=null){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
-					List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
-					for (BioModel model : models)
+					HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+					for (BioModel model : models.values())
 					{
 						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 					}
@@ -1449,8 +1477,8 @@ public class SBOL2SBML {
 					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 					{
-						List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
-						for (BioModel model : models)
+						HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+						for (BioModel model : models.values())
 						{
 							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 						}

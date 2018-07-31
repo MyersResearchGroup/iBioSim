@@ -6177,10 +6177,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
 				if (moduleDef.getModels().size()==0) {
-					List<BioModel> models;
+					HashMap<String,BioModel> models;
 					try {
 						models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
-						for (BioModel model : models) {
+						for (BioModel model : models.values()) {
 							if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
 									model.getSBMLDocument().getModel().getId() + ".xml")) {
 								model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");

@@ -67,7 +67,7 @@ public class VPRModelGenerator {
 				collectionURI = collectionURI.substring(0, collectionURI.lastIndexOf('/')); 
 				String collectionId = collectionURI.substring(collectionURI.lastIndexOf('/')+1);
 				collectionURI = collectionURI + '/' + collectionId + "_collection/" + cd.getVersion();
-				if (!collections.contains(collectionURI)) {
+				if (!collections.contains(URI.create(collectionURI))) {
 					collections.add(URI.create(collectionURI));
 				}
 			}
@@ -80,11 +80,11 @@ public class VPRModelGenerator {
 		
 		if(!rootModuleID.isEmpty() && rootModuleID != null)
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID, params);
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID, params, true);
 		}
 		else
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), "TopModule", params);
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), "TopModule", params, true);
 		}
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
