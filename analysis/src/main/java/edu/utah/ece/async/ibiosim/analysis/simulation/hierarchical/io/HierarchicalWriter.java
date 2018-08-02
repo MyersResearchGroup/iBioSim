@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 
 /**
  * Base class for writing hierarchical simulator results.
@@ -31,99 +30,94 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesN
  */
 public abstract class HierarchicalWriter {
 
-	protected BufferedWriter bufferedWriter;
-	protected List<WriterNode> listOfStates;
-	protected FileWriter writer;
-	protected boolean isSet;
+  protected BufferedWriter bufferedWriter;
+  protected List<WriterNode> listOfStates;
+  protected FileWriter writer;
+  protected boolean isSet;
 
-	public HierarchicalWriter () {
-		listOfStates = new ArrayList<>();
-		isSet = false;
-	}
+  public HierarchicalWriter() {
+    listOfStates = new ArrayList<>();
+    isSet = false;
+  }
 
-	/**
-	 * Initializes the writer.
-	 *
-	 * @param filename
-	 *          - the name of the file that the writer writes to.
-	 * @throws IOException
-	 *           - if there is any problem with the output file.
-	 */
-	public abstract void init (String filename) throws IOException;
+  /**
+   * Initializes the writer.
+   *
+   * @param filename
+   *          - the name of the file that the writer writes to.
+   * @throws IOException
+   *           - if there is any problem with the output file.
+   */
+  public abstract void init(String filename) throws IOException;
 
-	/**
-	 * Writes out the simulation results.
-	 *
-	 * @throws IOException
-	 *           - if there is any problem with the output file.
-	 */
-	public abstract void print () throws IOException;
+  /**
+   * Writes out the simulation results.
+   *
+   *
+   * @param currentTime
+   *          - simulation time.
+   * @throws IOException
+   *           - if there is any problem with the output file.
+   */
+  public abstract void print(double currentTime) throws IOException;
 
-	/**
-	 * Adds a variable that should have the values printed out.
-	 *
-	 * @param id
-	 *          - the id of the variable.
-	 * @param node
-	 *          - the node with the state variable.
-	 * @param index
-	 *          - the index of the submodel the node corresponds to.
-	 * @param isConcentration
-	 *          - whether to be normalize relative to the compartment value.
-	 */
-	public abstract void addVariable (String id, HierarchicalNode node, int index, boolean isConcentration);
+  /**
+   * Adds a variable that should have the values printed out.
+   *
+   * @param id
+   *          - the id of the variable.
+   * @param node
+   *          - the node with the state variable.
+   * @param index
+   *          - the index of the submodel the node corresponds to.
+   * @param isConcentration
+   *          - whether to be normalize relative to the compartment value.
+   */
+  public abstract void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration);
 
-	/**
-	 * Closes the writer.
-	 *
-	 * @throws IOException
-	 *           - if a problem occurs when closing the writer.
-	 */
-	public abstract void close () throws IOException;
+  /**
+   * Closes the writer.
+   *
+   * @throws IOException
+   *           - if a problem occurs when closing the writer.
+   */
+  public abstract void close() throws IOException;
 
-	/**
-	 * Adds the state variable to the list of variables that will be printed out.
-	 *
-	 * @param node
-	 *          - the node with the state variable.
-	 * @param index
-	 *          - the index of the submodel the node corresponds to.
-	 * @param isConcentration
-	 *          - whether to be normalize relative to the compartment value.
-	 */
-	protected void addNode (HierarchicalNode node, int index, boolean isConcentration) {
-		listOfStates.add(new WriterNode(node, index, isConcentration));
-	}
+  /**
+   * Adds the state variable to the list of variables that will be printed out.
+   *
+   * @param node
+   *          - the node with the state variable.
+   * @param index
+   *          - the index of the submodel the node corresponds to.
+   * @param isConcentration
+   *          - whether to be normalize relative to the compartment value.
+   */
+  protected void addNode(HierarchicalNode node, int index, boolean isConcentration) {
+    listOfStates.add(new WriterNode(node, index, isConcentration));
+  }
 
-	/**
-	 * Node class for printing out the results of a variable.
-	 */
-	protected class WriterNode {
-		private final HierarchicalNode node;
-		private final int index;
-		private final boolean isConcentration;
+  /**
+   * Node class for printing out the results of a variable.
+   */
+  protected class WriterNode {
+    private final HierarchicalNode node;
+    private final int index;
+    private final boolean isConcentration;
 
-		/**
-		 * Creates a WriterNode object.
-		 */
-		public WriterNode (HierarchicalNode node, int index, boolean isConcentration) {
-			this.node = node;
-			this.index = index;
-			this.isConcentration = isConcentration;
-		}
+    /**
+     * Creates a WriterNode object.
+     */
+    public WriterNode(HierarchicalNode node, int index, boolean isConcentration) {
+      this.node = node;
+      this.index = index;
+      this.isConcentration = isConcentration;
+    }
 
-		@Override
-		public String toString () {
-			double value = 0;
-			if (isConcentration && node.isSpecies()) {
-				SpeciesNode species = (SpeciesNode) node;
-				value = species.getConcentration(index);
-			} else {
-				value = node.getState().getState(index).getStateValue();
-			}
-
-			return String.valueOf(value);
-		}
-	}
+    @Override
+    public String toString() {
+      return String.valueOf(node.report(index, isConcentration));
+    }
+  }
 
 }

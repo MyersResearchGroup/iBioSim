@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
@@ -24,54 +24,62 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  */
 public class ValueState extends HierarchicalState {
 
-	public ValueState () {
-		this.value = 0;
-	}
+  public ValueState() {
+    this.value = 0;
+  }
 
-	public ValueState (double value) {
-		this.value = value;
-	}
+  public ValueState(double value) {
+    this.value = value;
+  }
 
-	@Override
-	public HierarchicalState getState(int index) {
-		// can't have children
-		return this;
-	}
+  ValueState(ValueState copy) {
+    super(copy);
+  }
 
-	@Override
-	public void addState(int index, HierarchicalState state) {
+  @Override
+  public HierarchicalState getChild(int index) {
+    // can't have children
+    return this;
+  }
 
-	}
+  @Override
+  public void addState(int index, HierarchicalState state) {
 
-	@Override
-	public String toString() {
+  }
 
-		return String.valueOf(value);
-	}
+  @Override
+  public String toString() {
 
-	public void update() {}
+    return String.valueOf(value);
+  }
 
-	@Override
-	public void replaceState(int index, HierarchicalState state) {
+  public void update() {}
 
-	}
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
 
-	@Override
-	public double getRateValue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+  }
 
-	@Override
-	public void setRateValue(double value) {
-		// TODO Auto-generated method stub
+  @Override
+  public double getRateValue() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 
-	}
+  @Override
+  public void setRateValue(double value) {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void restoreInitialValue() {
-		this.value = initValue;
+  }
 
-	}
+  @Override
+  public void restoreInitialValue() {
+    this.value = initValue;
 
+  }
+
+  @Override
+  public ValueState clone() {
+    return new ValueState(this);
+  }
 }

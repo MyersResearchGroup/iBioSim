@@ -21,8 +21,8 @@ import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 
 /**
@@ -34,92 +34,106 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
  * @version %I%
  */
 class ModelContainer {
-	private final Model model;
-	private final HierarchicalModel hierarchicalModel;
-	private CompSBMLDocumentPlugin compDoc;
-	private final CompModelPlugin compModel;
-	private final ModelContainer parent;
-	private Map<String, ModelContainer> children;
-	private String prefix;
+  private final Model model;
+  private final HierarchicalModel hierarchicalModel;
+  private CompSBMLDocumentPlugin compDoc;
+  private final CompModelPlugin compModel;
+  private final ModelContainer parent;
+  private Map<String, ModelContainer> children;
+  private String prefix;
 
-	ModelContainer (Model model, HierarchicalModel hierarchicalModel, ModelContainer parent, ModelType type) {
-		this.model = model;
-		this.hierarchicalModel = hierarchicalModel;
-		this.compModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
+  ModelContainer(Model model, HierarchicalModel hierarchicalModel, ModelContainer parent, ModelType type) {
+    this.model = model;
+    this.hierarchicalModel = hierarchicalModel;
+    this.compModel = (CompModelPlugin) model.getPlugin(CompConstants.namespaceURI);
 
-		if (model.getSBMLDocument() != null) {
-			compDoc = (CompSBMLDocumentPlugin) model.getSBMLDocument().getPlugin(CompConstants.namespaceURI);
-		}
+    if (model.getSBMLDocument() != null) {
+      compDoc = (CompSBMLDocumentPlugin) model.getSBMLDocument().getPlugin(CompConstants.namespaceURI);
+    }
 
-		this.parent = parent;
-		setPrefix();
-		addChild();
-		setModelType(hierarchicalModel, model, type);
-	}
+    this.parent = parent;
+    setPrefix();
+    addChild();
+    setModelType(hierarchicalModel, model, type);
+  }
 
-	Model getModel() {
-		return model;
-	}
+  Model getModel() {
+    return model;
+  }
 
-	HierarchicalModel getHierarchicalModel() {
-		return hierarchicalModel;
-	}
+  HierarchicalModel getHierarchicalModel() {
+    return hierarchicalModel;
+  }
 
-	CompSBMLDocumentPlugin getCompDoc() {
-		return compDoc;
-	}
+  CompSBMLDocumentPlugin getCompDoc() {
+    return compDoc;
+  }
 
-	ModelContainer getChild(String id) {
-		if (children != null) { return children.get(id); }
-		return null;
-	}
+  ModelContainer getChild(String id) {
+    if (children != null) { return children.get(id); }
+    return null;
+  }
 
-	CompModelPlugin getCompModel() {
-		return compModel;
-	}
+  CompModelPlugin getCompModel() {
+    return compModel;
+  }
 
-	ModelContainer getParent() {
-		return parent;
-	}
+  ModelContainer getParent() {
+    return parent;
+  }
 
-	String getPrefix() {
-		return prefix;
-	}
+  String getPrefix() {
+    return prefix;
+  }
 
-	private void addChild() {
-		if (parent != null) {
-			if (parent.children == null) {
-				parent.children = new HashMap<>();
-			}
-			parent.children.put(hierarchicalModel.getID(), this);
-			parent.hierarchicalModel.addSubmodel(hierarchicalModel);
-		}
-	}
+  private void addChild() {
+    if (parent != null) {
+      if (parent.children == null) {
+        parent.children = new HashMap<>();
+      }
+      parent.children.put(hierarchicalModel.getID(), this);
+      parent.hierarchicalModel.addSubmodel(hierarchicalModel);
+    }
+  }
 
-	private void setModelType(HierarchicalModel modelstate, Model model, ModelType type) {
-		if (model.isSetSBOTerm()) {
-			int sboTerm = model.getSBOTerm();
-			if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE) {
-				modelstate.setModelType(ModelType.HFBA);
-			} else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_DISCRETE) {
-				modelstate.setModelType(ModelType.HSSA);
-			} else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS) {
-				modelstate.setModelType(ModelType.HODE);
-			} else {
-				modelstate.setModelType(ModelType.NONE);
-			}
-		} else {
-			modelstate.setModelType(type);
-		}
+  private void setModelType(HierarchicalModel modelstate, Model model, ModelType type) {
+    if (model.isSetSBOTerm()) {
+      int sboTerm = model.getSBOTerm();
+      if (sboTerm == GlobalConstants.SBO_FLUX_BALANCE) {
+        modelstate.setModelType(ModelType.HFBA);
+      } else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_DISCRETE) {
+        modelstate.setModelType(ModelType.HSSA);
+      } else if (sboTerm == GlobalConstants.SBO_NONSPATIAL_CONTINUOUS) {
+        modelstate.setModelType(ModelType.HODE);
+      } else {
+        modelstate.setModelType(ModelType.NONE);
+      }
+    } else {
+      modelstate.setModelType(type);
+    }
 
-	}
+  }
 
-	private void setPrefix() {
-		if (parent != null) {
-			this.prefix = parent.prefix + hierarchicalModel.getID() + "__";
-		} else {
-			this.prefix = "";
-		}
-	}
+  private void setPrefix() {
+    if (parent != null) {
+      this.prefix = parent.prefix + hierarchicalModel.getID() + "__";
+    } else {
+      this.prefix = "";
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return model.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (!(obj instanceof ModelContainer)) { return false; }
+    ModelContainer container = (ModelContainer) obj;
+    return model == container.model;
+  }
 
 }

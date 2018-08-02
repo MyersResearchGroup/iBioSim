@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
@@ -26,62 +26,68 @@ import java.util.Map;
  * @version %I%
  */
 public class SparseState extends TreeState {
-	private final Map<Integer, HierarchicalState> mapOfStates;
+  private final Map<Integer, HierarchicalState> mapOfStates;
 
-	public SparseState () {
-		mapOfStates = new HashMap<>();
-	}
+  public SparseState() {
+    super();
+    mapOfStates = new HashMap<>();
+  }
 
-	@Override
-	public HierarchicalState getState(int index) {
-		return mapOfStates.get(index);
-	}
+  SparseState(SparseState state) {
+    super(state);
+    this.mapOfStates = state.mapOfStates;
+  }
 
-	@Override
-	public void addState(int index, HierarchicalState state) {
-		mapOfStates.put(index, state);
-	}
+  @Override
+  public HierarchicalState getChild(int index) {
+    return mapOfStates.get(index);
+  }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		if (mapOfStates != null) {
-			for (Integer integer : mapOfStates.keySet()) {
-				builder.append("{" + integer + ":" + mapOfStates.get(integer) + "}");
-			}
-		}
-		return builder.toString();
-	}
+  @Override
+  public void addState(int index, HierarchicalState state) {
+    mapOfStates.put(index, state);
+  }
 
-	@Override
-	protected boolean containsChild(int index) {
-		return mapOfStates.containsKey(index);
-	}
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    if (mapOfStates != null) {
+      for (Integer integer : mapOfStates.keySet()) {
+        builder.append("{" + integer + ":" + mapOfStates.get(integer) + "}");
+      }
+    }
+    return builder.toString();
+  }
 
-	@Override
-	public void replaceState(int index, HierarchicalState state) {
-		mapOfStates.put(index, state);
+  @Override
+  protected boolean containsChild(int index) {
+    return mapOfStates.containsKey(index);
+  }
 
-	}
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+    mapOfStates.put(index, state);
+  }
 
-	@Override
-	public double getRateValue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+  @Override
+  public double getRateValue() {
+    return 0;
+  }
 
-	@Override
-	public void setRateValue(double value) {
-		// TODO Auto-generated method stub
+  @Override
+  public void setRateValue(double value) {}
 
-	}
+  @Override
+  public void restoreInitialValue() {
+    for (HierarchicalState state : mapOfStates.values()) {
+      state.restoreInitialValue();
+    }
 
-	@Override
-	public void restoreInitialValue() {
-		for (HierarchicalState state : mapOfStates.values()) {
-			state.restoreInitialValue();
-		}
+  }
 
-	}
+  @Override
+  public SparseState clone() {
+    return new SparseState(this);
+  }
 
 }

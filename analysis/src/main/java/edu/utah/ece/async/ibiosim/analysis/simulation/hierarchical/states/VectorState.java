@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of iBioSim. Please visit <http://www.async.ece.utah.edu/ibiosim>
  * for the latest version of iBioSim.
  *
@@ -9,7 +9,7 @@
  * under the terms of the Apache License. A copy of the license agreement is provided
  * in the file named "LICENSE.txt" included with this software distribution
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
- * 
+ *
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
 
@@ -23,61 +23,86 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
  */
 public class VectorState extends HierarchicalState {
 
-	private final int vectorIndex;
-	private final VectorWrapper vectorState;
+  private int vectorIndex;
+  private final VectorWrapper wrapper;
 
-	public VectorState (VectorWrapper vectorState) {
-		this.vectorState = vectorState;
-		this.vectorIndex = vectorState.incrementSize();
-	}
+  public VectorState(VectorWrapper wrapper) {
+    this.wrapper = wrapper;
+    this.vectorIndex = -1;
+    wrapper.addVectorState(this);
+  }
 
-	@Override
-	public double getStateValue() {
-		if (vectorState.isSet()) {
-			return vectorState.getValues()[vectorIndex];
-		} else {
-			return value;
-		}
-	}
+  VectorState(VectorState copy) {
+    super(copy);
+    this.vectorIndex = -1;
+    this.wrapper = copy.wrapper;
+    wrapper.addVectorState(this);
+  }
 
-	@Override
-	public void setStateValue(double value) {
-		if (vectorState.isSet()) {
-			vectorState.getValues()[vectorIndex] = value;
-		} else {
-			this.value = value;
-		}
+  public int getIndex() {
+    return vectorIndex;
+  }
 
-	}
+  void initializeVectorIndex() {
+    this.vectorIndex = wrapper.incrementSize();
+  }
 
-	@Override
-	public void addState(int index, HierarchicalState state) {}
+  @Override
+  public double getValue() {
+    if (wrapper.isSet()) {
+      return wrapper.getValues()[vectorIndex];
+    } else {
+      return value;
+    }
+  }
 
-	@Override
-	public HierarchicalState getState(int index) {
-		return this;
-	}
+  @Override
+  public void setStateValue(double value) {
+    if (wrapper.isSet()) {
+      wrapper.getValues()[vectorIndex] = value;
+    } else {
+      this.value = value;
+    }
+  }
 
-	@Override
-	public double getRateValue() {
-		return vectorState.getRates()[vectorIndex];
+  @Override
+  public void addState(int index, HierarchicalState state) {}
 
-	}
+  @Override
+  public HierarchicalState getChild(int index) {
+    return this;
+  }
 
-	@Override
-	public void replaceState(int index, HierarchicalState state) {
-		// TODO Auto-generated method stub
+  @Override
+  public double getRateValue() {
+    return wrapper.getRates()[vectorIndex];
 
-	}
+  }
 
-	@Override
-	public void setRateValue(double value) {
-		vectorState.getRates()[vectorIndex] = value;
-	}
+  @Override
+  public void replaceState(int index, HierarchicalState state) {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void restoreInitialValue() {
-		vectorState.getValues()[vectorIndex] = initValue;
-	}
+  }
 
+  @Override
+  public void setRateValue(double value) {
+    wrapper.getRates()[vectorIndex] = value;
+  }
+
+  @Override
+  public void restoreInitialValue() {
+    wrapper.getValues()[vectorIndex] = initValue;
+  }
+
+  @Override
+  public String toString() {
+    if (wrapper.isSet()) { return String.valueOf(wrapper.getValues()[vectorIndex]); }
+    return "NaN";
+  }
+
+  @Override
+  public VectorState clone() {
+    return new VectorState(this);
+  }
 }
