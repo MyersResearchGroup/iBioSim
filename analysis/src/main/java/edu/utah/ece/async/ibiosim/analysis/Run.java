@@ -284,7 +284,12 @@ public class Run extends CoreObservable implements ActionListener {
     this.notifyObservers(message);
 
     if (sim.equals("reachability-analysis") && !sg.getStop()) {
-
+      message.setDialog("View State Graph", "Do you want to view the state graph?");
+      if (parent.request(RequestType.REQUEST_BOOLEAN, message)) {
+        if (message.getBoolean()) {
+          viewStateGraph(filename, properties.getModelFile(), properties.getDirectory(), sg);
+        }
+      }
     } else if (sim.equals("steady-state-markov-chain-analysis")) {
       if (!sg.getStop()) {
         message.setLog("Performing steady state Markov chain analysis.");

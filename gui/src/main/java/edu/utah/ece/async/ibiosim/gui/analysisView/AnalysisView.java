@@ -845,7 +845,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     {
       return;
     }
-    String root = properties.getRoot();
+    
     String outDir = properties.getDirectory();
     String simName = properties.getSim();
     String filename = properties.getFilename();
