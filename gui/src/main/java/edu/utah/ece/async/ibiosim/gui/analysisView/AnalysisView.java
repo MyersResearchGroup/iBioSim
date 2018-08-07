@@ -877,10 +877,19 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     }
     progress = new JProgressBar(0, 100);
     progressCancel = new JButton("Cancel");
-    progressLabel = new JLabel("Running " + simName);
+    if(properties.isOde() || properties.isSsa()) {
+	 progressLabel = new JLabel("Running " + simName);
+	 progress.setIndeterminate(false);
+    } else {
+	progressLabel = new JLabel("In progress.");
+	progress.setIndeterminate(true);
+    }
+    
     
     JFrame running = createProgressBar(progressLabel, progress, progressCancel);
     Run runProgram = new Run(properties);
+    
+    
     runProgram.addObservable(this);
     progressCancel.addActionListener(runProgram);
     gui.getExitButton().addActionListener(runProgram);
@@ -3654,10 +3663,10 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       message.setString(sbmlName);
       return true;
     }
-    else if(type == RequestType.REQUEST_OVERWRITE)
+    else if(type == RequestType.REQUEST_BOOLEAN)
     {
-      final Object[] options = { "Overwrite", "Cancel" };
-      int value = JOptionPane.showOptionDialog(this, "File already exists." + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+      final Object[] options = { "Yes", "No" };
+      int value = JOptionPane.showOptionDialog(this, message.getMessage(), message.getTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
       if (value == JOptionPane.YES_OPTION)
       {
         message.setBoolean(true);
