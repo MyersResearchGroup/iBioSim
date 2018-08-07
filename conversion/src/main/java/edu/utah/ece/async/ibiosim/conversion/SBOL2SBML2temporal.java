@@ -76,7 +76,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SBOL2SBML {
+public class SBOL2SBML2temporal {
 
 	/**
 	 * Returns the specified SBOL object's displayId. This means the prefix of the SBOL element's displayId will be cut off.
@@ -152,7 +152,7 @@ public class SBOL2SBML {
     			//resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), URI.create(FC.getDisplayId()), FC.getDirection());
     		}
     	}
-    	
+    	//TODO: add more information
     	//Create a HashMap of all the FC in resultMD to compare later when adding participations
     	Set<URI> FC_in_resultMD = new HashSet <URI>();
     	for (FunctionalComponent FC3 : resultMD.getFunctionalComponents()) {
@@ -232,7 +232,7 @@ public class SBOL2SBML {
 					EDAMOntology.SBML, SystemsBiologyOntology.DISCRETE_FRAMEWORK);
 			moduleDef.addModel(sbolModel);
 		}
-		
+		//give more information
 		// Annotate SBML model with SBOL module definition
 		Model sbmlModel = targetModel.getSBMLDocument().getModel();
 		SBOLAnnotation modelAnno = new SBOLAnnotation(sbmlModel.getMetaId(), 
@@ -377,8 +377,6 @@ public class SBOL2SBML {
 					promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
-				// TODO: Analyze "promoter" (TU) to see if it has Cello parameters
-				// if yes, call your generateProductionRxn method, else original
 				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
@@ -1588,20 +1586,20 @@ public class SBOL2SBML {
 
 				if(uri!=null){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
-					HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+					HashMap<String,BioModel> models = SBOL2SBML2temporal.generateModel(outputDir, topModuleDef, sbolDoc);
 					for (BioModel model : models.values())
 					{
-						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
+						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 					}
 				}
 				else{
 					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 					{
-						HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+						HashMap<String,BioModel> models = SBOL2SBML2temporal.generateModel(outputDir, moduleDef, sbolDoc);
 						for (BioModel model : models.values())
 						{
-							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
+							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
 						}
 					}
 				}
