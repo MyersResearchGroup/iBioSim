@@ -13,7 +13,13 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 
 /**
  * @author Leandro Watanabe
@@ -38,11 +44,22 @@ public abstract class AbstractHierarchicalNode {
     SPECIES, REACTION, VARIABLE, NONE
   };
 
+  /**
+   * Node types
+   */
+  public static enum IndexType {
+    COMPARTMENT, VARIABLE
+  };
+
   private final Type type;
   private HashSet<Integer> deletedElements;
   private String metaId;
+
+  protected Map<String, ArrayDimensionNode> mapOfDimensions;
+  protected List<ArrayDimensionNode> listOfDimensions;
   protected String name;
   protected VariableType varType;
+  protected Map<IndexType, List<HierarchicalNode>> indexMap;
 
   AbstractHierarchicalNode(Type type) {
     this.type = type;
@@ -55,12 +72,55 @@ public abstract class AbstractHierarchicalNode {
   }
 
   /**
+   * Adds a dimension object.
+   *
+   * @param dimensionId
+   *          - the id of the dimension object.
+   * @param arrayDimension
+   *          - dimension index.
+   * @param size
+   *          - the parameter for size.
+   */
+  public void addDimension(String dimensionId, int arrayDimension, String size) {
+    if (listOfDimensions == null) {
+      listOfDimensions = new ArrayList<>();
+    }
+
+    ArrayDimensionNode dimensionNode = new ArrayDimensionNode(size);
+
+    dimensionNode.setState(new ValueState());
+
+    for (int i = listOfDimensions.size(); i <= arrayDimension; i++) {
+      listOfDimensions.add(null);
+    }
+
+    listOfDimensions.set(arrayDimension, dimensionNode);
+
+    if (dimensionId != null) {
+      if (mapOfDimensions == null) {
+        mapOfDimensions = new HashMap<>();
+      }
+      mapOfDimensions.put(dimensionId, dimensionNode);
+    }
+
+  }
+
+  /**
    * Gets the type of the node.
    *
    * @return the node type.
    */
   public Type getType() {
     return type;
+  }
+
+  /**
+   * Checks if the node is of type array.
+   *
+   * @return if the node is boolean.
+   */
+  public boolean isArray() {
+    return listOfDimensions != null;
   }
 
   /**
@@ -182,6 +242,26 @@ public abstract class AbstractHierarchicalNode {
   }
 
   /**
+   * Gets the name of the node.
+   *
+   * @return the name.
+   */
+  public String getDimensionedName(int index) {
+
+    if (listOfDimensions != null) {
+      String[] dimensions = new String[listOfDimensions.size()];
+      int n = listOfDimensions.size();
+      for (int i = listOfDimensions.size() - 1; i >= 0; i--) {
+        dimensions[n - i - 1] = String.valueOf((int) listOfDimensions.get(i).getValue(index));
+      }
+
+      return String.join("__", dimensions);
+    }
+
+    return null;
+  }
+
+  /**
    * Sets the name of the node.
    *
    * @param name
@@ -213,5 +293,9 @@ public abstract class AbstractHierarchicalNode {
    */
   public boolean isDeleted(int index) {
     return deletedElements != null ? deletedElements.contains(index) : false;
+  }
+
+  public List<ArrayDimensionNode> getListOfDimensions() {
+    return listOfDimensions;
   }
 }

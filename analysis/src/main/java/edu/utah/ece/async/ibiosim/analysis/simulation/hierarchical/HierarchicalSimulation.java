@@ -155,8 +155,13 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
    * @param isConcentration
    *          - whether to print the value as a concentration.
    */
-  public void addPrintVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
-    writer.addVariable(id, node, index, isConcentration);
+  public void addPrintVariable(String prefix, HierarchicalNode node, HierarchicalNode compartment, int index, boolean isConcentration) {
+    if (isConcentration) {
+      writer.addVariable(prefix, node, compartment, index);
+    } else {
+      writer.addVariable(prefix, node, null, index);
+    }
+
   }
 
   /**

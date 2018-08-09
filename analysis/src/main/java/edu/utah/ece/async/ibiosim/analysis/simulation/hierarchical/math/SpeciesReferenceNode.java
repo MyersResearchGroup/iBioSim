@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import java.util.List;
-
 /**
  * A node that represents SBML Species References.
  *
@@ -25,7 +23,6 @@ import java.util.List;
  */
 public class SpeciesReferenceNode extends VariableNode {
   private final SpeciesNode species;
-  private List<HierarchicalNode> speciesIndices;
 
   public SpeciesReferenceNode(SpeciesNode species) {
     super("");

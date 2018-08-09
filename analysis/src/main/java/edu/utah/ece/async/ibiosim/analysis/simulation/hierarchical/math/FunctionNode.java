@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import java.util.List;
-
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
@@ -30,7 +28,6 @@ public class FunctionNode extends HierarchicalNode {
   private final HierarchicalNode variable;
   private final HierarchicalNode functionMath;
   private boolean isInitialAssignment;
-  private List<HierarchicalNode> variableIndices;
 
   public FunctionNode(HierarchicalNode variable, HierarchicalNode math) {
     super(Type.FUNCTION);

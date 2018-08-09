@@ -14,7 +14,9 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
 import java.util.Iterator;
+import java.util.List;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ArrayDimensionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 
 /**
@@ -35,17 +37,52 @@ public class HierarchicalIterator implements Iterator<HierarchicalNode> {
    */
   public HierarchicalIterator(HierarchicalNode node) {
     this.node = node;
+    this.size = 1;
+    this.iterator = 0;
+    if (node.getListOfDimensions() != null) {
+      for (ArrayDimensionNode dimension : node.getListOfDimensions()) {
+        size = dimension.getSize() * size;
+      }
+    }
+
   }
 
   @Override
   public boolean hasNext() {
-    // TODO Auto-generated method stub
-    return false;
+    return iterator < size;
   }
 
   @Override
   public HierarchicalNode next() {
-    // TODO Auto-generated method stub
-    return null;
+
+    if (node.getListOfDimensions() != null) {
+      List<ArrayDimensionNode> listOfDimensions = node.getListOfDimensions();
+      if (iterator == 0) {
+        for (int i = 0; i < listOfDimensions.size(); i++) {
+          ArrayDimensionNode dimension = listOfDimensions.get(i);
+          dimension.getState().setStateValue(0);
+        }
+      } else {
+        for (int i = 0; i < listOfDimensions.size(); i++) {
+          ArrayDimensionNode dimension = listOfDimensions.get(i);
+          if (!incrementValue(dimension)) {
+            break;
+          }
+        }
+      }
+
+    }
+    iterator++;
+    return node;
+  }
+
+  private boolean incrementValue(ArrayDimensionNode dimension) {
+    double value = dimension.getState().getValue() + 1;
+    if (value > dimension.getSize()) {
+      dimension.getState().setStateValue(0);
+      return true;
+    }
+    dimension.getState().setStateValue(value);
+    return false;
   }
 }

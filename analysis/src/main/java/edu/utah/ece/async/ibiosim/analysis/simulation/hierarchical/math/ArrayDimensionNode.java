@@ -25,15 +25,24 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueS
  */
 public class ArrayDimensionNode extends HierarchicalNode {
 
-  private final VariableNode size;
+  private final String sizeRef;
+  private int size;
 
-  public ArrayDimensionNode(VariableNode size) {
+  public ArrayDimensionNode(String sizeRef) {
     super(0);
-    this.size = size;
+    this.sizeRef = sizeRef;
     this.state = new ValueState();
   }
 
-  public VariableNode getSize() {
+  public String getSizeRef() {
+    return sizeRef;
+  }
+
+  public void setSize(int value) {
+    size = value;
+  }
+
+  public int getSize() {
     return size;
   }
 

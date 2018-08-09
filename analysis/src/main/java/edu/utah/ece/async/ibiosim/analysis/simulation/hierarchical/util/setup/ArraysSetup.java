@@ -13,6 +13,9 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
@@ -20,7 +23,13 @@ import org.sbml.jsbml.ext.arrays.Dimension;
 import org.sbml.jsbml.ext.arrays.Index;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ArrayDimensionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 
 /**
  * Setups up arrays in the hierarchical simulator.
@@ -36,10 +45,13 @@ class ArraysSetup {
     ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
 
     if (plugin == null) { return; }
-    container.getHierarchicalModel();
     if (plugin.getNumDimensions() > 0) {
+      modelstate.addArray(node);
       for (Dimension dimension : plugin.getListOfDimensions()) {
-
+        String dimensionId = dimension.getId();
+        String size = dimension.getSize();
+        int arrayDimension = dimension.getArrayDimension();
+        node.addDimension(dimensionId, arrayDimension, size);
       }
     }
 
@@ -55,6 +67,67 @@ class ArraysSetup {
 
       }
     }
+  }
+
+  static void initializeArrays(List<ModelContainer> listOfContainers, StateType type, VectorWrapper wrapper) {
+    for (ModelContainer container : listOfContainers) {
+      HierarchicalModel model = container.getHierarchicalModel();
+
+      if (model.getListOfArrays() != null) {
+        for (HierarchicalNode node : model.getListOfArrays()) {
+          initializeArraySize(model, node, type, wrapper);
+        }
+      }
+
+    }
+
+  }
+
+  private static void initializeArraySize(HierarchicalModel model, HierarchicalNode node, StateType type, VectorWrapper wrapper) {
+    int index = model.getIndex();
+    if (node.getListOfDimensions() != null) {
+      for (ArrayDimensionNode dimension : node.getListOfDimensions()) {
+        HierarchicalNode variable = model.getNode(dimension.getSizeRef());
+        int value = (int) variable.getState().getChild(index).getValue();
+        dimension.setSize(value);
+      }
+      initializeArraysState(model, node, type, wrapper);
+    }
+  }
+
+  private static void initializeArraysState(HierarchicalModel model, HierarchicalNode node, StateType type, VectorWrapper wrapper) {
+    LinkedList<HierarchicalState> listOfStates = new LinkedList<>();
+    List<ArrayDimensionNode> listOfDimensions = node.getListOfDimensions();
+    int dimensionIndex = listOfDimensions.size() - 1;
+    int modelIndex = model.getIndex();
+    if (node.getState() != null) {
+      HierarchicalState templateState = node.getState().getChild(modelIndex);
+      listOfStates.add(templateState);
+      while (dimensionIndex >= 0) {
+        ArrayDimensionNode dimension = listOfDimensions.get(dimensionIndex);
+        for (int i = listOfStates.size() - 1; i >= 0; i--) {
+          HierarchicalState currentState = listOfStates.pop();
+          for (int j = 0; j < dimension.getSize(); j++) {
+            if (dimensionIndex == 0) {
+              if (type == StateType.SCALAR) {
+                HierarchicalState state = new ValueState(templateState);
+                currentState.addState(j, state);
+              } else if (type == StateType.VECTOR) {
+                HierarchicalState state = new VectorState(templateState, wrapper);
+                currentState.addState(j, state);
+              }
+            } else {
+              HierarchicalState state = CoreSetup.createState(StateType.DENSE, wrapper);
+              currentState.addState(j, state);
+              listOfStates.add(state);
+            }
+          }
+        }
+        dimensionIndex--;
+      }
+
+    }
+
   }
 
 }

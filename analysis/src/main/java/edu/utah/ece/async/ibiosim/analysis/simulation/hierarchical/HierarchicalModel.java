@@ -52,7 +52,8 @@ public final class HierarchicalModel {
   private FunctionNode propensity;
   private ModelType type;
 
-  private List<FunctionNode> assigmentnRules;
+  private List<HierarchicalNode> arrays;
+  private List<FunctionNode> assigmentRules;
   private List<ConstraintNode> constraints;
   private List<EventNode> events;
   private List<FunctionNode> initialAssignments;
@@ -93,11 +94,24 @@ public final class HierarchicalModel {
    * @param node
    *          - the assignment rule.
    */
-  public void addAssignRule(FunctionNode node) {
-    if (assigmentnRules == null) {
-      assigmentnRules = new ArrayList<>();
+  public void addArray(HierarchicalNode node) {
+    if (arrays == null) {
+      arrays = new ArrayList<>();
     }
-    assigmentnRules.add(node);
+    arrays.add(node);
+  }
+
+  /**
+   * Adds an assignment rule.
+   *
+   * @param node
+   *          - the assignment rule.
+   */
+  public void addAssignRule(FunctionNode node) {
+    if (assigmentRules == null) {
+      assigmentRules = new ArrayList<>();
+    }
+    assigmentRules.add(node);
   }
 
   /**
@@ -282,7 +296,7 @@ public final class HierarchicalModel {
     int copyIndex = copy.index;
 
     this.type = copy.type;
-    this.assigmentnRules = copy.assigmentnRules;
+    this.assigmentRules = copy.assigmentRules;
     this.constraints = copy.constraints;
     this.events = copy.events;
     this.initialAssignments = copy.initialAssignments;
@@ -372,12 +386,21 @@ public final class HierarchicalModel {
   }
 
   /**
+   * Gets the list of arrays rules.
+   *
+   * @return the list of arrays rules.
+   */
+  public List<HierarchicalNode> getListOfArrays() {
+    return arrays;
+  }
+
+  /**
    * Gets the list of assignment rules.
    *
    * @return the list of assignment rules.
    */
   public List<FunctionNode> getListOfAssignmentRules() {
-    return assigmentnRules;
+    return assigmentRules;
   }
 
   /**

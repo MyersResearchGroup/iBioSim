@@ -90,48 +90,22 @@ class CoreSetup {
         setupInitialAssignments(sim, container);
         initializedModel.put(container, container.getHierarchicalModel());
       }
-      setupPrintableVariables(sim, container);
     }
   }
 
-  private static void setupPrintableVariables(HierarchicalSimulation sim, ModelContainer container) {
+  static HierarchicalState createState(StateType type, VectorWrapper wrapper) {
+    HierarchicalState state = null;
 
-    HierarchicalModel model = container.getHierarchicalModel();
-    int index = model.getIndex();
-    String prefix = container.getPrefix();
-    List<String> interestingSpecies = sim.getProperties().getSimulationProperties().getIntSpecies();
-    boolean isConcentration = sim.getProperties().getSimulationProperties().getPrinter_track_quantity().equals("concentration");
-    for (VariableNode variable : model.getListOfVariables()) {
-      //
-      String printVariable = String.join("", prefix, variable.getName());
-      if (interestingSpecies.contains(printVariable)) {
-        sim.addPrintVariable(printVariable, variable, index, isConcentration && variable.isSpecies());
-      } else if (variable.isSetName() && interestingSpecies.size() == 0) {
-        sim.addPrintVariable(printVariable, variable, index, isConcentration && variable.isSpecies());
-      }
+    if (type == StateType.VECTOR) {
+      state = new VectorState(wrapper);
+    } else if (type == StateType.SPARSE) {
+      state = new SparseState();
+    } else if (type == StateType.DENSE) {
+      state = new DenseState();
+    } else if (type == StateType.SCALAR) {
+      state = new ValueState();
     }
-
-    for (HierarchicalNode reaction : model.getListOfReactions()) {
-      //
-      String printVariable = String.join("", prefix, reaction.getName());
-      if (interestingSpecies.contains(printVariable)) {
-        sim.addPrintVariable(printVariable, reaction, index, false);
-      } else if (interestingSpecies.size() == 0) {
-        sim.addPrintVariable(printVariable, reaction, index, false);
-      }
-    }
-
-    for (VariableNode constant : model.getListOfConstants()) {
-      //
-      if (!constant.isLocalVariable()) {
-        String printVariable = String.join("", prefix, constant.getName());
-        if (interestingSpecies.contains(printVariable)) {
-          sim.addPrintVariable(printVariable, constant, index, isConcentration && constant.isSpecies());
-        } else if (!constant.isLocalVariable() && interestingSpecies.size() == 0) {
-          sim.addPrintVariable(printVariable, constant, index, isConcentration && constant.isSpecies());
-        }
-      }
-    }
+    return state;
   }
 
   private static void setupCompartments(HierarchicalSimulation sim, ModelContainer container, VectorWrapper wrapper) {
@@ -146,15 +120,20 @@ class CoreSetup {
       node.setState(createState(sim.getCollectionType(), wrapper));
       hierarchicalModel.addMappingNode(compartmentID, node);
 
+      ReplacementSetup.setupVariableReplacement(sim, compartment, wrapper, container);
+      ArraysSetup.setupArrays(hierarchicalModel, container, compartment, node);
+
       if (!compartment.isConstant()) {
         hierarchicalModel.addVariable(node);
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        if (node.isArray()) {
+          node.getState().addState(index, createState(StateType.DENSE, wrapper));
+        } else {
+          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        }
       } else {
         hierarchicalModel.addConstant(node);
         node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
-
-      ReplacementSetup.setupVariableReplacement(sim, compartment, wrapper, container);
 
       if (Double.isNaN(compartment.getSize())) {
         node.getState().getChild(index).setInitialValue(1);
@@ -179,21 +158,25 @@ class CoreSetup {
       hierarchicalModel.addMappingNode(parameter.getId(), node);
       node.setState(createState(sim.getCollectionType(), wrapper));
 
+      ReplacementSetup.setupVariableReplacement(sim, parameter, wrapper, container);
+      ArraysSetup.setupArrays(hierarchicalModel, container, parameter, node);
+
       if (!parameter.isConstant()) {
         hierarchicalModel.addVariable(node);
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        if (node.isArray()) {
+          node.getState().addState(index, createState(StateType.DENSE, wrapper));
+        } else {
+          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        }
       } else {
         hierarchicalModel.addConstant(node);
         node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
 
-      ReplacementSetup.setupVariableReplacement(sim, parameter, wrapper, container);
-
       if (parameter.isSetValue()) {
         node.getState().getChild(index).setInitialValue(parameter.getValue());
       }
 
-      ArraysSetup.setupArrays(hierarchicalModel, container, parameter, node);
     }
   }
 
@@ -210,23 +193,30 @@ class CoreSetup {
       SpeciesNode node = new SpeciesNode(speciesId);
       hierarchicalModel.addMappingNode(speciesId, node);
 
+      ReplacementSetup.setupVariableReplacement(sim, species, wrapper, container);
+      ArraysSetup.setupArrays(hierarchicalModel, container, species, node);
+
       boolean isBoundary = species.getBoundaryCondition();
       boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
       node.setState(createState(sim.getCollectionType(), wrapper));
 
       if (!species.isConstant()) {
         hierarchicalModel.addVariable(node);
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        if (node.isArray()) {
+          node.getState().addState(index, createState(StateType.DENSE, wrapper));
+        } else {
+          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+        }
       } else {
         hierarchicalModel.addConstant(node);
         node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
+
       node.getState().getChild(index).setBoundaryCondition(isBoundary);
       node.getState().getChild(index).setHasOnlySubstance(isOnlySubstance);
 
       VariableNode compartment = (VariableNode) hierarchicalModel.getNode(species.getCompartment());
       node.setCompartment(compartment);
-      ReplacementSetup.setupVariableReplacement(sim, species, wrapper, container);
 
       if (species.isSetInitialAmount()) {
         node.getState().getChild(index).setInitialValue(species.getInitialAmount());
@@ -565,22 +555,5 @@ class CoreSetup {
     }
 
     return plus.getChildCount() > 0 && minus.getChildCount() > 0 ? result : null;
-  }
-
-  private static HierarchicalState createState(StateType type, VectorWrapper wrapper) {
-    HierarchicalState state = null;
-
-    if (type == StateType.VECTOR) {
-      state = new VectorState(wrapper);
-    } else if (type == StateType.DENSE) {
-      state = new ValueState();
-    } else if (type == StateType.SPARSE) {
-      state = new SparseState();
-    } else if (type == StateType.DENSE) {
-      state = new DenseState();
-    } else if (type == StateType.SCALAR) {
-      state = new ValueState();
-    }
-    return state;
   }
 }
