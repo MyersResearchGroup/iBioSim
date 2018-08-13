@@ -214,11 +214,7 @@ public class ReactionNode extends VariableNode {
 
   private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier) {
     for (SpeciesReferenceNode specRef : specRefs) {
-      double stoichiometry = specRef.getValue(index);
-      SpeciesNode speciesNode = specRef.getSpecies();
-      if (!speciesNode.getState().getChild(index).isBoundaryCondition()) {
-        speciesNode.setValue(index, speciesNode.getValue(index) + multiplier * stoichiometry);
-      }
+      specRef.updateSpecies(index, multiplier);
     }
   }
 

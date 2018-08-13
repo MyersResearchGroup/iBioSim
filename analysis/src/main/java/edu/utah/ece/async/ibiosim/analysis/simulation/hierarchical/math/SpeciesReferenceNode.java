@@ -13,6 +13,10 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * A node that represents SBML Species References.
  *
@@ -51,6 +55,23 @@ public class SpeciesReferenceNode extends VariableNode {
   @Override
   public boolean isLocalVariable() {
     return true;
+  }
+
+  public void updateSpecies(int index, int multiplier) {
+    double stoichiometry = getValue(index);
+    HierarchicalState speciesState = species.getState().getChild(index);
+
+    if (indexMap != null && indexMap.containsKey(IndexType.SPECIESREFERENCE)) {
+      List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
+
+      for (int i = indexMath.size() - 1; i >= 0; i--) {
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(index), index);
+        speciesState = speciesState.getChild(speciesIndex);
+      }
+    }
+    if (!speciesState.isBoundaryCondition()) {
+      speciesState.setStateValue(speciesState.getValue() + multiplier * stoichiometry);
+    }
   }
 
 }

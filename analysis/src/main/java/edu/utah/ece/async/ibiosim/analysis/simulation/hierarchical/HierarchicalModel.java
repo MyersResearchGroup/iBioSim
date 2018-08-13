@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ConstraintNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
@@ -28,7 +27,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Reaction
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.DeletionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.ReplacementNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.SpeciesConcentration;
@@ -49,7 +47,7 @@ public final class HierarchicalModel {
 
   private final String ID;
   protected int index;
-  private FunctionNode propensity;
+  private double propensity;
   private ModelType type;
 
   private List<HierarchicalNode> arrays;
@@ -84,8 +82,6 @@ public final class HierarchicalModel {
     this.reactions = new ArrayList<>();
     this.replacements = new ArrayList<>();
     this.deletions = new ArrayList<>();
-
-    this.propensity = new FunctionNode(new VariableNode("_propensity", StateType.SCALAR), new HierarchicalNode(Type.PLUS));
   }
 
   /**
@@ -199,7 +195,6 @@ public final class HierarchicalModel {
    */
   public void addReaction(ReactionNode node) {
     reactions.add(node);
-    propensity.getMath().addChild(node);
     idToNode.put(node.getName(), node);
   }
 
@@ -258,8 +253,13 @@ public final class HierarchicalModel {
    */
   public boolean computePropensities() {
     boolean hasChanged = false;
+    propensity = 0;
     for (ReactionNode node : reactions) {
-      hasChanged = hasChanged | node.computePropensity(index);
+      for (HierarchicalNode subNode : node) {
+        hasChanged = hasChanged | node.computePropensity(index);
+        propensity += node.getValue(index);
+      }
+
     }
 
     return hasChanged;
@@ -347,8 +347,8 @@ public final class HierarchicalModel {
    *          - the trigger node.
    * @return the created event.
    */
-  public EventNode createEvent(HierarchicalNode triggerNode) {
-    EventNode node = new EventNode(triggerNode);
+  public EventNode createEvent() {
+    EventNode node = new EventNode();
     addEvent(node);
     return node;
   }
@@ -526,7 +526,7 @@ public final class HierarchicalModel {
    *
    * @return the total model propensity.
    */
-  public FunctionNode getPropensity() {
+  public double getPropensity() {
     return propensity;
   }
 

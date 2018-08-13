@@ -48,14 +48,14 @@ public abstract class AbstractHierarchicalNode {
    * Node types
    */
   public static enum IndexType {
-    COMPARTMENT, VARIABLE
+    COMPARTMENT, VARIABLE, SPECIESREFERENCE
   };
 
   private final Type type;
   private HashSet<Integer> deletedElements;
   private String metaId;
 
-  protected Map<String, ArrayDimensionNode> mapOfDimensions;
+  protected Map<String, HierarchicalNode> mapOfDimensions;
   protected List<ArrayDimensionNode> listOfDimensions;
   protected String name;
   protected VariableType varType;
@@ -106,12 +106,70 @@ public abstract class AbstractHierarchicalNode {
   }
 
   /**
+   *
+   * @param referencedAttribute
+   * @param arrayDimension
+   * @param math
+   */
+  public void addVariableIndex(String referencedAttribute, int arrayDimension, HierarchicalNode math) {
+    if (indexMap == null) {
+      indexMap = new HashMap<>();
+    }
+
+    IndexType type;
+    switch (referencedAttribute) {
+    case "variable":
+    case "symbol":
+      type = IndexType.VARIABLE;
+      break;
+    case "compartment":
+      type = IndexType.COMPARTMENT;
+      break;
+    case "species":
+      type = IndexType.SPECIESREFERENCE;
+      break;
+    default:
+      return;
+
+    }
+    List<HierarchicalNode> indexNodes;
+
+    if (!indexMap.containsKey(type)) {
+      indexNodes = new ArrayList<>();
+      indexMap.put(type, indexNodes);
+    } else {
+      indexNodes = indexMap.get(type);
+    }
+
+    for (int i = indexNodes.size(); i <= arrayDimension; i++) {
+      indexNodes.add(null);
+    }
+
+    indexNodes.set(arrayDimension, math);
+
+  }
+
+  /**
    * Gets the type of the node.
    *
    * @return the node type.
    */
   public Type getType() {
     return type;
+  }
+
+  /**
+   *
+   * @param child
+   * @param parent
+   */
+  public void inheritDimensionsFromParent(AbstractHierarchicalNode parent) {
+    if (parent.getListOfDimensions() != null) {
+      if (mapOfDimensions == null) {
+        mapOfDimensions = new HashMap<>();
+      }
+      mapOfDimensions.putAll(parent.getDimensionMapping());
+    }
   }
 
   /**
@@ -295,7 +353,20 @@ public abstract class AbstractHierarchicalNode {
     return deletedElements != null ? deletedElements.contains(index) : false;
   }
 
+  /**
+   *
+   * @return
+   */
   public List<ArrayDimensionNode> getListOfDimensions() {
     return listOfDimensions;
   }
+
+  /**
+   *
+   * @return
+   */
+  public Map<String, HierarchicalNode> getDimensionMapping() {
+    return mapOfDimensions;
+  }
+
 }

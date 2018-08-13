@@ -16,6 +16,7 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.arrays.ArraysConstants;
 import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
@@ -30,6 +31,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.ValueState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 
 /**
  * Setups up arrays in the hierarchical simulator.
@@ -55,18 +57,16 @@ class ArraysSetup {
       }
     }
 
-  }
-
-  static void setupIndices(HierarchicalModel modelstate, ModelContainer container, SBase sbase) {
-    ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
-
-    if (plugin == null) { return; }
-
     if (plugin.getNumIndices() > 0) {
       for (Index index : plugin.getListOfIndices()) {
-
+        String referencedAttribute = index.getReferencedAttribute();
+        int arrayDimension = index.getArrayDimension();
+        ASTNode math = index.getMath();
+        HierarchicalNode indexNode = MathInterpreter.parseASTNode(math, null, modelstate.getVariableToNodeMap(), node.getDimensionMapping(), modelstate.getIndex());
+        node.addVariableIndex(referencedAttribute, arrayDimension, indexNode);
       }
     }
+
   }
 
   static void initializeArrays(List<ModelContainer> listOfContainers, StateType type, VectorWrapper wrapper) {
@@ -109,7 +109,7 @@ class ArraysSetup {
           HierarchicalState currentState = listOfStates.pop();
           for (int j = 0; j < dimension.getSize(); j++) {
             if (dimensionIndex == 0) {
-              if (type == StateType.SCALAR) {
+              if (type == StateType.SCALAR || node.isReaction()) {
                 HierarchicalState state = new ValueState(templateState);
                 currentState.addState(j, state);
               } else if (type == StateType.VECTOR) {

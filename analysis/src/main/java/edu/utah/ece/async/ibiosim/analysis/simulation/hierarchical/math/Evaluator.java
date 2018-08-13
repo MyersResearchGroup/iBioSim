@@ -507,16 +507,26 @@ public final class Evaluator {
       return max;
     }
     case FUNCTION_SELECTOR: {
-      // HierarchicalNode array = node.getChild(0);
-      //
-      // for (int i = 1; i < node.getNumOfChild(); i++)
-      // {
-      // int index = (int) evaluateExpressionRecursive(node.getChild(i),
-      // checkSubstance, index);
-      // array = array.getChild(index);
-      // }
-      //
-      // return ((VariableNode) array).getValue(index);
+      switch (node.getChild(0).getType()) {
+      case VECTOR:
+        HierarchicalNode vectorNode = node.getChild(0);
+        for (int i = 1; i < node.getNumOfChild(); i++) {
+          int selectorIndex = (int) evaluateExpressionRecursive(node.getChild(i), index);
+          vectorNode = vectorNode.getChild(selectorIndex);
+        }
+        return evaluateExpressionRecursive(vectorNode, index);
+      case NAME:
+        HierarchicalNode selectorVariable = node.getChild(0);
+        HierarchicalState selectorState = selectorVariable.getState().getChild(index);
+        for (int i = 1; i < node.getNumOfChild(); i++) {
+          int selectorIndex = (int) evaluateExpressionRecursive(node.getChild(i), index);
+          selectorState = selectorState.getChild(selectorIndex);
+        }
+        return selectorState.getValue();
+      default:
+        break;
+      }
+      return 0;
     }
 
     default:

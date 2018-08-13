@@ -29,7 +29,7 @@ public class ArrayDimensionNode extends HierarchicalNode {
   private int size;
 
   public ArrayDimensionNode(String sizeRef) {
-    super(0);
+    super(Type.NAME);
     this.sizeRef = sizeRef;
     this.state = new ValueState();
   }

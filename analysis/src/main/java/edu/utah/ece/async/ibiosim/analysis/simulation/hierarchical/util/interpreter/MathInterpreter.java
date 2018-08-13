@@ -287,7 +287,9 @@ public final class MathInterpreter {
       break;
     case FUNCTION_SELECTOR:
       node = new HierarchicalNode(Type.FUNCTION_SELECTOR);
-      node.addChild(parseASTNode(math.getChild(0), args, variableToNodes, dimensionNodes, index));
+      for (ASTNode child : math.getChildren()) {
+        node.addChild(parseASTNode(child, args, variableToNodes, dimensionNodes, index));
+      }
       break;
     case FUNCTION_SIN:
       node = new HierarchicalNode(Type.FUNCTION_SIN);

@@ -23,6 +23,7 @@ import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -215,13 +216,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   private void computePropensities() {
     totalPropensity = 0;
     for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
-      int index = modelstate.getIndex();
-      for (ReactionNode node : modelstate.getListOfReactions()) {
-        node.computePropensity(index);
-      }
-      modelstate.getPropensity().updateVariable(index);
-
-      totalPropensity += modelstate.getPropensity().getVariable().getValue(index);
+      modelstate.computePropensities();
+      totalPropensity += modelstate.getPropensity();
     }
   }
 
@@ -232,12 +228,14 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
     double threshold = totalPropensity * r2;
     for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
       for (ReactionNode node : model.getListOfReactions()) {
-        sum += node.getValue(model.getIndex());
-
-        if (sum >= threshold) {
-          node.fireReaction(model.getIndex(), sum - threshold);
-          return;
+        for (HierarchicalNode subNode : node) {
+          sum += node.getValue(model.getIndex());
+          if (sum >= threshold) {
+            node.fireReaction(model.getIndex(), sum - threshold);
+            return;
+          }
         }
+
       }
     }
   }

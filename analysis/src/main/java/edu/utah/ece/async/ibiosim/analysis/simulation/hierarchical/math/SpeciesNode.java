@@ -58,6 +58,23 @@ public class SpeciesNode extends VariableNode {
   }
 
   @Override
+  public double getValue(int modelIndex) {
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfDimensions != null) {
+      for (int i = listOfDimensions.size() - 1; i >= 0; i--) {
+        variableState = variableState.getChild((int) listOfDimensions.get(i).state.getValue());
+      }
+    }
+
+    double speciesValue = variableState.getValue();
+    if (!variableState.hasOnlySubstance()) {
+      double compartmentValue = compartment.getValue(modelIndex);
+      speciesValue = speciesValue / compartmentValue;
+    }
+    return speciesValue;
+  }
+
+  @Override
   public double getValue(int modelIndex, int[] indices) {
     HierarchicalState variableState = state.getChild(modelIndex);
     if (indices != null) {
@@ -72,6 +89,26 @@ public class SpeciesNode extends VariableNode {
       speciesValue = speciesValue / compartmentValue;
     }
     return speciesValue;
+  }
+
+  @Override
+  public boolean setValue(int modelIndex, double value) {
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfDimensions != null) {
+      for (int i = listOfDimensions.size() - 1; i >= 0; i--) {
+        variableState = variableState.getChild((int) listOfDimensions.get(i).state.getValue());
+      }
+    }
+
+    if (!variableState.hasOnlySubstance()) {
+      double compartmentValue = compartment.getValue(modelIndex);
+      value = value * compartmentValue;
+    }
+
+    double oldValue = variableState.getValue();
+    variableState.setStateValue(value);
+
+    return oldValue != value;
   }
 
   @Override

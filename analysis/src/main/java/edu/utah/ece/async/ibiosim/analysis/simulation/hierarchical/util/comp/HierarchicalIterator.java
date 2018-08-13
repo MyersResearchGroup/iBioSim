@@ -78,7 +78,7 @@ public class HierarchicalIterator implements Iterator<HierarchicalNode> {
 
   private boolean incrementValue(ArrayDimensionNode dimension) {
     double value = dimension.getState().getValue() + 1;
-    if (value > dimension.getSize()) {
+    if (value >= dimension.getSize()) {
       dimension.getState().setStateValue(0);
       return true;
     }

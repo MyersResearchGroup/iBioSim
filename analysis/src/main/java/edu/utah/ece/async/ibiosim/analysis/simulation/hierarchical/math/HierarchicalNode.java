@@ -196,7 +196,15 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
    * @return the value of selected variable.
    */
   public double getValue(int modelIndex) {
-    return getValue(modelIndex, null);
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfDimensions != null) {
+      for (int i = listOfDimensions.size() - 1; i >= 0; i--) {
+        int arrayIndex = (int) listOfDimensions.get(i).state.getValue();
+        variableState = variableState.getChild(arrayIndex);
+      }
+    }
+
+    return variableState.getValue();
   }
 
   /**
@@ -229,7 +237,17 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
    * @return if the value has changed.
    */
   public boolean setValue(int modelIndex, double value) {
-    return setValue(modelIndex, null, value);
+    HierarchicalState variableState = state.getChild(modelIndex);
+    if (listOfDimensions != null) {
+      for (int i = listOfDimensions.size() - 1; i >= 0; i--) {
+        int arrayIndex = (int) listOfDimensions.get(i).state.getValue();
+        variableState = variableState.getChild(arrayIndex);
+      }
+    }
+    double oldValue = variableState.getValue();
+    variableState.setStateValue(value);
+
+    return oldValue != value && !Double.isNaN(oldValue) && !Double.isNaN(value);
   }
 
   /**

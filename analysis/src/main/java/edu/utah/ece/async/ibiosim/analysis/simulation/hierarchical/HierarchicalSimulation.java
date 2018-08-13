@@ -32,7 +32,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Constrai
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
@@ -127,7 +126,6 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.hasEvents = copy.hasEvents;
     this.atomicType = copy.atomicType;
     this.parentType = copy.parentType;
-    // this.totalPropensity = copy.totalPropensity;
   }
 
   /**
@@ -377,7 +375,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       for (HierarchicalModel modelstate : this.modules) {
         if (modelstate.getListOfAssignmentRules() != null) {
           for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(modelstate.getIndex());
+            for (HierarchicalNode subnode : node) {
+              changed = changed | node.updateVariable(modelstate.getIndex());
+            }
           }
         }
       }
@@ -440,22 +440,22 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
         }
 
         if (modelstate.getListOfReactions() != null) {
-          for (ReactionNode node : modelstate.getListOfReactions()) {
-            changed = changed | node.computePropensity(index);
-          }
-
-          modelstate.getPropensity().updateVariable(index);
+          changed |= modelstate.computePropensities();
         }
 
         if (modelstate.getListOfAssignmentRules() != null) {
           for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(index);
+            for (HierarchicalNode dummy : node) {
+              changed = changed | node.updateVariable(index);
+            }
           }
         }
 
         if (modelstate.getListOfInitialAssignments() != null) {
           for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
-            changed = changed | node.updateVariable(index);
+            for (HierarchicalNode dummy : node) {
+              changed = changed | node.updateVariable(index);
+            }
           }
         }
       }

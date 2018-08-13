@@ -36,9 +36,8 @@ public class EventNode extends HierarchicalNode {
   private List<FunctionNode> eventAssignments;
   private final Map<Integer, EventState> eventState;
 
-  public EventNode(HierarchicalNode trigger) {
+  public EventNode() {
     super(Type.PLUS);
-    this.addChild(trigger);
 
     eventState = new HashMap<>();
   }
@@ -83,6 +82,10 @@ public class EventNode extends HierarchicalNode {
    */
   public void setDelay(FunctionNode delay) {
     this.delay = delay;
+  }
+
+  public void setTrigger(HierarchicalNode node) {
+    this.addChild(node);
   }
 
   /**

@@ -221,20 +221,20 @@ public class ModelSetup {
   }
 
   private static void addPrintableVariable(HierarchicalSimulation sim, HierarchicalNode constant, String prefix, int index, boolean isConcentration, List<String> interestingSpecies) {
-    if (!constant.isLocalVariable()) {
-      String printVariable;
 
-      if (constant.isArray()) {
-        printVariable = String.join("", prefix, constant.getName(), "__", constant.getDimensionedName(index));
-      } else {
-        printVariable = String.join("", prefix, constant.getName());
-      }
-      if (interestingSpecies.contains(printVariable)) {
-        sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
-      } else if (!constant.isLocalVariable() && interestingSpecies.size() == 0) {
-        sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
-      }
+    String printVariable;
+
+    if (constant.isArray()) {
+      printVariable = String.join("", prefix, constant.getName(), "__", constant.getDimensionedName(index));
+    } else {
+      printVariable = String.join("", prefix, constant.getName());
     }
+    if (interestingSpecies.contains(printVariable)) {
+      sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
+    } else if (!constant.isLocalVariable() && interestingSpecies.size() == 0) {
+      sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
+    }
+
   }
 
 }
