@@ -125,11 +125,8 @@ public class SBOL2SBML {
 	 * @param MD the ModuleDefinition to be flattened
 	 * @return the flattened module definition to be used for creating the models
 	 * @throws SBOLValidationException the SBOL validation exception
-	 * @throws SBOLConversionException the SBOL conversion exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws SynBioHubException the syn bio hub exception
 	 */
-	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException, SBOLConversionException, IOException, SynBioHubException
+	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
         
     	SBOLDocument doc = new SBOLDocument();
@@ -237,7 +234,7 @@ public class SBOL2SBML {
 	 * @throws SBOLConversionException 
 	 */
     
-	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException, SBOLConversionException, SynBioHubException {
+	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
@@ -476,7 +473,7 @@ public class SBOL2SBML {
 	 * @throws SBOLConversionException 
 	 */
 	private static HashMap<String,BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException, SBOLConversionException, SynBioHubException {
+			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
 		HashMap<String,BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
@@ -1636,10 +1633,7 @@ public class SBOL2SBML {
 			catch(BioSimException e)
 			{
 			  e.printStackTrace();
-			} catch (SynBioHubException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
 
 		}
 	}
