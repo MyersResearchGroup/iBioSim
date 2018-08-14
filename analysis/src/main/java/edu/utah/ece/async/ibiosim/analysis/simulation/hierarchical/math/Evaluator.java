@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.CauchyDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
@@ -517,12 +519,12 @@ public final class Evaluator {
         return evaluateExpressionRecursive(vectorNode, index);
       case NAME:
         HierarchicalNode selectorVariable = node.getChild(0);
-        HierarchicalState selectorState = selectorVariable.getState().getChild(index);
+        List<ArrayDimensionNode> dimensions = selectorVariable.getListOfDimensions();
+
         for (int i = 1; i < node.getNumOfChild(); i++) {
-          int selectorIndex = (int) evaluateExpressionRecursive(node.getChild(i), index);
-          selectorState = selectorState.getChild(selectorIndex);
+          dimensions.get(i - 1).setValue(index, evaluateExpressionRecursive(node.getChild(i), index));
         }
-        return selectorState.getValue();
+        return selectorVariable.getValue(index);
       default:
         break;
       }

@@ -14,11 +14,10 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp.TriggeredEvent;
 
 /**
@@ -34,12 +33,9 @@ public class EventNode extends HierarchicalNode {
   private FunctionNode priority;
 
   private List<FunctionNode> eventAssignments;
-  private final Map<Integer, EventState> eventState;
 
   public EventNode() {
     super(Type.PLUS);
-
-    eventState = new HashMap<>();
   }
 
   /**
@@ -48,21 +44,10 @@ public class EventNode extends HierarchicalNode {
    * @param index
    *          - the model index.
    */
-  public void addEventState(int index) {
-    EventState state = new EventState();
-    eventState.put(index, state);
-  }
-
-  /**
-   * Gets the event state for a given model.
-   *
-   * @param index
-   *          - the model index.
-   *
-   * @return the event state for a given model.
-   */
-  public EventState getEventState(int index) {
-    return eventState.get(index);
+  public EventState addEventState(int index) {
+    EventState eventState = new EventState();
+    state.getChild(index).setEventState(eventState);
+    return eventState;
   }
 
   /**
@@ -97,7 +82,7 @@ public class EventNode extends HierarchicalNode {
    * @return the max disabled time.
    */
   public double getMaxDisabledTime(int index) {
-    return eventState.get(index).maxDisabledTime;
+    return getRootState(index).getEventState().getMaxDisabledTime();
   }
 
   /**
@@ -109,14 +94,7 @@ public class EventNode extends HierarchicalNode {
    *          - the time that was last seen disabled.
    */
   public void setMaxDisabledTime(int index, double maxDisabledTime) {
-    eventState.get(index).maxDisabledTime = maxDisabledTime;
-  }
-
-  public void setInitialTrue(int index, boolean isInitialTrue) {
-    eventState.get(index).isInitialTrue = isInitialTrue;
-    if (!isInitialTrue) {
-      eventState.get(index).maxDisabledTime = 0;
-    }
+    getRootState(index).getEventState().setMaxDisabledTime(maxDisabledTime);
   }
 
   /**
@@ -128,7 +106,7 @@ public class EventNode extends HierarchicalNode {
    * @return the min disabled time.
    */
   public double getMinEnabledTime(int index) {
-    return eventState.get(index).minEnabledTime;
+    return getRootState(index).getEventState().getMinEnabledTime();
   }
 
   /**
@@ -140,15 +118,20 @@ public class EventNode extends HierarchicalNode {
    *          - the time that was first seen enabled.
    */
   public void setMinEnabledTime(int index, double minEnabledTime) {
-    eventState.get(index).minEnabledTime = minEnabledTime;
+    getRootState(index).getEventState().setMinEnabledTime(minEnabledTime);
   }
 
+  /**
+   *
+   * @param index
+   * @param event
+   */
   public void addTriggeredEvent(int index, TriggeredEvent event) {
-    eventState.get(index).nonPersistentEvents.add(event);
+    getRootState(index).getEventState().addNonPersistentEvent(event);
   }
 
   private void untriggerNonPersistent(int index) {
-    LinkedList<TriggeredEvent> nonPersistent = eventState.get(index).nonPersistentEvents;
+    LinkedList<TriggeredEvent> nonPersistent = getRootState(index).getEventState().getNonPersistentEvents();
 
     while (!nonPersistent.isEmpty()) {
       TriggeredEvent node = nonPersistent.removeFirst();
@@ -211,15 +194,20 @@ public class EventNode extends HierarchicalNode {
    *          - the current simulation time.
    * @return an array with the evaluated event assignments.
    */
-  public double[] computeEventAssignmentValues(int index, double time) {
+  public double[] computeEventAssignmentValues(int index) {
 
     double[] assignmentValues = null;
     if (eventAssignments != null) {
-      assignmentValues = new double[eventAssignments.size()];
-      for (int i = 0; i < eventAssignments.size(); i++) {
-        FunctionNode eventAssignmentNode = eventAssignments.get(i);
-        double value = Evaluator.evaluateExpressionRecursive(eventAssignmentNode.getMath(), index);
-        assignmentValues[i] = value;
+      int size = 0, assignmentIndex = 0;
+      for (FunctionNode eventAssignment : eventAssignments) {
+        size += eventAssignment.getSize();
+      }
+      assignmentValues = new double[size];
+      for (FunctionNode eventAssignment : eventAssignments) {
+        for (HierarchicalNode subNode : eventAssignment) {
+          double value = Evaluator.evaluateExpressionRecursive(eventAssignment.getMath(), index);
+          assignmentValues[assignmentIndex++] = value;
+        }
       }
     }
     return assignmentValues;
@@ -248,18 +236,18 @@ public class EventNode extends HierarchicalNode {
    */
   public boolean isTriggeredAtTime(double time, int index) {
     boolean trigger = computeTrigger(index);
-    EventState state = eventState.get(index);
+    EventState state = getRootState(index).getEventState();
 
     if (trigger) {
-      if (state.maxDisabledTime >= 0 && time >= state.maxDisabledTime && time <= state.minEnabledTime) {
-        state.minEnabledTime = time;
+      if (state.getMaxDisabledTime() >= 0 && time >= state.getMaxDisabledTime() && time <= state.getMinEnabledTime()) {
+        state.setMinEnabledTime(time);
       }
-      return state.maxDisabledTime >= 0 && state.minEnabledTime <= time;
+      return state.getMaxDisabledTime() >= 0 && state.getMinEnabledTime() <= time;
     } else {
       untriggerNonPersistent(index);
 
-      if (time > state.maxDisabledTime) {
-        state.maxDisabledTime = time;
+      if (time > state.getMaxDisabledTime()) {
+        state.setMaxDisabledTime(time);
       }
 
       return false;
@@ -292,30 +280,6 @@ public class EventNode extends HierarchicalNode {
    *          - the model index.
    */
   public void resetEvents(int index) {
-    eventState.get(index).reset();
-  }
-
-  private class EventState {
-    private double maxDisabledTime;
-    private double minEnabledTime;
-    private boolean isInitialTrue;
-    private final LinkedList<TriggeredEvent> nonPersistentEvents;
-
-    EventState() {
-      this.maxDisabledTime = Double.NEGATIVE_INFINITY;
-      this.minEnabledTime = Double.POSITIVE_INFINITY;
-      this.nonPersistentEvents = new LinkedList<>();
-    }
-
-    void reset() {
-      if (isInitialTrue) {
-        this.maxDisabledTime = Double.NEGATIVE_INFINITY;
-      } else {
-        this.maxDisabledTime = 0;
-      }
-      this.minEnabledTime = Double.POSITIVE_INFINITY;
-      this.nonPersistentEvents.clear();
-    }
-
+    getRootState(index).getEventState().reset();
   }
 }

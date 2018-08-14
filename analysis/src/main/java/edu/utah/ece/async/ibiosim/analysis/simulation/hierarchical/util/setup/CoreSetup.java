@@ -50,6 +50,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesN
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.SpeciesReferenceNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.DenseState;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.EventState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.SparseState;
@@ -123,16 +124,18 @@ class CoreSetup {
       ReplacementSetup.setupVariableReplacement(sim, compartment, wrapper, container);
       ArraysSetup.setupArrays(hierarchicalModel, container, compartment, node);
 
+      if (node.isArray()) {
+        node.getState().addState(index, createState(StateType.DENSE, wrapper));
+      } else if (!compartment.isConstant()) {
+        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+      } else {
+        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
+      }
+
       if (!compartment.isConstant()) {
         hierarchicalModel.addVariable(node);
-        if (node.isArray()) {
-          node.getState().addState(index, createState(StateType.DENSE, wrapper));
-        } else {
-          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-        }
       } else {
         hierarchicalModel.addConstant(node);
-        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
 
       if (Double.isNaN(compartment.getSize())) {
@@ -161,16 +164,18 @@ class CoreSetup {
       ReplacementSetup.setupVariableReplacement(sim, parameter, wrapper, container);
       ArraysSetup.setupArrays(hierarchicalModel, container, parameter, node);
 
+      if (node.isArray()) {
+        node.getState().addState(index, createState(StateType.DENSE, wrapper));
+      } else if (!parameter.isConstant()) {
+        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+      } else {
+        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
+      }
+
       if (!parameter.isConstant()) {
         hierarchicalModel.addVariable(node);
-        if (node.isArray()) {
-          node.getState().addState(index, createState(StateType.DENSE, wrapper));
-        } else {
-          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-        }
       } else {
         hierarchicalModel.addConstant(node);
-        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
 
       if (parameter.isSetValue()) {
@@ -200,16 +205,18 @@ class CoreSetup {
       boolean isOnlySubstance = species.getHasOnlySubstanceUnits();
       node.setState(createState(sim.getCollectionType(), wrapper));
 
+      if (node.isArray()) {
+        node.getState().addState(index, createState(StateType.DENSE, wrapper));
+      } else if (!species.isConstant()) {
+        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
+      } else {
+        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
+      }
+
       if (!species.isConstant()) {
         hierarchicalModel.addVariable(node);
-        if (node.isArray()) {
-          node.getState().addState(index, createState(StateType.DENSE, wrapper));
-        } else {
-          node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-        }
       } else {
         hierarchicalModel.addConstant(node);
-        node.getState().addState(index, createState(StateType.SCALAR, wrapper));
       }
 
       node.getState().getChild(index).setBoundaryCondition(isBoundary);
@@ -243,16 +250,20 @@ class CoreSetup {
 
     node.setState(createState(sim.getCollectionType(), wrapper));
 
-    if (!product.isConstant()) {
-      if (node.isArray()) {
-        node.getState().addState(index, createState(StateType.DENSE, wrapper));
-      } else {
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-      }
+    if (node.isArray()) {
+      node.getState().addState(index, createState(StateType.DENSE, wrapper));
+    } else if (!product.isConstant()) {
+      node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
     } else {
-      hierarchicalModel.addConstant(node);
       node.getState().addState(index, createState(StateType.SCALAR, wrapper));
     }
+
+    if (!product.isConstant()) {
+      hierarchicalModel.addVariable(node);
+    } else {
+      hierarchicalModel.addConstant(node);
+    }
+
     node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(stoichiometryValue);
 
     reaction.addProduct(node);
@@ -282,16 +293,20 @@ class CoreSetup {
 
     node.setState(createState(sim.getCollectionType(), wrapper));
 
-    if (!reactant.isConstant()) {
-      if (node.isArray()) {
-        node.getState().addState(index, createState(StateType.DENSE, wrapper));
-      } else {
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
-      }
+    if (node.isArray()) {
+      node.getState().addState(index, createState(StateType.DENSE, wrapper));
+    } else if (!reactant.isConstant()) {
+      node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
     } else {
-      hierarchicalModel.addConstant(node);
       node.getState().addState(index, createState(StateType.SCALAR, wrapper));
     }
+
+    if (!reactant.isConstant()) {
+      hierarchicalModel.addVariable(node);
+    } else {
+      hierarchicalModel.addConstant(node);
+    }
+
     node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(stoichiometryValue);
     reaction.addReactant(node);
 
@@ -331,13 +346,16 @@ class CoreSetup {
     for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
       String id = eventAssignment.getId();
       String metaid = eventAssignment.getMetaId();
-      ReplacementSetup.setupObjectReplacement(sim, eventAssignment, id, metaid, container);
       if (eventAssignment.isSetMath()) {
+
+        FunctionNode eventAssignmentNode = new FunctionNode();
+        eventAssignmentNode.inheritDimensionsFromParent(eventNode);
+        ReplacementSetup.setupObjectReplacement(sim, eventAssignment, id, metaid, container);
+        ArraysSetup.setupArrays(hierarchicalModel, container, eventAssignment, eventAssignmentNode);
+
         ASTNode math = eventAssignment.getMath();
         HierarchicalNode variableNode = hierarchicalModel.getNode(eventAssignment.getVariable());
-
-        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, hierarchicalModel.getVariableToNodeMap(), index);
-        FunctionNode eventAssignmentNode = new FunctionNode();
+        HierarchicalNode assignmentNode = MathInterpreter.parseASTNode(math, null, hierarchicalModel.getVariableToNodeMap(), eventAssignmentNode.getDimensionMapping(), index);
         eventNode.addEventAssignment(eventAssignmentNode);
         eventAssignmentNode.setVariable(variableNode);
         eventAssignmentNode.setMath(assignmentNode);
@@ -359,7 +377,7 @@ class CoreSetup {
   private static void setupEvents(HierarchicalSimulation sim, ModelContainer container, VectorWrapper wrapper) {
     Model model = container.getModel();
     HierarchicalModel hierarchicalModel = container.getHierarchicalModel();
-    Map<String, HierarchicalNode> variableToNodeMap = hierarchicalModel.getVariableToNodeMap();
+    hierarchicalModel.getVariableToNodeMap();
     int index = hierarchicalModel.getIndex();
     for (Event event : model.getListOfEvents()) {
 
@@ -371,17 +389,26 @@ class CoreSetup {
 
         Trigger trigger = event.getTrigger();
         ASTNode triggerMath = trigger.getMath();
-        MathInterpreter.parseASTNode(triggerMath, variableToNodeMap, index);
 
         EventNode node = hierarchicalModel.createEvent();
         ArraysSetup.setupArrays(hierarchicalModel, container, event, node);
-        node.setTrigger(node);
-        node.addEventState(index);
+
+        HierarchicalNode triggerNode = MathInterpreter.parseASTNode(triggerMath, null, hierarchicalModel.getVariableToNodeMap(), node.getDimensionMapping(), index);
+        node.setTrigger(triggerNode);
         sim.setHasEvents(true);
 
         node.setState(createState(sim.getCollectionType(), wrapper));
-        node.getState().addState(index, createState(sim.getAtomicType(), wrapper));
 
+        if (node.isArray()) {
+          node.getState().addState(index, createState(StateType.DENSE, wrapper));
+        } else {
+          node.getState().addState(index, createState(StateType.SCALAR, wrapper));
+        }
+
+        EventState eventState = node.addEventState(index);
+        if (!trigger.getInitialValue()) {
+          eventState.setMaxDisabledTime(0);
+        }
         node.getState().getChild(hierarchicalModel.getIndex()).setInitialValue(0);
 
         boolean useValuesFromTrigger = event.getUseValuesFromTriggerTime();
@@ -389,7 +416,7 @@ class CoreSetup {
         boolean initValue = trigger.isSetInitialValue() ? trigger.getInitialValue() : false;
         node.getState().getChild(index).setUseTriggerValue(useValuesFromTrigger);
         node.getState().getChild(index).setPersistent(isPersistent);
-        node.setInitialTrue(index, initValue);
+        eventState.setInitialTrue(initValue);
 
         if (id != null) {
           hierarchicalModel.addMappingNode(id, node);
@@ -398,7 +425,7 @@ class CoreSetup {
           Priority priority = event.getPriority();
           ASTNode math = priority.getMath();
           if (math != null) {
-            HierarchicalNode priorityMath = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
+            HierarchicalNode priorityMath = MathInterpreter.parseASTNode(math, null, hierarchicalModel.getVariableToNodeMap(), node.getDimensionMapping(), index);
             FunctionNode priorityNode = new FunctionNode();
             node.setPriority(priorityNode);
             priorityNode.setMath(priorityMath);
@@ -411,7 +438,7 @@ class CoreSetup {
           Delay delay = event.getDelay();
           ASTNode math = delay.getMath();
           if (math != null) {
-            HierarchicalNode delayMath = MathInterpreter.parseASTNode(math, variableToNodeMap, index);
+            HierarchicalNode delayMath = MathInterpreter.parseASTNode(math, null, hierarchicalModel.getVariableToNodeMap(), node.getDimensionMapping(), index);
             FunctionNode delayNode = new FunctionNode();
             node.setDelay(delayNode);
             delayNode.setMath(delayMath);

@@ -338,26 +338,26 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     for (HierarchicalModel model : modules) {
       int index = model.getIndex();
       for (EventNode event : model.getListOfEvents()) {
-        if (!event.isDeleted(index) && event.isTriggeredAtTime(time, index)) {
-          event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
-          event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
-          double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
-          TriggeredEvent triggered = new TriggeredEvent(index, fireTime, event);
-          triggered.setPriority(event.evaluatePriority(index));
-          if (event.getState().getChild(index).isUseTriggerValue()) {
-            double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getState().getValue());
+        for (HierarchicalNode subEvent : event) {
+          if (!event.isDeleted(index) && event.isTriggeredAtTime(time, index)) {
+            event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
+            event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
+            double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
+            TriggeredEvent triggered = new TriggeredEvent(index, fireTime, event);
+            triggered.setPriority(event.evaluatePriority(index));
+            if (event.getState().getChild(index).isUseTriggerValue()) {
+              double[] eventAssignments = event.computeEventAssignmentValues(index);
+              if (eventAssignments != null) {
+                triggered.setAssignmentValues(eventAssignments);
+              }
 
-            if (eventAssignments != null) {
-              triggered.setAssignmentValues(eventAssignments);
             }
-
-          }
-          triggeredEventList.add(triggered);
-          if (!event.getState().getChild(index).isPersistent()) {
-            event.addTriggeredEvent(index, triggered);
+            triggeredEventList.add(triggered);
+            if (!event.getState().getChild(index).isPersistent()) {
+              event.addTriggeredEvent(index, triggered);
+            }
           }
         }
-
       }
     }
   }

@@ -103,7 +103,8 @@ public class FunctionNode extends HierarchicalNode {
     boolean changed = false;
 
     if (variable != null) {
-      if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !isDeleted(index)) {
+      if (!isDeleted(index)) {
+        if (this.isInitialAssignment && variable.getState().getChild(index).hasRule()) { return changed; }
         if (indexMap != null && indexMap.containsKey(IndexType.VARIABLE)) {
           List<HierarchicalNode> indexVariable = indexMap.get(IndexType.VARIABLE);
           int[] values = new int[indexVariable.size()];
@@ -115,6 +116,36 @@ public class FunctionNode extends HierarchicalNode {
           changed = variable.setValue(index, values, newValue);
         } else {
           double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
+          changed = variable.setValue(index, newValue);
+        }
+
+      }
+    }
+
+    return changed;
+  }
+
+  /**
+   *
+   * @param index
+   * @param value
+   * @return
+   */
+  public boolean updateVariable(int index, double newValue) {
+    boolean changed = false;
+
+    if (variable != null) {
+      if (!isDeleted(index)) {
+        if (this.isInitialAssignment && variable.getState().getChild(index).hasRule()) { return changed; }
+        if (indexMap != null && indexMap.containsKey(IndexType.VARIABLE)) {
+          List<HierarchicalNode> indexVariable = indexMap.get(IndexType.VARIABLE);
+          int[] values = new int[indexVariable.size()];
+
+          for (int i = 0; i < values.length; ++i) {
+            values[i] = (int) Evaluator.evaluateExpressionRecursive(indexVariable.get(i), index);
+          }
+          changed = variable.setValue(index, values, newValue);
+        } else {
           changed = variable.setValue(index, newValue);
         }
 

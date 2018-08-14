@@ -26,7 +26,7 @@ public abstract class HierarchicalState implements Cloneable {
   protected double value, initValue, initConcentration;
   protected boolean isReplaced;
   private boolean hasRule, hasInitRule, hasRate;
-
+  private EventState eventState;
   private final Attribute attributes;
 
   public HierarchicalState() {
@@ -41,6 +41,10 @@ public abstract class HierarchicalState implements Cloneable {
     this.hasInitRule = copy.hasInitRule;
     this.hasRate = copy.hasRate;
     this.initConcentration = copy.initConcentration;
+
+    if (copy.eventState != null) {
+      this.eventState = copy.eventState.clone();
+    }
   }
 
   /**
@@ -306,6 +310,25 @@ public abstract class HierarchicalState implements Cloneable {
    */
   public void setHasRate(boolean hasRate) {
     this.hasRate = hasRate;
+  }
+
+  /**
+   * Adds a new event state for a given model.
+   *
+   * @param evetState
+   *          -
+   *
+   */
+  public void setEventState(EventState eventState) {
+    this.eventState = eventState;
+  }
+
+  /**
+   * Returns the event state for a given model.
+   *
+   */
+  public EventState getEventState() {
+    return eventState;
   }
 
   @Override

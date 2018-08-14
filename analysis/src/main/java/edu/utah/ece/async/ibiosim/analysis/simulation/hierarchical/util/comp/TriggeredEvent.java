@@ -13,6 +13,9 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
+import java.util.List;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ArrayDimensionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
@@ -31,12 +34,22 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
   private final double fireTime;
   private final EventNode parent;
   private boolean hasFlipped;
+  private final double[] eventDimensions;
 
   public TriggeredEvent(int index, double fireTime, EventNode parent) {
     this.parent = parent;
     this.index = index;
     this.hasFlipped = false;
     this.fireTime = fireTime;
+    if (parent.isArray()) {
+      List<ArrayDimensionNode> dimensions = parent.getListOfDimensions();
+      eventDimensions = new double[dimensions.size()];
+      for (int i = 0; i < dimensions.size(); i++) {
+        eventDimensions[i] = dimensions.get(i).getValue(index);
+      }
+    } else {
+      eventDimensions = null;
+    }
   }
 
   /**
@@ -86,15 +99,6 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
   }
 
   /**
-   * Gets the assignment values.
-   *
-   * @return the assignment values.
-   */
-  public double[] getAssignmentValues() {
-    return assignmentValues;
-  }
-
-  /**
    * Checks if the event has its triggering condition changing to false before firing.
    */
   public void setFlipped() {
@@ -124,9 +128,14 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
       if (!parent.getState().getChild(index).isPersistent()) {
         if (hasFlipped) { return; }
       }
-
+      if (eventDimensions != null) {
+        List<ArrayDimensionNode> dimensions = parent.getListOfDimensions();
+        for (int i = eventDimensions.length - 1; i >= 0; i--) {
+          dimensions.get(i).setValue(index, eventDimensions[i]);
+        }
+      }
       if (!parent.getState().getChild(index).isUseTriggerValue()) {
-        double[] eventAssignments = parent.computeEventAssignmentValues(index, time);
+        double[] eventAssignments = parent.computeEventAssignmentValues(index);
 
         if (eventAssignments != null) {
           setAssignmentValues(eventAssignments);
@@ -134,11 +143,11 @@ public class TriggeredEvent implements Comparable<TriggeredEvent> {
       }
 
       if (assignmentValues != null) {
-        for (int i = 0; i < parent.getEventAssignments().size(); i++) {
-          FunctionNode eventAssignmentNode = parent.getEventAssignments().get(i);
-          if (!eventAssignmentNode.isDeleted(index)) {
-            HierarchicalNode variable = eventAssignmentNode.getVariable();
-            variable.setValue(index, assignmentValues[i]);
+        List<FunctionNode> eventAssignments = parent.getEventAssignments();
+        int assignmentIndex = 0;
+        for (FunctionNode eventAssigment : eventAssignments) {
+          for (HierarchicalNode subNode : eventAssigment) {
+            eventAssigment.updateVariable(index, assignmentValues[assignmentIndex++]);
           }
         }
       }

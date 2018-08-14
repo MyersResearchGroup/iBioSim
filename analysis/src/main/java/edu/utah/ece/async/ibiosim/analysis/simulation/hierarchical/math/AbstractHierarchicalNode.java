@@ -369,4 +369,18 @@ public abstract class AbstractHierarchicalNode {
     return mapOfDimensions;
   }
 
+  /**
+   *
+   * @return
+   */
+  public int getSize() {
+    int size = 1;
+    if (listOfDimensions != null) {
+      for (ArrayDimensionNode dim : listOfDimensions) {
+        size = size * dim.getSize();
+      }
+    }
+    return size;
+  }
+
 }

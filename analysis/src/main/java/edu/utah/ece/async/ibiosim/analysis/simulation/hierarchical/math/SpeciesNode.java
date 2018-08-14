@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
@@ -68,7 +70,7 @@ public class SpeciesNode extends VariableNode {
 
     double speciesValue = variableState.getValue();
     if (!variableState.hasOnlySubstance()) {
-      double compartmentValue = compartment.getValue(modelIndex);
+      double compartmentValue = getCompartmentValue(modelIndex);
       speciesValue = speciesValue / compartmentValue;
     }
     return speciesValue;
@@ -85,7 +87,7 @@ public class SpeciesNode extends VariableNode {
 
     double speciesValue = variableState.getValue();
     if (!variableState.hasOnlySubstance()) {
-      double compartmentValue = compartment.getValue(modelIndex);
+      double compartmentValue = getCompartmentValue(modelIndex);
       speciesValue = speciesValue / compartmentValue;
     }
     return speciesValue;
@@ -101,7 +103,7 @@ public class SpeciesNode extends VariableNode {
     }
 
     if (!variableState.hasOnlySubstance()) {
-      double compartmentValue = compartment.getValue(modelIndex);
+      double compartmentValue = getCompartmentValue(modelIndex);
       value = value * compartmentValue;
     }
 
@@ -121,7 +123,7 @@ public class SpeciesNode extends VariableNode {
     }
 
     if (!variableState.hasOnlySubstance()) {
-      double compartmentValue = compartment.getValue(modelIndex);
+      double compartmentValue = getCompartmentValue(modelIndex);
       value = value * compartmentValue;
     }
 
@@ -129,6 +131,25 @@ public class SpeciesNode extends VariableNode {
     variableState.setStateValue(value);
 
     return oldValue != value;
+  }
+
+  private int[] getCompartmentIndices(int index) {
+    if (indexMap != null && indexMap.containsKey(IndexType.COMPARTMENT)) {
+      List<HierarchicalNode> indexMaths = indexMap.get(IndexType.COMPARTMENT);
+      int[] compartmentIndices = new int[indexMaths.size()];
+      for (int i = 0; i < compartmentIndices.length; i++) {
+        compartmentIndices[i] = (int) Evaluator.evaluateExpressionRecursive(indexMaths.get(i), index);
+      }
+      return compartmentIndices;
+    }
+    return null;
+  }
+
+  private double getCompartmentValue(int index) {
+    int[] compartmentIndices = getCompartmentIndices(index);
+
+    if (compartmentIndices != null) { return compartment.getValue(index, compartmentIndices); }
+    return compartment.getValue(index);
   }
 
 }
