@@ -28,6 +28,7 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -489,7 +490,10 @@ public class Converter {
 					catch (BioSimException e) 
           {
             System.err.println(e.getMessage());
-          }
+          } catch (SynBioHubException e) {
+        	  			System.err.println(e.getMessage());
+						e.printStackTrace();
+					}
 				}
 			} //end of isSBOL input
 		}//end of is not a directory check

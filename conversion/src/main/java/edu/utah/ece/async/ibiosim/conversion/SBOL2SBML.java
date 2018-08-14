@@ -57,6 +57,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Identified;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -114,8 +115,21 @@ public class SBOL2SBML {
 
 	private static final Pattern genericURIpattern1bPat = Pattern.compile(genericURIpattern1b);
 	
-	// TODO: add information and description of this method
-    public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException, SBOLConversionException, IOException, SynBioHubException
+	
+    /**
+	 * MD flattener. This method was developed to flatten ModuleDefinitions. This is necessary since the model generation
+	 * uses Transcriptional Units (and not parts of a TU) as the center of reactions to which to model, and this method
+	 * flattens any parts of a TU to a single TU for any ModuleDefinition given. 
+	 *
+	 * @param sbolDoc the SBOL document containing the ModuleDefinition to be flattened
+	 * @param MD the ModuleDefinition to be flattened
+	 * @return the flattened module definition to be used for creating the models
+	 * @throws SBOLValidationException the SBOL validation exception
+	 * @throws SBOLConversionException the SBOL conversion exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws SynBioHubException the syn bio hub exception
+	 */
+	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException, SBOLConversionException, IOException, SynBioHubException
     {
         
     	SBOLDocument doc = new SBOLDocument();
@@ -123,6 +137,9 @@ public class SBOL2SBML {
 		doc.setCreateDefaults(false);
     	
 		doc.createCopy(sbolDoc);
+		//for (TopLevel part : sbolDoc.getTopLevels()) {
+		//	doc.createRecursiveCopy(part);
+		//}
 		doc.removeModuleDefinition(MD);
     	//Copy original MD to resultMD which the function will return
     	ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
@@ -239,10 +256,10 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		// TODO: add info of this method
+		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 		
-		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) { 
+		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
