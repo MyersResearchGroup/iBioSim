@@ -26,7 +26,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 import org.virtualparts.data.QueryParameters;
-import org.virtualparts.data.SBOLInteractionAdder_GeneCentric;
+import org.virtualparts.data2.SBOLInteractionAdder_GeneCentric;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -80,11 +80,11 @@ public class VPRModelGenerator {
 		
 		if(!rootModuleID.isEmpty() && rootModuleID != null)
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID, params, true);
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), rootModuleID, params);
 		}
 		else
 		{
-			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), "TopModule", params, true);
+			interactionAdder = new SBOLInteractionAdder_GeneCentric(URI.create(endpoint), "TopModule", params);
 		}
 		interactionAdder.addInteractions(generatedModel);
 		return generatedModel;
