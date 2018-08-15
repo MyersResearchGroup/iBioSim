@@ -226,16 +226,36 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   private void selectAndPerformReaction(double r2) {
     double sum = 0;
     double threshold = totalPropensity * r2;
+    HierarchicalModel selectedModel = null;
+    ReactionNode selectedReaction = null;
     for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-      for (ReactionNode node : model.getListOfReactions()) {
-        for (HierarchicalNode subNode : node) {
-          sum += node.getValue(model.getIndex());
-          if (sum >= threshold) {
-            node.fireReaction(model.getIndex(), sum - threshold);
-            return;
-          }
-        }
+      sum += model.getPropensity();
+      if (sum >= threshold) {
+        threshold = sum - threshold;
+        selectedModel = model;
+        break;
+      }
+    }
 
+    int index = selectedModel.getIndex();
+    sum = 0;
+    for (ReactionNode node : selectedModel.getListOfReactions()) {
+      sum += node.getState().getChild(index).getValue();
+      if (sum >= threshold) {
+        threshold = sum - threshold;
+        sum = 0;
+        selectedReaction = node;
+        break;
+      }
+    }
+
+    if (selectedReaction != null) {
+      for (HierarchicalNode subNode : selectedReaction) {
+        sum += selectedReaction.getValue(index);
+        if (sum >= threshold) {
+          selectedReaction.fireReaction(index, sum - threshold);
+          return;
+        }
       }
     }
   }

@@ -254,12 +254,15 @@ public final class HierarchicalModel {
   public boolean computePropensities() {
     boolean hasChanged = false;
     propensity = 0;
+    double reactionPropensity;
     for (ReactionNode node : reactions) {
+      reactionPropensity = 0;
       for (HierarchicalNode subNode : node) {
         hasChanged = hasChanged | node.computePropensity(index);
-        propensity += node.getValue(index);
+        reactionPropensity += node.getValue(index);
       }
-
+      node.getState().getChild(index).setStateValue(reactionPropensity);
+      propensity += reactionPropensity;
     }
 
     return hasChanged;
