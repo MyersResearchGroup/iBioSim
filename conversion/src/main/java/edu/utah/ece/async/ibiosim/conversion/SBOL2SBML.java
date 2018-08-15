@@ -145,12 +145,10 @@ public class SBOL2SBML {
     	HashMap<URI,URI> hash_map = new HashMap<URI, URI>();
     	
 		//Create a HashMap with store all the local_MapsTo component instance values to the FC that owns that MapsTo component instance for all the FC in the MD
-		//Set<URI> local_URIs = new HashSet<URI>();
 		HashMap<URI, URI> local_map_uris = new HashMap<URI, URI>();
 		for (FunctionalComponent FC2 : MD.getFunctionalComponents()) {		
 			for (MapsTo local : FC2.getMapsTos()) {
 				local_map_uris.put(local.getLocalIdentity(), FC2.getIdentity());
-				//local_URIs.add(local.getLocalIdentity());
 			}
 		}
     	
@@ -163,7 +161,6 @@ public class SBOL2SBML {
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
-    			//resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), URI.create(FC.getDisplayId()), FC.getDirection());
     		}
     	}
     	
