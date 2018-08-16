@@ -251,14 +251,14 @@ public final class HierarchicalModel {
    *
    * @return if the propensity has changed.
    */
-  public boolean computePropensities() {
+  public boolean computePropensities(boolean computeSpeciesRate) {
     boolean hasChanged = false;
     propensity = 0;
     double reactionPropensity;
     for (ReactionNode node : reactions) {
       reactionPropensity = 0;
       for (HierarchicalNode subNode : node) {
-        hasChanged = hasChanged | node.computePropensity(index);
+        hasChanged = hasChanged | node.computePropensity(index, computeSpeciesRate);
         reactionPropensity += node.getValue(index);
       }
       node.getState().getChild(index).setStateValue(reactionPropensity);
@@ -580,6 +580,13 @@ public final class HierarchicalModel {
   @Override
   public String toString() {
     return "ModelState [ID=" + getID() + "]";
+  }
+
+  /**
+   *
+   */
+  public void updateModelPropensity(double change) {
+    propensity += change;
   }
 
 }

@@ -28,11 +28,19 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
 public class SpeciesReferenceNode extends VariableNode {
   private final SpeciesNode species;
 
+  /**
+   *
+   * @param species
+   */
   public SpeciesReferenceNode(SpeciesNode species) {
     super("");
     this.species = species;
   }
 
+  /**
+   *
+   * @param copy
+   */
   public SpeciesReferenceNode(SpeciesReferenceNode copy) {
     super(copy);
     this.species = copy.species.clone();
@@ -57,7 +65,12 @@ public class SpeciesReferenceNode extends VariableNode {
     return true;
   }
 
-  public void updateSpecies(int index, int multiplier) {
+  /**
+   *
+   * @param index
+   * @param multiplier
+   */
+  public HierarchicalState updateSpecies(int index, int multiplier) {
     double stoichiometry = getValue(index);
     HierarchicalState speciesState = species.getState().getChild(index);
 
@@ -72,6 +85,29 @@ public class SpeciesReferenceNode extends VariableNode {
     if (!speciesState.isBoundaryCondition()) {
       speciesState.setStateValue(speciesState.getValue() + multiplier * stoichiometry);
     }
+
+    return speciesState;
+  }
+
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public boolean hasEnoughMolecules(int index) {
+
+    HierarchicalState speciesState = species.getState().getChild(index);
+    if (indexMap != null && indexMap.containsKey(IndexType.SPECIESREFERENCE)) {
+      List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
+
+      for (int i = indexMath.size() - 1; i >= 0; i--) {
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(index), index);
+        speciesState = speciesState.getChild(speciesIndex);
+      }
+    }
+    if (speciesState.getValue() < getRootState(index).getValue()) { return false; }
+
+    return true;
   }
 
 }

@@ -216,7 +216,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
   private void computePropensities() {
     totalPropensity = 0;
     for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
-      modelstate.computePropensities();
+      modelstate.computePropensities(computeRateOfChange);
       totalPropensity += modelstate.getPropensity();
     }
   }

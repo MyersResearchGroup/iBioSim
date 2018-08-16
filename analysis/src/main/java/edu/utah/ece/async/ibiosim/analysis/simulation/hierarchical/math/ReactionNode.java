@@ -120,7 +120,7 @@ public class ReactionNode extends VariableNode {
    * @param index
    *          - the model index.
    */
-  public boolean computePropensity(int index) {
+  public boolean computePropensity(int index, boolean computeSpeciesRate) {
 
     boolean changed = false;
     if (!isDeleted(index)) {
@@ -135,7 +135,10 @@ public class ReactionNode extends VariableNode {
         newValue = newValue + reverseRateValue;
       }
       changed = setValue(index, newValue);
-      updateSpeciesRate(index);
+
+      if (computeSpeciesRate) {
+        updateSpeciesRate(index);
+      }
     }
 
     return changed;
@@ -148,7 +151,7 @@ public class ReactionNode extends VariableNode {
    * @param index
    */
   public void updateSpeciesRate(int index) {
-
+    // TODO: fix
     double value = getValue(index);
     if (reactants != null) {
       for (SpeciesReferenceNode specRef : reactants) {
@@ -192,36 +195,89 @@ public class ReactionNode extends VariableNode {
     if (isForward) {
       if (computeNotEnoughEnoughMoleculesFd(index)) {
         if (reactants != null) {
-          updateSpeciesReference(reactants, index, -1);
+          updateSpeciesReference(reactants, index, -1, false);
         }
 
         if (products != null) {
-          updateSpeciesReference(products, index, 1);
+          updateSpeciesReference(products, index, 1, false);
         }
       }
     } else {
       if (computeNotEnoughEnoughMoleculesRv(index)) {
         if (reactants != null) {
-          updateSpeciesReference(reactants, index, 1);
+          updateSpeciesReference(reactants, index, 1, false);
         }
 
         if (products != null) {
-          updateSpeciesReference(products, index, -1);
+          updateSpeciesReference(products, index, -1, false);
         }
       }
     }
   }
 
-  private void updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier) {
-    for (SpeciesReferenceNode specRef : specRefs) {
-      specRef.updateSpecies(index, multiplier);
+  /**
+   *
+   * @param index
+   * @param threshold
+   */
+  public List<HierarchicalState> fireReactionAndUpdatePropensity(int index, double threshold) {
+    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
+    getRootState(index).getValue();
+    double newValue = 0;
+    List<HierarchicalState> output = new ArrayList<>();
+    if (isForward) {
+      if (computeNotEnoughEnoughMoleculesFd(index)) {
+        if (reactants != null) {
+          output.addAll(updateSpeciesReference(reactants, index, -1, true));
+        }
+
+        if (products != null) {
+          output.addAll(updateSpeciesReference(products, index, 1, true));
+        }
+      }
+
+      newValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+    } else {
+      if (computeNotEnoughEnoughMoleculesRv(index)) {
+        if (reactants != null) {
+          output.addAll(updateSpeciesReference(reactants, index, 1, true));
+        }
+
+        if (products != null) {
+          output.addAll(updateSpeciesReference(products, index, -1, true));
+        }
+      }
+
+      newValue = Evaluator.evaluateExpressionRecursive(reverseRate, index);
     }
+    setValue(index, newValue);
+
+    return output;
+  }
+
+  private List<HierarchicalState> updateSpeciesReference(List<SpeciesReferenceNode> specRefs, int index, int multiplier, boolean getUpdates) {
+    List<HierarchicalState> updatedStates = null;
+    if (getUpdates) {
+      updatedStates = new ArrayList<>();
+    }
+    for (SpeciesReferenceNode specRef : specRefs) {
+      for (HierarchicalNode subNode : specRef) {
+        HierarchicalState state = specRef.updateSpecies(index, multiplier);
+        if (getUpdates) {
+          updatedStates.add(state);
+        }
+      }
+    }
+
+    return updatedStates;
   }
 
   private boolean computeNotEnoughEnoughMoleculesFd(int index) {
     if (reactants != null) {
       for (SpeciesReferenceNode specRef : reactants) {
-        if (specRef.getSpecies().getValue(index) < specRef.getSpecies().getValue(index)) { return false; }
+        for (HierarchicalNode subNode : reactants) {
+          if (!specRef.hasEnoughMolecules(index)) { return false; }
+        }
       }
     }
 
@@ -229,9 +285,11 @@ public class ReactionNode extends VariableNode {
   }
 
   private boolean computeNotEnoughEnoughMoleculesRv(int index) {
-    if (reactants != null) {
-      for (SpeciesReferenceNode specRef : reactants) {
-        if (specRef.getSpecies().getValue(index) < specRef.getValue(index)) { return false; }
+    if (products != null) {
+      for (SpeciesReferenceNode specRef : products) {
+        for (HierarchicalNode subNode : products) {
+          if (!specRef.hasEnoughMolecules(index)) { return false; }
+        }
       }
     }
 
@@ -266,5 +324,4 @@ public class ReactionNode extends VariableNode {
   public ReactionNode clone() {
     return new ReactionNode(this);
   }
-
 }

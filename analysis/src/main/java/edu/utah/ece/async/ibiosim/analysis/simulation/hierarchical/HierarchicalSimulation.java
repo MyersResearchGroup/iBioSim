@@ -62,6 +62,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   final private SimType type;
   private HierarchicalWriter writer;
 
+  protected boolean computeRateOfChange;
   protected boolean cancel;
   protected final VariableNode currentTime;
   protected double currProgress, maxProgress;
@@ -108,6 +109,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
+    this.computeRateOfChange = false;
   }
 
   /**
@@ -126,6 +128,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.hasEvents = copy.hasEvents;
     this.atomicType = copy.atomicType;
     this.parentType = copy.parentType;
+    this.computeRateOfChange = copy.computeRateOfChange;
   }
 
   /**
@@ -159,7 +162,14 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     } else {
       writer.addVariable(prefix, node, null, index);
     }
+  }
 
+  /**
+   *
+   * @param computeRateOfChange
+   */
+  public void computeRateOfChange(boolean computeRateOfChange) {
+    this.computeRateOfChange = computeRateOfChange;
   }
 
   /**
@@ -440,7 +450,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
         }
 
         if (modelstate.getListOfReactions() != null) {
-          changed |= modelstate.computePropensities();
+          changed |= modelstate.computePropensities(computeRateOfChange);
         }
 
         if (modelstate.getListOfAssignmentRules() != null) {

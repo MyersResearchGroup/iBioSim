@@ -213,7 +213,7 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
             changed = changed | rateRule.updateRate(index);
           }
         }
-        changed |= hierarchicalModel.computePropensities();
+        changed |= hierarchicalModel.computePropensities(true);
       }
     }
 

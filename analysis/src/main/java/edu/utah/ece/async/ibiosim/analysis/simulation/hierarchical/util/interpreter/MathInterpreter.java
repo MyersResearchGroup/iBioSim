@@ -34,21 +34,21 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.Hierarch
  */
 public final class MathInterpreter {
 
+  private boolean hasRateOf;
+
   /**
-   * Parses the ASTNode and converts to its corresponding {@link HierarchicalNode}.
    *
-   * @param math
-   *          - ASTNode
-   * @param variableToNodes
-   *          - map of variable ids to node.
-   * @param type
-   *          - the math type.
-   * @param index
-   *          - the index of the model.
-   * @return the converted HierarchicalNode.
    */
-  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> variableToNodes, int index) {
-    return parseASTNode(math, null, variableToNodes, null, index);
+  public MathInterpreter() {
+    this.hasRateOf = false;
+  }
+
+  /**
+   *
+   * @return
+   */
+  public boolean hasRateOf() {
+    return hasRateOf;
   }
 
   /**
@@ -68,7 +68,7 @@ public final class MathInterpreter {
    *          - the math type.
    * @return the converted HierarchicalNode.
    */
-  public static HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> args, Map<String, HierarchicalNode> variableToNodes, Map<String, HierarchicalNode> dimensionNodes, int index) {
+  public HierarchicalNode parseASTNode(ASTNode math, Map<String, HierarchicalNode> args, Map<String, HierarchicalNode> variableToNodes, Map<String, HierarchicalNode> dimensionNodes, int index) {
 
     HierarchicalNode node;
 
@@ -264,6 +264,7 @@ public final class MathInterpreter {
     case FUNCTION_RATE_OF:
       node = new HierarchicalNode(Type.FUNCTION_RATEOF);
       node.addChild(parseASTNode(math.getChild(0), args, variableToNodes, dimensionNodes, index));
+      hasRateOf = true;
       break;
     case FUNCTION_REM:
       node = new HierarchicalNode(Type.FUNCTION_REM);

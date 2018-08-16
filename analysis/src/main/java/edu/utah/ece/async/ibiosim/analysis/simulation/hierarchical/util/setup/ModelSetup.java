@@ -42,6 +42,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Variable
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
@@ -148,11 +149,14 @@ public class ModelSetup {
         }
       }
     }
-
-    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
+    MathInterpreter mathInterpreter = new MathInterpreter();
+    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper, mathInterpreter);
     ReplacementSetup.initializeComp(listOfContainers);
     ArraysSetup.initializeArrays(listOfContainers, sim.getAtomicType(), wrapper);
     setupOutputVariables(sim, listOfContainers);
+
+    sim.computeRateOfChange(mathInterpreter.hasRateOf());
+
     if (sim instanceof HierarchicalMixedSimulator) {
       initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
     }

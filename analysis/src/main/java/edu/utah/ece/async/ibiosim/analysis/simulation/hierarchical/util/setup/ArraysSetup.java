@@ -43,7 +43,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpre
  */
 class ArraysSetup {
 
-  static void setupArrays(HierarchicalModel modelstate, ModelContainer container, SBase sbase, HierarchicalNode node) {
+  static void setupArrays(HierarchicalModel modelstate, ModelContainer container, SBase sbase, HierarchicalNode node, MathInterpreter mathInterpreter) {
     ArraysSBasePlugin plugin = (ArraysSBasePlugin) sbase.getExtension(ArraysConstants.shortLabel);
 
     if (plugin == null) { return; }
@@ -62,7 +62,7 @@ class ArraysSetup {
         String referencedAttribute = index.getReferencedAttribute();
         int arrayDimension = index.getArrayDimension();
         ASTNode math = index.getMath();
-        HierarchicalNode indexNode = MathInterpreter.parseASTNode(math, null, modelstate.getVariableToNodeMap(), node.getDimensionMapping(), modelstate.getIndex());
+        HierarchicalNode indexNode = mathInterpreter.parseASTNode(math, null, modelstate.getVariableToNodeMap(), node.getDimensionMapping(), modelstate.getIndex());
         node.addVariableIndex(referencedAttribute, arrayDimension, indexNode);
       }
     }
