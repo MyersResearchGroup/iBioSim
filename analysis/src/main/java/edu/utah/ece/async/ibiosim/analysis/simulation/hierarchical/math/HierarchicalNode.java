@@ -118,6 +118,7 @@ public class HierarchicalNode extends AbstractHierarchicalNode implements Iterab
 
   @Override
   public String toString() {
+    if (getType() == Type.NUMBER) { return String.valueOf(state.getValue()); }
     String toString = "(" + getType().toString();
     if (children != null) {
       for (HierarchicalNode child : children) {

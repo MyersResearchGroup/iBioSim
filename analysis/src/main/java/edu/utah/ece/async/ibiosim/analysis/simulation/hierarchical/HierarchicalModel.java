@@ -261,8 +261,13 @@ public final class HierarchicalModel {
         hasChanged = hasChanged | node.computePropensity(index, computeSpeciesRate);
         reactionPropensity += node.getValue(index);
       }
-      node.getState().getChild(index).setStateValue(reactionPropensity);
+
+      if (node.isArray()) {
+        node.getState().getChild(index).setStateValue(reactionPropensity);
+      }
+
       propensity += reactionPropensity;
+
     }
 
     return hasChanged;
@@ -589,4 +594,11 @@ public final class HierarchicalModel {
     propensity += change;
   }
 
+  /**
+   *
+   * @param propensity
+   */
+  public void setPropensity(double propensity) {
+    this.propensity = propensity;
+  }
 }

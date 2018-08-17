@@ -42,8 +42,14 @@ public class ArrayDimensionNode extends HierarchicalNode {
     size = value;
   }
 
+  @Override
   public int getSize() {
     return size;
+  }
+
+  @Override
+  public String toString() {
+    return String.valueOf(state.getValue());
   }
 
 }

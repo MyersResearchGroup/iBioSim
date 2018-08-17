@@ -114,6 +114,7 @@ public class FunctionNode extends HierarchicalNode {
           }
           double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
           changed = variable.setValue(index, values, newValue);
+          values = null;
         } else {
           double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
           changed = variable.setValue(index, newValue);
@@ -145,6 +146,7 @@ public class FunctionNode extends HierarchicalNode {
             values[i] = (int) Evaluator.evaluateExpressionRecursive(indexVariable.get(i), index);
           }
           changed = variable.setValue(index, values, newValue);
+          values = null;
         } else {
           changed = variable.setValue(index, newValue);
         }

@@ -133,22 +133,16 @@ public class SpeciesNode extends VariableNode {
     return oldValue != value;
   }
 
-  private int[] getCompartmentIndices(int index) {
+  private double getCompartmentValue(int index) {
+
     if (indexMap != null && indexMap.containsKey(IndexType.COMPARTMENT)) {
       List<HierarchicalNode> indexMaths = indexMap.get(IndexType.COMPARTMENT);
-      int[] compartmentIndices = new int[indexMaths.size()];
-      for (int i = 0; i < compartmentIndices.length; i++) {
-        compartmentIndices[i] = (int) Evaluator.evaluateExpressionRecursive(indexMaths.get(i), index);
+      HierarchicalState state = compartment.state.getChild(index);
+      for (int i = indexMaths.size() - 1; i > -0; i--) {
+        state = state.getChild((int) Evaluator.evaluateExpressionRecursive(indexMaths.get(i), index));
       }
-      return compartmentIndices;
+      return state.getValue();
     }
-    return null;
-  }
-
-  private double getCompartmentValue(int index) {
-    int[] compartmentIndices = getCompartmentIndices(index);
-
-    if (compartmentIndices != null) { return compartment.getValue(index, compartmentIndices); }
     return compartment.getValue(index);
   }
 

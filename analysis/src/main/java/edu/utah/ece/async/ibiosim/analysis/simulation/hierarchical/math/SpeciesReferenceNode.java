@@ -78,7 +78,7 @@ public class SpeciesReferenceNode extends VariableNode {
       List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
 
       for (int i = indexMath.size() - 1; i >= 0; i--) {
-        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(index), index);
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(i), index);
         speciesState = speciesState.getChild(speciesIndex);
       }
     }
@@ -101,7 +101,7 @@ public class SpeciesReferenceNode extends VariableNode {
       List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
 
       for (int i = indexMath.size() - 1; i >= 0; i--) {
-        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(index), index);
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(i), index);
         speciesState = speciesState.getChild(speciesIndex);
       }
     }

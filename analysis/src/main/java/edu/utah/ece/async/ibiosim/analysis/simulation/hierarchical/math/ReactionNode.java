@@ -191,9 +191,9 @@ public class ReactionNode extends VariableNode {
    *          - the threshold to select whether to fire the forward or reverse reaction.
    */
   public void fireReaction(int index, double threshold) {
-    boolean isForward = reverseRate == null || Evaluator.evaluateExpressionRecursive(forwardRate, index) > threshold;
-    if (isForward) {
-      if (computeNotEnoughEnoughMoleculesFd(index)) {
+    double rate = Evaluator.evaluateExpressionRecursive(forwardRate, index);
+    if (reverseRate == null || rate > threshold) {
+      if (checkHasEnoughMoleculesFd(index)) {
         if (reactants != null) {
           updateSpeciesReference(reactants, index, -1, false);
         }
@@ -203,7 +203,7 @@ public class ReactionNode extends VariableNode {
         }
       }
     } else {
-      if (computeNotEnoughEnoughMoleculesRv(index)) {
+      if (checkHasEnoughMoleculesRv(index)) {
         if (reactants != null) {
           updateSpeciesReference(reactants, index, 1, false);
         }
@@ -226,7 +226,7 @@ public class ReactionNode extends VariableNode {
     double newValue = 0;
     List<HierarchicalState> output = new ArrayList<>();
     if (isForward) {
-      if (computeNotEnoughEnoughMoleculesFd(index)) {
+      if (checkHasEnoughMoleculesFd(index)) {
         if (reactants != null) {
           output.addAll(updateSpeciesReference(reactants, index, -1, true));
         }
@@ -238,7 +238,7 @@ public class ReactionNode extends VariableNode {
 
       newValue = Evaluator.evaluateExpressionRecursive(forwardRate, index);
     } else {
-      if (computeNotEnoughEnoughMoleculesRv(index)) {
+      if (checkHasEnoughMoleculesRv(index)) {
         if (reactants != null) {
           output.addAll(updateSpeciesReference(reactants, index, 1, true));
         }
@@ -272,7 +272,7 @@ public class ReactionNode extends VariableNode {
     return updatedStates;
   }
 
-  private boolean computeNotEnoughEnoughMoleculesFd(int index) {
+  private boolean checkHasEnoughMoleculesFd(int index) {
     if (reactants != null) {
       for (SpeciesReferenceNode specRef : reactants) {
         for (HierarchicalNode subNode : reactants) {
@@ -284,7 +284,7 @@ public class ReactionNode extends VariableNode {
     return true;
   }
 
-  private boolean computeNotEnoughEnoughMoleculesRv(int index) {
+  private boolean checkHasEnoughMoleculesRv(int index) {
     if (products != null) {
       for (SpeciesReferenceNode specRef : products) {
         for (HierarchicalNode subNode : products) {

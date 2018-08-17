@@ -519,10 +519,11 @@ public final class Evaluator {
         return evaluateExpressionRecursive(vectorNode, index);
       case NAME:
         HierarchicalNode selectorVariable = node.getChild(0);
-        List<ArrayDimensionNode> dimensions = selectorVariable.getListOfDimensions();
 
+        List<ArrayDimensionNode> dimensions = selectorVariable.getListOfDimensions();
+        int n = dimensions.size();
         for (int i = 1; i < node.getNumOfChild(); i++) {
-          dimensions.get(i - 1).setValue(index, evaluateExpressionRecursive(node.getChild(i), index));
+          dimensions.get(n - i).setValue(index, evaluateExpressionRecursive(node.getChild(i), index));
         }
         return selectorVariable.getValue(index);
       default:
