@@ -41,7 +41,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
 4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.16.0/experimental/) libSBML for validation and flattening.
+5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.17.0/experimental/) libSBML for validation and flattening.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine
 
 
@@ -67,7 +67,7 @@ Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
       * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin).
   * Set Arguments tab to the following information:
     * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC -Djava.library.path=/path/to/lib/```
-    * Note: for the java library path, ```/path/to/lib/``` is the location where [libSBML is installed](#pre-installation-requirements). The libSBML is installed by default in ```/usr/local/lib``` in Linux and Mac OS X machines and ```C:\Program Files\SBML\libSBML-5.16.0-libxml2-x64``` in Windows 64-bit machines. 
+    * Note: for the java library path, ```/path/to/lib/``` is the location where [libSBML is installed](#pre-installation-requirements). The libSBML is installed by default in ```/usr/local/lib``` in Linux and Mac OS X machines and ```libSBML-5.17.0-win64``` in Windows 64-bit machines. 
   * If you are running on Mac OS X, also set the following:
     * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.

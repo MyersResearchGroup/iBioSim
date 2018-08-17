@@ -1600,7 +1600,7 @@ public class SBOL2SBML {
 					HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
 					for (BioModel model : models.values())
 					{
-						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
 					}
 				}
 				else{
@@ -1610,7 +1610,7 @@ public class SBOL2SBML {
 						HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
 						for (BioModel model : models.values())
 						{
-							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
 						}
 					}
 				}

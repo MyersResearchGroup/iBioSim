@@ -6183,7 +6183,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						for (BioModel model : models.values()) {
 							if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
 									model.getSBMLDocument().getModel().getId() + ".xml")) {
-								model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml");
+								model.save(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
 								addToTree(model.getSBMLDocument().getModel().getId() + ".xml");
 							}
 							numGeneratedSBML++;

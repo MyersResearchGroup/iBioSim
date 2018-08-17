@@ -30,7 +30,7 @@ public interface BioObservable {
 	 * Observable requests types.
 	 */
 	public static enum RequestType {
-		REQUEST_INTEGER, REQUEST_DOUBLE, REQUEST_STRING, REQUEST_OVERWRITE, REQUEST_PROGRESS, ADD_FILE
+		REQUEST_INTEGER, REQUEST_BOOLEAN, REQUEST_DOUBLE, REQUEST_STRING, REQUEST_PROGRESS, ADD_FILE
 	};
 
 	/**

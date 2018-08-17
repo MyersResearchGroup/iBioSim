@@ -2189,8 +2189,23 @@ public class BioModel extends CoreObservable{
 	 * @throws XMLStreamException 
 	 * @throws BioSimException 
 	 */
-	public void save(String filename) throws XMLStreamException, IOException, BioSimException {		
-		updatePorts();
+	public void save(String filename) throws XMLStreamException, IOException, BioSimException {
+		save(filename,true);
+	}
+	
+	/**
+	 * Save the current object to file.
+	 * 
+	 * @param filename
+	 * @param updatePorts
+	 * @throws IOException 
+	 * @throws XMLStreamException 
+	 * @throws BioSimException 
+	 */
+	public void save(String filename,boolean updatePorts) throws XMLStreamException, IOException, BioSimException {		
+		if (updatePorts) {
+			updatePorts();
+		}
 		setGridSize(gridTable.getNumRows(),gridTable.getNumCols());
 		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
