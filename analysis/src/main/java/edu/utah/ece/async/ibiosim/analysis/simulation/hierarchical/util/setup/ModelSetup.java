@@ -17,8 +17,10 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -31,10 +33,10 @@ import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.model.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -49,123 +51,135 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  */
 public class ModelSetup {
 
-	/**
-	 * Sets up the models for simulation.
-	 *
-	 * @param sim
-	 *          - the hierarchical simulator.
-	 * @param type
-	 *          - the simulation type.
-	 *
-	 * @throws XMLStreamException
-	 *           - if there is any issue with the SBML.
-	 * @throws IOException
-	 *           - if there is any issue with the input file.
-	 * @throws BioSimException
-	 *           - if there is an issue with a model.
-	 */
-	public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException, BioSimException {
-		setupModels(sim, type, null);
-	}
+  /**
+   * Sets up the models for simulation.
+   *
+   * @param sim
+   *          - the hierarchical simulator.
+   * @param type
+   *          - the simulation type.
+   *
+   * @throws XMLStreamException
+   *           - if there is any issue with the SBML.
+   * @throws IOException
+   *           - if there is any issue with the input file.
+   * @throws BioSimException
+   *           - if there is an issue with a model.
+   */
+  public static void setupModels(HierarchicalSimulation sim, ModelType type) throws XMLStreamException, IOException, BioSimException {
+    setupModels(sim, type, null);
+  }
 
-	/**
-	 * Sets up the models for simulation.
-	 *
-	 * @param sim
-	 *          - the hierarchical simulator.
-	 * @param type
-	 *          - the simulation type.
-	 * @param wrapper
-	 *          - the vector wrapper for the state vector.
-	 * @throws XMLStreamException
-	 *           - if there is any issue with the SBML.
-	 * @throws IOException
-	 *           - if there is any issue with the input file.
-	 * @throws BioSimException
-	 *           - if there is an issue with a model.
-	 */
-	public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException, BioSimException {
+  /**
+   * Sets up the models for simulation.
+   *
+   * @param sim
+   *          - the hierarchical simulator.
+   * @param type
+   *          - the simulation type.
+   * @param wrapper
+   *          - the vector wrapper for the state vector.
+   * @throws XMLStreamException
+   *           - if there is any issue with the SBML.
+   * @throws IOException
+   *           - if there is any issue with the input file.
+   * @throws BioSimException
+   *           - if there is an issue with a model.
+   */
+  public static void setupModels(HierarchicalSimulation sim, ModelType type, VectorWrapper wrapper) throws XMLStreamException, IOException, BioSimException {
 
-		List<ModelContainer> listOfContainers = new ArrayList<>();
-		AnalysisProperties properties = sim.getProperties();
-		SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
-		Model model = document.getModel();
-		String rootPath = properties.getRoot();
-		HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
-		sim.setTopmodel(hierarchicalModel);
+    Map<String, SBMLDocument> sourceMap = new HashMap<>();
+    List<ModelContainer> listOfContainers = new ArrayList<>();
+    AnalysisProperties properties = sim.getProperties();
+    SBMLDocument document = SBMLReader.read(new File(properties.getFilename()));
+    Model model = document.getModel();
+    HierarchicalModel hierarchicalModel = new HierarchicalModel("topmodel", 0);
+    sim.setTopmodel(hierarchicalModel);
 
-		LinkedList<ModelContainer> unproc = new LinkedList<>();
+    LinkedList<ModelContainer> unproc = new LinkedList<>();
 
-		unproc.push(new ModelContainer(model, hierarchicalModel, null, type));
-		int count = 0;
+    unproc.push(new ModelContainer(model, hierarchicalModel, null, type));
+    int count = 0;
 
-		while (!unproc.isEmpty()) {
-			ModelContainer container = unproc.pop();
-			listOfContainers.add(container);
-			sim.addModelState(container.getHierarchicalModel());
+    while (!unproc.isEmpty()) {
+      ModelContainer container = unproc.pop();
+      listOfContainers.add(container);
+      sim.addHierarchicalModel(container.getHierarchicalModel());
 
-			if (container.getCompModel() != null) {
-				for (Submodel submodel : container.getCompModel().getListOfSubmodels()) {
-					model = null;
-					CompSBMLDocumentPlugin compDoc = container.getCompDoc();
-					if (compDoc != null) {
-						if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null) {
-							ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
-							String source = ext.getSource();
-							String extDef = rootPath + HierarchicalUtilities.separator + source;
-							SBMLDocument extDoc = SBMLReader.read(new File(extDef));
-							model = extDoc.getModel();
-							compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
+      if (container.getCompModel() != null) {
+        for (Submodel submodel : container.getCompModel().getListOfSubmodels()) {
+          model = null;
+          CompSBMLDocumentPlugin compDoc = container.getCompDoc();
+          if (compDoc != null) {
+            if (compDoc.getListOfExternalModelDefinitions() != null && compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null) {
+              ExternalModelDefinition ext = compDoc.getListOfExternalModelDefinitions().get(submodel.getModelRef());
 
-							while (ext.isSetModelRef()) {
-								if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null) {
-									ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
-									source = ext.getSource().replace("file:", "");
-									extDef = rootPath + HierarchicalUtilities.separator + source;
-									extDoc = SBMLReader.read(new File(extDef));
-									model = extDoc.getModel();
-									compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
-								} else if (compDoc.getModelDefinition(ext.getModelRef()) != null) {
-									model = compDoc.getModelDefinition(ext.getModelRef());
-									break;
-								} else {
-									break;
-								}
-							}
-						} else if (compDoc.getListOfModelDefinitions() != null && compDoc.getListOfModelDefinitions().get(submodel.getModelRef()) != null) {
-							model = compDoc.getModelDefinition(submodel.getModelRef());
-						}
+              String source = ext.getSource();
+              SBMLDocument extDoc = getDocument(source, properties, sourceMap);
+              model = extDoc.getModel();
+              compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
 
-						if (model != null) {
-							hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
-							unproc.push(new ModelContainer(model, hierarchicalModel, container, type));
-						}
-					}
-				}
-			}
-		}
+              while (ext.isSetModelRef()) {
+                if (compDoc.getExternalModelDefinition(ext.getModelRef()) != null) {
+                  ext = compDoc.getListOfExternalModelDefinitions().get(ext.getModelRef());
+                  source = ext.getSource().replace("file:", "");
+                  extDoc = getDocument(source, properties, sourceMap);
+                  model = extDoc.getModel();
+                  compDoc = (CompSBMLDocumentPlugin) extDoc.getPlugin(CompConstants.namespaceURI);
+                } else if (compDoc.getModelDefinition(ext.getModelRef()) != null) {
+                  model = compDoc.getModelDefinition(ext.getModelRef());
+                  break;
+                } else {
+                  break;
+                }
+              }
+            } else if (compDoc.getListOfModelDefinitions() != null && compDoc.getListOfModelDefinitions().get(submodel.getModelRef()) != null) {
+              model = compDoc.getModelDefinition(submodel.getModelRef());
+            }
 
-		CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
+            if (model != null) {
+              hierarchicalModel = new HierarchicalModel(submodel.getId(), ++count);
+              unproc.push(new ModelContainer(model, hierarchicalModel, container, type));
+            }
+          }
+        }
+      }
+    }
 
-		if (sim instanceof HierarchicalMixedSimulator) {
-			initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
-		}
-	}
+    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
+    ReplacementSetup.initializeComp(listOfContainers);
 
-	private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException, BioSimException {
+    if (sim instanceof HierarchicalMixedSimulator) {
+      initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
+    }
+  }
 
-		List<HierarchicalModel> listOfODEModels = new ArrayList<>();
-		for (ModelContainer container : listOfContainers) {
-			HierarchicalModel state = container.getHierarchicalModel();
+  private static void initializeHybridSimulation(HierarchicalMixedSimulator sim, List<ModelContainer> listOfContainers) throws IOException, XMLStreamException, BioSimException {
 
-			if (state.getModelType() == ModelType.HFBA) {
-				sim.createFBASim(state, container.getModel());
-			} else if (state.getModelType() == ModelType.HODE) {
-				listOfODEModels.add(state);
-			}
-		}
+    List<HierarchicalModel> listOfODEModels = new ArrayList<>();
+    for (ModelContainer container : listOfContainers) {
+      HierarchicalModel state = container.getHierarchicalModel();
 
-		sim.createODESim(listOfContainers.get(0).getHierarchicalModel(), listOfODEModels);
-	}
+      if (state.getModelType() == ModelType.HFBA) {
+        sim.createFBASim(state, container.getModel());
+      } else if (state.getModelType() == ModelType.HODE) {
+        listOfODEModels.add(state);
+      }
+    }
+
+    sim.createODESim(listOfContainers.get(0).getHierarchicalModel(), listOfODEModels);
+  }
+
+  private static SBMLDocument getDocument(String source, AnalysisProperties properties, Map<String, SBMLDocument> sourceMap) throws XMLStreamException, IOException {
+    SBMLDocument extDoc = null;
+    String extDef = String.join(HierarchicalUtilities.separator, properties.getRoot(), source);
+    if (sourceMap.containsKey(source)) {
+      extDoc = sourceMap.get(source);
+    } else {
+      extDoc = SBMLReader.read(new File(extDef));
+      sourceMap.put(source, extDoc);
+    }
+    return extDoc;
+  }
 
 }
