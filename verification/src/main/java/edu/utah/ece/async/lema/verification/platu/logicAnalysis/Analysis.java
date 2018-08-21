@@ -257,6 +257,37 @@ public class Analysis extends CoreObservable{
 		// create random object
         Random RNG = new Random(System.currentTimeMillis());
         
+        
+        
+        // Create a State to absorb extra probability. 
+  		int size = sgList[0].getLpn().getVarIndexMap().size();
+      	int[] tempVariableVector = new int[size];
+      	for(int i = 0; i < size; i++) {
+      		tempVariableVector[i] = 1001;
+      	}
+      	
+      	size = sgList[0].getLpn().getAllTransitions().length;
+      	boolean[] tempEnabledTrans = new boolean[size];
+      	for(int i = 0; i < size; i++) {
+      		tempEnabledTrans[i] = true;
+      	}
+      	
+      	size = sgList[0].getLpn().getPlaceList().length;
+      	int[] tempMarkings = new int[size];
+      	for(int i = 0; i < size; i++) {
+      		tempMarkings[i] = 1001;
+      	}
+      	
+      	// Initial state can contain immediate transitions.
+      	State tempState = new State(sgList[0].getLpn(), tempMarkings, tempVariableVector, tempEnabledTrans);
+         
+      	State[] tempStateArray = new State[numLpns];
+      	tempStateArray[0] = tempState;
+         
+      	PrjState absorbLowProbState;		
+      	absorbLowProbState = new ProbGlobalState(tempStateArray);
+      	
+        
 		while(true) {
 			
 			iterations = 0;
@@ -441,6 +472,31 @@ public class Analysis extends CoreObservable{
 			
 			if(prevStateCount == curStateCount) {
 				
+				/* Add the links to absorbLowProbState states */
+				for(PrjState LocalSt : prjStateSet) {
+					
+					LpnTranList allTrans =  ((ProbGlobalState) LocalSt).getStateArray()[0].getEnabledTransitions();
+					HashMap<Transition, PrjState> allStates =  ((ProbGlobalState) LocalSt).getNextGlobalStateMap();
+							
+					for(Transition t:allTrans) {
+						
+						if(!allStates.keySet().contains(t)) {
+							LocalSt.addNextGlobalState(t, absorbLowProbState);
+						}
+						
+					}
+					
+				}
+				
+				Transition dummyTran = new Transition();
+				absorbLowProbState.addNextGlobalState(dummyTran, absorbLowProbState);
+				((ProbGlobalState) absorbLowProbState).addNextGlobalTranRate(dummyTran, 1.0);
+				
+				
+				
+				prjStateSet.add(absorbLowProbState);
+
+				
 				if(Options.getExportPrismModelFlag()) {
 					exportExplicitPrismModel(initPrjState ,prjStateSet);
 				}
@@ -457,7 +513,7 @@ public class Analysis extends CoreObservable{
 			prevStateCount = curStateCount;
 			iterationCount++;
 			
-			if (iterationCount % 100 == 0) {
+			if (iterationCount % 50 == 0) {
 				
 				System.out.println("---> #GlobalIteration " + iterationCount
 						+ "> # LPN transition firings: " + tranFiringCnt
@@ -1455,7 +1511,7 @@ public class Analysis extends CoreObservable{
 			
 			String[] variableNames = initGlobalState.toStateArray()[0].getLpn().getVariables();
 			
-			HashMap<String, Integer> statesIdLookup = new HashMap<String, Integer>();
+			HashMap<PrjState, Integer> statesIdLookup = new HashMap<PrjState, Integer>();
 			int stateCount = 0;
 			int tranCount = 0;
 			
@@ -1471,7 +1527,7 @@ public class Analysis extends CoreObservable{
 			/* Write state ids and values */
 			for(PrjState LocalSt : globalStateSet) {
 				
-				statesIdLookup.put(LocalSt.getLabel(), stateCount);
+				statesIdLookup.put(LocalSt, stateCount);
 				
 				statesFile.write(stateCount + ":(");
 				for(int ii=0; ii<variableNames.length;ii++) {
@@ -1486,7 +1542,7 @@ public class Analysis extends CoreObservable{
 			
 			statesFile.close();
 			
-			BufferedWriter tranMatrixFile = new BufferedWriter(new FileWriter(tranMatrixFileName));
+			BufferedWriter tempTranMatrixFileW = new BufferedWriter(new FileWriter(tranMatrixFileName + "_temp"));
 			
 			/* Write transition matrix and rates */
 			for(PrjState LocalSt : globalStateSet) {
@@ -1494,33 +1550,36 @@ public class Analysis extends CoreObservable{
 				HashMap<Transition, PrjState> nxtGlobalStateMap = LocalSt.getNextGlobalStateMap();
 				
 				for(Transition tran_out: nxtGlobalStateMap.keySet()) {
-					tranMatrixFile.write(statesIdLookup.get(LocalSt.getLabel()) + " " + statesIdLookup.get(nxtGlobalStateMap.get(tran_out).getLabel()) + " " + ((ProbGlobalState) LocalSt).getOutgoingTranRate(tran_out) + "\n");
+					tempTranMatrixFileW.write(statesIdLookup.get(LocalSt) + " " + statesIdLookup.get(nxtGlobalStateMap.get(tran_out)) + " " + ((ProbGlobalState) LocalSt).getOutgoingTranRate(tran_out) + "\n");
 					tranCount++;
 				}
 			}
 			
-			tranMatrixFile.close();	
+			tempTranMatrixFileW.close();	
 			
 			/* Add state count and transition count at the beginning*/
 			/* Read all */
-			BufferedReader tranMatrixFileReader = new BufferedReader(new FileReader(tranMatrixFileName));
-			String result = "";
-			String line = "";
-			while( (line = tranMatrixFileReader.readLine()) != null){
-			 result = result + line + "\n"; 
-			}
-			tranMatrixFileReader.close();
 			
-			/* Write appended value */
-			tranMatrixFile = new BufferedWriter(new FileWriter(tranMatrixFileName));
-			result = stateCount + "," + tranCount + "\n" + result;
-			tranMatrixFile.write(result);
-			tranMatrixFile.close();	
+			
+			BufferedReader tempTranMatrixFileR = new BufferedReader(new FileReader(tranMatrixFileName + "_temp"));
+			BufferedWriter tranMatrixFile = new BufferedWriter(new FileWriter(tranMatrixFileName));
+			
+			tranMatrixFile.write(stateCount + "," + tranCount + "\n");
+			String line = "";
+			
+			while( (line = tempTranMatrixFileR.readLine()) != null){
+				tranMatrixFile.write(line + "\n");
+			}
+			tempTranMatrixFileR.close();
+			tranMatrixFile.close();
+			
+			File delFile = new File(tranMatrixFileName + "_temp");
+			delFile.delete();
 			
 			/* Write label files : Deadlock and initial states */
 			BufferedWriter labelFile = new BufferedWriter(new FileWriter(labelFileName));
 			labelFile.write("0=\"init\" 1=\"deadlock\"\n");
-			labelFile.write(statesIdLookup.get(initGlobalState.getLabel())+": 0\n");
+			labelFile.write(statesIdLookup.get(initGlobalState)+": 0\n");
 			labelFile.close();
 			
 		}
