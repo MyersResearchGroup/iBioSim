@@ -260,6 +260,8 @@ public class SBOL2SBML {
 					promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
+				// TODO: Analyze "promoter" (TU) to see if it has Cello parameters
+				// if yes, call your generateProductionRxn method, else original
 				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
