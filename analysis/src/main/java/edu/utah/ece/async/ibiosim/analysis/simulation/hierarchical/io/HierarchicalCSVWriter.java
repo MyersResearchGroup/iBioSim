@@ -28,56 +28,50 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Hierarch
  */
 public class HierarchicalCSVWriter extends HierarchicalWriter {
 
-	private final StringBuilder header;
-	private final char separator;
+  private final StringBuilder header;
+  private final char separator;
 
-	public HierarchicalCSVWriter () {
-		super();
-		this.separator = ',';
-		this.header = new StringBuilder();
-	}
+  public HierarchicalCSVWriter() {
+    super();
+    this.separator = ',';
+    this.header = new StringBuilder();
+    this.header.append("time");
+  }
 
-	@Override
-	public void print () throws IOException {
-		bufferedWriter.write("\n");
-		if (listOfStates.size() > 0) {
-			bufferedWriter.write(String.valueOf(listOfStates.get(0).toString()));
+  @Override
+  public void print(double currentTime) throws IOException {
+    bufferedWriter.write("\n");
+    bufferedWriter.write(String.valueOf(bufferedWriter));
 
-			for (int i = 1; i < this.listOfStates.size(); ++i) {
-				bufferedWriter.write(String.valueOf(separator) + listOfStates.get(i).toString());
-			}
-		}
+    for (int i = 0; i < this.listOfStates.size(); ++i) {
+      bufferedWriter.write(String.valueOf(separator) + listOfStates.get(i).toString());
+    }
 
-		bufferedWriter.flush();
-	}
+    bufferedWriter.flush();
+  }
 
-	@Override
-	public void addVariable (String id, HierarchicalNode node, int index, boolean isConcentration) {
-		if (header.length() == 0) {
-			header.append(id);
-		} else {
-			header.append(separator + id);
-		}
+  @Override
+  public void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
+    header.append(separator + id);
+    addNode(node, index, isConcentration);
+  }
 
-		addNode(node, index, isConcentration);
-	}
+  @Override
+  public void init(String filename) throws IOException {
+    if (!isSet && header.length() > 0) {
+      isSet = true;
+    }
+    if (isSet) {
+      writer = new FileWriter(filename);
+      bufferedWriter = new BufferedWriter(writer);
+      bufferedWriter.write(header.toString());
+      bufferedWriter.flush();
+    }
+  }
 
-	@Override
-	public void init (String filename) throws IOException {
-		if (!isSet && header.length() > 0) {
-			isSet = true;
-		}
-		if (isSet) {
-			writer = new FileWriter(filename);
-			bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write(header.toString());
-			bufferedWriter.flush();
-		}
-	}
-
-	@Override
-	public void close () throws IOException {
-		bufferedWriter.write(")");
-		bufferedWriter.close();
-	}
+  @Override
+  public void close() throws IOException {
+    bufferedWriter.write(")");
+    bufferedWriter.close();
+  }
 }

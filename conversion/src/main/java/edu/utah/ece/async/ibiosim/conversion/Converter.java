@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -443,7 +444,7 @@ public class Converter {
 						if(!topLevelURIStr.isEmpty())
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
-							List<BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+							HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
 							SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 						} 
 						else
@@ -451,7 +452,7 @@ public class Converter {
 							//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
-								List<BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}

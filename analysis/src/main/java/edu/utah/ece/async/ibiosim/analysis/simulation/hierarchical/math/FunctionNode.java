@@ -13,6 +13,10 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * A node that represents SBML Initial assignments and SBML Assignment Rules.
  *
@@ -23,72 +27,114 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
  */
 public class FunctionNode extends HierarchicalNode {
 
-	private VariableNode variable;
-	private boolean isInitialAssignment;
+  private final HierarchicalNode variable;
+  private final HierarchicalNode functionMath;
+  private boolean isInitialAssignment;
+  private List<HierarchicalNode> variableIndices;
 
-	public FunctionNode (VariableNode variable, HierarchicalNode math) {
-		this(math);
-		this.variable = variable;
-	}
+  public FunctionNode(HierarchicalNode variable, HierarchicalNode math) {
+    super(Type.FUNCTION);
+    this.functionMath = math;
+    this.variable = variable;
+  }
 
-	public FunctionNode (Type type) {
-		super(type);
-	}
+  public FunctionNode(FunctionNode math) {
+    super(Type.FUNCTION);
+    this.variable = math.variable;
+    this.functionMath = math.functionMath;
+  }
 
-	public FunctionNode (HierarchicalNode math) {
-		super(math.getType());
-		if (math.getNumOfChild() > 0) {
-			for (HierarchicalNode node : math.getChildren()) {
-				this.addChild(node);
-			}
-		}
-		if (math.state != null) {
-			this.state = math.state;
-		}
-		this.name = math.name;
+  /**
+   * Gets the variable node associated with this function.
+   *
+   * @return the variable.
+   */
+  public HierarchicalNode getVariable() {
+    return variable;
+  }
 
-	}
+  /**
+   * Sets a flag to indicate whether this function is an initial assignment.
+   *
+   * @param initAssign
+   *          - whether this is an initial assignment.
+   */
+  public void setIsInitAssignment(boolean initAssign) {
+    this.isInitialAssignment = initAssign;
+  }
 
-	public FunctionNode (FunctionNode math) {
-		super(math);
-		this.variable = math.variable;
-	}
+  /**
+   * Checks if this function is an initial assignment.
+   *
+   * @return true if this function is an initial assignment and false otherwise.
+   */
+  public boolean isInitAssignment() {
+    return this.isInitialAssignment;
+  }
 
-	public VariableNode getVariable() {
-		return variable;
-	}
+  /**
+   * Evaluates the node and updates the corresponding variable.
+   *
+   * @param index
+   *          - the model index.
+   * @return true if the value has changed. False otherwise.
+   */
+  public boolean updateVariable(int index) {
+    boolean changed = false;
 
-	public void setVariable(VariableNode variable) {
-		this.variable = variable;
-	}
+    if (variable != null) {
+      if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !isDeleted(index)) {
+        double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
+        changed = variable.setValue(index, newValue);
+      }
+    }
 
-	public void setIsInitAssignment(boolean initAssign) {
-		this.isInitialAssignment = initAssign;
-	}
+    return changed;
+  }
 
-	public boolean isInitAssignment() {
-		return this.isInitialAssignment;
-	}
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public boolean updateRate(int index) {
+    double rate = 0;
+    boolean changed = false;
+    if (variable != null) {
+      if (!isDeleted(index)) {
+        HierarchicalState variableState = variable.getState().getChild(index);
+        rate = Evaluator.evaluateExpressionRecursive(functionMath, index);
+        if (!variableState.hasOnlySubstance()) {
+          HierarchicalNode compartment = variable.getCompartment();
+          double c = compartment.getValue(index);
+          rate = rate * c;
+          double compartmentChange = compartment.getState().getChild(index).getRateValue();
+          if (compartmentChange != 0) {
+            rate = rate + variableState.getValue() * compartmentChange / c;
+          }
+        }
+        changed = variable.setRate(index, rate);
+      }
+    }
+    return changed;
+  }
 
-	/**
-	 * Evaluates the node and updates the corresponding variable.
-	 *
-	 * @param index
-	 *          - the model index.
-	 * @return true if the value has changed. False otherwise.
-	 */
-	public boolean computeFunction(int index) {
-		boolean changed = false;
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public double computeFunction(int index) {
+    return Evaluator.evaluateExpressionRecursive(functionMath, index);
+  }
 
-		if (!(this.isInitialAssignment && variable.state.getState(index).hasRule())) {
-			double oldValue = variable.getState().getState(index).getStateValue();
-			double newValue = Evaluator.evaluateExpressionRecursive(this, index);
-			variable.getState().getState(index).setStateValue(newValue);
-			boolean isNaN = Double.isNaN(oldValue) && Double.isNaN(newValue);
-			changed = !isNaN && oldValue != newValue;
-		}
-
-		return changed;
-	}
+  /**
+   * Gets the math associated with this function.
+   *
+   * @return the right-hand side of this function.
+   */
+  public HierarchicalNode getMath() {
+    return functionMath;
+  }
 
 }

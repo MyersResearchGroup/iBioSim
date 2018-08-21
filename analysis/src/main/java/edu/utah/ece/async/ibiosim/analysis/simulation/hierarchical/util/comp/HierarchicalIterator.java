@@ -11,29 +11,41 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *
  *******************************************************************************/
+package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.comp;
 
-package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states;
+import java.util.Iterator;
+
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 
 /**
- * Base class for states
  *
  * @author Leandro Watanabe
- * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public abstract class TreeState extends HierarchicalState {
+public class HierarchicalIterator implements Iterator<HierarchicalNode> {
 
-  protected HierarchicalState multiplier;
+  private final HierarchicalNode node;
+  private int size;
+  private int iterator;
 
-  protected abstract boolean containsChild(int index);
-
-  TreeState() {
-    super();
+  /**
+   *
+   * @param node
+   */
+  public HierarchicalIterator(HierarchicalNode node) {
+    this.node = node;
   }
 
-  TreeState(TreeState state) {
-    super(state);
+  @Override
+  public boolean hasNext() {
+    // TODO Auto-generated method stub
+    return false;
   }
 
+  @Override
+  public HierarchicalNode next() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

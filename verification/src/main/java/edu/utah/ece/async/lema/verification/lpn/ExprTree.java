@@ -5573,7 +5573,7 @@ public class ExprTree {
 					if(result != null){
 						return result;
 					}
-					return z.getContinuousBounds(variable, lhpn);
+					return z.getContinuousBounds(lcPair);
 					
 				}
 				

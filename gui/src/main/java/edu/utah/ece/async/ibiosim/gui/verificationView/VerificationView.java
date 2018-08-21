@@ -484,7 +484,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 		advancedPanel.add(noDisplayResult);
 		advancedPanel.add(displayDBM);
 		advancedPanel.add(rateOptimization);
-		
+
 		bddPanel.add(bddSizeLabel);
 		bddPanel.add(bddSize);
 
@@ -593,11 +593,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 					graph.setSelected(true);
 				}
 			}
-//			if (load.containsKey("verification.UntimedPOR")) {
-//				if (load.getProperty("verification.UntimedPOR").equals("true")) {
-//					untimedPOR.setSelected(true);
-//				}
-//			}
+			//			if (load.containsKey("verification.UntimedPOR")) {
+			//				if (load.getProperty("verification.UntimedPOR").equals("true")) {
+			//					untimedPOR.setSelected(true);
+			//				}
+			//			}
 			if (load.containsKey("verification.DecomposeLPN")) {
 				if (load.getProperty("verification.DecomposeLPN").equals("true")) {
 					decomposeLPN.setSelected(true);
@@ -805,7 +805,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 						}
 					}
 					else {
-					  absProperty.preAbsModel.removeElement(s);
+						absProperty.preAbsModel.removeElement(s);
 					}
 					if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
 						Pattern loopPattern = Pattern
@@ -820,7 +820,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 						}
 					}
 					else {
-					  absProperty.loopAbsModel.removeElement(s);
+						absProperty.loopAbsModel.removeElement(s);
 					}
 					if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
 						Pattern postPattern = Pattern
@@ -835,32 +835,32 @@ public class VerificationView extends PanelObservable implements ActionListener,
 						}
 					}
 					else {
-					  absProperty.postAbsModel.removeElement(s);
+						absProperty.postAbsModel.removeElement(s);
 					}
 				}
 				else if (containsAbstractions) {
-				  absProperty.preAbsModel.removeElement(s);
-				  absProperty.loopAbsModel.removeElement(s);
-				  absProperty.postAbsModel.removeElement(s);
+					absProperty.preAbsModel.removeElement(s);
+					absProperty.loopAbsModel.removeElement(s);
+					absProperty.postAbsModel.removeElement(s);
 				}
 			}
 			if (preOrder.size() > 0) {
-			  absProperty.preAbsModel.removeAllElements();
+				absProperty.preAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < preOrder.size(); j++) {
-			  absProperty.preAbsModel.addElement(preOrder.get(j));
+				absProperty.preAbsModel.addElement(preOrder.get(j));
 			}
 			if (loopOrder.size() > 0) {
-			  absProperty.loopAbsModel.removeAllElements();
+				absProperty.loopAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < loopOrder.size(); j++) {
-			  absProperty.loopAbsModel.addElement(loopOrder.get(j));
+				absProperty.loopAbsModel.addElement(loopOrder.get(j));
 			}
 			if (postOrder.size() > 0) {
-			  absProperty.postAbsModel.removeAllElements();
+				absProperty.postAbsModel.removeAllElements();
 			}
 			for (Integer j = 0; j < postOrder.size(); j++) {
-			  absProperty.postAbsModel.addElement(postOrder.get(j));
+				absProperty.postAbsModel.addElement(postOrder.get(j));
 			}
 			abstPane.preAbs.setListData(absProperty.preAbsModel.toArray());
 			abstPane.loopAbs.setListData(absProperty.loopAbsModel.toArray());
@@ -1143,11 +1143,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 		if (untimedStateSearch.isSelected()) {
 			LPN lpn = new LPN();
 			try {
-        lpn.load(directory + File.separator + lpnFileName);
-      } catch (BioSimException e1) {
-        JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
-        e1.printStackTrace();
-      }
+				lpn.load(directory + File.separator + lpnFileName);
+			} catch (BioSimException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, e1.getMessage(), e1.getTitle(), JOptionPane.ERROR_MESSAGE); 
+				e1.printStackTrace();
+			}
 			Options.setLogName(lpn.getLabel());
 			boolean canPerformMarkovianAnalysisTemp = true;
 			if (!canPerformMarkovianAnalysis(lpn))
@@ -1159,11 +1159,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 					String curLPNname = (String) lpnList.getSelectedValues()[i];
 					LPN curLPN = new LPN();
 					try {
-            curLPN.load(directory + File.separator + curLPNname);
-          } catch (BioSimException e) {
-            JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
-            e.printStackTrace();
-          }
+						curLPN.load(directory + File.separator + curLPNname);
+					} catch (BioSimException e) {
+						JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+						e.printStackTrace();
+					}
 					selectedLPNs.add(curLPN);
 					if (!canPerformMarkovianAnalysis(curLPN))
 						canPerformMarkovianAnalysisTemp = false;
@@ -1203,9 +1203,9 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
 				Project untimed_dfs = new Project(selectedLPNs);				
 				//untimed_dfs.setObserver(this);
-				
+
 				// ------- Debugging Messages Settings ------------
-				 //Options for printing out intermediate results during POR
+				//Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
 				Options.setDebugMode(false);
 				if (Options.getDebugMode())
@@ -1305,134 +1305,134 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				// -------------------------------------				
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				//if (untimedPOR.isSelected()) {
-					// Options for using trace-back in ample calculation					
-					String[] ampleMethds = {"No POR", "Trace-back","No trace-back for ample computation", "Behavioral Analysis"};
-					JList ampleMethdsList = new JList(ampleMethds);
-					ampleMethdsList.setVisibleRowCount(4);
-					//cycleClosingList.addListSelectionListener(new ValueReporter());
-					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
-					JPanel mainPanel0 = new JPanel(new BorderLayout());
-					mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
-					mainPanel0.add("Center", ampleMethdsPane);							
-					Object[] options0 = {"Run", "Cancel"};
-					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
-					if (optionRtVal0 == 1) { // Cancel
-						return;
-					}
-					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
-					if (ampleMethdsIndex == 0) { 
-						Options.setPOR("off");						
-					}
-					if (ampleMethdsIndex == 1) { 
-						Options.setPOR("tb");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingStrongStubbornMethd("cctb");
-						if (Options.getMarkovianModelFlag()) {
-							String[] tranRateDepSpectrum = {"Full dependency relations", "Fastest average transition rates",
-									"Ignore dependency relations within a rate change tolerance", "Ignore dependency relations"};
-							JList tranRateDepSpectrumList = new JList(tranRateDepSpectrum);
-							tranRateDepSpectrumList.setVisibleRowCount(4);							
-							JScrollPane tranRateDepPane = new JScrollPane(tranRateDepSpectrumList);
-							JPanel mainPanel1 = new JPanel(new BorderLayout());
-							mainPanel1.add("North", new JLabel("Select a dependency relation for transition rates:"));
-							mainPanel1.add("Center", tranRateDepPane);							
-							Object[] options1 = {"Run", "Cancel"};
-							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Transition rates depedency relation for partial-order reduction", 
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-							if (optionRtVal1 == 1) { // Cancel
-								return;
-							}
-							int tranRateDepSpectrumListIndex = tranRateDepSpectrumList.getSelectedIndex();
-							if (tranRateDepSpectrumListIndex == 0) {
-								Options.setTranRatePorDef("full");
-							}
-							else if (tranRateDepSpectrumListIndex == 1){
-								Options.setTranRatePorDef("avrg");
-								System.out.println("To be implemented.");
-								System.exit(1);
-							}
-							else if (tranRateDepSpectrumListIndex == 2) {
-								Options.setTranRatePorDef("tolr");
-								System.out.println("To be implemented.");
-								System.exit(1);
-							}
-							else if (tranRateDepSpectrumListIndex == 3) {
-								Options.setTranRatePorDef("none");
-							}
-							
-						}					
-					}		
-					if (ampleMethdsIndex == 2) {
-						Options.setPOR("tboff");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingStrongStubbornMethd("cctboff");
-					}
-					if (ampleMethdsIndex == 3) {
-						Options.setPOR("behavioral");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingStrongStubbornMethd("cctboff");
-					}
-					// TODO: Choose different cycle closing methods
-					//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
-					//					if (cycleClosingMthdIndex == 0) {
-					//						Options.setCycleClosingMthd("behavioral");
-					//						if (Options.getPOR().equals("tb")) {
-					//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
-					//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
-					//							cycleClosingAmpleList.setVisibleRowCount(2);
-					//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
-					//							JPanel mainPanel1 = new JPanel(new BorderLayout());
-					//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
-					//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
-					//							Object[] options1 = {"Run", "Cancel"};
-					//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
-					//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-					//							if (optionRtVal1 == 1) {
-					//								// Cancel
-					//								return;
-					//							}
-					//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
-					//							if (cycleClosingAmpleMethdIndex == 0) 
-					//								Options.setCycleClosingAmpleMethd("cctb");
-					//							if (cycleClosingAmpleMethdIndex == 1)
-					//								Options.setCycleClosingAmpleMethd("cctboff");
-					//						}
-					//						else if (Options.getPOR().equals("tboff")) {
-					//							Options.setCycleClosingAmpleMethd("cctboff");
-					//						}
-					//					}						
-					//					else if (cycleClosingMthdIndex == 1) 
-					//						Options.setCycleClosingMthd("state_search");
-					//					else if (cycleClosingMthdIndex == 2)
-					//						Options.setCycleClosingMthd("no_cycleclosing");
-					//					else if (cycleClosingMthdIndex == 3)
-					//						Options.setCycleClosingMthd("strong");
+				// Options for using trace-back in ample calculation					
+				String[] ampleMethds = {"No POR", "Trace-back","No trace-back for ample computation", "Behavioral Analysis"};
+				JList ampleMethdsList = new JList(ampleMethds);
+				ampleMethdsList.setVisibleRowCount(4);
+				//cycleClosingList.addListSelectionListener(new ValueReporter());
+				JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
+				JPanel mainPanel0 = new JPanel(new BorderLayout());
+				mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
+				mainPanel0.add("Center", ampleMethdsPane);							
+				Object[] options0 = {"Run", "Cancel"};
+				int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+				if (optionRtVal0 == 1) { // Cancel
+					return;
+				}
+				int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
+				if (ampleMethdsIndex == 0) { 
+					Options.setPOR("off");						
+				}
+				if (ampleMethdsIndex == 1) { 
+					Options.setPOR("tb");
+					Options.setCycleClosingMthd("behavioral");
+					Options.setCycleClosingStrongStubbornMethd("cctb");
+					if (Options.getMarkovianModelFlag()) {
+						String[] tranRateDepSpectrum = {"Full dependency relations", "Fastest average transition rates",
+								"Ignore dependency relations within a rate change tolerance", "Ignore dependency relations"};
+						JList tranRateDepSpectrumList = new JList(tranRateDepSpectrum);
+						tranRateDepSpectrumList.setVisibleRowCount(4);							
+						JScrollPane tranRateDepPane = new JScrollPane(tranRateDepSpectrumList);
+						JPanel mainPanel1 = new JPanel(new BorderLayout());
+						mainPanel1.add("North", new JLabel("Select a dependency relation for transition rates:"));
+						mainPanel1.add("Center", tranRateDepPane);							
+						Object[] options1 = {"Run", "Cancel"};
+						int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Transition rates depedency relation for partial-order reduction", 
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+						if (optionRtVal1 == 1) { // Cancel
+							return;
+						}
+						int tranRateDepSpectrumListIndex = tranRateDepSpectrumList.getSelectedIndex();
+						if (tranRateDepSpectrumListIndex == 0) {
+							Options.setTranRatePorDef("full");
+						}
+						else if (tranRateDepSpectrumListIndex == 1){
+							Options.setTranRatePorDef("avrg");
+							System.out.println("To be implemented.");
+							System.exit(1);
+						}
+						else if (tranRateDepSpectrumListIndex == 2) {
+							Options.setTranRatePorDef("tolr");
+							System.out.println("To be implemented.");
+							System.exit(1);
+						}
+						else if (tranRateDepSpectrumListIndex == 3) {
+							Options.setTranRatePorDef("none");
+						}
 
-					if (dot.isSelected()) {
-						Options.setOutputSgFlag(true);
-					}
-					//Options.setPrjSgPath(directory + File.separator);
-					System.out.println("directory = "+ directory);
-					Options.setPrjSgPath(directory);
-					// Options for printing the final numbers from search_dfs.
-					Options.setOutputLogFlag(true);
-					try {
-            untimed_dfs.search();
-          } catch (BioSimException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-					
+					}					
+				}		
+				if (ampleMethdsIndex == 2) {
+					Options.setPOR("tboff");
+					Options.setCycleClosingMthd("behavioral");
+					Options.setCycleClosingStrongStubbornMethd("cctboff");
+				}
+				if (ampleMethdsIndex == 3) {
+					Options.setPOR("behavioral");
+					Options.setCycleClosingMthd("behavioral");
+					Options.setCycleClosingStrongStubbornMethd("cctboff");
+				}
+				// TODO: Choose different cycle closing methods
+				//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+				//					if (cycleClosingMthdIndex == 0) {
+				//						Options.setCycleClosingMthd("behavioral");
+				//						if (Options.getPOR().equals("tb")) {
+				//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+				//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+				//							cycleClosingAmpleList.setVisibleRowCount(2);
+				//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+				//							JPanel mainPanel1 = new JPanel(new BorderLayout());
+				//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+				//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+				//							Object[] options1 = {"Run", "Cancel"};
+				//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+				//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+				//							if (optionRtVal1 == 1) {
+				//								// Cancel
+				//								return;
+				//							}
+				//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+				//							if (cycleClosingAmpleMethdIndex == 0) 
+				//								Options.setCycleClosingAmpleMethd("cctb");
+				//							if (cycleClosingAmpleMethdIndex == 1)
+				//								Options.setCycleClosingAmpleMethd("cctboff");
+				//						}
+				//						else if (Options.getPOR().equals("tboff")) {
+				//							Options.setCycleClosingAmpleMethd("cctboff");
+				//						}
+				//					}						
+				//					else if (cycleClosingMthdIndex == 1) 
+				//						Options.setCycleClosingMthd("state_search");
+				//					else if (cycleClosingMthdIndex == 2)
+				//						Options.setCycleClosingMthd("no_cycleclosing");
+				//					else if (cycleClosingMthdIndex == 3)
+				//						Options.setCycleClosingMthd("strong");
+
+				if (dot.isSelected()) {
+					Options.setOutputSgFlag(true);
+				}
+				//Options.setPrjSgPath(directory + File.separator);
+				System.out.println("directory = "+ directory);
+				Options.setPrjSgPath(directory);
+				// Options for printing the final numbers from search_dfs.
+				Options.setOutputLogFlag(true);
+				try {
+					untimed_dfs.search();
+				} catch (BioSimException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 				//}				
 				//else { // No POR
-//					Options.setPrjSgPath(directory + File.separator);
-//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
-//					Options.setOutputLogFlag(true);
-//					//					Options.setPrintLogToFile(false);
-//					if (dot.isSelected()) 
-//						Options.setOutputSgFlag(true);
-//					untimed_dfs.search();
+				//					Options.setPrjSgPath(directory + File.separator);
+				//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+				//					Options.setOutputLogFlag(true);
+				//					//					Options.setPrintLogToFile(false);
+				//					if (dot.isSelected()) 
+				//						Options.setOutputSgFlag(true);
+				//					untimed_dfs.search();
 				//}
 				return;
 			}
@@ -1707,22 +1707,22 @@ public class VerificationView extends PanelObservable implements ActionListener,
 		}
 		LPN lhpnFile = new LPN();
 		try {
-      lhpnFile.load(directory + File.separator + lpnFileName);
-    } catch (BioSimException e2) {
-      JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
-      e2.printStackTrace();
-    }
+			lhpnFile.load(directory + File.separator + lpnFileName);
+		} catch (BioSimException e2) {
+			JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
+			e2.printStackTrace();
+		}
 		Abstraction abstraction = new Abstraction(lhpnFile, this.absProperty);
 		String abstFilename;
 		//if(dbm2.isSelected())
 		//{
-			//try {
-				//verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+File.separator, lpnFileName);
-			//} catch (FileNotFoundException e) {
-				//e.printStackTrace();
-			//}
+		//try {
+		//verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+File.separator, lpnFileName);
+		//} catch (FileNotFoundException e) {
+		//e.printStackTrace();
+		//}
 
-			//return;
+		//return;
 		//}
 
 		/**
@@ -1823,11 +1823,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LPN lpn = new LPN();
 			try {
-        lpn.load(directory + File.separator + lpnFileName);
-      } catch (BioSimException e2) {
-        JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
-        e2.printStackTrace();
-      }			
+				lpn.load(directory + File.separator + lpnFileName);
+			} catch (BioSimException e2) {
+				JOptionPane.showMessageDialog(Gui.frame, e2.getMessage(), e2.getTitle(), JOptionPane.ERROR_MESSAGE); 
+				e2.printStackTrace();
+			}			
 			Options.set_TimingLogFile(directory + File.separator
 					+ lpnFileName + ".tlog");
 
@@ -1847,11 +1847,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				String curLPNname = guiLPNList[i];
 				LPN curLPN = new LPN();
 				try {
-          curLPN.load(directory + File.separator + curLPNname);
-        } catch (BioSimException e) {
-          JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
-          e.printStackTrace();
-        }
+					curLPN.load(directory + File.separator + curLPNname);
+				} catch (BioSimException e) {
+					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE); 
+					e.printStackTrace();
+				}
 				selectedLPNs.add(curLPN);
 			}
 
@@ -1882,7 +1882,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			// Checking the rate optimization flag turns the optimization on.
 			Options.set_rateOptimization(rateOptimization.isSelected());
 			//Options.setDebugMode(true);
-			
+
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
 
@@ -1892,17 +1892,17 @@ public class VerificationView extends PanelObservable implements ActionListener,
 				Options.setPrjSgPath(directory + File.separator);				
 			}
 			try {
-        timedStateSearch.search();
-      } catch (BioSimException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
-//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+				timedStateSearch.search();
+			} catch (BioSimException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 			String graphFileName = "full_sg.dot";
 
-//			if (dot.isSelected()) {
-//				stateGraphArray[0].outputLocalStateGraph(directory + File.separator + graphFileName);  
-//			}
+			//			if (dot.isSelected()) {
+			//				stateGraphArray[0].outputLocalStateGraph(directory + File.separator + graphFileName);  
+			//			}
 
 			if(graph.isSelected()){
 				showGraph(directory + File.separator + graphFileName);
@@ -1911,7 +1911,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			Options.setTimingAnalsysisType("off");
 
 			BufferedWriter logFile = Zone.get_writeLogFile();
-			
+
 			if(logFile != null){
 				try {
 					logFile.close();
@@ -1920,9 +1920,9 @@ public class VerificationView extends PanelObservable implements ActionListener,
 					e.printStackTrace();
 				}
 			}
-			
+
 			Zone.reset_writeLogFile();
-			
+
 			return;
 
 		}
@@ -2515,7 +2515,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			}
 		}
 	}
-	*/
+	 */
 
 	public void saveAs() {
 		String newName = JOptionPane.showInputDialog(Gui.frame,
@@ -2537,10 +2537,10 @@ public class VerificationView extends PanelObservable implements ActionListener,
 	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-//			FileInputStream in = new FileInputStream(new File(directory
-//					+ File.separator + filename));
-//			prop.load(in);
-//			in.close();
+			//			FileInputStream in = new FileInputStream(new File(directory
+			//					+ File.separator + filename));
+			//			prop.load(in);
+			//			in.close();
 			prop.setProperty("verification.file", verifyFile);
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText()
@@ -2647,11 +2647,11 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			} else {
 				prop.setProperty("verification.Graph", "false");
 			}
-//			if (untimedPOR.isSelected()) {
-//				prop.setProperty("verification.UntimedPOR", "true");
-//			} else {
-//				prop.setProperty("verification.UntimedPOR", "false");
-//			}
+			//			if (untimedPOR.isSelected()) {
+			//				prop.setProperty("verification.UntimedPOR", "true");
+			//			} else {
+			//				prop.setProperty("verification.UntimedPOR", "false");
+			//			}
 			if (decomposeLPN.isSelected()) {
 				prop.setProperty("verification.DecomposeLPN", "true");
 			} else {
@@ -2794,7 +2794,7 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			for (int i = 0; i < absProperty.listModel.getSize(); i++) {
 				if (absProperty.listModel.getElementAt(i) != null) {
 					intVars = intVars + absProperty.listModel.getElementAt(i)
-							+ " ";
+					+ " ";
 				}
 			}
 			if (sListModel.size() > 0) {
@@ -3104,21 +3104,21 @@ public class VerificationView extends PanelObservable implements ActionListener,
 		} else if (sourceFile.endsWith(".xml")) {
 			BioModel bioModel =  BioModel.createBioModel(workDir, this);
 			try {
-        bioModel.load(workDir + File.separator + sourceFile);
-        ModelEditor.saveLPN(bioModel, directory + File.separator + sourceFile.replace(".xml", ".lpn"));
-      } catch (XMLStreamException e) {
-        JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      } catch (IOException e) {
-        JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
+				bioModel.load(workDir + File.separator + sourceFile);
+				ModelEditor.saveLPN(bioModel, directory + File.separator + sourceFile.replace(".xml", ".lpn"));
+			} catch (XMLStreamException e) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 			catch (BioSimException e) {
-        JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-          JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-      }
-			
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+						JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -3179,39 +3179,39 @@ public class VerificationView extends PanelObservable implements ActionListener,
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public static boolean canPerformMarkovianAnalysis(LPN lpn) {
 		for (String trans : lpn.getTransitionList()) {
 			if (!lpn.isExpTransitionRateTree(trans)) {
-//				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
-//						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+				//				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
+				//						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			for (String var : lpn.getVariables()) {
 				if (lpn.isRandomBoolAssignTree(trans, var)) {
-//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+					//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lpn.isRandomContAssignTree(trans, var)) {
-//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+					//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lpn.isRandomIntAssignTree(trans, var)) {
-//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+					//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
 		}
 		if (lpn.getContVars().length > 0) {
-//			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
-//					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+			//			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
+			//					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		return true;		
 	}
-  
+
 }

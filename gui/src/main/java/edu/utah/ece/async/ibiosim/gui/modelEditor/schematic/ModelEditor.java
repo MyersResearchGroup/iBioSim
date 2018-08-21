@@ -3090,7 +3090,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		if (biomodel.getSBMLDocument().getModel().getSpecies(id + "_mRNA") != null) {
 			biomodel.getSBMLDocument().getModel().removeSpecies(id + "_mRNA");
 		}
-		biomodel.removeReaction(biomodel.getProductionReaction(id).getId());
+		if (biomodel.getProductionReaction(id)!=null) {
+			biomodel.removeReaction(biomodel.getProductionReaction(id).getId());
+		}
 		Layout layout = biomodel.getLayout();
 		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH + "__" + id) != null) {
 			layout.getListOfSpeciesGlyphs().remove(GlobalConstants.GLYPH + "__" + id);

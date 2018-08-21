@@ -145,7 +145,7 @@ public class SBMLutilities extends CoreObservable
 	 * @throws IOException Unable to write file to SBML.
 	 * @throws BioSimException - if sbml model is invalid.
 	 */
-	public static void exportSBMLModels(List<BioModel> models, String outputDir, String outputFileName, 
+	public static void exportSBMLModels(HashMap<String,BioModel> models, String outputDir, String outputFileName, 
 			boolean noOutput, boolean sbmlOut, boolean singleSBMLOutput) throws SBMLException, XMLStreamException, IOException, BioSimException
 	{
 		// Note: Since SBOL2SBML converter encase the result of SBML model in BioModels, the last biomodel 
@@ -216,11 +216,11 @@ public class SBMLutilities extends CoreObservable
 	 * @throws IOException Unable to write file to SBML.
 	 * @throws BioSimException - if sbml model is invalid.
 	 */
-	public static ArrayList<String> exportMultSBMLFile(List<BioModel> models, String outputDir) throws XMLStreamException, IOException, BioSimException
+	public static ArrayList<String> exportMultSBMLFile(HashMap<String,BioModel> models, String outputDir) throws XMLStreamException, IOException, BioSimException
 	{
 		ArrayList<String> submodels = new ArrayList<String>();
 		//Multiple SBML output
-		for (BioModel model : models)
+		for (BioModel model : models.values())
 		{
 			String filename =  model.getSBMLDocument().getModel().getId() + ".xml";
 			model.save(outputDir + File.separator + filename);
@@ -5267,7 +5267,7 @@ public class SBMLutilities extends CoreObservable
 					double upperBound = FastMath.max(leftChildValue, rightChildValue);
 
 					//return prng.nextDouble(lowerBound, upperBound);
-					return ((upperBound-lowerBound) / 2);
+					return ((upperBound+lowerBound) / 2);
 				}
 				else if (nodeName.equals("exponential"))
 				{
