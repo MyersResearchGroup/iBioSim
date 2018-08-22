@@ -123,6 +123,12 @@ public final class HierarchicalModel {
     constraints.add(constraintNode);
   }
 
+  /**
+   * Adds a deletion node.
+   *
+   * @param node
+   *          - the deletion node that specifies what is being deleted in the model.
+   */
   public void addDeletion(DeletionNode node) {
     deletions.add(node);
   }
@@ -206,6 +212,10 @@ public final class HierarchicalModel {
     replacements.add(node);
   }
 
+  /**
+   *
+   * @param node
+   */
   public void addRateRule(FunctionNode node) {
     if (rateRules == null) {
       rateRules = new ArrayList<>();
@@ -261,13 +271,10 @@ public final class HierarchicalModel {
         hasChanged = hasChanged | node.computePropensity(index, computeSpeciesRate);
         reactionPropensity += node.getValue(index);
       }
-
       if (node.isArray()) {
         node.getState().getChild(index).setStateValue(reactionPropensity);
       }
-
       propensity += reactionPropensity;
-
     }
 
     return hasChanged;

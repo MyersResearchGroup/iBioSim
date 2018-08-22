@@ -60,11 +60,18 @@ public class DynamicSimulation extends CoreObservable {
     message = new Message();
   }
 
+  /**
+   * Runs simulation using the given analysis properties.
+   *
+   * @param properties
+   *          - specifies the configurations to setup simulation.
+   * @param filename
+   *          - the model to simulate.
+   */
   public void simulate(AnalysisProperties properties, String filename) {
     SimulationProperties simProperties = properties.getSimulationProperties();
 
     try {
-
       String SBMLFileName = filename, outputDirectory = properties.getOutDir().equals(".") ? properties.getDirectory() : properties.getOutDir();
       properties.getRoot();
       String quantityType = simProperties.getPrinter_track_quantity();
@@ -80,7 +87,6 @@ public class DynamicSimulation extends CoreObservable {
       }
       switch (simulatorType) {
       case RK:
-
         simulator = new SimulatorODERK(SBMLFileName, outputDirectory, runs, timeLimit, maxTimeStep, randomSeed, printInterval, stoichAmpValue, interestingSpecies, numSteps, relError, absError, quantityType);
         simulator.addObservable(this);
         break;
@@ -113,20 +119,16 @@ public class DynamicSimulation extends CoreObservable {
       }
 
       for (int run = 1; run <= runs; ++run) {
-
         if (cancelFlag == true) {
           break;
         }
-
         if (simulator != null) {
           simulator.simulate();
           if ((runs - run) >= 1) {
             simulator.setupForNewRun(run + 1);
           }
         }
-
         if (cancelFlag == false && statisticsFlag == true) {
-
           if (simulator != null) {
             simulator.printStatisticsTSD();
           }
