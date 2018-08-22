@@ -132,11 +132,8 @@ public class SBOL2SBML {
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
-    	
 		doc.createCopy(sbolDoc);
-		//for (TopLevel part : sbolDoc.getTopLevels()) {
-		//	doc.createRecursiveCopy(part);
-		//}
+						
 		doc.removeModuleDefinition(MD);
     	//Copy original MD to resultMD which the function will return
     	ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
@@ -200,9 +197,17 @@ public class SBOL2SBML {
     				//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
     				if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
     					//copy participation with FC in resultMD as the participant
+    					System.out.println("yay");
     					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
     				} else {
-    					//otherwise create participation with FC that replaced the FC that was pointed to. 
+    					//otherwise create participation with FC that replaced the FC that was pointed to.
+    					System.out.println(I_MD_MD.getDisplayId());
+    					System.out.println(I_MD_MD_part.getParticipantIdentity());
+    					System.out.println(I_MD_MD_part.getParticipantIdentity());
+    					System.out.println(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()));
+    					//this one gets void
+    					System.out.println(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())));
+    					
     					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
     				}
     			}
