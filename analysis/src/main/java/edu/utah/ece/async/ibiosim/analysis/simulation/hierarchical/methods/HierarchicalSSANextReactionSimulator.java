@@ -14,6 +14,12 @@
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +29,8 @@ import edu.utah.ece.async.ibiosim.analysis.properties.SimulationProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.AbstractHierarchicalNode.Type;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Evaluator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
@@ -30,16 +38,17 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.Mo
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
- * Hierarchical SSA simulator.
+ * Hierarchical SSA simulator using Gibson and Bruck method.
  *
  * @author Leandro Watanabe
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
+public class HierarchicalSSANextReactionSimulator extends HierarchicalSimulation {
   private final boolean print;
   private double totalPropensity;
+  private Map<HierarchicalState, List<DependencyNode>> dependencyGraph;
 
   /**
    * Creates an instance of a SSA simulator.
@@ -53,7 +62,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
    * @throws BioSimException
    *           - if an error occur in the initialization.
    */
-  public HierarchicalSSADirectSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
+  public HierarchicalSSANextReactionSimulator(AnalysisProperties properties) throws IOException, XMLStreamException, BioSimException {
     super(properties, SimType.HSSA);
     this.print = true;
 
@@ -73,7 +82,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
    * @throws BioSimException
    *           - if an error occur in the initialization.
    */
-  public HierarchicalSSADirectSimulator(AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException {
+  public HierarchicalSSANextReactionSimulator(AnalysisProperties properties, boolean print) throws IOException, XMLStreamException, BioSimException {
     super(properties, SimType.HSSA);
     this.print = print;
 
@@ -106,6 +115,7 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
         computeEvents();
       }
 
+      buildDependencyGraph();
       setupForOutput(runNumber);
       isInitialized = true;
     }
@@ -141,6 +151,8 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
     printTime = simProperties.getOutputStartTime();
     previousTime = 0;
 
+    computePropensities();
+
     while (currentTime.getState().getValue() < timeLimit) {
       // if (!HierarchicalUtilities.evaluateConstraints(constraintList))
       // {
@@ -150,10 +162,10 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
       if (cancel) {
         break;
       }
+
       double currentTime = this.currentTime.getState().getValue();
       r1 = getRandom();
       r2 = getRandom();
-      computePropensities();
       delta_t = Math.log(1 / r1) / totalPropensity;
       nextReactionTime = currentTime + delta_t;
       nextEventTime = getNextEventTime();
@@ -201,6 +213,89 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
 
   }
 
+  private void buildDependencyGraph() {
+    dependencyGraph = new HashMap<>();
+    for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
+      int index = model.getIndex();
+      for (ReactionNode node : model.getListOfReactions()) {
+        getReactionDependency(model, node, index);
+      }
+    }
+  }
+
+  private void getReactionDependency(HierarchicalModel model, ReactionNode node, int index) {
+    List<HierarchicalNode> dependencies = getDependency(node);
+
+    int[] arrayIndex = null;
+    for (HierarchicalNode subNode : node) {
+      if (node.getListOfDimensions() != null) {
+        int n = node.getListOfDimensions().size();
+        arrayIndex = new int[n];
+        for (int i = 0; i < n; i++) {
+          arrayIndex[i] = (int) node.getListOfDimensions().get(i).getValue(index);
+        }
+      }
+      DependencyNode dependencyNode = new DependencyNode(model, node, arrayIndex);
+      for (HierarchicalNode dependency : dependencies) {
+        HierarchicalState state = null;
+        if (dependency.isName()) {
+          state = dependency.getRootState(index);
+          if (!dependencyGraph.containsKey(state)) {
+            dependencyGraph.put(state, new ArrayList<>());
+          }
+          dependencyGraph.get(state).add(dependencyNode);
+        } else if (dependency.getType() == Type.FUNCTION_SELECTOR) {
+          HierarchicalNode variable = dependency.getChild(0);
+          state = variable.getState().getChild(index);
+          for (int i = 1; i < dependency.getNumOfChild(); i++) {
+            int selectorIndex = (int) Evaluator.evaluateExpressionRecursive(dependency.getChild(i), index);
+            state = state.getChild(selectorIndex);
+          }
+
+        }
+
+        if (state != null) {
+          if (!dependencyGraph.containsKey(state)) {
+            dependencyGraph.put(state, new ArrayList<>());
+          }
+          dependencyGraph.get(state).add(dependencyNode);
+        }
+      }
+    }
+  }
+
+  private List<HierarchicalNode> getDependency(ReactionNode node) {
+
+    List<HierarchicalNode> output = new ArrayList<>();
+    LinkedList<HierarchicalNode> unprocessed = new LinkedList<>();
+    unprocessed.add(node.getForwardRate());
+
+    if (node.getReverseRate() != null) {
+      unprocessed.add(node.getReverseRate());
+    }
+
+    while (!unprocessed.isEmpty()) {
+      HierarchicalNode currentNode = unprocessed.remove();
+
+      if (currentNode.isName()) {
+        output.add(currentNode);
+      } else if (currentNode.getType() == Type.FUNCTION_SELECTOR) {
+        if (currentNode.getChild(0).isName()) {
+          output.add(currentNode);
+        }
+      } else {
+        if (currentNode.getNumOfChild() > 0) {
+          for (int i = 0; i < currentNode.getNumOfChild(); i++) {
+            unprocessed.add(currentNode.getChild(i));
+          }
+        }
+      }
+
+    }
+
+    return output;
+  }
+
   private void update(boolean reaction, boolean rateRule, boolean events, double r2, double previousTime) {
     if (reaction) {
       selectAndPerformReaction(r2);
@@ -216,24 +311,9 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
 
   private void computePropensities() {
     totalPropensity = 0;
-    for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
-      double propensity = 0;
-      double reactionPropensity;
-      int index = model.getIndex();
-      for (ReactionNode node : model.getListOfReactions()) {
-        reactionPropensity = 0;
-        HierarchicalState reactionState = node.getState().getChild(index);
-        for (HierarchicalNode subNode : node) {
-          node.computePropensity(index, computeRateOfChange);
-          reactionPropensity += node.getValue(index);
-        }
-        if (node.isArray()) {
-          reactionState.setStateValue(reactionPropensity);
-        }
-        propensity += reactionPropensity;
-      }
-      model.setPropensity(propensity);
-      totalPropensity += propensity;
+    for (HierarchicalModel modelstate : this.getListOfHierarchicalModels()) {
+      modelstate.computePropensities(computeRateOfChange);
+      totalPropensity += modelstate.getPropensity();
     }
   }
 
@@ -243,36 +323,111 @@ public class HierarchicalSSADirectSimulator extends HierarchicalSimulation {
     double sum = 0;
     double threshold = totalPropensity * r2;
     HierarchicalModel selectedModel = null;
+    ReactionNode selectedReaction = null;
     for (HierarchicalModel model : this.getListOfHierarchicalModels()) {
       sum += model.getPropensity();
       if (sum >= threshold) {
-        sum = sum - model.getPropensity();
+        threshold = sum - threshold;
         selectedModel = model;
         break;
       }
     }
+    if (selectedModel == null) { return; }
 
     int index = selectedModel.getIndex();
+    sum = 0;
     for (ReactionNode node : selectedModel.getListOfReactions()) {
-      double reactionPropensity = node.getState().getChild(index).getValue();
-      sum += reactionPropensity;
+      sum += node.getState().getChild(index).getValue();
       if (sum >= threshold) {
-        sum = sum - reactionPropensity;
-        for (HierarchicalNode subNode : node) {
-          sum += node.getValue(index);
-          if (sum >= threshold) {
-            node.fireReaction(index, sum - threshold);
-            return;
-          }
-        }
+        threshold = sum - threshold;
+        sum = 0;
+        selectedReaction = node;
+        break;
       }
     }
 
+    if (selectedReaction != null) {
+      for (HierarchicalNode subNode : selectedReaction) {
+        sum += selectedReaction.getValue(index);
+        if (sum >= threshold) {
+          performReaction(selectedModel, selectedReaction, sum - threshold, index);
+          break;
+        }
+      }
+    }
+  }
+
+  private void performReaction(HierarchicalModel model, ReactionNode reactionNode, double threshold, int index) {
+    double oldValue = reactionNode.getValue(index);
+    List<HierarchicalState> listOfUpdates = reactionNode.fireReactionAndUpdatePropensity(index, threshold);
+    double newValue = reactionNode.getValue(index);
+
+    double change = (newValue - oldValue);
+    totalPropensity += change;
+    model.updateModelPropensity(change);
+    if (reactionNode.isArray()) {
+      double totalReactionPropensity = reactionNode.getState().getChild(index).getValue();
+      reactionNode.getState().getChild(index).setStateValue(totalReactionPropensity + change);
+    }
+    updateDependencies(listOfUpdates);
+    return;
+  }
+
+  private void updateDependencies(List<HierarchicalState> listOfUpdates) {
+    HashSet<DependencyNode> updatedNodes = new HashSet<>();
+    for (HierarchicalState update : listOfUpdates) {
+
+      if (!dependencyGraph.containsKey(update)) {
+        continue;
+      }
+
+      List<DependencyNode> dependencies = dependencyGraph.get(update);
+
+      for (DependencyNode dependency : dependencies) {
+        if (!updatedNodes.contains(dependency)) {
+          updatedNodes.add(dependency);
+        } else {
+          continue;
+        }
+
+        HierarchicalModel model = dependency.model;
+        ReactionNode reactionNode = dependency.node;
+        int index = model.getIndex();
+
+        if (dependency.arrayIndex != null) {
+          for (int i = 0; i < dependency.arrayIndex.length; i++) {
+            reactionNode.getListOfDimensions().get(i).setValue(index, dependency.arrayIndex[i]);
+          }
+        }
+        double oldValue = reactionNode.getValue(index);
+        reactionNode.computePropensity(index, computeRateOfChange);
+        double newValue = reactionNode.getValue(index);
+        double change = (newValue - oldValue);
+        totalPropensity += change;
+        model.updateModelPropensity(change);
+        if (reactionNode.isArray()) {
+          double totalReactionPropensity = reactionNode.getState().getChild(index).getValue();
+          reactionNode.getState().getChild(index).setStateValue(totalReactionPropensity + change);
+        }
+      }
+    }
   }
 
   private double getNextEventTime() {
     checkEvents();
     if (triggeredEventList != null && !triggeredEventList.isEmpty()) { return triggeredEventList.peek().getFireTime(); }
     return Double.POSITIVE_INFINITY;
+  }
+
+  private class DependencyNode {
+    ReactionNode node;
+    int[] arrayIndex;
+    HierarchicalModel model;
+
+    public DependencyNode(HierarchicalModel model, ReactionNode node, int[] arrayIndex) {
+      this.node = node;
+      this.arrayIndex = arrayIndex;
+      this.model = model;
+    }
   }
 }

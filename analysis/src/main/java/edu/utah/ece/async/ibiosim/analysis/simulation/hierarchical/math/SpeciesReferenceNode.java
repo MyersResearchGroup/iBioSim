@@ -15,6 +15,8 @@ package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
 import java.util.List;
 
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
+
 /**
  * A node that represents SBML Species References.
  *
@@ -25,13 +27,20 @@ import java.util.List;
  */
 public class SpeciesReferenceNode extends VariableNode {
   private final SpeciesNode species;
-  private List<HierarchicalNode> speciesIndices;
 
+  /**
+   *
+   * @param species
+   */
   public SpeciesReferenceNode(SpeciesNode species) {
     super("");
     this.species = species;
   }
 
+  /**
+   *
+   * @param copy
+   */
   public SpeciesReferenceNode(SpeciesReferenceNode copy) {
     super(copy);
     this.species = copy.species.clone();
@@ -53,6 +62,51 @@ public class SpeciesReferenceNode extends VariableNode {
 
   @Override
   public boolean isLocalVariable() {
+    return true;
+  }
+
+  /**
+   *
+   * @param index
+   * @param multiplier
+   */
+  public HierarchicalState updateSpecies(int index, int multiplier) {
+    double stoichiometry = getValue(index);
+    HierarchicalState speciesState = species.getState().getChild(index);
+
+    if (indexMap != null && indexMap.containsKey(IndexType.SPECIESREFERENCE)) {
+      List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
+
+      for (int i = indexMath.size() - 1; i >= 0; i--) {
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(i), index);
+        speciesState = speciesState.getChild(speciesIndex);
+      }
+    }
+    if (!speciesState.isBoundaryCondition()) {
+      speciesState.setStateValue(speciesState.getValue() + multiplier * stoichiometry);
+    }
+
+    return speciesState;
+  }
+
+  /**
+   *
+   * @param index
+   * @return
+   */
+  public boolean hasEnoughMolecules(int index) {
+
+    HierarchicalState speciesState = species.getState().getChild(index);
+    if (indexMap != null && indexMap.containsKey(IndexType.SPECIESREFERENCE)) {
+      List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
+
+      for (int i = indexMath.size() - 1; i >= 0; i--) {
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(i), index);
+        speciesState = speciesState.getChild(speciesIndex);
+      }
+    }
+    if (speciesState.getValue() < getRootState(index).getValue()) { return false; }
+
     return true;
   }
 

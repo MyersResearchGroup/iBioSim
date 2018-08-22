@@ -36,9 +36,13 @@ import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalModel.ModelType;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.methods.HierarchicalMixedSimulator;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.HierarchicalUtilities;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.interpreter.MathInterpreter;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
@@ -145,9 +149,13 @@ public class ModelSetup {
         }
       }
     }
-
-    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper);
+    MathInterpreter mathInterpreter = new MathInterpreter();
+    CoreSetup.initializeCore(sim, listOfContainers, sim.getCurrentTime(), wrapper, mathInterpreter);
     ReplacementSetup.initializeComp(listOfContainers);
+    ArraysSetup.initializeArrays(listOfContainers, sim.getAtomicType(), wrapper);
+    setupOutputVariables(sim, listOfContainers);
+
+    sim.computeRateOfChange(mathInterpreter.hasRateOf());
 
     if (sim instanceof HierarchicalMixedSimulator) {
       initializeHybridSimulation((HierarchicalMixedSimulator) sim, listOfContainers);
@@ -180,6 +188,57 @@ public class ModelSetup {
       sourceMap.put(source, extDoc);
     }
     return extDoc;
+  }
+
+  private static void setupOutputVariables(HierarchicalSimulation sim, List<ModelContainer> listOfContainers) {
+    for (ModelContainer container : listOfContainers) {
+      setupPrintableVariables(sim, container);
+    }
+  }
+
+  private static void setupPrintableVariables(HierarchicalSimulation sim, ModelContainer container) {
+
+    HierarchicalModel model = container.getHierarchicalModel();
+    int index = model.getIndex();
+    String prefix = container.getPrefix();
+    List<String> interestingSpecies = sim.getProperties().getSimulationProperties().getIntSpecies();
+    boolean isConcentration = sim.getProperties().getSimulationProperties().getPrinter_track_quantity().equals("concentration");
+    for (VariableNode variable : model.getListOfVariables()) {
+      //
+      for (HierarchicalNode child : variable) {
+        addPrintableVariable(sim, child, prefix, index, isConcentration, interestingSpecies);
+      }
+
+    }
+    for (ReactionNode reaction : model.getListOfReactions()) {
+      //
+      for (HierarchicalNode child : reaction) {
+        addPrintableVariable(sim, child, prefix, index, isConcentration, interestingSpecies);
+      }
+    }
+    for (VariableNode constant : model.getListOfConstants()) {
+      //
+      for (HierarchicalNode child : constant) {
+        addPrintableVariable(sim, child, prefix, index, isConcentration, interestingSpecies);
+      }
+    }
+  }
+
+  private static void addPrintableVariable(HierarchicalSimulation sim, HierarchicalNode constant, String prefix, int index, boolean isConcentration, List<String> interestingSpecies) {
+
+    String printVariable;
+
+    if (constant.isArray()) {
+      printVariable = String.join("", prefix, constant.getName(), "__", constant.getDimensionedName(index));
+    } else {
+      printVariable = String.join("", prefix, constant.getName());
+    }
+    if (interestingSpecies.contains(printVariable)) {
+      sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
+    } else if (!constant.isLocalVariable() && interestingSpecies.size() == 0) {
+      sim.addPrintVariable(printVariable, constant, constant.getCompartment(), index, isConcentration && constant.isSpecies());
+    }
+
   }
 
 }

@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  * Writes simulation results to comma-separated values format.
@@ -51,9 +52,14 @@ public class HierarchicalCSVWriter extends HierarchicalWriter {
   }
 
   @Override
-  public void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
+  public void addVariable(String id, HierarchicalNode node, HierarchicalNode compartment, int index) {
     header.append(separator + id);
-    addNode(node, index, isConcentration);
+    HierarchicalState nodeState = node.getState().getChild(index);
+    HierarchicalState compartmentState = null;
+    if (compartment != null) {
+      compartmentState = compartment.getState().getChild(index);
+    }
+    addNode(nodeState, compartmentState);
   }
 
   @Override

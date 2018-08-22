@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  * Writes simulation results to time-series data format.
@@ -49,9 +50,14 @@ public class HierarchicalTSDWriter extends HierarchicalWriter {
   }
 
   @Override
-  public void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
+  public void addVariable(String id, HierarchicalNode node, HierarchicalNode compartment, int index) {
     header.append(",\"" + id + "\"");
-    addNode(node, index, isConcentration);
+    HierarchicalState nodeState = node.getRootState(index);
+    HierarchicalState compartmentState = null;
+    if (compartment != null) {
+      compartmentState = compartment.getState().getChild(index);
+    }
+    addNode(nodeState, compartmentState);
   }
 
   @Override
