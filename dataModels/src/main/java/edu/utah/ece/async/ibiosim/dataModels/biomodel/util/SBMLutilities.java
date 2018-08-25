@@ -3479,9 +3479,13 @@ public class SBMLutilities extends CoreObservable
 	public static String addBoolean(String formula, String boolVar)
 	{
 		formula = formula.replace(" " + boolVar + " ", " (eq(" + boolVar + ",1)) ");
+		formula = formula.replace("!" + boolVar + " ", " !(eq(" + boolVar + ",1)) ");
 		formula = formula.replace("," + boolVar + ",", ",(eq(" + boolVar + ",1)),");
+		formula = formula.replace("!" + boolVar + ",", "!(eq(" + boolVar + ",1)),");
 		formula = formula.replace("(" + boolVar + ",", "((eq(" + boolVar + ",1)),");
+		formula = formula.replace("!" + boolVar + ",", "!(eq(" + boolVar + ",1)),");
 		formula = formula.replace("," + boolVar + ")", ",(eq(" + boolVar + ",1)))");
+		formula = formula.replace("!" + boolVar + ")", "!(eq(" + boolVar + ",1)))");
 		formula = formula.replace("(" + boolVar + " ", "((eq(" + boolVar + ",1)) ");
 		formula = formula.replace(" " + boolVar + ")", " (eq(" + boolVar + ",1)))");
 		formula = formula.replace("(" + boolVar + ")", " (eq(" + boolVar + ",1))");
@@ -3492,6 +3496,10 @@ public class SBMLutilities extends CoreObservable
 		if (formula.endsWith(" " + boolVar))
 		{
 			formula = formula.replaceFirst(" " + boolVar, "(eq(" + boolVar + ",1))");
+		}
+		if (formula.endsWith("!" + boolVar))
+		{
+			formula = formula.replaceFirst("!" + boolVar, "!(eq(" + boolVar + ",1))");
 		}
 		if (formula.equals(boolVar))
 		{
