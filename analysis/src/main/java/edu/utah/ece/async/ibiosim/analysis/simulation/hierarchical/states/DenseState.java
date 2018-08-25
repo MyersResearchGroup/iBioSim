@@ -54,10 +54,11 @@ public class DenseState extends TreeState {
       listOfStates = new ArrayList<>();
     }
 
-    while (index > listOfStates.size()) {
-      listOfStates.add(state);
+    while (listOfStates.size() <= index) {
+      listOfStates.add(null);
     }
 
+    listOfStates.set(index, state);
   }
 
   @Override
