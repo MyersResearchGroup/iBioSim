@@ -53,14 +53,6 @@ public class VariableNode extends HierarchicalNode {
     return new VariableNode(this);
   }
 
-  /**
-   *
-   * @return
-   */
-  public boolean isLocalVariable() {
-    return false;
-  }
-
   public boolean isSetName() {
     return name != null && name.length() > 0;
   }

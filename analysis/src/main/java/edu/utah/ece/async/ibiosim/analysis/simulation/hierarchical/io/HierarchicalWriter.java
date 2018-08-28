@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
  * Base class for writing hierarchical simulator results.
@@ -70,10 +71,8 @@ public abstract class HierarchicalWriter {
    *          - the node with the state variable.
    * @param index
    *          - the index of the submodel the node corresponds to.
-   * @param isConcentration
-   *          - whether to be normalize relative to the compartment value.
    */
-  public abstract void addVariable(String id, HierarchicalNode node, int index, boolean isConcentration);
+  public abstract void addVariable(String id, HierarchicalNode node, HierarchicalNode compartment, int index);
 
   /**
    * Closes the writer.
@@ -86,37 +85,53 @@ public abstract class HierarchicalWriter {
   /**
    * Adds the state variable to the list of variables that will be printed out.
    *
-   * @param node
-   *          - the node with the state variable.
-   * @param index
-   *          - the index of the submodel the node corresponds to.
-   * @param isConcentration
-   *          - whether to be normalize relative to the compartment value.
    */
-  protected void addNode(HierarchicalNode node, int index, boolean isConcentration) {
-    listOfStates.add(new WriterNode(node, index, isConcentration));
+  protected void addNode(HierarchicalState state) {
+    addNode(state, null);
+  }
+
+  /**
+   * Adds the state variable to the list of variables that will be printed out.
+   *
+   */
+  protected void addNode(HierarchicalState state, HierarchicalState compartment) {
+    listOfStates.add(new WriterNode(state, compartment));
   }
 
   /**
    * Node class for printing out the results of a variable.
    */
   protected class WriterNode {
-    private final HierarchicalNode node;
-    private final int index;
-    private final boolean isConcentration;
+    private final HierarchicalState state, compartmentState;
 
     /**
      * Creates a WriterNode object.
      */
-    public WriterNode(HierarchicalNode node, int index, boolean isConcentration) {
-      this.node = node;
-      this.index = index;
-      this.isConcentration = isConcentration;
+    public WriterNode(HierarchicalState state, int index) {
+      this.state = state;
+      this.compartmentState = null;
+    }
+
+    /**
+     *
+     * @param state
+     * @param index
+     * @param isConcentration
+     */
+    public WriterNode(HierarchicalState state, HierarchicalState compartmentState) {
+      this.state = state;
+      this.compartmentState = compartmentState;
     }
 
     @Override
     public String toString() {
-      return String.valueOf(node.report(index, isConcentration));
+      double value = state.getValue();
+
+      if (compartmentState != null) {
+        value = value / compartmentState.getValue();
+      }
+
+      return String.valueOf(value);
     }
   }
 

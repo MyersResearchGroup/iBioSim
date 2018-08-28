@@ -27,21 +27,41 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.Hierar
  */
 public class FunctionNode extends HierarchicalNode {
 
-  private final HierarchicalNode variable;
-  private final HierarchicalNode functionMath;
+  private HierarchicalNode variable;
+  private HierarchicalNode functionMath;
   private boolean isInitialAssignment;
-  private List<HierarchicalNode> variableIndices;
 
-  public FunctionNode(HierarchicalNode variable, HierarchicalNode math) {
+  /**
+   *
+   */
+  public FunctionNode() {
     super(Type.FUNCTION);
-    this.functionMath = math;
-    this.variable = variable;
   }
 
+  /**
+   *
+   * @param math
+   */
   public FunctionNode(FunctionNode math) {
     super(Type.FUNCTION);
     this.variable = math.variable;
     this.functionMath = math.functionMath;
+  }
+
+  /**
+   *
+   * @param variable
+   */
+  public void setVariable(HierarchicalNode variable) {
+    this.variable = variable;
+  }
+
+  /**
+   *
+   * @param math
+   */
+  public void setMath(HierarchicalNode math) {
+    this.functionMath = math;
   }
 
   /**
@@ -83,9 +103,54 @@ public class FunctionNode extends HierarchicalNode {
     boolean changed = false;
 
     if (variable != null) {
-      if (!(this.isInitialAssignment && variable.getState().getChild(index).hasRule()) && !isDeleted(index)) {
-        double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
-        changed = variable.setValue(index, newValue);
+      if (!isDeleted(index)) {
+        if (this.isInitialAssignment && variable.getState().getChild(index).hasRule()) { return changed; }
+        if (indexMap != null && indexMap.containsKey(IndexType.VARIABLE)) {
+          List<HierarchicalNode> indexVariable = indexMap.get(IndexType.VARIABLE);
+          int[] values = new int[indexVariable.size()];
+
+          for (int i = 0; i < values.length; ++i) {
+            values[i] = (int) Evaluator.evaluateExpressionRecursive(indexVariable.get(i), index);
+          }
+          double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
+          changed = variable.setValue(index, values, newValue);
+          values = null;
+        } else {
+          double newValue = Evaluator.evaluateExpressionRecursive(functionMath, index);
+          changed = variable.setValue(index, newValue);
+        }
+
+      }
+    }
+
+    return changed;
+  }
+
+  /**
+   *
+   * @param index
+   * @param value
+   * @return
+   */
+  public boolean updateVariable(int index, double newValue) {
+    boolean changed = false;
+
+    if (variable != null) {
+      if (!isDeleted(index)) {
+        if (this.isInitialAssignment && variable.getState().getChild(index).hasRule()) { return changed; }
+        if (indexMap != null && indexMap.containsKey(IndexType.VARIABLE)) {
+          List<HierarchicalNode> indexVariable = indexMap.get(IndexType.VARIABLE);
+          int[] values = new int[indexVariable.size()];
+
+          for (int i = 0; i < values.length; ++i) {
+            values[i] = (int) Evaluator.evaluateExpressionRecursive(indexVariable.get(i), index);
+          }
+          changed = variable.setValue(index, values, newValue);
+          values = null;
+        } else {
+          changed = variable.setValue(index, newValue);
+        }
+
       }
     }
 

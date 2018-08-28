@@ -32,7 +32,6 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.Constrai
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
-import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.ReactionNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.VariableNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState.StateType;
@@ -63,6 +62,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
   final private SimType type;
   private HierarchicalWriter writer;
 
+  protected boolean computeRateOfChange;
   protected boolean cancel;
   protected final VariableNode currentTime;
   protected double currProgress, maxProgress;
@@ -109,6 +109,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.currentRun = 1;
     this.randomNumberGenerator = new Random(simProperties.getRndSeed());
     this.writer = new HierarchicalTSDWriter();
+    this.computeRateOfChange = false;
   }
 
   /**
@@ -127,7 +128,7 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     this.hasEvents = copy.hasEvents;
     this.atomicType = copy.atomicType;
     this.parentType = copy.parentType;
-    // this.totalPropensity = copy.totalPropensity;
+    this.computeRateOfChange = copy.computeRateOfChange;
   }
 
   /**
@@ -155,8 +156,20 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
    * @param isConcentration
    *          - whether to print the value as a concentration.
    */
-  public void addPrintVariable(String id, HierarchicalNode node, int index, boolean isConcentration) {
-    writer.addVariable(id, node, index, isConcentration);
+  public void addPrintVariable(String prefix, HierarchicalNode node, HierarchicalNode compartment, int index, boolean isConcentration) {
+    if (isConcentration) {
+      writer.addVariable(prefix, node, compartment, index);
+    } else {
+      writer.addVariable(prefix, node, null, index);
+    }
+  }
+
+  /**
+   *
+   * @param computeRateOfChange
+   */
+  public void computeRateOfChange(boolean computeRateOfChange) {
+    this.computeRateOfChange = computeRateOfChange;
   }
 
   /**
@@ -335,26 +348,26 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
     for (HierarchicalModel model : modules) {
       int index = model.getIndex();
       for (EventNode event : model.getListOfEvents()) {
-        if (!event.isDeleted(index) && event.isTriggeredAtTime(time, index)) {
-          event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
-          event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
-          double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
-          TriggeredEvent triggered = new TriggeredEvent(index, fireTime, event);
-          triggered.setPriority(event.evaluatePriority(index));
-          if (event.getState().getChild(index).isUseTriggerValue()) {
-            double[] eventAssignments = event.computeEventAssignmentValues(index, currentTime.getState().getValue());
+        for (HierarchicalNode subEvent : event) {
+          if (!event.isDeleted(index) && event.isTriggeredAtTime(time, index)) {
+            event.setMaxDisabledTime(index, Double.NEGATIVE_INFINITY);
+            event.setMinEnabledTime(index, Double.POSITIVE_INFINITY);
+            double fireTime = currentTime.getState().getValue() + event.evaluateFireTime(index);
+            TriggeredEvent triggered = new TriggeredEvent(index, fireTime, event);
+            triggered.setPriority(event.evaluatePriority(index));
+            if (event.getState().getChild(index).isUseTriggerValue()) {
+              double[] eventAssignments = event.computeEventAssignmentValues(index);
+              if (eventAssignments != null) {
+                triggered.setAssignmentValues(eventAssignments);
+              }
 
-            if (eventAssignments != null) {
-              triggered.setAssignmentValues(eventAssignments);
             }
-
-          }
-          triggeredEventList.add(triggered);
-          if (!event.getState().getChild(index).isPersistent()) {
-            event.addTriggeredEvent(index, triggered);
+            triggeredEventList.add(triggered);
+            if (!event.getState().getChild(index).isPersistent()) {
+              event.addTriggeredEvent(index, triggered);
+            }
           }
         }
-
       }
     }
   }
@@ -372,7 +385,9 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
       for (HierarchicalModel modelstate : this.modules) {
         if (modelstate.getListOfAssignmentRules() != null) {
           for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(modelstate.getIndex());
+            for (HierarchicalNode subnode : node) {
+              changed = changed | node.updateVariable(modelstate.getIndex());
+            }
           }
         }
       }
@@ -435,22 +450,22 @@ public abstract class HierarchicalSimulation extends AbstractSimulator {
         }
 
         if (modelstate.getListOfReactions() != null) {
-          for (ReactionNode node : modelstate.getListOfReactions()) {
-            changed = changed | node.computePropensity(index);
-          }
-
-          modelstate.getPropensity().updateVariable(index);
+          changed |= modelstate.computePropensities(computeRateOfChange);
         }
 
         if (modelstate.getListOfAssignmentRules() != null) {
           for (FunctionNode node : modelstate.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(index);
+            for (HierarchicalNode dummy : node) {
+              changed = changed | node.updateVariable(index);
+            }
           }
         }
 
         if (modelstate.getListOfInitialAssignments() != null) {
           for (FunctionNode node : modelstate.getListOfInitialAssignments()) {
-            changed = changed | node.updateVariable(index);
+            for (HierarchicalNode dummy : node) {
+              changed = changed | node.updateVariable(index);
+            }
           }
         }
       }

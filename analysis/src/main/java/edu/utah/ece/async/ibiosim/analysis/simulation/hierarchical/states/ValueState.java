@@ -32,7 +32,7 @@ public class ValueState extends HierarchicalState {
     this.value = value;
   }
 
-  ValueState(ValueState copy) {
+  public ValueState(HierarchicalState copy) {
     super(copy);
   }
 
