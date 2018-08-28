@@ -133,8 +133,10 @@ public class SBOL2SBML {
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
-						
+		
+		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
+		
     	//Copy original MD to resultMD which the function will return
     	ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
     	
@@ -185,33 +187,38 @@ public class SBOL2SBML {
     	
     	//create a HashMap with the URIs of the local and remote component instance to use later when copying interactions from the lower-lvl MD to the resultMD
     	for (Module MD_Module : MD.getModules()) {
-    		HashMap<URI, URI> RemoteMapsTo_LocalMapsTo = new HashMap <URI, URI>();
-    		for (MapsTo M_MapsTo : MD_Module.getMapsTos()) {
-    			RemoteMapsTo_LocalMapsTo.put(M_MapsTo.getRemoteURI(), M_MapsTo.getLocalURI());
-    		}
-
-    		//Copy Interactions from the ModuleDefinition that this Module points to
-    		for (Interaction I_MD_MD : (MD_Module.getDefinition()).getInteractions()) {
-    			resultMD.createInteraction(I_MD_MD.getDisplayId(), I_MD_MD.getTypes());
-    			for (Participation I_MD_MD_part : I_MD_MD.getParticipations()) {
-    				//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
-    				if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
-    					//copy participation with FC in resultMD as the participant
-    					System.out.println("yay");
-    					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
-    				} else {
-    					//otherwise create participation with FC that replaced the FC that was pointed to.
-    					System.out.println(I_MD_MD.getDisplayId());
-    					System.out.println(I_MD_MD_part.getParticipantIdentity());
-    					System.out.println(I_MD_MD_part.getParticipantIdentity());
-    					System.out.println(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()));
-    					//this one gets void
-    					System.out.println(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())));
-    					
-    					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
-    				}
+    		//if Module has other Modules nested, just copy it, and it will be flattened latter
+    		if (MD_Module.getDefinition().getModules().size() != 0) {
+    			//Copy the module to a higher level
+    			Module Mod = resultMD.createModule(MD_Module.getDisplayId(), MD_Module.getDefinitionURI());
+    			//Copy all the maptsTos
+    			//BEWARE: if in the feature we add more information to the modules that need to be copied, this is the place to do it (for example parameters).
+    			for (MapsTo Modules_MapsTo : MD_Module.getMapsTos()) {
+    				Mod.createMapsTo(Modules_MapsTo.getDisplayId(), Modules_MapsTo.getRefinement(), Modules_MapsTo.getLocalURI(), Modules_MapsTo.getRemoteURI());
     			}
     		}
+    		else {
+        		HashMap<URI, URI> RemoteMapsTo_LocalMapsTo = new HashMap <URI, URI>();
+        		for (MapsTo M_MapsTo : MD_Module.getMapsTos()) {
+        			RemoteMapsTo_LocalMapsTo.put(M_MapsTo.getRemoteURI(), M_MapsTo.getLocalURI());
+        		}
+
+        		//Copy Interactions from the ModuleDefinition that this Module points to
+        		for (Interaction I_MD_MD : (MD_Module.getDefinition()).getInteractions()) {
+        			resultMD.createInteraction(I_MD_MD.getDisplayId(), I_MD_MD.getTypes());
+        			for (Participation I_MD_MD_part : I_MD_MD.getParticipations()) {
+        				//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
+        				if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
+        					//copy participation with FC in resultMD as the participant
+        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
+        				} else {
+        					//otherwise create participation with FC that replaced the FC that was pointed to.
+        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
+        				}
+        			}
+        		}
+    		}
+
     	}       
         return resultMD;
     }
@@ -403,10 +410,11 @@ public class SBOL2SBML {
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
+			ModuleDefinition subModuleDefFlatt = MDFlattener(sbolDoc, subModuleDef);
 			BioModel subTargetModel = new BioModel(projectDirectory);
-			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDef) + ".xml")) {
+			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDefFlatt) + ".xml")) {
 				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
-			} if ((subTargetModel=models.get(getDisplayID(subModuleDef)))!=null) {
+			} if ((subTargetModel=models.get(getDisplayID(subModuleDefFlatt)))!=null) {
 				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
 			} else {
 				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, targetModel);
