@@ -134,7 +134,7 @@ public class SBOL2SBML {
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
 		
-		//The following to for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
+		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
 			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
