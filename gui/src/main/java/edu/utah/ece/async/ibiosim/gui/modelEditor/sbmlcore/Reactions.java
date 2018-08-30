@@ -1955,9 +1955,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				productID = dimID[0].trim();
 				if (productID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Product dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), productID, selectedID, false);
+					if (!SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Product ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
@@ -2388,9 +2398,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
 				if (modifierID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Modifier dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), modifierID, selectedID, false);
+					if (!SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Modifier ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
@@ -2824,9 +2844,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
 				if (reactantID.equals("")) {
 					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Reactant dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(gcm.getSBMLDocument(), reactantID, selectedID, false);
+					if (!SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Reactant ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
