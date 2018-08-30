@@ -67,6 +67,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 
 /**
@@ -128,7 +129,20 @@ public class SBOL2SBML {
 	 */
 	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
-        
+		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
+		for (Module ChildModule : MD.getModules()) {
+			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
+				Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
+			}	
+		}
+		for (Module ChildModule : MD.getModules()) {
+			for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
+				if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
+					return MD;
+				}
+			}					
+		}
+		
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
@@ -218,7 +232,6 @@ public class SBOL2SBML {
         			}
         		}
     		}
-
     	}       
         return resultMD;
     }
