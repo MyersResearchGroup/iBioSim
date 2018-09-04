@@ -151,32 +151,19 @@ public class ReactionNode extends VariableNode {
    * @param index
    */
   public void updateSpeciesRate(int index) {
-    // TODO: fix
     double value = getValue(index);
     if (reactants != null) {
       for (SpeciesReferenceNode specRef : reactants) {
-        SpeciesNode speciesNode = specRef.getSpecies();
-        HierarchicalState state = speciesNode.getState().getChild(index);
-        if (!state.isBoundaryCondition()) {
-          double stoichiometry = specRef.getValue(index);
-          double currentRate = speciesNode.getState().getChild(index).getRateValue();
-          double rateChange = value * stoichiometry;
-          double newRate = currentRate - rateChange;
-          state.setRateValue(newRate);
+        for (HierarchicalNode subNode : specRef) {
+          specRef.setSpeciesRate(index, -value);
         }
       }
     }
 
     if (products != null) {
       for (SpeciesReferenceNode specRef : products) {
-        SpeciesNode speciesNode = specRef.getSpecies();
-        HierarchicalState state = speciesNode.getState().getChild(index);
-        if (!state.isBoundaryCondition()) {
-          double stoichiometry = specRef.getValue(index);
-          double currentRate = speciesNode.getState().getChild(index).getRateValue();
-          double rateChange = value * stoichiometry;
-          double newRate = currentRate + rateChange;
-          state.setRateValue(newRate);
+        for (HierarchicalNode subNode : specRef) {
+          specRef.setSpeciesRate(index, value);
         }
       }
     }
