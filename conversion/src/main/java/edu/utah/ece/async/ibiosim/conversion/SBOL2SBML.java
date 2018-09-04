@@ -18,10 +18,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +42,7 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
@@ -59,6 +63,7 @@ import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
+import org.synbiohub.frontend.SynBioHubFrontend;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -67,7 +72,6 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 
 /**
@@ -129,6 +133,13 @@ public class SBOL2SBML {
 	 */
 	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
+        
+    	SBOLDocument doc = new SBOLDocument();
+		doc.setComplete(false);
+		doc.setCreateDefaults(false);
+		doc.createCopy(sbolDoc);
+		
+		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
 			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
@@ -142,11 +153,6 @@ public class SBOL2SBML {
 				}
 			}					
 		}
-		
-    	SBOLDocument doc = new SBOLDocument();
-		doc.setComplete(false);
-		doc.setCreateDefaults(false);
-		doc.createCopy(sbolDoc);
 		
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
@@ -232,6 +238,7 @@ public class SBOL2SBML {
         			}
         		}
     		}
+
     	}       
         return resultMD;
     }
@@ -396,6 +403,7 @@ public class SBOL2SBML {
 				generateBiochemicalRxn(interact, resultMD, targetModel);
 			}
 		}
+		
 
 		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
 			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
@@ -413,12 +421,63 @@ public class SBOL2SBML {
 					promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
+				
 				// TODO: Analyze "promoter" (TU) to see if it has Cello parameters
 				// if yes, call your generateProductionRxn method, else original
-				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+				
+				String n = "";
+				String K = "";
+				String ymax = "";
+				String ymin = "";
+				
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					for (Component comp : tuCD.getComponents()) {
+						if (comp.getDefinition() != null) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
+									comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+								ComponentDefinition Part = comp.getDefinition();
+								List<Annotation> Annot = Part.getAnnotations();
+								for (int i = 0; i < Annot.size(); i++) {
+									//System.out.println(Annot.get(i));
+									//System.out.println(Annot.get(i).getQName());
+									//System.out.println(Annot.get(i).getIntegerValue());
+									//System.out.println(Annot.get(i).getStringValue());
+									//System.out.println(Annot.get(i).getURIValue());
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+										K = Annot.get(i).getStringValue();
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+										n = Annot.get(i).getStringValue();
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+										ymax = Annot.get(i).getStringValue();
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+										ymin = Annot.get(i).getStringValue();
+									}
+									//if (Objects.equals(new String("ymin+(ymax-ymin)/(1.0+(x/K)^n)"), Annot.get(i).getStringValue())) {
+									//	System.out.println("YAYYY");
+									//}
+								}
+							}
+						}
+					}
+				}
+				
+				if (!n.isEmpty() && !K.isEmpty() && !ymax.isEmpty() && !ymin.isEmpty()) {
+					//go to the new generateProductionRxn method
+					System.out.println("you are in new method call");
+					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+				}else {
+					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+				}
 			}
 		}
 
