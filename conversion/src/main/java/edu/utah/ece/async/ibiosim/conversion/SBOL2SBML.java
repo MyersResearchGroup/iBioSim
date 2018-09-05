@@ -422,7 +422,7 @@ public class SBOL2SBML {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				//retrieve Cello Parameters if the TU has them
+				//retrieve Cello Parameters, if the TU (promoter) has them
 				HashMap<String, String> celloParameters = hasCelloParameters(promoter);
 				
 				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
@@ -466,8 +466,15 @@ public class SBOL2SBML {
 		return models;
 	}
 
+	/**
+	 * Checks for Cello parameters. This method searches annotations of parts to see if there are stored any Cello parameters. 
+	 *
+	 * @param promoter The TranscriptionalUnit (TU) where, if present, Cello parameters are stored
+	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
+	 */
 	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
 		
+		//Initialize the parameters we are looking for
 		String n = "";
 		String K = "";
 		String ymax = "";
@@ -480,7 +487,10 @@ public class SBOL2SBML {
 					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
 							comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
 						ComponentDefinition Part = comp.getDefinition();
+						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+						//the location of these parameters can change
 						List<Annotation> Annot = Part.getAnnotations();
+						//cicle through all annotations looking for Cello parameters
 						for (int i = 0; i < Annot.size(); i++) {
 							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
 								K = Annot.get(i).getStringValue();
@@ -499,6 +509,7 @@ public class SBOL2SBML {
 				}
 			}
 		}
+		//Create HashMap where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
 		HashMap<String, String> celloParameters = new HashMap<String, String>();
 		celloParameters.put("n", n);
 		celloParameters.put("K", K);
