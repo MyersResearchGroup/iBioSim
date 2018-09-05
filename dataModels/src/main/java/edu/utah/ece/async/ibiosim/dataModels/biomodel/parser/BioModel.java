@@ -5906,7 +5906,7 @@ public class BioModel extends CoreObservable{
 		}
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
-		String tempFile = path + File.separator + filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
+		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 		save(tempFile);
 
 		BioModel model = BioModel.createBioModel(path, this);
