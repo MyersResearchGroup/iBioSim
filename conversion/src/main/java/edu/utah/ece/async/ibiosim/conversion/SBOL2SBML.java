@@ -466,57 +466,20 @@ public class SBOL2SBML {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				// TODO: Analyze "promoter" (TU) to see if it has Cello parameters
-				// if yes, call your generateProductionRxn method, else original
+				//retrieve Cello Parameters if the TU has them
+				HashMap<String, String> celloParameters = hasCelloParameters(promoter);
 				
-				String n = "";
-				String K = "";
-				String ymax = "";
-				String ymin = "";
-				
-				if (promoter.getDefinition() != null) {
-					ComponentDefinition tuCD = promoter.getDefinition();
-					for (Component comp : tuCD.getComponents()) {
-						if (comp.getDefinition() != null) {
-							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
-									comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-								ComponentDefinition Part = comp.getDefinition();
-								List<Annotation> Annot = Part.getAnnotations();
-								for (int i = 0; i < Annot.size(); i++) {
-									//System.out.println(Annot.get(i));
-									//System.out.println(Annot.get(i).getQName());
-									//System.out.println(Annot.get(i).getIntegerValue());
-									//System.out.println(Annot.get(i).getStringValue());
-									//System.out.println(Annot.get(i).getURIValue());
-									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
-										K = Annot.get(i).getStringValue();
-									}
-									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
-										n = Annot.get(i).getStringValue();
-									}
-									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
-										ymax = Annot.get(i).getStringValue();
-									}
-									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
-										ymin = Annot.get(i).getStringValue();
-									}
-									//if (Objects.equals(new String("ymin+(ymax-ymin)/(1.0+(x/K)^n)"), Annot.get(i).getStringValue())) {
-									//	System.out.println("YAYYY");
-									//}
-								}
-							}
-						}
-					}
-				}
-				
-				if (!n.isEmpty() && !K.isEmpty() && !ymax.isEmpty() && !ymin.isEmpty()) {
+				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
+				if (!celloParameters.get("n").isEmpty() && !celloParameters.get("K").isEmpty() && !celloParameters.get("ymax").isEmpty() && !celloParameters.get("ymin").isEmpty()) {
 					//go to the new generateProductionRxn method
 					System.out.println("you are in new method call");
 					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
 							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
-				}else {
+				}
+				//else call the normal model generating method
+				else {
 					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
@@ -546,6 +509,47 @@ public class SBOL2SBML {
 		return models;
 	}
 
+	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
+		
+		String n = "";
+		String K = "";
+		String ymax = "";
+		String ymin = "";
+		
+		if (promoter.getDefinition() != null) {
+			ComponentDefinition tuCD = promoter.getDefinition();
+			for (Component comp : tuCD.getComponents()) {
+				if (comp.getDefinition() != null) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
+							comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+						ComponentDefinition Part = comp.getDefinition();
+						List<Annotation> Annot = Part.getAnnotations();
+						for (int i = 0; i < Annot.size(); i++) {
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+								K = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+								n = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+								ymax = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+								ymin = Annot.get(i).getStringValue();
+							}
+						}
+					}
+				}
+			}
+		}
+		HashMap<String, String> celloParameters = new HashMap<String, String>();
+		celloParameters.put("n", n);
+		celloParameters.put("K", K);
+		celloParameters.put("ymax", ymax);
+		celloParameters.put("ymin", ymin);
+		return celloParameters;
+	}
+	
 	/**
 	 * Convert the given SBOL ModuleDefinition and its submodule to equivalent SBML models. 
 	 * SBML replacement and replacedBy objects will be created for each SBOL MapsTo that occur in the given SBML submodule.
