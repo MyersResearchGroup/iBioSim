@@ -887,7 +887,8 @@ public class SBOL2SBML {
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
-
+		
+		// Create reaction ID string using all the interactions listed with this promoter (or TU). 
 		String rxnID = "";
 		if (productions!=null) {
 			for (Interaction production : productions) {
@@ -941,6 +942,7 @@ public class SBOL2SBML {
 				}
 			}
 		
+			// create the actual production reaction, using this method from BioModel. Returns a reaction
 			Reaction productionRxn = targetModel.createProductionReaction(promoterId, rxnIDi, null, null, null, null, 
 					null, null, false, null);
 
