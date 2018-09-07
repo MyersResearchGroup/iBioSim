@@ -1022,17 +1022,21 @@ public class SBOL2SBML {
 		
 		int kdegrad = 0;
 		
+		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
 		if (species.getDefinition().containsRole(SequenceOntology.MRNA)) {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
-			
+		
+			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
 		//should it be .containsRole or .containsType for the Transcription Factor TF?
 		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT)) {
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 		} else {
 			//error, this should never happen. If this method is called, it's because the degraded species is either mRNA or a Transcription Factor TF
 			throw new BioSimException("", "Unexpected Method Call");
+			//or should we call the normal generateDegradationRxn???
 		}
 		
+		//create degradation reaction to be added to the model
 		Reaction degradationRxn = targetModel.createCelloDegradationReaction(getDisplayID(species), kdegrad, onPort, null);
 		degradationRxn.setId(getDisplayID(degradation));
 
