@@ -2014,6 +2014,9 @@ public class BioModel extends CoreObservable{
 	//TODO PEDRO
 	public Reaction createCelloDegradationReaction(String s,int kdegrad,boolean onPort, String[] dimensions) {
 		//createDegradationDefaultParameters();
+		
+		//This method is very similar to the createDegradationReaction() method, except it uses other parameter values (kSDdim or kTFdim insted of kd). 
+		
 		Reaction reaction = getDegradationReaction(s);
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
@@ -2044,6 +2047,8 @@ public class BioModel extends CoreObservable{
 			//	AnnotationUtility.setSweepAnnotation(p, sweep);
 			//} 
 		}
+		
+		//Set the math for the degradation reaction
 		k.setMath(SBMLutilities.myParseFormula("kdegrad*"+s+indexStr));
 		Port port = getPortByIdRef(reaction.getId());
 		if (port!=null) {
