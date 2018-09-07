@@ -129,6 +129,8 @@ public class SBOL2SBML {
 	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
         
+		try {
+		
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
@@ -225,6 +227,7 @@ public class SBOL2SBML {
         				//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
         				if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
         					//copy participation with FC in resultMD as the participant
+        					
         					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
         				} else {
         					//otherwise create participation with FC that replaced the FC that was pointed to.
@@ -233,9 +236,9 @@ public class SBOL2SBML {
         			}
         		}
     		}
-
     	}       
-        return resultMD;
+        return resultMD;} catch (Exception e) {e.printStackTrace();
+        return MD;}
     }
 	
 	/**
