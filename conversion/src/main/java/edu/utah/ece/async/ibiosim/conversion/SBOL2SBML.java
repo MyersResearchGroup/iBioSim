@@ -888,7 +888,7 @@ public class SBOL2SBML {
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
 		
-		// Create reaction ID string using all the interactions listed with this promoter (or TU). 
+		// Create reaction ID string using all the interactions listed with this promoter (or TU).
 		String rxnID = "";
 		if (productions!=null) {
 			for (Interaction production : productions) {
@@ -997,7 +997,53 @@ public class SBOL2SBML {
 			}
 		}
 	}
+	
+	// TODO PEDRO
+	private static void generateCelloProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
+			List<Interaction> activations, List<Interaction> repressions,
+			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
+			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
+		
+	}
 
+	// TODO PEDRO
+	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) throws BioSimException {
+		Participation degraded = null;
+		for(Participation part : degradation.getParticipations())
+		{
+			degraded = part;
+			break;
+		}
+		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipantURI());
+		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
+				|| species.getDirection().equals(DirectionType.OUT));
+		
+		int kdegrad = 0;
+		
+		if (species.getDefinition().containsRole(SequenceOntology.MRNA)) {
+			kdegrad = GlobalConstants.k_SD_DIM_S;
+			
+		//should it be .containsRole or .containsType for the Transcription Factor TF?
+		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT)) {
+			kdegrad = GlobalConstants.k_TF_DIM_S;
+		} else {
+			//error, this should never happen. If this method is called, it's because the degraded species is either mRNA or a Transcription Factor TF
+			throw new BioSimException("", "Unexpected Method Call");
+		}
+		
+		Reaction degradationRxn = targetModel.createCelloDegradationReaction(getDisplayID(species), kdegrad, onPort, null);
+		degradationRxn.setId(getDisplayID(degradation));
+
+		// Annotate SBML degradation reaction with SBOL interaction
+		annotateRxn(degradationRxn, degradation);
+
+		// Annotate SBML degraded reactant with SBOL participation
+		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
+		annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
+	}
+	
+	
+	
 	/**
 	 * Convert SBOL participation that takes on the role of activator into its equivalent SBML SpeciesReference.
 	 * 

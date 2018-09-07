@@ -2011,6 +2011,60 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
+	//TODO PEDRO
+	public Reaction createCelloDegradationReaction(String s,int kdegrad,boolean onPort, String[] dimensions) {
+		//createDegradationDefaultParameters();
+		Reaction reaction = getDegradationReaction(s);
+		if (reaction==null) {
+			reaction = sbml.getModel().createReaction();
+			reaction.setId(GlobalConstants.DEGRADATION + "_" + s);
+			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
+			reaction.setReversible(false);
+			//reaction.setFast(false);
+			SpeciesReference reactant = reaction.createReactant();
+			reactant.setSpecies(s);
+			reactant.setStoichiometry(1);
+			reactant.setConstant(true);
+		} 
+		String indexStr = "";
+		if (dimensions!=null && dimensions.length>0) {
+			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			SBMLutilities.createDimensions(reaction, dimIds, dimensions);
+			SBMLutilities.addIndices(reaction.getReactant(0), "species", dimIds, 0);
+			indexStr = SBMLutilities.getIndicesString(reaction.getReactant(0), "species");
+		}
+		KineticLaw k = reaction.createKineticLaw();
+		if (kdegrad > 0) {
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			p.setValue(kdegrad);
+			//if (sweep != null) {
+			//	AnnotationUtility.setSweepAnnotation(p, sweep);
+			//} 
+		}
+		k.setMath(SBMLutilities.myParseFormula("kdegrad*"+s+indexStr));
+		Port port = getPortByIdRef(reaction.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+			}
+		}
+		return reaction;
+	}
+		
 	public static String createComplexKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
