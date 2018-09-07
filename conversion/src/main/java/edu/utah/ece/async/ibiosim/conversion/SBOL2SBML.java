@@ -1072,6 +1072,8 @@ public class SBOL2SBML {
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
 		
+		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
+		
 	}
 
 	// TODO PEDRO
