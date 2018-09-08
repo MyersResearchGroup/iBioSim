@@ -2011,6 +2011,16 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
+	/**
+	 * Creates the cello degradation reaction.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param s the species (in SBML) or ComponentDefinition (in SBOL) that is being degraded
+	 * @param kdegrad the is the rate of degradation. It's value is obtained from Cello, and it depends if it's mRNA or Protein
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @return the reaction is the Degradation Reaction being created for this species
+	 */
 	//TODO PEDRO
 	public Reaction createCelloDegradationReaction(String s,int kdegrad,boolean onPort, String[] dimensions) {
 		//createDegradationDefaultParameters();
