@@ -512,6 +512,7 @@ public class SBOL2SBML {
 	/**
 	 * Checks for Cello parameters. This method searches annotations of parts to see if there are stored any Cello parameters. 
 	 *
+	 * @author Pedro Fontanarrosa
 	 * @param promoter The TranscriptionalUnit (TU) where, if present, Cello parameters are stored
 	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
 	 */
@@ -1076,6 +1077,15 @@ public class SBOL2SBML {
 		
 	}
 
+	/**
+	 * Generate cello degradation rxn using Cello optimized parameters. 
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param degradation the degradation interaction
+	 * @param moduleDef the ModuleDefinition in which the interaction is in
+	 * @param targetModel the target model being constructed for the TU
+	 * @throws BioSimException the bio sim exception
+	 */
 	// TODO PEDRO
 	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) throws BioSimException {
 		Participation degraded = null;
