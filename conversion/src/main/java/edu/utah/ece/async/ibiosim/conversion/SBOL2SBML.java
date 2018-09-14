@@ -126,6 +126,7 @@ public class SBOL2SBML {
 	 * uses Transcriptional Units (and not parts of a TU) as the center of reactions to which to model, and this method
 	 * flattens any parts of a TU to a single TU for any ModuleDefinition given. 
 	 *
+	 * @author Pedro Fontanarrosa
 	 * @param sbolDoc the SBOL document containing the ModuleDefinition to be flattened
 	 * @param MD the ModuleDefinition to be flattened
 	 * @return the flattened module definition to be used for creating the models
@@ -429,10 +430,14 @@ public class SBOL2SBML {
 				if (!celloParameters.get("n").isEmpty() && !celloParameters.get("K").isEmpty() && !celloParameters.get("ymax").isEmpty() && !celloParameters.get("ymin").isEmpty()) {
 					//go to the new generateProductionRxn method
 					System.out.println("you are in new method call");
-					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+					
+					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
+					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, celloParameters);
+					//TODO PEDRO calling cello methods
+					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
 				}
 				//else call the normal model generating method
 				else {
@@ -889,7 +894,7 @@ public class SBOL2SBML {
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
 		
-		// Create reaction ID string using all the interactions listed with this promoter (or TU).
+		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
 		String rxnID = "";
 		if (productions!=null) {
 			for (Interaction production : productions) {
@@ -917,6 +922,7 @@ public class SBOL2SBML {
 			}
 		}
 
+		// For each promoter in the TU, a new production reaction will be created, so we save the Identity of each promoter in this TU in promoterID
 		for (int i = 0; i < promoterCnt; i++) {
 			
 			String rxnIDi = rxnID; 
@@ -943,7 +949,7 @@ public class SBOL2SBML {
 				}
 			}
 		
-			// create the actual production reaction, using this method from BioModel. Returns a reaction
+			// create the actual production reaction, using a specific promoter in the TU. Returns a reaction.
 			Reaction productionRxn = targetModel.createProductionReaction(promoterId, rxnIDi, null, null, null, null, 
 					null, null, false, null);
 
@@ -999,14 +1005,151 @@ public class SBOL2SBML {
 		}
 	}
 	
-	// TODO PEDRO
-	private static void generateCelloProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
+	// TODO PEDRO generateCelloProductionsRxns
+	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
+			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap celloParameters) {
 		
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		
+		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
+		String rxnID = "";
+		if (productions!=null) {
+			for (Interaction production : productions) {
+				if (rxnID.equals("")) {
+					rxnID = getDisplayID(production);
+				} else {
+					rxnID = rxnID + "_" + getDisplayID(production);
+				}
+			}
+		} else {
+			rxnID = promoter.getDisplayId() + "_Production";
+		}
+		
+		// Count promoters
+		int promoterCnt = 0;
+		if (promoter.getDefinition() != null) {
+			ComponentDefinition tuCD = promoter.getDefinition();
+			for (Component comp : tuCD.getComponents()) {
+				if (comp.getDefinition() != null) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
+							comp.getDefinition().getRoles().contains(SequenceOntology.OPERATOR)) {
+						promoterCnt++;
+					}
+				}
+			}
+		}
+		
+		//Make a set with all the promoters (and operators???) for this TU.
+		HashSet <String> promoterIDs = new HashSet<String>();
+		for (int i = 0; i < promoterCnt; i++) {
+			// Use the id of the actual promoter
+			if (promoterCnt >= 1) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					int j = 0;
+					for (Component comp : tuCD.getComponents()) {
+						if (comp.getDefinition() != null) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+								if (i==j) {
+									promoterIDs.add(getDisplayID(comp.getDefinition()));
+									break;
+								}
+								j++;
+							}
+						}
+					}
+				}
+			}
+		}
+			
+			/*
+			// Annotate SBML production reaction with SBOL production interactions
+			List<Interaction> productionsRegulations = new LinkedList<Interaction>();
+			if (productions!=null) productionsRegulations.addAll(productions);
+			productionsRegulations.addAll(activations);
+			productionsRegulations.addAll(repressions);
+			if (!productionsRegulations.isEmpty())
+				annotateRxn(productionRxn, productionsRegulations);
+			if (!partici.isEmpty()) 
+				annotateSpeciesReference(productionRxn.getModifier(0), partici);
+
+			if (promoterCnt > 1) {
+				int j = 0;
+
+				for (Participation activator : activators) {
+					if (i==j) {
+						generateActivatorReference(activator, promoterId, moduleDef, productionRxn, targetModel);
+					}
+					j++;
+				}
+
+				for (Participation repressor : repressors) {
+					if (i==j) {
+						generateRepressorReference(repressor, promoterId, moduleDef, productionRxn, targetModel);
+					}
+					j++;
+				}
+			} else {
+				for (Participation activator : activators)
+					generateActivatorReference(activator, promoterId, moduleDef, productionRxn, targetModel);
+
+				for (Participation repressor : repressors)
+					generateRepressorReference(repressor, promoterId, moduleDef, productionRxn, targetModel);
+			}
+			
+			for (Participation product : products)
+				generateProductReference(product, promoterId, moduleDef, productionRxn, targetModel);
+
+		}
+		*/
+		
+		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
+		String kTFdegrad = String.valueOf(GlobalConstants.k_TF_DIM_S);
+		
+		if (promoter.getDefinition() != null) {
+			ComponentDefinition tuCD = promoter.getDefinition();
+			for (Component comp : tuCD.getComponents()) {
+				if (comp.getDefinition() != null) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.CDS)) {
+						Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(comp.getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, 
+								null, null, false, null);
+						Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(comp.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, 
+								null, null, false, null);
+					}
+				}
+			}
+		}
+		
+		if (promoter.getDefinition() != null) {
+			for (Participation produ : products) {
+				Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(produ.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, 
+						null, null, false, null);
+			}
+		}
+		
+		
+		//I think I should get the id of all promoters, and create 1 production reaction for the mRNA for the whole TU
+		// and another production reaction for the product, for the whole TU
+		
+		// create the actual production reaction, using a specific promoter in the TU. Returns a reaction.
+		//Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(promoter.getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, null, null, false, null);
+		//Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(promoter.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
+		//call here the generateCelloDegradationRxn for this promoter? or to the mRNA product? or for just the CDS product
+
+
+		//Note: find the resulting ComponentDefinition that creates or result in the production reaction to annotate in its equivalent
+		// SBML species. 
+		for (int i = 0; i < transcribed.size(); i++) {
+			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(i).getParticipantURI());
+			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(i).getParticipantURI());
+
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), compDef);
+			}
+		}
 	}
 
 	/**
@@ -1018,7 +1161,7 @@ public class SBOL2SBML {
 	 * @param targetModel the target model being constructed for the TU
 	 * @throws BioSimException the bio sim exception
 	 */
-	// TODO PEDRO
+	// TODO PEDRO generateCelloDegradationRxn
 	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) throws BioSimException {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
@@ -1030,10 +1173,10 @@ public class SBOL2SBML {
 		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
 				|| species.getDirection().equals(DirectionType.OUT));
 		
-		int kdegrad = 0;
+		double kdegrad = 0;
 		
 		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
-		if (species.getDefinition().containsRole(SequenceOntology.MRNA)) {
+		if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
 		
 			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
@@ -1042,7 +1185,7 @@ public class SBOL2SBML {
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 		} else {
 			//error, this should never happen. If this method is called, it's because the degraded species is either mRNA or a Transcription Factor TF
-			throw new BioSimException("", "Unexpected Method Call");
+			throw new BioSimException("A generateCelloDegradationRxn method has been called for a species that isn't an mRNA or protein", "Unexpected Method Call");
 			//or should we call the normal generateDegradationRxn???
 		}
 		
