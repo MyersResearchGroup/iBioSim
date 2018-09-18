@@ -2059,6 +2059,8 @@ public class BioModel extends CoreObservable{
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
 			
+			//set modifiers (TU)
+			
 			k = r.createKineticLaw();
 		} else {
 			// return r? or search for globalconstantCelloParameters? 
@@ -2111,6 +2113,8 @@ public class BioModel extends CoreObservable{
 			//SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
+			
+			//Set modifiers or reactant as mRNA
 			
 			k = r.createKineticLaw();
 			
