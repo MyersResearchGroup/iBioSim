@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.print.Doc;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
@@ -357,9 +358,30 @@ public class SBOL2SBML {
 		HashMap<FunctionalComponent, List<Participation>> promoterToActivators = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToRepressors = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
+		
+		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
+		
+		boolean CelloModel = false;
+		// TODO there has to be a better way to determine if we are in a Cello model generation or not
+		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
+				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation and both Degradation reactions and Production reactions will be modeled using Hamid's model and Cello parameters
+				celloParameters.put(promoter, hasCelloParameters(promoter));
+				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
+				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
+					CelloModel = true;
+				}
+			}
+		}
+
 		for (Interaction interact : resultMD.getInteractions()) {
-			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {
-				generateDegradationRxn(interact, resultMD, targetModel);
+			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {	
+				if (CelloModel) {
+					System.out.println("you are in new degradation method call");
+					generateCelloDegradationRxn(interact, resultMD, targetModel);
+				} else {
+					generateDegradationRxn(interact, resultMD, targetModel);
+				}
 			} else if (isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
@@ -466,11 +488,8 @@ public class SBOL2SBML {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				//retrieve Cello Parameters, if the TU (promoter) has them
-				HashMap<String, String> celloParameters = hasCelloParameters(promoter);
-				
 				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
-				if (!celloParameters.get("n").isEmpty() && !celloParameters.get("K").isEmpty() && !celloParameters.get("ymax").isEmpty() && !celloParameters.get("ymin").isEmpty()) {
+				if (CelloModel) {
 					//go to the new generateProductionRxn method
 					System.out.println("you are in new method call");
 					
@@ -1081,9 +1100,12 @@ public class SBOL2SBML {
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		
 		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
+		
+		//change ID for each SD reaction and TF production
+		// TODO PEDRO create reaction ID for SD and TF which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqe
 		String rxnID = "";
-		if (productions!=null) {
-			for (Interaction production : productions) {
+		if (products!=null) {
+			for (Participation production : products) {
 				if (rxnID.equals("")) {
 					rxnID = getDisplayID(production);
 				} else {
@@ -1091,7 +1113,7 @@ public class SBOL2SBML {
 				}
 			}
 		} else {
-			rxnID = promoter.getDisplayId() + "_Production";
+			// TODO PEDRO throw exception
 		}
 		
 		// Count promoters
@@ -1107,6 +1129,9 @@ public class SBOL2SBML {
 				}
 			}
 		}
+		
+		//TODO PEDRO create a set of sets. Each key would be every promoter
+		// each promoter will have a set of interactions
 		
 		//Make a set with all the promoters (and operators???) for this TU.
 		HashSet <String> promoterIDs = new HashSet<String>();
@@ -1175,15 +1200,17 @@ public class SBOL2SBML {
 		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
 		String kTFdegrad = String.valueOf(GlobalConstants.k_TF_DIM_S);
 		
+		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
+		
+		//TODO PEDRO add only one TF and SD reaction per TU
 		if (promoter.getDefinition() != null) {
 			ComponentDefinition tuCD = promoter.getDefinition();
 			for (Component comp : tuCD.getComponents()) {
-				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.CDS)) {
-						Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(comp.getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, 
-								null, null, false, null);
-						Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(comp.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, 
-								null, null, false, null);
+				if (comp.getDefinitionIdentity() != null) {
+					//sbolDoc.getComponentDefinition(comp.getDefinitionIdentity()).containsRole(SequenceOntology.CDS);
+					if (comp.getDefinition().containsRole(SequenceOntology.CDS) || comp.getDefinition().containsRole(SequenceOntology.ENGINEERED_REGION) || comp.getDisplayId().equals("Gen_Component"))  {
+						Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(comp.getDefinition().getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, null, null, false, null);
+						//Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(comp.getDefinition().getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
 					}
 				}
 			}
