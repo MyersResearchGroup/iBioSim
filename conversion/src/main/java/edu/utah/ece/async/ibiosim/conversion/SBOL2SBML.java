@@ -1211,21 +1211,35 @@ public class SBOL2SBML {
 		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT)) {
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 		} else {
-			//error, this should never happen. If this method is called, it's because the degraded species is either mRNA or a Transcription Factor TF
-			throw new BioSimException("A generateCelloDegradationRxn method has been called for a species that isn't an mRNA or protein", "Unexpected Method Call");
-			//or should we call the normal generateDegradationRxn???
+			// Do nothing, kdegrad = 0
 		}
 		
-		//create degradation reaction to be added to the model
-		Reaction degradationRxn = targetModel.createCelloDegradationReaction(getDisplayID(species), kdegrad, onPort, null);
-		degradationRxn.setId(getDisplayID(degradation));
+		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
+		if (kdegrad == 0) {
+			Reaction degradationRxn = targetModel.createDegradationReaction(getDisplayID(species), -1, null, onPort, null);
+			degradationRxn.setId(getDisplayID(degradation));
 
-		// Annotate SBML degradation reaction with SBOL interaction
-		annotateRxn(degradationRxn, degradation);
+			// Annotate SBML degradation reaction with SBOL interaction
+			annotateRxn(degradationRxn, degradation);
 
-		// Annotate SBML degraded reactant with SBOL participation
-		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
-		annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
+			// Annotate SBML degraded reactant with SBOL participation
+			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
+			annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
+			
+		} 
+		// else, we call the celloDegradationReaction, which uses different degradation reaction rates for this reaction. 
+		else {
+			//create degradation reaction to be added to the model
+			Reaction degradationRxn = targetModel.createCelloDegradationReaction(getDisplayID(species), kdegrad, onPort, null);
+			degradationRxn.setId(getDisplayID(degradation));
+
+			// Annotate SBML degradation reaction with SBOL interaction
+			annotateRxn(degradationRxn, degradation);
+
+			// Annotate SBML degraded reactant with SBOL participation
+			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
+			annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
+		}
 	}
 	
 	
