@@ -1136,12 +1136,62 @@ public class SBOL2SBML {
 		
 		//TODO PEDRO create a set of sets. Each key would be every promoter
 		// each promoter will have a set of interactions
+		HashMap <String, List<Participation>> promoterInteractions = new HashMap <String, List<Participation>>();
+		for (int i = 0; i < promoterCnt; i++) {
+			
+			String promoterId = getDisplayID(promoter);
+			
+			// Use the id of the actual promoter
+			if (promoterCnt > 1) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					int j = 0;
+					for (Component comp : tuCD.getComponents()) {
+						if (comp.getDefinition() != null) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+								if (i==j) {
+									promoterId = getDisplayID(comp.getDefinition());
+									break;
+								}
+								j++;
+							}
+						}
+					}
+				}
+			}
+			promoterInteractions.put(promoterId, new LinkedList<Participation>());
+			if (promoterCnt > 1) {
+				int j = 0;
+
+				for (Participation activator : activators) {
+					if (i==j) {
+						promoterInteractions.get(promoterId).add(activator);
+					}
+					j++;
+				}
+
+				for (Participation repressor : repressors) {
+					if (i==j) {
+						promoterInteractions.get(promoterId).add(repressor);
+					}
+					j++;
+				}
+			} else {
+				for (Participation activator : activators)
+					promoterInteractions.get(promoterId).add(activator);
+
+				for (Participation repressor : repressors)
+					promoterInteractions.get(promoterId).add(repressor);
+			}
+			
+			
+		}
 		
 		//Make a set with all the promoters (and operators???) for this TU.
-		HashMap <String, List<Interaction>> promoterIDs = new HashMap <String, List<Interaction>>();
+/*		HashMap <String, List<Interaction>> promoterInteractions = new HashMap <String, List<Interaction>>();
 		for (int i = 0; i < promoterCnt; i++) {
 			// Use the id of the actual promoter
-			if (promoterCnt >= 1) {
+		if (promoterCnt >= 1) {
 				if (promoter.getDefinition() != null) {
 					ComponentDefinition tuCD = promoter.getDefinition();
 					int j = 0;
@@ -1158,7 +1208,7 @@ public class SBOL2SBML {
 					}
 				}
 			}
-		}
+		}*/
 			
 			/*
 			// Annotate SBML production reaction with SBOL production interactions
@@ -1210,41 +1260,14 @@ public class SBOL2SBML {
 		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
 		mRNA.setId( rxnID + "_mRNA");
 		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
-		//boolean onPort = (mRNA.getDirection().equals(DirectionType.IN) 
-		//		|| mRNA.getDirection().equals(DirectionType.OUT));
-		//Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, onPort, dimensions);
+		Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
+		
 		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(mRNA, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
-		
-		
-/*		if (promoter.getDefinition() != null) {
-			ComponentDefinition tuCD = promoter.getDefinition();
-			for (Component comp : tuCD.getComponents()) {
-				if (comp.getDefinitionIdentity() != null) {
-					//sbolDoc.getComponentDefinition(comp.getDefinitionIdentity()).containsRole(SequenceOntology.CDS);
-					if (comp.getDefinition().containsRole(SequenceOntology.CDS) || comp.getDefinition().containsRole(SequenceOntology.ENGINEERED_REGION) || comp.getDisplayId().equals("Gen_Component"))  {
-						Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(comp.getDefinition().getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, null, null, false, null);
-						//Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(comp.getDefinition().getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
-					}
-				}
-			}
-		}
-		
-		if (promoter.getDefinition() != null) {
-			for (Participation produ : products) {
-				Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(produ.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
-			}
-		}*/
-		
+			
 		
 		//I think I should get the id of all promoters, and create 1 production reaction for the mRNA for the whole TU
 		// and another production reaction for the product, for the whole TU
 		
-		// create the actual production reaction, using a specific promoter in the TU. Returns a reaction.
-		//Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(promoter.getDisplayId(), rxnID, celloParameters, kSDdegrad, null, null, null, null, false, null);
-		//Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(promoter.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
-		//call here the generateCelloDegradationRxn for this promoter? or to the mRNA product? or for just the CDS product
-
-
 		//Note: find the resulting ComponentDefinition that creates or result in the production reaction to annotate in its equivalent
 		// SBML species. 
 		for (int i = 0; i < transcribed.size(); i++) {
