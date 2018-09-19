@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -86,6 +87,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.libsbml.libsbmlConstants;
+import org.sbolstandard.core2.Participation;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -2012,41 +2014,39 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloSDProductionReaction
-	public Reaction createCelloSDProductionReactions(String CDS, String reactionID, HashMap celloParameters, String kSDdegrad, String n, String k_react,
-			String ymax, String ymin, boolean onPort, String[] dimensions) {
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap celloParameters, String kSDdegrad, String n, String k_react,
+			String ymax, String ymin, boolean onPort, String[] dimensions, BioModel targetModel) {
 		
 		//This method should create a mRNA species for the CDS and a production reaction for that mRNA
 		
-		//TODO PEDRO Check if rxnID is unique, if not, add something to it
-		//SBMLutilities.getUniqueSBMLId(currentId, bioModel)
+		
+		//Check if rxnID is unique, if not, add something to it
+		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
 		
 		//createProductionDefaultParameters();
-		Species mRNA = sbml.getModel().getSpecies(CDS+"_mRNA"); 
-		Reaction r = getProductionReaction(CDS);
+		
+		Reaction r = getProductionReaction(reactionID);
 		KineticLaw k = null;
 		
 		if (mRNA==null) {
 			mRNA = sbml.getModel().createSpecies();
 			//reaction id + mRNA
-			mRNA.setId(CDS + "_mRNA");
+			mRNA.setId(reactionID + "_mRNA");
 		}
 		
 		if (r == null) {
 			
 			r = sbml.getModel().createReaction();
-			r.setId(GlobalConstants.PRODUCTION + "_" + mRNA.getId());
+			r.setId(reactionID);
 			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-			r.setCompartment(sbml.getModel().getSpecies(mRNA.getId()).getCompartment());
-			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
 			r.setReversible(false);
-			//r.setFast(false);
-			//ModifierSpeciesReference modifier = r.createModifier();
-			//modifier.setSpecies(promoterId);
-			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterId), modifier, "species");
-			//modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(TU);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
 			mRNA.setCompartment(r.getCompartment());
-			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),mRNA,"compartment");
 			mRNA.setInitialAmount(0.0);
 			mRNA.setBoundaryCondition(false);
 			mRNA.setConstant(false);
@@ -2058,9 +2058,7 @@ public class BioModel extends CoreObservable{
 			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
-			
-			//set modifiers (TU)
-			
+
 			k = r.createKineticLaw();
 		} else {
 			// return r? or search for globalconstantCelloParameters? 
@@ -2090,31 +2088,33 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloTFProductionReaction
-	public Reaction createCelloTFProductionReactions(String producto, String rxnID, HashMap celloParameters, String kTFdegrad, String ko,
+	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
 		//This method should create a production reaction for Protein or Product
 		
 		//createProductionDefaultParameters();
-		Reaction r = getProductionReaction(producto);
+		Reaction r = getProductionReaction(rxnID);
 		KineticLaw k = null;
 		
 		if (r == null) {
 			r = sbml.getModel().createReaction();
-			r.setId(GlobalConstants.PRODUCTION + "_" + producto);
+			r.setId(rxnID);
 			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-			r.setCompartment(sbml.getModel().getSpecies(producto).getCompartment());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+			r.setCompartment(sbml.getModel().getSpecies(mRNA.getId()).getCompartment());
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
-			//r.setFast(false);
 			
-			SpeciesReference product = r.createProduct();
-			product.setSpecies(producto);
-			//SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
-			product.setStoichiometry(1.0);
-			product.setConstant(true);
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(mRNA);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
-			//Set modifiers or reactant as mRNA
+			for (Participation product : products) {
+				SpeciesReference TUproduct = r.createProduct();
+				TUproduct.setSpecies(product.getDisplayId());
+				TUproduct.setStoichiometry(1.0);
+				TUproduct.setConstant(true);
+			}
 			
 			k = r.createKineticLaw();
 			
@@ -2130,7 +2130,7 @@ public class BioModel extends CoreObservable{
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -2139,7 +2139,7 @@ public class BioModel extends CoreObservable{
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		

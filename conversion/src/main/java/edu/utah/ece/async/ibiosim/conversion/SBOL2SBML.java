@@ -1033,9 +1033,6 @@ public class SBOL2SBML {
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		
 		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
-		
-		//change ID for each SD reaction and TF production
-		// TODO PEDRO create reaction ID for SD and TF which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqe
 		String rxnID = "";
 		if (products!=null) {
 			for (Participation production : products) {
@@ -1048,6 +1045,13 @@ public class SBOL2SBML {
 		} else {
 			// TODO PEDRO throw exception
 		}
+		
+		//create reaction ID for SDproduction and TFproduction which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqueSBMLId()
+		String rxnIDSD = rxnID = "_" + "transcription";
+		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
+		String rxnIDTF = rxnID = "_" + "translation";
+		rxnIDTF = SBMLutilities.getUniqueSBMLId(rxnIDTF, targetModel);
+		
 		
 		// Count promoters
 		int promoterCnt = 0;
@@ -1067,7 +1071,7 @@ public class SBOL2SBML {
 		// each promoter will have a set of interactions
 		
 		//Make a set with all the promoters (and operators???) for this TU.
-		HashSet <String> promoterIDs = new HashSet<String>();
+		HashMap <String, List<Interaction>> promoterIDs = new HashMap <String, List<Interaction>>();
 		for (int i = 0; i < promoterCnt; i++) {
 			// Use the id of the actual promoter
 			if (promoterCnt >= 1) {
@@ -1078,7 +1082,7 @@ public class SBOL2SBML {
 						if (comp.getDefinition() != null) {
 							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
 								if (i==j) {
-									promoterIDs.add(getDisplayID(comp.getDefinition()));
+									//promoterIDs.put(getDisplayID(comp.getDefinition()), repressions.get(getDisplayID(comp.getDefinition()));
 									break;
 								}
 								j++;
@@ -1136,7 +1140,16 @@ public class SBOL2SBML {
 		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
 		
 		//TODO PEDRO add only one TF and SD reaction per TU
-		if (promoter.getDefinition() != null) {
+		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
+		mRNA.setId( rxnID + "_mRNA");
+		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
+		//boolean onPort = (mRNA.getDirection().equals(DirectionType.IN) 
+		//		|| mRNA.getDirection().equals(DirectionType.OUT));
+		//Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, onPort, dimensions);
+		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(mRNA, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
+		
+		
+/*		if (promoter.getDefinition() != null) {
 			ComponentDefinition tuCD = promoter.getDefinition();
 			for (Component comp : tuCD.getComponents()) {
 				if (comp.getDefinitionIdentity() != null) {
@@ -1151,10 +1164,9 @@ public class SBOL2SBML {
 		
 		if (promoter.getDefinition() != null) {
 			for (Participation produ : products) {
-				Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(produ.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, 
-						null, null, false, null);
+				Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(produ.getDisplayId(), rxnID, celloParameters, kTFdegrad, null, null, null, null, false, null);
 			}
-		}
+		}*/
 		
 		
 		//I think I should get the id of all promoters, and create 1 production reaction for the mRNA for the whole TU
