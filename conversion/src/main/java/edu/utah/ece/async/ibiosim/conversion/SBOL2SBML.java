@@ -1047,9 +1047,9 @@ public class SBOL2SBML {
 		}
 		
 		//create reaction ID for SDproduction and TFproduction which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqueSBMLId()
-		String rxnIDSD = rxnID = "_" + "transcription";
+		String rxnIDSD = rxnID + "_" + "transcription";
 		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
-		String rxnIDTF = rxnID = "_" + "translation";
+		String rxnIDTF = rxnID + "_" + "translation";
 		rxnIDTF = SBMLutilities.getUniqueSBMLId(rxnIDTF, targetModel);
 		
 		
@@ -1243,9 +1243,12 @@ public class SBOL2SBML {
 		
 			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
 		//should it be .containsRole or .containsType for the Transcription Factor TF?
-		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT)) {
+		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 		} else {
+			//TODO PEDRO: So I am using the constant of degradation for every species that's not mRNA. Should I change this?
+			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecues
+			kdegrad = GlobalConstants.k_TF_DIM_S;
 			// Do nothing, kdegrad = 0
 		}
 		

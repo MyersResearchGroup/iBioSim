@@ -2017,7 +2017,7 @@ public class BioModel extends CoreObservable{
 	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap celloParameters, String kSDdegrad, String n, String k_react,
 			String ymax, String ymin, boolean onPort, String[] dimensions, BioModel targetModel) {
 		
-		//This method should create a mRNA species for the CDS and a production reaction for that mRNA
+		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
 		
 		
 		//Check if rxnID is unique, if not, add something to it
@@ -2038,7 +2038,7 @@ public class BioModel extends CoreObservable{
 			
 			r = sbml.getModel().createReaction();
 			r.setId(reactionID);
-			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			r.setSBOTerm(GlobalConstants.SBO_TRANSCRIPTION);
 			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
 			r.setReversible(false);
 
@@ -2091,18 +2091,17 @@ public class BioModel extends CoreObservable{
 	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
-		//This method should create a production reaction for Protein or Product
+		//This method should create a production reaction for all Protein or Products the TU produces.
 		
-		//createProductionDefaultParameters();
+		//Check if rxnID is unique, if not, add something to it
 		Reaction r = getProductionReaction(rxnID);
 		KineticLaw k = null;
 		
 		if (r == null) {
 			r = sbml.getModel().createReaction();
 			r.setId(rxnID);
-			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			r.setSBOTerm(GlobalConstants.SBO_TRANSLATION);
 			r.setCompartment(sbml.getModel().getSpecies(mRNA.getId()).getCompartment());
-			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			
 			ModifierSpeciesReference modifier = r.createModifier();
@@ -2112,6 +2111,7 @@ public class BioModel extends CoreObservable{
 			for (Participation product : products) {
 				SpeciesReference TUproduct = r.createProduct();
 				TUproduct.setSpecies(product.getDisplayId());
+				//SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
 				TUproduct.setStoichiometry(1.0);
 				TUproduct.setConstant(true);
 			}
