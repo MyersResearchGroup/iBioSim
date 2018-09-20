@@ -250,6 +250,8 @@ public class GlobalConstants {
 	public static final int SBO_GENETIC_PRODUCTION = 589;
 	public static final int SBO_ASSOCIATION = 177;
 	public static final int SBO_CONSTITUTIVE = 396;
+	public static final int SBO_TRANSCRIPTION = 183;
+	public static final int SBO_TRANSLATION = 184;
 
 	// obsolete
 	public static final int SBO_REGULATION = 19;
