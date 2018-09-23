@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
@@ -2058,8 +2061,12 @@ public class BioModel extends CoreObservable{
 			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
-
+			
 			k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
+			p.setValue(GlobalConstants.k_SD_DIM_S);
 		} else {
 			// return r? or search for globalconstantCelloParameters? 
 			// or come here only when passing n, k, yoff and yon?
@@ -2117,6 +2124,10 @@ public class BioModel extends CoreObservable{
 			}
 			
 			k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
+			p.setValue(GlobalConstants.k_TF_DIM_S);
 			
 		} else {
 			/// use parameters passed by user
@@ -2147,7 +2158,7 @@ public class BioModel extends CoreObservable{
 	}
 
 	/**
-	 * Creates the cello degradation reaction.
+	 * Creates a degradation reaction using Hamid's paper for dynamic modeling using Cello parameters.
 	 *
 	 * @author Pedro Fontanarrosa
 	 * @param s the species (in SBML) or ComponentDefinition (in SBOL) that is being degraded
@@ -2213,6 +2224,38 @@ public class BioModel extends CoreObservable{
 			}
 		}
 		return reaction;
+	}
+	
+	//TODO PEDRO createCelloProductionKineticLaw
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap celloParameters, HashMap promoterInteractions, Set promoters) {
+		String kineticLaw = "";
+		//boolean activated = false;
+		String promoter = "";
+		
+	     for (Object it : promoters.toArray()) {
+	    	 promoter = it.toString();
+	    	 
+	    	 String numerator = "(ymax - ymin)";
+	    	 //numerator = numerator + celloParameters.get("ymax");
+	    	 String denominator = "1 + ";
+	    	 HashMap promInter = (HashMap) promoterInteractions.get(promoter);
+
+	    	 for (Object entry : promInter.keySet()) {
+	    		 String interaction = entry.toString();
+	    		 if (interaction.equals("activation")) {
+	    			 String activator = promInter.get(entry).toString();
+	    			 String temp = "(K/" + activator + ")^n";
+	    			 denominator += temp;
+	    			 
+	    		 } else if (interaction.equals("repression")) {
+	    			 String repressor = promInter.get(entry).toString();
+	    			 String temp = "(" + repressor + "/k)^n";
+	    			 denominator += temp;
+	    		 }
+	    	 }
+	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + "ymin" + ")";
+	     }
+		return kineticLaw;
 	}
 		
 	public static String createComplexKineticLaw(Reaction reaction) {
