@@ -2028,7 +2028,7 @@ public class BioModel extends CoreObservable{
 		
 		//createProductionDefaultParameters();
 		
-		Reaction r = getProductionReaction(reactionID);
+		Reaction r = sbml.getModel().getReaction(reactionID);
 		KineticLaw k = null;
 		
 		if (mRNA==null) {
@@ -2100,8 +2100,10 @@ public class BioModel extends CoreObservable{
 		
 		//This method should create a production reaction for all Protein or Products the TU produces.
 		
+		//TODO PEDRO: somewhere in this method, SBO term of SDproduction is changed
+		
 		//Check if rxnID is unique, if not, add something to it
-		Reaction r = getProductionReaction(rxnID);
+		Reaction r = sbml.getModel().getReaction(rxnID);
 		KineticLaw k = null;
 		
 		if (r == null) {
@@ -2135,7 +2137,7 @@ public class BioModel extends CoreObservable{
 		
 		
 		// Use cello kinetic law for TF production
-		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
+		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {
@@ -2235,8 +2237,17 @@ public class BioModel extends CoreObservable{
 	     for (Object it : promoters.toArray()) {
 	    	 promoter = it.toString();
 	    	 
-	    	 String numerator = "(ymax - ymin)";
-	    	 //numerator = numerator + celloParameters.get("ymax");
+	    	 String ymax = "ymax_" + promoter;
+	    	 String ymin = "ymin_" + promoter;
+	    	 
+	    	 String numerator = "(" + ymax + "-" + ymin + ")";
+			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+			 ymax_p.setId(ymax);
+			 //ymax_p.setValue(kdegrad);
+			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+			 ymin_p.setId(ymin);
+			 //ymax_p.setValue(kdegrad);
+			 
 	    	 String denominator = "1 + ";
 	    	 HashMap promInter = (HashMap) promoterInteractions.get(promoter);
 
@@ -2244,16 +2255,36 @@ public class BioModel extends CoreObservable{
 	    		 String interaction = entry.toString();
 	    		 if (interaction.equals("activation")) {
 	    			 String activator = promInter.get(entry).toString();
-	    			 String temp = "(K/" + activator + ")^n";
+	    			 String K = "K_" + activator;
+	    			 String n = "n_" + activator;
+	    			 
+	    			 String temp = "("+ K +"/" + activator + ")^" + n;
 	    			 denominator += temp;
+	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 //K_para.setValue(kdegrad);
+	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
+	    			 n_para.setId(n);
+	    			 //n_para.setValue(kdegrad);
 	    			 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
-	    			 String temp = "(" + repressor + "/k)^n";
+	    			 String K = "K_" + repressor;
+	    			 String n = "n_" + repressor;
+	    			 
+	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
 	    			 denominator += temp;
+	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 //K_para.setValue(kdegrad);
+	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
+	    			 n_para.setId(n);
+	    			 //n_para.setValue(kdegrad);
 	    		 }
 	    	 }
-	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + "ymin" + ")";
+	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + ymin + ")";
 	     }
 		return kineticLaw;
 	}

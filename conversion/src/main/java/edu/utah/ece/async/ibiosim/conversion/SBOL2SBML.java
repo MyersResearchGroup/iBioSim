@@ -325,7 +325,6 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		//TODO PEDRO obtain a set of sets of promoters with their interactions
 		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc);
 		
@@ -623,6 +622,8 @@ public class SBOL2SBML {
 	 * @param promoter The TranscriptionalUnit (TU) where, if present, Cello parameters are stored
 	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
 	 */
+	
+	//TODO PEDRO hasCelloParameters
 	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
 		
 		//Initialize the parameters we are looking for
