@@ -140,7 +140,7 @@ public enum SynthesisPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		if (!regexField.getText().trim().equals(""))
 			IBioSimPreferences.INSTANCE.setSynthesisPreference(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, regexField.getText().trim());
 		else {
@@ -160,6 +160,7 @@ public enum SynthesisPreferencesTab implements PreferencesTab {
 			IBioSimPreferences.INSTANCE.setSynthesisPreference(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "True");
 		else
 			IBioSimPreferences.INSTANCE.setSynthesisPreference(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "False");
+		return true;
 	}
 
 	@Override

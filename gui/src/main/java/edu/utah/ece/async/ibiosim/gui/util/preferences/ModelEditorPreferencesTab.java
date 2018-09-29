@@ -435,7 +435,7 @@ public enum ModelEditorPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		for (String element:schematicElements.keySet()) {
 			SchematicElement schematicElement = schematicElements.get(element);
 			String rounded = "false";
@@ -460,6 +460,7 @@ public enum ModelEditorPreferencesTab implements PreferencesTab {
 				IBioSimPreferences.INSTANCE.setSchematicPreference("biosim.schematic.rounded."+element, rounded);
 			}
 		}	
+		return true;
 	}
 
 	@Override
