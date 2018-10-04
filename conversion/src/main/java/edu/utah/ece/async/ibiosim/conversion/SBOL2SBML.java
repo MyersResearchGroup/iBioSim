@@ -121,6 +121,7 @@ public class SBOL2SBML {
 	 * uses Transcriptional Units (and not parts of a TU) as the center of reactions to which to model, and this method
 	 * flattens any parts of a TU to a single TU for any ModuleDefinition given. 
 	 *
+	 * @author Pedro Fontanarrosa
 	 * @param sbolDoc the SBOL document containing the ModuleDefinition to be flattened
 	 * @param MD the ModuleDefinition to be flattened
 	 * @return the flattened module definition to be used for creating the models
@@ -137,6 +138,8 @@ public class SBOL2SBML {
 		doc.createCopy(sbolDoc);
 		
 		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
+		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
+		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
 			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
@@ -154,10 +157,11 @@ public class SBOL2SBML {
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
 		
-    	//Copy original MD to resultMD which the function will return
+    	//Copy information from original MD to resultMD, which the method will return
     	ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
     	
-    	//Create a hashMap that will be used later to store the URIs of the FC that are pointed by the MapsTo of other FC, so they are not copied to resultMD. The value of each key is the URI of the upper-level-FC that replaced this FC. 
+    	//Create a hashMap that will be used later to store the URIs of the FC that are pointed by the MapsTo of other FC, so they are not copied to resultMD. 
+    	//The value of each key is the URI of the upper-level-FC that replaced this FC. 
     	HashMap<URI,URI> hash_map = new HashMap<URI, URI>();
     	
 		//Create a HashMap with store all the local_MapsTo component instance values to the FC that owns that MapsTo component instance for all the FC in the MD
@@ -173,7 +177,8 @@ public class SBOL2SBML {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
-    			hash_map.put(FC.getIdentity(), local_map_uris.get(FC.getIdentity()));    				
+    			hash_map.put(FC.getIdentity(), local_map_uris.get(FC.getIdentity()));
+    			//TODO PEDRO: check if the pointer is not also pointed by someone
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
