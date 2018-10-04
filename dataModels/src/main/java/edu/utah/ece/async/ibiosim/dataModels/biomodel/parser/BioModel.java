@@ -2073,7 +2073,7 @@ public class BioModel extends CoreObservable{
 		}
 		
 		//produce cello model kinetic law for mRNA production
-		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
+		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {

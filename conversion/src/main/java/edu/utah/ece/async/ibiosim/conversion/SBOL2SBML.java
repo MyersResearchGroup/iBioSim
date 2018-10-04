@@ -1186,6 +1186,15 @@ public class SBOL2SBML {
 		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
 		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
 		mRNA.setId( rxnID + "_mRNA");
+		//TODO PEDRO This is to make TU a species on which to make it a modifier. This may have to change when we fix MDflatenner
+		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
+			targetModel.createPromoter(promoter.getDisplayId(), -1, -1, true, false, null);
+		}
+		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId());
+		ComponentDefinition proDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+		if (proDef!=null) {
+			annotateSpecies(sbmlPromoter, promoter, proDef, sbolDoc);
+		}
 		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
 		Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
