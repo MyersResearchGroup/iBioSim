@@ -136,12 +136,16 @@ public class SBOL2SBML {
 	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
         
+		try {
+		
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
 		
 		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
+		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
+		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
 			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
@@ -159,10 +163,11 @@ public class SBOL2SBML {
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
 		
-    	//Copy original MD to resultMD which the function will return
+    	//Copy information from original MD to resultMD, which the method will return
     	ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
     	
-    	//Create a hashMap that will be used later to store the URIs of the FC that are pointed by the MapsTo of other FC, so they are not copied to resultMD. The value of each key is the URI of the upper-level-FC that replaced this FC. 
+    	//Create a hashMap that will be used later to store the URIs of the FC that are pointed by the MapsTo of other FC, so they are not copied to resultMD. 
+    	//The value of each key is the URI of the upper-level-FC that replaced this FC. 
     	HashMap<URI,URI> hash_map = new HashMap<URI, URI>();
     	
 		//Create a HashMap with store all the local_MapsTo component instance values to the FC that owns that MapsTo component instance for all the FC in the MD
@@ -177,8 +182,13 @@ public class SBOL2SBML {
     	for (FunctionalComponent FC : MD.getFunctionalComponents()) {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
+    			URI value = local_map_uris.get(FC.getIdentity());
+    			while (local_map_uris.containsKey(value)) {
+    				value = local_map_uris.get(value);
+    			}
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
-    			hash_map.put(FC.getIdentity(), local_map_uris.get(FC.getIdentity()));    				
+    			hash_map.put(FC.getIdentity(), value);
+    			//TODO PEDRO: check if the pointer is not also pointed by someone
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
@@ -232,17 +242,18 @@ public class SBOL2SBML {
         				//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
         				if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
         					//copy participation with FC in resultMD as the participant
+        					
         					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
         				} else {
         					//otherwise create participation with FC that replaced the FC that was pointed to.
-        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
+        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantURI()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantURI())), I_MD_MD_part.getRoles());
         				}
         			}
         		}
     		}
-
     	}       
-        return resultMD;
+        return resultMD;} catch (Exception e) {e.printStackTrace();
+        return MD;}
     }
 	
 	/**
@@ -299,7 +310,8 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-				generatePromoterSpecies(comp, sbolDoc, targetModel);
+				//generatePromoterSpecies(comp, sbolDoc, targetModel);
+				generateTUSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -862,6 +874,30 @@ public class SBOL2SBML {
 		}
 	}
 
+	/**
+	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
+	 * species (per promoter sequence present in the TU) per TU. 
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param promoter the TU the model needa to create a species from
+	 * @param sbolDoc the SBOLDocument being worked on
+	 * @param targetModel is the target model being created
+	 */
+	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+			
+			String TU = promoter.getDisplayId();
+			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
+				targetModel.createPromoter(TU, -1, -1, true, false, null);
+			}
+			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(TU);
+			
+			// Annotate SBML promoter species with SBOL component and component definition
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+			}
+		
+	}
 	/**
 	 * Convert the given SBOL biochemical reaction interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
 	 * Each SBOL participation that takes place in the biochemical reaction will be given SBO terms to retain the role of the participation 
