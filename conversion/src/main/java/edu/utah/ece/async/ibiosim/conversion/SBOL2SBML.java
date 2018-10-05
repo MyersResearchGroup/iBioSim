@@ -301,7 +301,8 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-				generatePromoterSpecies(comp, sbolDoc, targetModel);
+				//generatePromoterSpecies(comp, sbolDoc, targetModel);
+				generateTUSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -688,6 +689,31 @@ public class SBOL2SBML {
 				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
 			}
 		}
+	}
+	
+	/**
+	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
+	 * species (per promoter sequence present in the TU) per TU. 
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param promoter the TU the model needa to create a species from
+	 * @param sbolDoc the SBOLDocument being worked on
+	 * @param targetModel is the target model being created
+	 */
+	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+			
+			String TU = promoter.getDisplayId();
+			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
+				targetModel.createPromoter(TU, -1, -1, true, false, null);
+			}
+			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(TU);
+			
+			// Annotate SBML promoter species with SBOL component and component definition
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+			}
+		
 	}
 
 	/**
