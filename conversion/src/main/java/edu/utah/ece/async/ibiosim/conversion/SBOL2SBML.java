@@ -301,8 +301,8 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-				//generatePromoterSpecies(comp, sbolDoc, targetModel);
-				generateTUSpecies(comp, sbolDoc, targetModel);
+				generatePromoterSpecies(comp, sbolDoc, targetModel);
+				//generateTUSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
