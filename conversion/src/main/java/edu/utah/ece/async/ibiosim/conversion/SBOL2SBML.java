@@ -176,8 +176,12 @@ public class SBOL2SBML {
     	for (FunctionalComponent FC : MD.getFunctionalComponents()) {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
+    			URI value = local_map_uris.get(FC.getIdentity());
+    			while (local_map_uris.containsKey(value)) {
+    				value = local_map_uris.get(value);
+    			}
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
-    			hash_map.put(FC.getIdentity(), local_map_uris.get(FC.getIdentity()));
+    			hash_map.put(FC.getIdentity(), value);
     			//TODO PEDRO: check if the pointer is not also pointed by someone
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
@@ -236,7 +240,7 @@ public class SBOL2SBML {
         					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
         				} else {
         					//otherwise create participation with FC that replaced the FC that was pointed to.
-        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
+        					resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantURI()))).getDisplayId(), hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantURI())), I_MD_MD_part.getRoles());
         				}
         			}
         		}
@@ -448,8 +452,6 @@ public class SBOL2SBML {
 				}
 			}
 		}
-		
-		
 		models.put(getDisplayID(resultMD),targetModel);
 		return models;
 	}
