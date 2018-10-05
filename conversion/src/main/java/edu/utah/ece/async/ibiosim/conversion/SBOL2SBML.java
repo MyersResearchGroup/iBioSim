@@ -142,13 +142,20 @@ public class SBOL2SBML {
 =======
 =======
         
+		try {
+		
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
 		
 		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
+<<<<<<< Upstream, based on origin/master
 >>>>>>> 79375bb Verify if parts have Cello parameters, call different createproductionRXN method
+=======
+		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
+		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
+>>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
 			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
@@ -212,12 +219,19 @@ public class SBOL2SBML {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
     			URI value = local_map_uris.get(FC.getIdentity());
+<<<<<<< Upstream, based on origin/master
     			// check if the pointer is not also pointed by someone, store the toppest level FC
+=======
+>>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
     			while (local_map_uris.containsKey(value)) {
     				value = local_map_uris.get(value);
     			}
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
     			hash_map.put(FC.getIdentity(), value);
+<<<<<<< Upstream, based on origin/master
+=======
+    			//TODO PEDRO: check if the pointer is not also pointed by someone
+>>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
@@ -280,7 +294,6 @@ public class SBOL2SBML {
         			}
         		}
     		}
-
     	}       
         return resultMD;} catch (Exception e) {e.printStackTrace();
         return MD;}
@@ -340,8 +353,13 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
+<<<<<<< Upstream, based on origin/master
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
 				//generateTUSpecies(comp, sbolDoc, targetModel);
+=======
+				//generatePromoterSpecies(comp, sbolDoc, targetModel);
+				generateTUSpecies(comp, sbolDoc, targetModel);
+>>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -929,6 +947,30 @@ public class SBOL2SBML {
 		
 	}
 
+	/**
+	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
+	 * species (per promoter sequence present in the TU) per TU. 
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param promoter the TU the model needa to create a species from
+	 * @param sbolDoc the SBOLDocument being worked on
+	 * @param targetModel is the target model being created
+	 */
+	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+			
+			String TU = promoter.getDisplayId();
+			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
+				targetModel.createPromoter(TU, -1, -1, true, false, null);
+			}
+			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(TU);
+			
+			// Annotate SBML promoter species with SBOL component and component definition
+			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
+			if (compDef!=null) {
+				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
+			}
+		
+	}
 	/**
 	 * Convert the given SBOL biochemical reaction interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
 	 * Each SBOL participation that takes place in the biochemical reaction will be given SBO terms to retain the role of the participation 
