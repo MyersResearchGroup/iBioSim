@@ -4123,7 +4123,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		iBioSimActivity.clearUsages();
 		SedML sedmlModel = sedmlDocument.getSedMLModel();
 		for (org.jlibsedml.Model model : sedmlModel.getModels()) {
-			String modelId = model.getSource().replace(".xml","_model");
+			//String modelId = model.getSource().replace(".xml","_model");
+			String modelId = model.getId();
 			BioModel biomodel = new BioModel(root);
 			biomodel.load(root + File.separator + model.getSource());
 			String defaultURIprefix = SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString();
