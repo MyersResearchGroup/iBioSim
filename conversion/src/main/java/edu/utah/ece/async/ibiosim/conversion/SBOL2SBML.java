@@ -229,9 +229,12 @@ public class SBOL2SBML {
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
     			hash_map.put(FC.getIdentity(), value);
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
 =======
     			//TODO PEDRO: check if the pointer is not also pointed by someone
 >>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
+=======
+>>>>>>> fe87c46 Comments
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
@@ -401,6 +404,8 @@ public class SBOL2SBML {
 			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {	
 				if (CelloModel) {
 					System.out.println("you are in new degradation method call");
+					//TODO PEDRO: change this so that the degradation rate is only called for 
+					//proteins and mRNAs, but not for the rest (i.e. IPTG, etc)
 					generateCelloDegradationRxn(interact, resultMD, targetModel);
 				} else {
 					generateDegradationRxn(interact, resultMD, targetModel);
@@ -1296,14 +1301,14 @@ public class SBOL2SBML {
 		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
 		mRNA.setId( rxnID + "_mRNA");
 		//TODO PEDRO This is to make TU a species on which to make it a modifier. This may have to change when we fix MDflatenner
-		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
+/*		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
 			targetModel.createPromoter(promoter.getDisplayId(), -1, -1, true, false, null);
 		}
 		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId());
 		ComponentDefinition proDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
 		if (proDef!=null) {
 			annotateSpecies(sbmlPromoter, promoter, proDef, sbolDoc);
-		}
+		}*/
 		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
 		Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
