@@ -1284,14 +1284,16 @@ public class BioModel extends CoreObservable{
 	
 	public static boolean isProductionReaction(Reaction react) {
 		if (AnnotationUtility.checkObsoleteAnnotation(react, GlobalConstants.PRODUCTION)) {
-			react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			//react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 			AnnotationUtility.removeObsoleteAnnotation(react);
 			return checkProductionStructure(react);
 		} else if (react.isSetSBOTerm()) {
 			if (react.getSBOTerm() == GlobalConstants.SBO_PRODUCTION) {
-				react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+				//react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 				return checkProductionStructure(react);
 			} else if (react.getSBOTerm() == GlobalConstants.SBO_GENETIC_PRODUCTION) 
+				return checkProductionStructure(react);
+			 else if (react.getSBOTerm() == GlobalConstants.SBO_TRANSCRIPTION) 
 				return checkProductionStructure(react);
 		} 
 		return false;
