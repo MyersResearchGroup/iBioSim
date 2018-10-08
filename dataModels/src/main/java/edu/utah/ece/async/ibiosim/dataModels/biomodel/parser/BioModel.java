@@ -2101,9 +2101,7 @@ public class BioModel extends CoreObservable{
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
 		//This method should create a production reaction for all Protein or Products the TU produces.
-		
-		//TODO PEDRO: somewhere in this method, SBO term of SDproduction is changed
-		
+				
 		//Check if rxnID is unique, if not, add something to it
 		Reaction r = sbml.getModel().getReaction(rxnID);
 		KineticLaw k = null;
@@ -2137,9 +2135,6 @@ public class BioModel extends CoreObservable{
 			/// use parameters passed by user
 		}
 		
-		
-		// Use cello kinetic law for TF production
-		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {
