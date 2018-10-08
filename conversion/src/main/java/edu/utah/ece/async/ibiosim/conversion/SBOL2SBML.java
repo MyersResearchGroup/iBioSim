@@ -565,8 +565,8 @@ public class SBOL2SBML {
 	 * will be later used when creating the mathematical model using Hamid's paper for dynamic modeling using Cello Parameters.
 	 * 
 	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol doc
-	 * @return the hash map
+	 * @param sbolDoc the SBOLDocument
+	 * @return the hash map with all the interactions per
 	 */
 	//TODO PEDRO: promoterInteractions
 	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc){
@@ -962,6 +962,8 @@ public class SBOL2SBML {
 	 * @param targetModel is the target model being created
 	 */
 	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+			
+			//TODO PEDRO: generateTUSpecies
 			
 			String TU = promoter.getDisplayId();
 			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
