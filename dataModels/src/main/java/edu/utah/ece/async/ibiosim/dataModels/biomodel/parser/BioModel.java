@@ -90,6 +90,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.libsbml.libsbmlConstants;
+import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Participation;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -2019,7 +2020,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloSDProductionReaction
-	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap celloParameters, String kSDdegrad, String n, String k_react,
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, String kSDdegrad, String n, String k_react,
 			String ymax, String ymin, boolean onPort, String[] dimensions, BioModel targetModel) {
 		
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
@@ -2097,7 +2098,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloTFProductionReaction
-	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap celloParameters, String kTFdegrad, String ko,
+	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
 		//This method should create a production reaction for all Protein or Products the TU produces.
@@ -2226,7 +2227,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloProductionKineticLaw
-	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap celloParameters, HashMap promoterInteractions, Set promoters) {
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
