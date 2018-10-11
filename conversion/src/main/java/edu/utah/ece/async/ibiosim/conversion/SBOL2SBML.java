@@ -137,11 +137,14 @@ public class SBOL2SBML {
     {
 <<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
         
 		try {
 =======
 =======
         
+=======
+>>>>>>> fa2c440 Changing hashmaps from raw to hashmaps with types
 		try {
 		
     	SBOLDocument doc = new SBOLDocument();
@@ -297,7 +300,7 @@ public class SBOL2SBML {
         			}
         		}
     		}
-    	}       
+    	}     
         return resultMD;} catch (Exception e) {e.printStackTrace();
         return MD;}
     }
@@ -570,7 +573,7 @@ public class SBOL2SBML {
 	 */
 	//TODO PEDRO: promoterInteractions
 	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc){
-		
+
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
 		
 		//HashMap<String, ComponentDefinition> promoterActivations = new HashMap<String, ComponentDefinition>();
@@ -634,7 +637,7 @@ public class SBOL2SBML {
 				}
 			}
 		}
-		
+
 		return promoterInteractions;
 	}
 
@@ -1229,7 +1232,7 @@ public class SBOL2SBML {
 	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap celloParameters, HashMap promoterInteractions) {
+			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
 		
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
@@ -1245,9 +1248,9 @@ public class SBOL2SBML {
 				}
 			}
 		} else {
-			// TODO PEDRO throw exception
-		}
-		
+			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
+			}
+				
 		//create reaction ID for SDproduction and TFproduction which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqueSBMLId()
 		String rxnIDSD = rxnID + "_" + "transcription";
 		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
@@ -1312,7 +1315,7 @@ public class SBOL2SBML {
 			annotateSpecies(sbmlPromoter, promoter, proDef, sbolDoc);
 		}*/
 		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
-		Reaction SDdegradationRxn = targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
+		targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
 		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(mRNA, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
 			
