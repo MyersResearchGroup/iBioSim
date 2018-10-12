@@ -309,6 +309,7 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else {
+				//remove comments and print outs
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
 		}
