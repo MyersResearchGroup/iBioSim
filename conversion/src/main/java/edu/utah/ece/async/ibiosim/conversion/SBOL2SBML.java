@@ -177,12 +177,12 @@ public class SBOL2SBML {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
     			URI value = local_map_uris.get(FC.getIdentity());
+    			// check if the pointer is not also pointed by someone, store the toppest level FC
     			while (local_map_uris.containsKey(value)) {
     				value = local_map_uris.get(value);
     			}
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
     			hash_map.put(FC.getIdentity(), value);
-    			//TODO PEDRO: check if the pointer is not also pointed by someone
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
