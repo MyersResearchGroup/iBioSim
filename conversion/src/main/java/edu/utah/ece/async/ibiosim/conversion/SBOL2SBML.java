@@ -299,6 +299,22 @@ public class SBOL2SBML {
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 		
+		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
+		boolean CelloModel = false;
+		// TODO there has to be a better way to determine if we are in a Cello model generation or not
+		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
+				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
+				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
+				//using Cello Parameters.
+				celloParameters.put(promoter, hasCelloParameters(promoter));
+				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
+				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
+					CelloModel = true;
+				}
+			}
+		}
+		
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
@@ -308,8 +324,15 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-				//generatePromoterSpecies(comp, sbolDoc, targetModel);
-				generateTUSpecies(comp, sbolDoc, targetModel);
+				// If CelloModel, generate only one species for each TU
+				if (CelloModel) {
+					generateTUSpecies(comp, sbolDoc, targetModel);
+				}
+				// else, we are in normal model generation, which creates one species for each promoter in the TU
+				else {
+					generatePromoterSpecies(comp, sbolDoc, targetModel);
+				}
+				
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -329,23 +352,6 @@ public class SBOL2SBML {
 		HashMap<FunctionalComponent, List<Participation>> promoterToRepressors = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
 		
-		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		
-		boolean CelloModel = false;
-		// TODO there has to be a better way to determine if we are in a Cello model generation or not
-		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
-			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
-				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
-				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
-				//using Cello Parameters.
-				celloParameters.put(promoter, hasCelloParameters(promoter));
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
-				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
-					CelloModel = true;
-				}
-			}
-		}
-
 		for (Interaction interact : resultMD.getInteractions()) {
 			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {	
 				if (CelloModel) {
