@@ -127,7 +127,7 @@ public class SBOL2SBML {
 	 * @return the flattened module definition to be used for creating the models
 	 * @throws SBOLValidationException the SBOL validation exception
 	 */
-	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
+	private static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
         
 		try {
