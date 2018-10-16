@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
+import java.util.List;
+
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.CauchyDistribution;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
@@ -507,16 +509,27 @@ public final class Evaluator {
       return max;
     }
     case FUNCTION_SELECTOR: {
-      // HierarchicalNode array = node.getChild(0);
-      //
-      // for (int i = 1; i < node.getNumOfChild(); i++)
-      // {
-      // int index = (int) evaluateExpressionRecursive(node.getChild(i),
-      // checkSubstance, index);
-      // array = array.getChild(index);
-      // }
-      //
-      // return ((VariableNode) array).getValue(index);
+      switch (node.getChild(0).getType()) {
+      case VECTOR:
+        HierarchicalNode vectorNode = node.getChild(0);
+        for (int i = 1; i < node.getNumOfChild(); i++) {
+          int selectorIndex = (int) evaluateExpressionRecursive(node.getChild(i), index);
+          vectorNode = vectorNode.getChild(selectorIndex);
+        }
+        return evaluateExpressionRecursive(vectorNode, index);
+      case NAME:
+        HierarchicalNode selectorVariable = node.getChild(0);
+
+        List<ArrayDimensionNode> dimensions = selectorVariable.getListOfDimensions();
+        int n = dimensions.size();
+        for (int i = 1; i < node.getNumOfChild(); i++) {
+          dimensions.get(n - i).setValue(index, evaluateExpressionRecursive(node.getChild(i), index));
+        }
+        return selectorVariable.getValue(index);
+      default:
+        break;
+      }
+      return 0;
     }
 
     default:

@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img  src="docs/media/iBioSim_horizontal.png">
+  <img  src="docs/media/iBioSim_horizontal.png" width=300>
 </p>
 
 iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits. 
@@ -22,9 +22,9 @@ biology.
 ##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
 ##### Contact: Chris Myers (@cjmyers) myers@ece.utah.edu
 
-Contributor(s): Nathan Barker, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Michael Zhang, Zhen Zhang, and Zach Zundel.
+Contributor(s): Nathan Barker, Pedro Fontanarrosa, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Michael Zhang, Zhen Zhang, and Zach Zundel.
 
-Active Developer(s): Chris Myers, Tramy Nguyen, Leandro Watanabe, Michael Zhang.
+Active Developer(s): Pedro Fontanarrosa, Chris Myers, Tramy Nguyen, Leandro Watanabe.
 
 ## Running iBioSim
 1. Download the iBioSim tool from the release page [here](https://github.com/MyersResearchGroup/iBioSim/releases): 

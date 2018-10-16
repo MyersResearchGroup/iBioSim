@@ -13,8 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math;
 
-import java.util.List;
-
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.HierarchicalState;
 
 /**
@@ -36,7 +34,7 @@ public class LocalVariableNode extends VariableNode {
   }
 
   @Override
-  public double getValue(int modelIndex, List<Integer> listOfIndices) {
+  public double getValue(int modelIndex, int[] indices) {
 
     if (this.isDeleted(modelIndex)) {
       if (globalVariable != null) {
@@ -47,9 +45,9 @@ public class LocalVariableNode extends VariableNode {
     }
 
     HierarchicalState variableState = state.getChild(modelIndex);
-    if (listOfIndices != null) {
-      for (int i = listOfIndices.size() - 1; i >= 0; i--) {
-        variableState = variableState.getChild(listOfIndices.get(i));
+    if (indices != null) {
+      for (int i = indices.length - 1; i >= 0; i--) {
+        variableState = variableState.getChild(indices[i]);
       }
     }
 

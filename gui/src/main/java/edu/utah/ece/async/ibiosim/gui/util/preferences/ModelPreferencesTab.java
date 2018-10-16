@@ -201,7 +201,7 @@ public enum ModelPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		if (Undeclared.isSelected()) {
 			IBioSimPreferences.INSTANCE.setModelPreference("biosim.check.undeclared", "true");
 		}
@@ -267,7 +267,9 @@ public enum ModelPreferencesTab implements PreferencesTab {
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Numeric model preference given non-numeric value.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
+		return true;
 	}
 
 	@Override

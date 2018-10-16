@@ -5775,8 +5775,8 @@ public class BioModel extends CoreObservable{
 		}
 		else {
 			
-			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
-				comps.add(sbmlCompModel.getListOfSubmodels().get(i).getId());
+			for(Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
+				comps.add(submodel.getId());
 			}
 		}
 		return comps;
@@ -5818,11 +5818,22 @@ public class BioModel extends CoreObservable{
 	
 	public SBMLDocument flattenModelWithLibSBML(boolean removeComp) throws Exception {
 		if (Executables.libsbmlFound) {
+		  
+		  
 			String tempFile = filename.replace(".gcm", "").replace(".xml", "") + "_temp.xml";
 			save(tempFile);
 			
+			
+			
 			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
 			org.sbml.libsbml.SBMLDocument document = reader.readSBML(tempFile);
+			
+			if(document.getNamespaces().containsUri(ArraysConstants.namespaceURI_L3V1V1)) {
+        String errorMessage = "The libSBML flattening procedure cannot be used when the model depends on the arrays package. iBioSim's flattening will be used.";
+        message.setErrorDialog("Unable to flatten the model", errorMessage);
+        this.notifyObservers(message);
+        return null;
+      }
 			new File(tempFile).delete();
 			
 			document.enablePackage(org.sbml.libsbml.LayoutExtension.getXmlnsL3V1V1(), "layout", false);

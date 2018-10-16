@@ -159,7 +159,7 @@ public enum LearnPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		IBioSimPreferences.INSTANCE.setLearnPreference("biosim.learn.bins", (String) bins.getSelectedItem());
 		IBioSimPreferences.INSTANCE.setLearnPreference("biosim.learn.equaldata", (String) equaldata.getSelectedItem());
 		IBioSimPreferences.INSTANCE.setLearnPreference("biosim.learn.autolevels", (String) autolevels.getSelectedItem());
@@ -185,7 +185,9 @@ public enum LearnPreferencesTab implements PreferencesTab {
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Numeric learn preference given non-numeric value.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
+		return true;
 	}
 
 	@Override

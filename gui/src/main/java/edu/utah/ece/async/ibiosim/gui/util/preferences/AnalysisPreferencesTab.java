@@ -296,7 +296,7 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.command", simCommand.getText().trim());
 		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.useInterval", (String) useInterval.getSelectedItem());
 		IBioSimPreferences.INSTANCE.setAnalysisPreference("biosim.sim.abs", (String) abs.getSelectedItem());
@@ -342,7 +342,9 @@ public enum AnalysisPreferencesTab implements PreferencesTab {
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Numeric analysis preference given non-numeric value.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
+		return true;
 	}
 
 	@Override

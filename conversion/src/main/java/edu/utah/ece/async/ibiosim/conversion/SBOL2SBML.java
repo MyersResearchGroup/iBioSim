@@ -19,9 +19,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -54,6 +57,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Identified;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
+import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -87,7 +92,161 @@ public class SBOL2SBML {
 		return identity.substring(identity.lastIndexOf("/") + 1);
 	}
 
+	public static String extractURIprefix(URI objURI) {
+        String URIstr = objURI.toString();
+        Matcher m = genericURIpattern1bPat.matcher(URIstr);
+        if (m.matches())
+                return m.group(2);
+        else
+                return null;
+	}
 
+	private static final String delimiter = "[/|#|:]";
+
+	private static final String protocol = "(?:https?|ftp|file)://";
+
+	private static final String URIprefixPattern = "\\b(?:"+protocol+")?[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+
+	private static final String displayIDpattern = "[a-zA-Z_]+[a-zA-Z0-9_]*";//"[a-zA-Z0-9_]+”;
+
+	private static final String versionPattern = "[0-9]+[a-zA-Z0-9_\\.-]*"; 
+
+	private static final String genericURIpattern1b = "((" + URIprefixPattern + delimiter+")(" + displayIDpattern + "))(/(" + versionPattern + "))?";
+
+	private static final Pattern genericURIpattern1bPat = Pattern.compile(genericURIpattern1b);
+	
+	
+    /**
+	 * MD flattener. This method was developed to flatten ModuleDefinitions. This is necessary since the model generation
+	 * uses Transcriptional Units (and not parts of a TU) as the center of reactions to which to model, and this method
+	 * flattens any parts of a TU to a single TU for any ModuleDefinition given. 
+	 *
+	 * @param sbolDoc the SBOL document containing the ModuleDefinition to be flattened
+	 * @param MD the ModuleDefinition to be flattened
+	 * @return the flattened module definition to be used for creating the models
+	 * @throws SBOLValidationException the SBOL validation exception
+	 */
+	private static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
+	{
+
+		try {
+
+			SBOLDocument doc = new SBOLDocument();
+			doc.setComplete(false);
+			doc.setCreateDefaults(false);
+			doc.createCopy(sbolDoc);
+
+			//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
+			Set<URI> Modules_remote_mapsto = new HashSet<URI>();
+			for (Module ChildModule : MD.getModules()) {
+				for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
+					Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
+				}	
+			}
+			for (Module ChildModule : MD.getModules()) {
+				for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
+					if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
+						return MD;
+					}
+				}					
+			}
+
+			//remove the Root MD you are going to flatten
+			doc.removeModuleDefinition(MD);
+
+			//Copy original MD to resultMD which the function will return
+			ModuleDefinition resultMD = doc.createModuleDefinition(extractURIprefix(MD.getIdentity()), MD.getDisplayId(), MD.getVersion());
+
+			//Create a hashMap that will be used later to store the URIs of the FC that are pointed by the MapsTo of other FC, so they are not copied to resultMD. The value of each key is the URI of the upper-level-FC that replaced this FC. 
+			HashMap<URI,URI> hash_map = new HashMap<URI, URI>();
+
+			//Create a HashMap with store all the local_MapsTo component instance values to the FC that owns that MapsTo component instance for all the FC in the MD
+			HashMap<URI, URI> local_map_uris = new HashMap<URI, URI>();
+			for (FunctionalComponent FC2 : MD.getFunctionalComponents()) {		
+				for (MapsTo local : FC2.getMapsTos()) {
+					local_map_uris.put(local.getLocalIdentity(), FC2.getIdentity());
+				}
+			}
+
+			//Copy all the FCs that are not mappedTo in another FC (i.e. it is not part of another FC), store in the HashMap the URIs of the FC not copied, and of those that replaced the lower-level-FCs. 
+			for (FunctionalComponent FC : MD.getFunctionalComponents()) {
+				//Check if the FC is referenced in any local identity
+				if (local_map_uris.containsKey(FC.getIdentity())) {
+					//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
+					hash_map.put(FC.getIdentity(), local_map_uris.get(FC.getIdentity()));    				
+				} else {
+					//The FC is a "root" FC so it can be copied to resultMD
+					resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
+				}
+			}
+
+			//Create a HashMap of all the FC in resultMD to compare later when adding participations
+			Set<URI> FC_in_resultMD = new HashSet <URI>();
+			for (FunctionalComponent FC3 : resultMD.getFunctionalComponents()) {
+				FC_in_resultMD.add(FC3.getIdentity());
+			}
+
+			//Copy the interactions pre-existing in the original root MD into the new resultMD
+			for (Interaction I_MD : MD.getInteractions()) {
+				resultMD.createInteraction(I_MD.getDisplayId(), I_MD.getTypes());
+				//alternatively, use HashMap "hash_map" to determine if the participant is in resultMD or not
+				for (Participation I_MD_part : I_MD.getParticipations()) {
+					//if the FC is present in the resultMD (it was copied) then copy the participation that points to this FC
+					if (FC_in_resultMD.contains(I_MD_part.getParticipantURI())) {
+						//copy participation
+						resultMD.getInteraction(I_MD.getDisplayId()).createParticipation(I_MD_part.getDisplayId(), I_MD_part.getParticipantURI(), I_MD_part.getRoles());
+					} else {
+						//otherwise, create participation but pointing to FC that has a higher level (or "root") for this participant.
+						resultMD.getInteraction(I_MD.getDisplayId()).createParticipation(I_MD_part.getDisplayId(), hash_map.get(I_MD_part.getParticipantURI()), I_MD_part.getRoles());
+					}
+				}
+			}
+
+			//create a HashMap with the URIs of the local and remote component instance to use later when copying interactions from the lower-lvl MD to the resultMD
+			for (Module MD_Module : MD.getModules()) {
+				//if Module has other Modules nested, just copy it, and it will be flattened latter
+				if (MD_Module.getDefinition().getModules().size() != 0) {
+					//Copy the module to a higher level
+					Module Mod = resultMD.createModule(MD_Module.getDisplayId(), MD_Module.getDefinitionURI());
+					//Copy all the maptsTos
+					//BEWARE: if in the feature we add more information to the modules that need to be copied, this is the place to do it (for example parameters).
+					for (MapsTo Modules_MapsTo : MD_Module.getMapsTos()) {
+						Mod.createMapsTo(Modules_MapsTo.getDisplayId(), Modules_MapsTo.getRefinement(), Modules_MapsTo.getLocalURI(), Modules_MapsTo.getRemoteURI());
+					}
+				}
+				else {
+					HashMap<URI, URI> RemoteMapsTo_LocalMapsTo = new HashMap <URI, URI>();
+					for (MapsTo M_MapsTo : MD_Module.getMapsTos()) {
+						RemoteMapsTo_LocalMapsTo.put(M_MapsTo.getRemoteURI(), M_MapsTo.getLocalURI());
+					}
+
+					//Copy Interactions from the ModuleDefinition that this Module points to
+					for (Interaction I_MD_MD : (MD_Module.getDefinition()).getInteractions()) {
+						resultMD.createInteraction(I_MD_MD.getDisplayId(), I_MD_MD.getTypes());
+						for (Participation I_MD_MD_part : I_MD_MD.getParticipations()) {
+							//check if any MapsTo of this module points to one FC in the resultMD. If it does, create participation with FC in resultMD
+							if (FC_in_resultMD.contains(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))) {
+								//copy participation with FC in resultMD as the participant
+
+								resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())).getDisplayId(), RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()), I_MD_MD_part.getRoles());
+							} else {
+								//otherwise create participation with FC that replaced the FC that was pointed to.
+								resultMD.getInteraction(I_MD_MD.getDisplayId()).createParticipation(resultMD.getFunctionalComponent(
+										hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity()))).getDisplayId(), 
+										hash_map.get(RemoteMapsTo_LocalMapsTo.get(I_MD_MD_part.getParticipantIdentity())), I_MD_MD_part.getRoles());
+							}
+						}
+					}
+				}
+			}       
+			return resultMD;
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			return MD;
+		}
+	}
+	
 	/**
 	 * Perform conversion from SBOL to SBML. 
 	 * All SBOL Interactions are converted to SBML degradation, complex formation, and production reactions. Depending
@@ -103,8 +262,9 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
-	 * @throws SBOLValidationException 
+	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
 	 */
+    
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
@@ -123,9 +283,11 @@ public class SBOL2SBML {
 		SBOLAnnotation modelAnno = new SBOLAnnotation(sbmlModel.getMetaId(), 
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
-
-		// TODO: add moduleDef flattening here
-		for (FunctionalComponent comp : moduleDef.getFunctionalComponents()) { 
+		
+		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
+		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
+		
+		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
@@ -133,7 +295,7 @@ public class SBOL2SBML {
 				} else if (isOutputComponent(comp)){
 					generateOutputPort(comp, targetModel);
 				}
-			} else if (isPromoterComponent(moduleDef, comp, sbolDoc)) {
+			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
@@ -153,10 +315,10 @@ public class SBOL2SBML {
 		HashMap<FunctionalComponent, List<Participation>> promoterToActivators = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToRepressors = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
-		for (Interaction interact : moduleDef.getInteractions()) {
-			if (isDegradationInteraction(interact, moduleDef, sbolDoc)) {
-				generateDegradationRxn(interact, moduleDef, targetModel);
-			} else if (isComplexFormationInteraction(interact, moduleDef, sbolDoc)) {
+		for (Interaction interact : resultMD.getInteractions()) {
+			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {
+				generateDegradationRxn(interact, resultMD, targetModel);
+			} else if (isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
 				for (Participation partici: interact.getParticipations()) {
@@ -169,13 +331,13 @@ public class SBOL2SBML {
 						ligands.add(partici);
 					}
 				}
-				generateComplexFormationRxn(interact, complex, ligands, moduleDef, targetModel);
-			} else if (isProductionInteraction(interact, moduleDef, sbolDoc)) {
+				generateComplexFormationRxn(interact, complex, ligands, resultMD, targetModel);
+			} else if (isProductionInteraction(interact, resultMD, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
 							partici.containsRole(SystemsBiologyOntology.TEMPLATE)) {
-						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
+						promoter = resultMD.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -203,12 +365,12 @@ public class SBOL2SBML {
 					promoterToActivations.put(promoter, new LinkedList<Interaction>());
 				if (!promoterToRepressions.containsKey(promoter))
 					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
-			} else if (isActivationInteraction(interact, moduleDef, sbolDoc)) {
+			} else if (isActivationInteraction(interact, resultMD, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
 							partici.containsRole(SystemsBiologyOntology.STIMULATED)) {
-						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
+						promoter = resultMD.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -221,12 +383,12 @@ public class SBOL2SBML {
 				if (!promoterToActivations.containsKey(promoter))
 					promoterToActivations.put(promoter, new LinkedList<Interaction>());
 				promoterToActivations.get(promoter).add(interact);
-			} else if (isRepressionInteraction(interact, moduleDef, sbolDoc)) {
+			} else if (isRepressionInteraction(interact, resultMD, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
 					if (partici.containsRole(SystemsBiologyOntology.PROMOTER)||
 							partici.containsRole(SystemsBiologyOntology.INHIBITED)) {
-						promoter = moduleDef.getFunctionalComponent(partici.getParticipantURI());
+						promoter = resultMD.getFunctionalComponent(partici.getParticipantURI());
 						if (!promoterToPartici.containsKey(promoter))
 							promoterToPartici.put(promoter, new LinkedList<Participation>());
 						promoterToPartici.get(promoter).add(partici);
@@ -240,12 +402,12 @@ public class SBOL2SBML {
 					promoterToRepressions.put(promoter, new LinkedList<Interaction>());
 				promoterToRepressions.get(promoter).add(interact);
 			} else {
-				generateBiochemicalRxn(interact, moduleDef, targetModel);
+				generateBiochemicalRxn(interact, resultMD, targetModel);
 			}
 		}
 
-		for (FunctionalComponent promoter : moduleDef.getFunctionalComponents()) { 
-			if (isPromoterComponent(moduleDef, promoter, sbolDoc)) {
+		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
 				if (!promoterToActivators.containsKey(promoter))
 					promoterToActivators.put(promoter, new LinkedList<Participation>());
 				if (!promoterToRepressors.containsKey(promoter))
@@ -265,20 +427,21 @@ public class SBOL2SBML {
 				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-						promoterToRepressors.get(promoter), moduleDef, sbolDoc, targetModel);
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
 			}
 		}
 
 		//option 1
-		for (Module subModule : moduleDef.getModules()) {
+		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
+			ModuleDefinition subModuleDefFlatt = MDFlattener(sbolDoc, subModuleDef);
 			BioModel subTargetModel = new BioModel(projectDirectory);
-			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDef) + ".xml")) {
-				generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
-			} if ((subTargetModel=models.get(getDisplayID(subModuleDef)))!=null) {
-				generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDefFlatt) + ".xml")) {
+				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
+			} if ((subTargetModel=models.get(getDisplayID(subModuleDefFlatt)))!=null) {
+				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
 			} else {
-				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, targetModel);
+				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, targetModel);
 				for (String key : subModels.keySet()) {
 					models.put(key,subModels.get(key));
 				}
@@ -286,7 +449,7 @@ public class SBOL2SBML {
 		}
 		
 		
-		models.put(getDisplayID(moduleDef),targetModel);
+		models.put(getDisplayID(resultMD),targetModel);
 		return models;
 	}
 
@@ -338,6 +501,8 @@ public class SBOL2SBML {
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong the with SBML model.
 	 * @throws SBOLValidationException 
+	 * @throws SynBioHubException 
+	 * @throws SBOLConversionException 
 	 */
 	private static HashMap<String,BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
@@ -1500,7 +1665,7 @@ public class SBOL2SBML {
 			catch(BioSimException e)
 			{
 			  e.printStackTrace();
-			}
+			} 
 
 		}
 	}

@@ -32,6 +32,13 @@ public class VectorState extends HierarchicalState {
     wrapper.addVectorState(this);
   }
 
+  public VectorState(HierarchicalState copy, VectorWrapper wrapper) {
+    super(copy);
+    this.vectorIndex = -1;
+    this.wrapper = wrapper;
+    wrapper.addVectorState(this);
+  }
+
   VectorState(VectorState copy) {
     super(copy);
     this.vectorIndex = -1;

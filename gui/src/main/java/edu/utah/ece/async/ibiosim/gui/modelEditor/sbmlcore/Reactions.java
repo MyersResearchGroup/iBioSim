@@ -50,6 +50,7 @@ import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.ext.arrays.ArraysSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
 
@@ -131,7 +132,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 	/*
 	 * ArrayList of reactants
 	 */
-	private ArrayList<SpeciesReference> changedReactants;
+	private ArrayList<SimpleSpeciesReference> changedReactants;
 
 	/*
 	 * product buttons
@@ -146,7 +147,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 	/*
 	 * ArrayList of products
 	 */
-	private ArrayList<SpeciesReference> changedProducts;
+	private ArrayList<SimpleSpeciesReference> changedProducts;
 
 	/*
 	 * modifier buttons
@@ -160,7 +161,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 	/*
 	 * ArrayList of modifiers
 	 */
-	private ArrayList<ModifierSpeciesReference> changedModifiers;
+	private ArrayList<SimpleSpeciesReference> changedModifiers;
 
 	private JComboBox productSpecies; // ComboBox for product editing
 
@@ -386,6 +387,15 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		}
 		return true;
 	}
+	
+	private boolean hasIdsOrDimensions(ArrayList<SimpleSpeciesReference> speciesRefs) {
+		for (SimpleSpeciesReference sRef : speciesRefs) {
+			if (sRef.isSetId()) return true;
+			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sRef);
+			if (sBasePlugin.getDimensionCount() > 0) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Creates a frame used to edit reactions or create new ones.
@@ -526,7 +536,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		scroll2.setPreferredSize(new java.awt.Dimension(276, 152));
 		scroll2.setViewportView(reactants);
 		reacta = new String[0];
-		changedReactants = new ArrayList<SpeciesReference>();
+		changedReactants = new ArrayList<SimpleSpeciesReference>();
 		if (option.equals("OK")) {
 			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<SpeciesReference> listOfReactants = reac.getListOfReactants();
@@ -571,7 +581,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		scroll3.setPreferredSize(new java.awt.Dimension(276, 152));
 		scroll3.setViewportView(products);
 		proda = new String[0];
-		changedProducts = new ArrayList<SpeciesReference>();
+		changedProducts = new ArrayList<SimpleSpeciesReference>();
 		if (option.equals("OK")) {
 			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<SpeciesReference> listOfProducts = reac.getListOfProducts();
@@ -616,7 +626,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		scroll5.setPreferredSize(new java.awt.Dimension(276, 152));
 		scroll5.setViewportView(modifiers);
 		modifierArray = new String[0];
-		changedModifiers = new ArrayList<ModifierSpeciesReference>();
+		changedModifiers = new ArrayList<SimpleSpeciesReference>();
 		if (option.equals("OK")) {
 			Reaction reac = bioModel.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<ModifierSpeciesReference> listOfModifiers = reac.getListOfModifiers();
@@ -882,6 +892,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				reactionID = dimID[0].trim();
 				dimensionIds = SBMLutilities.getDimensionIds("",dimID.length-1);
 				error = Utils.checkID(bioModel.getSBMLDocument(), reactionID, reactionId.trim(), false);
+				if (!error) {
+					if (dimensionIds.length > 0) {
+						if (hasIdsOrDimensions(changedReactants) ||
+							hasIdsOrDimensions(changedProducts) ||
+							hasIdsOrDimensions(changedModifiers)) {
+							JOptionPane.showMessageDialog(Gui.frame, 
+									"Reactions are currently not allowed to have dimensions\nif any reactants, products or modifiers have ids or dimensions.", 
+									"Illegal Reactant Id",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					}
+				}
 			}
 			else{
 				error = true;
@@ -896,13 +919,6 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				/*
-				else if ((changedReactants.size() == 0) && (changedProducts.size() == 0)) {
-					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have at least one reactant or product.", "No Reactants or Products",
-							JOptionPane.ERROR_MESSAGE);
-					error = true;
-				}
-				*/
 				else if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 					if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
@@ -980,7 +996,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						remove.remove(0);
 					}
 					for (int i = 0; i < changedProducts.size(); i++) {
-						react.addProduct(changedProducts.get(i));
+						react.addProduct((SpeciesReference) changedProducts.get(i));
 					}
 					remove = react.getListOfModifiers();
 					size = react.getModifierCount();
@@ -988,7 +1004,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						remove.remove(0);
 					}
 					for (int i = 0; i < changedModifiers.size(); i++) {
-						react.addModifier(changedModifiers.get(i));
+						react.addModifier((ModifierSpeciesReference) changedModifiers.get(i));
 					}
 					remove = react.getListOfReactants();
 					size = react.getReactantCount();
@@ -996,7 +1012,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						remove.remove(0);
 					}
 					for (int i = 0; i < changedReactants.size(); i++) {
-						react.addReactant(changedReactants.get(i));
+						react.addReactant((SpeciesReference) changedReactants.get(i));
 					}
 					if (reacReverse.getSelectedItem().equals("true")) {
 						react.setReversible(true);
@@ -1089,19 +1105,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 								changedParameters.add(new LocalParameter(parameter));
 							}
 						}
-						changedProducts = new ArrayList<SpeciesReference>();
+						changedProducts = new ArrayList<SimpleSpeciesReference>();
 						ListOf<SpeciesReference> listOfProducts = react.getListOfProducts();
 						for (int i = 0; i < react.getProductCount(); i++) {
 							SpeciesReference product = listOfProducts.get(i);
 							changedProducts.add(product);
 						}
-						changedReactants = new ArrayList<SpeciesReference>();
+						changedReactants = new ArrayList<SimpleSpeciesReference>();
 						ListOf<SpeciesReference> listOfReactants = react.getListOfReactants();
 						for (int i = 0; i < react.getReactantCount(); i++) {
 							SpeciesReference reactant = listOfReactants.get(i);
 							changedReactants.add(reactant);
 						}
-						changedModifiers = new ArrayList<ModifierSpeciesReference>();
+						changedModifiers = new ArrayList<SimpleSpeciesReference>();
 						ListOf<ModifierSpeciesReference> listOfModifiers = react.getListOfModifiers();
 						for (int i = 0; i < react.getModifierCount(); i++) {
 							ModifierSpeciesReference modifier = listOfModifiers.get(i);
@@ -1119,13 +1135,13 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						}
 					}
 					for (int i = 0; i < changedProducts.size(); i++) {
-						react.addProduct(changedProducts.get(i));
+						react.addProduct((SpeciesReference) changedProducts.get(i));
 					}
 					for (int i = 0; i < changedModifiers.size(); i++) {
-						react.addModifier(changedModifiers.get(i));
+						react.addModifier((ModifierSpeciesReference) changedModifiers.get(i));
 					}
 					for (int i = 0; i < changedReactants.size(); i++) {
-						react.addReactant(changedReactants.get(i));
+						react.addReactant((SpeciesReference) changedReactants.get(i));
 					}
 					if (reacReverse.getSelectedItem().equals("true")) {
 						react.setReversible(true);
@@ -1862,10 +1878,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		String selectedID = "";
 		if (option.equals("OK")) {
 			if (product == null || !inSchematic) {
-				for (SpeciesReference p : changedProducts) {
+				for (SimpleSpeciesReference p : changedProducts) {
 					if (p.getId().equals(selectedProductId)||p.getSpecies().equals(selectedProductId)) {
-						if (speciesReferenceMatch(p,(String)products.getSelectedValue())) {
-							product = p;
+						if (speciesReferenceMatch((SpeciesReference) p,(String)products.getSelectedValue())) {
+							product = (SpeciesReference) p;
 							break;
 						}
 					}
@@ -1955,9 +1971,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				productID = dimID[0].trim();
 				if (productID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Product dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), productID, selectedID, false);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Product ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
@@ -2094,10 +2120,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				if (option.equals("OK")) {
 					SpeciesReference produ = product;
 					if (product == null || !inSchematic) {
-						for (SpeciesReference p : changedProducts) {
+						for (SimpleSpeciesReference p : changedProducts) {
 							if (p.getId().equals(selectedProductId)||p.getSpecies().equals(selectedProductId)) {
-								if (speciesReferenceMatch(p,(String)products.getSelectedValue())) {
-									produ = p;
+								if (speciesReferenceMatch((SpeciesReference) p,(String)products.getSelectedValue())) {
+									produ = (SpeciesReference) p;
 									break;
 								}
 							}
@@ -2260,10 +2286,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		
 		if (option.equals("OK")) {
 			if (modifier == null || !inSchematic) {
-				for (ModifierSpeciesReference m : changedModifiers) {
+				for (SimpleSpeciesReference m : changedModifiers) {
 					if (m.getId().equals(selectedModifierId)||m.getSpecies().equals(selectedModifierId)) {
-						if (modifierSpeciesReferenceMatch(m,(String)modifiers.getSelectedValue())) {
-							modifier = m;
+						if (modifierSpeciesReferenceMatch((ModifierSpeciesReference) m,(String)modifiers.getSelectedValue())) {
+							modifier = (ModifierSpeciesReference) m;
 							break;
 						}
 					}
@@ -2388,9 +2414,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				dimensionIds = SBMLutilities.getDimensionIds("m",dimID.length-1);
 				if (modifierID.equals("")) {
 					error = SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Modifier dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(bioModel.getSBMLDocument(), modifierID, selectedID, false);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Modifier ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
@@ -2472,10 +2508,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				if (option.equals("OK")) {
 					ModifierSpeciesReference modi = modifier;
 					if (modifier == null || !inSchematic) {
-						for (ModifierSpeciesReference m : changedModifiers) {
+						for (SimpleSpeciesReference m : changedModifiers) {
 							if (m.getId().equals(selectedModifierId)||m.getSpecies().equals(selectedModifierId)) {
-								if (modifierSpeciesReferenceMatch(m,(String)modifiers.getSelectedValue())) {
-									modi = m;
+								if (modifierSpeciesReferenceMatch((ModifierSpeciesReference) m,(String)modifiers.getSelectedValue())) {
+									modi = (ModifierSpeciesReference) m;
 									break;
 								}
 							}
@@ -2735,10 +2771,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		}
 		if (option.equals("OK")) {
 			if (reactant == null) {
-				for (SpeciesReference r : changedReactants) {
+				for (SimpleSpeciesReference r : changedReactants) {
 					if (r.getId().equals(selectedReactantId) || r.getSpecies().equals(selectedReactantId)) {
-						if (speciesReferenceMatch(r,(String)reactants.getSelectedValue()))
-							reactant = r;
+						if (speciesReferenceMatch((SpeciesReference) r,(String)reactants.getSelectedValue()))
+							reactant = (SpeciesReference) r;
 					}
 				}
 			}
@@ -2824,9 +2860,19 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				dimensionIds = SBMLutilities.getDimensionIds("r",dimID.length-1);
 				if (reactantID.equals("")) {
 					error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, this, null);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("") && dimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Reactant dimensions are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 				else {
 					error = Utils.checkID(gcm.getSBMLDocument(), reactantID, selectedID, false);
+					if (!error && !SBMLutilities.getDimensionString(reaction).equals("")) {
+						JOptionPane.showMessageDialog(Gui.frame, "Reactant ids are currently not allowed for arrayed reactions.", "Illegal Reactant Id",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			else{
@@ -2885,18 +2931,6 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					if (index >= 0) {
 						reactants.setSelectedIndex(index);
 					}
-					/*
-					for (int i = 0; i < reacta.length; i++) {
-						if (i != index) {
-							if (reacta[i].split("\\[| ")[0].equals(reactantSpecies.getSelectedItem())) {
-								error = true;
-								JOptionPane.showMessageDialog(Gui.frame, "Unable to add species as a reactant.\n"
-										+ "Each species can only be used as a reactant once.", "Species Can Only Be Used Once",
-										JOptionPane.ERROR_MESSAGE);
-							}
-						}
-					}
-					*/
 				}
 			}
 			if (!error) {
@@ -2962,10 +2996,10 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				if (option.equals("OK")) {
 					SpeciesReference reactan = reactant;
 					if (reactant == null || !inSchematic) {
-						for (SpeciesReference r : changedReactants) {
+						for (SimpleSpeciesReference r : changedReactants) {
 							if (r.getId().equals(selectedReactantId) || r.getSpecies().equals(selectedReactantId)) {
-								if (speciesReferenceMatch(r,(String)reactants.getSelectedValue())) {
-									reactan = r;
+								if (speciesReferenceMatch((SpeciesReference) r,(String)reactants.getSelectedValue())) {
+									reactan = (SpeciesReference) r;
 									break;
 								}
 							}
@@ -3275,7 +3309,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		String kinetic = kf;
 		boolean addEquil = false;
 		String equilExpr = "";
-		for (SpeciesReference s : changedReactants) {
+		for (SimpleSpeciesReference s : changedReactants) {
 			if (SBMLutilities.hasDimensions(s)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
@@ -3289,28 +3323,28 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				equilExpr += stoichiometry;
 			}
 			else {
-				equilExpr += s.getStoichiometry();
+				equilExpr += ((SpeciesReference) s).getStoichiometry();
 			}
 		}
 		if (addEquil) {
 			kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-2)";
 		}
-		for (SpeciesReference s : changedReactants) {
+		for (SimpleSpeciesReference s : changedReactants) {
 			if (s.isSetId()) {
 				String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
 				if (stoichiometry==null) return;
 				kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + stoichiometry + ")";
 			}
 			else {
-				if (s.getStoichiometry() == 1) {
+				if (((SpeciesReference) s).getStoichiometry() == 1) {
 					kinetic += " * " + indexedSpeciesRef(s);
 				}
 				else {
-					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + s.getStoichiometry() + ")";
+					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + ((SpeciesReference) s).getStoichiometry() + ")";
 				}
 			}
 		}
-		for (ModifierSpeciesReference s : changedModifiers) {
+		for (SimpleSpeciesReference s : changedModifiers) {
 			if (SBMLutilities.hasDimensions(s)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 						+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
@@ -3323,7 +3357,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 			kinetic += " - " + kr;
 			addEquil = false;
 			equilExpr = "";
-			for (SpeciesReference s : changedProducts) {
+			for (SimpleSpeciesReference s : changedProducts) {
 				if (SBMLutilities.hasDimensions(s)) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
 							+ "Dimensions on species references not currently supported for use mass action button.", "Unable to Create Kinetic Law",
@@ -3337,28 +3371,28 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					equilExpr += stoichiometry;
 				}
 				else {
-					equilExpr += s.getStoichiometry();
+					equilExpr += ((SpeciesReference) s).getStoichiometry();
 				}
 			}
 			if (addEquil) {
 				kinetic += " * pow(" + kf + "/" + kr + "," + equilExpr + "-1)";
 			}
-			for (SpeciesReference s : changedProducts) {
+			for (SimpleSpeciesReference s : changedProducts) {
 				if (s.isSetId()) {
 					String stoichiometry = indexedSpeciesRefId(doc,reacID.getText(),s);
 					if (stoichiometry==null) return;
 					kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + stoichiometry + ")";
 				}
 				else {
-					if (s.getStoichiometry() == 1) {
+					if (((SpeciesReference) s).getStoichiometry() == 1) {
 						kinetic += " * " + indexedSpeciesRef(s);
 					}
 					else {
-						kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + s.getStoichiometry() + ")";
+						kinetic += " * pow(" + indexedSpeciesRef(s) + ", " + ((SpeciesReference) s).getStoichiometry() + ")";
 					}
 				}
 			}
-			for (ModifierSpeciesReference s : changedModifiers) {
+			for (SimpleSpeciesReference s : changedModifiers) {
 				kinetic += " * " + indexedSpeciesRef(s);
 			}
 		}
