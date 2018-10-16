@@ -88,7 +88,8 @@ public class ProbGlobalState extends PrjState {
 		isAbsorbing = false;
 		
 		/* Probabilistic search */
-		curReachabilityProb = -1.0;
+		//curReachabilityProb = -1.0;
+		curReachabilityProb = 0.0;
 		nextReachabilityProb = 0.0;
 		totalOutgoingTranRate = 0.0;
 		successorTranProbMap = new HashMap<PrjState, Double>();
@@ -313,7 +314,7 @@ public class ProbGlobalState extends PrjState {
 	/* Probabilistic search */
 	public double getCurReachabilityProb() {
 		
-		if(curReachabilityProb < 0.0) return nextReachabilityProb;
+		//if(curReachabilityProb < 0.0) return nextReachabilityProb;
 		
 		return curReachabilityProb;
 		
@@ -334,6 +335,10 @@ public class ProbGlobalState extends PrjState {
 		
 		for(PrjState successor: successorTranProbMap.keySet()) {
 			nextReachabilityProb += ((ProbGlobalState) successor).getCurReachabilityProb() * successorTranProbMap.get(successor);
+		}
+		
+		if (nextReachabilityProb > 1.0) {
+			throw new RuntimeException("Path Probability greater than 1.0");
 		}
 	}
 	

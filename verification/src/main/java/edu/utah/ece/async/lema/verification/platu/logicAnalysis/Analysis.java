@@ -263,7 +263,7 @@ public class Analysis extends CoreObservable{
   		int size = sgList[0].getLpn().getVarIndexMap().size();
       	int[] tempVariableVector = new int[size];
       	for(int i = 0; i < size; i++) {
-      		tempVariableVector[i] = 1001;
+      		tempVariableVector[i] = -1;
       	}
       	
       	size = sgList[0].getLpn().getAllTransitions().length;
@@ -275,7 +275,7 @@ public class Analysis extends CoreObservable{
       	size = sgList[0].getLpn().getPlaceList().length;
       	int[] tempMarkings = new int[size];
       	for(int i = 0; i < size; i++) {
-      		tempMarkings[i] = 1001;
+      		tempMarkings[i] = -1;
       	}
       	
       	// Initial state can contain immediate transitions.
@@ -486,6 +486,9 @@ public class Analysis extends CoreObservable{
 						
 					}
 					
+					/* Prepare next iteration */
+					((ProbGlobalState) LocalSt).setNextReachabilityProbToCurrent();
+					
 				}
 				
 				Transition dummyTran = new Transition();
@@ -498,7 +501,7 @@ public class Analysis extends CoreObservable{
 
 				
 				if(Options.getExportPrismModelFlag()) {
-					exportExplicitPrismModel(initPrjState ,prjStateSet);
+					exportExplicitPrismModel(initPrjState, prjStateSet, absorbLowProbState);
 				}
 				
 				break;
@@ -1484,7 +1487,7 @@ public class Analysis extends CoreObservable{
 	 * @param globalStateSet
 	 */
 	
-	public static void exportExplicitPrismModel(PrjState initGlobalState, StateSetInterface globalStateSet) {
+	public static void exportExplicitPrismModel(PrjState initGlobalState, StateSetInterface globalStateSet, PrjState absorbingGlobalState) {
 		
 		if(initGlobalState.toStateArray().length > 1) {
 			System.err.println("Error producing Prism Model. Only one LPN file is supported currently.");
@@ -1578,8 +1581,9 @@ public class Analysis extends CoreObservable{
 			
 			/* Write label files : Deadlock and initial states */
 			BufferedWriter labelFile = new BufferedWriter(new FileWriter(labelFileName));
-			labelFile.write("0=\"init\" 1=\"deadlock\"\n");
+			labelFile.write("0=\"init\" 1=\"deadlock\" 2=\"absorbingState\" \n");
 			labelFile.write(statesIdLookup.get(initGlobalState)+": 0\n");
+			labelFile.write(statesIdLookup.get(absorbingGlobalState)+": 2\n");
 			labelFile.close();
 			
 		}
