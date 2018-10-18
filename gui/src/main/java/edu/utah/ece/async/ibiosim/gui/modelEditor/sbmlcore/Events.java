@@ -540,17 +540,24 @@ public class Events extends PanelObservable implements ActionListener, MouseList
 					EAdimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), left, false);
 					if(EAdimID!=null){
 						EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-						String variableId = EAdimID[0].trim();
-						if (variableId.endsWith("_"+GlobalConstants.RATE)) {
-							variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+						if (dimensionIds.length > 0 && EAdimensionIds.length > 0) {
+							JOptionPane.showMessageDialog(Gui.frame, "Event dimensions are currently not allowed when it has arrayed event assignments.", "Illegal Event",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						} else {
+							String variableId = EAdimID[0].trim();
+							if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+								variableId = variableId.replace("_"+GlobalConstants.RATE, "");
+							}
+							SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
+							EAdex = Utils.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+							error = (EAdex==null);
 						}
-						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
-						EAdex = Utils.checkIndices(rightSide, variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
-						error = (EAdex==null);
 					}
 					else{
 						error = true;
 					}
+					if (error) break;
 				}
 			}
 			if (!error) {
@@ -1335,23 +1342,29 @@ public class Events extends PanelObservable implements ActionListener, MouseList
 				EAdimID = Utils.checkSizeParameters(bioModel.getSBMLDocument(), EAdimensions.getText(), true);
 				if(EAdimID!=null){
 					EAdimensionIds = SBMLutilities.getDimensionIds("e",EAdimID.length-1);
-					String variableId = (String)eaID.getSelectedItem();
-					if (variableId.endsWith("_"+GlobalConstants.RATE)) {
-						variableId = variableId.replace("_"+GlobalConstants.RATE, "");
-					}
-					SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
-					EAdex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
-					error = (EAdex==null);
-					if (!error) {	
-						ArrayList<String> meshDimensionIds = new ArrayList<String>();
-						if (dimensionIds!=null) {
-							meshDimensionIds.addAll(Arrays.asList(dimensionIds));
+					if (dimensionIds.length > 0 && EAdimensionIds.length > 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Event assignment dimensions are currently not allowed for arrayed events.", "Illegal Event Assignment",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					} else {
+						String variableId = (String)eaID.getSelectedItem();
+						if (variableId.endsWith("_"+GlobalConstants.RATE)) {
+							variableId = variableId.replace("_"+GlobalConstants.RATE, "");
 						}
-						if (EAdimensionIds!=null) {
-							meshDimensionIds.addAll(Arrays.asList(EAdimensionIds));
+						SBase variable = SBMLutilities.getElementBySId(bioModel.getSBMLDocument(), variableId);
+						EAdex = Utils.checkIndices(iIndex.getText(), variable, bioModel.getSBMLDocument(), EAdimensionIds, "variable", EAdimID, dimensionIds, dimID);
+						error = (EAdex==null);
+						if (!error) {	
+							ArrayList<String> meshDimensionIds = new ArrayList<String>();
+							if (dimensionIds!=null) {
+								meshDimensionIds.addAll(Arrays.asList(dimensionIds));
+							}
+							if (EAdimensionIds!=null) {
+								meshDimensionIds.addAll(Arrays.asList(EAdimensionIds));
+							}
+							error = Utils.displayinvalidVariables("Event assignment", bioModel.getSBMLDocument(), 
+									meshDimensionIds.toArray(new String[meshDimensionIds.size()]), eqn.getText().trim(), "", false);
 						}
-						error = Utils.displayinvalidVariables("Event assignment", bioModel.getSBMLDocument(), 
-								meshDimensionIds.toArray(new String[meshDimensionIds.size()]), eqn.getText().trim(), "", false);
 					}
 				}
 				else{

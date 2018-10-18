@@ -68,6 +68,32 @@ public class SpeciesReferenceNode extends VariableNode {
   /**
    *
    * @param index
+   * @param value
+   */
+  public void setSpeciesRate(int index, double value) {
+    SpeciesNode speciesNode = getSpecies();
+    HierarchicalState speciesState = species.getState().getChild(index);
+
+    if (indexMap != null && indexMap.containsKey(IndexType.SPECIESREFERENCE)) {
+      List<HierarchicalNode> indexMath = indexMap.get(IndexType.SPECIESREFERENCE);
+
+      for (int i = indexMath.size() - 1; i >= 0; i--) {
+        int speciesIndex = (int) Evaluator.evaluateExpressionRecursive(indexMath.get(i), index);
+        speciesState = speciesState.getChild(speciesIndex);
+      }
+    }
+    if (!speciesState.isBoundaryCondition()) {
+      double stoichiometry = getValue(index);
+      double currentRate = speciesNode.getState().getChild(index).getRateValue();
+      double rateChange = value * stoichiometry;
+      double newRate = currentRate + rateChange;
+      speciesState.setRateValue(newRate);
+    }
+  }
+
+  /**
+   *
+   * @param index
    * @param multiplier
    */
   public HierarchicalState updateSpecies(int index, int multiplier) {

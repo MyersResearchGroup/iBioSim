@@ -1647,13 +1647,13 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
       simulators.removeAllItems();
       simulators.addItem("steady-state-markov-chain-analysis");
       simulators.addItem("transient-markov-chain-analysis");
-      simulators.addItem("reachability-analysis");
+      //simulators.addItem("reachability-analysis");
       simulators.addItem("prism");
-      if (Executables.reb2sacFound)
-      {
-        simulators.addItem("atacs");
-        simulators.addItem("ctmc-transient");
-      }
+//      if (Executables.reb2sacFound)
+//      {
+//        simulators.addItem("atacs");
+//        simulators.addItem("ctmc-transient");
+//      }
       //      if (selectedMarkovSim != null)
       //      {
       //        simulators.setSelectedItem(selectedMarkovSim);
@@ -2684,14 +2684,14 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     {
       simulators.addItem("steady-state-markov-chain-analysis");
       simulators.addItem("transient-markov-chain-analysis");
-      simulators.addItem("reachability-analysis");
+      // simulators.addItem("reachability-analysis");
       simulators.addItem("prism");
     }
-    if (Executables.reb2sacFound)
-    {
-      simulators.addItem("atacs");
-      simulators.addItem("ctmc-transient");
-    }
+//    if (Executables.reb2sacFound)
+//    {
+//      simulators.addItem("atacs");
+//      simulators.addItem("ctmc-transient");
+//    }
     ArrayList<String> getLists = new ArrayList<String>();
     // getLists.add("kinetic-law-constants-simplifier");
     String[] objects = getLists.toArray(new String[getLists.size()]);

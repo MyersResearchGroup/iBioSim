@@ -32,6 +32,7 @@ import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalM
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.HierarchicalSimulation;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.EventNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.FunctionNode;
+import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.math.HierarchicalNode;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.states.VectorWrapper;
 import edu.utah.ece.async.ibiosim.analysis.simulation.hierarchical.util.setup.ModelSetup;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -204,13 +205,17 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
         int index = hierarchicalModel.getIndex();
         if (hierarchicalModel.getListOfAssignmentRules() != null) {
           for (FunctionNode node : hierarchicalModel.getListOfAssignmentRules()) {
-            changed = changed | node.updateVariable(hierarchicalModel.getIndex());
+            for (HierarchicalNode subNode : node) {
+              changed = changed | node.updateVariable(hierarchicalModel.getIndex());
+            }
           }
         }
 
         if (hierarchicalModel.getListOfRateRules() != null) {
           for (FunctionNode rateRule : hierarchicalModel.getListOfRateRules()) {
-            changed = changed | rateRule.updateRate(index);
+            for (HierarchicalNode subNode : rateRule) {
+              changed = changed | rateRule.updateRate(index);
+            }
           }
         }
         changed |= hierarchicalModel.computePropensities(true);
@@ -249,8 +254,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getListOfEvents()) {
-          if (event.isTriggeredAtTime(t, index)) {
-            returnValue = value;
+          for (HierarchicalNode subNode : event) {
+            if (event.isTriggeredAtTime(t, index)) {
+              returnValue = value;
+            }
           }
         }
       }
@@ -266,8 +273,10 @@ public final class HierarchicalODERKSimulator extends HierarchicalSimulation imp
       for (HierarchicalModel modelstate : modules) {
         int index = modelstate.getIndex();
         for (EventNode event : modelstate.getListOfEvents()) {
-          if (event.getMaxDisabledTime(index) > t) {
-            event.setMaxDisabledTime(index, t);
+          for (HierarchicalNode subNode : event) {
+            if (event.getMaxDisabledTime(index) > t) {
+              event.setMaxDisabledTime(index, t);
+            }
           }
         }
       }

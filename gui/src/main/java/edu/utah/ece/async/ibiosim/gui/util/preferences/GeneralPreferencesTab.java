@@ -103,7 +103,7 @@ public enum GeneralPreferencesTab implements PreferencesTab {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
 		IBioSimPreferences.INSTANCE.setFileDialogEnabled(dialog.isSelected());
 		IBioSimPreferences.INSTANCE.setPlusMinusIconsEnabled(icons.isSelected()); 
 		IBioSimPreferences.INSTANCE.setNoConfirmEnabled(delete.isSelected());
@@ -113,6 +113,7 @@ public enum GeneralPreferencesTab implements PreferencesTab {
 		IBioSimPreferences.INSTANCE.setXhtmlCmd(xhtmlCmd.getText());
 		IBioSimPreferences.INSTANCE.setGraphvizCmd(dotCmd.getText());
 		IBioSimPreferences.INSTANCE.setPrismCmd(prismCmd.getText());
+		return true;
 	}
 
 	@Override

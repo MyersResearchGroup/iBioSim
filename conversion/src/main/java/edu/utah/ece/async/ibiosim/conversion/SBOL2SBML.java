@@ -249,7 +249,7 @@ public class SBOL2SBML {
         return resultMD;} catch (Exception e) {e.printStackTrace();
         return MD;}
     }
-	
+
 	/**
 	 * Perform conversion from SBOL to SBML. 
 	 * All SBOL Interactions are converted to SBML degradation, complex formation, and production reactions. Depending
@@ -265,7 +265,7 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
-	 * @throws SBOLValidationException 
+	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
 	 * @throws SynBioHubException 
 	 * @throws SBOLConversionException 
 	 */
@@ -454,6 +454,7 @@ public class SBOL2SBML {
 				}
 			}
 		}
+
 		models.put(getDisplayID(resultMD),targetModel);
 		return models;
 	}
