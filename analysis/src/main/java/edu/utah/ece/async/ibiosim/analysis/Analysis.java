@@ -264,7 +264,7 @@ public class Analysis implements BioObserver
     {
       if(propertiesFile != null)
       {
-        AnalysisPropertiesLoader.loadPropertiesFile(properties);
+        AnalysisPropertiesLoader.loadPropertiesFile(properties,propertiesFile);
       }
       loadUserValues(propertiesMap);
       AnalysisPropertiesWriter.createProperties(properties);
@@ -294,7 +294,7 @@ public class Analysis implements BioObserver
       String name = file.getName();
       if(isSBML(file))
       {
-        properties.setModelFile(name);
+          properties.setModelFile(name);
       }
       else if(isSEDML(file))
       {

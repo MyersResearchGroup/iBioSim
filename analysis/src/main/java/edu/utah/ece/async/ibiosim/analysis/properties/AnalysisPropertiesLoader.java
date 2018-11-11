@@ -112,10 +112,12 @@ public class AnalysisPropertiesLoader {
 	 * @throws IOException
 	 *           - if there is a problem when reading in the given property file.
 	 */
-	public static void loadPropertiesFile(AnalysisProperties properties) throws IOException {
+	public static void loadPropertiesFile(AnalysisProperties properties, String openFile) throws IOException {
 		String root = properties.getRoot();
 		String simName = properties.getId();
-		String openFile = root + File.separator + simName + File.separator + simName + ".properties";
+		if (openFile==null) {
+			openFile = root + File.separator + simName + File.separator + simName + ".properties";
+		}
 		String modelName = properties.getModelFile();
 
 		VerificationProperties verifProperties = properties.getVerificationProperties();
