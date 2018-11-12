@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" fbc:required="false" level="3" version="2" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2">
+  <model fbc:strict="false" id="evenzeroes_testbench_temp" metaid="iBioSim2" name="Created by iBioSim flatten routine">
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+  </model>
+</sbml>

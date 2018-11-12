@@ -1,0 +1,208 @@
+package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
+
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+
+/**
+ * 
+ * @author Tramy Nguyen
+ *
+ */
+public class TestCompilerOptions extends AbstractVerilogParserTest{
+	
+	@Test
+	public void Test_inputSize() throws ParseException, FileNotFoundException {
+		String[] args = {"-v", reader.getFile("init_block.v")};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
+	}
+	
+	@Test
+	public void Test_inputSize2() throws ParseException, FileNotFoundException {
+		String files = String.join(",", reader.getFile("init_block.v"), reader.getFile("init_block.v"));
+		String[] args = {"-v", files};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertEquals(2, compilerOptions.getVerilogFiles().size());
+	}
+	
+	@Test
+	public void Test_inputSize3() throws ParseException, FileNotFoundException {
+		String files = String.join(",", reader.getFile("init_block.v"), reader.getFile("assign.v"), reader.getFile("delay.v"));
+		String[] args = {"-v", files};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertEquals(3, compilerOptions.getVerilogFiles().size());
+	}
+	
+	@Test(expected = org.apache.commons.cli.ParseException.class)
+	public void Test_PaserException() throws ParseException {
+		String[] args = {"-v"};
+		
+		Main.parseCommandLine(args);
+	}
+	
+	@Test(expected = FileNotFoundException.class)
+	public void Test_FileNotFoundException() throws ParseException, FileNotFoundException {
+		String[] args = {"-v", "a.v"};
+
+		CommandLine cmd = Main.parseCommandLine(args);
+		Main.setCompilerOptions(cmd);
+		
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
+		//error because missing module identifier names for imp and tb
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException2() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
+				"-lpn", "-od", CompilerTestSuite.outputDirectory};
+		//error because missing output file name
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException3() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
+				"-lpn"};
+		//error because missing output directory and output file name
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException4() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
+				"-lpn", "-o", "evenzeroes"};
+		//error because missing output directory
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException5() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-sbml"};
+		//error because missing output directory
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException6() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-imp", "evenzeroes_imp",  
+				"-lpn", "-od", CompilerTestSuite.outputDirectory};
+		//error because missing tb module identifier
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException7() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-tb", "evenzeroes_testbench",
+				"-lpn", "-od", CompilerTestSuite.outputDirectory};
+		//error because missing imp module identifier
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Main.runVerilogCompiler(compilerOptions);
+	}
+	
+	@Test
+	public void Test_SBML() throws ParseException, FileNotFoundException {
+		String[] args = {"-v", reader.getFile("init_block.v"), "-sbml",
+						"-od", CompilerTestSuite.outputDirectory};
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertTrue(compilerOptions.hasOutput());
+		Assert.assertTrue(compilerOptions.isOutputSBML());
+		Assert.assertFalse(compilerOptions.isOutputLPN());
+		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
+		Assert.assertFalse(compilerOptions.isOutputFileNameSet());
+		Assert.assertFalse(compilerOptions.isImplementatonModuleIdSet());
+		Assert.assertFalse(compilerOptions.isTestbenchModuleIdSet());
+	}
+	
+	@Test
+	public void Test_LPN() throws ParseException, FileNotFoundException {
+		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
+				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
+				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertTrue(compilerOptions.hasOutput());
+		Assert.assertFalse(compilerOptions.isOutputSBML());
+		Assert.assertTrue(compilerOptions.isOutputLPN());
+		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
+		Assert.assertTrue(compilerOptions.isOutputFileNameSet());
+		Assert.assertTrue(compilerOptions.isImplementatonModuleIdSet());
+		Assert.assertTrue(compilerOptions.isTestbenchModuleIdSet());
+	}
+	
+	@Test
+	public void Test_verbose() throws ParseException, FileNotFoundException {
+		String[] args = {"--verilogFiles", reader.getFile("init_block.v")};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
+	}
+	
+	@Test
+	public void Test_verbose2() throws ParseException, FileNotFoundException {
+		String[] args = {"-sbml", "--odir", CompilerTestSuite.outputDirectory, "--verilogFiles", reader.getFile("init_block.v")};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
+		Assert.assertTrue(compilerOptions.hasOutput());
+		Assert.assertTrue(compilerOptions.isOutputSBML());
+		Assert.assertFalse(compilerOptions.isOutputLPN());
+		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
+		Assert.assertFalse(compilerOptions.isOutputFileNameSet());
+		Assert.assertFalse(compilerOptions.isImplementatonModuleIdSet());
+		Assert.assertFalse(compilerOptions.isTestbenchModuleIdSet());
+	}
+
+	@Test
+	public void Test_help() throws ParseException, FileNotFoundException {
+		String[] args = {"-h"};
+		
+		CommandLine cmd = Main.parseCommandLine(args);
+		Main.setCompilerOptions(cmd);
+	}
+}
