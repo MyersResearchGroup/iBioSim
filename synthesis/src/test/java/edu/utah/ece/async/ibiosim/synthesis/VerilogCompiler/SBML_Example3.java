@@ -22,7 +22,7 @@ public class SBML_Example3 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("register.v"), "-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("register.v"), "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("registers");

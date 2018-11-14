@@ -20,7 +20,7 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
 						"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test 
@@ -29,7 +29,7 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 		String[] cmd = {"-v", files, 
 				"-imp", "counter_imp", "-tb", "counter_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "counter"};
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test 
@@ -39,7 +39,7 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 				"-imp", "multthree_imp", "-tb", "multThree_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "multThree"};
 		
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test 
@@ -49,7 +49,7 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 				"-imp", "scanflop_imp", "-tb", "scanflop_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "scanflop"};
 		
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test 
@@ -59,7 +59,7 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 				"-imp", "lfsr_imp", "-tb", "lfsr_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "lfsr"};
 		
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test
@@ -69,15 +69,23 @@ public class TestWorkflow extends AbstractVerilogParserTest{
 				"-imp", "srlatch_imp", "-tb", "srlatch_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "srlatch"};
 		
-		reader.runCompiler(cmd);
+		Main.main(cmd);
 	}
 	
 	@Test
 	public void Test_EvenZeroesSynth() throws ParseException, FileNotFoundException {
-		String[] args = {"-v", reader.getFile("evenzeroes_sequential_synth.v"),
+		String[] cmd = {"-v", reader.getFile("evenzeroes_sequential_synth.v"),
 				"-sbol", "-od", CompilerTestSuite.outputDirectory};
-		//TODO: detach output flags then run this test
-//		reader.runCompiler(args);
+		
+		Main.main(cmd);
+	}
+	
+	@Test
+	public void Test_() throws ParseException, FileNotFoundException {
+		String[] cmd = {"-v", reader.getFile("contAssign5.v"),
+				"-sbol", "-od", CompilerTestSuite.outputDirectory};
+		
+		Main.main(cmd);
 	}
 
 }

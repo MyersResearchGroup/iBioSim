@@ -26,7 +26,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-v", reader.getFile("init_block.v")};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
 	}
 	
@@ -36,7 +36,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-v", files};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(2, compilerOptions.getVerilogFiles().size());
 	}
 	
@@ -46,7 +46,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-v", files};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(3, compilerOptions.getVerilogFiles().size());
 	}
 	
@@ -62,7 +62,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-v", "a.v"};
 
 		CommandLine cmd = Main.parseCommandLine(args);
-		Main.setCompilerOptions(cmd);
+		Main.createCompilerOptions(cmd);
 		
 	}
 	
@@ -72,8 +72,8 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		//error because missing module identifier names for imp and tb
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -83,19 +83,19 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing output file name
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
-	@Test(expected = VerilogCompilerException.class)
+	@Test()
 	public void Test_VerilogCompilerException3() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
 		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
 				"-lpn"};
-		//error because missing output directory and output file name
+		//no output directory and output file name
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -105,18 +105,18 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-o", "evenzeroes"};
 		//error because missing output directory
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
-	@Test(expected = VerilogCompilerException.class)
+	@Test()
 	public void Test_VerilogCompilerException5() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
 		String[] args = {"-v", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"), 
 				"-sbml"};
-		//error because missing output directory
+		//no output directory
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -126,8 +126,8 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing tb module identifier
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -137,8 +137,8 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing imp module identifier
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Main.runVerilogCompiler(compilerOptions);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Main.verifyCompilerSetup(compilerOptions);
 	}
 	
 	@Test
@@ -146,8 +146,8 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-v", reader.getFile("init_block.v"), "-sbml",
 						"-od", CompilerTestSuite.outputDirectory};
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Assert.assertTrue(compilerOptions.hasOutput());
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Assert.assertTrue(compilerOptions.isExportOn());
 		Assert.assertTrue(compilerOptions.isOutputSBML());
 		Assert.assertFalse(compilerOptions.isOutputLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
@@ -163,8 +163,8 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
-		Assert.assertTrue(compilerOptions.hasOutput());
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
+		Assert.assertTrue(compilerOptions.isExportOn());
 		Assert.assertFalse(compilerOptions.isOutputSBML());
 		Assert.assertTrue(compilerOptions.isOutputLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
@@ -178,7 +178,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"--verilogFiles", reader.getFile("init_block.v")};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
 	}
 	
@@ -187,9 +187,9 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-sbml", "--odir", CompilerTestSuite.outputDirectory, "--verilogFiles", reader.getFile("init_block.v")};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		CompilerOptions compilerOptions = Main.setCompilerOptions(cmd);
+		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
-		Assert.assertTrue(compilerOptions.hasOutput());
+		Assert.assertTrue(compilerOptions.isExportOn());
 		Assert.assertTrue(compilerOptions.isOutputSBML());
 		Assert.assertFalse(compilerOptions.isOutputLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
@@ -203,6 +203,6 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		String[] args = {"-h"};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
-		Main.setCompilerOptions(cmd);
+		Main.createCompilerOptions(cmd);
 	}
 }

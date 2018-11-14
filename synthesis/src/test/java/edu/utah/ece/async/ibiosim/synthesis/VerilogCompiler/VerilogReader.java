@@ -24,7 +24,7 @@ public class VerilogReader {
 		VerilogCompiler compiledResult = null;
 		try {
 			CommandLine cmds = Main.parseCommandLine(args);
-			CompilerOptions setupOpt = Main.setCompilerOptions(cmds);
+			CompilerOptions setupOpt = Main.createCompilerOptions(cmds);
 			compiledResult = Main.runVerilogCompiler(setupOpt);
 		} catch (ParseException e) {
 			e.printStackTrace();

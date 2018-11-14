@@ -2,6 +2,7 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.cli.CommandLine;
@@ -31,8 +32,19 @@ public class Main {
 		
 		try {
 			CommandLine cmd = parseCommandLine(args);
-			CompilerOptions compilerOptions = setCompilerOptions(cmd);
-			runVerilogCompiler(compilerOptions);
+			CompilerOptions compilerOptions = createCompilerOptions(cmd);
+			VerilogCompiler compiler = runVerilogCompiler(compilerOptions);
+			if(compilerOptions.isExportOn()){
+				if(compilerOptions.isOutputSBML()){
+					compiler.exportSBML();
+				}
+				if(compilerOptions.isOutputLPN()){
+					compiler.exportLPN();
+				}
+				if(compilerOptions.isOutputSBOL()){
+					compiler.exportSBOL();
+				}
+			}
 		} 
 		catch (org.apache.commons.cli.ParseException e1) {
 			printUsage();
@@ -47,7 +59,7 @@ public class Main {
 			return;
 		} 
 		catch (IOException e) {
-			System.err.println("ERROR: Unable to read input SBML files to perform flattening. " + e.getMessage());
+			System.err.println("ERROR: Unable to read SBML files to perform flattening. " + e.getMessage());
 			return;
 		} 
 		catch (BioSimException e) {
@@ -70,7 +82,7 @@ public class Main {
 	public static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("VerilogCompiler -v <Verilog File(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/example/ -lpn", getSetupOptions());
-		
+		return;
 	}
 
 	private static Options getSetupOptions() {
@@ -88,9 +100,7 @@ public class Main {
 		options.addOption("od", "odir", true, "Path of output directory where the compiler will produce the results to.");
 		options.addOption("tb", "tb_modId", true, "Name of the testbench verilog module identifier that simulates the design.");
 		options.addOption("imp", "imp_modId", true, "Name of the implemenation verilog module identifier that describes the circuit");
-		options.addOption("h", "help", false, "Instructions to execute compiler are shown below.");
-		options.addOption("s", "synth", false, "Perform synthesis.");
-		options.addOption("sbol", false, "Output SBOL data model when synthesizer is called.");
+		options.addOption("sbol", false, "Perform synthesis and ouput data into SBOL.");
 		return options;
 	}
 
@@ -101,7 +111,7 @@ public class Main {
 		return cmd;
 	}
 
-	public static CompilerOptions setCompilerOptions(CommandLine cmd) throws FileNotFoundException {
+	public static CompilerOptions createCompilerOptions(CommandLine cmd) throws FileNotFoundException {
 		CompilerOptions compilerOptions = new CompilerOptions();
 		
 		if(cmd.hasOption("h")) {
@@ -114,6 +124,7 @@ public class Main {
 		if(cmd.hasOption("od")) {
 			String outputDirectory = cmd.getOptionValue("od");
 			compilerOptions.setOutputDirectory(outputDirectory);
+			compilerOptions.exportCompiler(true);
 		}
 		if(cmd.hasOption("tb")) {
 			String testbenchName = cmd.getOptionValue("tb");
@@ -125,16 +136,12 @@ public class Main {
 		}
 		if(cmd.hasOption("lpn")) {
 			compilerOptions.setOutputLPN(true);
-			compilerOptions.setOutputOn(true);
 		}
 		if(cmd.hasOption("sbml")) {
 			compilerOptions.setOutputSBML(true);
-			compilerOptions.setOutputOn(true);
 		}
 		if(cmd.hasOption("sbol")) {
-			compilerOptions.setSynthesis(true);
 			compilerOptions.setOutputSBOL(true); 
-			compilerOptions.setOutputOn(true);
 		}
 		if(cmd.hasOption("v")) {
 			String[] files = cmd.getOptionValue("v").split(String.valueOf(separator));
@@ -142,26 +149,43 @@ public class Main {
 				compilerOptions.addVerilogFile(file);
 			}
 		}
-		if(cmd.hasOption("s")) {
-			//TODO: merge with sbol export
-		}
+		
 		return compilerOptions;
 	}
 
-	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
-		compiler.compile();
-		
-		if(compilerOptions.hasOutput()){
-			if(compilerOptions.isSynthOn()) {
-				compiler.generateSBOL();
-			}
-			else {
-				compiler.generateSBML();
+	public static void verifyCompilerSetup(CompilerOptions compilerOptions) throws VerilogCompilerException {
 
-				if(compilerOptions.isOutputLPN()) {
-					compiler.generateLPN();
-				}
+		if(compilerOptions.isOutputSBML()|| compilerOptions.isOutputLPN() || compilerOptions.isOutputSBOL()){
+			if(!compilerOptions.isOutputDirectorySet()){
+				throw new VerilogCompilerException("No directory was set to export the data to."); 
+			}
+			
+			if(!compilerOptions.isOutputFileNameSet()){
+				throw new VerilogCompilerException("The compiler cannot export an LPN model because the output file name was not provided."); 
+			}
+			if(!compilerOptions.isTestbenchModuleIdSet()){
+				throw new VerilogCompilerException("The testbench module identifier field was not provided to produce and LPN model.");
+			}
+			if(!compilerOptions.isImplementatonModuleIdSet()){
+				throw new VerilogCompilerException("The implementation module identifier field was not provided to produce and LPN model.");
+			}
+		}
+
+
+	}
+
+	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+		
+		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
+		compiler.compile(); 
+		
+		if(compilerOptions.isOutputSBOL()){
+			compiler.generateSBOL();
+		}
+		else{
+			compiler.generateSBML();
+			if(compilerOptions.isOutputLPN()){
+				compiler.generateLPN();
 			}
 		}
 		return compiler;

@@ -16,6 +16,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+
 /**
  * An SBOL utility class created for the VerilogToSBOL converter. 
  * @author Tramy Nguyen
@@ -29,7 +30,7 @@ public class WrappedSBOL {
 	
 	private Map<String, String> portMapping; //map verilog inputs to sbol IDs
 	
-	private int interCounter, partiCounter, cdCounter, fcCounter; //use to generate unique URIs
+	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter; //use to generate unique URIs
 
 	public WrappedSBOL() {
 		this.sbolDoc = new SBOLDocument();
@@ -89,9 +90,48 @@ public class WrappedSBOL {
 		String id = "_" + tu_id;
 		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		tu.addRole(SequenceOntology.ENGINEERED_REGION);
+		
+		ComponentDefinition promoter = createPromoter();
+		ComponentDefinition ribosome = createRibosome();
+		ComponentDefinition cds = createCDS();
+		ComponentDefinition terminator = createTerminator();
+		
+		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, promoter.getIdentity());
+		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, ribosome.getIdentity());
+		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, cds.getIdentity());
+		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, terminator.getIdentity());
+		
 		FunctionalComponent tu_instance = addFunctionalComponent(getFunctionalComponentId() + id, AccessType.PUBLIC, tu.getIdentity(), DirectionType.NONE);
 		return tu_instance;
 	} 
+	
+	public ComponentDefinition createPromoter() throws SBOLValidationException{
+		String id = "_promoter";
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
+		part.addRole(SequenceOntology.PROMOTER);
+		return part;
+	}
+	
+	public ComponentDefinition createRibosome() throws SBOLValidationException{
+		String id = "_ribosome";
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
+		part.addRole(SequenceOntology.RIBOSOME_ENTRY_SITE	);
+		return part;
+	}
+	
+	public ComponentDefinition createCDS() throws SBOLValidationException{
+		String id = "_cds";
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
+		part.addRole(SequenceOntology.CDS);
+		return part;
+	}
+	
+	public ComponentDefinition createTerminator() throws SBOLValidationException{
+		String id = "_terminator";
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
+		part.addRole(SequenceOntology.TERMINATOR	);
+		return part;
+	}
 	
 	public FunctionalComponent createProtein(String proteinId, DirectionType proteinDirection) throws SBOLValidationException {
 		String id =  "_" + proteinId;
@@ -136,6 +176,10 @@ public class WrappedSBOL {
 	
 	private String getComponentDefinitionId() {
 		return "CD" + this.cdCounter++;
+	}
+	
+	private String getComponentId() {
+		return "C" + this.cCounter++;
 	}
 	
 	private String getFunctionalComponentId() {

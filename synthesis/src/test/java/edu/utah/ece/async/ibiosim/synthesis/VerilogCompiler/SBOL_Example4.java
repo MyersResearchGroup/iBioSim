@@ -30,7 +30,7 @@ public class SBOL_Example4 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("contAssign5.v"), "-sbol", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("contAssign5.v"), "-sbol"};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		String vName = "contAssign5";

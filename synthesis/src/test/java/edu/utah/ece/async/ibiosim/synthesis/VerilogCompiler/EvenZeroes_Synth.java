@@ -117,12 +117,7 @@ public class EvenZeroes_Synth extends AbstractVerilogParserTest{
 		Assert.assertEquals("or(parity0,and(not(parity1),ez_instance__state))", actual_assign.getExpression());
 	}
 	
-	@Test
-	public void Test_SBOL() {
-		Assert.assertEquals(5, sbolDesign.getFunctionalComponents().size());
-		Assert.assertNotNull(sbolDesign.getFunctionalComponent("FC0_bit1"));
-		
-	}
+	
 
 	
 }

@@ -28,7 +28,7 @@ public class SBML_Example9 extends AbstractVerilogParserTest{
 
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("delay.v"), "-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("delay.v"), "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("delay");

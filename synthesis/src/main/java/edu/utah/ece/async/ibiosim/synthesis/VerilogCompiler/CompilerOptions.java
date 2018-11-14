@@ -13,15 +13,14 @@ import java.util.List;
 public class CompilerOptions {
 	private List<File> verilogFiles;
 	private String tbModuleId, impModuleId, outputFileName, outDir;
-	private boolean outputSBOL, outputSBML, outputLPN, generateOutput, runSynth;
+	private boolean outputSBOL, outputSBML, outputLPN, exportOutput;
 
 	public CompilerOptions() {
 		this.verilogFiles = new ArrayList<>();
 		this.outputSBOL = false;
 		this.outputSBML = false;
 		this.outputLPN = false;
-		this.generateOutput = false;
-		this.runSynth = false;
+		this.exportOutput = false;
 	}
 
 	public void addVerilogFile(String fullFileName) throws FileNotFoundException {
@@ -49,10 +48,6 @@ public class CompilerOptions {
 	
 	public void setImplementationModuleId(String id) {
 		this.impModuleId = id;
-	}
-	
-	public void setSynthesis(boolean isSynth) {
-		this.runSynth = isSynth;
 	}
 	
 	public void setOutputSBOL(boolean isSBOL) {
@@ -91,20 +86,16 @@ public class CompilerOptions {
 		return this.outputFileName;
 	}
 	
-	public String getOutputDirectory() {
+	public String getOutputDirectory(){
 		return this.outDir;
 	}
 	
-	public void setOutputOn(boolean turnOn) {
-		this.generateOutput = true;
+	public void exportCompiler(boolean turnOn) {
+		this.exportOutput = true;
 	}
 	
-	public boolean hasOutput() {
-		return this.generateOutput;
-	}
-	
-	public boolean isSynthOn() {
-		return this.runSynth;
+	public boolean isExportOn() {
+		return this.exportOutput;
 	}
 	
 	public boolean isOutputSBOL() {

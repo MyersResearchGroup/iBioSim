@@ -26,7 +26,7 @@ public class SBML_Example7 extends AbstractVerilogParserTest{
 
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("conditional_stmt2.v"), "-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("conditional_stmt2.v"), "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("conditional_stmt2");

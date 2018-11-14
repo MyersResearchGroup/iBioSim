@@ -1,2 +1,97 @@
+.inputs r s 
+.outputs q ack 
+.internal 
+.dummy sl_instance__if_0 sl_instance__wait_1 sl_instance__wait_0 sl_instance__if_1 delay_4 assign_4 delay_5 delay_6 assign_0 assign_1 assign_2 assign_3 sl_instance__delay_2 sl_instance__delay_1 sl_instance__delay_0 delay_0 T0 sl_instance__delay_6 delay_1 T1 sl_instance__delay_5 delay_2 T2 sl_instance__delay_4 delay_3 T3 sl_instance__delay_3 if_3 T4 if_2 sl_instance__assign_0 sl_instance__assign_3 sl_instance__assign_4 sl_instance__assign_1 sl_instance__assign_2 sl_instance__T1 sl_instance__T2 sl_instance__T0 if_1 wait_1 if_0 wait_0 
+#|.places sl_instance__P10 sl_instance__P11 sl_instance__P12 sl_instance__P13 sl_instance__P9 sl_instance__P7 sl_instance__P14 sl_instance__P8 sl_instance__P15 sl_instance__P5 sl_instance__P16 P20 sl_instance__P6 sl_instance__P17 P0 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P12 sl_instance__P3 P11 sl_instance__P4 P14 sl_instance__P1 P13 sl_instance__P2 P16 P15 sl_instance__P0 P18 P17 P19 
+#@.init_state [0000]
+.graph
+sl_instance__P2 sl_instance__if_0
+sl_instance__if_0 sl_instance__P4
+sl_instance__P3 sl_instance__wait_1
+sl_instance__wait_1 sl_instance__P14
+sl_instance__P0 sl_instance__wait_0
+sl_instance__wait_0 sl_instance__P1
+sl_instance__P2 sl_instance__if_1
+sl_instance__if_1 sl_instance__P9
+P13 delay_4
+delay_4 P14
+P17 assign_4
+assign_4 P18
+P16 delay_5
+delay_5 P17
+P19 delay_6
+delay_6 P20
+P1 assign_0
+assign_0 P2
+P5 assign_1
+assign_1 P6
+P8 assign_2
+assign_2 P9
+P14 assign_3
+assign_3 P15
+sl_instance__P6 sl_instance__delay_2
+sl_instance__delay_2 sl_instance__P7
+sl_instance__P4 sl_instance__delay_1
+sl_instance__delay_1 sl_instance__P5
+sl_instance__P1 sl_instance__delay_0
+sl_instance__delay_0 sl_instance__P2
+P0 delay_0
+delay_0 P1
+P6 T0
+T0 P3
+sl_instance__P15 sl_instance__delay_6
+sl_instance__delay_6 sl_instance__P16
+P4 delay_1
+delay_1 P5
+P9 T1
+T1 P3
+sl_instance__P14 sl_instance__delay_5
+sl_instance__delay_5 sl_instance__P15
+P7 delay_2
+delay_2 P8
+P15 T2
+T2 P12
+sl_instance__P11 sl_instance__delay_4
+sl_instance__delay_4 sl_instance__P12
+P10 delay_3
+delay_3 P11
+P18 T3
+T3 P12
+sl_instance__P9 sl_instance__delay_3
+sl_instance__delay_3 sl_instance__P10
+P11 if_3
+if_3 P16
+P20 T4
+T4 P0
+P11 if_2
+if_2 P13
+sl_instance__P5 sl_instance__assign_0
+sl_instance__assign_0 sl_instance__P6
+sl_instance__P12 sl_instance__assign_3
+sl_instance__assign_3 sl_instance__P13
+sl_instance__P16 sl_instance__assign_4
+sl_instance__assign_4 sl_instance__P17
+sl_instance__P7 sl_instance__assign_1
+sl_instance__assign_1 sl_instance__P8
+sl_instance__P10 sl_instance__assign_2
+sl_instance__assign_2 sl_instance__P11
+sl_instance__P13 sl_instance__T1
+sl_instance__T1 sl_instance__P3
+sl_instance__P17 sl_instance__T2
+sl_instance__T2 sl_instance__P0
+sl_instance__P8 sl_instance__T0
+sl_instance__T0 sl_instance__P3
+P2 if_1
+if_1 P7
+P12 wait_1
+wait_1 P19
+P2 if_0
+if_0 P4
+P3 wait_0
+wait_0 P10
+.marking {P0 sl_instance__P0 }
+#@.enablings {<sl_instance__if_0=[s]><sl_instance__wait_1=[(~(s=1)&~(r=1))]><sl_instance__wait_0=[(s|r)]><sl_instance__if_1=[~(s)]><delay_4=[true]><assign_4=[true]><delay_5=[true]><delay_6=[true]><assign_0=[true]><assign_1=[true]><assign_2=[true]><assign_3=[true]><sl_instance__delay_2=[true]><sl_instance__delay_1=[true]><sl_instance__delay_0=[true]><delay_0=[true]><T0=[true]><sl_instance__delay_6=[true]><delay_1=[true]><T1=[true]><sl_instance__delay_5=[true]><delay_2=[true]><T2=[true]><sl_instance__delay_4=[true]><delay_3=[true]><T3=[true]><sl_instance__delay_3=[true]><if_3=[~(s)]><T4=[true]><if_2=[s]><sl_instance__assign_0=[true]><sl_instance__assign_3=[true]><sl_instance__assign_4=[true]><sl_instance__assign_1=[true]><sl_instance__assign_2=[true]><sl_instance__T1=[true]><sl_instance__T2=[true]><sl_instance__T0=[true]><if_1=[true]><wait_1=[~(ack=1)]><if_0=[true]><wait_0=[ack]>}
+#@.delay_assignments {<delay_4=[5.0]><delay_5=[5.0]><delay_6=[5.0]><sl_instance__delay_2=[5]><sl_instance__delay_1=[5]><sl_instance__delay_0=[5]><delay_0=[5.0]><sl_instance__delay_6=[5]><delay_1=[5.0]><sl_instance__delay_5=[5]><delay_2=[5.0]><sl_instance__delay_4=[5]><delay_3=[5.0]><sl_instance__delay_3=[5]>}
+#@.boolean_assignments {<assign_4=[r:=0]><assign_1=[r:=1]><assign_2=[s:=1]><assign_3=[s:=0]><sl_instance__assign_0=[q:=1]><sl_instance__assign_3=[ack:=1]><sl_instance__assign_4=[ack:=0]><sl_instance__assign_1=[ack:=1]><sl_instance__assign_2=[q:=0]>}
 #@.continuous 
 .end

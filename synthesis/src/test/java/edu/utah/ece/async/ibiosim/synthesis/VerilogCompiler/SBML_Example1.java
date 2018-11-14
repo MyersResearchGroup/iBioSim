@@ -26,7 +26,7 @@ public class SBML_Example1 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("init_block.v"), "-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("init_block.v"), "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 	
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("init_block");

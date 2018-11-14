@@ -19,7 +19,7 @@ public class SBML_Example12 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("contAssign.v"), "-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", reader.getFile("contAssign.v"), "-sbml"};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
