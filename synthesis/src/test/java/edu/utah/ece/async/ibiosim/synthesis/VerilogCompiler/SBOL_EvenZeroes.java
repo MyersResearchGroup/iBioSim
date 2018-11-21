@@ -19,7 +19,7 @@ import VerilogConstructs.VerilogModule;
  * @author Tramy Nguyen
  *
  */
-public class EvenZeroes_Synth extends AbstractVerilogParserTest{
+public class SBOL_EvenZeroes extends AbstractVerilogParserTest{
 
 	private static VerilogModule verilogModule;
 	private static ModuleDefinition sbolDesign;

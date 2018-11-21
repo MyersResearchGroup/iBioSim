@@ -31,7 +31,7 @@ public class VerilogParser_SRLatch extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String files = String.join(",", reader.getFile("srlatch_imp.v"), reader.getFile("srlatch_testbench.v"));
+		String files = String.join(" ", reader.getFile("srlatch_imp.v"), reader.getFile("srlatch_testbench.v"));
 		String[] cmd = {"-v", files};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);

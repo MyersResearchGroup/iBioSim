@@ -23,7 +23,7 @@ import VerilogConstructs.VerilogWait;
  * @author Tramy Nguyen
  *
  */
-public class TestScanflop extends AbstractVerilogParserTest{
+public class VerilogParser_Scanflop extends AbstractVerilogParserTest{
 	
 	private static VerilogModule verilog_imp, verilog_tb;
 	private static VerilogBlock imp_alwaysblk, tb_alwaysblk;

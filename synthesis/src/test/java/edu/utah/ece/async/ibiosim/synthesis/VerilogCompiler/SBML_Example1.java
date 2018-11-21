@@ -35,6 +35,7 @@ public class SBML_Example1 extends AbstractVerilogParserTest{
 		Assert.assertNotNull(sbmlModel);
 		Assert.assertEquals("init_block", sbmlModel.getId());
 	}
+	
 	@Test
 	public void TestSBML_ports() {
 		CompModelPlugin compPlugin = (CompModelPlugin) sbmlModel.getPlugin("comp");

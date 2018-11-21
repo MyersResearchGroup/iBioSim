@@ -31,7 +31,7 @@ public class VerilogParser_EvenZeroes extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String files = String.join(",", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"));	
+		String files = String.join(" ", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"));	
 		String[] cmd = {"-v", files};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);

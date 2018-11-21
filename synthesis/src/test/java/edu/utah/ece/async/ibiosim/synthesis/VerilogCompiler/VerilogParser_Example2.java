@@ -83,7 +83,8 @@ public class VerilogParser_Example2 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct1() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 0);
+		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 0);
+		
 		Assert.assertNotNull(actual_construct);
 		Assert.assertTrue(actual_construct instanceof VerilogAssignment);
 		

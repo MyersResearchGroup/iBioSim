@@ -126,5 +126,24 @@ public class CompilerOptions {
 		return this.outputFileName != null && !this.outputFileName.isEmpty() ? true : false;
 	}
 	
+	public void verifyCompilerSetup() throws VerilogCompilerException {
+		
+		if(isOutputLPN()){
+			if(!isImplementatonModuleIdSet() && !isTestbenchModuleIdSet()){
+				throw new VerilogCompilerException("Both the implementation module identifier and the testbench module identifier field must be set to produce and LPN model.");
+			}
+		}
+		
+		if(!isOutputDirectorySet()){
+			//user want to export result from compiler
+			if(isOutputSBML() || isOutputSBOL() || isOutputLPN()){
+				throw new VerilogCompilerException("The output directory was not set");
+			}
+		}
+		
+		if(!isOutputFileNameSet() && isOutputLPN()) {
+			throw new VerilogCompilerException("You must provide an output file name to export an LPN model.");
+		}
+	}
 
 }

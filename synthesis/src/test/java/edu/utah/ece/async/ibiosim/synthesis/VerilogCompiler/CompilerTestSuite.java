@@ -13,7 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestCompilerOptions.class,
+	CompilerOptions_Tests.class,
 	VerilogParser_Example1.class, 
 	VerilogParser_Example2.class, 
 	VerilogParser_Example3.class, 
@@ -49,9 +49,9 @@ import org.junit.runners.Suite.SuiteClasses;
 	VerilogParser_Counter.class,
 	VerilogParser_LFSR.class,
 	VerilogParser_SRLatch.class,
-	TestWorkflow.class, 
-	TestSynthesis.class,
-	EvenZeroes_Synth.class})
+	Workflow.class, 
+	Decomposition.class,
+	SBOL_EvenZeroes.class})
 
 public class CompilerTestSuite {
 	

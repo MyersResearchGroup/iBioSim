@@ -19,7 +19,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author Tramy Nguyen
  *
  */
-public class TestCompilerOptions extends AbstractVerilogParserTest{
+public class CompilerOptions_Tests extends AbstractVerilogParserTest{
 	
 	@Test
 	public void Test_inputSize() throws ParseException, FileNotFoundException {
@@ -32,7 +32,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 	
 	@Test
 	public void Test_inputSize2() throws ParseException, FileNotFoundException {
-		String files = String.join(",", reader.getFile("init_block.v"), reader.getFile("init_block.v"));
+		String files = String.join(" ", reader.getFile("init_block.v"), reader.getFile("init_block.v"));
 		String[] args = {"-v", files};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
@@ -42,7 +42,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 	
 	@Test
 	public void Test_inputSize3() throws ParseException, FileNotFoundException {
-		String files = String.join(",", reader.getFile("init_block.v"), reader.getFile("assign.v"), reader.getFile("delay.v"));
+		String files = String.join(" ", reader.getFile("init_block.v"), reader.getFile("assign.v"), reader.getFile("delay.v"));
 		String[] args = {"-v", files};
 		
 		CommandLine cmd = Main.parseCommandLine(args);
@@ -73,7 +73,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//error because missing module identifier names for imp and tb
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -84,7 +84,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//error because missing output file name
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test()
@@ -95,7 +95,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//no output directory and output file name
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+			compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -106,7 +106,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//error because missing output directory
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test()
@@ -116,7 +116,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//no output directory
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -127,7 +127,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//error because missing tb module identifier
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -138,7 +138,7 @@ public class TestCompilerOptions extends AbstractVerilogParserTest{
 		//error because missing imp module identifier
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
-		Main.verifyCompilerSetup(compilerOptions);
+		compilerOptions.verifyCompilerSetup();
 	}
 	
 	@Test

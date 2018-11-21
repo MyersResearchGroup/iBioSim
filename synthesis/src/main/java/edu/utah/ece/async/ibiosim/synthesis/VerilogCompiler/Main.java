@@ -18,15 +18,15 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
- * Main class to call the Verilog compiler and synthesizer.
- * The compiler will allow a user to produce SBML and LPN output from a Verilog input.
+ * Main class to call the Verilog compiler and Verilog synthesizer.
+ * The compiler will allow a user to produce SBML, SBOL, and LPN model9S) from a list of Verilog files.
  * The synthesizer will allow the user to produce an SBOL data model output.
  * 
  * @author Tramy Nguyen
  */
 public class Main {
 
-	private static final char separator = ',';
+	private static final char separator = ' ';
 	
 	public static void main(String[] args) {
 		
@@ -59,11 +59,11 @@ public class Main {
 			return;
 		} 
 		catch (IOException e) {
-			System.err.println("ERROR: Unable to read SBML files to perform flattening. " + e.getMessage());
+			System.err.println(e.getMessage());
 			return;
 		} 
 		catch (BioSimException e) {
-			System.err.println("ERROR: Unable to convert SBML Math expression to an LPN expression. " + e.getMessage());
+			System.err.println(e.getMessage());
 			return;
 		} 
 		catch (VerilogCompilerException e) {
@@ -81,16 +81,25 @@ public class Main {
 	
 	public static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("VerilogCompiler -v <Verilog File(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/example/ -lpn", getSetupOptions());
-		return;
+		
+		String sbolUsage = "-v <arg(s)> -od usr/dir/example/ -sbol \n";
+		String sbmlUsage = "usage: -v <arg(s)> -od usr/dir/example/ -sbml \n";
+		String lpnUsage = "usage: -v <arg(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/example/ -lpn \n";
+		
+		formatter.printHelp(125, sbolUsage + sbmlUsage + lpnUsage , 
+				"VerilogCompiler Options", 
+				getSetupOptions(), 
+				"Note: <arg> is the user's input value.");
+
 	}
 
 	private static Options getSetupOptions() {
-		Option verilogFiles = new Option("v", "verilogFiles",  true, "compile the given verilog file(s)");
+		Option verilogFiles = new Option("v", "verilogFiles",  true, "compile the given verilog file(s).");
 		verilogFiles.setValueSeparator(separator);
 		
 		Options options = new Options();
 		options.addOption(verilogFiles);
+		options.addOption("h", "help", false, "show the available command line needed to run this application.");
 		options.addOption("lpn", false, "Export result of the compiler to an LPN model."  +
 				"Note that the LPN model produced in this compiler is limited to converting one implementation verilog file and its testbench file to LPN. " +
 				"If the testbench file has more than one submodule instantiated, the user must specificy the name of the implementation verilog module and the name of the testbench verilog module for the compiler to produce a valid LPN model. " +
@@ -100,7 +109,7 @@ public class Main {
 		options.addOption("od", "odir", true, "Path of output directory where the compiler will produce the results to.");
 		options.addOption("tb", "tb_modId", true, "Name of the testbench verilog module identifier that simulates the design.");
 		options.addOption("imp", "imp_modId", true, "Name of the implemenation verilog module identifier that describes the circuit");
-		options.addOption("sbol", false, "Perform synthesis and ouput data into SBOL.");
+		options.addOption("sbol", false, "Output data into SBOL.");
 		return options;
 	}
 
@@ -153,29 +162,10 @@ public class Main {
 		return compilerOptions;
 	}
 
-	public static void verifyCompilerSetup(CompilerOptions compilerOptions) throws VerilogCompilerException {
-
-		if(compilerOptions.isOutputSBML()|| compilerOptions.isOutputLPN() || compilerOptions.isOutputSBOL()){
-			if(!compilerOptions.isOutputDirectorySet()){
-				throw new VerilogCompilerException("No directory was set to export the data to."); 
-			}
-			
-			if(!compilerOptions.isOutputFileNameSet()){
-				throw new VerilogCompilerException("The compiler cannot export an LPN model because the output file name was not provided."); 
-			}
-			if(!compilerOptions.isTestbenchModuleIdSet()){
-				throw new VerilogCompilerException("The testbench module identifier field was not provided to produce and LPN model.");
-			}
-			if(!compilerOptions.isImplementatonModuleIdSet()){
-				throw new VerilogCompilerException("The implementation module identifier field was not provided to produce and LPN model.");
-			}
-		}
-
-
-	}
+	
 
 	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		
+		compilerOptions.verifyCompilerSetup();
 		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
 		compiler.compile(); 
 		
@@ -185,6 +175,8 @@ public class Main {
 		else{
 			compiler.generateSBML();
 			if(compilerOptions.isOutputLPN()){
+				compiler.exportSBML();
+				compiler.flattenSBML();
 				compiler.generateLPN();
 			}
 		}

@@ -119,14 +119,14 @@ public class VerilogCompiler {
 			this.vmoduleToSBML.put(verilogModuleId, sbmlModel);
 			
 			//If the user wants to generate an LPN model, then we have to remember one of the SBML file name that was exported.
-			String filePath = this.outDir + File.separator + verilogModuleId + ".xml";
+			String filePath = verilogModuleId + ".xml";
 			if(this.tb_id != null && this.tb_id.equals(verilogModuleId)) {
-				this.tb_fullPath = filePath;
+				this.tb_fullPath = this.outDir + File.separator + filePath;
 			}
 		}
 	}
 	
-	public void generateLPN() throws XMLStreamException, IOException, BioSimException {
+	public void flattenSBML() throws BioSimException, XMLStreamException, IOException{
 		//Flatten the SBML models and then export to the same directory 
 		BioModel sbmlDoc = new BioModel(this.outDir); 
 		if(this.tb_fullPath == null) {
@@ -134,17 +134,19 @@ public class VerilogCompiler {
 		}
 		boolean isDocumentLoaded = sbmlDoc.load(this.tb_fullPath);
 		if(!isDocumentLoaded) {
-			throw new BioSimException("Unable to load SBML file that will be used for flattening.", "Error when converting SBML to LPN");
+			throw new BioSimException("Error: Unable to load SBML file that will be used for flattening.", "Error when converting SBML to LPN");
 		}
 		SBMLDocument flattenDoc = sbmlDoc.flattenModel(true);
 		this.flatSBMLDocument = flattenDoc;
 		String flatSBMLPath = this.outDir + File.separator + this.imp_id + "_" + this.tb_id + "_flattened.xml";
 		exportSBML(flattenDoc, flatSBMLPath);
-				
+	}
+	
+	public void generateLPN() throws XMLStreamException, IOException, BioSimException {
 		WrappedSBML tbWrapper = getSBMLWrapper(this.tb_id);
 		WrappedSBML impWrapper = getSBMLWrapper(this.imp_id);
 		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, this.flatSBMLDocument);
-		
+
 	}
 	
 	/**
@@ -168,6 +170,10 @@ public class VerilogCompiler {
 	
 	public WrappedSBOL getSBOLWrapper(String verilogModule_id) {
 		return this.vmoduleToSBOL.get(verilogModule_id);
+	}
+	
+	public LPN getLPN(){
+		return this.lpn;
 	}
 	
 	public void exportSBML() throws SBMLException, FileNotFoundException, XMLStreamException{

@@ -87,7 +87,7 @@ public class VerilogParser_Example9 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct1() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 0);
+		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 0);
 		Assert.assertNotNull(actual_construct);
 		Assert.assertTrue(actual_construct instanceof VerilogDelay);
 		
@@ -98,7 +98,7 @@ public class VerilogParser_Example9 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct2() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 1);
+		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 1);
 		Assert.assertNotNull(actual_construct);
 		Assert.assertTrue(actual_construct instanceof VerilogAssignment);
 		
@@ -110,24 +110,21 @@ public class VerilogParser_Example9 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct3() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 2);
-		Assert.assertNotNull(actual_construct);
-		Assert.assertTrue(actual_construct instanceof VerilogConditional);
-		VerilogConditional actual_condition = (VerilogConditional) actual_construct;
+		AbstractVerilogConstruct always_cst = VerilogTestUtility.getBlockConstruct(block, 2);
+		Assert.assertNotNull(always_cst);
 		
-		Assert.assertEquals("eq(next,0)", actual_condition.getIfCondition());
-		actual_construct = actual_condition.getIfBlock();
-		Assert.assertTrue(actual_construct instanceof VerilogBlock);
-		List<AbstractVerilogConstruct> if_constructs = VerilogTestUtility.getBlockConstructs((VerilogBlock) actual_construct);
-		Assert.assertEquals(2, if_constructs.size());
+		VerilogConditional if_ = VerilogTestUtility.getConditionalConstruct(always_cst);
+		Assert.assertEquals("eq(next,0)", if_.getIfCondition());
 		
-		Assert.assertTrue(if_constructs.get(0) instanceof VerilogAssignment);
-		VerilogAssignment actual_assignment = (VerilogAssignment) if_constructs.get(0);
+		VerilogBlock if_block = VerilogTestUtility.getVerilogBlock(if_);
+		Assert.assertEquals(2, if_block.getNumConstructSize());
+		AbstractVerilogConstruct act_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
+		VerilogAssignment actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out0", actual_assignment.getVariable());
 		Assert.assertEquals("1", actual_assignment.getExpression());
 		
-		Assert.assertTrue(if_constructs.get(1) instanceof VerilogWait);
-		VerilogWait waitCondition = (VerilogWait) if_constructs.get(1);
+		act_cst = VerilogTestUtility.getBlockConstruct(if_block, 1);
+		VerilogWait waitCondition = VerilogTestUtility.getWaitConstruct(act_cst);
 		Assert.assertEquals("eq(out0,1)",waitCondition.getWaitExpression());	
 		
 		AbstractVerilogConstruct waitConstruct = waitCondition.getDelayConstruct();
@@ -135,18 +132,16 @@ public class VerilogParser_Example9 extends AbstractVerilogParserTest{
 		VerilogDelay delay = (VerilogDelay) waitConstruct;
 		Assert.assertEquals(5, delay.getDelayValue());
 		
-		actual_construct = actual_condition.getElseBlock();
-		Assert.assertTrue(actual_construct instanceof VerilogBlock);
-		List<AbstractVerilogConstruct> else_constructs = VerilogTestUtility.getBlockConstructs((VerilogBlock) actual_construct);
-		Assert.assertEquals(2, else_constructs.size());
+		VerilogBlock else_block = VerilogTestUtility.getVerilogBlock(if_.getElseBlock());
+		Assert.assertEquals(2, else_block.getNumConstructSize());
 		
-		Assert.assertTrue(else_constructs.get(0) instanceof VerilogAssignment);
-		actual_assignment = (VerilogAssignment) else_constructs.get(0);
+		act_cst = VerilogTestUtility.getBlockConstruct(else_block, 0);
+		actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out1", actual_assignment.getVariable());
 		Assert.assertEquals("1", actual_assignment.getExpression());
 		
-		Assert.assertTrue(else_constructs.get(1) instanceof VerilogWait);
-		waitCondition = (VerilogWait) else_constructs.get(1);
+		act_cst = VerilogTestUtility.getBlockConstruct(else_block, 1);
+		waitCondition = VerilogTestUtility.getWaitConstruct(act_cst);
 		Assert.assertEquals("eq(out1,1)",waitCondition.getWaitExpression());	
 		
 		waitConstruct = waitCondition.getDelayConstruct();

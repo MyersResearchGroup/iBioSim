@@ -84,7 +84,7 @@ public class VerilogParser_Example7 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct1() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 0);
+		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 0);
 		Assert.assertNotNull(actual_construct);
 		Assert.assertTrue(actual_construct instanceof VerilogAssignment);
 		
@@ -96,7 +96,7 @@ public class VerilogParser_Example7 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct2() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 1);
+		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 1);
 		Assert.assertNotNull(actual_construct);
 		Assert.assertTrue(actual_construct instanceof VerilogAssignment);
 		
@@ -108,51 +108,43 @@ public class VerilogParser_Example7 extends AbstractVerilogParserTest{
 	@Test
 	public void TestVerilog_construct3() {
 		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getAlwaysConstruct(block, 2);
-		Assert.assertNotNull(actual_construct);
-		Assert.assertTrue(actual_construct instanceof VerilogConditional);
-		VerilogConditional actual_condition = (VerilogConditional) actual_construct;
+		AbstractVerilogConstruct always_cst = VerilogTestUtility.getBlockConstruct(block, 2);
+		Assert.assertNotNull(always_cst);
 		
-		Assert.assertEquals("and(eq(out0,1),eq(out1,0))", actual_condition.getIfCondition());
-		actual_construct = actual_condition.getIfBlock();
-		Assert.assertTrue(actual_construct instanceof VerilogBlock);
-		List<AbstractVerilogConstruct> if_constructs = VerilogTestUtility.getBlockConstructs((VerilogBlock) actual_construct);
-		Assert.assertEquals(2, if_constructs.size());
+		VerilogConditional if_ = VerilogTestUtility.getConditionalConstruct(always_cst);
+		Assert.assertEquals("and(eq(out0,1),eq(out1,0))", if_.getIfCondition());
 		
-		Assert.assertTrue(if_constructs.get(0) instanceof VerilogAssignment);
-		VerilogAssignment actual_assignment = (VerilogAssignment) if_constructs.get(0);
+		VerilogBlock if_block = VerilogTestUtility.getVerilogBlock(if_);
+		Assert.assertEquals(2, if_block.getNumConstructSize());
+		AbstractVerilogConstruct act_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
+		VerilogAssignment actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out0", actual_assignment.getVariable());
 		Assert.assertEquals("1", actual_assignment.getExpression());
 		
-		Assert.assertTrue(if_constructs.get(1) instanceof VerilogAssignment);
-		actual_assignment = (VerilogAssignment) if_constructs.get(1);
+		act_cst = VerilogTestUtility.getBlockConstruct(if_block, 1);
+		actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out1", actual_assignment.getVariable());
 		Assert.assertEquals("1", actual_assignment.getExpression());
 		
-		actual_construct = actual_condition.getElseBlock();
-		Assert.assertTrue(actual_construct instanceof VerilogConditional);
-		VerilogConditional elseIf = (VerilogConditional) actual_construct;
-		Assert.assertEquals("and(eq(out0,0),eq(out1,1))", elseIf.getIfCondition());
-		List<AbstractVerilogConstruct> else_constructs = VerilogTestUtility.getBlockConstructs((VerilogBlock) elseIf.getIfBlock());
-		Assert.assertEquals(1, else_constructs.size());
+		VerilogConditional elseIf_ = VerilogTestUtility.getConditionalConstruct(if_.getElseBlock());
+		Assert.assertEquals("and(eq(out0,0),eq(out1,1))", elseIf_.getIfCondition());
 		
-		Assert.assertTrue(else_constructs.get(0) instanceof VerilogAssignment);
-		actual_assignment = (VerilogAssignment) else_constructs.get(0);
+		VerilogBlock elseif_block = VerilogTestUtility.getVerilogBlock(elseIf_);
+		Assert.assertEquals(1, elseif_block.getNumConstructSize());
+		act_cst = VerilogTestUtility.getBlockConstruct(elseif_block, 0);
+		actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out0", actual_assignment.getVariable());
 		Assert.assertEquals("not(out1)", actual_assignment.getExpression());
 		
-		VerilogBlock elseblock = (VerilogBlock) elseIf.getElseBlock();
-		Assert.assertNotNull(elseblock);
-		else_constructs = VerilogTestUtility.getBlockConstructs((VerilogBlock) elseblock);
-		Assert.assertEquals(2, else_constructs.size());
-		
-		Assert.assertTrue(else_constructs.get(0) instanceof VerilogAssignment);
-		actual_assignment = (VerilogAssignment) else_constructs.get(0);
+		VerilogBlock else_block = VerilogTestUtility.getVerilogBlock(elseIf_.getElseBlock());
+		Assert.assertEquals(2, else_block.getNumConstructSize());
+		act_cst = VerilogTestUtility.getBlockConstruct(else_block, 0);
+		actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out0", actual_assignment.getVariable());
 		Assert.assertEquals("0", actual_assignment.getExpression());
 		
-		Assert.assertTrue(else_constructs.get(1) instanceof VerilogAssignment);
-		actual_assignment = (VerilogAssignment) else_constructs.get(1);
+		act_cst = VerilogTestUtility.getBlockConstruct(else_block, 1);
+		actual_assignment = VerilogTestUtility.getVerilogAssignment(act_cst);
 		Assert.assertEquals("out1", actual_assignment.getVariable());
 		Assert.assertEquals("0", actual_assignment.getExpression());
 		

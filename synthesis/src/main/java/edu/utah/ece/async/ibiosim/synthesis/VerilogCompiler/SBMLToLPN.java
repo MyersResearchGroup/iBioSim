@@ -28,7 +28,7 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
- * Class to perform conversion from SBML to LPN
+ * Class to perform conversion from event-based SBML data model to an LPN model.
  * @author Tramy Nguyen
  */
 public class SBMLToLPN {
@@ -44,10 +44,10 @@ public class SBMLToLPN {
 	private ASTNode ignoreNode = new ASTNode(Type.CONSTANT_TRUE);
 	
 	/**
-	 * 
-	 * @param tbWrapper
-	 * @param impWrapper
-	 * @param sbmlDocument
+	 * The SBML to LPN constructor needed to setup the necessary variables before running conversion.
+	 * @param tbWrapper: The SBML testbench of the modeling circuit. Set this parameter to null if the SBML document has no external ports to convert.
+	 * @param impWrapper: The SBML circuit. Set this parameter to null if the SBML document has no external ports to convert.
+	 * @param sbmlDocument: The event-based SBML document to perform conversion
 	 */
 	public SBMLToLPN(WrappedSBML tbWrapper, WrappedSBML impWrapper, SBMLDocument sbmlDocument) {
 		this.sbmlDocument = sbmlDocument;
@@ -67,17 +67,10 @@ public class SBMLToLPN {
 	 * @return The LPN model
 	 */
 	public LPN convert() {
-
-		if(lpn != null) {
-			return lpn;
-		}
-		
 		lpn = new LPN();
 		
 		convertSBMLParameters();
-		
 		addTransitions();
-
 		convertPorts();
 		convertSBMLEvents();
 
@@ -94,6 +87,7 @@ public class SBMLToLPN {
 		SBMLToLPN converter = new SBMLToLPN(tbWrapper, impWrapper, sbmlDocument);
 		return converter.convert();
 	}
+	
 
 	private void convertPorts() {
 		Model model = sbmlDocument.getModel();
@@ -186,7 +180,8 @@ public class SBMLToLPN {
 				String variable = eventAssign.getVariable();
 				String assignment = eventAssign.getMath().toString();
 
-				//Look for SBML eventAssignments that should be ignored when converting to lpn
+				//Look for SBML eventAssignments that should be ignored when converting to lpn. 
+				//Specifically, look for when random value between 0 and 1 are generated in the SBML model.
 				if(assignment.equals("piecewise(1, uniform(0, 1) < 0.5, 0)")) {
 					ignoreVariables.add(variable);
 					ignoreTransitions.add(event.getId());
@@ -227,8 +222,6 @@ public class SBMLToLPN {
 	}
 
 	private void convertSBMLTriggers(Event event) {
-
-		
 		if(event.isSetTrigger()) {
 			Trigger trigger = event.getTrigger();
 			ASTNode math = removePresetFromASTNode(trigger.getMath());			

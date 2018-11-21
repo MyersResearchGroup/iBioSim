@@ -31,7 +31,7 @@ public class VerilogParser_LFSR extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String files = String.join(",", reader.getFile("lfsr_imp.v"), reader.getFile("lfsr_testbench.v"));
+		String files = String.join(" ", reader.getFile("lfsr_imp.v"), reader.getFile("lfsr_testbench.v"));
 		String[] cmd = {"-v", files};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);

@@ -17,14 +17,6 @@ import VerilogConstructs.VerilogWait;
  */
 public class VerilogTestUtility {
 	
-	public static AbstractVerilogConstruct getAlwaysConstruct(VerilogBlock alwaysBlock, int index) {
-		//TODO: refactor code to delete this
-		if(alwaysBlock.getBlockConstructs() != null && alwaysBlock.getBlockConstructs().size() > 0) {
-			return alwaysBlock.getBlockConstructs().get(index);
-		}
-		return null;
-	}
-	
 	public static VerilogDelay getDelayConstruct(AbstractVerilogConstruct construct) {
 		VerilogDelay delay = null;
 		if(construct instanceof VerilogWait) {
@@ -36,15 +28,6 @@ public class VerilogTestUtility {
 		}
 		return delay;
 	}
-	
-	public static List<AbstractVerilogConstruct> getBlockConstructs(VerilogBlock block) {
-		//TODO: refactor code to delete this
-		if(block.getBlockConstructs() != null && block.getBlockConstructs().size() > 0) {
-			return block.getBlockConstructs();
-		}
-		return null;
-	}
-	
 	
 	public static AbstractVerilogConstruct getBlockConstruct(VerilogBlock block, int index) {	
 		assert(block.getBlockConstructs() != null);
@@ -83,10 +66,7 @@ public class VerilogTestUtility {
 	}
 	
 	public static VerilogAssignment getVerilogAssignment(AbstractVerilogConstruct construct){
-		VerilogAssignment assign = null;
-		if(construct instanceof VerilogAssignment) {
-			assign = (VerilogAssignment) construct;
- 		}
-		return assign;
+		assert(construct instanceof VerilogAssignment);
+		return (VerilogAssignment) construct;
 	}
 }

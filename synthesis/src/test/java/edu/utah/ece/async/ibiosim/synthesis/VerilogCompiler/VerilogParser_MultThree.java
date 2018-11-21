@@ -32,7 +32,7 @@ public class VerilogParser_MultThree extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String files = String.join(",", reader.getFile("multThree_imp.v"), reader.getFile("multThree_testbench.v"));
+		String files = String.join(" ", reader.getFile("multThree_imp.v"), reader.getFile("multThree_testbench.v"));
 		String[] cmd = {"-v", files};
 		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);

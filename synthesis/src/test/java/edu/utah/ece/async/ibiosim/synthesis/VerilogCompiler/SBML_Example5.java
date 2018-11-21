@@ -180,7 +180,7 @@ public class SBML_Example5 extends AbstractVerilogParserTest{
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertEquals("5", delay.getMath().toString());
+		Assert.assertEquals("uniform(0,5.0)", delay.getMath().toString());
 	}
 	
 	@Test
