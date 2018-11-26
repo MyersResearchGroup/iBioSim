@@ -296,8 +296,44 @@ public class SBOL2SBML {
 		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc);
 		
+		//Determine the product of each engineered region, and extract it's cello parameters
+		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
+		
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
+		
+		//HashMap<String, List<String>> Prot_2_Param3 = productionInteractions(sbolDoc);
+		
+		
+/*		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
+		for (Interaction interaction : resultMD.getInteractions()) {
+			if (isProductionInteraction(interaction, resultMD, sbolDoc)) {
+				String protein1 = "";
+				for (Participation participator2 : interaction.getParticipations()) {
+					if (participator2.containsRole(SystemsBiologyOntology.PRODUCT)){
+						protein1 = participator2.getParticipant().getDisplayId();
+						if (!Prot_2_Param.containsKey(protein1)) {
+							Prot_2_Param.put(protein1, new ArrayList());
+						}
+					}
+				}
+				for (Participation participator : interaction.getParticipations()) {
+					if (participator.containsRole(SystemsBiologyOntology.PROMOTER)||
+							participator.containsRole(SystemsBiologyOntology.TEMPLATE)) {
+						for (Component comp : participator.getParticipantDefinition().getComponents()) {
+							if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)){
+							List<String> CelloParameters = hasCelloParameters2(comp.getDefinition());
+							Prot_2_Param.put(protein1, CelloParameters);
+							if (!Prot_2_Param.get(protein1).isEmpty()) {
+								System.out.println("has Cello Parameters!");
+							}
+							}
+						}
+					}
+				}
+			}
+		}*/
+		
 		
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		boolean CelloModel = false;
@@ -477,7 +513,7 @@ public class SBOL2SBML {
 					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, celloParameters, promoterInteractions);
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
 					//TODO PEDRO calling cello methods
 					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
 				}
@@ -590,6 +626,55 @@ public class SBOL2SBML {
 
 		return promoterInteractions;
 	}
+	
+	/**
+	 * This method returns a Hashmap with a protein, and Cello Parameters associated with it if it has any.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param sbolDoc the sbol doc
+	 * @return the hash map
+	 */
+	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
+		
+		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
+		for (ComponentDefinition CD : sbolDoc.getComponentDefinitions()) {
+			if (CD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
+				System.out.println("Role!");
+				System.out.println(CD);
+				for (Component comp : CD.getComponents()) {
+					if (comp.getDefinition().containsRole(SequenceOntology.CDS)) {
+						System.out.println("CDS");
+						System.out.println(comp);
+						for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
+							for (Interaction interaction : moduleDef.getInteractions()) {
+								if (isProductionInteraction(interaction, moduleDef, sbolDoc)) {
+									for (Participation participator : interaction.getParticipations()) {
+										// use .equals() rather than == in the If statement, because .equals() compares objects and == only compares int.
+										if (participator.getParticipant().getDisplayId().equals(comp.getDefinition().getDisplayId())) {
+											for (Participation participator2 : interaction.getParticipations()) {
+												if (participator2.containsRole(SystemsBiologyOntology.PRODUCT)) {
+													String protein1 = participator2.getParticipant().getDisplayId();
+													if (!Prot_2_Param.containsKey(protein1)) {
+														Prot_2_Param.put(protein1, hasCelloParameters2(CD));
+														System.out.println(CD.getDisplayId() + protein1 + "YAY!");
+													}
+												}
+												
+											}
+											//System.out.println("P" + participator2.getParticipant().getDisplayId());
+											//System.out.println("D" + comp.getDefinition().getDisplayId());
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return Prot_2_Param;
+	}
 
 	/**
 	 * Checks for Cello parameters. This method searches annotations of parts to see if there are stored any Cello parameters. 
@@ -612,8 +697,7 @@ public class SBOL2SBML {
 			ComponentDefinition tuCD = promoter.getDefinition();
 			for (Component comp : tuCD.getComponents()) {
 				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
-							comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+					if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
 						ComponentDefinition Part = comp.getDefinition();
 						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 						//the location of these parameters can change
@@ -639,11 +723,60 @@ public class SBOL2SBML {
 		}
 		//Create HashMap where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
 		HashMap<String, String> celloParameters = new HashMap<String, String>();
+				
 		celloParameters.put("n", n);
 		celloParameters.put("K", K);
 		celloParameters.put("ymax", ymax);
 		celloParameters.put("ymin", ymin);
 		return celloParameters;
+	}
+	
+	//TODO PEDRO hasCelloParameters
+	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
+		
+		//Initialize the parameters we are looking for
+		String n = "";
+		String K = "";
+		String ymax = "";
+		String ymin = "";
+		
+		if (promoter != null) {
+			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+				//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+				//the location of these parameters can change
+				List<Annotation> Annot = promoter.getAnnotations();
+					//cicle through all annotations looking for Cello parameters
+					for (int i = 0; i < Annot.size(); i++) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+							K = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+							n = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+							ymax = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+							ymin = Annot.get(i).getStringValue();
+						}
+					}
+			}
+		}
+		//Create HashMap where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
+		HashMap<String, String> celloParameters = new HashMap<String, String>();
+		
+		ArrayList<String> CelloParameters2 = new ArrayList<String>();
+		CelloParameters2.add(n);
+		CelloParameters2.add(K);
+		CelloParameters2.add(ymax);
+		CelloParameters2.add(ymin);
+		
+		
+		celloParameters.put("n", n);
+		celloParameters.put("K", K);
+		celloParameters.put("ymax", ymax);
+		celloParameters.put("ymin", ymin);
+		return CelloParameters2;
 	}
 	
 	/**
@@ -1157,7 +1290,7 @@ public class SBOL2SBML {
 	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
+			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
 		
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction

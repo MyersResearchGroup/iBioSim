@@ -2020,7 +2020,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloSDProductionReaction
-	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, String kSDdegrad, String n, String k_react,
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap<String, List<String>> celloParameters, String kSDdegrad, String n, String k_react,
 			String ymax, String ymin, boolean onPort, String[] dimensions, BioModel targetModel) {
 		
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
@@ -2098,7 +2098,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloTFProductionReaction
-	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, String kTFdegrad, String ko,
+	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<String, List<String>> celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
 		//This method should create a production reaction for all Protein or Products the TU produces.
@@ -2227,7 +2227,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloProductionKineticLaw
-	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<FunctionalComponent, HashMap<String, String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
@@ -2259,13 +2259,30 @@ public class BioModel extends CoreObservable{
 	    			 String temp = "("+ K +"/" + activator + ")^" + n;
 	    			 denominator += temp;
 	    			 
-	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
-	    			 K_para.setId(K);
-	    			 //K_para.setValue(kdegrad);
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
-	    			 //n_para.setValue(kdegrad);
+	    			 if (celloParameters.get(activator).get(0) != null) {
+	    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
+	    				 n_para.setValue(n_value);
+	    			 }
 	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 if (celloParameters.get(activator) != null) {
+	    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
+	    				 K_para.setValue(K_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(activator) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(activator) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
+
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
 	    			 String K = "K_" + repressor;
@@ -2274,12 +2291,30 @@ public class BioModel extends CoreObservable{
 	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
 	    			 denominator += temp;
 	    			 
-	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
-	    			 K_para.setId(K);
-	    			 //K_para.setValue(kdegrad);
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
-	    			 //n_para.setValue(kdegrad);
+	    			 if (celloParameters.get(repressor) != null) {
+	    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
+	    				 n_para.setValue(n_value);
+	    			 }
+	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 if (celloParameters.get(repressor) != null) {
+	    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
+	    				 K_para.setValue(K_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(repressor) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(repressor) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
+
 	    		 }
 	    	 }
 	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + ymin + ")";
