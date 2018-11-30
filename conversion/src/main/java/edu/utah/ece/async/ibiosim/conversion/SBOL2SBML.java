@@ -344,6 +344,9 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
+		//Determine the relationship between Sensor Molecules and their target
+		HashMap<String, String> sensorMolecules = sensorMolecules(sbolDoc);
+		
 		//Determine the product of each engineered region, and extract it's cello parameters
 		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
 		
@@ -579,6 +582,41 @@ public class SBOL2SBML {
 		return models;
 	}
 	
+	private static HashMap<String, String> sensorMolecules(SBOLDocument sbolDoc){
+
+		HashMap<String, String> sensorMolecules = new HashMap<String, String>();
+				
+		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
+			for (Interaction interact : moduleDef.getInteractions()) {
+				if (isComplexFormationInteraction(interact, moduleDef, sbolDoc)) {
+					ComponentDefinition ligand = null;
+					ComponentDefinition complex = null;
+					for (Participation partici : interact.getParticipations()) {
+						if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
+							complex = partici.getParticipantDefinition();
+							if (!sensorMolecules.containsKey(complex)) {
+								//promoterActivations.put(promoter.getDisplayId(), null);
+								sensorMolecules.put(complex.getDisplayId(),"");
+							}
+						}
+					}
+					for (Participation partici : interact.getParticipations()) {
+						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
+							FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
+							ligand = partici.getParticipantDefinition();
+							if (isSmallMoleculeDefinition(ligand)) {
+								sensorMolecules.replace(complex.getDisplayId(), ligand.getDisplayId());
+								//.get(complex.getDisplayId())
+								//.put(partici.getParticipantDefinition().getDisplayId());
+							}
+						}
+					}
+				}
+			}
+		}
+		return sensorMolecules;
+	}
+	
 	/**
 	 * This method searches all activation and repression interactions and maps it to individual promoters (not TUs). This information
 	 * will be later used when creating the mathematical model using Hamid's paper for dynamic modeling using Cello Parameters.
@@ -591,8 +629,6 @@ public class SBOL2SBML {
 	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
-		
-		//HashMap<String, ComponentDefinition> promoterActivations = new HashMap<String, ComponentDefinition>();
 		
 		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
 			for (Interaction interact : moduleDef.getInteractions()) {
