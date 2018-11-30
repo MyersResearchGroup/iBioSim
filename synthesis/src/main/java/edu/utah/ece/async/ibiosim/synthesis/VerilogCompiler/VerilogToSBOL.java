@@ -10,6 +10,7 @@ import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import VerilogConstructs.AbstractVerilogConstruct;
 import VerilogConstructs.VerilogAssignment;
 import VerilogConstructs.VerilogModule;
 
@@ -66,13 +67,40 @@ public class VerilogToSBOL {
 		
 		LinkedList<FunctionalComponent> inputs = new LinkedList<FunctionalComponent>();
 		LinkedList<FunctionalComponent> outputs = new LinkedList<FunctionalComponent>();
-		String outputId = sbolWrapper.getPortMapping(variable);
-		FunctionalComponent design_output = sbolWrapper.getFunctionalComponent(outputId);
+		FunctionalComponent design_output = sbolWrapper.getFunctionalComponent(sbolWrapper.getPortMapping(variable));
 		outputs.add(design_output);
 		
-		convertLogicFunctions(sbolWrapper, design, inputs, outputs);
-
+		temp(sbolWrapper, design, design_output);
+		//convertLogicFunctions(sbolWrapper, design, inputs, outputs);
+	}
 	
+	private static void temp(WrappedSBOL sbolWrapper, ASTNode node, FunctionalComponent outputProtein) throws SBOLValidationException {
+		//no more expression to build SBOL on
+		if(node.getChildCount() < 1){
+			return;
+		}
+		
+		//convert logic gates
+		if(node.getType() == ASTNode.Type.LOGICAL_NOT){
+			assert(node.getNumChildren() == 1);
+			ASTNode notOperand = node.getChild(0);
+				
+			if(notOperand.getType() == ASTNode.Type.LOGICAL_OR) {
+				//a NOR gate was found
+				assert(notOperand.getNumChildren() == 2);
+				FunctionalComponent inputProtein1 = getInputNode(notOperand.getLeftChild(), sbolWrapper);
+				FunctionalComponent inputProtein2 = getInputNode(notOperand.getRightChild(), sbolWrapper);
+				sbolWrapper.addNORGate(inputProtein1, inputProtein2, outputProtein);
+			
+				temp(sbolWrapper, notOperand.getLeftChild(), inputProtein1);
+				temp(sbolWrapper, notOperand.getRightChild(), inputProtein2);
+			}
+			else {
+				FunctionalComponent inputProtein = getInputNode(node, sbolWrapper);
+				sbolWrapper.addNOTGate(inputProtein, outputProtein);
+				temp(sbolWrapper, notOperand, inputProtein);
+			}
+		}
 	}
 	
 	private static void convertLogicFunctions(WrappedSBOL sbolWrapper, ASTNode node, LinkedList<FunctionalComponent> inputs, LinkedList<FunctionalComponent> outputs) throws SBOLValidationException{
@@ -102,7 +130,15 @@ public class VerilogToSBOL {
 		}
 
 	}
-	
+
+	private static FunctionalComponent getInputNode(ASTNode node, WrappedSBOL sbolWrapper) throws SBOLValidationException {
+		String inputNode = sbolWrapper.getPortMapping(node.getName());
+		if(inputNode != null) {
+			return sbolWrapper.getFunctionalComponent(inputNode);
+		}
+		
+		return sbolWrapper.createProtein("wiredProtein", DirectionType.NONE);
+	}
 	
 	private static void createInputNodes(WrappedSBOL sbolWrapper, ASTNode node, LinkedList<FunctionalComponent> inputs) throws SBOLValidationException{
 		for(int i = node.getChildCount() - 1; i >= 0; i--) {

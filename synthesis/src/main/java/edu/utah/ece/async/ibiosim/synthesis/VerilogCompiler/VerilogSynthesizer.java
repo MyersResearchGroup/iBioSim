@@ -44,13 +44,6 @@ public class VerilogSynthesizer{
 			result = convertAndToNor(operands);
 		}
 		else if(logicFunction.getType() == ASTNode.Type.LOGICAL_OR) {
-//			if(logicFunction.getParent() != null){
-//				ASTNode parentNode = (ASTNode) logicFunction.getParent();
-//				if(parentNode.getType() == ASTNode.Type.LOGICAL_NOT){
-//
-//					return createOR(operands);
-//				}
-//			}
 			result = convertOrToNor(operands);
 			
 		}

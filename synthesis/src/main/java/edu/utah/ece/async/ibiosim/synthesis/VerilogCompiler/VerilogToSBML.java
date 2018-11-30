@@ -300,7 +300,7 @@ public class VerilogToSBML {
 	
 	private static void convertVerilogDelay(WrappedSBML sbmlWrapper, VerilogDelay delayConstruct, HashSet<String> preset) {
 		String currentPlace = sbmlWrapper.addPlace(false);
-		Event delayEvent = sbmlWrapper.createDelay(delayConstruct.getDelayValue());
+		Event delayEvent = sbmlWrapper.createDelay((double)delayConstruct.getDelayValue());
 		
 		// Attach this delay with the previous places
 		sbmlWrapper.addMovementToTransition(preset, delayEvent, sbmlWrapper.getTrueNode());

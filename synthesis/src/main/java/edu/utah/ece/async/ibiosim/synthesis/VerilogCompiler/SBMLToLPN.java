@@ -195,6 +195,9 @@ public class SBMLToLPN {
 
 	private void convertSBMLDelay(Event event){
 		if(event.isSetDelay()) {
+			if(!event.getId().isEmpty()) {
+				System.out.println(event.getDelay().getMath().getType());
+			}
 			Delay delay = event.getDelay();
 			String delayValue = convertSBMLASTNode(delay.getMath()); 
 			lpn.changeDelay(event.getId(), delayValue);
@@ -209,10 +212,12 @@ public class SBMLToLPN {
 			if(places.contains(variable)) {
 				if(assignment.getInteger() == 0) {
 					lpn.addMovement(variable, event.getId());
-				} else{
+				} 
+				else{
 					lpn.addMovement(event.getId(), variable);
 				}
-			} else {
+			} 
+			else {
 				if(!ignoreTransitions.contains(event.getId())) {
 					lpn.addBoolAssign(event.getId(), variable, convertSBMLASTNode(assignment));
 				}

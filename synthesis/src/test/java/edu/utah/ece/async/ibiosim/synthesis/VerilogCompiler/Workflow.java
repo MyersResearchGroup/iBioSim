@@ -72,21 +72,28 @@ public class Workflow extends AbstractVerilogParserTest{
 		Main.main(cmd);
 	}
 	
-	@Test	
-	public void Test_EvenZeroesSynth() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", reader.getFile("evenzeroes_sequential_synth.v"),
-				"-sbol", "-od", CompilerTestSuite.outputDirectory};
-		
-		Main.main(cmd);
-	}
+	//@Test	
+	//public void Test_EvenZeroesSynth() throws ParseException, FileNotFoundException {
+	//	String[] cmd = {"-v", reader.getFile("evenzeroes_sequential_synth.v"),
+	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
+	//	
+	//	Main.main(cmd);
+	//}
 	
-	@Test	
-	public void Test_gts_ack() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", reader.getFile("sequential_gts_ack.v"),
-				"-sbol", "-od", CompilerTestSuite.outputDirectory};
-		
-		Main.main(cmd);
-	}
+	//@Test	
+	//public void Test_gts_ack() throws ParseException, FileNotFoundException {
+	//	String[] cmd = {"-v", reader.getFile("sequential_gts_ack.v"),
+	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
+	//	
+	//	Main.main(cmd);
+	//}
 	
-
+	
+	//@Test	
+	//public void Test_small() throws ParseException, FileNotFoundException {
+	//	String[] cmd = {"-v", reader.getFile("contAssign2.v"),
+	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
+	//	
+	//	Main.main(cmd);
+	//}
 }

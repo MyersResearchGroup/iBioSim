@@ -140,6 +140,22 @@ public class WrappedSBOL {
 		portMapping.put(proteinId, protein_fc.getDisplayId());
 		return protein_fc;
 	}
+
+	public void addNOTGate(FunctionalComponent input, FunctionalComponent output) throws SBOLValidationException {
+		FunctionalComponent gate = createTranscriptionalUnit("notGate");
+	
+		addInhibitionInteraction(input, gate);
+		addProductionInteraction(gate, output);
+	}
+
+	public void addNORGate(FunctionalComponent input1, FunctionalComponent input2, FunctionalComponent output) throws SBOLValidationException {
+		
+		FunctionalComponent gate = createTranscriptionalUnit("norGate");
+		addInhibitionInteraction(input1, gate);
+		addInhibitionInteraction(input2, gate);
+		addProductionInteraction(gate, output);
+	}
+	
 	
 	public void addNOTGate(LinkedList<FunctionalComponent> inputs, LinkedList<FunctionalComponent> outputs) throws SBOLValidationException {
 		FunctionalComponent gate = createTranscriptionalUnit("notGate");

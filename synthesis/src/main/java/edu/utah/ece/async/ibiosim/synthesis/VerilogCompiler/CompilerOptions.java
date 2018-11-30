@@ -134,16 +134,16 @@ public class CompilerOptions {
 			}
 		}
 		
-		if(!isOutputDirectorySet()){
-			//user want to export result from compiler
-			if(isOutputSBML() || isOutputSBOL() || isOutputLPN()){
-				throw new VerilogCompilerException("The output directory was not set");
-			}
-		}
+		//if(!isOutputDirectorySet()){
+		//	//user want to export result from compiler
+		//	if(isOutputSBML() || isOutputSBOL() || isOutputLPN()){
+		//		throw new VerilogCompilerException("The output directory was not set");
+		//	}
+		//}
 		
-		if(!isOutputFileNameSet() && isOutputLPN()) {
-			throw new VerilogCompilerException("You must provide an output file name to export an LPN model.");
-		}
+		//if(!isOutputFileNameSet() && isOutputLPN()) {
+		//	throw new VerilogCompilerException("You must provide an output file name to export an LPN model.");
+		//}
 	}
 
 }

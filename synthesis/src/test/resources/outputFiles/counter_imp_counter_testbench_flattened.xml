@@ -181,7 +181,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> uniform(0,5.0) </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -276,7 +276,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> uniform(0,5.0) </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -308,7 +308,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> uniform(0,5.0) </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -403,7 +403,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> uniform(0,5.0) </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -493,11 +493,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -568,11 +564,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -636,11 +628,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -704,11 +692,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -857,11 +841,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -925,11 +905,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -993,11 +969,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1165,11 +1137,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1233,11 +1201,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1301,11 +1265,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1492,11 +1452,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1560,11 +1516,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1628,11 +1580,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3010,11 +2958,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3077,11 +3021,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3144,11 +3084,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3304,11 +3240,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3464,11 +3396,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3624,11 +3552,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3753,11 +3677,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <ci> uniform </ci>
-              <cn type="integer"> 0 </cn>
-              <cn type="integer"> 5 </cn>
-            </apply>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
