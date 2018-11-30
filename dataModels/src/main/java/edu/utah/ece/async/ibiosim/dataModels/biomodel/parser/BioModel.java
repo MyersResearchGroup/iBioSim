@@ -2315,6 +2315,21 @@ public class BioModel extends CoreObservable{
 		    			 ymin_p.setValue(ymin_value);
 	    			 }
 
+	    		 } else if (interaction.equals("sensor")) {
+	    			 String sensor = promInter.get(entry).toString();
+	    			 
+	    			 String temp = "(" + sensor + ")";
+	    			 denominator += temp;
+	    			 
+	    			 if (celloParameters.get(sensor) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(sensor) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
 	    		 }
 	    	 }
 	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + ymin + ")";
