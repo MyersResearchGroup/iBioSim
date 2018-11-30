@@ -44,6 +44,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	SBOL_Example3.class,
 	SBOL_Example4.class,
 	SBOL_Example5.class,
+	SBOL_Example6.class,
 	VerilogParser_EvenZeroes.class,
 	VerilogParser_MultThree.class, 
 	VerilogParser_Counter.class,

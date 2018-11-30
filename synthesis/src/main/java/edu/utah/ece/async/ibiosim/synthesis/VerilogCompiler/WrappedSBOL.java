@@ -2,7 +2,6 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.sbolstandard.core2.AccessType;
@@ -105,28 +104,28 @@ public class WrappedSBOL {
 		return tu_instance;
 	} 
 	
-	public ComponentDefinition createPromoter() throws SBOLValidationException{
+	private ComponentDefinition createPromoter() throws SBOLValidationException{
 		String id = "_promoter";
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		part.addRole(SequenceOntology.PROMOTER);
 		return part;
 	}
 	
-	public ComponentDefinition createRibosome() throws SBOLValidationException{
+	private ComponentDefinition createRibosome() throws SBOLValidationException{
 		String id = "_ribosome";
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		part.addRole(SequenceOntology.RIBOSOME_ENTRY_SITE	);
 		return part;
 	}
 	
-	public ComponentDefinition createCDS() throws SBOLValidationException{
+	private ComponentDefinition createCDS() throws SBOLValidationException{
 		String id = "_cds";
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		part.addRole(SequenceOntology.CDS);
 		return part;
 	}
 	
-	public ComponentDefinition createTerminator() throws SBOLValidationException{
+	private ComponentDefinition createTerminator() throws SBOLValidationException{
 		String id = "_terminator";
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		part.addRole(SequenceOntology.TERMINATOR	);
@@ -143,43 +142,15 @@ public class WrappedSBOL {
 
 	public void addNOTGate(FunctionalComponent input, FunctionalComponent output) throws SBOLValidationException {
 		FunctionalComponent gate = createTranscriptionalUnit("notGate");
-	
 		addInhibitionInteraction(input, gate);
 		addProductionInteraction(gate, output);
 	}
 
 	public void addNORGate(FunctionalComponent input1, FunctionalComponent input2, FunctionalComponent output) throws SBOLValidationException {
-		
 		FunctionalComponent gate = createTranscriptionalUnit("norGate");
 		addInhibitionInteraction(input1, gate);
 		addInhibitionInteraction(input2, gate);
 		addProductionInteraction(gate, output);
-	}
-	
-	
-	public void addNOTGate(LinkedList<FunctionalComponent> inputs, LinkedList<FunctionalComponent> outputs) throws SBOLValidationException {
-		FunctionalComponent gate = createTranscriptionalUnit("notGate");
-		FunctionalComponent gateInput = inputs.removeFirst();
-		FunctionalComponent gateOutput = outputs.removeFirst();
-		
-		addInhibitionInteraction(gateInput, gate);
-		addProductionInteraction(gate, gateOutput);
-		
-		outputs.add(gateInput);
-	}
-	
-	public void addNORGate(LinkedList<FunctionalComponent> inputs, LinkedList<FunctionalComponent> outputs) throws SBOLValidationException {
-		FunctionalComponent gate = createTranscriptionalUnit("norGate");
-		FunctionalComponent gateInput1 = inputs.removeFirst();
-		FunctionalComponent gateInput2 = inputs.removeFirst();
-		FunctionalComponent gateOutput = outputs.removeFirst();
-		
-		addInhibitionInteraction(gateInput1, gate);
-		addInhibitionInteraction(gateInput2, gate);
-		addProductionInteraction(gate, gateOutput);
-		
-		outputs.add(gateInput1);
-		outputs.add(gateInput2);
 	}
 	
 	public FunctionalComponent getFunctionalComponent(String fc_id) {

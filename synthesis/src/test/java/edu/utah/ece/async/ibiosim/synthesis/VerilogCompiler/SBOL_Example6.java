@@ -1,9 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,6 +13,11 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+/**
+ * Test for a 3 input assignment. 
+ * 
+ * @author Tramy Nguyen 
+ */
 public class SBOL_Example6 extends AbstractVerilogParserTest{
 
 	private static SBOLDocument sbolDoc;
@@ -49,7 +51,7 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 	}
 	
 	@Test
-	public void Test_CD_proteinSize() {
+	public void Test_proteinSize() {
 		int actualSize = 0; 
 		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
 			if(cd.getTypes().iterator().next().equals(ComponentDefinition.PROTEIN)) {
@@ -60,7 +62,7 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 	}
 	
 	@Test
-	public void Test_CD_dnaSize() {
+	public void Test_dnaSize() {
 		int actualSize = 0; 
 		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
 			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA)) {
@@ -76,7 +78,7 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 	}
 	
 	@Test
-	public void Test_Interaction_inhibitionSize() {
+	public void Test_inhibitionSize() {
 		int actualSize = 0; 
 		for(Interaction inter : sbolDesign.getInteractions()) {
 			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.INHIBITION)) {
@@ -87,7 +89,7 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 	}
 	
 	@Test
-	public void Test_Interaction_productionSize() {
+	public void Test_productionSize() {
 		int actualSize = 0; 
 		for(Interaction inter : sbolDesign.getInteractions()) {
 			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
