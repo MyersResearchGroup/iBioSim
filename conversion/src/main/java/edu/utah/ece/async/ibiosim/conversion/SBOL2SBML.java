@@ -344,48 +344,17 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
-		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc);
-		
 		//Determine the product of each engineered region, and extract it's cello parameters
 		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
 		
+		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
+		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param);
+		
+
+		
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
-		
-		//HashMap<String, List<String>> Prot_2_Param3 = productionInteractions(sbolDoc);
-		
-		
-/*		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
-		for (Interaction interaction : resultMD.getInteractions()) {
-			if (isProductionInteraction(interaction, resultMD, sbolDoc)) {
-				String protein1 = "";
-				for (Participation participator2 : interaction.getParticipations()) {
-					if (participator2.containsRole(SystemsBiologyOntology.PRODUCT)){
-						protein1 = participator2.getParticipant().getDisplayId();
-						if (!Prot_2_Param.containsKey(protein1)) {
-							Prot_2_Param.put(protein1, new ArrayList());
-						}
-					}
-				}
-				for (Participation participator : interaction.getParticipations()) {
-					if (participator.containsRole(SystemsBiologyOntology.PROMOTER)||
-							participator.containsRole(SystemsBiologyOntology.TEMPLATE)) {
-						for (Component comp : participator.getParticipantDefinition().getComponents()) {
-							if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)){
-							List<String> CelloParameters = hasCelloParameters2(comp.getDefinition());
-							Prot_2_Param.put(protein1, CelloParameters);
-							if (!Prot_2_Param.get(protein1).isEmpty()) {
-								System.out.println("has Cello Parameters!");
-							}
-							}
-						}
-					}
-				}
-			}
-		}*/
-		
-		
+				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		boolean CelloModel = false;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
@@ -619,7 +588,7 @@ public class SBOL2SBML {
 	 * @return the hash map with all the interactions per
 	 */
 	//TODO PEDRO: promoterInteractions
-	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc){
+	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
 		
@@ -628,6 +597,21 @@ public class SBOL2SBML {
 		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
 			for (Interaction interact : moduleDef.getInteractions()) {
 				if (isActivationInteraction(interact, moduleDef, sbolDoc)) {
+					List<Annotation> Annot = interact.getAnnotations();
+					String ymax = "";
+					String ymin = "";
+					for (int i = 0; i < Annot.size(); i++) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+							ymax = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+							ymin = Annot.get(i).getStringValue();
+						}
+					}
+					Boolean sensor = false;
+					if (!ymax.isEmpty() & !ymin.isEmpty()) {
+						sensor = true;
+					}
 					ComponentDefinition promoter = null;
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.PROMOTER)|| partici.containsRole(SystemsBiologyOntology.STIMULATED)) {
@@ -651,10 +635,31 @@ public class SBOL2SBML {
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.STIMULATOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
-							promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
+							if (sensor) {
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList(ymax, ymin));
+							} else {
+								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
+							}
+							
 						}
 					}
 				} else if (isRepressionInteraction(interact, moduleDef, sbolDoc)) {
+					List<Annotation> Annot = interact.getAnnotations();
+					String ymax = "";
+					String ymin = "";
+					for (int i = 0; i < Annot.size(); i++) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+							ymax = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+							ymin = Annot.get(i).getStringValue();
+						}
+					}
+					Boolean sensor = false;
+					if (!ymax.isEmpty() & !ymin.isEmpty()) {
+						sensor = true;
+					}
 					ComponentDefinition promoter = null;
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.PROMOTER)|| partici.containsRole(SystemsBiologyOntology.INHIBITED)) {
@@ -672,13 +677,19 @@ public class SBOL2SBML {
 										}
 									}
 								}
-							}
+								}
 						}
 					}
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.INHIBITOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
-							promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
+							if (sensor) {
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList(ymax, ymin));
+							} else {
+								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
+							}
+							
 						}
 					}
 				}
@@ -720,10 +731,7 @@ public class SBOL2SBML {
 														System.out.println(CD.getDisplayId() + protein1 + "YAY!");
 													}
 												}
-												
 											}
-											//System.out.println("P" + participator2.getParticipant().getDisplayId());
-											//System.out.println("D" + comp.getDefinition().getDisplayId());
 										}
 									}
 								}
