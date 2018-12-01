@@ -84,7 +84,7 @@ public class VerilogToSBOL {
 				buildSBOLExpression(sbolWrapper, notOperand.getRightChild(), inputProtein2);
 			}
 			else {
-				FunctionalComponent inputProtein = getInputNode(node, sbolWrapper);
+				FunctionalComponent inputProtein = getInputNode(notOperand, sbolWrapper);
 				sbolWrapper.addNOTGate(inputProtein, outputProtein);
 				buildSBOLExpression(sbolWrapper, notOperand, inputProtein);
 			}

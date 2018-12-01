@@ -22,8 +22,6 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 
 	private static SBOLDocument sbolDoc;
 	private static ModuleDefinition sbolDesign;
-	private final static String sbol_version = "1.0";
-	
 		
 	@BeforeClass
 	public static void setupTest() {
@@ -36,7 +34,7 @@ public class SBOL_Example6 extends AbstractVerilogParserTest{
 		Assert.assertNotNull(sbolWrapper);
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition(vName, sbol_version);
+		sbolDesign = sbolDoc.getModuleDefinition(vName, "1.0");
 	}
 
 	@Test
