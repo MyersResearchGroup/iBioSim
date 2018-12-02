@@ -95,7 +95,7 @@ public class VerilogToSBOL {
 	 * Returns the equivalent SBOL FunctionalComponent of the given ASTNode if it already exists in the WrappedSBOL. 
 	 * If the node does not exist, then a new FunctionalComponent is created and returned from this method.
 	 * @param node: The ASTNode to find the equivalent SBOL FunctionalComponent.
-	 * @param sbolWrapper: The container for the SBOLDocument that will be accessed to retrieve the FunctionalComponent.
+	 * @param sbolWrapper: A container for the SBOLDocument that will be accessed to retrieve the FunctionalComponent.
 	 * @return An SBOL FunctionalComponent
 	 * @throws SBOLValidationException
 	 */

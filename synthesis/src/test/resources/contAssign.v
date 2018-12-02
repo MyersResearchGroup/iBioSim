@@ -13,5 +13,5 @@ module contAssign(bit1, bit0, parity1, parity0);
   output parity0;
   wire t;
 
-assign t = (bit0 & ~parity0 & ez_instance__state);
+assign t = ~parity0;
 endmodule

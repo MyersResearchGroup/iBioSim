@@ -1,24 +1,23 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.net.URI;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.ComponentDefinition;
-import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 
 /**
- * Test NOT gate design that was compiled from a verilog expression to an SBOL data model
+ * Test !a decomposed to SBOL.
+ *  
  * @author Tramy Nguyen
- *
  */
 public class SBOL_Example1 extends AbstractVerilogParserTest{
 
@@ -41,106 +40,104 @@ public class SBOL_Example1 extends AbstractVerilogParserTest{
 	
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(3, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(7, sbolDoc.getComponentDefinitions().size());
 	}
-	
+
 	@Test
 	public void Test_fcSize() {
 		Assert.assertEquals(3, sbolDesign.getFunctionalComponents().size());
 	}
-	
+
 	@Test
-	public void Test_CD1() {
-		ComponentDefinition cd = sbolDoc.getComponentDefinition("CD0_a", "1.0");
-		Assert.assertNotNull(cd);
-		Assert.assertEquals(1, cd.getTypes().size());
-		Assert.assertEquals(ComponentDefinition.PROTEIN, cd.getTypes().iterator().next());
+	public void Test_proteinSize() {
+		int actualSize = 0; 
+		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
+			if(cd.getTypes().iterator().next().equals(ComponentDefinition.PROTEIN)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(2, actualSize);
 	}
 
 	@Test
-	public void Test_CD2() {
-		ComponentDefinition cd = sbolDoc.getComponentDefinition("CD1_y", "1.0");
-		Assert.assertNotNull(cd);
-		Assert.assertEquals(1, cd.getTypes().size());
-		Assert.assertEquals(ComponentDefinition.PROTEIN, cd.getTypes().iterator().next());
+	public void Test_dnaSize() {
+		int actualSize = 0; 
+		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
+			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(5, actualSize);
 	}
-	
+
 	@Test
-	public void Test_CD3() {
-		ComponentDefinition cd = sbolDoc.getComponentDefinition("CD2_notGate", "1.0");
-		Assert.assertNotNull(cd);
-		Assert.assertEquals(1, cd.getTypes().size());
-		Assert.assertEquals(ComponentDefinition.DNA, cd.getTypes().iterator().next());
-		Assert.assertEquals(1, cd.getRoles().size());
-		Assert.assertEquals(SequenceOntology.ENGINEERED_REGION, cd.getRoles().iterator().next());
-	}
-	
-	@Test
-	public void Test_FC1() {
-		FunctionalComponent fc = sbolDesign.getFunctionalComponent("FC0_a");
-		Assert.assertNotNull(fc);
-		Assert.assertEquals(AccessType.PUBLIC, fc.getAccess());
-		Assert.assertEquals(DirectionType.IN, fc.getDirection());
-	}
-	
-	@Test
-	public void Test_FC2() {
-		FunctionalComponent fc = sbolDesign.getFunctionalComponent("FC1_y");
-		Assert.assertNotNull(fc);
-		Assert.assertEquals(AccessType.PUBLIC, fc.getAccess());
-		Assert.assertEquals(DirectionType.OUT, fc.getDirection());
-	}
-	
-	@Test
-	public void Test_FC3() {
-		FunctionalComponent fc = sbolDesign.getFunctionalComponent("FC2_notGate");
-		Assert.assertNotNull(fc);
-		Assert.assertEquals(AccessType.PUBLIC, fc.getAccess());
-		Assert.assertEquals(DirectionType.NONE, fc.getDirection());
-	}
-	
-	@Test
-	public void Test_InteractionSize() {
+	public void Test_interactionSize() {
 		Assert.assertEquals(2, sbolDesign.getInteractions().size());
 	}
-	
+
 	@Test
-	public void Test_Interaction1() {
-		Interaction interaction = sbolDesign.getInteraction("I0");
-		Assert.assertNotNull(interaction);
-		Assert.assertEquals(1, interaction.getTypes().size());
-		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, interaction.getTypes().iterator().next());
-		
-		Participation p1 = interaction.getParticipation("P0");
-		Assert.assertNotNull(p1);
-		Assert.assertEquals(sbolDesign.getFunctionalComponent("FC0_a"), p1.getParticipant());
-		Assert.assertEquals(1, p1.getRoles().size());
-		Assert.assertEquals(SystemsBiologyOntology.INHIBITOR, p1.getRoles().iterator().next());
-		
-		Participation p2 = interaction.getParticipation("P1");
-		Assert.assertNotNull(p2);
-		Assert.assertEquals(sbolDesign.getFunctionalComponent("FC2_notGate"), p2.getParticipant());
-		Assert.assertEquals(1, p2.getRoles().size());
-		Assert.assertEquals(SystemsBiologyOntology.INHIBITED, p2.getRoles().iterator().next());
+	public void Test_inhibitionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : sbolDesign.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.INHIBITION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(1, actualSize);
 	}
-	
+
 	@Test
-	public void Test_Interaction2() {
-		Interaction interaction = sbolDesign.getInteraction("I1");
-		Assert.assertNotNull(interaction);
-		Assert.assertEquals(1, interaction.getTypes().size());
-		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, interaction.getTypes().iterator().next());
-		
-		Participation p1 = interaction.getParticipation("P2");
-		Assert.assertNotNull(p1);
-		Assert.assertEquals(sbolDesign.getFunctionalComponent("FC2_notGate"), p1.getParticipant());
-		Assert.assertEquals(1, p1.getRoles().size());
-		Assert.assertEquals(SystemsBiologyOntology.PROMOTER, p1.getRoles().iterator().next());
-		
-		Participation p2 = interaction.getParticipation("P3");
-		Assert.assertNotNull(p2);
-		Assert.assertEquals(sbolDesign.getFunctionalComponent("FC1_y"), p2.getParticipant());
-		Assert.assertEquals(1, p2.getRoles().size());
-		Assert.assertEquals(SystemsBiologyOntology.PRODUCT, p2.getRoles().iterator().next());
+	public void Test_productionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : sbolDesign.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(1, actualSize);
 	}
+
+	@Test
+	public void Test_NOT1() {
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC2_notGate");
+		Assert.assertNotNull(gate);
+		
+		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC0_a");
+		Assert.assertNotNull(input);
+		
+		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC1_y");
+		Assert.assertNotNull(output);
+		
+		Interaction inhibition = sbolDesign.getInteraction("I0");
+		Assert.assertNotNull(inhibition);
+		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
+		Assert.assertEquals(2, inhibition.getParticipations().size());
+
+		for(Participation p : inhibition.getParticipations()) {
+			URI role = p.getRoles().iterator().next();
+			if(role.equals(SystemsBiologyOntology.INHIBITOR)) {
+				Assert.assertEquals(input, p.getParticipant());
+			}
+			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
+				Assert.assertEquals(gate, p.getParticipant());
+			}
+		}
+	
+		Interaction production = sbolDesign.getInteraction("I1");
+		Assert.assertNotNull(production);
+		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
+		Assert.assertEquals(2, production.getParticipations().size());
+
+		for(Participation p : production.getParticipations()) {
+			URI role = p.getRoles().iterator().next();
+			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+				Assert.assertEquals(gate, p.getParticipant());
+			}
+			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
+				Assert.assertEquals(output, p.getParticipant());
+			}
+		}
+	}
+
+
 }
