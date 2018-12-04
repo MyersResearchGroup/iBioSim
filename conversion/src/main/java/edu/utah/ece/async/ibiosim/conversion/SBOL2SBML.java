@@ -65,6 +65,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
+import org.virtualparts.sbol.Terms.sbo;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -351,10 +352,8 @@ public class SBOL2SBML {
 		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
 		
 		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
-		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param);
-		
-
-		
+		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
+			
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 				
@@ -427,8 +426,8 @@ public class SBOL2SBML {
 				if (CelloModel) {
 					System.out.println("you are in new degradation method call");
 					//TODO PEDRO: change this so that the degradation rate is only called for 
-					//proteins and mRNAs, but not for the rest (i.e. IPTG, etc)
-					generateCelloDegradationRxn(interact, resultMD, targetModel);
+					//proteins and mRNAs, but not for the rest (i.e. IPTG, complexes, etc)
+					generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
 				} else {
 					generateDegradationRxn(interact, resultMD, targetModel);
 				}
@@ -582,6 +581,15 @@ public class SBOL2SBML {
 		return models;
 	}
 	
+	/**
+	 * This method returns a list of complex molecules formed, and their associated ligand. This is going to be used when
+	 * determining the sensor promoters, and who represses/activates them (since for Cello, the presence of input ligand
+	 * activates the promoters).
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param sbolDoc the sbol document in use
+	 * @return the hash map where "keys" are the complex molecules and "values" are the ligand associated
+	 */
 	private static HashMap<String, String> sensorMolecules(SBOLDocument sbolDoc){
 
 		HashMap<String, String> sensorMolecules = new HashMap<String, String>();
@@ -591,6 +599,7 @@ public class SBOL2SBML {
 				if (isComplexFormationInteraction(interact, moduleDef, sbolDoc)) {
 					ComponentDefinition ligand = null;
 					ComponentDefinition complex = null;
+					ComponentDefinition prot = null;
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
 							complex = partici.getParticipantDefinition();
@@ -602,10 +611,24 @@ public class SBOL2SBML {
 					}
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
+							prot = partici.getParticipantDefinition();
+							if(isProteinDefinition(prot)) {
+								if (!sensorMolecules.containsKey(prot)) {
+									//promoterActivations.put(promoter.getDisplayId(), null);
+									sensorMolecules.put(prot.getDisplayId(),"");
+									break;
+								}
+							}
+						}
+					}
+					for (Participation partici : interact.getParticipations()) {
+						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
 							FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
 							ligand = partici.getParticipantDefinition();
+							ligand = comp.getDefinition();
 							if (isSmallMoleculeDefinition(ligand)) {
 								sensorMolecules.replace(complex.getDisplayId(), ligand.getDisplayId());
+								sensorMolecules.replace(prot.getDisplayId(), ligand.getDisplayId());
 								//.get(complex.getDisplayId())
 								//.put(partici.getParticipantDefinition().getDisplayId());
 							}
@@ -623,10 +646,10 @@ public class SBOL2SBML {
 	 * 
 	 * @author Pedro Fontanarrosa
 	 * @param sbolDoc the SBOLDocument
-	 * @return the hash map with all the interactions per
+	 * @return the hash map with all the interactions per promoter
 	 */
 	//TODO PEDRO: promoterInteractions
-	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param){
+	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, String> sensorMolecules){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
 		
@@ -672,8 +695,8 @@ public class SBOL2SBML {
 						if (partici.containsRole(SystemsBiologyOntology.STIMULATOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
-								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList(ymax, ymin));
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -720,8 +743,8 @@ public class SBOL2SBML {
 						if (partici.containsRole(SystemsBiologyOntology.INHIBITOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
-								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList(ymax, ymin));
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -736,23 +759,20 @@ public class SBOL2SBML {
 	}
 	
 	/**
-	 * This method returns a Hashmap with a protein, and Cello Parameters associated with it if it has any.
+	 * This method returns a Hashmap with a protein, and Cello Parameters associated with it if it has any. This
+	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU
 	 *
 	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol doc
-	 * @return the hash map
+	 * @param sbolDoc the sbol document being used
+	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
 	 */
 	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
 		
 		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
 		for (ComponentDefinition CD : sbolDoc.getComponentDefinitions()) {
 			if (CD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
-				System.out.println("Role!");
-				System.out.println(CD);
 				for (Component comp : CD.getComponents()) {
 					if (comp.getDefinition().containsRole(SequenceOntology.CDS)) {
-						System.out.println("CDS");
-						System.out.println(comp);
 						for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
 							for (Interaction interaction : moduleDef.getInteractions()) {
 								if (isProductionInteraction(interaction, moduleDef, sbolDoc)) {
@@ -764,7 +784,6 @@ public class SBOL2SBML {
 													String protein1 = participator2.getParticipant().getDisplayId();
 													if (!Prot_2_Param.containsKey(protein1)) {
 														Prot_2_Param.put(protein1, hasCelloParameters2(CD));
-														System.out.println(CD.getDisplayId() + protein1 + "YAY!");
 													}
 												}
 											}
@@ -867,20 +886,13 @@ public class SBOL2SBML {
 					}
 			}
 		}
-		//Create HashMap where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
-		HashMap<String, String> celloParameters = new HashMap<String, String>();
-		
+		//Create list where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
 		ArrayList<String> CelloParameters2 = new ArrayList<String>();
 		CelloParameters2.add(n);
 		CelloParameters2.add(K);
 		CelloParameters2.add(ymax);
 		CelloParameters2.add(ymin);
 		
-		
-		celloParameters.put("n", n);
-		celloParameters.put("K", K);
-		celloParameters.put("ymax", ymax);
-		celloParameters.put("ymin", ymin);
 		return CelloParameters2;
 	}
 	
@@ -1464,6 +1476,7 @@ public class SBOL2SBML {
 		Set <String> promoters = new HashSet <String>();
 		for (int i = 0; i < promoterCnt; i++) {
 			
+			// if only one promoter in TU, then promoterId will be the name of the TU
 			String promoterId = getDisplayID(promoter);
 			
 			// Use the id of the actual promoter
@@ -1558,33 +1571,42 @@ public class SBOL2SBML {
 	 * @throws BioSimException the bio sim exception
 	 */
 	// TODO PEDRO generateCelloDegradationRxn
-	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) throws BioSimException {
+	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel, SBOLDocument sbolDoc) throws BioSimException {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
 		{
 			degraded = part;
 			break;
 		}
+		Set<URI> species2 = degraded.getParticipantDefinition().getTypes();
 		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipantURI());
 		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
 				|| species.getDirection().equals(DirectionType.OUT));
 		
 		double kdegrad = 0;
 		
-		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
+		if (isProteinComponent(species, sbolDoc)) {
+			kdegrad = GlobalConstants.k_TF_DIM_S;
+		}
+		if (isRNAComponent(species, sbolDoc)) {
+			kdegrad = GlobalConstants.k_SD_DIM_S;
+			System.out.println("mRNA: " + species.getDisplayId());
+		}
+		
+/*		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
 		if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
 		
 			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
 		//should it be .containsRole or .containsType for the Transcription Factor TF?
-		} else if (species.getDefinition().containsRole(SystemsBiologyOntology.PRODUCT) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
+		} else if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 		} else {
 			//TODO PEDRO: So I am using the constant of degradation for every species that's not mRNA. Should I change this?
-			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecues
+			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecules
 			kdegrad = GlobalConstants.k_TF_DIM_S;
 			// Do nothing, kdegrad = 0
-		}
+		}*/
 		
 		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
 		if (kdegrad == 0) {
