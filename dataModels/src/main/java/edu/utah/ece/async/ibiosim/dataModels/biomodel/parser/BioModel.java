@@ -2235,23 +2235,26 @@ public class BioModel extends CoreObservable{
 	     for (Object it : promoters.toArray()) {
 	    	 promoter = it.toString();
 	    	 
-	    	 String ymax = "ymax_" + promoter;
-	    	 String ymin = "ymin_" + promoter;
+	    	 String numerator = "";
+	    	 String denominator = "";
+	    	 String in_parentesis = "";
 	    	 
-	    	 String numerator = "(" + ymax + "-" + ymin + ")";
-			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
-			 ymax_p.setId(ymax);
-			 //ymax_p.setValue(kdegrad);
-			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
-			 ymin_p.setId(ymin);
-			 //ymax_p.setValue(kdegrad);
-			 
-	    	 String denominator = "1 + ";
 	    	 HashMap promInter = (HashMap) promoterInteractions.get(promoter);
 
 	    	 for (Object entry : promInter.keySet()) {
 	    		 String interaction = entry.toString();
 	    		 if (interaction.equals("activation")) {
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
+	    			 
+	    	    	 denominator = "1 + ";
+	    	    	 
 	    			 String activator = promInter.get(entry).toString();
 	    			 String K = "K_" + activator;
 	    			 String n = "n_" + activator;
@@ -2282,11 +2285,22 @@ public class BioModel extends CoreObservable{
 		    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
 		    			 ymin_p.setValue(ymin_value);
 	    			 }
+	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
 	    			 String K = "K_" + repressor;
 	    			 String n = "n_" + repressor;
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
+	    			 
+	    	    	 denominator = "1 + ";
 	    			 
 	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
 	    			 denominator += temp;
@@ -2314,12 +2328,23 @@ public class BioModel extends CoreObservable{
 		    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
 		    			 ymin_p.setValue(ymin_value);
 	    			 }
+	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 
 	    		 } else if (interaction.equals("sensor")) {
 	    			 String sensor = promInter.get(entry).toString();
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
 	    			 
-	    			 String temp = "(" + sensor + ")";
-	    			 denominator += temp;
+	    			 
+	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
+	    			 numerator = "piecewise(" + ymin + " , (" + sensor + " == 0), " + ymax + ")"; 
+	    			 
+	    			 System.out.println(numerator);
 	    			 
 	    			 if (celloParameters.get(sensor) != null) {
 		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
@@ -2330,10 +2355,12 @@ public class BioModel extends CoreObservable{
 		    			 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
 		    			 ymin_p.setValue(ymin_value);
 	    			 }
+	    			 in_parentesis = "(" + numerator + ")"; 
 	    		 }
 	    	 }
-	    	 kineticLaw += "+" + "kdegrad" + "*(" + numerator + "/(" + denominator + ")+" + ymin + ")";
+	    	 kineticLaw += "+" + "kdegrad" + "*" + in_parentesis;
 	     }
+	     System.out.println(kineticLaw);
 		return kineticLaw;
 	}
 		
