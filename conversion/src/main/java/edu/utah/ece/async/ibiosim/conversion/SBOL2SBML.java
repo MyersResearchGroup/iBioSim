@@ -358,7 +358,7 @@ public class SBOL2SBML {
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 		
 		//Remove Complex formation and sensor promoters from ModuleDefinition, so that no species is created for these
-		removeSensorPromotersAndComplexes(resultMD, sensorMolecules);
+		removeSensorInteractios(resultMD, sensorMolecules);
 		
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		boolean CelloModel = false;
@@ -948,7 +948,7 @@ public class SBOL2SBML {
 		return CelloParameters2;
 	}
 	
-	private static void removeSensorPromotersAndComplexes(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
+	private static void removeSensorInteractios(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
 		
 		for (Interaction interact : moduleDef.getInteractions()) {
 			for (Participation part :interact.getParticipations()){

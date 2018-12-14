@@ -2058,8 +2058,29 @@ public class BioModel extends CoreObservable{
 					for (String modifi : promoterInteractions.get(promoter).keySet()) {
 						if (modifi.equals("sensor")) {
 							ModifierSpeciesReference input = r.createModifier();
+							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
+								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
+								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								
+								smallMolecule.setConstant(false);
+								//smallMolecule.setBoundaryCondition(true);
+								
+								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								
+								/*mRNA.setInitialAmount(0.0);
+								mRNA.setBoundaryCondition(false);
+								mRNA.setConstant(false);
+								mRNA.setHasOnlySubstanceUnits(true);
+								mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);*/
+																								
+								input.setSpecies(smallMolecule);
+								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							} else {
+							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
 							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
 							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							}
 						}
 					}
 				}
