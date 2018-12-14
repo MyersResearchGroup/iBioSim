@@ -353,10 +353,13 @@ public class SBOL2SBML {
 		
 		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
-			
+		
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
-				
+		
+		//Remove Complex formation and sensor promoters from ModuleDefinition, so that no species is created for these
+		removeSensorPromotersAndComplexes(resultMD, sensorMolecules);
+		
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		boolean CelloModel = false;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
@@ -373,6 +376,8 @@ public class SBOL2SBML {
 			}
 		}
 		
+
+		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
@@ -399,8 +404,11 @@ public class SBOL2SBML {
 				else {
 					generatePromoterSpecies(comp, sbolDoc, targetModel);
 				}
+<<<<<<< Upstream, based on origin/master
 				
 >>>>>>> c0bf0af added new decision point for Cello or normal modeling
+=======
+>>>>>>> d178269 createCelloSDProduction removal of unnecessary variables
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -410,6 +418,35 @@ public class SBOL2SBML {
 				//remove comments and print outs
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
+
+//			if (sensorMolecules.containsKey(comp.getDisplayId())) {
+//				break;
+//			} else {
+//				if (isSpeciesComponent(comp, sbolDoc)) {
+//					generateSpecies(comp, sbolDoc, targetModel);
+//					if (isInputComponent(comp)) {
+//						generateInputPort(comp, targetModel);
+//					} else if (isOutputComponent(comp)){
+//						generateOutputPort(comp, targetModel);
+//					}
+//				} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
+//					// If CelloModel, generate only one species for each TU
+//					if (CelloModel) {
+//						generateTUSpecies(comp, sbolDoc, targetModel);
+//					}
+//					// else, we are in normal model generation, which creates one species for each promoter in the TU
+//					else {
+//						generatePromoterSpecies(comp, sbolDoc, targetModel);
+//					}
+//					if (isInputComponent(comp)) {
+//						generateInputPort(comp, targetModel);
+//					} else if (isOutputComponent(comp)){
+//						generateOutputPort(comp, targetModel);
+//					}
+//				} else {
+//					//System.out.println("Dropping "+comp.getIdentity());
+//				}
+			//}
 		}
 
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -559,6 +596,8 @@ public class SBOL2SBML {
 				}
 			}
 		}
+		
+		//removeSensorProAndMole(sensorMolecules, targetModel);
 
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
@@ -576,9 +615,22 @@ public class SBOL2SBML {
 				}
 			}
 		}
+<<<<<<< Upstream, based on origin/master
 
+=======
+>>>>>>> d178269 createCelloSDProduction removal of unnecessary variables
 		models.put(getDisplayID(resultMD),targetModel);
+		removeSensorProAndMole(sensorMolecules, targetModel);
 		return models;
+	}
+	
+	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
+		
+		for (String species : sensorMolecules.keySet()) {
+			targetModel.getSBMLDocument().getModel().removeSpecies(species);
+		}
+		
+		
 	}
 	
 	/**
@@ -896,6 +948,26 @@ public class SBOL2SBML {
 		return CelloParameters2;
 	}
 	
+	private static void removeSensorPromotersAndComplexes(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
+		
+		for (Interaction interact : moduleDef.getInteractions()) {
+			for (Participation part :interact.getParticipations()){
+				for (String com_prot : sensorMolecules.keySet()) {
+					if (part.getDisplayId().equals(com_prot)) {
+						moduleDef.removeInteraction(interact);
+						break;
+					}
+				}
+			}
+		}
+
+/*		for (String com_prot : sensorMolecules.keySet()) {
+
+			moduleDef.removeFunctionalComponent(moduleDef.getFunctionalComponent(com_prot));
+
+		}*/
+	}
+
 	/**
 	 * Convert the given SBOL ModuleDefinition and its submodule to equivalent SBML models. 
 	 * SBML replacement and replacedBy objects will be created for each SBOL MapsTo that occur in the given SBML submodule.
@@ -1514,8 +1586,8 @@ public class SBOL2SBML {
 		ComponentDefinition proDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
 		if (proDef!=null) {
 			annotateSpecies(sbmlPromoter, promoter, proDef, sbolDoc);
-		}*/
-		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId() , celloParameters, kSDdegrad, null, null, null, null, false, null, targetModel);
+		}*/ 
+		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
 		targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
 		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(mRNA, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);

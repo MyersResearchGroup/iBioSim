@@ -2020,8 +2020,7 @@ public class BioModel extends CoreObservable{
 	}
 	
 	//TODO PEDRO createCelloSDProductionReaction
-	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU , HashMap<String, List<String>> celloParameters, String kSDdegrad, String n, String k_react,
-			String ymax, String ymin, boolean onPort, String[] dimensions, BioModel targetModel) {
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, Set <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
 		
@@ -2047,10 +2046,24 @@ public class BioModel extends CoreObservable{
 			r.setSBOTerm(GlobalConstants.SBO_TRANSCRIPTION);
 			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
 			r.setReversible(false);
-
+			
+			// Make the DNA a promoter for the mRNA production
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(TU);
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			
+			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+			for (String promoter : promoters) {
+				if (promoterInteractions.containsKey(promoter)) {
+					for (String modifi : promoterInteractions.get(promoter).keySet()) {
+						if (modifi.equals("sensor")) {
+							ModifierSpeciesReference input = r.createModifier();
+							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+						}
+					}
+				}
+			}
 			
 			mRNA.setCompartment(r.getCompartment());
 			mRNA.setInitialAmount(0.0);
