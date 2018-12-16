@@ -13,14 +13,20 @@ import java.util.List;
 public class CompilerOptions {
 	private List<File> verilogFiles;
 	private String tbModuleId, impModuleId, outputFileName, outDir;
-	private boolean outputSBOL, outputSBML, outputLPN, exportOutput;
+	private boolean generateSBOL, generateSBML, generateLPN, exportOutput, flatModel;
 
+	private final String ERROR1 = "The output directory was not set";
+	private final String ERROR2 = "You must provide an output file name to export an LPN model.";
+	private final String ERROR3 = "Implementation module identifier field must be set to produce and LPN model.";
+	private final String ERROR4 = "Testbench module identifier field must be set to produce and LPN model.";
+	
 	public CompilerOptions() {
 		this.verilogFiles = new ArrayList<>();
-		this.outputSBOL = false;
-		this.outputSBML = false;
-		this.outputLPN = false;
+		this.generateSBOL = false;
+		this.generateSBML = false;
+		this.generateLPN = false;
 		this.exportOutput = false;
+		this.flatModel = false;
 	}
 
 	public void addVerilogFile(String fullFileName) throws FileNotFoundException {
@@ -50,18 +56,22 @@ public class CompilerOptions {
 		this.impModuleId = id;
 	}
 	
-	public void setOutputSBOL(boolean isSBOL) {
-		this.outputSBOL = isSBOL;
+	public void setGenerateSBOL(boolean isSBOL) {
+		this.generateSBOL = isSBOL;
 	}
 	
-	public void setOutputSBML(boolean isFlatSBML) {
-		this.outputSBML = isFlatSBML;
+	public void setGenerateSBML(boolean isFlatSBML) {
+		this.generateSBML = isFlatSBML;
 	}
 	
-	public void setOutputLPN(boolean isLPN) {
-		this.outputLPN = isLPN;
+	public void setGenerateLPN(boolean isLPN) {
+		this.generateLPN = isLPN;
 	}
 	
+	public void setFlatModel(boolean isFlatModel) {
+		this.flatModel = isFlatModel;
+	}
+		
 	public void setOutputFileName(String fileName) {
 		this.outputFileName = fileName;
 	}
@@ -98,16 +108,20 @@ public class CompilerOptions {
 		return this.exportOutput;
 	}
 	
-	public boolean isOutputSBOL() {
-		return this.outputSBOL;
+	public boolean isGenerateSBOL() {
+		return this.generateSBOL;
+	}
+
+	public boolean isOutputFlatModel() {
+		return this.flatModel;
 	}
 	
-	public boolean isOutputSBML() {
-		return this.outputSBML;
+	public boolean isGenerateSBML() {
+		return this.generateSBML;
 	}
 	
-	public boolean isOutputLPN() {
-		return this.outputLPN;
+	public boolean isGenerateLPN() {
+		return this.generateLPN;
 	}
 	
 	public boolean isTestbenchModuleIdSet() {
@@ -128,22 +142,33 @@ public class CompilerOptions {
 	
 	public void verifyCompilerSetup() throws VerilogCompilerException {
 		
-		if(isOutputLPN()){
+		if(isGenerateLPN()){
 			if(!isImplementatonModuleIdSet() && !isTestbenchModuleIdSet()){
-				throw new VerilogCompilerException("Both the implementation module identifier and the testbench module identifier field must be set to produce and LPN model.");
+				throw new VerilogCompilerException(ERROR3);
+			}
+			if(!isTestbenchModuleIdSet()) {
+				throw new VerilogCompilerException(ERROR4);
+			}
+			if(isExportOn()) {
+				if(!isOutputDirectorySet() && isOutputFileNameSet()) {
+					throw new VerilogCompilerException(ERROR1);
+				}
+				else if(isOutputDirectorySet() && !isOutputFileNameSet()) {
+					throw new VerilogCompilerException(ERROR2);
+				}
+				throw new VerilogCompilerException(ERROR1);
 			}
 		}
-		
-		//if(!isOutputDirectorySet()){
-		//	//user want to export result from compiler
-		//	if(isOutputSBML() || isOutputSBOL() || isOutputLPN()){
-		//		throw new VerilogCompilerException("The output directory was not set");
-		//	}
-		//}
-		
-		//if(!isOutputFileNameSet() && isOutputLPN()) {
-		//	throw new VerilogCompilerException("You must provide an output file name to export an LPN model.");
-		//}
+		if(isGenerateSBML()) {
+			if(!isOutputDirectorySet() && isExportOn()) {
+				throw new VerilogCompilerException(ERROR1);
+			}
+		}
+		if(isGenerateSBOL()) {
+			if(!isOutputDirectorySet() && isExportOn()) {
+				throw new VerilogCompilerException(ERROR1);
+			}
+		}
 	}
 
 }

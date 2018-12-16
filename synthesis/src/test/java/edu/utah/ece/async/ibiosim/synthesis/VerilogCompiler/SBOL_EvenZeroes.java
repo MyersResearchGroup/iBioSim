@@ -7,7 +7,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
 import VerilogConstructs.VerilogAssignment;
@@ -22,7 +21,6 @@ import VerilogConstructs.VerilogModule;
 public class SBOL_EvenZeroes extends AbstractVerilogParserTest{
 
 	private static VerilogModule verilogModule;
-	private static ModuleDefinition sbolDesign;
 
 	@BeforeClass
 	public static void setupTest() {
@@ -41,7 +39,6 @@ public class SBOL_EvenZeroes extends AbstractVerilogParserTest{
 		Assert.assertNotNull(sbolWrapper);
 		SBOLDocument sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition(vName, "1.0");
 	}
 	
 	@Test

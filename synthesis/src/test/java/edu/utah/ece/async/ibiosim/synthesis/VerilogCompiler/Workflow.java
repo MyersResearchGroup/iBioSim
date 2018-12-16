@@ -89,11 +89,11 @@ public class Workflow extends AbstractVerilogParserTest{
 	//}
 	
 	
-	//@Test	
-	//public void Test_small() throws ParseException, FileNotFoundException {
-	//	String[] cmd = {"-v", reader.getFile("contAssign2.v"),
-	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
-	//	
-	//	Main.main(cmd);
-	//}
+	@Test	
+	public void Test_small() throws ParseException, FileNotFoundException {
+		String[] cmd = {"-v", reader.getFile("filter.v"),
+				"-sbol", "-od", CompilerTestSuite.outputDirectory};
+		
+		Main.main(cmd);
+	}
 }

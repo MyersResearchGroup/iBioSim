@@ -41,7 +41,7 @@ public class SBML_Example12 extends AbstractVerilogParserTest{
 		
 		AssignmentRule actualRule = sbmlModel.getAssignmentRuleByVariable("t");
 		Assert.assertNotNull(actualRule);
-		Assert.assertEquals("bit0 && ((!parity0) && ez_instance__state)", actualRule.getMath().toString());
+		Assert.assertEquals("!parity0", actualRule.getMath().toString());
 	}
 
 }

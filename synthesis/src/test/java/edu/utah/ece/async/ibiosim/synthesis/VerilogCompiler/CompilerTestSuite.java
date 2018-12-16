@@ -14,6 +14,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	CompilerOptions_Tests.class,
+	Decomposition.class,
+	FlatteningSBML.class,
+	LPN_Example1.class,
 	VerilogParser_Example1.class, 
 	VerilogParser_Example2.class, 
 	VerilogParser_Example3.class, 
@@ -27,6 +30,13 @@ import org.junit.runners.Suite.SuiteClasses;
 	VerilogParser_Example11.class,
 	VerilogParser_Example12.class,
 	VerilogParser_Example13.class,
+	VerilogParser_Example14.class,
+	VerilogParser_EvenZeroes.class,
+	VerilogParser_MultThree.class, 
+	VerilogParser_Counter.class,
+	VerilogParser_LFSR.class,
+	VerilogParser_SRLatch.class,
+	VerilogParser_Scanflop.class,
 	SBML_Example1.class,
 	SBML_Example2.class,
 	SBML_Example3.class,
@@ -45,18 +55,20 @@ import org.junit.runners.Suite.SuiteClasses;
 	SBOL_Example4.class,
 	SBOL_Example5.class,
 	SBOL_Example6.class,
-	VerilogParser_EvenZeroes.class,
-	VerilogParser_MultThree.class, 
-	VerilogParser_Counter.class,
-	VerilogParser_LFSR.class,
-	VerilogParser_SRLatch.class,
-	Workflow.class, 
-	Decomposition.class,
-	SBOL_EvenZeroes.class})
+	SBOL_EvenZeroes.class,
+	Workflow.class}) 
 
 public class CompilerTestSuite {
 	
 	protected static String outputDirectory = "src" + File.separator + "test" + File.separator + 
 			"resources" + File.separator + "outputFiles";
 	
+	
+	
+	
+	
+	protected static String sbmlEvenZero_impFile  = outputDirectory + File.separator + "evenzeroes_imp.xml";
+	protected static String sbmlEvenZero_tbFile   = outputDirectory + File.separator + "evenzeroes_testbench.xml";
+	protected static String sbmlEvenZero_flatFile = outputDirectory + File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml";
+
 }

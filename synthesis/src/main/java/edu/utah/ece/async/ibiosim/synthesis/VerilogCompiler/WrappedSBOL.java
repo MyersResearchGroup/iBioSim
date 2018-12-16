@@ -9,7 +9,9 @@ import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
+import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
@@ -24,36 +26,37 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 public class WrappedSBOL {
 
 	private SBOLDocument sbolDoc;
-	private ModuleDefinition design;
 	private final String sbolVersion = "1.0";
 	
-	private Map<String, String> portMapping; //map verilog inputs to sbol IDs
+	private Map<String, String> portMapping; //map Verilog port names to SBOL FunctionalComponent displayId 
+	private Map<String, String> proteinMapping; //map subcircuit proteins with top level circuit proteins using FunctionalComponent dispalyIds
 	
-	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter; //use to generate unique URIs
+	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mdCounter, mapsToCounter; //use to generate unique URIs
 
 	public WrappedSBOL() {
 		this.sbolDoc = new SBOLDocument();
 		this.sbolDoc.setDefaultURIprefix("http://async.ece.utah.edu/VerilogCompiler/"); 
 		this.sbolDoc.setComplete(true);
 		this.portMapping = new HashMap<String, String>();
+		this.proteinMapping = new HashMap<String, String>();
 	}
 	
-	public void setModuleDefinition(String id) throws SBOLValidationException {
-		this.design = this.sbolDoc.createModuleDefinition(id, sbolVersion);
+	public ModuleDefinition addCircuit(String id) throws SBOLValidationException {
+		return this.sbolDoc.createModuleDefinition(getModuleDefinitionId() + "_" + id, sbolVersion);
 	}
-
-	public void addInput(String inName) throws SBOLValidationException{
-		FunctionalComponent protein = createProtein(inName, DirectionType.IN);
+	
+	public void addInput(ModuleDefinition circuit, String inName) throws SBOLValidationException{
+		FunctionalComponent protein = createProtein(circuit, inName, DirectionType.IN);
 		portMapping.put(inName, protein.getDisplayId());
 	}
 	
-	public void addOutput(String outName) throws SBOLValidationException{
-		FunctionalComponent protein = createProtein(outName, DirectionType.OUT);
+	public void addOutput(ModuleDefinition circuit, String outName) throws SBOLValidationException{
+		FunctionalComponent protein = createProtein(circuit, outName, DirectionType.OUT);
 		portMapping.put(outName, protein.getDisplayId());
 	}
 	
-	public void addRegister(String regName) throws SBOLValidationException {
-		FunctionalComponent protein = createProtein(regName, DirectionType.INOUT);
+	public void addRegister(ModuleDefinition circuit, String regName) throws SBOLValidationException {
+		FunctionalComponent protein = createProtein(circuit, regName, DirectionType.INOUT);
 		portMapping.put(regName, protein.getDisplayId());
 	}
 	
@@ -61,31 +64,31 @@ public class WrappedSBOL {
 		return sbolDoc.createComponentDefinition(compDefId, sbolVersion, compDefType);
 	}
 	
-	private FunctionalComponent addFunctionalComponent(String funcCompId, AccessType accessType, URI compDefId, DirectionType dirType) throws SBOLValidationException {
-		return design.createFunctionalComponent(funcCompId, accessType, compDefId, dirType);
+	private FunctionalComponent addFunctionalComponent(ModuleDefinition circuit, String funcCompId, AccessType accessType, URI compDefId, DirectionType dirType) throws SBOLValidationException {
+		return circuit.createFunctionalComponent(funcCompId, accessType, compDefId, dirType);
 	}
 	
-	private Interaction addInteraction(String interactionId, URI interactionType) throws SBOLValidationException {
-		return this.design.createInteraction(interactionId, interactionType);
+	private Interaction addInteraction(ModuleDefinition circuit, String interactionId, URI interactionType) throws SBOLValidationException {
+		return circuit.createInteraction(interactionId, interactionType);
 	}
 	
 	private void addInteractionParticipation(Interaction interaction, URI participationRole, URI participantId) throws SBOLValidationException {
 		interaction.createParticipation(getParticipationId(), participantId, participationRole);
 	}
 	
-	private void addInhibitionInteraction(FunctionalComponent inhibitor, FunctionalComponent inhibited) throws SBOLValidationException {
-		Interaction inter = addInteraction(getInteractionId(), SystemsBiologyOntology.INHIBITION);
+	private void addInhibitionInteraction(ModuleDefinition circuit, FunctionalComponent inhibitor, FunctionalComponent inhibited) throws SBOLValidationException {
+		Interaction inter = addInteraction(circuit, getInteractionId(), SystemsBiologyOntology.INHIBITION);
 		addInteractionParticipation(inter, SystemsBiologyOntology.INHIBITOR, inhibitor.getIdentity());
 		addInteractionParticipation(inter, SystemsBiologyOntology.INHIBITED, inhibited.getIdentity());
 	}
 	
-	private void addProductionInteraction(FunctionalComponent transcriptionalUnit, FunctionalComponent product) throws SBOLValidationException {
-		Interaction inter = addInteraction(getInteractionId(), SystemsBiologyOntology.GENETIC_PRODUCTION);
+	private void addProductionInteraction(ModuleDefinition circuit, FunctionalComponent transcriptionalUnit, FunctionalComponent product) throws SBOLValidationException {
+		Interaction inter = addInteraction(circuit, getInteractionId(), SystemsBiologyOntology.GENETIC_PRODUCTION);
 		addInteractionParticipation(inter, SystemsBiologyOntology.PROMOTER, transcriptionalUnit.getIdentity()); //TODO: confirm
 		addInteractionParticipation(inter, SystemsBiologyOntology.PRODUCT, product.getIdentity());
 	}
 	
-	private FunctionalComponent createTranscriptionalUnit(String tu_id) throws SBOLValidationException {
+	private FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id) throws SBOLValidationException {
 		String id = "_" + tu_id;
 		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		tu.addRole(SequenceOntology.ENGINEERED_REGION);
@@ -100,7 +103,7 @@ public class WrappedSBOL {
 		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, cds.getIdentity());
 		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, terminator.getIdentity());
 		
-		FunctionalComponent tu_instance = addFunctionalComponent(getFunctionalComponentId() + id, AccessType.PUBLIC, tu.getIdentity(), DirectionType.NONE);
+		FunctionalComponent tu_instance = addFunctionalComponent(circuit, getFunctionalComponentId() + id, AccessType.PUBLIC, tu.getIdentity(), DirectionType.NONE);
 		return tu_instance;
 	} 
 	
@@ -132,29 +135,35 @@ public class WrappedSBOL {
 		return part;
 	}
 	
-	public FunctionalComponent createProtein(String proteinId, DirectionType proteinDirection) throws SBOLValidationException {
+	public FunctionalComponent createProtein(ModuleDefinition circuit, String proteinId, DirectionType proteinDirection) throws SBOLValidationException {
 		String id =  "_" + proteinId;
 		ComponentDefinition protein = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.PROTEIN);
-		FunctionalComponent protein_fc = addFunctionalComponent(getFunctionalComponentId() + id, AccessType.PUBLIC, protein.getIdentity(), proteinDirection);
+		FunctionalComponent protein_fc = addFunctionalComponent(circuit, getFunctionalComponentId() + id, AccessType.PUBLIC, protein.getIdentity(), proteinDirection);
 		portMapping.put(proteinId, protein_fc.getDisplayId());
 		return protein_fc;
 	}
 
-	public void addNOTGate(FunctionalComponent input, FunctionalComponent output) throws SBOLValidationException {
-		FunctionalComponent gate = createTranscriptionalUnit("notGate");
-		addInhibitionInteraction(input, gate);
-		addProductionInteraction(gate, output);
+	public void addNOTGate(ModuleDefinition circuit,FunctionalComponent input, FunctionalComponent output) throws SBOLValidationException {
+		FunctionalComponent gate = createTranscriptionalUnit(circuit, "notGate");
+		addInhibitionInteraction(circuit, input, gate);
+		addProductionInteraction(circuit, gate, output);
 	}
 
-	public void addNORGate(FunctionalComponent input1, FunctionalComponent input2, FunctionalComponent output) throws SBOLValidationException {
-		FunctionalComponent gate = createTranscriptionalUnit("norGate");
-		addInhibitionInteraction(input1, gate);
-		addInhibitionInteraction(input2, gate);
-		addProductionInteraction(gate, output);
+	public void addNORGate(ModuleDefinition circuit, FunctionalComponent input1, FunctionalComponent input2, FunctionalComponent output) throws SBOLValidationException {
+		FunctionalComponent gate = createTranscriptionalUnit(circuit, "norGate");
+		addInhibitionInteraction(circuit, input1, gate);
+		addInhibitionInteraction(circuit, input2, gate);
+		addProductionInteraction(circuit, gate, output);
 	}
 	
-	public FunctionalComponent getFunctionalComponent(String fc_id) {
-		return this.design.getFunctionalComponent(fc_id);
+	public void createMapsTo(ModuleDefinition circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
+		//fullCircuitProtein.createMapsTo("", RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
+		Module circuit_instance = circuit.createModule(getModuleId(), circuit.getDisplayId());
+		circuit_instance.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
+	}
+	
+	public FunctionalComponent getFunctionalComponent(ModuleDefinition circuit, String fc_id) {
+		return circuit.getFunctionalComponent(fc_id);
 	}
 
 	public String getPortMapping(String verilogPortName) {
@@ -181,6 +190,18 @@ public class WrappedSBOL {
 		return "P" + this.partiCounter++;
 	}
 
+	private String getModuleId() {
+		return "M" + this.moduleCounter++;
+	}
+	
+	private String getMapsToId() {
+		return "MT" + this.mapsToCounter++;
+	}
+	
+	private String getModuleDefinitionId() {
+		return "MD" + this.mdCounter++;
+	}
+	
 	public SBOLDocument getSBOLDocument(){
 		return this.sbolDoc;
 	}

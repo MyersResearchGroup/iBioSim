@@ -148,8 +148,8 @@ public class CompilerOptions_Tests extends AbstractVerilogParserTest{
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertTrue(compilerOptions.isExportOn());
-		Assert.assertTrue(compilerOptions.isOutputSBML());
-		Assert.assertFalse(compilerOptions.isOutputLPN());
+		Assert.assertTrue(compilerOptions.isGenerateSBML());
+		Assert.assertFalse(compilerOptions.isGenerateLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
 		Assert.assertFalse(compilerOptions.isOutputFileNameSet());
 		Assert.assertFalse(compilerOptions.isImplementatonModuleIdSet());
@@ -165,8 +165,8 @@ public class CompilerOptions_Tests extends AbstractVerilogParserTest{
 		CommandLine cmd = Main.parseCommandLine(args);
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertTrue(compilerOptions.isExportOn());
-		Assert.assertFalse(compilerOptions.isOutputSBML());
-		Assert.assertTrue(compilerOptions.isOutputLPN());
+		Assert.assertFalse(compilerOptions.isGenerateSBML());
+		Assert.assertTrue(compilerOptions.isGenerateLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
 		Assert.assertTrue(compilerOptions.isOutputFileNameSet());
 		Assert.assertTrue(compilerOptions.isImplementatonModuleIdSet());
@@ -190,8 +190,8 @@ public class CompilerOptions_Tests extends AbstractVerilogParserTest{
 		CompilerOptions compilerOptions = Main.createCompilerOptions(cmd);
 		Assert.assertEquals(1, compilerOptions.getVerilogFiles().size());
 		Assert.assertTrue(compilerOptions.isExportOn());
-		Assert.assertTrue(compilerOptions.isOutputSBML());
-		Assert.assertFalse(compilerOptions.isOutputLPN());
+		Assert.assertTrue(compilerOptions.isGenerateSBML());
+		Assert.assertFalse(compilerOptions.isGenerateLPN());
 		Assert.assertTrue(compilerOptions.isOutputDirectorySet());
 		Assert.assertFalse(compilerOptions.isOutputFileNameSet());
 		Assert.assertFalse(compilerOptions.isImplementatonModuleIdSet());

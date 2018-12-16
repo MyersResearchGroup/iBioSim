@@ -22,6 +22,8 @@ import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Blocking_assignmen
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Conditional_statementContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Delay_controlContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.ExpressionContext;
+import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Function_callContext;
+import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Function_declarationContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Hierarchical_identifierContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Initial_constructContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Input_declarationContext;
@@ -57,11 +59,14 @@ public class VerilogParser extends Verilog2001BaseListener{
 	private Stack<AbstractVerilogConstruct> constructCtx;
 
 	private LinkedList<String> operators; //name of variables for assignments or conditional expression
+	private int operatorSize;
+	
 	
 	public VerilogParser() {
 		verilogModule = new VerilogModule();
 		constructCtx = new Stack<>();
 		operators = new LinkedList<>();
+		operatorSize = 0;
 	}
 
 	/**
@@ -362,7 +367,28 @@ public class VerilogParser extends Verilog2001BaseListener{
 		}
 
 	}
+	
+	
+	public void exitFunction_declaration(Function_declarationContext ctx) {
+		System.out.println("141 " + ctx.getText());
+		operators.clear();
+	}
 
+	@Override
+	public void enterFunction_call(Function_callContext ctx) {
+		System.out.println("461 " + ctx.getText()); 
+		operatorSize = this.operators.size();
+	}
+	
+	@Override
+	public void exitFunction_call(Function_callContext ctx) {
+		System.out.println(ctx.getText()); 
+		while(this.operators.size() > this.operatorSize) {
+			this.operators.removeLast();
+		}
+		this.operators.addLast(ctx.getText());
+	}
+	
 	@Override 
 	public void enterSystem_function_call(System_function_callContext ctx){ 
 		String function = ctx.getText();

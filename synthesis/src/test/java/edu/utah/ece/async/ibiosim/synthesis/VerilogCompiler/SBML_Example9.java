@@ -106,7 +106,7 @@ public class SBML_Example9 extends AbstractVerilogParserTest{
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertEquals("uniform(0,5.0)", delay.getMath().toString());
+		Assert.assertTrue(5.0 == delay.getMath().getReal());
 	}
 	
 	@Test
@@ -241,7 +241,7 @@ public class SBML_Example9 extends AbstractVerilogParserTest{
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertEquals("uniform(0,5.0)", delay.getMath().toString());
+		Assert.assertTrue(5.0 == delay.getMath().getReal());
 	}
 	
 	@Test
@@ -372,7 +372,7 @@ public class SBML_Example9 extends AbstractVerilogParserTest{
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertEquals("uniform(0,5.0)", delay.getMath().toString());
+		Assert.assertTrue(5.0 == delay.getMath().getReal());
 	}
 	
 	@Test

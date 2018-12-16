@@ -37,7 +37,7 @@ public class Decomposition extends AbstractVerilogParserTest{
 	public void Test_NOR() throws ParseException, VerilogCompilerException {
 		ASTNode logicFunction = ASTNode.parseFormula("not(or(a,b))");
 		ASTNode decompNode = VerilogSynthesizer.synthesize(logicFunction);
-		Assert.assertEquals("!(a || b)", decompNode.toString());
+		Assert.assertEquals("!(!(!(a || b)))", decompNode.toString());
 	}
 	
 	@Test
@@ -121,7 +121,7 @@ public class Decomposition extends AbstractVerilogParserTest{
 	public void Test1_3LvlGates() throws ParseException, VerilogCompilerException{
 		ASTNode logicFunction = ASTNode.parseFormula("not(or(a,and(b,c)))");
 		ASTNode decompNode = VerilogSynthesizer.synthesize(logicFunction);
-		Assert.assertEquals("!(a || (!((!b) || (!c))))", decompNode.toString());
+		Assert.assertEquals("!(!(!(a || (!((!b) || (!c))))))", decompNode.toString());
 	}
 	
 	@Test
@@ -142,7 +142,7 @@ public class Decomposition extends AbstractVerilogParserTest{
 	public void Test_4LvlGates() throws ParseException, VerilogCompilerException{
 		ASTNode logicFunction = ASTNode.parseFormula("or(or(b,c),and(not(or(a,b)),not(c)))");
 		ASTNode decompNode = VerilogSynthesizer.synthesize(logicFunction);
-		Assert.assertEquals("!(!((!(!(b || c))) || (!((!(!(a || b))) || (!(!c))))))", decompNode.toString());
+		Assert.assertEquals("!(!((!(!(b || c))) || (!((!(!(!(!(a || b))))) || (!(!c))))))", decompNode.toString());
 	}
 	
 	@Test

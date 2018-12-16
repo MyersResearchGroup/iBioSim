@@ -54,13 +54,13 @@ public class WrappedSBML {
 	private final ASTNode node_true = new ASTNode(Type.CONSTANT_TRUE);
 	private final ASTNode node_zero = new ASTNode(0);
 	private final ASTNode node_one = new ASTNode(1);
-
+	private final String sbmlCompPack = "comp";
 	
 	public WrappedSBML() {
 		this.sbmlDocument = new SBMLDocument(3,1);
 		this.model = sbmlDocument.createModel(); 
-		this.compPlugin = (CompModelPlugin) model.createPlugin("comp");
-		this.docPlugin = (CompSBMLDocumentPlugin) sbmlDocument.createPlugin("comp");
+		this.compPlugin = (CompModelPlugin) model.createPlugin(sbmlCompPack);
+		this.docPlugin = (CompSBMLDocumentPlugin) sbmlDocument.createPlugin(sbmlCompPack);
 		this.expressionQueue = new LinkedList<String>();
 		this.inputs = new ArrayList<>();
 		this.outputs = new ArrayList<>();
@@ -147,7 +147,7 @@ public class WrappedSBML {
 	
 	public void addReplacement(String topElementId, String modelRef, String submodelId, String replacedElement) {
 		SBase element = model.getElementBySId(topElementId);
-		CompSBasePlugin plugin = (CompSBasePlugin) element.createPlugin("comp");
+		CompSBasePlugin plugin = (CompSBasePlugin) element.createPlugin(sbmlCompPack);
 		ReplacedElement replacement = plugin.createReplacedElement();
 		replacement.setSubmodelRef(submodelId);
 		String portName = modelRef + "__" + replacedElement;

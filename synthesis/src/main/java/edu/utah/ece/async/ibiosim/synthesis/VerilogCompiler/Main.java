@@ -35,13 +35,13 @@ public class Main {
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
 			VerilogCompiler compiler = runVerilogCompiler(compilerOptions);
 			if(compilerOptions.isExportOn()){
-				if(compilerOptions.isOutputSBML()){
+				if(compilerOptions.isGenerateSBML()){
 					compiler.exportSBML();
 				}
-				if(compilerOptions.isOutputLPN()){
+				if(compilerOptions.isGenerateLPN()){
 					compiler.exportLPN();
 				}
-				if(compilerOptions.isOutputSBOL()){
+				if(compilerOptions.isGenerateSBOL()){
 					compiler.exportSBOL();
 				}
 			}
@@ -129,6 +129,7 @@ public class Main {
 		if(cmd.hasOption("o")) {
 			String fileName = cmd.getOptionValue("o");
 			compilerOptions.setOutputFileName(fileName);
+			compilerOptions.exportCompiler(true);
 		}
 		if(cmd.hasOption("od")) {
 			String outputDirectory = cmd.getOptionValue("od");
@@ -144,13 +145,13 @@ public class Main {
 			compilerOptions.setImplementationModuleId(implementationName);
 		}
 		if(cmd.hasOption("lpn")) {
-			compilerOptions.setOutputLPN(true);
+			compilerOptions.setGenerateLPN(true);
 		}
 		if(cmd.hasOption("sbml")) {
-			compilerOptions.setOutputSBML(true);
+			compilerOptions.setGenerateSBML(true);
 		}
 		if(cmd.hasOption("sbol")) {
-			compilerOptions.setOutputSBOL(true); 
+			compilerOptions.setGenerateSBOL(true); 
 		}
 		if(cmd.hasOption("v")) {
 			String[] files = cmd.getOptionValue("v").split(String.valueOf(separator));
@@ -169,12 +170,12 @@ public class Main {
 		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
 		compiler.compile(); 
 		
-		if(compilerOptions.isOutputSBOL()){
+		if(compilerOptions.isGenerateSBOL()){
 			compiler.generateSBOL();
 		}
 		else{
 			compiler.generateSBML();
-			if(compilerOptions.isOutputLPN()){
+			if(compilerOptions.isGenerateLPN()){
 				compiler.exportSBML();
 				compiler.flattenSBML();
 				compiler.generateLPN();

@@ -48,6 +48,7 @@ public class VerilogCompiler {
 	private LPN lpn;
 	private String outDir, outFileName, tb_id, imp_id, tb_fullPath;
 	private SBMLDocument flatSBMLDocument;
+	private boolean isFlatModel;
 	
 	/**
 	 * Load the verilog files into a binary tree to begin parsing.
@@ -58,6 +59,7 @@ public class VerilogCompiler {
 		this.verilogModules = new HashMap<>();
 		this.vmoduleToSBML = new HashMap<>();
 		this.vmoduleToSBOL = new HashMap<>();
+		this.isFlatModel = compilerOptions.isOutputFlatModel();
 		
 		if(compilerOptions.isOutputDirectorySet()) {
 			this.outDir = compilerOptions.getOutputDirectory();
@@ -91,7 +93,6 @@ public class VerilogCompiler {
 			ParseTreeWalker.DEFAULT.walk(v, vFile);
 			
 			VerilogModule verilogModule = v.getVerilogModule();
-			
 			this.verilogModules.put(verilogModule.getModuleId(), verilogModule);
 		}
 
@@ -100,7 +101,7 @@ public class VerilogCompiler {
 	
 	public void generateSBOL() throws SBOLValidationException, ParseException, IOException, SBOLConversionException, VerilogCompilerException {
 		for(VerilogModule verilogModule : this.verilogModules.values()) { 
-			WrappedSBOL sbolData = VerilogToSBOL.convertVerilog2SBOL(verilogModule);
+			WrappedSBOL sbolData = VerilogToSBOL.convertVerilog2SBOL(verilogModule, this.isFlatModel);
 			this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
 		}
 	}
@@ -134,7 +135,7 @@ public class VerilogCompiler {
 		}
 		boolean isDocumentLoaded = sbmlDoc.load(this.tb_fullPath);
 		if(!isDocumentLoaded) {
-			throw new BioSimException("Error: Unable to load SBML file that will be used for flattening.", "Error when converting SBML to LPN");
+			throw new BioSimException("ERROR: Unable to load SBML file that will be used for flattening.", "Error when converting SBML to LPN");
 		}
 		SBMLDocument flattenDoc = sbmlDoc.flattenModel(true);
 		this.flatSBMLDocument = flattenDoc;

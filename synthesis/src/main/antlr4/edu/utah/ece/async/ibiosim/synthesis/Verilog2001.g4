@@ -1430,9 +1430,10 @@ constant_function_call
 function_call
    : hierarchical_function_identifier attribute_instance* '(' (expression (',' expression)*)? ')'
    ;
-
+//iBioSim VeriologCompiler -- INCLUDED 2 PARAMTERS FOR SYSTEM FUNCTION CALLS
 system_function_call
    : system_function_identifier (expression (',' expression)*)?
+   | system_function_identifier '(' (expression (',' expression))? ')' 
    ;
 
 genvar_function_call
