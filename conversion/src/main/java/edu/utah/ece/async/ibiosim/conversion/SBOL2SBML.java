@@ -294,19 +294,21 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		//Determine the relationship between Sensor Molecules and their target
+		//Determine the relationship between Sensor Molecules and their target. This method will return a list with Sensor Proteins/Complexes related
+		//the ligand they interact with.
 		HashMap<String, String> sensorMolecules = sensorMolecules(sbolDoc);
 		
-		//Determine the product of each engineered region, and extract it's cello parameters
+		//This method returns a map with each protein, and it's associated Cello parameters.
 		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
 		
-		//if this is a Cello Modeling event, check all the interactions in the SBOL document and record with which particular promoter do they interact
+		//Determine the activations/repressions of each promoter in the SBOLDocument. Returns a map that relates each promoter, if it is activated/repressed
+		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
 		
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 		
-		//Remove Complex formation and sensor promoters from ModuleDefinition, so that no species is created for these
+		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
 		
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
@@ -531,8 +533,7 @@ public class SBOL2SBML {
 			}
 		}
 		
-		//removeSensorProAndMole(sensorMolecules, targetModel);
-
+		
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -550,10 +551,19 @@ public class SBOL2SBML {
 			}
 		}
 		models.put(getDisplayID(resultMD),targetModel);
+		
+		//This method will remove all Sensor proteins and Complexes species from the SBML document.
 		removeSensorProAndMole(sensorMolecules, targetModel);
 		return models;
 	}
 	
+	/**
+	 * This method will remove all Sensor proteins and Complexes species from the SBML document.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param sensorMolecules the sensor proteins and complexes to be removed
+	 * @param targetModel the target model where the species will be removed
+	 */
 	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
 		
 		for (String species : sensorMolecules.keySet()) {
@@ -878,6 +888,14 @@ public class SBOL2SBML {
 		return CelloParameters2;
 	}
 	
+	/**
+	 * Removes the complex formation interaction (from sensor protein and ligand) from the document. This will remove the need to create these interactions for the SBML document
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param moduleDef the module def
+	 * @param sensorMolecules the sensor molecules
+	 * @throws SBOLValidationException the SBOL validation exception
+	 */
 	private static void removeSensorInteractios(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
 		
 		for (Interaction interact : moduleDef.getInteractions()) {
