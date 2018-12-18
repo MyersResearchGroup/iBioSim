@@ -2065,6 +2065,7 @@ public class BioModel extends CoreObservable{
 								
 								smallMolecule.setConstant(false);
 								//smallMolecule.setBoundaryCondition(true);
+								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
 								
 								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
 								
@@ -2376,7 +2377,7 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 
 	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
-	    			 numerator = "piecewise(" + ymin + " , (" + sensor + " == 0), " + ymax + ")"; 
+	    			 numerator = "piecewise(" + ymin + ", (" + sensor + " == 0), " + ymax + ")"; 
 	    			 
 	    			 System.out.println(numerator);
 	    			 
@@ -2392,7 +2393,7 @@ public class BioModel extends CoreObservable{
 	    			 in_parentesis = "(" + numerator + ")"; 
 	    		 }
 	    	 }
-	    	 kineticLaw += "+" + "kdegrad" + "*" + in_parentesis;
+	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
 	     }
 	     System.out.println(kineticLaw);
 		return kineticLaw;
