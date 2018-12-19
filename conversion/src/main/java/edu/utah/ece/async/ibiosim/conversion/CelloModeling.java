@@ -350,6 +350,7 @@ public class CelloModeling {
 		
 		//This method will remove all Sensor proteins and Complexes species from the SBML document.
 		removeSensorProAndMole(sensorMolecules, targetModel);
+		
 		return models;
 	}
 	
@@ -374,14 +375,22 @@ public class CelloModeling {
 				subTargetModel.IsWithinCompartment(), subTargetModel.getCompartmentPorts(), 
 				-1, -1, 0, 0, md5);
 		SBOL2SBML.annotateSubModel(targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)), subModule);
+		
+		for (FunctionalComponent fc : moduleDef.getFunctionalComponents()) {
+			ComponentDefinition ligand = fc.getDefinition();
+			if (SBOL2SBML.isSmallMoleculeDefinition(ligand)) {
+				generateReplacement(fc, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+			}
+		}
+		
 		for (MapsTo mapping : subModule.getMapsTos()) 
 			if (SBOL2SBML.isIOMapping(mapping, subModule, sbolDoc)) {
 				RefinementType refinement = mapping.getRefinement();
 				if (refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
 						|| refinement == RefinementType.USELOCAL) {
-					generateReplacement(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+					SBOL2SBML.generateReplacement(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 				} else if (refinement == RefinementType.USEREMOTE) {
-					generateReplacedBy(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+					SBOL2SBML.generateReplacedBy(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 				}
 			}
 	}
@@ -817,27 +826,34 @@ public class CelloModeling {
 	 * @param subTargetModel - The SBML remote model that contain the SBML replacement.
 	 * @param targetModel - The SBML local model that contain the SBML replacement.
 	 */
-	private static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
+	private static void generateReplacement(FunctionalComponent ligand, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
+		//FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(ligand.getDisplayId());
+		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(ligand.getDisplayId());
 
 		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(localSpecies));
-		Port port = subTargetModel.getPortByIdRef(SBOL2SBML.getDisplayID(remoteSpecies));
+		Species remoteSBMLSpecies = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)).getModel().getSpecies(SBOL2SBML.getDisplayID(localSpecies));
+		//Species remoteSBMLSpecies = subTargetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(localSpecies));
+		//Species remoteSBMLSpecies = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)).get
+		
+/*		Port port = subTargetModel.getPortByIdRef(SBOL2SBML.getDisplayID(localSpecies));
 		if (port==null) {
-			System.err.println("Cannot find "+ SBOL2SBML.getDisplayID(remoteSpecies));
+			System.err.println("Cannot find "+ SBOL2SBML.getDisplayID(localSpecies));
 			//return;
-		}
-
+		}*/
+		
+		String port = "input__" + SBOL2SBML.getDisplayID(localSpecies);
+		
 		Submodel subModel = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule));
-		SBMLutilities.addReplacement(localSBMLSpecies, subModel, SBOL2SBML.getDisplayID(subModule), port.getId(), "(none)", 
+		
+		SBMLutilities.addReplacement(localSBMLSpecies, subModel, SBOL2SBML.getDisplayID(subModule), port, "(none)", 
 				new String[]{""}, new String[]{""}, new String[]{""}, new String[]{""}, false);
 
 		// Annotate SBML replacment with SBOL maps-to
 		CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), 1);
-		SBOL2SBML.annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
+		//SBOL2SBML.annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
 	}
 	
 	/**
@@ -851,7 +867,7 @@ public class CelloModeling {
 	 * @param subTargetModel - The SBML remote model that contain the SBML replacedBy.
 	 * @param targetModel - The SBML local model that contain the SBML replacedBy.
 	 */
-	static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
+	private static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
