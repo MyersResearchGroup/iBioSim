@@ -999,7 +999,7 @@ public class SBOL2SBML {
 	 * @param subTargetModel - The SBML remote model that contain the SBML replacement.
 	 * @param targetModel - The SBML local model that contain the SBML replacement.
 	 */
-	private static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
+	static void generateReplacement(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
 			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
 		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
