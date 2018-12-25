@@ -28,10 +28,11 @@ public class VerilogParser_Example8 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("wait_stmt2.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt2_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
+		
 		verilogModule = moduleList.get("wait_stmt");
 		Assert.assertNotNull(verilogModule);
 	}

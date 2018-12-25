@@ -28,7 +28,7 @@ public class VerilogParser_Example9 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("delay.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogDelay_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());

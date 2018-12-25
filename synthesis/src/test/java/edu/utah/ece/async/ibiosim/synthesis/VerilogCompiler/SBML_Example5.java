@@ -27,7 +27,7 @@ public class SBML_Example5 extends AbstractVerilogParserTest{
 
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("wait_stmt.v"), "-sbml"};
+		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt_file, "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("wait_stmt");

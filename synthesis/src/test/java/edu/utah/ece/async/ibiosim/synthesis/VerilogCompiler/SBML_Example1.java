@@ -26,11 +26,12 @@ public class SBML_Example1 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("init_block.v"), "-sbml"};
+		String[] cmd = {"-v", CompilerTestSuite.verilogInitBlock_file, "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 	
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("init_block");
 		Assert.assertNotNull(sbmlWrapper);		
+		
 		sbmlModel = sbmlWrapper.getModel();
 		Assert.assertNotNull(sbmlModel);
 		Assert.assertEquals("init_block", sbmlModel.getId());

@@ -14,17 +14,23 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 
+/**
+ * 
+ * @author Tramy Nguyen 
+ *
+ */
 public class SBML_Example4 extends AbstractVerilogParserTest{
 	
 	private static Model sbmlModel;
 
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("reg_assignments.v"), "-sbml"};
+		String[] cmd = {"-v", CompilerTestSuite.verilogRegAssign_file, "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("reg_assign");
 		Assert.assertNotNull(sbmlWrapper);
+		
 		sbmlModel = sbmlWrapper.getModel();
 		Assert.assertNotNull(sbmlModel);
 		Assert.assertEquals("reg_assign", sbmlModel.getId());

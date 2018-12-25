@@ -46,8 +46,8 @@ public class VerilogReader {
 		return compiledResult;
 	}
 
-	protected String getFile(String name) {
-		return this.getClass().getResource(File.separator + name).getFile();
-	}
+	//protected String getFile(String name) {
+	//	return this.getClass().getResource(File.separator + name).getFile();
+	//}
 
 }

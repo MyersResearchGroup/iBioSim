@@ -31,10 +31,8 @@ public class VerilogParser_MultThree extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		
-		String files = String.join(" ", reader.getFile("multThree_imp.v"), reader.getFile("multThree_testbench.v"));
+		String files = String.join(" ", CompilerTestSuite.verilogMultThree_impFile, CompilerTestSuite.verilogMultThree_tbFile);	
 		String[] cmd = {"-v", files};
-		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());

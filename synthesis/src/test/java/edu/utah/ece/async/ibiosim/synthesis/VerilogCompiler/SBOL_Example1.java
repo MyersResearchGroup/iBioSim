@@ -15,7 +15,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 
 /**
- * Test !a decomposed to SBOL.
+ * Test !a decomposed to a flat SBOL data model.
  *  
  * @author Tramy Nguyen
  */
@@ -27,12 +27,13 @@ public class SBOL_Example1 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("contAssign3.v"), "-sbol"};
-		
+		String[] cmd = {"-v", CompilerTestSuite.verilogCont3_file, "-sbol", "-flat"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		
 		String vName = "contAssign";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
 		Assert.assertNotNull(sbolWrapper);
+	
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
 		sbolDesign = sbolDoc.getModuleDefinition(vName, "1.0");
@@ -108,7 +109,7 @@ public class SBOL_Example1 extends AbstractVerilogParserTest{
 		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC1_y");
 		Assert.assertNotNull(output);
 		
-		Interaction inhibition = sbolDesign.getInteraction("I0");
+		Interaction inhibition = sbolDesign.getInteraction("I0_Inhib");
 		Assert.assertNotNull(inhibition);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
 		Assert.assertEquals(2, inhibition.getParticipations().size());
@@ -123,7 +124,7 @@ public class SBOL_Example1 extends AbstractVerilogParserTest{
 			}
 		}
 	
-		Interaction production = sbolDesign.getInteraction("I1");
+		Interaction production = sbolDesign.getInteraction("I1_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());

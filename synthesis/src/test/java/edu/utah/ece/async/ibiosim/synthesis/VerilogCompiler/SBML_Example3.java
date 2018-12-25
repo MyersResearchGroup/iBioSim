@@ -22,11 +22,12 @@ public class SBML_Example3 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("register.v"), "-sbml"};
+		String[] cmd = {"-v", CompilerTestSuite.verilogReg_file, "-sbml"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("registers");
 		Assert.assertNotNull(sbmlWrapper);
+		
 		sbmlModel = sbmlWrapper.getModel();
 		Assert.assertNotNull(sbmlModel);
 		Assert.assertEquals("registers", sbmlModel.getId());

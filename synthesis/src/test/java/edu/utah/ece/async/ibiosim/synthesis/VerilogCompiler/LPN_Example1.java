@@ -21,9 +21,8 @@ public class LPN_Example1 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String files = String.join(" ", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"));	
 		
-		String[] cmd = {"-v", files, "-lpn",
+		String[] cmd = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, "-lpn",
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", "-od", CompilerTestSuite.outputDirectory};
 				
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);

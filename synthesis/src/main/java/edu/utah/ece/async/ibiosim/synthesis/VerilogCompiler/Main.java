@@ -110,6 +110,7 @@ public class Main {
 		options.addOption("tb", "tb_modId", true, "Name of the testbench verilog module identifier that simulates the design.");
 		options.addOption("imp", "imp_modId", true, "Name of the implemenation verilog module identifier that describes the circuit");
 		options.addOption("sbol", false, "Output data into SBOL.");
+		options.addOption("flat", false, "Export data model as a flat model.");
 		return options;
 	}
 
@@ -159,11 +160,11 @@ public class Main {
 				compilerOptions.addVerilogFile(file);
 			}
 		}
-		
+		if(cmd.hasOption("flat")) {
+			compilerOptions.setFlatModel(true);
+		}
 		return compilerOptions;
 	}
-
-	
 
 	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
 		compilerOptions.verifyCompilerSetup();

@@ -26,10 +26,11 @@ public class VerilogParser_Example4 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("reg_assignments.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogRegAssign_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
+		
 		verilogModule = moduleList.get("reg_assign");
 		Assert.assertNotNull(verilogModule);
 	}

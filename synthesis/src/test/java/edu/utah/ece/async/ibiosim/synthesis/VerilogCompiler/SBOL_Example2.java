@@ -15,7 +15,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 
 /**
- * Test y = a*b decomposed into SBOL.
+ * Test y = a*b decomposed into a flat SBOL data model.
  *  
  * @author Tramy Nguyen
  */
@@ -27,12 +27,13 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("contAssign2.v"), "-sbol"};
-		
+		String[] cmd = {"-v", CompilerTestSuite.verilogCont2_file, "-sbol", "-flat"};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		
 		String vName = "contAssign2";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
 		Assert.assertNotNull(sbolWrapper);
+		
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
 		sbolDesign = sbolDoc.getModuleDefinition(vName, "1.0");
@@ -99,20 +100,20 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 	
 	@Test
 	public void Test_NOR1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_norGate");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_norGate");
 		Assert.assertNotNull(gate);
 		
-		FunctionalComponent in1 = sbolDesign.getFunctionalComponent("FC3_wiredProtein");
+		FunctionalComponent in1 = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
 		Assert.assertNotNull(in1);
 		
-		FunctionalComponent in2 = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
+		FunctionalComponent in2 = sbolDesign.getFunctionalComponent("FC5_wiredProtein");
 		Assert.assertNotNull(in2);
 		
 		
 		FunctionalComponent out = sbolDesign.getFunctionalComponent("FC2_y");
 		Assert.assertNotNull(out);
 		
-		Interaction inhibition1 = sbolDesign.getInteraction("I0");
+		Interaction inhibition1 = sbolDesign.getInteraction("I0_Inhib");
 		Assert.assertNotNull(inhibition1);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition1.getTypes().iterator().next());
 		
@@ -126,7 +127,7 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 			}
 		}
 		
-		Interaction inhibition2 = sbolDesign.getInteraction("I1");
+		Interaction inhibition2 = sbolDesign.getInteraction("I1_Inhib");
 		Assert.assertNotNull(inhibition2);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition2.getTypes().iterator().next());
 
@@ -139,7 +140,7 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 		}
-		Interaction production = sbolDesign.getInteraction("I2");
+		Interaction production = sbolDesign.getInteraction("I2_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());
@@ -164,10 +165,10 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC0_a");
 		Assert.assertNotNull(input);
 		
-		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC3_wiredProtein");
+		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
 		Assert.assertNotNull(output);
 		
-		Interaction inhibition = sbolDesign.getInteraction("I3");
+		Interaction inhibition = sbolDesign.getInteraction("I3_Inhib");
 		Assert.assertNotNull(inhibition);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
 		Assert.assertEquals(2, inhibition.getParticipations().size());
@@ -182,7 +183,7 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 			}
 		}
 	
-		Interaction production = sbolDesign.getInteraction("I4");
+		Interaction production = sbolDesign.getInteraction("I4_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());
@@ -206,10 +207,10 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC1_b");
 		Assert.assertNotNull(input);
 		
-		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
+		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC5_wiredProtein");
 		Assert.assertNotNull(output);
 		
-		Interaction inhibition = sbolDesign.getInteraction("I5");
+		Interaction inhibition = sbolDesign.getInteraction("I5_Inhib");
 		Assert.assertNotNull(inhibition);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
 		Assert.assertEquals(2, inhibition.getParticipations().size());
@@ -224,7 +225,7 @@ public class SBOL_Example2 extends AbstractVerilogParserTest{
 			}
 		}
 	
-		Interaction production = sbolDesign.getInteraction("I6");
+		Interaction production = sbolDesign.getInteraction("I6_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());

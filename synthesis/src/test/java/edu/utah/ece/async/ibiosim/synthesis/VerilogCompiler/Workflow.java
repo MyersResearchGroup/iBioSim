@@ -15,8 +15,7 @@ public class Workflow extends AbstractVerilogParserTest{
 
 	@Test 
 	public void TestEvenZeroes() {
-		String files = String.join(" ", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"));	
-		String[] cmd = {"-v", files,
+		String[] cmd = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile,
 						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
 						"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		
@@ -25,8 +24,7 @@ public class Workflow extends AbstractVerilogParserTest{
 	
 	@Test 
 	public void TestCounter() {
-		String files = String.join(" ", reader.getFile("counter_imp.v"), reader.getFile("counter_testbench.v"));
-		String[] cmd = {"-v", files, 
+		String[] cmd = {"-v", CompilerTestSuite.verilogCounter_impFile, CompilerTestSuite.verilogCounter_tbFile, 
 				"-imp", "counter_imp", "-tb", "counter_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "counter"};
 		Main.main(cmd);
@@ -34,8 +32,7 @@ public class Workflow extends AbstractVerilogParserTest{
 	
 	@Test 
 	public void TestMultThree() {
-		String files = String.join(" ", reader.getFile("multThree_imp.v"), reader.getFile("multThree_testbench.v"));
-		String[] cmd = {"-v", files, 
+		String[] cmd = {"-v", CompilerTestSuite.verilogMultThree_impFile, CompilerTestSuite.verilogMultThree_tbFile, 
 				"-imp", "multthree_imp", "-tb", "multThree_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "multThree"};
 		
@@ -44,8 +41,7 @@ public class Workflow extends AbstractVerilogParserTest{
 	
 	@Test 
 	public void TestScanflop() {
-		String files = String.join(" ", reader.getFile("scanflop_imp.v"), reader.getFile("scanflop_testbench.v"));	
-		String[] cmd = {"-v", files, 
+		String[] cmd = {"-v", CompilerTestSuite.verilogScanflop_impFile, CompilerTestSuite.verilogScanflop_tbFile, 
 				"-imp", "scanflop_imp", "-tb", "scanflop_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "scanflop"};
 		
@@ -54,8 +50,7 @@ public class Workflow extends AbstractVerilogParserTest{
 	
 	@Test 
 	public void TestLFSR() {
-		String files = String.join(" ", reader.getFile("lfsr_imp.v"), reader.getFile("lfsr_testbench.v"));
-		String[] cmd = {"-v", files, 
+		String[] cmd = {"-v", CompilerTestSuite.verilogLFSR_impFile, CompilerTestSuite.verilogLFSR_tbFile, 
 				"-imp", "lfsr_imp", "-tb", "lfsr_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "lfsr"};
 		
@@ -64,35 +59,25 @@ public class Workflow extends AbstractVerilogParserTest{
 	
 	@Test
 	public void TestSRLatch() {
-		String files = String.join(" ", reader.getFile("srlatch_imp.v"), reader.getFile("srlatch_testbench.v"));
-		String[] cmd = {"-v", files, 
+		String[] cmd = {"-v", CompilerTestSuite.verilogSRLatch_impFile, CompilerTestSuite.verilogSRLatch_tbFile, 
 				"-imp", "srlatch_imp", "-tb", "srlatch_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "srlatch"};
 		
 		Main.main(cmd);
 	}
 	
-	//@Test	
-	//public void Test_EvenZeroesSynth() throws ParseException, FileNotFoundException {
-	//	String[] cmd = {"-v", reader.getFile("evenzeroes_sequential_synth.v"),
-	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
-	//	
-	//	Main.main(cmd);
-	//}
-	
-	//@Test	
-	//public void Test_gts_ack() throws ParseException, FileNotFoundException {
-	//	String[] cmd = {"-v", reader.getFile("sequential_gts_ack.v"),
-	//			"-sbol", "-od", CompilerTestSuite.outputDirectory};
-	//	
-	//	Main.main(cmd);
-	//}
-	
-	
+	@Test	
+	public void Test_Filter() throws ParseException, FileNotFoundException {
+		String[] cmd = {"-v", CompilerTestSuite.verilogFilter_file,
+				"-sbol", "-od", CompilerTestSuite.outputDirectory, "-flat"};
+		
+		Main.main(cmd);
+	}
+
 	@Test	
 	public void Test_small() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", reader.getFile("filter.v"),
-				"-sbol", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", CompilerTestSuite.verilogCont4_file,
+				"-sbol", "-od", CompilerTestSuite.outputDirectory, "-flat"};
 		
 		Main.main(cmd);
 	}

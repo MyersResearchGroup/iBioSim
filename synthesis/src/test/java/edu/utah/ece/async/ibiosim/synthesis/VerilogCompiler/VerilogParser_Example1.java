@@ -27,7 +27,7 @@ public class VerilogParser_Example1 extends AbstractVerilogParserTest{
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", reader.getFile("init_block.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogInitBlock_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();

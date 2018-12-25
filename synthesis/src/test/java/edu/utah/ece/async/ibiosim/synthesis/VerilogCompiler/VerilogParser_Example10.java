@@ -1,6 +1,5 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,10 +7,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import VerilogConstructs.AbstractVerilogConstruct;
 import VerilogConstructs.VerilogAlwaysBlock;
-import VerilogConstructs.VerilogAssignment;
 import VerilogConstructs.VerilogBlock;
+import VerilogConstructs.VerilogConditional;
 import VerilogConstructs.VerilogInitialBlock;
 import VerilogConstructs.VerilogModule;
 import VerilogConstructs.VerilogModuleInstance;
@@ -27,12 +25,12 @@ public class VerilogParser_Example10 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("init_block.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt3_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
-		
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
-		verilogModule = moduleList.get("init_block");
+		
+		verilogModule = moduleList.get("if_stmnt3");
 		Assert.assertNotNull(verilogModule);
 	}
 	
@@ -40,26 +38,25 @@ public class VerilogParser_Example10 extends AbstractVerilogParserTest{
 	public void TestVerilog_inputs() {
 		List<String> actual_inputPorts = verilogModule.getInputPorts();
 		Assert.assertNotNull(actual_inputPorts);
-		Assert.assertTrue(actual_inputPorts.size() == 1);
-		Assert.assertEquals("in0", actual_inputPorts.get(0));
+		Assert.assertTrue(actual_inputPorts.size() == 0);
 	}
 	
 	@Test
 	public void TestVerilog_outputs() {
 		List<String> actual_outputPorts = verilogModule.getOutputPorts();
 		Assert.assertNotNull(actual_outputPorts);
-		Assert.assertTrue(actual_outputPorts.size() == 1);
-		Assert.assertEquals("out0", actual_outputPorts.get(0));
+		Assert.assertTrue(actual_outputPorts.size() == 0);
 	}
 	
 	@Test
 	public void TestVerilog_registers() {
 		List<String> actual_registers = verilogModule.getRegisters();
 		Assert.assertNotNull(actual_registers);
-		Assert.assertTrue(actual_registers.size() == 1);
-		Assert.assertEquals("state", actual_registers.get(0));
+		Assert.assertEquals(2, actual_registers.size());
+		Assert.assertEquals("a", actual_registers.get(0));
+		Assert.assertEquals("b", actual_registers.get(1));
 	}
-
+	
 	@Test
 	public void TestVerilog_submodules() {
 		List<VerilogModuleInstance> actual_submodules = verilogModule.getSubmodules();
@@ -71,29 +68,34 @@ public class VerilogParser_Example10 extends AbstractVerilogParserTest{
 	public void TestVerilog_initialBlocks() {
 		List<VerilogInitialBlock> actual_initBlocks = verilogModule.getInitialBlockList();
 		Assert.assertNotNull(actual_initBlocks);
-		Assert.assertTrue(actual_initBlocks.size() == 1);
-		
-		HashMap<String, String> expected_initConstructs = new HashMap<>();
-		expected_initConstructs.put("out0", "0");
-		expected_initConstructs.put("state", "1");
-		
-		VerilogBlock init_block = (VerilogBlock) actual_initBlocks.get(0).getBlock();
-		for(AbstractVerilogConstruct actual_construct: init_block.getBlockConstructs()) {
-			Assert.assertTrue(actual_construct instanceof VerilogAssignment);
-			VerilogAssignment actual_assign = (VerilogAssignment) actual_construct;
-			Assert.assertTrue(expected_initConstructs.containsKey(actual_assign.getVariable()));
-			Assert.assertEquals(expected_initConstructs.get(actual_assign.getVariable()),
-					actual_assign.getExpression());
-		}
+		Assert.assertTrue(actual_initBlocks.size() == 0);
 	}
 	
 	@Test
 	public void TestVerilog_alwaysBlocks() {
 		List<VerilogAlwaysBlock> actual_alwayBlocks = verilogModule.getAlwaysBlockList();
 		Assert.assertNotNull(actual_alwayBlocks);
-		Assert.assertTrue(actual_alwayBlocks.size() == 0);
+		Assert.assertTrue(actual_alwayBlocks.size() == 1);
+		VerilogBlock alwaysBlock = (VerilogBlock) actual_alwayBlocks.get(0).getBlock();
+		
+		Assert.assertEquals(1, alwaysBlock.getBlockConstructs().size());
+		Assert.assertTrue(alwaysBlock.getBlockConstructs().get(0) instanceof VerilogConditional);
+		VerilogConditional actual_if = (VerilogConditional) alwaysBlock.getBlockConstructs().get(0);
+		Assert.assertEquals("a", actual_if.getIfCondition());
+		VerilogBlock actual_ifBlock = (VerilogBlock) actual_if.getIfBlock();
+		Assert.assertEquals(0, actual_ifBlock.getBlockConstructs().size());
+		
+		Assert.assertNotNull(actual_if.getElseBlock());
+		Assert.assertTrue(actual_if.getElseBlock() instanceof VerilogConditional);
+		VerilogConditional actual_else_ifCondition = (VerilogConditional) actual_if.getElseBlock();
+		Assert.assertEquals("a", actual_else_ifCondition.getIfCondition());
+		VerilogBlock actual_elseIfBlock = (VerilogBlock) actual_else_ifCondition.getIfBlock();
+		Assert.assertEquals(0, actual_elseIfBlock.getBlockConstructs().size());
+		
+		Assert.assertTrue(actual_else_ifCondition.getElseBlock() instanceof VerilogBlock);
+		VerilogBlock actual_elseBlock = (VerilogBlock) actual_else_ifCondition.getElseBlock();
+		Assert.assertEquals(0, actual_elseBlock.getBlockConstructs().size());
 	}
-	
 	
 	
 }

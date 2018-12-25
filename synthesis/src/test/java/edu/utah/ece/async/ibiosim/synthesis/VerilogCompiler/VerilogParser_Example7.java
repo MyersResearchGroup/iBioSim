@@ -26,10 +26,11 @@ public class VerilogParser_Example7 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("conditional_stmt2.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt2_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
+		
 		verilogModule = moduleList.get("conditional_stmt2");
 		Assert.assertNotNull(verilogModule);
 	}

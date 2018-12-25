@@ -1,121 +1,265 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
+import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import SBOLGates.NORGate;
+import SBOLGates.NOTGate;
+import SBOLGates.SBOLLogicGate;
 import VerilogConstructs.VerilogAssignment;
 import VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 
 /**
  * Convert Verilog to SBOL. This conversion is limited to converting Verilog continuous assignments.
+ * 
  * @author Tramy Nguyen
- *
  */
 public class VerilogToSBOL {
 
-	public static WrappedSBOL convertVerilog2SBOL(VerilogModule module, boolean generateflatModel) throws SBOLValidationException, ParseException, VerilogCompilerException {
-		WrappedSBOL sbolWrapper = new WrappedSBOL();
+	private final boolean isFlatModel;
+	private WrappedSBOL sbolWrapper;
+	
+	private HashMap<String, FunctionalComponent> primaryInputs; //name of input ports parsed from verilogCompiler
+
+	public VerilogToSBOL(boolean generateFlatModel) {
+		this.isFlatModel = generateFlatModel;
+		this.sbolWrapper = new WrappedSBOL();
+		this.primaryInputs = new HashMap<>();
+	}
+	
+	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
 		
 		ModuleDefinition fullCircuit = sbolWrapper.addCircuit(module.getModuleId());
-		convertVerilogInputPorts(fullCircuit, sbolWrapper, module.getInputPorts());
-		convertVerilogOutputPorts(fullCircuit, sbolWrapper, module.getOutputPorts());
-		convertVerilogRegisters(fullCircuit, sbolWrapper, module.getRegisters());
-		convertVerilogContinousAssignments(fullCircuit, generateflatModel, sbolWrapper, module.getContinousAssignments());
+		
+		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
+		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);
+		convertVerilogPorts(fullCircuit, module.getRegisters(), DirectionType.INOUT);
+		
+		convertVerilogContinousAssignments(fullCircuit, module.getContinousAssignments());
 		return sbolWrapper;
 	}
-	
-	private static void convertVerilogInputPorts(ModuleDefinition circuit, WrappedSBOL sbolWrapper, List<String> inputPorts) throws SBOLValidationException {
-		for(String input : inputPorts) {
-			sbolWrapper.createProtein(circuit, input, DirectionType.IN);
-		}
-	}
-	
-	private static void convertVerilogOutputPorts(ModuleDefinition circuit, WrappedSBOL sbolWrapper, List<String> outputPorts) throws SBOLValidationException {
-		for(String output : outputPorts) {
-			sbolWrapper.createProtein(circuit, output, DirectionType.OUT);
-		}
-	}
-	
-	private static void convertVerilogRegisters(ModuleDefinition circuit, WrappedSBOL sbolWrapper, List<String> registers) throws SBOLValidationException {
-		for(String reg : registers) {
-			sbolWrapper.createProtein(circuit, reg, DirectionType.INOUT);
-		}
-	}
-	
-	private static void convertVerilogContinousAssignments(ModuleDefinition circuit, boolean generateflatModel, WrappedSBOL sbolWrapper, List<VerilogAssignment> contAssigns) throws SBOLValidationException, ParseException, VerilogCompilerException {
-		
-		ModuleDefinition currentCircuit = circuit;
-		for(VerilogAssignment assign : contAssigns) {
-			if(generateflatModel) {
-				currentCircuit = sbolWrapper.addCircuit(assign.getVariable());
+
+	private void convertVerilogPorts(ModuleDefinition circuit, List<String> verilogPorts, DirectionType portType) throws SBOLValidationException, SBOLException {
+		for(String port : verilogPorts) {
+			FunctionalComponent portProtein = sbolWrapper.addProtein(circuit, port, portType);
+			if(portType.equals(DirectionType.IN) || portType.equals(DirectionType.INOUT)) {
+				primaryInputs.put(port, portProtein);
 			}
-			convertAssignment(currentCircuit, sbolWrapper, assign);
-
+		}
+	}
+	
+	private void convertVerilogContinousAssignments(ModuleDefinition circuit, List<VerilogAssignment> contAssigns) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
+		for(VerilogAssignment assign : contAssigns) {
+			String var = assign.getVariable();
+			ASTNode expression = ASTNode.parseFormula(assign.getExpression());
+			ASTNode synthExpression = VerilogSynthesizer.synthesize(expression);
+			
+			FunctionalComponent fullCircuit_outputProtein = getProtein(circuit, var); 
+			HashMap<FunctionalComponent, FunctionalComponent> primary_inputProteins = new HashMap<>();
+			
+			if(!isFlatModel) {
+				ModuleDefinition subCircuit = sbolWrapper.addCircuit(var);
+				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
+				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primary_inputProteins);
+		
+				//Connect primary input and output proteins for full circuit and subcircuit.
+				sbolWrapper.createMapsTo(circuit, fullCircuit_outputProtein, subCircuit_outputProtein);
+				for(FunctionalComponent subcircuit_input : primary_inputProteins.keySet()) {
+					sbolWrapper.createMapsTo(circuit, primary_inputProteins.get(subcircuit_input), subcircuit_input);
+				}
+			}
+			else {
+				buildSBOLExpression(circuit, synthExpression, fullCircuit_outputProtein, primary_inputProteins);
+			}
 		}
 	}
 
-	private static void convertAssignment(ModuleDefinition circuit, WrappedSBOL sbolWrapper, VerilogAssignment assign) throws SBOLValidationException, ParseException, VerilogCompilerException {
-
-		String var = assign.getVariable();
-		ASTNode expression = ASTNode.parseFormula(assign.getExpression());
-		ASTNode synthExpression = VerilogSynthesizer.synthesize(expression);
-
-		FunctionalComponent design_output = sbolWrapper.getFunctionalComponent(circuit, sbolWrapper.getPortMapping(var));
-		buildSBOLExpression(circuit, sbolWrapper, synthExpression, design_output);
-	}
-	
-	private static void buildSBOLExpression(ModuleDefinition circuit, WrappedSBOL sbolWrapper, ASTNode node, FunctionalComponent outputProtein) throws SBOLValidationException {
+	private void buildSBOLExpression(ModuleDefinition circuit, ASTNode logicNode, FunctionalComponent outputProtein, HashMap<FunctionalComponent, FunctionalComponent> primary_inputProteins) throws SBOLValidationException, SBOLException, VerilogCompilerException {
 		//no more expression to build SBOL on
-		if(node.getChildCount() < 1){
+		if(logicNode.getChildCount() < 1){
 			return;
 		}
-		
+
 		//convert logic gates
-		if(node.getType() == ASTNode.Type.LOGICAL_NOT){
-			assert(node.getNumChildren() == 1);
-			ASTNode notOperand = node.getChild(0);
-				
+		if(logicNode.getType() == ASTNode.Type.LOGICAL_NOT){
+			assert(logicNode.getNumChildren() == 1);
+			ASTNode notOperand = logicNode.getChild(0);
+			String gateId = logicNode.toString();
+			
 			if(notOperand.getType() == ASTNode.Type.LOGICAL_OR) {
 				//a NOR gate was found
 				assert(notOperand.getNumChildren() == 2);
-				FunctionalComponent inputProtein1 = getInputNode(circuit, notOperand.getLeftChild(), sbolWrapper);
-				FunctionalComponent inputProtein2 = getInputNode(circuit, notOperand.getRightChild(), sbolWrapper);
-				sbolWrapper.addNORGate(circuit, inputProtein1, inputProtein2, outputProtein);
-			
-				buildSBOLExpression(circuit, sbolWrapper, notOperand.getLeftChild(), inputProtein1);
-				buildSBOLExpression(circuit, sbolWrapper, notOperand.getRightChild(), inputProtein2);
+				NORGate sbolNOR = addNORGate(circuit, gateId);
+				
+				ASTNode norLeftChild = notOperand.getLeftChild();
+				ASTNode norRightChild = notOperand.getRightChild();
+				
+				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, primary_inputProteins);
+				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, primary_inputProteins);
+				
+				addOutput(circuit, sbolNOR, outputProtein);
+				
+				sbolWrapper.addGateMapping(gateId, sbolNOR);
+
+				buildSBOLExpression(circuit, norLeftChild, leftInputProtein, primary_inputProteins);
+				buildSBOLExpression(circuit, norRightChild, rightInputProtein, primary_inputProteins);
+
 			}
 			else {
-				FunctionalComponent inputProtein = getInputNode(circuit, notOperand, sbolWrapper);
-				sbolWrapper.addNOTGate(circuit, inputProtein, outputProtein);
-				buildSBOLExpression(circuit, sbolWrapper, notOperand, inputProtein);
+				//a NOT gate was found
+				NOTGate sbolNOT = addNOTGate(circuit, gateId);
+				
+				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, primary_inputProteins); 
+				
+				addOutput(circuit, sbolNOT, outputProtein);
+				
+				sbolWrapper.addGateMapping(gateId, sbolNOT);
+
+				buildSBOLExpression(circuit, notOperand, inputProtein, primary_inputProteins);
 			}
 		}
 	}
 
 	/**
-	 * Returns the equivalent SBOL FunctionalComponent of the given ASTNode if it already exists in the WrappedSBOL. 
-	 * If the node does not exist, then a new FunctionalComponent is created and returned from this method.
-	 * @param node: The ASTNode to find the equivalent SBOL FunctionalComponent.
-	 * @param sbolWrapper: A container for the SBOLDocument that will be accessed to retrieve the FunctionalComponent.
-	 * @return An SBOL FunctionalComponent
+	 * Returns the equivalent SBOL FunctionalComponent for the given input if it already exists. 
+	 * If the input name for the gate does not exist, then a new FunctionalComponent is created and returned.
+	 * @param portName: The gate's input name to find the equivalent SBOL FunctionalComponent.
+	 * @return The desired protein represented as a FunctionalComponent 
 	 * @throws SBOLValidationException
+	 * @throws SBOLException
 	 */
-	private static FunctionalComponent getInputNode(ModuleDefinition circuit, ASTNode node, WrappedSBOL sbolWrapper) throws SBOLValidationException {
-		String inputNode = sbolWrapper.getPortMapping(node.getName());
-		if(inputNode != null) {
-			return sbolWrapper.getFunctionalComponent(circuit, inputNode);
+	private FunctionalComponent getProtein(ModuleDefinition circuit, String portName) throws SBOLValidationException, SBOLException {
+		String protein = sbolWrapper.getProteinMapping(portName);
+		if(protein != null) {
+			return sbolWrapper.getFunctionalComponent(circuit, protein);
 		}
 		
-		return sbolWrapper.createProtein(circuit, "wiredProtein", DirectionType.NONE);
+		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.NONE);
+	}
+
+	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, SBOLLogicGate logicGate, HashMap<FunctionalComponent, FunctionalComponent> inputProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {
+		FunctionalComponent inputProtein = null;
+		FunctionalComponent tu = logicGate.getTranscriptionalUnit();
+		SBOLLogicGate inputGate = sbolWrapper.getGateMapping(logicNode.toString());
+		if(inputGate != null) {
+			inputProtein = inputGate.getOutputProtein();
+			createInputInteraction(circuit, logicGate, tu, inputProtein);
+		}
+		else {
+			inputProtein = getProtein(circuit, logicNode.getName());
+			//inputProtein already is an input on the current gate. Don't create interaction and continue. This will solve output proteins with multiple fan-outs
+			if(!checkIfProteinIsInput(inputProtein, logicGate)) {
+				createInputInteraction(circuit, logicGate, tu, inputProtein);
+			}
+		}
+		
+		if(primaryInputs.containsKey(logicNode.getName())){
+			FunctionalComponent fullCircuit_inputProtein = primaryInputs.get(logicNode.getName());
+			inputProteinList.put(inputProtein, fullCircuit_inputProtein);
+		}
+		
+		return inputProtein;
 	}
 	
+	private void addOutput(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent outputProtein) throws SBOLValidationException {
+		//outputProtein is already set as an output onto the current gate. Don't create interaction and continue.
+		if(!checkIfProteinIsOutput(outputProtein, logicGate)) {
+			createOutputInteractin(circuit, logicGate, logicGate.getTranscriptionalUnit(), outputProtein);
+		}
+	}
+	
+	private void createInputInteraction(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent inputProtein) throws VerilogCompilerException, SBOLValidationException {
+		Interaction inputInteraction = sbolWrapper.createInhibitionInteraction(circuit, inputProtein, tu);
+		logicGate.addInput(inputProtein, inputInteraction);
+	}
+	
+	private void createOutputInteractin(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent outputProtein) throws SBOLValidationException {
+		Interaction outputInteraction = sbolWrapper.createProductionInteraction(circuit, tu, outputProtein);
+		logicGate.setOutput(outputProtein, outputInteraction);
+	}
+	
+	private boolean checkIfProteinIsInput(FunctionalComponent inputProtein, SBOLLogicGate logicGate) {
+		if(logicGate instanceof NOTGate) {
+			NOTGate gate = (NOTGate)logicGate;
+			return inputProtein.equals(gate.getInputProtein());
+		}
+		else if(logicGate instanceof NORGate) {
+			NORGate gate = (NORGate)logicGate;
+			return inputProtein.equals(gate.getLeftInputProtein())
+					|| inputProtein.equals(gate.getRightInputProtein()); 
+		}
+		return false;
+	}
+	
+	private boolean checkIfProteinIsOutput(FunctionalComponent outputProtein, SBOLLogicGate logicGate) {
+		return outputProtein.equals(logicGate.getOutputProtein());
+	}
+	
+	/**
+	 * Retrieve the NORGate mapped from the given gateId. A new NORGate will be created and returned if an existing NORGate was not found from the given gateId.
+	 * @param circuit: The circuit where the expected NORGate should be contained in.
+	 * @param gateId: The gateId used to look up the expected NORGate.
+	 * @return The NORGate that was added to the given circuit.
+	 * @throws SBOLValidationException
+	 * @throws VerilogCompilerException
+	 */
+	private NORGate addNORGate(ModuleDefinition circuit, String gateId) throws SBOLValidationException, VerilogCompilerException {
+		SBOLLogicGate currentGate = sbolWrapper.getGateMapping(gateId);
+		NORGate sbolNOR = null;
+		if(currentGate == null) {
+			//this NOR gate does not exist. Create one. 
+			FunctionalComponent norTU = sbolWrapper.createGate(circuit, 2);
+			sbolNOR = new NORGate(gateId, norTU); 
+		}
+		else if(currentGate instanceof NORGate){
+			sbolNOR = (NORGate) currentGate; 
+		}
+		else {
+			throw new VerilogCompilerException("Expected " + gateId + " to be of type NORGate but is actually " + currentGate.getClass());
+		}
+		
+		return sbolNOR;
+	}
+	
+	
+	/**
+	 * Retrieve the NOTGate mapped from the given gateId. A new NOTGate will be created and returned if an existing NOTGate was not found from the given gateId.
+	 * @param circuit: The circuit where the expected NOTGate should be contained in.
+	 * @param gateId: The gateId used to look up the expected NOTGate.
+	 * @return The NOTGate that was added to the given circuit.
+	 * @throws SBOLValidationException
+	 * @throws VerilogCompilerException
+	 */
+	private NOTGate addNOTGate(ModuleDefinition circuit, String gateId) throws SBOLValidationException, VerilogCompilerException {
+		SBOLLogicGate currentGate = sbolWrapper.getGateMapping(gateId);
+		NOTGate sbolNOT = null;
+		if(currentGate == null) {
+			//this NOT gate does not exist. Create one. 
+			FunctionalComponent notTU = sbolWrapper.createGate(circuit, 1);
+			sbolNOT = new NOTGate(gateId, notTU); 
+		}
+		else if(currentGate instanceof NOTGate){
+			sbolNOT = (NOTGate) currentGate;
+		}
+		else {
+			throw new VerilogCompilerException("Expected " + gateId + " to be of type NOTGate but is actually " + currentGate.getClass());
+		}
+		
+		return sbolNOT;
+	}
 }

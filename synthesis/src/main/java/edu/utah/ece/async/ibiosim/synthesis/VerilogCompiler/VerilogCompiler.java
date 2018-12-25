@@ -29,6 +29,7 @@ import org.sbolstandard.core2.SBOLWriter;
 import VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Lexer;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Source_textContext;
@@ -99,9 +100,11 @@ public class VerilogCompiler {
 			
 	}
 	
-	public void generateSBOL() throws SBOLValidationException, ParseException, IOException, SBOLConversionException, VerilogCompilerException {
-		for(VerilogModule verilogModule : this.verilogModules.values()) { 
-			WrappedSBOL sbolData = VerilogToSBOL.convertVerilog2SBOL(verilogModule, this.isFlatModel);
+	public void generateSBOL() throws SBOLValidationException, ParseException, IOException, SBOLConversionException, VerilogCompilerException, SBOLException {
+		for(VerilogModule verilogModule : this.verilogModules.values()) {
+			VerilogToSBOL v2sbol_conv = new VerilogToSBOL(isFlatModel); 
+			
+			WrappedSBOL sbolData = v2sbol_conv.convertVerilog2SBOL(verilogModule);
 			this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
 		}
 	}

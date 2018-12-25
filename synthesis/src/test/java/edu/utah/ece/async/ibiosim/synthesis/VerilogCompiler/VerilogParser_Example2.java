@@ -25,10 +25,11 @@ public class VerilogParser_Example2 extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		String[] cmd = {"-v", reader.getFile("always_block.v")};
+		String[] cmd = {"-v", CompilerTestSuite.verilogAlwaysBlock_file};
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
+		
 		verilogModule = moduleList.get("always_block");
 		Assert.assertNotNull(verilogModule);
 	}

@@ -30,10 +30,8 @@ public class VerilogParser_Scanflop extends AbstractVerilogParserTest{
 	
 	@BeforeClass
 	public static void setupTest() {
-		
-		String files = String.join(",", reader.getFile("scanflop_imp.v"), reader.getFile("scanflop_testbench.v"));	
+		String files = String.join(" ", CompilerTestSuite.verilogScanflop_impFile, CompilerTestSuite.verilogScanflop_tbFile);		
 		String[] cmd = {"-v", files};
-		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());

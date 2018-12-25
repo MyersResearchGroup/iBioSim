@@ -30,10 +30,8 @@ public class VerilogParser_EvenZeroes extends AbstractVerilogParserTest{
 
 	@BeforeClass
 	public static void setupTest() {
-		
-		String files = String.join(" ", reader.getFile("evenZeroes_imp.v"), reader.getFile("evenZeroes_testbench.v"));	
+		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);
 		String[] cmd = {"-v", files};
-		
 		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());
