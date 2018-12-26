@@ -31,12 +31,12 @@ public class VerilogToSBOL {
 	private final boolean isFlatModel;
 	private WrappedSBOL sbolWrapper;
 	
-	private HashMap<String, FunctionalComponent> primaryInputs; //map verilog port names to its FunctionalComponent displayId
+	private HashMap<String, FunctionalComponent> primaryProteins; //map verilog port names to its FunctionalComponent displayId
 
 	public VerilogToSBOL(boolean generateFlatModel) {
 		this.isFlatModel = generateFlatModel;
 		this.sbolWrapper = new WrappedSBOL();
-		this.primaryInputs = new HashMap<>();
+		this.primaryProteins = new HashMap<>();
 	}
 	
 	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
@@ -54,7 +54,7 @@ public class VerilogToSBOL {
 	private void convertVerilogPorts(ModuleDefinition circuit, List<String> verilogPorts, DirectionType portType) throws SBOLValidationException, SBOLException {
 		for(String port : verilogPorts) {
 			FunctionalComponent portProtein = sbolWrapper.addProtein(circuit, port, portType);
-			primaryInputs.put(port, portProtein);
+			primaryProteins.put(port, portProtein);
 		}
 	}
 	
@@ -64,28 +64,30 @@ public class VerilogToSBOL {
 			ASTNode expression = ASTNode.parseFormula(assign.getExpression());
 			ASTNode synthExpression = VerilogSynthesizer.synthesize(expression);
 			
-			FunctionalComponent fullCircuit_outputProtein = getProtein(circuit, var); 
-			HashMap<FunctionalComponent, FunctionalComponent> primary_inputProteins = new HashMap<>();
+			FunctionalComponent fullCircuit_outputProtein = primaryProteins.get(var);
+			HashMap<FunctionalComponent, FunctionalComponent> primaryProteins = new HashMap<>();
 			
 			if(!isFlatModel) {
 				ModuleDefinition subCircuit = sbolWrapper.createCircuit(var);
 				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
-				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
-				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primary_inputProteins);
+				
+				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
+				mapPrimaryProteins(var, primaryProteins, subCircuit_outputProtein);
+				
+				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primaryProteins);
 		
 				//Connect primary input and output proteins for full circuit and subcircuit.
-				sbolWrapper.createMapsTo(subCircuit_instance, fullCircuit_outputProtein, subCircuit_outputProtein);
-				for(FunctionalComponent subcircuit_input : primary_inputProteins.keySet()) {
-					sbolWrapper.createMapsTo(subCircuit_instance, primary_inputProteins.get(subcircuit_input), subcircuit_input);
+				for(FunctionalComponent subcircuit_input : primaryProteins.keySet()) {
+					sbolWrapper.createMapsTo(subCircuit_instance, primaryProteins.get(subcircuit_input), subcircuit_input);
 				}
 			}
 			else {
-				buildSBOLExpression(circuit, synthExpression, fullCircuit_outputProtein, primary_inputProteins);
+				buildSBOLExpression(circuit, synthExpression, fullCircuit_outputProtein, primaryProteins);
 			}
 		}
 	}
 
-	private void buildSBOLExpression(ModuleDefinition circuit, ASTNode logicNode, FunctionalComponent outputProtein, HashMap<FunctionalComponent, FunctionalComponent> primary_inputProteins) throws SBOLValidationException, SBOLException, VerilogCompilerException {
+	private void buildSBOLExpression(ModuleDefinition circuit, ASTNode logicNode, FunctionalComponent outputProtein, HashMap<FunctionalComponent, FunctionalComponent> mapped_primaryProteins) throws SBOLValidationException, SBOLException, VerilogCompilerException {
 		//no more expression to build SBOL on
 		if(logicNode.getChildCount() < 1){
 			return;
@@ -105,28 +107,28 @@ public class VerilogToSBOL {
 				ASTNode norLeftChild = notOperand.getLeftChild();
 				ASTNode norRightChild = notOperand.getRightChild();
 				
-				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, primary_inputProteins);
-				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, primary_inputProteins);
+				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, mapped_primaryProteins);
+				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, mapped_primaryProteins);
 				
 				addOutput(circuit, sbolNOR, outputProtein);
 				
 				sbolWrapper.addGateMapping(gateId, sbolNOR);
 
-				buildSBOLExpression(circuit, norLeftChild, leftInputProtein, primary_inputProteins);
-				buildSBOLExpression(circuit, norRightChild, rightInputProtein, primary_inputProteins);
+				buildSBOLExpression(circuit, norLeftChild, leftInputProtein, mapped_primaryProteins);
+				buildSBOLExpression(circuit, norRightChild, rightInputProtein, mapped_primaryProteins);
 
 			}
 			else {
 				//a NOT gate was found
 				NOTGate sbolNOT = addNOTGate(circuit, gateId);
 				
-				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, primary_inputProteins); 
+				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, mapped_primaryProteins); 
 				
 				addOutput(circuit, sbolNOT, outputProtein);
 				
 				sbolWrapper.addGateMapping(gateId, sbolNOT);
 
-				buildSBOLExpression(circuit, notOperand, inputProtein, primary_inputProteins);
+				buildSBOLExpression(circuit, notOperand, inputProtein, mapped_primaryProteins);
 			}
 		}
 	}
@@ -143,9 +145,11 @@ public class VerilogToSBOL {
 		String proteinId = sbolWrapper.getProteinMapping(portName);
 		if(proteinId != null) {	
 			if(!this.isFlatModel) {
-				if(primaryInputs.containsKey(portName)) {
-					FunctionalComponent fullCircuit_Protein = primaryInputs.get(portName);
-					return sbolWrapper.addProtein(circuit, portName + "Internal", fullCircuit_Protein.getDirection());
+				if(primaryProteins.containsKey(portName)) {
+					FunctionalComponent fullCircuit_Protein = primaryProteins.get(portName);
+					DirectionType mappedDirection = fullCircuit_Protein.getDirection().equals(DirectionType.OUT) ? DirectionType.IN : fullCircuit_Protein.getDirection();
+					
+					return sbolWrapper.addFunctionalComponent(circuit, sbolWrapper.getFunctionalComponentId() + "_" + portName + "Internal", AccessType.PUBLIC, fullCircuit_Protein.getDefinitionIdentity(), mappedDirection);
 				}
 			}
 			return sbolWrapper.getFunctionalComponent(circuit, proteinId);
@@ -154,7 +158,7 @@ public class VerilogToSBOL {
 		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.NONE);
 	}
 
-	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, SBOLLogicGate logicGate, HashMap<FunctionalComponent, FunctionalComponent> inputProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {
+	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, SBOLLogicGate logicGate, HashMap<FunctionalComponent, FunctionalComponent> primaryProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {
 		FunctionalComponent inputProtein = null;
 		FunctionalComponent tu = logicGate.getTranscriptionalUnit();
 		SBOLLogicGate inputGate = sbolWrapper.getGateMapping(logicNode.toString());
@@ -169,13 +173,16 @@ public class VerilogToSBOL {
 				createInputInteraction(circuit, logicGate, tu, inputProtein);
 			}
 		}
-		
-		if(primaryInputs.containsKey(logicNode.toString())){
-			FunctionalComponent fullCircuit_inputProtein = primaryInputs.get(logicNode.toString());
-			inputProteinList.put(inputProtein, fullCircuit_inputProtein);
-		}
+		mapPrimaryProteins(logicNode.toString(), primaryProteinList, inputProtein);
 		
 		return inputProtein;
+	}
+	
+	private void mapPrimaryProteins(String logicId, HashMap<FunctionalComponent, FunctionalComponent> proteinList, FunctionalComponent protein) {
+		if(primaryProteins.containsKey(logicId)){
+			FunctionalComponent fullCircuit_inputProtein = primaryProteins.get(logicId);
+			proteinList.put(protein, fullCircuit_inputProtein);
+		}
 	}
 	
 	private void addOutput(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent outputProtein) throws SBOLValidationException {

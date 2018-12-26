@@ -196,7 +196,7 @@ public class WrappedSBOL {
 		return "C" + this.cCounter++;
 	}
 	
-	private String getFunctionalComponentId() {
+	public String getFunctionalComponentId() {
 		return "FC" + fcCounter++;
 	}
 	

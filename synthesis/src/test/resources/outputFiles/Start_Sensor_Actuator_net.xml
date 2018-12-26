@@ -5,146 +5,6 @@
     <sbol:displayId>Start_Sensor_Actuator_net</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC7_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC7_wiredProtein"/>
-        <sbol:displayId>FC7_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC0_Start/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC0_Start"/>
-        <sbol:displayId>FC0_Start</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD0_Start/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC12_notGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC12_notGate"/>
-        <sbol:displayId>FC12_notGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC6_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC6_wiredProtein"/>
-        <sbol:displayId>FC6_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD14_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC4_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC4_wiredProtein"/>
-        <sbol:displayId>FC4_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD8_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC15_notGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC15_notGate"/>
-        <sbol:displayId>FC15_notGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC13_norGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC13_norGate"/>
-        <sbol:displayId>FC13_norGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC3_notGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC3_notGate"/>
-        <sbol:displayId>FC3_notGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC10_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC10_wiredProtein"/>
-        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD22_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC5_norGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC5_norGate"/>
-        <sbol:displayId>FC5_norGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC1_Sensor/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC1_Sensor"/>
-        <sbol:displayId>FC1_Sensor</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD1_Sensor/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC9_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC9_wiredProtein"/>
-        <sbol:displayId>FC9_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC2_Actuator/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC2_Actuator"/>
-        <sbol:displayId>FC2_Actuator</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD2_Actuator/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC11_notGate/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC11_notGate"/>
-        <sbol:displayId>FC11_notGate</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC8_norGate/1.0">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC8_norGate"/>
         <sbol:displayId>FC8_norGate</sbol:displayId>
@@ -160,6 +20,146 @@
         <sbol:displayId>FC14_wiredProtein</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD38_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC7_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC7_wiredProtein"/>
+        <sbol:displayId>FC7_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC5_norGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC5_norGate"/>
+        <sbol:displayId>FC5_norGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC11_notGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC11_notGate"/>
+        <sbol:displayId>FC11_notGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC9_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC9_wiredProtein"/>
+        <sbol:displayId>FC9_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC12_notGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC12_notGate"/>
+        <sbol:displayId>FC12_notGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC15_notGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC15_notGate"/>
+        <sbol:displayId>FC15_notGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC2_Actuator/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC2_Actuator"/>
+        <sbol:displayId>FC2_Actuator</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD2_Actuator/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC1_Sensor/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC1_Sensor"/>
+        <sbol:displayId>FC1_Sensor</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD1_Sensor/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC6_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC6_wiredProtein"/>
+        <sbol:displayId>FC6_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD14_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC3_notGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC3_notGate"/>
+        <sbol:displayId>FC3_notGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC13_norGate/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC13_norGate"/>
+        <sbol:displayId>FC13_norGate</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC4_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC4_wiredProtein"/>
+        <sbol:displayId>FC4_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD8_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC0_Start/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC0_Start"/>
+        <sbol:displayId>FC0_Start</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD0_Start/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC10_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/Start_Sensor_Actuator_net/FC10_wiredProtein"/>
+        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD22_wiredProtein/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -613,49 +613,6 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate"/>
-    <sbol:displayId>CD24_notGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C12_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C12_part"/>
-        <sbol:displayId>C12_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD23_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C14_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C14_part"/>
-        <sbol:displayId>C14_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD26_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C13_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C13_part"/>
-        <sbol:displayId>C13_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD25_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C15_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C15_part"/>
-        <sbol:displayId>C15_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD27_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD43_terminator/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD43_terminator"/>
     <sbol:displayId>CD43_terminator</sbol:displayId>
@@ -723,98 +680,12 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate"/>
-    <sbol:displayId>CD34_norGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C22_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C22_part"/>
-        <sbol:displayId>C22_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD36_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C20_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C20_part"/>
-        <sbol:displayId>C20_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD33_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C21_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C21_part"/>
-        <sbol:displayId>C21_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD35_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C23_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C23_part"/>
-        <sbol:displayId>C23_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD37_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD3_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD3_promoter"/>
     <sbol:displayId>CD3_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate"/>
-    <sbol:displayId>CD17_norGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C10_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C10_part"/>
-        <sbol:displayId>C10_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD19_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C9_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C9_part"/>
-        <sbol:displayId>C9_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD18_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C8_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C8_part"/>
-        <sbol:displayId>C8_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD16_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C11_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C11_part"/>
-        <sbol:displayId>C11_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD20_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD39_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD39_promoter"/>
@@ -844,49 +715,6 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate"/>
-    <sbol:displayId>CD29_notGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C17_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C17_part"/>
-        <sbol:displayId>C17_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD30_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C18_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C18_part"/>
-        <sbol:displayId>C18_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD31_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C19_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C19_part"/>
-        <sbol:displayId>C19_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD32_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C16_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C16_part"/>
-        <sbol:displayId>C16_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD28_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD23_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD23_promoter"/>
     <sbol:displayId>CD23_promoter</sbol:displayId>
@@ -900,6 +728,49 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate"/>
+    <sbol:displayId>CD29_notGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C16_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C16_part"/>
+        <sbol:displayId>C16_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD28_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C19_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C19_part"/>
+        <sbol:displayId>C19_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD32_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C18_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C18_part"/>
+        <sbol:displayId>C18_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD31_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C17_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD29_notGate/C17_part"/>
+        <sbol:displayId>C17_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD30_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD31_cds/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD31_cds"/>
@@ -915,49 +786,6 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate"/>
-    <sbol:displayId>CD4_notGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C1_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C1_part"/>
-        <sbol:displayId>C1_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD5_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C0_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C0_part"/>
-        <sbol:displayId>C0_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD3_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C2_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C2_part"/>
-        <sbol:displayId>C2_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD6_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C3_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C3_part"/>
-        <sbol:displayId>C3_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD7_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD41_ribosome/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD41_ribosome"/>
     <sbol:displayId>CD41_ribosome</sbol:displayId>
@@ -965,28 +793,52 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
   </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate"/>
+    <sbol:displayId>CD34_norGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C22_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C22_part"/>
+        <sbol:displayId>C22_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD36_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C20_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C20_part"/>
+        <sbol:displayId>C20_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD33_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C23_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C23_part"/>
+        <sbol:displayId>C23_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD37_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C21_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD34_norGate/C21_part"/>
+        <sbol:displayId>C21_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD35_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD38_wiredProtein/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD38_wiredProtein"/>
     <sbol:displayId>CD38_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein"/>
-    <sbol:displayId>CD21_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD36_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD36_cds"/>
-    <sbol:displayId>CD36_cds</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein"/>
-    <sbol:displayId>CD15_wiredProtein</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
@@ -997,12 +849,12 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C5_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C5_part"/>
-        <sbol:displayId>C5_part</sbol:displayId>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C4_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C4_part"/>
+        <sbol:displayId>C4_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD11_ribosome/1.0"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD9_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
@@ -1024,12 +876,160 @@
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C4_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C4_part"/>
-        <sbol:displayId>C4_part</sbol:displayId>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C5_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD10_norGate/C5_part"/>
+        <sbol:displayId>C5_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD9_promoter/1.0"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD11_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate"/>
+    <sbol:displayId>CD24_notGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C15_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C15_part"/>
+        <sbol:displayId>C15_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD27_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C13_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C13_part"/>
+        <sbol:displayId>C13_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD25_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C12_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C12_part"/>
+        <sbol:displayId>C12_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD23_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C14_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD24_notGate/C14_part"/>
+        <sbol:displayId>C14_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD26_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD21_wiredProtein"/>
+    <sbol:displayId>CD21_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate"/>
+    <sbol:displayId>CD40_notGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C25_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C25_part"/>
+        <sbol:displayId>C25_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD41_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C24_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C24_part"/>
+        <sbol:displayId>C24_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD39_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C27_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C27_part"/>
+        <sbol:displayId>C27_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD43_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C26_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C26_part"/>
+        <sbol:displayId>C26_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD42_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD36_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD36_cds"/>
+    <sbol:displayId>CD36_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD15_wiredProtein"/>
+    <sbol:displayId>CD15_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate"/>
+    <sbol:displayId>CD17_norGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C11_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C11_part"/>
+        <sbol:displayId>C11_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD20_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C10_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C10_part"/>
+        <sbol:displayId>C10_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD19_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C9_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C9_part"/>
+        <sbol:displayId>C9_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD18_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C8_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD17_norGate/C8_part"/>
+        <sbol:displayId>C8_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD16_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
   </sbol:ComponentDefinition>
@@ -1067,6 +1067,49 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
   </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate"/>
+    <sbol:displayId>CD4_notGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD5_ribosome/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD6_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD7_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C0_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD4_notGate/C0_part"/>
+        <sbol:displayId>C0_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD3_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD5_ribosome/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD5_ribosome"/>
     <sbol:displayId>CD5_ribosome</sbol:displayId>
@@ -1100,49 +1143,6 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/1.0">
-    <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate"/>
-    <sbol:displayId>CD40_notGate</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C24_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C24_part"/>
-        <sbol:displayId>C24_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD39_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C25_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C25_part"/>
-        <sbol:displayId>C25_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD41_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C26_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C26_part"/>
-        <sbol:displayId>C26_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD42_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C27_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD40_notGate/C27_part"/>
-        <sbol:displayId>C27_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD43_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/VerilogCompiler/CD11_ribosome/1.0">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/VerilogCompiler/CD11_ribosome"/>
