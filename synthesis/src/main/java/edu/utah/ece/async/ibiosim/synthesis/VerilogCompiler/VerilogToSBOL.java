@@ -71,7 +71,7 @@ public class VerilogToSBOL {
 				ModuleDefinition subCircuit = sbolWrapper.createCircuit(var);
 				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
 				
-				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
+				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var, AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
 				addPrimaryProteinMapping(var, primaryProteins, subCircuit_outputProtein);
 				
 				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primaryProteins);
@@ -134,8 +134,8 @@ public class VerilogToSBOL {
 	}
 
 	/**
-	 * Returns the equivalent SBOL FunctionalComponent for the given input if it already exists. 
-	 * If the input name for the gate does not exist, then a new FunctionalComponent is created and returned.
+	 * Retrieve the desired protein from the given circuit with the given verilog variable name.
+	 * If a protein does not exist with the given verilog variable name a new protein is created and returned. 
 	 * @param portName: The gate's input name to find the equivalent SBOL FunctionalComponent.
 	 * @return The desired protein represented as a FunctionalComponent 
 	 * @throws SBOLValidationException
@@ -152,7 +152,7 @@ public class VerilogToSBOL {
 					//handle feedback by changing output proteins as input for subcircuit
 					DirectionType mappedDirection = fullCircuit_Protein.getDirection().equals(DirectionType.OUT) ? DirectionType.IN : fullCircuit_Protein.getDirection();
 					
-					return sbolWrapper.addFunctionalComponent(circuit, sbolWrapper.getFunctionalComponentId() + "_" + portName + "Internal", AccessType.PUBLIC, fullCircuit_Protein.getDefinitionIdentity(), mappedDirection);
+					return sbolWrapper.addFunctionalComponent(circuit, sbolWrapper.getFunctionalComponentId() + "_" + portName, AccessType.PUBLIC, fullCircuit_Protein.getDefinitionIdentity(), mappedDirection);
 				}
 			}
 			return sbolWrapper.getFunctionalComponent(circuit, proteinId);
@@ -167,13 +167,13 @@ public class VerilogToSBOL {
 		SBOLLogicGate inputGate = sbolWrapper.getGateMapping(logicNode.toString());
 		if(inputGate != null) {
 			inputProtein = inputGate.getOutputProtein();
-			createInputInteraction(circuit, logicGate, tu, inputProtein);
+			addInputInteraction(circuit, logicGate, tu, inputProtein);
 		}
 		else {
 			inputProtein = getProtein(circuit, logicNode.toString());
 			//inputProtein already is an input on the current gate. Don't create interaction and continue. This will solve output proteins with multiple fan-outs
 			if(!checkIfProteinIsInput(inputProtein, logicGate)) {
-				createInputInteraction(circuit, logicGate, tu, inputProtein);
+				addInputInteraction(circuit, logicGate, tu, inputProtein);
 			}
 		}
 		addPrimaryProteinMapping(logicNode.toString(), primaryProteinList, inputProtein);
@@ -191,16 +191,16 @@ public class VerilogToSBOL {
 	private void addOutput(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent outputProtein) throws SBOLValidationException {
 		//outputProtein is already set as an output onto the current gate. Don't create interaction and continue.
 		if(!checkIfProteinIsOutput(outputProtein, logicGate)) {
-			createOutputInteractin(circuit, logicGate, logicGate.getTranscriptionalUnit(), outputProtein);
+			addOutputInteractin(circuit, logicGate, logicGate.getTranscriptionalUnit(), outputProtein);
 		}
 	}
 	
-	private void createInputInteraction(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent inputProtein) throws VerilogCompilerException, SBOLValidationException {
+	private void addInputInteraction(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent inputProtein) throws VerilogCompilerException, SBOLValidationException {
 		Interaction inputInteraction = sbolWrapper.createInhibitionInteraction(circuit, inputProtein, tu);
 		logicGate.addInput(inputProtein, inputInteraction);
 	}
 	
-	private void createOutputInteractin(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent outputProtein) throws SBOLValidationException {
+	private void addOutputInteractin(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent outputProtein) throws SBOLValidationException {
 		Interaction outputInteraction = sbolWrapper.createProductionInteraction(circuit, tu, outputProtein);
 		logicGate.setOutput(outputProtein, outputInteraction);
 	}

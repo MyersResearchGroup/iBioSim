@@ -47,7 +47,7 @@ public class WrappedSBOL {
 	}
 	
 	public ModuleDefinition createCircuit(String id) throws SBOLValidationException {
-		return this.sbolDoc.createModuleDefinition(id, sbolVersion);
+		return this.sbolDoc.createModuleDefinition("circuit_" + id, sbolVersion);
 	}
 	
 	private ComponentDefinition addComponentDefinition(String cd_id, URI compDefType) throws SBOLValidationException {
@@ -67,7 +67,7 @@ public class WrappedSBOL {
 	}
 	
 	public Interaction createInhibitionInteraction(ModuleDefinition circuit, FunctionalComponent inhibitor, FunctionalComponent inhibited) throws SBOLValidationException {
-		Interaction inter = addInteraction(circuit, getInteractionId()+"_Inhib", SystemsBiologyOntology.INHIBITION);
+		Interaction inter = addInteraction(circuit, getInteractionId() + "_Inhib", SystemsBiologyOntology.INHIBITION);
 		createInteractionParticipation(inter, SystemsBiologyOntology.INHIBITOR, inhibitor.getIdentity());
 		createInteractionParticipation(inter, SystemsBiologyOntology.INHIBITED, inhibited.getIdentity());
 		return inter;
