@@ -72,7 +72,7 @@ public class VerilogToSBOL {
 				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
 				
 				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
-				mapPrimaryProteins(var, primaryProteins, subCircuit_outputProtein);
+				addPrimaryProteinMapping(var, primaryProteins, subCircuit_outputProtein);
 				
 				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primaryProteins);
 		
@@ -146,7 +146,10 @@ public class VerilogToSBOL {
 		if(proteinId != null) {	
 			if(!this.isFlatModel) {
 				if(primaryProteins.containsKey(portName)) {
+					//duplicate the protein for a subcircuit and connect to full circuit 
 					FunctionalComponent fullCircuit_Protein = primaryProteins.get(portName);
+					
+					//handle feedback by changing output proteins as input for subcircuit
 					DirectionType mappedDirection = fullCircuit_Protein.getDirection().equals(DirectionType.OUT) ? DirectionType.IN : fullCircuit_Protein.getDirection();
 					
 					return sbolWrapper.addFunctionalComponent(circuit, sbolWrapper.getFunctionalComponentId() + "_" + portName + "Internal", AccessType.PUBLIC, fullCircuit_Protein.getDefinitionIdentity(), mappedDirection);
@@ -173,12 +176,12 @@ public class VerilogToSBOL {
 				createInputInteraction(circuit, logicGate, tu, inputProtein);
 			}
 		}
-		mapPrimaryProteins(logicNode.toString(), primaryProteinList, inputProtein);
+		addPrimaryProteinMapping(logicNode.toString(), primaryProteinList, inputProtein);
 		
 		return inputProtein;
 	}
 	
-	private void mapPrimaryProteins(String logicId, HashMap<FunctionalComponent, FunctionalComponent> proteinList, FunctionalComponent protein) {
+	private void addPrimaryProteinMapping(String logicId, HashMap<FunctionalComponent, FunctionalComponent> proteinList, FunctionalComponent protein) {
 		if(primaryProteins.containsKey(logicId)){
 			FunctionalComponent fullCircuit_inputProtein = primaryProteins.get(logicId);
 			proteinList.put(protein, fullCircuit_inputProtein);
