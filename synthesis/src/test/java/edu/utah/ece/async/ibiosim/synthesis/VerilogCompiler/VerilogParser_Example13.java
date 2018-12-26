@@ -13,7 +13,7 @@ import VerilogConstructs.VerilogModule;
  * 
  * @author Tramy Nguyen
  */
-public class VerilogParser_Example13 extends AbstractVerilogParserTest{
+public class VerilogParser_Example13 {
 	
 	private static VerilogModule verilog_imp;
 
@@ -22,7 +22,7 @@ public class VerilogParser_Example13 extends AbstractVerilogParserTest{
 
 		String[] cmd = {"-v", CompilerTestSuite.verilogUniform1_file};
 
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
 

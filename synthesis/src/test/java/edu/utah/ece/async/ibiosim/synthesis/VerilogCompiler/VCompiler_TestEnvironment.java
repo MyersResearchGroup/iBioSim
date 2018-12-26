@@ -1,6 +1,5 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
@@ -17,7 +16,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author Tramy Nguyen
  *
  */
-public class VerilogReader {
+public class VCompiler_TestEnvironment {
 
 	public VerilogCompiler runCompiler(String[] args) {
 		
@@ -45,9 +44,5 @@ public class VerilogReader {
 		}
 		return compiledResult;
 	}
-
-	//protected String getFile(String name) {
-	//	return this.getClass().getResource(File.separator + name).getFile();
-	//}
 
 }

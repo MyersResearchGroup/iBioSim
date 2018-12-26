@@ -19,14 +19,14 @@ import VerilogConstructs.VerilogModuleInstance;
  * @author Tramy Nguyen
  *
  */
-public class VerilogParser_Example10 extends AbstractVerilogParserTest{
+public class VerilogParser_Example10 {
 
 	private static VerilogModule verilogModule;
 	
 	@BeforeClass
 	public static void setupTest() {
 		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt3_file};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
 		

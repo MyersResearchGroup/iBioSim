@@ -46,7 +46,7 @@ public class WrappedSBOL {
 		this.gateMapping = new HashMap<>();
 	}
 	
-	public ModuleDefinition addCircuit(String id) throws SBOLValidationException {
+	public ModuleDefinition createCircuit(String id) throws SBOLValidationException {
 		return this.sbolDoc.createModuleDefinition(id, sbolVersion);
 	}
 	
@@ -154,10 +154,12 @@ public class WrappedSBOL {
 		return createTranscriptionalUnit(circuit, "norGate", generatePromoters(1));
 	}
 	
-	public void createMapsTo(ModuleDefinition circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
-		//fullCircuitProtein.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
-		Module circuit_instance = circuit.createModule(getModuleId(), circuit.getDisplayId());
-		circuit_instance.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
+	public Module addSubCircuit(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {
+		return fullCircuit.createModule(getModuleId(), subCircuit.getDisplayId());
+	}
+	
+	public void createMapsTo(Module circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
+		circuit.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
 	}
 	
 	public FunctionalComponent getFunctionalComponent(ModuleDefinition circuit, String fc_id) throws SBOLException {

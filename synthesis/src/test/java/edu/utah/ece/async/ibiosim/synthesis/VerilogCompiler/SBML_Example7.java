@@ -20,14 +20,14 @@ import org.sbml.jsbml.ext.comp.Port;
  * @author Tramy Nguyen
  *
  */
-public class SBML_Example7 extends AbstractVerilogParserTest{
+public class SBML_Example7 {
 	
 	private static Model sbmlModel;
 
 	@BeforeClass
 	public static void setupTest() {
 		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt2_file, "-sbml"};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("conditional_stmt2");
 		Assert.assertNotNull(sbmlWrapper);

@@ -24,7 +24,7 @@ import VerilogConstructs.VerilogWait;
  * @author Tramy Nguyen
  *
  */
-public class VerilogParser_MultThree extends AbstractVerilogParserTest{
+public class VerilogParser_MultThree {
 	
 	private static VerilogModule verilog_imp, verilog_tb;
 	private static VerilogBlock imp_alwaysblk, tb_alwaysblk;
@@ -33,7 +33,7 @@ public class VerilogParser_MultThree extends AbstractVerilogParserTest{
 	public static void setupTest() {
 		String files = String.join(" ", CompilerTestSuite.verilogMultThree_impFile, CompilerTestSuite.verilogMultThree_tbFile);	
 		String[] cmd = {"-v", files};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());
 		

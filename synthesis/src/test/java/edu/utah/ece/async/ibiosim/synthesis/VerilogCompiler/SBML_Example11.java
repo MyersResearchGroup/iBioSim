@@ -12,7 +12,7 @@ import org.sbml.jsbml.Model;
  * @author Tramy Nguyen
  *
  */
-public class SBML_Example11 extends AbstractVerilogParserTest{
+public class SBML_Example11 { 
 	
 	private static Model sbmlModel;
 
@@ -21,7 +21,7 @@ public class SBML_Example11 extends AbstractVerilogParserTest{
 		
 		String[] cmd = {"-v", CompilerTestSuite.verilogCont_file, "-sbml"};
 		
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("contAssign");
 		Assert.assertNotNull(sbmlWrapper);

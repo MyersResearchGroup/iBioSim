@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author Tramy Nguyen
  *
  */
-public class Workflow extends AbstractVerilogParserTest{
+public class Workflow {
 
 	@Test 
 	public void TestEvenZeroes() {
@@ -76,8 +76,8 @@ public class Workflow extends AbstractVerilogParserTest{
 
 	@Test	
 	public void Test_small() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogCont4_file,
-				"-sbol", "-od", CompilerTestSuite.outputDirectory, "-flat"};
+		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file,
+				"-sbol", "-od", CompilerTestSuite.outputDirectory };
 		
 		Main.main(cmd);
 	}

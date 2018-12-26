@@ -58,6 +58,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 public class CompilerTestSuite {
 	
+	protected static VCompiler_TestEnvironment testEnv = new VCompiler_TestEnvironment();
+	
 	protected static String outputDirectory = "src" + File.separator + "test" + File.separator + 
 			"resources" + File.separator + "outputFiles";
 	

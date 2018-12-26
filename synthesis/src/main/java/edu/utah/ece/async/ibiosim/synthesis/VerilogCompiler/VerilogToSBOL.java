@@ -1,10 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -13,6 +9,7 @@ import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
+import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
 
@@ -34,7 +31,7 @@ public class VerilogToSBOL {
 	private final boolean isFlatModel;
 	private WrappedSBOL sbolWrapper;
 	
-	private HashMap<String, FunctionalComponent> primaryInputs; //name of input ports parsed from verilogCompiler
+	private HashMap<String, FunctionalComponent> primaryInputs; //map verilog port names to its FunctionalComponent displayId
 
 	public VerilogToSBOL(boolean generateFlatModel) {
 		this.isFlatModel = generateFlatModel;
@@ -44,7 +41,7 @@ public class VerilogToSBOL {
 	
 	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
 		
-		ModuleDefinition fullCircuit = sbolWrapper.addCircuit(module.getModuleId());
+		ModuleDefinition fullCircuit = sbolWrapper.createCircuit(module.getModuleId());
 		
 		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
 		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);
@@ -57,9 +54,7 @@ public class VerilogToSBOL {
 	private void convertVerilogPorts(ModuleDefinition circuit, List<String> verilogPorts, DirectionType portType) throws SBOLValidationException, SBOLException {
 		for(String port : verilogPorts) {
 			FunctionalComponent portProtein = sbolWrapper.addProtein(circuit, port, portType);
-			if(portType.equals(DirectionType.IN) || portType.equals(DirectionType.INOUT)) {
-				primaryInputs.put(port, portProtein);
-			}
+			primaryInputs.put(port, portProtein);
 		}
 	}
 	
@@ -73,14 +68,15 @@ public class VerilogToSBOL {
 			HashMap<FunctionalComponent, FunctionalComponent> primary_inputProteins = new HashMap<>();
 			
 			if(!isFlatModel) {
-				ModuleDefinition subCircuit = sbolWrapper.addCircuit(var);
+				ModuleDefinition subCircuit = sbolWrapper.createCircuit(var);
+				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
 				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, var + "Internal", AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
 				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primary_inputProteins);
 		
 				//Connect primary input and output proteins for full circuit and subcircuit.
-				sbolWrapper.createMapsTo(circuit, fullCircuit_outputProtein, subCircuit_outputProtein);
+				sbolWrapper.createMapsTo(subCircuit_instance, fullCircuit_outputProtein, subCircuit_outputProtein);
 				for(FunctionalComponent subcircuit_input : primary_inputProteins.keySet()) {
-					sbolWrapper.createMapsTo(circuit, primary_inputProteins.get(subcircuit_input), subcircuit_input);
+					sbolWrapper.createMapsTo(subCircuit_instance, primary_inputProteins.get(subcircuit_input), subcircuit_input);
 				}
 			}
 			else {
@@ -144,9 +140,15 @@ public class VerilogToSBOL {
 	 * @throws SBOLException
 	 */
 	private FunctionalComponent getProtein(ModuleDefinition circuit, String portName) throws SBOLValidationException, SBOLException {
-		String protein = sbolWrapper.getProteinMapping(portName);
-		if(protein != null) {
-			return sbolWrapper.getFunctionalComponent(circuit, protein);
+		String proteinId = sbolWrapper.getProteinMapping(portName);
+		if(proteinId != null) {	
+			if(!this.isFlatModel) {
+				if(primaryInputs.containsKey(portName)) {
+					FunctionalComponent fullCircuit_Protein = primaryInputs.get(portName);
+					return sbolWrapper.addProtein(circuit, portName + "Internal", fullCircuit_Protein.getDirection());
+				}
+			}
+			return sbolWrapper.getFunctionalComponent(circuit, proteinId);
 		}
 		
 		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.NONE);
@@ -161,15 +163,15 @@ public class VerilogToSBOL {
 			createInputInteraction(circuit, logicGate, tu, inputProtein);
 		}
 		else {
-			inputProtein = getProtein(circuit, logicNode.getName());
+			inputProtein = getProtein(circuit, logicNode.toString());
 			//inputProtein already is an input on the current gate. Don't create interaction and continue. This will solve output proteins with multiple fan-outs
 			if(!checkIfProteinIsInput(inputProtein, logicGate)) {
 				createInputInteraction(circuit, logicGate, tu, inputProtein);
 			}
 		}
 		
-		if(primaryInputs.containsKey(logicNode.getName())){
-			FunctionalComponent fullCircuit_inputProtein = primaryInputs.get(logicNode.getName());
+		if(primaryInputs.containsKey(logicNode.toString())){
+			FunctionalComponent fullCircuit_inputProtein = primaryInputs.get(logicNode.toString());
 			inputProteinList.put(inputProtein, fullCircuit_inputProtein);
 		}
 		

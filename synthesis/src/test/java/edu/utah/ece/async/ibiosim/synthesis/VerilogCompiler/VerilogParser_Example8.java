@@ -22,14 +22,14 @@ import VerilogConstructs.VerilogWait;
  * @author Tramy Nguyen
  *
  */
-public class VerilogParser_Example8 extends AbstractVerilogParserTest{
+public class VerilogParser_Example8 {
 
 	private static VerilogModule verilogModule;
 	
 	@BeforeClass
 	public static void setupTest() {
 		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt2_file};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
 		

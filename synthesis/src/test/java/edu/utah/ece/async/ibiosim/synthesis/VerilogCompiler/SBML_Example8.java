@@ -22,14 +22,14 @@ import org.sbml.jsbml.ext.comp.Port;
  * @author Tramy Nguyen
  *
  */
-public class SBML_Example8 extends AbstractVerilogParserTest{
+public class SBML_Example8 {
 	
 	private static Model sbmlModel;
 
 	@BeforeClass
 	public static void setupTest() {
 		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt2_file, "-sbml"};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("wait_stmt");
 		Assert.assertNotNull(sbmlWrapper);

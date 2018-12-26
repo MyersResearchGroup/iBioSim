@@ -15,17 +15,19 @@ import edu.utah.ece.async.lema.verification.lpn.Transition;
  * @author Tramy Nguyen
  *
  */
-public class LPN_Example1 extends AbstractVerilogParserTest{
+public class LPN_Example1 {
 	
 	private static LPN lpn;
 	
 	@BeforeClass
 	public static void setupTest() {
 		
-		String[] cmd = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, "-lpn",
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", "-od", CompilerTestSuite.outputDirectory};
+		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);	
+		String[] cmd = {"-v", files, "-lpn",
+				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
+				"-od", CompilerTestSuite.outputDirectory};
 				
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 	
 		lpn = compiledVerilog.getLPN();
 	}

@@ -19,7 +19,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * @author Tramy Nguyen
  *
  */
-public class CompilerOptions_Tests extends AbstractVerilogParserTest{
+public class CompilerOptions_Tests{
 	
 	@Test
 	public void Test_inputSize() throws ParseException, FileNotFoundException {

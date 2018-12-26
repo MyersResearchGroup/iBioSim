@@ -19,14 +19,14 @@ import org.sbml.jsbml.ext.comp.CompModelPlugin;
  * @author Tramy Nguyen 
  *
  */
-public class SBML_Example4 extends AbstractVerilogParserTest{
+public class SBML_Example4 {
 	
 	private static Model sbmlModel;
 
 	@BeforeClass
 	public static void setupTest() {
 		String[] cmd = {"-v", CompilerTestSuite.verilogRegAssign_file, "-sbml"};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("reg_assign");
 		Assert.assertNotNull(sbmlWrapper);

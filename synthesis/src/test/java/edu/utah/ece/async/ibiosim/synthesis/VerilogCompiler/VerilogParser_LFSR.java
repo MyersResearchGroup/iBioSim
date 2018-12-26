@@ -23,7 +23,7 @@ import VerilogConstructs.VerilogWait;
  * @author Tramy Nguyen
  *
  */
-public class VerilogParser_LFSR extends AbstractVerilogParserTest{
+public class VerilogParser_LFSR {
 	
 	private static VerilogModule verilog_imp, verilog_tb;
 	private static VerilogBlock imp_alwaysblk, tb_alwaysblk;
@@ -32,7 +32,7 @@ public class VerilogParser_LFSR extends AbstractVerilogParserTest{
 	public static void setupTest() {
 		String files = String.join(" ", CompilerTestSuite.verilogLFSR_impFile, CompilerTestSuite.verilogLFSR_tbFile);		
 		String[] cmd = {"-v", files};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());
 		

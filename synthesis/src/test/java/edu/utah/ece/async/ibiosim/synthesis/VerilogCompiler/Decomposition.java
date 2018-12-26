@@ -9,7 +9,7 @@ import org.sbml.jsbml.text.parser.ParseException;
  * Test Verilog expression when it goes through synthesis
  * @author Tramy Nguyen
  */
-public class Decomposition extends AbstractVerilogParserTest{
+public class Decomposition { 
 
 	
 	@Test

@@ -19,7 +19,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
  * @author Tramy Nguyen
  *
  */
-public class SBOL_Example4 extends AbstractVerilogParserTest{
+public class SBOL_Example4 {
 
 	private static SBOLDocument sbolDoc;
 	private static ModuleDefinition sbolDesign;
@@ -28,7 +28,7 @@ public class SBOL_Example4 extends AbstractVerilogParserTest{
 	public static void setupTest() {
 		
 		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file, "-sbol", "-flat"};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		
 		String vName = "contAssign5";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);

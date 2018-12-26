@@ -19,7 +19,7 @@ import org.sbml.jsbml.ext.comp.Port;
  * @author Tramy Nguyen
  *
  */
-public class SBML_Example1 extends AbstractVerilogParserTest{
+public class SBML_Example1 {
 	
 	private static Model sbmlModel;
 	
@@ -27,7 +27,7 @@ public class SBML_Example1 extends AbstractVerilogParserTest{
 	public static void setupTest() {
 		
 		String[] cmd = {"-v", CompilerTestSuite.verilogInitBlock_file, "-sbml"};
-		VerilogCompiler compiledVerilog = reader.runCompiler(cmd);
+		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 	
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("init_block");
 		Assert.assertNotNull(sbmlWrapper);		
