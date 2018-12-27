@@ -1,5 +1,7 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URI;
 
 import org.junit.Assert;
@@ -481,4 +483,108 @@ public class SBOLExample8_Test {
 			Assert.assertEquals(DirectionType.OUT, actualProtein.getDirection());
 		}
 	}
+
+	@Test
+	public void Test_dnaSize() {
+		int actualSize = 0; 
+		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
+			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(30, actualSize);
+	}
+	
+	@Test
+	public void Test_qSubcircuitInhibitionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : subcircuit_q.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.INHIBITION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(4, actualSize);
+	}
+
+	@Test
+	public void Test_qnotSubcircuitInhibitionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : subcircuit_qnot.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.INHIBITION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(4, actualSize);
+	}
+	
+	@Test
+	public void Test_qSubcircuitProductionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : subcircuit_q.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(3, actualSize);
+	}
+	
+	@Test
+	public void Test_qnotSubcircuitProductionSize() {
+		int actualSize = 0; 
+		for(Interaction inter : subcircuit_qnot.getInteractions()) {
+			if(inter.getTypes().iterator().next().equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
+				actualSize++;
+			}
+		}
+		Assert.assertEquals(3, actualSize);
+	}
+	
+	@Test
+	public void Test_FCtoCD() {
+		for(FunctionalComponent fullCircuitProtein : fullCircuit.getFunctionalComponents()) {
+			
+			String fullCircuitId = fullCircuitProtein.getDisplayId();
+			FunctionalComponent subcircuitProtein = null;
+			switch(fullCircuitId) {
+			case "FC0_s":
+				subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC18_s");
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD0_s", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+				break;
+			case "FC1_r":
+				subcircuitProtein = subcircuit_q.getFunctionalComponent("FC10_r");
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD1_r", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+				break;
+			case "FC2_q":
+				subcircuitProtein = subcircuit_q.getFunctionalComponent("FC4_q");
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD2_q", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+
+				subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC19_q");
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD2_q", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+				break;
+			case "FC3_qnot":
+				subcircuitProtein = subcircuit_q.getFunctionalComponent("FC11_qnot"); 
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD3_qnot", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+
+				subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC12_qnot"); 
+				assertNotNull(subcircuitProtein);
+				Assert.assertEquals("CD3_qnot", fullCircuitProtein.getDefinition().getDisplayId());
+				Assert.assertTrue(fullCircuitProtein.getDefinition().equals(subcircuitProtein.getDefinition()));
+				break;
+			default:
+				Assert.fail("Unexpected protein found on full circuit with the following displayId " + fullCircuitId);
+			}
+			
+		}
+	}
+
 }
