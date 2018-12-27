@@ -36,7 +36,7 @@ public class SBOLExample4_Test {
 		Assert.assertNotNull(sbolWrapper);
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition(vName, "1.0");
+		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + vName, "1.0");
 	}
 	
 	@Test

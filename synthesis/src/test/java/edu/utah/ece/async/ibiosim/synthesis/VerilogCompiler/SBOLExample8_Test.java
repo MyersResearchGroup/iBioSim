@@ -383,36 +383,30 @@ public class SBOLExample8_Test {
 	}
 	
 	@Test
-	public void Test_qMapsTo1() {
+	public void Test_qMapsTo() {
 		Module qCircuit_instance = fullCircuit.getModule("M0");
 		Assert.assertNotNull(qCircuit_instance);
+		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
+			switch (wire.getDisplayId()) {
+			case "MT0":
+				Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC4_q", wire.getRemote().getDisplayId());
+				break;
+			case "MT1":
+				Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC11_qnot", wire.getRemote().getDisplayId());
+				break;
+			case "MT2":
+				Assert.assertEquals("FC1_r", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC10_r", wire.getRemote().getDisplayId());
+				break;
+			default:
+				Assert.fail("Unexpected MapsTo was found for the following circuit " + wire.getDisplayId());
+				break;
+			}
+			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+		}
 		
-		MapsTo wire = qCircuit_instance.getMapsTo("MT0");
-		Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC4_q", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-	}
-
-	@Test
-	public void Test_qMapsTo2() {
-		Module qCircuit_instance = fullCircuit.getModule("M0");
-		Assert.assertNotNull(qCircuit_instance);
-		
-		MapsTo wire = qCircuit_instance.getMapsTo("MT1");
-		Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC11_qnot", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-	}
-
-	@Test
-	public void Test_qMapsTo3() {
-		Module qCircuit_instance = fullCircuit.getModule("M0");
-		Assert.assertNotNull(qCircuit_instance);
-		
-		MapsTo wire = qCircuit_instance.getMapsTo("MT2");
-		Assert.assertEquals("FC1_r", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC10_r", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
 	}
 
 	@Test
@@ -430,36 +424,30 @@ public class SBOLExample8_Test {
 	}
 
 	@Test
-	public void Test_qnotMapsTo1() {
-		Module qnotCircuit_instance = fullCircuit.getModule("M1");
-		Assert.assertNotNull(qnotCircuit_instance);
+	public void Test_qnotMapsTo() {
+		Module qCircuit_instance = fullCircuit.getModule("M1");
+		Assert.assertNotNull(qCircuit_instance);
+		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
+			switch (wire.getDisplayId()) {
+			case "MT4":
+				Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC19_q", wire.getRemote().getDisplayId());
+				break;
+			case "MT5":
+				Assert.assertEquals("FC0_s", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC18_s", wire.getRemote().getDisplayId());
+				break;
+			case "MT3":
+				Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
+				Assert.assertEquals("FC12_qnot", wire.getRemote().getDisplayId());
+				break;
+			default:
+				Assert.fail("Unexpected MapsTo was found for the following circuit " + wire.getDisplayId());
+				break;
+			}
+			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+		}
 		
-		MapsTo wire = qnotCircuit_instance.getMapsTo("MT3");
-		Assert.assertEquals("FC0_s", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC18_s", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-	}
-
-	@Test
-	public void Test_qnotMapsTo2() {
-		Module qnotCircuit_instance = fullCircuit.getModule("M1");
-		Assert.assertNotNull(qnotCircuit_instance);
-		
-		MapsTo wire = qnotCircuit_instance.getMapsTo("MT4");
-		Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC12_qnot", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-	}
-
-	@Test
-	public void Test_qnotMapsTo3() {
-		Module qnotCircuit_instance = fullCircuit.getModule("M1");
-		Assert.assertNotNull(qnotCircuit_instance);
-		
-		MapsTo wire = qnotCircuit_instance.getMapsTo("MT5");
-		Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
-		Assert.assertEquals("FC19_q", wire.getRemote().getDisplayId());
-		Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
 	}
 
 	@Test
