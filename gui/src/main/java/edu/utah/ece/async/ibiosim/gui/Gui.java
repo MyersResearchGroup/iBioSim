@@ -501,7 +501,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
 		
-		importVerilog = new JMenuItem("Verilog File(s)");
+		importVerilog = new JMenuItem("Verilog File");
 		importSbol = new JMenuItem("SBOL File");
 		importGenBank = new JMenuItem("GenBank File");
 		importFasta = new JMenuItem("Fasta File");
