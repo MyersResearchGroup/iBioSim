@@ -60,7 +60,6 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -91,10 +90,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
 	private Gui gui;
-	private Properties synthProps; // Stores fields needed for technology mapping in a property file
+	private Properties synthProps; //Store fields needed for technology mapping in a property file
 	private JTextField specText;
 	private List<String> libFilePaths;
-	private JList<String> libList; // The path to all the gate library files.
+	private JList<String> libList; //The path to all the library files.
 
 	private JScrollPane libScroll;
 	private JButton addLibButton, removeLibButton;
@@ -152,7 +151,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JPanel constructSpecLibPanel() 
 	{
 		JPanel specLibPanel = new JPanel();
-		JLabel libLabel = new JLabel("Library Files: ");
+		JLabel libLabel = createLabel("Library Files: ");
 		JPanel inputPanel = constructSpecLibInputPanel();
 		specLibPanel.add(libLabel);
 		specLibPanel.add(inputPanel);
@@ -183,7 +182,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private JPanel constructSpecPanel() {
 		JPanel specPanel = new JPanel();
-		JLabel specLabel = new JLabel("Specification File:");
+		JLabel specLabel = createLabel("Specification File:");
 		specText = new JTextField();
 		specText.setEditable(false);
 		specPanel.add(specLabel);
@@ -191,19 +190,29 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return specPanel;
 	}
 
+
 	/**
 	 * Create buttons to add and remove gate library files.
 	 * @return the button panel for the gate library
 	 */
 	private JPanel constructLibButtonPanel() {
-		JPanel buttonPanel = new JPanel();
-		addLibButton = new JButton("Add");
+		JPanel buttonContainer = new JPanel();
+		
+		addLibButton = createButton("Add");
 		addLibButton.addActionListener(this);
-		removeLibButton = new JButton("Remove");
+		
+		removeLibButton = createButton("Remove");
 		removeLibButton.addActionListener(this);
-		buttonPanel.add(addLibButton);
-		buttonPanel.add(removeLibButton);
-		return buttonPanel;
+		
+		buttonContainer.add(addLibButton);
+		buttonContainer.add(removeLibButton);
+		
+		return buttonContainer;
+	}
+	
+	private JButton createButton(String buttonName) {
+		JButton button = new JButton(buttonName);
+		return button;
 	}
 
 	/**
@@ -230,14 +239,27 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private JPanel constructTechnologyMappingOptions(){
 		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
-		select_SBMLTechMap = new JRadioButton("SBML Technology Mapping");
-		select_SBOLTechMap = new JRadioButton("SBOL Technology Mapping");	
+		
+		select_SBMLTechMap = createRadioButton("SBML Technology Mapping");
 		select_SBMLTechMap.setSelected(true);
 		techMapPanel.add(select_SBMLTechMap);
-		techMapPanel.add(select_SBOLTechMap); 
 		select_SBMLTechMap.addActionListener(this);
+		
+		select_SBOLTechMap = createRadioButton("SBOL Technology Mapping");	
+		techMapPanel.add(select_SBOLTechMap); 
 		select_SBOLTechMap.addActionListener(this);
+		
 		return techMapPanel;
+	}
+	
+	private JRadioButton createRadioButton(String radioButtonName) {
+		JRadioButton radioButton = new JRadioButton(radioButtonName);
+		return radioButton;
+	}
+	
+	private JLabel createLabel(String labelName) {
+		JLabel label = new JLabel(labelName);
+		return label;
 	}
 
 	/**
@@ -246,8 +268,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private JPanel constructMethodLabelPanel() {
 		JPanel labelPanel = new JPanel(new GridLayout(2, 1));
-		labelPanel.add(new JLabel("Synthesis Method:  "));
-		numSolnsLabel = new JLabel("Number of Solutions:  ");
+		labelPanel.add(createLabel("Synthesis Method:  "));
+		numSolnsLabel = createLabel("Number of Solutions:  ");
 		labelPanel.add(numSolnsLabel);
 		return labelPanel;
 	}
@@ -414,17 +436,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			libFilePaths.remove(libFilePaths.size() - 1);
 		updateLibraryFiles();
 	}
-
-	//	private void mergeLibraryFiles(int[] mergeIndices) {
-	//		for (int mergeIndex : mergeIndices) 
-	//			for (String fileID : new File(libFilePaths.get(mergeIndex)).list()) {
-	//				if (fileID.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)) {
-	//					SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(libFilePaths.get(mergeIndex) + separator + fileID);
-	//					SBOLDocument flatSBOLDoc = SBOLUtility.flattenSBOLDocument(sbolDoc);
-	//					
-	//				}
-	//			}
-	//	}
 
 	/**
 	 * Retrieve the path for all the gate library files and store them in the global variable liblist.
