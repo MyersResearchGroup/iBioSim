@@ -24,7 +24,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
  * 
  * @author Tramy Nguyen
  */
-public class Main {
+public class VerilogRunner {
 
 	private static final char separator = ' ';
 	
@@ -33,16 +33,21 @@ public class Main {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
-			VerilogCompiler compiler = runVerilogCompiler(compilerOptions);
+			VerilogCompiler compiledVerilog = runVerilogCompiler(compilerOptions);
 			if(compilerOptions.isExportOn()){
-				if(compilerOptions.isGenerateSBML()){
-					compiler.exportSBML();
-				}
-				if(compilerOptions.isGenerateLPN()){
-					compiler.exportLPN();
-				}
 				if(compilerOptions.isGenerateSBOL()){
-					compiler.exportSBOL();
+					compiledVerilog.generateSBOL();
+					compiledVerilog.exportSBOL();
+				}
+				else {
+					compiledVerilog.generateSBML();
+					if(compilerOptions.isGenerateSBML()){
+						compiledVerilog.exportSBML();
+					}
+					if(compilerOptions.isGenerateLPN()){
+						compiledVerilog.flattenSBML();
+						compiledVerilog.exportLPN();
+					}
 				}
 			}
 		} 
@@ -168,20 +173,9 @@ public class Main {
 
 	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
 		compilerOptions.verifyCompilerSetup();
+		
 		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
 		compiler.compile(); 
-		
-		if(compilerOptions.isGenerateSBOL()){
-			compiler.generateSBOL();
-		}
-		else{
-			compiler.generateSBML();
-			if(compilerOptions.isGenerateLPN()){
-				compiler.exportSBML();
-				compiler.flattenSBML();
-				compiler.generateLPN();
-			}
-		}
 		return compiler;
 	}
 

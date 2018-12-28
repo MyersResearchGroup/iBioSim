@@ -190,6 +190,8 @@ public class GlobalConstants {
 	public static final int SD_GENE_LENGTH = 269;
 	public static final String SBOL_FILE_EXTENSION = ".sbol";
 	public static final String RDF_FILE_EXTENSION = ".rdf";
+	public static final String VERILOG_FILE_EXTENTION = ".v";
+	public static final String SYSTEM_VERILOG_FILE_EXTENTION = ".sv";
 	public static final String SBOL_SYNTH_PROPERTIES_EXTENSION = ".sbolsynth.properties";
 	public static final String SBOL_SYNTH_SPEC_PROPERTY = "synthesis.spec";
 	public static final String SBOL_SYNTH_LIBS_PROPERTY = "synthesis.libraries";

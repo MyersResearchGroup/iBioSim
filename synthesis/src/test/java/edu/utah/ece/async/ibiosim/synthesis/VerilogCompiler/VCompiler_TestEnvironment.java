@@ -20,11 +20,22 @@ public class VCompiler_TestEnvironment {
 
 	public VerilogCompiler runCompiler(String[] args) {
 		
-		VerilogCompiler compiledResult = null;
+		VerilogCompiler compiledVerilog = null;
 		try {
-			CommandLine cmds = Main.parseCommandLine(args);
-			CompilerOptions setupOpt = Main.createCompilerOptions(cmds);
-			compiledResult = Main.runVerilogCompiler(setupOpt);
+			CommandLine cmds = VerilogRunner.parseCommandLine(args);
+			CompilerOptions setupOpt = VerilogRunner.createCompilerOptions(cmds);
+			compiledVerilog = VerilogRunner.runVerilogCompiler(setupOpt);
+			
+			if(setupOpt.isGenerateSBOL()){
+				compiledVerilog.generateSBOL();
+			}
+			else {
+				compiledVerilog.generateSBML();
+				if(setupOpt.isGenerateLPN()){
+					compiledVerilog.flattenSBML();
+					compiledVerilog.generateLPN();
+				}
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
@@ -42,7 +53,7 @@ public class VCompiler_TestEnvironment {
 		} catch (SBOLConversionException e) {
 			e.printStackTrace();
 		}
-		return compiledResult;
+		return compiledVerilog;
 	}
 
 }

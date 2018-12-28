@@ -172,6 +172,10 @@ public class VerilogCompiler {
 		return this.vmoduleToSBML.get(verilogModule_id);
 	}
 	
+	public Map<String, WrappedSBML> getSBMLWrapperMapper(){
+		return this.vmoduleToSBML;
+	}
+
 	public WrappedSBOL getSBOLWrapper(String verilogModule_id) {
 		return this.vmoduleToSBOL.get(verilogModule_id);
 	}

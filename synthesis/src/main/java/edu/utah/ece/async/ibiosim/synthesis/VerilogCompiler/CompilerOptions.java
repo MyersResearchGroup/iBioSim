@@ -29,8 +29,7 @@ public class CompilerOptions {
 		this.flatModel = false;
 	}
 
-	public void addVerilogFile(String fullFileName) throws FileNotFoundException {
-		File verilogFile = new File(fullFileName);
+	public void addVerilogFile(File verilogFile) throws FileNotFoundException {
 		if(!verilogFile.exists()) {
 			throw new FileNotFoundException();
 		}
@@ -40,6 +39,11 @@ public class CompilerOptions {
 		if(verilogFile.isFile()) {
 			this.verilogFiles.add(verilogFile);
 		}
+	}
+	
+	public void addVerilogFile(String fullFileName) throws FileNotFoundException {
+		File verilogFile = new File(fullFileName);
+		addVerilogFile(verilogFile);
 	}
 	
 	public void addDirectoryVerilogFiles(File file) {

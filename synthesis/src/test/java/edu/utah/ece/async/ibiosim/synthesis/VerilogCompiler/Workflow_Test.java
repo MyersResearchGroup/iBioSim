@@ -19,7 +19,7 @@ public class Workflow_Test {
 						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
 						"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test 
@@ -27,7 +27,7 @@ public class Workflow_Test {
 		String[] cmd = {"-v", CompilerTestSuite.verilogCounter_impFile, CompilerTestSuite.verilogCounter_tbFile, 
 				"-imp", "counter_imp", "-tb", "counter_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "counter"};
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test 
@@ -36,7 +36,7 @@ public class Workflow_Test {
 				"-imp", "multthree_imp", "-tb", "multThree_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "multThree"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test 
@@ -45,7 +45,7 @@ public class Workflow_Test {
 				"-imp", "scanflop_imp", "-tb", "scanflop_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "scanflop"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test 
@@ -54,7 +54,7 @@ public class Workflow_Test {
 				"-imp", "lfsr_imp", "-tb", "lfsr_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "lfsr"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class Workflow_Test {
 				"-imp", "srlatch_imp", "-tb", "srlatch_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "srlatch"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 	
 	@Test	
@@ -71,7 +71,7 @@ public class Workflow_Test {
 		String[] cmd = {"-v", CompilerTestSuite.verilogFilter_file,
 				"-sbol", "-od", CompilerTestSuite.outputDirectory, "-flat"};
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 
 	@Test	
@@ -79,6 +79,6 @@ public class Workflow_Test {
 		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file,
 				"-sbol", "-od", CompilerTestSuite.outputDirectory };
 		
-		Main.main(cmd);
+		VerilogRunner.main(cmd);
 	}
 }
