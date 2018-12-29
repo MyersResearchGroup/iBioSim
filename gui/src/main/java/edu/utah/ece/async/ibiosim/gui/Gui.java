@@ -7457,7 +7457,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			if (overwrite(root + File.separator + synthID, synthID)) 
 			{
-				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
+				SynthesisView synthView = new SynthesisView(this, synthID, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7475,7 +7475,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
-				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
+				SynthesisView synthView = new SynthesisView(this, synthID, root, log);
 				synthView.loadSynthesisProperties(synthProps);
 				addTab(synthID, synthView, null);
 			}

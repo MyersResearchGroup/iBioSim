@@ -84,19 +84,21 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 
 	private static final long serialVersionUID = 1L;
 	private String synthID; // ID of synthesis file
-	private String separator; 
 	private String rootFilePath; // Path to the iBioSim project
-
+	private String tbFilePath; 
+	
 	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
 	private Gui gui;
 	private Properties synthProps; //Store fields needed for technology mapping in a property file
-	private JTextField specText;
+	
+	private JTextField specText, tbTextBox;
+	
 	private List<String> libFilePaths;
 	private JList<String> libList; //The path to all the library files.
 
 	private JScrollPane libScroll;
-	private JButton addLibButton, removeLibButton;
+	private JButton addLibButton, removeLibButton, tbButton;
 	private JComboBox methodBox;
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
@@ -112,15 +114,14 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 * @param rootFilePath - Path to the iBioSim project
 	 * @param log - Log file used in each iBioSim project
 	 */
-	public SynthesisView(Gui ibioSimGUI, String synthID, String separator, String rootFilePath, Log log) 
+	public SynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
 	{
 		this.gui = ibioSimGUI;
 		this.synthID = synthID;
-		this.separator = separator;
 		this.rootFilePath = rootFilePath;
 		this.log = log;
 
-		new File(rootFilePath + separator + synthID).mkdir(); // Create the synthesis directory
+		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
 		JPanel optionsPanel = constructOptionsPanel(); // Create the UI for the synthesis view
 		addTab("Synthesis Options", optionsPanel); // Create a tab in the iBioSim workspace for technology mapping
 		getComponentAt(getComponents().length - 1).setName("Synthesis Options"); // Set the title of the technology mapping tab.
@@ -142,7 +143,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		optionsPanel.add(methodPanel, BorderLayout.CENTER);
 		return topPanel;
 	}
-
+	
 	/**
 	 * Construct the technology mapping library gate panel for users to upload the library file(s).
 	 * 
@@ -151,7 +152,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JPanel constructSpecLibPanel() 
 	{
 		JPanel specLibPanel = new JPanel();
-		JLabel libLabel = createLabel("Library Files: ");
+		JLabel libLabel = new JLabel("Library Files: ");
 		JPanel inputPanel = constructSpecLibInputPanel();
 		specLibPanel.add(libLabel);
 		specLibPanel.add(inputPanel);
@@ -165,12 +166,19 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private JPanel constructSpecLibInputPanel() 
 	{
+		JPanel designPanel = new JPanel(new BorderLayout());
 		JPanel inputPanel = new JPanel(new BorderLayout());
 		JPanel specPanel = constructSpecPanel();
+		JPanel tbPanel = constructTestbenchPanel();
+		designPanel.add(specPanel, BorderLayout.NORTH);
+		designPanel.add(tbPanel, BorderLayout.SOUTH);
+		
 		libScroll = new JScrollPane();
 		libScroll.setPreferredSize(new Dimension(276, 55));
+		
 		JPanel buttonPanel = constructLibButtonPanel();
-		inputPanel.add(specPanel, BorderLayout.NORTH);
+		inputPanel.add(designPanel, BorderLayout.NORTH);
+		
 		inputPanel.add(libScroll, BorderLayout.WEST);
 		inputPanel.add(buttonPanel, BorderLayout.SOUTH);
 		return inputPanel;
@@ -181,15 +189,35 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 * @return The specification panel.
 	 */
 	private JPanel constructSpecPanel() {
-		JPanel specPanel = new JPanel();
-		JLabel specLabel = createLabel("Specification File:");
+		JPanel specPanel = createLabeledPanel("Specification File:");
 		specText = new JTextField();
 		specText.setEditable(false);
-		specPanel.add(specLabel);
 		specPanel.add(specText);
 		return specPanel;
 	}
 
+	private JPanel constructTestbenchPanel(){
+		JPanel tbPanel = createLabeledPanel("Testbench File:");
+		
+		JPanel buttonPanel = new JPanel();
+		tbButton = new JButton("Browse...");
+		tbButton.addActionListener(this);
+		buttonPanel.add(tbButton);
+		
+		tbTextBox = new JTextField(20);
+		tbTextBox.setEnabled(false);
+		tbPanel.add(tbTextBox);
+		
+		tbPanel.add(buttonPanel);
+		return tbPanel;
+	}
+	
+	private JPanel createLabeledPanel(String panelName) {
+		JPanel panel = new JPanel();
+		JLabel panelLabel = new JLabel(panelName);
+		panel.add(panelLabel);
+		return panel;
+	}
 
 	/**
 	 * Create buttons to add and remove gate library files.
@@ -198,23 +226,16 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JPanel constructLibButtonPanel() {
 		JPanel buttonContainer = new JPanel();
 		
-		addLibButton = createButton("Add");
+		addLibButton = new JButton("Add");
+		removeLibButton = new JButton("Remove");
 		addLibButton.addActionListener(this);
-		
-		removeLibButton = createButton("Remove");
 		removeLibButton.addActionListener(this);
-		
 		buttonContainer.add(addLibButton);
 		buttonContainer.add(removeLibButton);
 		
 		return buttonContainer;
 	}
 	
-	private JButton createButton(String buttonName) {
-		JButton button = new JButton(buttonName);
-		return button;
-	}
-
 	/**
 	 * Create the supported technology mapping algorithms panel.
 	 * @return The technology mapping algorithms panel
@@ -240,36 +261,25 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JPanel constructTechnologyMappingOptions(){
 		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
 		
-		select_SBMLTechMap = createRadioButton("SBML Technology Mapping");
+		select_SBMLTechMap = new JRadioButton("SBML Technology Mapping");
 		select_SBMLTechMap.setSelected(true);
 		techMapPanel.add(select_SBMLTechMap);
-		select_SBMLTechMap.addActionListener(this);
 		
-		select_SBOLTechMap = createRadioButton("SBOL Technology Mapping");	
+		select_SBOLTechMap = new JRadioButton("SBOL Technology Mapping");	
 		techMapPanel.add(select_SBOLTechMap); 
-		select_SBOLTechMap.addActionListener(this);
 		
 		return techMapPanel;
 	}
 	
-	private JRadioButton createRadioButton(String radioButtonName) {
-		JRadioButton radioButton = new JRadioButton(radioButtonName);
-		return radioButton;
-	}
 	
-	private JLabel createLabel(String labelName) {
-		JLabel label = new JLabel(labelName);
-		return label;
-	}
-
 	/**
 	 * Set method label in Synthesis View
 	 * @return The label panel for the synthesis method.
 	 */
 	private JPanel constructMethodLabelPanel() {
 		JPanel labelPanel = new JPanel(new GridLayout(2, 1));
-		labelPanel.add(createLabel("Synthesis Method:  "));
-		numSolnsLabel = createLabel("Number of Solutions:  ");
+		labelPanel.add(new JLabel("Synthesis Method:  "));
+		numSolnsLabel = new JLabel("Number of Solutions:  ");
 		labelPanel.add(numSolnsLabel);
 		return labelPanel;
 	}
@@ -306,7 +316,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private void saveSynthesisProperties() 
 	{
-		String propFilePath = rootFilePath + separator + synthID + separator + synthID 
+		String propFilePath = rootFilePath + File.separator + synthID + File.separator + synthID 
 				+ GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION;
 		log.addText("Creating properties file:\n" + propFilePath + "\n");
 		try 
@@ -353,6 +363,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		methodBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY));
 		numSolnsText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
+	
+	private boolean isValidSynthesisFile(String fileFullPath) {
+		return fileFullPath.endsWith(GlobalConstants.SBOL_FILE_EXTENSION) ||
+				fileFullPath.endsWith(GlobalConstants.XML_FILE_EXTENSION) ||
+				fileFullPath.endsWith(GlobalConstants.VERILOG_FILE_EXTENTION);	
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) 
@@ -364,6 +380,15 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		else if (e.getSource() == removeLibButton)
 		{
 			removeLibraryFiles(libList.getSelectedIndices());
+		}
+		else if(e.getSource() == tbButton) {
+			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);
+			if(!isValidSynthesisFile(selectedFilePath)) {
+				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			tbFilePath = selectedFilePath;
+			tbTextBox.setText(selectedFilePath);
 		}
 		else if (e.getSource() == methodBox)
 		{
@@ -401,6 +426,15 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		if (methodBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_EXHAUST_BB)) 
 			numSolnsText.setText("1");
 	}
+	
+	private String openFileBrowser(int fileChooserType) {
+		//Get the path for the current ibiosim project directory and store into a File.
+		File startDirectory = new File(Preferences.userRoot().get("biosim.general.project_dir", ""));
+
+		//Run File browser and let the startDirectory be the starting directory location when the browser opens.
+		String selectedFilePath = Utility.browse(frame, startDirectory, null, fileChooserType, "Select", -1);
+		return selectedFilePath;
+	}
 
 	/**
 	 * 
@@ -408,12 +442,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private void addLibraryFile(int addIndex) 
 	{
-		//Go to the directory where this iBioSim project is located.
-		File startDirectory = new File(Preferences.userRoot().get("biosim.general.project_dir", ""));
-
-		//Retrieve the user's selected directory where the library of gates are stored.
-		String libFilePath = Utility.browse(frame, startDirectory, null, 
-				JFileChooser.DIRECTORIES_ONLY, "Open", -1);
+		String libFilePath = openFileBrowser(JFileChooser.FILES_AND_DIRECTORIES);
 		if (libFilePath.length() > 0 && !libFilePaths.contains(libFilePath)) 
 		{
 			if (addIndex >= 0)
@@ -445,7 +474,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		//NOTE: go through all file path in libFilePaths and add to libList
 		String[] libListData = new String[libFilePaths.size()];
 		for (int i = 0; i < libListData.length; i++) {
-			String[] splitPath = libFilePaths.get(i).split(separator);
+			String[] splitPath = libFilePaths.get(i).split(File.separator);
 			libListData[i] = splitPath[splitPath.length - 1];
 		}
 		libList.setListData(libListData);
@@ -472,7 +501,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				for (String libFilePath : libFilePaths) 
 					for (String fileID : new File(libFilePath).list())
 						if (fileID.endsWith(".sbol"))
-							sbolFilePaths.add(libFilePath + separator + fileID);
+							sbolFilePaths.add(libFilePath + File.separator + fileID);
 
 				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 
@@ -687,7 +716,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			solutionModel.setSBMLFile(solutionID + "_" + idIndex + ".xml");
 			solutionModel.getSBMLDocument().getModel().setId(solutionID + "_" + idIndex);
 			try {
-				solutionModel.save(synthFilePath + separator + solutionID + "_" + idIndex + ".xml");
+				solutionModel.save(synthFilePath + File.separator + solutionID + "_" + idIndex + ".xml");
 			} catch (XMLStreamException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
@@ -763,7 +792,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
 				solutionSubModel.load(solutionGraph.getModelFileID());
 				solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID.replace(".xml", ""));
-				solutionSubModel.save(synthFilePath + separator + subModelFileID);
+				solutionSubModel.save(synthFilePath + File.separator + subModelFileID);
 				solutionGraph.setModelFileID(subModelFileID);
 			}
 		} catch (XMLStreamException e) {
@@ -782,7 +811,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 
 	private String flattenProjectIntoModelFileID(BioModel biomodel, Set<String> modelFileIDs) {
-		String[] splitPath = biomodel.getPath().split(separator);
+		String[] splitPath = biomodel.getPath().split(File.separator);
 		String flatModelFileID = splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
 		int fileIndex = 0;
 		while (modelFileIDs.contains(flatModelFileID)) {
@@ -804,7 +833,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
 		try {
 			SBOLFileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
-					synthFilePath + separator + sbolFileID);
+					synthFilePath + File.separator + sbolFileID);
 			return sbolFileID;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
