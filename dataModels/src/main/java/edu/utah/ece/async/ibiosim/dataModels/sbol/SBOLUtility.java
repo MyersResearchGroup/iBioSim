@@ -21,10 +21,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.swing.JFrame;
@@ -50,7 +52,31 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
  */
 public class SBOLUtility 
 {
-	private static SBOLDocument SBOLDOC; 
+	private SBOLDocument SBOLDOC; //TODO: consider refactoring this SBOLDOC. Doesn't make sense to have a global doc in a utlity class. 
+	
+	private String sbolURIPrefix;
+	private static SBOLUtility utility;
+	
+	public static SBOLUtility getInstance() {
+		if(utility == null) {
+			utility = new SBOLUtility();
+		}
+		return utility;
+	}
+	
+	private SBOLUtility() {
+		//iBioSim's default URI prefix if user did not provide one from GUI or command line
+		this.sbolURIPrefix = GlobalConstants.SBOL_AUTHORITY_DEFAULT; 
+	}
+	
+	public void setURIPrefix(String uriPrefix) {
+		sbolURIPrefix = uriPrefix;
+	}
+	
+	public String getURIPrefix() {
+		return sbolURIPrefix;
+	}
+	
 	
 	/**
 	 * Get all the SBOL files from the given directory.
@@ -58,7 +84,7 @@ public class SBOLUtility
 	 * @param externalSBOLPath - The directory the get the SBOL files from
 	 * @return All SBOL files located in the given SBOL directory.
 	 */
-	public static HashSet<String> getSBOLFilesFromPath(String externalSBOLPath)
+	public HashSet<String> getSBOLFilesFromPath(String externalSBOLPath)
 	{
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
 		//Note: this is an optional field. User provided sbol path to read in
@@ -89,8 +115,9 @@ public class SBOLUtility
 	 * @throws IOException - Unable to read in the input file.
 	 * @throws SBOLConversionException - Unable to perform internal SBOL conversion from libSBOLj library.
 	 * @throws SBOLException - Null SBOLDocument
+	 * @deprecated use loadSBOLFile(String fileFullPath)
 	 */
-	public static SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException, SBOLException 
+	public SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException, SBOLException 
 	{
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
@@ -106,7 +133,17 @@ public class SBOLUtility
 		return sbolDoc;
 	}
 	
-	public static SBOLDocument loadMultSBOLFile(List<String> files, String defaultPrefix) throws SBOLValidationException, IOException, SBOLConversionException
+	/**
+	 * 
+	 * @param files
+	 * @param defaultPrefix
+	 * @return
+	 * @throws SBOLValidationException
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 * @deprecated Use loadSBOLDir(String dirPath)
+	 */
+	public SBOLDocument loadMultSBOLFile(List<String> files, String defaultPrefix) throws SBOLValidationException, IOException, SBOLConversionException
 	{
 		SBOLDocument sbolDoc = new SBOLDocument();
 		sbolDoc.setDefaultURIprefix(defaultPrefix);
@@ -119,8 +156,19 @@ public class SBOLUtility
 		
 		return sbolDoc;
 	}
-	
-	public static SBOLDocument loadFromDir(String directory, String defaultPrefix) throws SBOLException, SBOLValidationException, IOException, SBOLConversionException
+
+	/**
+	 * 
+	 * @param directory
+	 * @param defaultPrefix
+	 * @return
+	 * @throws SBOLException
+	 * @throws SBOLValidationException
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 * @deprecated Use loadSBOLDir(String dirPath)
+	 */
+	public SBOLDocument loadFromDir(String directory, String defaultPrefix) throws SBOLException, SBOLValidationException, IOException, SBOLConversionException
 	{
 		File files = new File(directory); 
 		List<String> sbolFiles = new ArrayList<String>();
@@ -139,11 +187,67 @@ public class SBOLUtility
 		return loadMultSBOLFile(sbolFiles, defaultPrefix);
 	
 	}
+	
+	public SBOLDocument mergeSBOLDocuments(ArrayList<SBOLDocument> documentList) throws SBOLValidationException {
+		String defaultPrefix = getURIPrefix();
+		SBOLDocument result = new SBOLDocument();
+		result.setDefaultURIprefix(defaultPrefix);
+		for(SBOLDocument currentDoc : documentList) {
+			result.createCopy(currentDoc);
+		}
+		return result;
+	}
 
-	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 
+	/**
+	 * Creates a java File object from the given String. 
+	 * @param fileFullPath: Full path to a file or a directory.
+	 * @return A File object
+	 * @throws FileNotFoundException: Unable to locate the given file or directory. 
+	 */
+	public File getFile(String fileFullPath) throws FileNotFoundException {
+		File file = new File(fileFullPath);
+		if(!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		return file;
+	}
+	
+	public SBOLDocument loadSBOLFile(String fileFullPath) throws SBOLValidationException, IOException, SBOLConversionException {
+		File file = getFile(fileFullPath);
+		if(!file.isFile()) {
+			throw new FileNotFoundException(fileFullPath + " was not identified as a file");
+		}
+		return parseSBOLFile(file);
+	}
+	
+	public ArrayList<SBOLDocument> loadSBOLDir(String dirPath) throws SBOLValidationException, IOException, SBOLConversionException {
+		File file = getFile(dirPath);
+		ArrayList<SBOLDocument> loadedDocuments = new ArrayList<>();
+		if(file.isDirectory()) {
+			loadedDocuments = loadSBOLDir(dirPath);
+			for(File f : file.listFiles()) {
+				loadedDocuments.add(parseSBOLFile(f));
+			}
+		}
+		return loadedDocuments;
+	}
+	
+	public SBOLDocument parseSBOLFile(File file) throws SBOLValidationException, IOException, SBOLConversionException {
+		SBOLReader.setURIPrefix(getURIPrefix());
+		SBOLDocument sbolDoc = SBOLReader.read(file);
+		return sbolDoc;
+	}
+	
+	public SBOLDocument createSBOLDocument() {
+		SBOLDocument doc = new SBOLDocument();
+		doc.setDefaultURIprefix(this.sbolURIPrefix);
+		doc.setComplete(false);
+		return doc;
+	}
+
+	public void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) throws FileNotFoundException, SBOLConversionException 
 	{
 		SBOLWriter.write(sbolDoc, new FileOutputStream(filePath));
-		
 	}
 	
 	/**
@@ -153,7 +257,7 @@ public class SBOLUtility
 	 * @throws SBOLValidationException - Unable to perform createCopy from libSBOLj
 	 * @throws SBOLException - SBOL contents not equal when performing SBOL equals method was called.
 	 */
-	public static void copyAllTopLevels(SBOLDocument sourceDoc, SBOLDocument targetDoc) throws SBOLValidationException, SBOLException
+	public void copyAllTopLevels(SBOLDocument sourceDoc, SBOLDocument targetDoc) throws SBOLValidationException, SBOLException
 	{
 		for(TopLevel topLevObj : sourceDoc.getTopLevels())
 		{
@@ -201,7 +305,7 @@ public class SBOLUtility
 	 * @throws SBOLValidationException - Unable to perform createCopy from libSBOLj
 	 * @throws SBOLException - SBOL contents not equal when performing SBOL equals method was called.
 	 */
-	private static void copySBOLObj(SBOLDocument targetSBOLDoc, TopLevel targetTopLevelObj, TopLevel sourceTopLevObj) throws SBOLValidationException, SBOLException
+	private void copySBOLObj(SBOLDocument targetSBOLDoc, TopLevel targetTopLevelObj, TopLevel sourceTopLevObj) throws SBOLValidationException, SBOLException
 	{
 		if(targetTopLevelObj == null)
 		{
@@ -223,7 +327,7 @@ public class SBOLUtility
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
 	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
 	// multiple data structures of the same URI
-	public static void addDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
+	public void addDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
 	{
 		dnac = replaceDNAComponent(dnac, sbolDoc);
 		Set<String> topURIs = new HashSet<String>();
@@ -239,7 +343,7 @@ public class SBOLUtility
 		}
 	}
 
-	public static void addSequence(Sequence seq, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
+	public void addSequence(Sequence seq, SBOLDocument sbolDoc, boolean flatten) throws SBOLValidationException 
 	{
 		Set<String> topURIs = new HashSet<String>();
 		for (TopLevel sbolObj : sbolDoc.getTopLevels())
@@ -251,7 +355,7 @@ public class SBOLUtility
 	}
 
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
-	private static void flattenDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException {
+	private void flattenDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException {
 		if (!topURIs.contains(dnac.getIdentity())) {
 			sbolDoc.createCopy(dnac); 
 			topURIs.add(dnac.getIdentity().toString());
@@ -262,7 +366,7 @@ public class SBOLUtility
 	}
 
 	// Recursively adds annotation subcomponents to top level of SBOL document if not already present
-	private static void flattenSubComponents(Set<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException 
+	private void flattenSubComponents(Set<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) throws SBOLValidationException 
 	{
 		for (SequenceAnnotation anno : annos) {
 			ComponentDefinition subDnac = anno.getComponent().getDefinition();
@@ -281,7 +385,7 @@ public class SBOLUtility
 
 	// Replaces DNA component and its subcomponents with components from SBOL document if their URIs match
 	// Used to avoid conflict of multiple data structures of same URI in a single SBOL document
-	public static ComponentDefinition replaceDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc) 
+	public ComponentDefinition replaceDNAComponent(ComponentDefinition dnac, SBOLDocument sbolDoc) 
 	{
 		ComponentDefinition resolvedDnac = sbolDoc.getComponentDefinition(dnac.getIdentity());
 		if (resolvedDnac != null)
@@ -294,7 +398,7 @@ public class SBOLUtility
 		return dnac;
 	}
 
-	private static void replaceSubComponents(Set<SequenceAnnotation> annos) 
+	private void replaceSubComponents(Set<SequenceAnnotation> annos) 
 	{
 		for (SequenceAnnotation anno : annos) 
 		{
@@ -320,7 +424,7 @@ public class SBOLUtility
 
 	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
 	// and DNA sequences of composite components using the deleted components
-	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) throws SBOLValidationException {
+	public void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) throws SBOLValidationException {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(deletingURI);
 		if (compDef!=null) {
 			// TODO: should update any references to this compDef
@@ -372,7 +476,7 @@ public class SBOLUtility
 
 	// Returns all DNA components from SBOL document that have URIs matching the given URI
 	// or that have subcomponents matching the given URI
-	public static List<ComponentDefinition> intersectDNAComponent(URI intersectingURI, SBOLDocument sbolDoc) {
+	public List<ComponentDefinition> intersectDNAComponent(URI intersectingURI, SBOLDocument sbolDoc) {
 		
 		List<ComponentDefinition> intersections = new LinkedList<ComponentDefinition>();
 		for (TopLevel sbolObj : sbolDoc.getTopLevels()) // note getContents() only returns top-level SBOL objects
@@ -388,7 +492,7 @@ public class SBOLUtility
 	}
 
 
-	private static List<ComponentDefinition> intersectWithSubComponents(URI intersectingURI, ComponentDefinition intersectedDnac, Set<SequenceAnnotation> intersectedAnnos) {
+	private List<ComponentDefinition> intersectWithSubComponents(URI intersectingURI, ComponentDefinition intersectedDnac, Set<SequenceAnnotation> intersectedAnnos) {
 		
 		List<ComponentDefinition> subIntersections = new LinkedList<ComponentDefinition>();
 		Iterator<SequenceAnnotation> annoIterator = intersectedAnnos.iterator();
@@ -413,7 +517,7 @@ public class SBOLUtility
 	}
 
 
-	public static List<URI> loadDNAComponentURIs(List<ComponentDefinition> dnaComps) {
+	public List<URI> loadDNAComponentURIs(List<ComponentDefinition> dnaComps) {
 		List<URI> uris = new LinkedList<URI>();
 		for (ComponentDefinition lowestComp : loadLowestSubComponents(dnaComps))
 			uris.add(lowestComp.getIdentity());
@@ -421,7 +525,7 @@ public class SBOLUtility
 	}
 
 
-	public static List<ComponentDefinition> loadLowestSubComponents(List<ComponentDefinition> dnaComps) {
+	public List<ComponentDefinition> loadLowestSubComponents(List<ComponentDefinition> dnaComps) {
 		List<ComponentDefinition> subComps = new LinkedList<ComponentDefinition>();
 		List<ComponentDefinition> tempComps = new LinkedList<ComponentDefinition>(dnaComps);
 		
@@ -437,7 +541,7 @@ public class SBOLUtility
 	}
 
 	
-	public static List<ComponentDefinition> filterDNAComponents(List<ComponentDefinition> dnaComps, Set<URI> soFilterNums) {
+	public List<ComponentDefinition> filterDNAComponents(List<ComponentDefinition> dnaComps, Set<URI> soFilterNums) {
 		List<ComponentDefinition> filteredComps = new LinkedList<ComponentDefinition>();
 		for (ComponentDefinition dnaComp : dnaComps) {
 			for (URI role : soFilterNums) {
@@ -450,7 +554,7 @@ public class SBOLUtility
 		return filteredComps;
 	}
 
-	public static int countNucleotides(List<ComponentDefinition> dnaComps) {
+	public int countNucleotides(List<ComponentDefinition> dnaComps) {
 		int nucleotideCount = 0;
 		for (ComponentDefinition dnaComp : dnaComps) {
 			Sequence sequence = dnaComp.getSequenceByEncoding(Sequence.IUPAC_DNA);
@@ -461,7 +565,7 @@ public class SBOLUtility
 	}
 
 
-	public static String convertRegexSOTermsToNumbers(String regex) 
+	public String convertRegexSOTermsToNumbers(String regex) 
 	{
 		regex = regex.replaceAll("promoter", "SO:0000167");
 		regex = regex.replaceAll("ribosome entry site", "SO:0000139");
@@ -470,7 +574,7 @@ public class SBOLUtility
 		return regex;
 	}
 
-	public static String loadSONumber(ComponentDefinition dnaComp) {
+	public String loadSONumber(ComponentDefinition dnaComp) {
 		for (URI uri : dnaComp.getRoles()) {
 			String authority = uri.getAuthority();
 			if (authority != null && authority.equals(GlobalConstants.SO_AUTHORITY2)) {
@@ -494,7 +598,7 @@ public class SBOLUtility
 	 * @return The property file for synthesis view
 	 * @throws IOException - Synthesis specification property is missing.
 	 */
-	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) throws IOException {
+	public Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) throws IOException {
 		Properties synthProps = new Properties();
 		for (String synthFileID : new File(synthFilePath).list())
 		{
