@@ -16,11 +16,13 @@ import VerilogConstructs.VerilogModule;
 import VerilogConstructs.VerilogModuleInstance;
 import VerilogConstructs.VerilogWait;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001BaseListener;
+import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Always_constructContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Binary_operatorContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Blocking_assignmentContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Conditional_statementContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Delay_controlContext;
+import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Delay_valueContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.ExpressionContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Function_callContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Function_declarationContext;
@@ -309,11 +311,18 @@ public class VerilogParser extends Verilog2001BaseListener{
 		}
 	}
 
+	public void enterDelay_value(Delay_valueContext ctx){ 
+		if(ctx.Decimal_number() != null) {
+			operators.add(ctx.getText());
+		}
+	}
+	
 	@Override
-	public void enterDelay_control(Delay_controlContext ctx){ 
+	public void exitDelay_control(Delay_controlContext ctx){ 
 		if(!constructCtx.isEmpty()) {
 			VerilogDelay delayConstruct = new VerilogDelay();
-			delayConstruct.setDelayValue(Integer.parseInt(ctx.delay_value().getText()));
+			String delayValue = infixToPrefix(); 
+			delayConstruct.setDelayValue(delayValue);
 			
 			AbstractVerilogConstruct currentConstruct = constructCtx.peek();
 			currentConstruct.addConstruct(delayConstruct);
@@ -376,13 +385,11 @@ public class VerilogParser extends Verilog2001BaseListener{
 
 	@Override
 	public void enterFunction_call(Function_callContext ctx) {
-		System.out.println("461 " + ctx.getText()); 
 		operatorSize = this.operators.size();
 	}
 	
 	@Override
 	public void exitFunction_call(Function_callContext ctx) {
-		System.out.println(ctx.getText()); 
 		while(this.operators.size() > this.operatorSize) {
 			this.operators.removeLast();
 		}
@@ -392,10 +399,19 @@ public class VerilogParser extends Verilog2001BaseListener{
 	@Override 
 	public void enterSystem_function_call(System_function_callContext ctx){ 
 		String function = ctx.getText();
-		switch(function) {
-		case "$random":
-			operators.add("uniform(0," + Integer.MAX_VALUE + ")");
-			break;
+		if(function.matches("\\$random")) {
+			operators.add("uniform");
+			operators.add("0");
+			operators.add(String.valueOf(Integer.MAX_VALUE));
+			
+		}
+		else if(function.matches("\\$urandom\\_range\\(\\d+\\)")) {
+			operators.add("uniform");
+			operators.add("0");
+
+		}
+		else if(function.matches("\\$urandom\\_range\\(\\d+,\\d+\\)")) {
+			operators.add("uniform");
 		}
 
 	}
@@ -507,8 +523,18 @@ public class VerilogParser extends Verilog2001BaseListener{
 		case "%":
 			operand1 = output.removeLast();
 			operand2 = output.removeLast();
-			//output.addLast("mod" + "(" + operand1 + "," +operand2 + ")");
 			output.addLast("piecewise(1, uniform(0,1)  < 0.5, 0)");
+			break;
+		case "uniform":
+			operand1 = output.removeLast();
+			operand2 = output.removeLast();
+			
+			if(Integer.parseInt(operand1) > Integer.parseInt(operand2)) {
+				String temp = operand1;
+				operand1 = operand2;
+				operand2 = temp;
+			}
+			output.addLast("uniform(" + operand1 + "," + operand2 + ")");
 			break;
 		default:
 			output.add(op);
@@ -538,7 +564,8 @@ public class VerilogParser extends Verilog2001BaseListener{
 	    }
 	 
 	    LinkedList<String> prefixMath = infixToPostfix();
-	    
-	    return prefixMath.pop();
+	    String result = prefixMath.pop();
+	    operators.addAll(prefixMath);
+	    return result; 
 	}
 }

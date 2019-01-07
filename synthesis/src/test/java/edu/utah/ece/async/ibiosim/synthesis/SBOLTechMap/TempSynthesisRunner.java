@@ -58,8 +58,8 @@ public class TempSynthesisRunner
 		SBOLDocument specDoc;
 		try 
 		{
-			specDoc = SBOLUtility.loadSBOLFile(PATH + SPEC_FILE_NAME, defaultURIPrefix);
-			SBOLDocument libDoc = SBOLUtility.loadSBOLFile(PATH + LIB_FILE_NAME, defaultURIPrefix);
+			specDoc = SBOLUtility.getInstance().loadSBOLFile(PATH + SPEC_FILE_NAME, defaultURIPrefix);
+			SBOLDocument libDoc = SBOLUtility.getInstance().loadSBOLFile(PATH + LIB_FILE_NAME, defaultURIPrefix);
 			
 			//Set up specification. and library graph
 			Synthesis syn = new Synthesis();
@@ -78,7 +78,7 @@ public class TempSynthesisRunner
 			syn.match_topLevel(syn.getSpecification(), matches);
 			Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
 			
-			SBOLDocument sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification(), GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+			SBOLDocument sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification()); 
 			sbolDoc.write(new File(OUTPUT_PATH + OUTPUT_FILE_NAME));
 		} 
 		catch (FileNotFoundException e1) 

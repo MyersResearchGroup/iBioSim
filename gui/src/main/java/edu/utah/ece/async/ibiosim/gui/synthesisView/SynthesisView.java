@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -68,7 +69,10 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
@@ -615,18 +619,18 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				SBOLDocument libDoc = new SBOLDocument();
 				for(String sbolDir : libFilePaths)
 				{
-					SBOLDocument sbolDoc = SBOLUtility.loadFromDir(sbolDir, defaultURIPrefix);
+					SBOLDocument sbolDoc = SBOLUtility.getInstance().loadFromDir(sbolDir, defaultURIPrefix);
 					libDoc.createCopy(sbolDoc);
 				}
-
-				SBOLDocument solution = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-
+				Synthesis syn = new Synthesis();
+				Map<SynthesisNode, SBOLGraph> solution = SBOLTechMap.runSBOLTechMap(syn, specDoc, libDoc);
+				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
 				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;
 				List<String> solutionFileIDs = new ArrayList<String>();
-				for (ModuleDefinition moduleDef : solution.getRootModuleDefinitions())
+				for (ModuleDefinition moduleDef : sbolTechMap_solution.getRootModuleDefinitions())
 				{
-					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
+					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, sbolTechMap_solution);
 					solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
 				} 
 				return solutionFileIDs;

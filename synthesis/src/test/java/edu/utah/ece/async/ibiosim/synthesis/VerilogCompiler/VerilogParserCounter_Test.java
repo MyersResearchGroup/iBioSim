@@ -204,7 +204,7 @@ public class VerilogParserCounter_Test {
 		VerilogWait actual_wait = VerilogTestUtility.getWaitConstruct(construct);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(actual_wait);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -239,7 +239,7 @@ public class VerilogParserCounter_Test {
 			AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(if_block, delay_index[i++]);
 			VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 			Assert.assertNotNull(actual_delay);
-			Assert.assertEquals(5, actual_delay.getDelayValue());
+			Assert.assertEquals("5", actual_delay.getDelayValue());
 		}
 		
 	}
@@ -300,7 +300,7 @@ public class VerilogParserCounter_Test {
 			AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(elseif_block, delay_index[i++]);
 			VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 			Assert.assertNotNull(actual_delay);
-			Assert.assertEquals(5, actual_delay.getDelayValue());
+			Assert.assertEquals("5", actual_delay.getDelayValue());
 		}
 		
 	}
@@ -366,7 +366,7 @@ public class VerilogParserCounter_Test {
 			AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(else_block, delay_index[i++]);
 			VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 			Assert.assertNotNull(actual_delay);
-			Assert.assertEquals(5, actual_delay.getDelayValue());
+			Assert.assertEquals("5", actual_delay.getDelayValue());
 		}
 		
 	}
@@ -437,7 +437,7 @@ public class VerilogParserCounter_Test {
 			AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(else_block, delay_index[i++]);
 			VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 			Assert.assertNotNull(actual_delay);
-			Assert.assertEquals(5, actual_delay.getDelayValue());
+			Assert.assertEquals("5", actual_delay.getDelayValue());
 		}
 		
 	}
@@ -767,7 +767,7 @@ public class VerilogParserCounter_Test {
 		VerilogWait actual_wait = VerilogTestUtility.getWaitConstruct(construct);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(actual_wait);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -787,7 +787,7 @@ public class VerilogParserCounter_Test {
 		VerilogWait actual_wait = VerilogTestUtility.getWaitConstruct(construct);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(actual_wait);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -819,7 +819,7 @@ public class VerilogParserCounter_Test {
 		AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -864,7 +864,7 @@ public class VerilogParserCounter_Test {
 		AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -909,7 +909,7 @@ public class VerilogParserCounter_Test {
 		AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -954,7 +954,7 @@ public class VerilogParserCounter_Test {
 		AbstractVerilogConstruct if_cst = VerilogTestUtility.getBlockConstruct(if_block, 0);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(if_cst);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -977,7 +977,7 @@ public class VerilogParserCounter_Test {
 		
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(construct);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -997,7 +997,7 @@ public class VerilogParserCounter_Test {
 	
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(alwaysConstruct);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -1027,7 +1027,7 @@ public class VerilogParserCounter_Test {
 		VerilogWait actual_wait = VerilogTestUtility.getWaitConstruct(construct);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(actual_wait);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -1037,7 +1037,7 @@ public class VerilogParserCounter_Test {
 	
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(alwaysConstruct);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -1067,7 +1067,7 @@ public class VerilogParserCounter_Test {
 		VerilogWait actual_wait = VerilogTestUtility.getWaitConstruct(construct);
 		VerilogDelay actual_delay = VerilogTestUtility.getDelayConstruct(actual_wait);	
 		Assert.assertNotNull(actual_delay);
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 }

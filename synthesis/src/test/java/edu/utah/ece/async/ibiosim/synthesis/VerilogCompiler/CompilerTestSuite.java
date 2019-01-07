@@ -30,6 +30,9 @@ import org.junit.runners.Suite.SuiteClasses;
 	VerilogParserExample11_Test.class,
 	VerilogParserExample12_Test.class,
 	VerilogParserExample13_Test.class,
+	VerilogParserExample14_Test.class,
+	VerilogParserExample15_Test.class,
+	VerilogParserExample16_Test.class,
 	VerilogParserEvenZeroes_Test.class,
 	VerilogParserMultThree_Test.class, 
 	VerilogParserCounter_Test.class,
@@ -84,10 +87,14 @@ public class CompilerTestSuite {
 	protected static String verilogCont7_file = CompilerTestSuite.class.getResource(File.separator + "contAssign7.v").getFile();
 	protected static String verilogDelay_file = CompilerTestSuite.class.getResource(File.separator + "delay.v").getFile();
 	protected static String verilogInitBlock_file = CompilerTestSuite.class.getResource(File.separator + "init_block.v").getFile();
+	protected static String verilogPortMapping_file = CompilerTestSuite.class.getResource(File.separator + "portMapping.v").getFile();
 	protected static String verilogReg_file = CompilerTestSuite.class.getResource(File.separator + "register.v").getFile();
 	protected static String verilogRegAssign_file = CompilerTestSuite.class.getResource(File.separator + "reg_assignments.v").getFile();
-	protected static String verilogUniform1_file = CompilerTestSuite.class.getResource(File.separator + "uniformFunc1.v").getFile();
+	protected static String verilogSystemFunc1_file = CompilerTestSuite.class.getResource(File.separator + "system_func1.v").getFile();
+	protected static String verilogSystemFunc2_file = CompilerTestSuite.class.getResource(File.separator + "system_func2.v").getFile();
+	protected static String verilogSystemFunc3_file = CompilerTestSuite.class.getResource(File.separator + "system_func3.v").getFile();
 	protected static String verilogWaitStmt_file = CompilerTestSuite.class.getResource(File.separator + "wait_stmt.v").getFile();
+	
 	protected static String verilogWaitStmt2_file = CompilerTestSuite.class.getResource(File.separator + "wait_stmt2.v").getFile();
 
 	protected static String verilogCounter_impFile = CompilerTestSuite.class.getResource(File.separator + "counter_imp.v").getFile();

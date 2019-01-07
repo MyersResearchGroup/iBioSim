@@ -105,7 +105,7 @@ public class FlatteningSBML_Test {
 		for(Event e : imp_model.getListOfEvents()){
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertEquals(ASTNode.Type.REAL, actual_delay.getMath().getType());
+				Assert.assertEquals(ASTNode.Type.NAME, actual_delay.getMath().getType());
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class FlatteningSBML_Test {
 		for(Event e : tb_model.getListOfEvents()){
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertEquals(ASTNode.Type.REAL, actual_delay.getMath().getType());
+				Assert.assertEquals(ASTNode.Type.NAME, actual_delay.getMath().getType());
 			}
 		}
 	}
@@ -127,6 +127,7 @@ public class FlatteningSBML_Test {
 				//flat SBML must only have id taken from imp and tb
 				String flat_id = flat_event.getId();
 				Type flat_delayType = flat_event.getDelay().getMath().getType();
+				Assert.assertEquals(ASTNode.Type.NAME, flat_delayType);
 				if(flat_id.startsWith("ez_instance__")) {
 					Event imp_event = imp_model.getEvent(flat_id.substring(13));
 					Assert.assertNotNull(imp_event);
@@ -148,7 +149,9 @@ public class FlatteningSBML_Test {
 		for(Event e : imp_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(5.0 == actual_delay.getMath().getReal());
+				Assert.assertTrue(actual_delay.getMath().isString());
+				Assert.assertTrue(actual_delay.getMath().isSetName());
+				Assert.assertEquals("5", actual_delay.getMath().getName());
 			}
 		}
 	}
@@ -158,7 +161,9 @@ public class FlatteningSBML_Test {
 		for(Event e : tb_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(5.0 == actual_delay.getMath().getReal());
+				Assert.assertTrue(actual_delay.getMath().isString());
+				Assert.assertTrue(actual_delay.getMath().isSetName());
+				Assert.assertEquals("5", actual_delay.getMath().getName());;
 			}
 		}
 	}
@@ -168,7 +173,9 @@ public class FlatteningSBML_Test {
 		for(Event e : flat_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(5.0 == actual_delay.getMath().getReal());
+				Assert.assertTrue(actual_delay.getMath().isString());
+				Assert.assertTrue(actual_delay.getMath().isSetName());
+				Assert.assertEquals("5", actual_delay.getMath().getName());;
 			}
 		}
 	}

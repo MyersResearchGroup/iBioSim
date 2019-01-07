@@ -39,7 +39,8 @@ public class SynthesisNode
 	private List<SynthesisNode> children; 
 	private FunctionalComponent functionalComponent; //Represent each vertex node
 	private ComponentDefinition componentDefinition; //Use to store the type for each vertex node
-	private String sequence;
+	private String flattenedSequence;
+	private Set<Sequence> sequences;
 	private ModuleDefinition moduleDefinition; //Represent each gate
 	private SBOLDocument sbolDoc; //SBOLDocument where the SBOL objects are referred to
 	private URI compDefType; 
@@ -59,13 +60,13 @@ public class SynthesisNode
 		ComponentDefinition compDef = fc.getDefinition();
 		this.componentDefinition = compDef;
 		this.compDefType = compDef.getTypes().iterator().next();
-		Set<Sequence> sequences = compDef.getSequences();
+		this.sequences = compDef.getSequences();
 		String completeSeq = "";
 		for(Sequence s: sequences)
 		{
 			completeSeq = completeSeq + s.getElements();
 		}
-		this.sequence = completeSeq;
+		this.flattenedSequence = completeSeq;
 		this.moduleDefinition = md;
 		this.sbolDoc = sbolDoc;
 		
@@ -124,9 +125,13 @@ public class SynthesisNode
 		return this.componentDefinition;
 	}
 	
-	public String getSequence()
+	public Set<Sequence> getSequences(){
+		return this.sequences;
+	}
+	
+	public String getFlattenedSequence()
 	{
-		return this.sequence;
+		return this.flattenedSequence;
 	}
 	
 	public ModuleDefinition getModuleDefinition()
@@ -162,7 +167,7 @@ public class SynthesisNode
 	@Override
 	public String toString()
 	{
-		return moduleDefinition.getDisplayId() + "_" + functionalComponent.getDisplayId();
+		return moduleDefinition.getDisplayId() + "_" + this.functionalComponent.getDisplayId(); 
 	}
 	
 	public boolean isLeaf()

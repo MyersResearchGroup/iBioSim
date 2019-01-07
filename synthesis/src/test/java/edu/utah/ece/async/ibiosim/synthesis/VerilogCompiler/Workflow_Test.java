@@ -7,15 +7,17 @@ import org.junit.Test;
 
 
 /**
+ * Test end to end process of running the VerilogCompiler. 
+ * This process involves reading in the specified verilog files and compiling the result to the desired output format
  * 
  * @author Tramy Nguyen
- *
  */
 public class Workflow_Test {
 
 	@Test 
 	public void TestEvenZeroes() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile,
+		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);
+		String[] cmd = {"-v", files,
 						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
 						"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		
@@ -24,7 +26,8 @@ public class Workflow_Test {
 	
 	@Test 
 	public void TestCounter() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogCounter_impFile, CompilerTestSuite.verilogCounter_tbFile, 
+		String files = String.join(" ", CompilerTestSuite.verilogCounter_impFile, CompilerTestSuite.verilogCounter_tbFile);
+		String[] cmd = {"-v", files, 
 				"-imp", "counter_imp", "-tb", "counter_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "counter"};
 		VerilogRunner.main(cmd);
@@ -32,7 +35,8 @@ public class Workflow_Test {
 	
 	@Test 
 	public void TestMultThree() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogMultThree_impFile, CompilerTestSuite.verilogMultThree_tbFile, 
+		String files = String.join(" ", CompilerTestSuite.verilogMultThree_impFile, CompilerTestSuite.verilogMultThree_tbFile);
+		String[] cmd = {"-v", files, 
 				"-imp", "multthree_imp", "-tb", "multThree_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "multThree"};
 		
@@ -41,7 +45,8 @@ public class Workflow_Test {
 	
 	@Test 
 	public void TestScanflop() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogScanflop_impFile, CompilerTestSuite.verilogScanflop_tbFile, 
+		String files = String.join(" ", CompilerTestSuite.verilogScanflop_impFile, CompilerTestSuite.verilogScanflop_tbFile);
+		String[] cmd = {"-v", files, 
 				"-imp", "scanflop_imp", "-tb", "scanflop_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "scanflop"};
 		
@@ -50,7 +55,8 @@ public class Workflow_Test {
 	
 	@Test 
 	public void TestLFSR() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogLFSR_impFile, CompilerTestSuite.verilogLFSR_tbFile, 
+		String files = String.join(" ", CompilerTestSuite.verilogLFSR_impFile, CompilerTestSuite.verilogLFSR_tbFile);
+		String[] cmd = {"-v", files, 
 				"-imp", "lfsr_imp", "-tb", "lfsr_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "lfsr"};
 		
@@ -59,7 +65,8 @@ public class Workflow_Test {
 	
 	@Test
 	public void TestSRLatch() {
-		String[] cmd = {"-v", CompilerTestSuite.verilogSRLatch_impFile, CompilerTestSuite.verilogSRLatch_tbFile, 
+		String files = String.join(" ", CompilerTestSuite.verilogSRLatch_impFile, CompilerTestSuite.verilogSRLatch_tbFile);
+		String[] cmd = {"-v", files, 
 				"-imp", "srlatch_imp", "-tb", "srlatch_testbench", 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "srlatch"};
 		
@@ -76,7 +83,7 @@ public class Workflow_Test {
 
 	@Test	
 	public void Test_small() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file,
+		String[] cmd = {"-v", CompilerTestSuite.verilogCont3_file, "-flat",
 				"-sbol", "-od", CompilerTestSuite.outputDirectory };
 		
 		VerilogRunner.main(cmd);

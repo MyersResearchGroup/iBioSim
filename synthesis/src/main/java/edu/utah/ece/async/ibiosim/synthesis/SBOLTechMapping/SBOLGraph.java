@@ -121,14 +121,14 @@ public class SBOLGraph
 					addRelationship(promoter, u, SystemsBiologyOntology.STIMULATION);
 				}
 			}
-			else if(type.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) //SystemsBiologyOntology.GENETIC_PRODUCTION
+			else if(type.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) 
 			{
 				List<URI> tf = new ArrayList<URI>();
 				URI promoter = null; 
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.TEMPLATE))
+					if(role.equals(SystemsBiologyOntology.TEMPLATE) || role.equals(SystemsBiologyOntology.PROMOTER)) 
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -307,7 +307,7 @@ public class SBOLGraph
 		BufferedWriter output = null;
 		try 
 		{
-			File file = new File(filename);
+			File file = new File(filename + ".dot");
 			output = new BufferedWriter(new FileWriter(file));
 			output.write("digraph G {");
 

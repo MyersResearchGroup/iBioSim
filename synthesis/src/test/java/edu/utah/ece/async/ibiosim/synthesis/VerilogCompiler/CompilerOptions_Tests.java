@@ -67,13 +67,13 @@ public class CompilerOptions_Tests{
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
-	public void Test_VerilogCompilerException() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+	public void Test_VerilogCompilerException() throws org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException, ParseException {
 		String[] args = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		//error because missing module identifier names for imp and tb
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -84,7 +84,7 @@ public class CompilerOptions_Tests{
 		//error because missing output file name
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test()
@@ -95,7 +95,7 @@ public class CompilerOptions_Tests{
 		//no output directory and output file name
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-			compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -106,7 +106,7 @@ public class CompilerOptions_Tests{
 		//error because missing output directory
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test()
@@ -116,7 +116,7 @@ public class CompilerOptions_Tests{
 		//no output directory
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -127,7 +127,7 @@ public class CompilerOptions_Tests{
 		//error because missing tb module identifier
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -138,7 +138,7 @@ public class CompilerOptions_Tests{
 		//error because missing imp module identifier
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		compilerOptions.verifyCompilerSetup();
+		VerilogRunner.runVerilogCompiler(compilerOptions);
 	}
 	
 	@Test

@@ -270,7 +270,7 @@ public class WrappedSBML {
 		return placeName;
 	}
 	
-	public Event createDelay(double delayValue) {
+	public Event createDelay(String delayValue) {
 		String delayName = getNextDelayId();
 		Event delayEvent = createTransition(delayName);
 		delayEvent.createDelay(new ASTNode(delayValue));

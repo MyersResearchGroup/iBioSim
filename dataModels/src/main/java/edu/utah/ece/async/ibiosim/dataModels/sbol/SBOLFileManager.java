@@ -92,7 +92,7 @@ public class SBOLFileManager {
 					 *of which sbol document belong to which sbol file. 
 					 */
 					fileDocMap.put(sbolFilePath, sbolDoc); 
-					SBOLUtility.copyAllTopLevels(sbolDoc, SBOLDOC);
+					SBOLUtility.getInstance().copyAllTopLevels(sbolDoc, SBOLDOC);
 				} 
 				else
 					sbolFilesAreLoaded = false;
@@ -185,11 +185,11 @@ public class SBOLFileManager {
 			if (sbolFilePath.equals(targetFilePath))
 			{
 				for(Sequence s : tempSbolDoc.getSequences())
-					SBOLUtility.addSequence(s, sbolDoc, false);
+					SBOLUtility.getInstance().addSequence(s, sbolDoc, false);
 				for(ComponentDefinition c : tempSbolDoc.getComponentDefinitions())
-					SBOLUtility.addDNAComponent(c, sbolDoc, false);
+					SBOLUtility.getInstance().addDNAComponent(c, sbolDoc, false);
 			}
-			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
+			SBOLUtility.getInstance().writeSBOLDocument(sbolFilePath, sbolDoc);
 			//System.out.println("Wrote sbolAnnot to this file: " + sbolFilePath);
 		}
 	}
@@ -197,8 +197,8 @@ public class SBOLFileManager {
 	public static void saveDNAComponents(List<ComponentDefinition> dnaComps, String filePath) throws SBOLValidationException, FileNotFoundException, SBOLConversionException {
 		SBOLDocument sbolDoc = new SBOLDocument();
 		for (ComponentDefinition dnaComp : dnaComps)
-			SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
-		SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+			SBOLUtility.getInstance().addDNAComponent(dnaComp, sbolDoc, false);
+		SBOLUtility.getInstance().writeSBOLDocument(filePath, sbolDoc);
 	}
 	
 

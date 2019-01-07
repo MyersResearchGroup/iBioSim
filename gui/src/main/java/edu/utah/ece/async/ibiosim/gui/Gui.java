@@ -4029,7 +4029,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 				try 
 				{
-					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+					sbolDocument = SBOLUtility.getInstance().loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					sbolDocument.setCreateDefaults(true);
 				} 
 				catch (FileNotFoundException e) 
@@ -4768,7 +4768,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			
 		} 
 		catch (org.sbml.jsbml.text.parser.ParseException | XMLStreamException | IOException | BioSimException
-				| VerilogCompilerException | SBOLValidationException | SBOLConversionException e) {
+				| VerilogCompilerException e) {
 			JOptionPane.showMessageDialog(frame, e.toString(), "Verilog Compiler Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
@@ -6017,7 +6017,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				//update SBOL library file with newly generated components that vpr model generator created.
 				generateSBMLFromSBOL(chosenDesign, filePath);
 				// TODO: should be using libSBOLj for this
-				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
+				SBOLUtility.getInstance().copyAllTopLevels(chosenDesign, sbolDocument);
 				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
@@ -7472,7 +7472,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		//Properties synthProps;
 		try 
 		{
-			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
+			Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
 				SynthesisView synthView = new SynthesisView(this, synthID, root, log);
@@ -8964,7 +8964,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				{
 					try 
 					{
-						Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
+						Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(
 								root + File.separator + s, File.separator, Gui.frame);
 						if (synthProps != null) 
 						{

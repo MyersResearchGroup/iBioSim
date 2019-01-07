@@ -490,7 +490,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),
 							SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
-						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
+						String regex = SBOLUtility.getInstance().convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 						SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex);
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);

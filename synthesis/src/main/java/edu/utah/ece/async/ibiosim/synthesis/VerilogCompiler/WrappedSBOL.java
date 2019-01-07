@@ -19,6 +19,7 @@ import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import SBOLGates.SBOLLogicGate;
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 
@@ -39,15 +40,13 @@ public class WrappedSBOL {
 	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter;
 
 	public WrappedSBOL() {
-		this.sbolDoc = new SBOLDocument();
-		this.sbolDoc.setDefaultURIprefix("http://async.ece.utah.edu/VerilogCompiler/"); 
-		this.sbolDoc.setComplete(true);
+		this.sbolDoc = SBOLUtility.getInstance().createSBOLDocument();
 		this.proteinMapping = new HashMap<>();
 		this.gateMapping = new HashMap<>();
 	}
 	
 	public ModuleDefinition createCircuit(String id) throws SBOLValidationException {
-		return this.sbolDoc.createModuleDefinition("circuit_" + id, sbolVersion);
+		return this.sbolDoc.createModuleDefinition(id, sbolVersion);
 	}
 	
 	private ComponentDefinition addComponentDefinition(String cd_id, URI compDefType) throws SBOLValidationException {
@@ -80,7 +79,7 @@ public class WrappedSBOL {
 		return inter;
 	}
 
-	private FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id, ArrayList<ComponentDefinition> promoters) throws SBOLValidationException {
+	public FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id, ArrayList<ComponentDefinition> promoters) throws SBOLValidationException {
 		String id = "_" + tu_id;
 		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
 		tu.addRole(SequenceOntology.ENGINEERED_REGION);
@@ -133,7 +132,7 @@ public class WrappedSBOL {
 		return protein_fc;
 	}
 
-	private ArrayList<ComponentDefinition> generatePromoters(int numofPromoters) throws SBOLValidationException{
+	public ArrayList<ComponentDefinition> generatePromoters(int numofPromoters) throws SBOLValidationException{
 		ArrayList<ComponentDefinition> promoters = new ArrayList<ComponentDefinition>();
 		for(int i = 0; i < numofPromoters; i++) {
 			ComponentDefinition promoter = createPromoter();
@@ -148,10 +147,12 @@ public class WrappedSBOL {
 		}
 		
 		if(numGateInput == 1) {
-			return createTranscriptionalUnit(circuit, "notGate", generatePromoters(1));
+			return createTranscriptionalUnit(circuit, "notTU", generatePromoters(1));
 		}
-		
-		return createTranscriptionalUnit(circuit, "norGate", generatePromoters(1));
+		/* TODO: iBioSim does not accept 2 promoters for 1 transcription unit. 
+		 * When iBiosim supports 2 promoters, change generatePromoters(1) to generatePromoters(2)
+		 */
+		return createTranscriptionalUnit(circuit, "norTU", generatePromoters(1));
 	}
 	
 	public Module addSubCircuit(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {

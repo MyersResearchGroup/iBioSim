@@ -50,9 +50,7 @@ public class VCompiler_TestEnvironment {
 			e.printStackTrace();
 		} catch (SBOLValidationException e) {
 			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			e.printStackTrace();
-		}
+		} 
 		return compiledVerilog;
 	}
 

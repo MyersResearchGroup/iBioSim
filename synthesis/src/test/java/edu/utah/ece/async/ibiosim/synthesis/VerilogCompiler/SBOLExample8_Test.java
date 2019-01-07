@@ -78,7 +78,7 @@ public class SBOLExample8_Test {
 
 	@Test
 	public void Test_qNOT1() {
-		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC5_notGate");
+		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC5_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = subcircuit_q.getFunctionalComponent("FC6_wiredProtein");
@@ -121,7 +121,7 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qNOT2() {
-		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC7_notGate");
+		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC7_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = subcircuit_q.getFunctionalComponent("FC8_wiredProtein");
@@ -163,7 +163,7 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qNOR1() {
-		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC9_norGate");
+		FunctionalComponent gate = subcircuit_q.getFunctionalComponent("FC9_norTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent in1 = subcircuit_q.getFunctionalComponent("FC10_r");
@@ -222,7 +222,7 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qnotNOT1() {
-		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC13_notGate");
+		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC13_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = subcircuit_qnot.getFunctionalComponent("FC14_wiredProtein");
@@ -264,7 +264,7 @@ public class SBOLExample8_Test {
 
 	@Test
 	public void Test_qnotNOT2() {
-		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC15_notGate");
+		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC15_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = subcircuit_qnot.getFunctionalComponent("FC16_wiredProtein");
@@ -306,7 +306,7 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qnotNOR1() {
-		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC17_norGate");
+		FunctionalComponent gate = subcircuit_qnot.getFunctionalComponent("FC17_norTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent in1 = subcircuit_qnot.getFunctionalComponent("FC18_s");
@@ -381,34 +381,29 @@ public class SBOLExample8_Test {
 	public void Test_subcircuitSize() {
 		Assert.assertEquals(2, fullCircuit.getModules().size());
 	}
-	
+
 	@Test
 	public void Test_qMapsTo() {
 		Module qCircuit_instance = fullCircuit.getModule("M0");
 		Assert.assertNotNull(qCircuit_instance);
-		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
-			switch (wire.getDisplayId()) {
-			case "MT0":
-				Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC4_q", wire.getRemote().getDisplayId());
-				break;
-			case "MT1":
-				Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC11_qnot", wire.getRemote().getDisplayId());
-				break;
-			case "MT2":
-				Assert.assertEquals("FC1_r", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC10_r", wire.getRemote().getDisplayId());
-				break;
-			default:
-				Assert.fail("Unexpected MapsTo was found for the following circuit " + wire.getDisplayId());
-				break;
-			}
-			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-		}
 		
+		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
+			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+			
+			String local = wire.getLocal().getDisplayId();
+			String remote = wire.getRemote().getDisplayId();
+			if(local.equals("FC2_q")) {
+				Assert.assertEquals("FC4_q", remote);
+			}
+			else if(local.equals("FC3_qnot")) {
+				Assert.assertEquals("FC11_qnot", wire.getRemote().getDisplayId());
+			}
+			else if(local.equals("FC1_r")) {
+				Assert.assertEquals("FC10_r", wire.getRemote().getDisplayId());
+			}
+		}
 	}
-
+	
 	@Test
 	public void Test_qMapsToSize() {
 		Module qCircuit_instance = fullCircuit.getModule("M0");
@@ -422,32 +417,27 @@ public class SBOLExample8_Test {
 		Assert.assertNotNull(qnotCircuit_instance);
 		Assert.assertEquals(3, qnotCircuit_instance.getMapsTos().size());
 	}
-
+	
 	@Test
 	public void Test_qnotMapsTo() {
 		Module qCircuit_instance = fullCircuit.getModule("M1");
 		Assert.assertNotNull(qCircuit_instance);
-		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
-			switch (wire.getDisplayId()) {
-			case "MT4":
-				Assert.assertEquals("FC2_q", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC19_q", wire.getRemote().getDisplayId());
-				break;
-			case "MT5":
-				Assert.assertEquals("FC0_s", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC18_s", wire.getRemote().getDisplayId());
-				break;
-			case "MT3":
-				Assert.assertEquals("FC3_qnot", wire.getLocal().getDisplayId());
-				Assert.assertEquals("FC12_qnot", wire.getRemote().getDisplayId());
-				break;
-			default:
-				Assert.fail("Unexpected MapsTo was found for the following circuit " + wire.getDisplayId());
-				break;
-			}
-			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
-		}
 		
+		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
+			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+			
+			String local = wire.getLocal().getDisplayId();
+			String remote = wire.getRemote().getDisplayId();
+			if(local.equals("FC3_qnot")) {
+				Assert.assertEquals("FC12_qnot", remote);
+			}
+			else if(local.equals("FC2_q")) {
+				Assert.assertEquals("FC19_q", wire.getRemote().getDisplayId());
+			}
+			else if(local.equals("FC0_s")) {
+				Assert.assertEquals("FC18_s", wire.getRemote().getDisplayId());
+			}
+		}
 	}
 
 	@Test

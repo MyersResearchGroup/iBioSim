@@ -53,8 +53,9 @@ public class VerilogCompiler {
 	
 	/**
 	 * Load the verilog files into a binary tree to begin parsing.
+	 * @throws VerilogCompilerException 
 	 */
-	public VerilogCompiler(CompilerOptions compilerOptions) {
+	public VerilogCompiler(CompilerOptions compilerOptions) throws VerilogCompilerException {
 	
 		this.stcList = new ArrayList<>();
 		this.verilogModules = new HashMap<>();
@@ -62,17 +63,15 @@ public class VerilogCompiler {
 		this.vmoduleToSBOL = new HashMap<>();
 		this.isFlatModel = compilerOptions.isOutputFlatModel();
 		
-		if(compilerOptions.isOutputDirectorySet()) {
-			this.outDir = compilerOptions.getOutputDirectory();
-		}
-		if(compilerOptions.isImplementatonModuleIdSet()) {
+		if(compilerOptions.isGenerateLPN()) {
 			this.imp_id = compilerOptions.getImplementationModuleId();
-		}
-		if(compilerOptions.isTestbenchModuleIdSet()) {
 			this.tb_id = compilerOptions.getTestbenchModuleId();
 		}
-		if(compilerOptions.isOutputFileNameSet()) {
-			this.outFileName = compilerOptions.getOutputFileName();
+		if(compilerOptions.isExportOn()) {
+			this.outDir = compilerOptions.getOutputDirectory();
+			if(compilerOptions.isGenerateLPN()) {
+				this.outFileName = compilerOptions.getOutputFileName();
+			}
 		}
 		
 		for(File file : compilerOptions.getVerilogFiles()) {
@@ -90,6 +89,7 @@ public class VerilogCompiler {
 	public void compile() throws XMLStreamException, IOException, BioSimException {
 		
 		for(Source_textContext vFile : this.stcList) {
+			
 			VerilogParser v = new VerilogParser();
 			ParseTreeWalker.DEFAULT.walk(v, vFile);
 			
@@ -100,7 +100,7 @@ public class VerilogCompiler {
 			
 	}
 	
-	public void generateSBOL() throws SBOLValidationException, ParseException, IOException, SBOLConversionException, VerilogCompilerException, SBOLException {
+	public void generateSBOL() throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException { 
 		for(VerilogModule verilogModule : this.verilogModules.values()) {
 			VerilogToSBOL v2sbol_conv = new VerilogToSBOL(isFlatModel); 
 			
@@ -109,14 +109,7 @@ public class VerilogCompiler {
 		}
 	}
 	
-	/**
-	 * 
-	 * @throws XMLStreamException
-	 * @throws IOException
-	 * @throws BioSimException
-	 * @throws ParseException: An SBML Exception has occurred while trying to convert Verilog expressions to SBML.
-	 */
-	public void generateSBML() throws XMLStreamException, IOException, BioSimException, ParseException {
+	public void generateSBML() throws ParseException { 
 		for(VerilogModule verilogModule : this.verilogModules.values()) { 
 			WrappedSBML sbmlModel = VerilogToSBML.convertVerilogToSBML(verilogModule);
 			String verilogModuleId = verilogModule.getModuleId();
@@ -134,11 +127,13 @@ public class VerilogCompiler {
 		//Flatten the SBML models and then export to the same directory 
 		BioModel sbmlDoc = new BioModel(this.outDir); 
 		if(this.tb_fullPath == null) {
-			throw new FileNotFoundException("ERROR: Unable to locate the SBML file that describes the testbench.");
+			throw new FileNotFoundException("No SBML file was provided that described the testbench to perform SBML flattening.");
 		}
+		
+		//Loading the testbench file will also load the implementation file as well since externalModelDefinition is used.
 		boolean isDocumentLoaded = sbmlDoc.load(this.tb_fullPath);
 		if(!isDocumentLoaded) {
-			throw new BioSimException("ERROR: Unable to load SBML file that will be used for flattening.", "Error when converting SBML to LPN");
+			throw new BioSimException("Unable to perform flattening for the following SBML file " + this.tb_fullPath, "Error converting SBML to LPN");
 		}
 		SBMLDocument flattenDoc = sbmlDoc.flattenModel(true);
 		this.flatSBMLDocument = flattenDoc;
@@ -146,7 +141,7 @@ public class VerilogCompiler {
 		exportSBML(flattenDoc, flatSBMLPath);
 	}
 	
-	public void generateLPN() throws XMLStreamException, IOException, BioSimException {
+	public void generateLPN() { 
 		WrappedSBML tbWrapper = getSBMLWrapper(this.tb_id);
 		WrappedSBML impWrapper = getSBMLWrapper(this.imp_id);
 		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, this.flatSBMLDocument);
@@ -208,7 +203,7 @@ public class VerilogCompiler {
 		lpn.save(fullPath);
 	}
 	
-	private void exportSBML(SBMLDocument document, String fullPath) throws SBMLException, FileNotFoundException, XMLStreamException {
+	private void exportSBML(SBMLDocument document, String fullPath) throws SBMLException, FileNotFoundException, XMLStreamException { 
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBMLToFile(document, fullPath);
 	}

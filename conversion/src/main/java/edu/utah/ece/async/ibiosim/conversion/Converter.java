@@ -304,7 +304,7 @@ public class Converter {
 		/* Note: Initialize any optional variables that are required for conversion, validation, or file diff.*/
 		if(externalSBOLPath != null && !externalSBOLPath.isEmpty())
 		{
-			ref_sbolInputFilePath = SBOLUtility.getSBOLFilesFromPath(externalSBOLPath);
+			ref_sbolInputFilePath = SBOLUtility.getInstance().getSBOLFilesFromPath(externalSBOLPath);
 		}
 
 		if(genBankOut == false && fastaOut == false && sbolV1out == false && sbolV2out == false && sbmlOut == false)
@@ -441,7 +441,7 @@ public class Converter {
 				{
 					try 
 					{	
-						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
+						SBOLDocument sbolDoc = SBOLUtility.getInstance().loadSBOLFile(fullInputFileName, URIPrefix);
 						if(!topLevelURIStr.isEmpty())
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));

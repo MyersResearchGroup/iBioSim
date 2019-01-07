@@ -155,7 +155,8 @@ public class SBMLExample8_Test {
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertTrue(5.0 == delay.getMath().getReal());
+		Assert.assertTrue(delay.getMath().isString());
+		Assert.assertEquals("5", delay.getMath().getName());
 	}
 	
 	@Test

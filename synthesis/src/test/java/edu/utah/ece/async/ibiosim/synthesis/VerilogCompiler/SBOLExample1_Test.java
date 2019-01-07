@@ -100,7 +100,7 @@ public class SBOLExample1_Test {
 
 	@Test
 	public void Test_NOT1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC2_notGate");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC2_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC0_a");

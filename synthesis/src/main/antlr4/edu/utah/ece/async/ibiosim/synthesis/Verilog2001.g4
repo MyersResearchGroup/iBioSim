@@ -1432,8 +1432,7 @@ function_call
    ;
 //iBioSim VeriologCompiler -- INCLUDED 2 PARAMTERS FOR SYSTEM FUNCTION CALLS
 system_function_call
-   : system_function_identifier (expression (',' expression)*)?
-   | system_function_identifier '(' (expression (',' expression))? ')' 
+   : system_function_identifier ('('expression (',' expression)* ')' )?
    ;
 
 genvar_function_call

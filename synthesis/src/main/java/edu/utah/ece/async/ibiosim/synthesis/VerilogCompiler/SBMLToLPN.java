@@ -78,12 +78,13 @@ public class SBMLToLPN {
 	}
 	
 	/**
-	 * Converts the given SBML document to an LPN model.
-	 * @param document: The SBML document to convert into LPN. 
-	 * @throws IOException Error reading in input file
-	 * @throws XMLStreamException 
+	 * Convert the given SBML document to an LPN model.
+	 * @param tbWrapper
+	 * @param impWrapper
+	 * @param sbmlDocument: The SBML document to convert into LPN. 
+	 * @return
 	 */
-	public static LPN convertSBMLtoLPN(WrappedSBML tbWrapper, WrappedSBML impWrapper, SBMLDocument sbmlDocument) throws XMLStreamException, IOException {
+	public static LPN convertSBMLtoLPN(WrappedSBML tbWrapper, WrappedSBML impWrapper, SBMLDocument sbmlDocument) { 
 		SBMLToLPN converter = new SBMLToLPN(tbWrapper, impWrapper, sbmlDocument);
 		return converter.convert();
 	}
@@ -195,9 +196,6 @@ public class SBMLToLPN {
 
 	private void convertSBMLDelay(Event event){
 		if(event.isSetDelay()) {
-			if(!event.getId().isEmpty()) {
-				System.out.println(event.getDelay().getMath().getType());
-			}
 			Delay delay = event.getDelay();
 			String delayValue = convertSBMLASTNode(delay.getMath()); 
 			lpn.changeDelay(event.getId(), delayValue);

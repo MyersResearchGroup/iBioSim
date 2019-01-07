@@ -15,10 +15,6 @@ public class CompilerOptions {
 	private String tbModuleId, impModuleId, outputFileName, outDir;
 	private boolean generateSBOL, generateSBML, generateLPN, exportOutput, flatModel;
 
-	private final String ERROR1 = "The output directory was not set";
-	private final String ERROR2 = "You must provide an output file name to export an LPN model.";
-	private final String ERROR3 = "Implementation module identifier field must be set to produce and LPN model.";
-	private final String ERROR4 = "Testbench module identifier field must be set to produce and LPN model.";
 	
 	public CompilerOptions() {
 		this.verilogFiles = new ArrayList<>();
@@ -88,19 +84,31 @@ public class CompilerOptions {
 		return this.verilogFiles;
 	}
 	
-	public String getTestbenchModuleId() {
+	public String getTestbenchModuleId() throws VerilogCompilerException {
+		if(!isTestbenchModuleIdSet()) {
+			throw new VerilogCompilerException("Testbench module identifier was not set.");
+		}
 		return this.tbModuleId;
 	}
 	
-	public String getImplementationModuleId() {
+	public String getImplementationModuleId() throws VerilogCompilerException {
+		if(!isImplementatonModuleIdSet()) {
+			throw new VerilogCompilerException("Implementation module identifier was not set.");
+		}
 		return this.impModuleId;
 	}
 	
-	public String getOutputFileName() {
+	public String getOutputFileName() throws VerilogCompilerException {
+		if(!isOutputFileNameSet()) {
+			throw new VerilogCompilerException("Output file name was not set.");
+		}
 		return this.outputFileName;
 	}
 	
-	public String getOutputDirectory(){
+	public String getOutputDirectory() throws VerilogCompilerException{
+		if(!isOutputDirectorySet()) {
+			throw new VerilogCompilerException("The output directory was not set");
+		}
 		return this.outDir;
 	}
 	
@@ -144,35 +152,4 @@ public class CompilerOptions {
 		return this.outputFileName != null && !this.outputFileName.isEmpty() ? true : false;
 	}
 	
-	public void verifyCompilerSetup() throws VerilogCompilerException {
-		
-		if(isGenerateLPN()){
-			if(!isImplementatonModuleIdSet() && !isTestbenchModuleIdSet()){
-				throw new VerilogCompilerException(ERROR3);
-			}
-			if(!isTestbenchModuleIdSet()) {
-				throw new VerilogCompilerException(ERROR4);
-			}
-			if(isExportOn()) {
-				if(!isOutputDirectorySet() && isOutputFileNameSet()) {
-					throw new VerilogCompilerException(ERROR1);
-				}
-				else if(isOutputDirectorySet() && !isOutputFileNameSet()) {
-					throw new VerilogCompilerException(ERROR2);
-				}
-				throw new VerilogCompilerException(ERROR1);
-			}
-		}
-		if(isGenerateSBML()) {
-			if(!isOutputDirectorySet() && isExportOn()) {
-				throw new VerilogCompilerException(ERROR1);
-			}
-		}
-		if(isGenerateSBOL()) {
-			if(!isOutputDirectorySet() && isExportOn()) {
-				throw new VerilogCompilerException(ERROR1);
-			}
-		}
-	}
-
 }

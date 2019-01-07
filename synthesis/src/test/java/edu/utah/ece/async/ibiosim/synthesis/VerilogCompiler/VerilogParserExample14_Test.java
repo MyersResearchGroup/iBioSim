@@ -17,24 +17,24 @@ import VerilogConstructs.VerilogInitialBlock;
 import VerilogConstructs.VerilogModule;
 
 /**
- * Test parsing of urandom_range() verilog function for one parameter
+ * Test parsing of urandom_range() verilog function for two parameter
  * 
  * @author Tramy Nguyen
  */
-public class VerilogParserExample13_Test {
+public class VerilogParserExample14_Test {
 	
 	private static VerilogModule verilogModule;
 
 	@BeforeClass
 	public static void setupTest() {
 
-		String[] cmd = {"-v", CompilerTestSuite.verilogSystemFunc1_file};
+		String[] cmd = {"-v", CompilerTestSuite.verilogSystemFunc2_file};
 
 		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
 
-		verilogModule = moduleList.get("system_func1");
+		verilogModule = moduleList.get("system_func2");
 		Assert.assertNotNull(verilogModule);
 	}
 
@@ -70,7 +70,7 @@ public class VerilogParserExample13_Test {
 
 	@Test
 	public void TestVerilog_alwaysCstSize() {
-		Assert.assertEquals(4, verilogModule.getAlwaysBlock(0).getNumConstructSize());
+		Assert.assertEquals(2, verilogModule.getAlwaysBlock(0).getNumConstructSize());
 	}
 	
 	@Test
@@ -80,7 +80,7 @@ public class VerilogParserExample13_Test {
 		Assert.assertNotNull(actual_construct);
 		
 		VerilogDelay delay = VerilogTestUtility.getDelayConstruct(actual_construct);
-		assertEquals("uniform(0,5)", delay.getDelayValue());
+		assertEquals("uniform(5,10)", delay.getDelayValue());
 	}
 	
 	
@@ -93,27 +93,6 @@ public class VerilogParserExample13_Test {
 		VerilogAssignment assign = VerilogTestUtility.getVerilogAssignment(actual_construct);
 		assertEquals("bit0", assign.getVariable());
 		assertEquals("1", assign.getExpression());
-	}
-
+	}	
 	
-	@Test
-	public void TestVerilog_construct3() {
-		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 2);
-		Assert.assertNotNull(actual_construct);
-		
-		VerilogDelay delay = VerilogTestUtility.getDelayConstruct(actual_construct);
-		assertEquals("3", delay.getDelayValue());
-	}
-
-	@Test
-	public void TestVerilog_construct4() {
-		VerilogBlock block = verilogModule.getAlwaysBlock(0);
-		AbstractVerilogConstruct actual_construct = VerilogTestUtility.getBlockConstruct(block, 3);
-		Assert.assertNotNull(actual_construct);
-		
-		VerilogAssignment assign = VerilogTestUtility.getVerilogAssignment(actual_construct);
-		assertEquals("bit0", assign.getVariable());
-		assertEquals("0", assign.getExpression());
-	}
 }

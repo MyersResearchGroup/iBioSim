@@ -45,7 +45,10 @@ public class VerilogRunner {
 						compiledVerilog.exportSBML();
 					}
 					if(compilerOptions.isGenerateLPN()){
+						//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
+						compiledVerilog.exportSBML(); 
 						compiledVerilog.flattenSBML();
+						compiledVerilog.generateLPN();
 						compiledVerilog.exportLPN();
 					}
 				}
@@ -53,33 +56,33 @@ public class VerilogRunner {
 		} 
 		catch (org.apache.commons.cli.ParseException e1) {
 			printUsage();
-			System.err.println("ERROR: Incorrect command prompt. Report: " + e1.getMessage());
+			System.err.println("Command-line ERROR: " + e1.getMessage());
 		}
 		catch (ParseException e) {
-			System.err.println("ERROR: Unable to parse the SBML file that was created when compiling verilog." + e.getMessage());
+			System.err.println("ParseException ERROR: Invalid format found when converting Verilog data to SBOL or SBML. " + e.getMessage());
 			return;
 		} 
 		catch (XMLStreamException e) {
-			System.err.println("ERROR: Unable to parse XML file when flattening SBMLDocuments. " + e.getMessage());
+			System.err.println("XMLException ERROR: Unable to load or export an XML file. " + e.getMessage());
 			return;
 		} 
 		catch (IOException e) {
-			System.err.println(e.getMessage());
+			System.err.println("IOException ERROR: Unable to load or export a file. " + e.getMessage());
 			return;
 		} 
 		catch (BioSimException e) {
-			System.err.println(e.getMessage());
+			System.err.println("iBioSim Exception " + e.getMessage());
 			return;
 		} 
 		catch (VerilogCompilerException e) {
-			System.err.println("ERROR: Verilog Compiler occurred. " + e.getMessage());
+			System.err.println("Verilog Compiler ERROR: " + e.getMessage());
 			return;
 		} 
 		catch (SBOLValidationException e) {
-			System.err.println("ERROR: Invalid SBOL when exporting Verilog to SBOL. " + e.getMessage());
+			System.err.println("SBOL Validation ERROR: Invalid SBOL data was created when converting from Verilog to SBOL. " + e.getMessage());
 			return;
 		} catch (SBOLConversionException e) {
-			System.err.println("ERROR: Unable to compile verilog to SBOL data format. " + e.getMessage());
+			System.err.println("SBOL Conversion ERROR: Unable to export SBOL data. " + e.getMessage());
 			return;
 		}
 	}
@@ -93,12 +96,12 @@ public class VerilogRunner {
 		
 		formatter.printHelp(125, sbolUsage + sbmlUsage + lpnUsage , 
 				"VerilogCompiler Options", 
-				getSetupOptions(), 
+				getCommandLineOptions(), 
 				"Note: <arg> is the user's input value.");
 
 	}
 
-	private static Options getSetupOptions() {
+	private static Options getCommandLineOptions() {
 		Option verilogFiles = new Option("v", "verilogFiles",  true, "compile the given verilog file(s).");
 		verilogFiles.setValueSeparator(separator);
 		
@@ -120,7 +123,7 @@ public class VerilogRunner {
 	}
 
 	public static CommandLine parseCommandLine(String[] args) throws org.apache.commons.cli.ParseException {
-		Options cmd_options = getSetupOptions();
+		Options cmd_options = getCommandLineOptions();
 		CommandLineParser cmd_parser = new DefaultParser();
 		CommandLine cmd = cmd_parser.parse(cmd_options, args);
 		return cmd;
@@ -171,10 +174,8 @@ public class VerilogRunner {
 		return compilerOptions;
 	}
 
-	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		compilerOptions.verifyCompilerSetup();
-		
-		VerilogCompiler compiler = new VerilogCompiler(compilerOptions);
+	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws VerilogCompilerException, XMLStreamException, IOException, BioSimException {
+		VerilogCompiler compiler = new VerilogCompiler(compilerOptions); 
 		compiler.compile(); 
 		return compiler;
 	}

@@ -41,7 +41,7 @@ public class VerilogToSBOL {
 	
 	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
 		
-		ModuleDefinition fullCircuit = sbolWrapper.createCircuit(module.getModuleId());
+		ModuleDefinition fullCircuit = sbolWrapper.createCircuit("circuit_" + module.getModuleId());
 		
 		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
 		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);
@@ -68,7 +68,7 @@ public class VerilogToSBOL {
 			HashMap<FunctionalComponent, FunctionalComponent> primaryProteins = new HashMap<>();
 			
 			if(!isFlatModel) {
-				ModuleDefinition subCircuit = sbolWrapper.createCircuit(var);
+				ModuleDefinition subCircuit = sbolWrapper.createCircuit("circuit_" + var);
 				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
 				
 				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var, AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);

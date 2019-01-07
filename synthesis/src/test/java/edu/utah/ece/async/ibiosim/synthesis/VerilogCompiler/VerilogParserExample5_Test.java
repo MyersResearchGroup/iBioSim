@@ -111,7 +111,7 @@ public class VerilogParserExample5_Test {
 		AbstractVerilogConstruct waitConstruct = waitCondition.getDelayConstruct();
 		Assert.assertNotNull(waitConstruct);
 		VerilogDelay delay = (VerilogDelay) waitConstruct;
-		Assert.assertEquals(5, delay.getDelayValue());
+		Assert.assertEquals("5", delay.getDelayValue());
 	}
 	
 	

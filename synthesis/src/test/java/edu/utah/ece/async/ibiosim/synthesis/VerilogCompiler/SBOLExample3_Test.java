@@ -100,7 +100,7 @@ public class SBOLExample3_Test {
 
 	@Test
 	public void Test_NOT1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_notGate");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_notTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
@@ -142,7 +142,7 @@ public class SBOLExample3_Test {
 
 	@Test
 	public void Test_NOR1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_norGate");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_norTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent in1 = sbolDesign.getFunctionalComponent("FC0_a");

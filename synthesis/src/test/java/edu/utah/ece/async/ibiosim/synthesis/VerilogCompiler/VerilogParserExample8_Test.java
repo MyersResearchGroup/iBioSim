@@ -107,7 +107,7 @@ public class VerilogParserExample8_Test {
 		Assert.assertNotNull(actual_wait.getDelayConstruct());
 		Assert.assertTrue(actual_wait.getDelayConstruct() instanceof VerilogDelay);
 		VerilogDelay actual_delay = (VerilogDelay) actual_wait.getDelayConstruct();
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	

@@ -92,7 +92,7 @@ public class VerilogParserExample9_Test {
 		Assert.assertTrue(actual_construct instanceof VerilogDelay);
 		
 		VerilogDelay actual_delay = (VerilogDelay) actual_construct;
-		Assert.assertEquals(5, actual_delay.getDelayValue());
+		Assert.assertEquals("5", actual_delay.getDelayValue());
 	}
 	
 	@Test
@@ -130,7 +130,7 @@ public class VerilogParserExample9_Test {
 		AbstractVerilogConstruct waitConstruct = waitCondition.getDelayConstruct();
 		Assert.assertNotNull(waitConstruct);
 		VerilogDelay delay = (VerilogDelay) waitConstruct;
-		Assert.assertEquals(5, delay.getDelayValue());
+		Assert.assertEquals("5", delay.getDelayValue());
 		
 		VerilogBlock else_block = VerilogTestUtility.getVerilogBlock(if_.getElseBlock());
 		Assert.assertEquals(2, else_block.getNumConstructSize());
@@ -147,7 +147,7 @@ public class VerilogParserExample9_Test {
 		waitConstruct = waitCondition.getDelayConstruct();
 		Assert.assertNotNull(waitConstruct);
 		delay = (VerilogDelay) waitConstruct;
-		Assert.assertEquals(5, delay.getDelayValue());
+		Assert.assertEquals("5", delay.getDelayValue());
 	}
 	
 	

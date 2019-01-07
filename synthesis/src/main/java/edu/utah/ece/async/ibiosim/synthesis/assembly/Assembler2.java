@@ -497,8 +497,8 @@ public class Assembler2
 		List<String> types = new LinkedList<String>();
 //		if (dnaComp.getAnnotations().size() == 0) {
 		if (dnaComp.getSequenceAnnotations().size() == 0) {
-			if (SBOLUtility.loadSONumber(dnaComp) != null) {
-				String soNum = SBOLUtility.loadSONumber(dnaComp).replace(":", "_");
+			if (SBOLUtility.getInstance().loadSONumber(dnaComp) != null) {
+				String soNum = SBOLUtility.getInstance().loadSONumber(dnaComp).replace(":", "_");
 				if (soNum != null) {
 					types.add(strand);
 					types.add(soNum);
@@ -580,7 +580,7 @@ public class Assembler2
 	}
 	
 	private static List<URI> loadNodeURIs(AssemblyNode2 assemblyNode) {
-		return SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents());
+		return SBOLUtility.getInstance().loadDNAComponentURIs(assemblyNode.getDNAComponents());
 	}
 	
 	private static List<URI> loadNodeURIs(List<AssemblyNode2> assemblyNodes) {
