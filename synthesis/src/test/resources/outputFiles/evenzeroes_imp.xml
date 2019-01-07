@@ -136,7 +136,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -223,7 +223,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -372,7 +372,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -701,7 +701,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -772,7 +772,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -835,7 +835,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -960,7 +960,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
+            <ci> 5 </ci>
           </math>
                 </delay>
         <listOfEventAssignments>
