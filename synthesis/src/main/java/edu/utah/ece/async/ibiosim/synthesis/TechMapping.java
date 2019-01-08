@@ -30,6 +30,7 @@ import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 
@@ -255,6 +256,8 @@ public class TechMapping {
 		catch (SBOLConversionException e) 
 		{
 			System.err.println("ERROR: Unable to convert input file to SBOL data format.");
+			e.printStackTrace();
+		} catch (SBOLTechMapException e) {
 			e.printStackTrace();
 		}
 	}

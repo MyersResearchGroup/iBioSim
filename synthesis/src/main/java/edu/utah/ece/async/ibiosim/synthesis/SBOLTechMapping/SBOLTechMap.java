@@ -70,6 +70,9 @@ public class SBOLTechMap {
 		} catch (SBOLConversionException e) {
 			System.err.println("SBOLConversion ERROR: " + e.getMessage());
 			e.printStackTrace();
+		} catch (SBOLTechMapException e) { 
+			System.err.println("SBOL Technology Mapping ERROR: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

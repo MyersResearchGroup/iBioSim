@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Test_LibrarySize1.class
+	Test1_LibrarySize1.class
 })
 
 /**

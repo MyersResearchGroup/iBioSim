@@ -13,7 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
-import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.Sequence;
@@ -53,17 +51,21 @@ public class Synthesis
 	private List<SBOLGraph> _libraryGraph; 
 	private SBOLGraph _specificationGraph; 
 	private Map<SynthesisNode, SBOLGraph> bestSolution;
+	private Map<String, FunctionalComponent> fcMapping;
 	
-	private int moduleCounter;
+	private int moduleCounter, mapsToCounter, fcCounter;
 	
 	private SBOLUtility sbolUtil;
 	
 	public Synthesis()
 	{
+		sbolUtil = SBOLUtility.getInstance();
+		
 		_libraryGraph = new ArrayList<SBOLGraph>();
 		_specificationGraph = null;
+		
 		bestSolution = new HashMap<>();
-		sbolUtil = SBOLUtility.getInstance();
+		this.fcMapping = new HashMap<>();
 	}
 
 
@@ -344,6 +346,8 @@ public class Synthesis
 		ModuleDefinition md = gate.getOutputNode().getModuleDefinition();
 		
 		for(SynthesisNode gateNode : gate.getAllNodes()) {
+			ComponentDefinition cd = gateNode.getComponentDefinition();
+//			System.out.println(cd.getDisplayId());
 			sbolDoc.createCopy(gateNode.getComponentDefinition());
 			
 			for(Sequence gateSequence : gateNode.getSequences()) {
@@ -356,14 +360,14 @@ public class Synthesis
 		return (ModuleDefinition) copiedGate;
 	}
 
-	public SBOLDocument getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph) throws SBOLValidationException
+	public SBOLDocument getSBOLfromTechMapping(Map<SynthesisNode, SBOLGraph> solution, SBOLGraph specificationGraph) throws SBOLValidationException, SBOLTechMapException
 	{
 		//Set up SBOLDocument to write into
 		SBOLDocument sbolDoc = sbolUtil.createSBOLDocument(); 
 
-		ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_Circuit");
-		getSBOLfromTechMap(null, sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
-
+		ModuleDefinition topLevelModDef = sbolDoc.createModuleDefinition("TechMapSolution_Circuit", "1.0");
+		//getSBOLfromTechMap(null, sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
+		temp2(sbolDoc, topLevelModDef, solution, specificationGraph.getOutputNode());
 		return sbolDoc;
 
 	}
@@ -372,18 +376,60 @@ public class Synthesis
 		SBOLWriter.write(doc, filePath + ".xml");
 	}
 	
-	private void temp2(SBOLDocument outputDoc, ModuleDefinition circuitSolution, Map<SynthesisNode, SBOLGraph> techMapSolution, SBOLGraph startingSpecNode) throws SBOLValidationException {
+	private void printContent(SBOLDocument doc) {
+		for(ComponentDefinition cd : doc.getComponentDefinitions()) {
+			System.out.println("actually " + cd.getDisplayId() );
+		}
+		
+		for(ModuleDefinition md : doc.getModuleDefinitions()) {
+			System.out.println("md " + md.getDisplayId());
+		}
+	}
+	
+	private void temp2(SBOLDocument outputDoc, ModuleDefinition circuitSolution, Map<SynthesisNode, SBOLGraph> techMapSolution, SynthesisNode startingSpecNode) throws SBOLValidationException, SBOLTechMapException {
 		//Grab the gate that matches the spec. graph
 		SBOLGraph coveredLibGate = techMapSolution.get(startingSpecNode);
+		SynthesisNode coveredLibGate_outputNode = coveredLibGate.getOutputNode();
 	
 		/* Copy each gate into an SBOLDocument that will act as the solution of tech. map
-		 * Note, the ModuleDefinition for each library gate must be copied or else the FunctionalComponent and Interactions will be dropped from the final solution
-		 */
+		 * Note, the ModuleDefinition for each library gate must be copied or else the FunctionalComponent and Interactions will be dropped from the final solution */
 		ModuleDefinition copiedGate = addGatetoSBOLDoc(outputDoc, coveredLibGate);
 		Module copiedGate_instance = circuitSolution.createModule(getModuleId() + "_gate", copiedGate.getDisplayId(), "1.0");
 		
-		//connect the input and output component for the gate to the ModuleDefinition the represents the solution
+		//connect the input and output components for the gate to the ModuleDefinition that represents the solution
+		FunctionalComponent subGateOuput = copiedGate.getFunctionalComponent(coveredLibGate_outputNode.getFunctionalComponent().getDisplayId());
+		if(subGateOuput == null) {
+			throw new SBOLTechMapException("Unable to locate this FunctionalComponent " + coveredLibGate_outputNode.getFunctionalComponent().getDisplayId() + 
+					"after this information was copied from " + coveredLibGate_outputNode.getModuleDefinition().getDisplayId()); 
+		}
+		FunctionalComponent circuitGateOutput = getFunctionalComponetFromMapping(circuitSolution, subGateOuput);
+		copiedGate_instance.createMapsTo(getMapsToId(), RefinementType.USELOCAL, circuitGateOutput.getDisplayId(), subGateOuput.getDisplayId());
 		
+		List<SynthesisNode> specLeafNodes = getEndNodes(startingSpecNode, coveredLibGate_outputNode);
+		List<SynthesisNode> libLeafNodes = getEndNodes(coveredLibGate_outputNode, coveredLibGate_outputNode);
+
+		for(int i = 0; i < specLeafNodes.size(); i++)
+		{
+			SynthesisNode specLeaf = specLeafNodes.get(i);
+			SynthesisNode libLeaf = libLeafNodes.get(i); 
+			FunctionalComponent subGateInput = copiedGate.getFunctionalComponent(libLeaf.getFunctionalComponent().getDisplayId());
+			FunctionalComponent circuitGateInput = getFunctionalComponetFromMapping(circuitSolution, subGateInput);
+			copiedGate_instance.createMapsTo(getMapsToId(), RefinementType.USELOCAL, circuitGateInput.getDisplayId(), subGateInput.getDisplayId());
+			if(techMapSolution.containsKey(specLeaf))
+			{
+				temp2(outputDoc, circuitSolution, techMapSolution, specLeaf);
+			}
+		}
+	}
+	
+	private FunctionalComponent getFunctionalComponetFromMapping(ModuleDefinition md, FunctionalComponent fc) throws SBOLValidationException {
+		String fc_id = fc.getDisplayId();
+		if(this.fcMapping.containsKey(fc_id)) {
+			return fcMapping.get(fc_id);
+		}
+		FunctionalComponent new_fc = md.createFunctionalComponent(getFunctionalComponentId() + "_" + fc_id, AccessType.PUBLIC, fc.getDefinition().getIdentity(), DirectionType.NONE);
+		this.fcMapping.put(fc_id, new_fc);
+		return new_fc;
 	}
 	
 	private void getSBOLfromTechMap(FunctionalComponent comp, SBOLDocument solutionDoc, ModuleDefinition circuitSolution, Map<SynthesisNode, SBOLGraph> solution, SynthesisNode specNode) throws SBOLValidationException
@@ -501,7 +547,14 @@ public class Synthesis
 	private String getModuleId() {
 		return "M" + this.moduleCounter++;
 	}
+	
+	private String getMapsToId() {
+		return "MT" + this.mapsToCounter++;
+	}
 
+	private String getFunctionalComponentId() {
+		return "FC" + this.fcCounter++;
+	}
 	public int getDegree(SynthesisNode node)
 	{
 		return node.getParents().size();

@@ -30,6 +30,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.WeightedGraph;
@@ -105,6 +106,9 @@ public class TempSynthesisRunner
 		{
 			System.err.println("ERROR: Unable to convert input file to SBOL data model.");
 			e1.printStackTrace();
+		} catch (SBOLTechMapException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		System.out.println("Successfully generated a solution for SBOL Technology Mapping");
 		System.out.println("Solution located here: " + OUTPUT_PATH + OUTPUT_FILE_NAME);

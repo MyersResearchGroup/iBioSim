@@ -45,7 +45,6 @@ public class SBOLGraph
 	private Map<URI, SynthesisNode> _nodes; 
 	private List<SynthesisNode> _root; 
 	private int _score;
-	int uniqueId = 0;
 	private List<SynthesisNode> _topologicalSortNodes;
 
 	public SBOLGraph()
@@ -68,7 +67,7 @@ public class SBOLGraph
 		{
 			if(!_nodes.containsKey(f.getIdentity()))
 			{
-				SynthesisNode node = new SynthesisNode(sbolDoc, md, f, uniqueId++);
+				SynthesisNode node = new SynthesisNode(sbolDoc, md, f);
 				_nodes.put(f.getIdentity(), node);
 			}	
 		}
@@ -347,7 +346,7 @@ public class SBOLGraph
 	@Override
 	public String toString()
 	{
-		return "SBOLGraph [Output node= " + getOutputNode().toString() + "]";
+		return "SBOLGraph [Gate name = " + getOutputNode().getModuleDefinition() + "]";
 	}
 	
 	

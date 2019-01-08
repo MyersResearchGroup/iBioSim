@@ -71,6 +71,7 @@ import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
@@ -674,6 +675,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			catch (BioSimException e) 
 			{
 				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(), JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			} catch (SBOLTechMapException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -11,6 +11,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 
@@ -24,7 +25,6 @@ public class SBOLTechMap_TestEnvironment {
 			CommandLine cmd = SBOLTechMap.parseCommandLine(args);
 			SBOLTechMapOptions techMapOptions = SBOLTechMap.createTechMapOptions(cmd);
 			SBOLTechMap.runSBOLTechMap(syn, techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
-			syn.printCoveredGates(syn.getBestSolution());
 			sbolSol = syn.getSBOLfromTechMapping(syn.getBestSolution(), syn.getSpecification());
 
 		} catch (ParseException e) {
@@ -38,6 +38,8 @@ public class SBOLTechMap_TestEnvironment {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SBOLConversionException e) {
+			e.printStackTrace();
+		} catch (SBOLTechMapException e) {
 			e.printStackTrace();
 		}
 		

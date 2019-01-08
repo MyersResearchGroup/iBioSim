@@ -36,21 +36,25 @@ import org.sbolstandard.core2.Sequence;
  */
 public class SynthesisNode
 {
-	private List<SynthesisNode> children; 
-	private FunctionalComponent functionalComponent; //Represent each vertex node
-	private ComponentDefinition componentDefinition; //Use to store the type for each vertex node
-	private String flattenedSequence;
-	private Set<Sequence> sequences;
-	private ModuleDefinition moduleDefinition; //Represent each gate
 	private SBOLDocument sbolDoc; //SBOLDocument where the SBOL objects are referred to
+	private ModuleDefinition moduleDefinition; //Container where information about the gates are stored in
+	
+	private ComponentDefinition componentDefinition; 
+	private FunctionalComponent functionalComponent; //Represent each vertex node
 	private URI compDefType; 
-	private double score; 
+	
+	private Set<Sequence> sequences;
+	private String flattenedSequence;
+	
 	private List<SynthesisNode> parents;
+	private List<SynthesisNode> children; 
 	private Map<SynthesisNode, URI> relations; 
+	
+	private double score; 
 	private int degree; 
 	private boolean visited; 
 	
-	public SynthesisNode(SBOLDocument sbolDoc, ModuleDefinition md, FunctionalComponent fc, int uniqueId)
+	public SynthesisNode(SBOLDocument sbolDoc, ModuleDefinition md, FunctionalComponent fc) 
 	{
 		this.children = new ArrayList<SynthesisNode>();
 		this.parents = new ArrayList<SynthesisNode>();
