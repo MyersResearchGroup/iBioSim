@@ -83,8 +83,8 @@ public class Workflow_Test {
 
 	@Test	
 	public void Test_small() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogCont3_file, "-flat",
-				"-sbol", "-od", CompilerTestSuite.outputDirectory };
+		String[] cmd = {"-v", CompilerTestSuite.vSpec, "-flat",
+				"-sbol", "-od", CompilerTestSuite.outputDirectory};
 		
 		VerilogRunner.main(cmd);
 	}

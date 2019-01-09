@@ -2,11 +2,15 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
@@ -16,8 +20,12 @@ import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.RefinementType;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * Test hierarchical model for an SR-latch example exported into SBOL.
@@ -30,7 +38,7 @@ public class SBOLExample8_Test {
 	private static ModuleDefinition fullCircuit, subcircuit_q, subcircuit_qnot;
 		
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 
 		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file, "-sbol"};
 		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 

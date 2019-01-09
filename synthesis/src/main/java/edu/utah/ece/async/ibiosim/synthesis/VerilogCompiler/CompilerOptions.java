@@ -60,8 +60,8 @@ public class CompilerOptions {
 		this.generateSBOL = isSBOL;
 	}
 	
-	public void setGenerateSBML(boolean isFlatSBML) {
-		this.generateSBML = isFlatSBML;
+	public void setGenerateSBML(boolean isSBML) {
+		this.generateSBML = isSBML;
 	}
 	
 	public void setGenerateLPN(boolean isLPN) {

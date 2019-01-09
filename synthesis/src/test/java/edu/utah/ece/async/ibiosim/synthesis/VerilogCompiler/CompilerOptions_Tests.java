@@ -67,35 +67,30 @@ public class CompilerOptions_Tests{
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
-	public void Test_VerilogCompilerException() throws org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException, ParseException {
+	public void Test_VerilogCompilerException() throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
 		String[] args = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, 
 				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes"};
 		//error because missing module identifier names for imp and tb
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
-	public void Test_VerilogCompilerException2() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
+	public void Test_VerilogCompilerException2( ) throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
 		String[] args = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, 
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing output file name
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
-	@Test()
-	public void Test_VerilogCompilerException3() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		String[] args = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, 
+	@Test(expected = VerilogCompilerException.class)
+	public void Test_VerilogCompilerException3() throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
+		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);
+		String[] args = {"-v", files,
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
 				"-lpn"};
-		//no output directory and output file name
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		//no output directory. Generating LPN needs the SBML files exported to a directory before sbml to lpn can be called. 
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -104,9 +99,7 @@ public class CompilerOptions_Tests{
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
 				"-lpn", "-o", "evenzeroes"};
 		//error because missing output directory
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test()
@@ -114,9 +107,7 @@ public class CompilerOptions_Tests{
 		String[] args = {"-v", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile, 
 				"-sbml"};
 		//no output directory
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -125,9 +116,7 @@ public class CompilerOptions_Tests{
 				"-imp", "evenzeroes_imp",  
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing tb module identifier
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
@@ -136,9 +125,7 @@ public class CompilerOptions_Tests{
 				"-tb", "evenzeroes_testbench",
 				"-lpn", "-od", CompilerTestSuite.outputDirectory};
 		//error because missing imp module identifier
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
-		VerilogRunner.runVerilogCompiler(compilerOptions);
+		CompilerTestSuite.testEnv.runCompiler(args); 
 	}
 	
 	@Test

@@ -1,11 +1,17 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import VerilogConstructs.VerilogAlwaysBlock;
 import VerilogConstructs.VerilogBlock;
@@ -13,6 +19,7 @@ import VerilogConstructs.VerilogConditional;
 import VerilogConstructs.VerilogInitialBlock;
 import VerilogConstructs.VerilogModule;
 import VerilogConstructs.VerilogModuleInstance;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * 
@@ -24,7 +31,7 @@ public class VerilogParserExample10_Test {
 	private static VerilogModule verilogModule;
 	
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt3_file};
 		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();

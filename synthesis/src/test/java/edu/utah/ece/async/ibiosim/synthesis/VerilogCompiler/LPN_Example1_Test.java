@@ -1,12 +1,19 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Transition;
 
@@ -20,7 +27,7 @@ public class LPN_Example1_Test {
 	private static LPN lpn;
 	
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		
 		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);	
 		String[] cmd = {"-v", files, "-lpn",

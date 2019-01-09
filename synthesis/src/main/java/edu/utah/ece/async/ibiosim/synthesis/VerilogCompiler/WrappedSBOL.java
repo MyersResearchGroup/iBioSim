@@ -149,10 +149,7 @@ public class WrappedSBOL {
 		if(numGateInput == 1) {
 			return createTranscriptionalUnit(circuit, "notTU", generatePromoters(1));
 		}
-		/* TODO: iBioSim does not accept 2 promoters for 1 transcription unit. 
-		 * When iBiosim supports 2 promoters, change generatePromoters(1) to generatePromoters(2)
-		 */
-		return createTranscriptionalUnit(circuit, "norTU", generatePromoters(1));
+		return createTranscriptionalUnit(circuit, "norTU", generatePromoters(2));
 	}
 	
 	public Module addSubCircuit(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {

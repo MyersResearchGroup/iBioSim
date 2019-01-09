@@ -73,6 +73,9 @@ public class CompilerTestSuite {
 	protected static String sbmlEvenZero_flatFile = outputDirectory + File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml";
 	
 	
+	protected static String vSpec = CompilerTestSuite.class.getResource(File.separator + "NOT_Spec.v").getFile();
+
+	
 	protected static String verilogAlwaysBlock_file = CompilerTestSuite.class.getResource(File.separator + "always_block.v").getFile();
 	protected static String verilogAssign_file = CompilerTestSuite.class.getResource(File.separator + "assign.v").getFile();
 	protected static String verilogCondStmt1_file = CompilerTestSuite.class.getResource(File.separator + "conditional_stmt1.v").getFile();

@@ -39,7 +39,7 @@ public class GateGenerator {
 	}
 	
 	public ModuleDefinition createTandemPromoterGate() throws SBOLValidationException, SBOLException {
-		ModuleDefinition gate = sbolWrapper.createCircuit(getMDId() + "_TandemPromoterGate");
+		ModuleDefinition gate = sbolWrapper.createCircuit(getMDId() + "_TandemPromoterNORGate");
 		FunctionalComponent tu = sbolWrapper.createTranscriptionalUnit(gate, "tu", sbolWrapper.generatePromoters(2));
 	
 		FunctionalComponent inputProtein1 = sbolWrapper.addProtein(gate, "inputProtein1", DirectionType.IN);

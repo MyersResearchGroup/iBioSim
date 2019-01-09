@@ -47,34 +47,19 @@ public class VerilogCompiler {
 	private Map<String, WrappedSBML> vmoduleToSBML;
 	private Map<String, WrappedSBOL> vmoduleToSBOL;
 	private LPN lpn;
-	private String outDir, outFileName, tb_id, imp_id, tb_fullPath;
-	private SBMLDocument flatSBMLDocument;
-	private boolean isFlatModel;
 	
 	/**
 	 * Load the verilog files into a binary tree to begin parsing.
 	 * @throws VerilogCompilerException 
 	 */
-	public VerilogCompiler(CompilerOptions compilerOptions) throws VerilogCompilerException {
+	public VerilogCompiler(List<File> verilogFiles) throws VerilogCompilerException {
 	
 		this.stcList = new ArrayList<>();
 		this.verilogModules = new HashMap<>();
 		this.vmoduleToSBML = new HashMap<>();
 		this.vmoduleToSBOL = new HashMap<>();
-		this.isFlatModel = compilerOptions.isOutputFlatModel();
 		
-		if(compilerOptions.isGenerateLPN()) {
-			this.imp_id = compilerOptions.getImplementationModuleId();
-			this.tb_id = compilerOptions.getTestbenchModuleId();
-		}
-		if(compilerOptions.isExportOn()) {
-			this.outDir = compilerOptions.getOutputDirectory();
-			if(compilerOptions.isGenerateLPN()) {
-				this.outFileName = compilerOptions.getOutputFileName();
-			}
-		}
-		
-		for(File file : compilerOptions.getVerilogFiles()) {
+		for(File file : verilogFiles) {
 			parseFile(file);
 		}
 	}
@@ -100,51 +85,46 @@ public class VerilogCompiler {
 			
 	}
 	
-	public void generateSBOL() throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException { 
+	public void generateSBOL(boolean generateFlatModel) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException { 
 		for(VerilogModule verilogModule : this.verilogModules.values()) {
-			VerilogToSBOL v2sbol_conv = new VerilogToSBOL(isFlatModel); 
+			VerilogToSBOL v2sbol_conv = new VerilogToSBOL(generateFlatModel); 
 			
 			WrappedSBOL sbolData = v2sbol_conv.convertVerilog2SBOL(verilogModule);
 			this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
 		}
 	}
 	
-	public void generateSBML() throws ParseException { 
+	public void generateSBML() throws ParseException {
 		for(VerilogModule verilogModule : this.verilogModules.values()) { 
-			WrappedSBML sbmlModel = VerilogToSBML.convertVerilogToSBML(verilogModule);
+			VerilogToSBML v2sbml = new VerilogToSBML();
+			WrappedSBML	sbmlModel = v2sbml.convertVerilogToSBML(verilogModule);
 			String verilogModuleId = verilogModule.getModuleId();
 			this.vmoduleToSBML.put(verilogModuleId, sbmlModel);
 			
-			//If the user wants to generate an LPN model, then we have to remember one of the SBML file name that was exported.
-			String filePath = verilogModuleId + ".xml";
-			if(this.tb_id != null && this.tb_id.equals(verilogModuleId)) {
-				this.tb_fullPath = this.outDir + File.separator + filePath;
-			}
 		}
 	}
 	
-	public void flattenSBML() throws BioSimException, XMLStreamException, IOException{
+	public SBMLDocument flattenSBML(String outputDirectory, String fileFullPath) throws BioSimException, XMLStreamException, IOException{
 		//Flatten the SBML models and then export to the same directory 
-		BioModel sbmlDoc = new BioModel(this.outDir); 
-		if(this.tb_fullPath == null) {
-			throw new FileNotFoundException("No SBML file was provided that described the testbench to perform SBML flattening.");
+		BioModel sbmlDoc = new BioModel(outputDirectory); 
+		if(fileFullPath == null) {
+			throw new FileNotFoundException("fileFullPath was not provided to perform SBML flattening.");
 		}
 		
 		//Loading the testbench file will also load the implementation file as well since externalModelDefinition is used.
-		boolean isDocumentLoaded = sbmlDoc.load(this.tb_fullPath);
+		boolean isDocumentLoaded = sbmlDoc.load(fileFullPath);
 		if(!isDocumentLoaded) {
-			throw new BioSimException("Unable to perform flattening for the following SBML file " + this.tb_fullPath, "Error converting SBML to LPN");
+			throw new BioSimException("Unable to perform flattening for the following SBML file " + fileFullPath, "Error Flattening SBML Files");
 		}
 		SBMLDocument flattenDoc = sbmlDoc.flattenModel(true);
-		this.flatSBMLDocument = flattenDoc;
-		String flatSBMLPath = this.outDir + File.separator + this.imp_id + "_" + this.tb_id + "_flattened.xml";
-		exportSBML(flattenDoc, flatSBMLPath);
+		return flattenDoc;
 	}
 	
-	public void generateLPN() { 
-		WrappedSBML tbWrapper = getSBMLWrapper(this.tb_id);
-		WrappedSBML impWrapper = getSBMLWrapper(this.imp_id);
-		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, this.flatSBMLDocument);
+	public void generateLPN(String implementationModuleId, String testbenchModuleId, SBMLDocument sbmlDoc) {
+	
+		WrappedSBML tbWrapper = getSBMLWrapper(testbenchModuleId);
+		WrappedSBML impWrapper = getSBMLWrapper(implementationModuleId);
+		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, sbmlDoc);
 
 	}
 	
@@ -179,23 +159,23 @@ public class VerilogCompiler {
 		return this.lpn;
 	}
 	
-	public void exportSBML() throws SBMLException, FileNotFoundException, XMLStreamException{
+	public void exportSBML(String outputDirectory) throws SBMLException, FileNotFoundException, XMLStreamException{
 		for (Map.Entry<String, WrappedSBML> entry : this.vmoduleToSBML.entrySet()) {
 			String verilogModuleId = entry.getKey();
 			SBMLDocument sbmlDocument = entry.getValue().getSBMLDocument();
-			exportSBML(sbmlDocument, this.outDir + File.separator + verilogModuleId + ".xml");
+			exportSBML(sbmlDocument, outputDirectory + File.separator + verilogModuleId + ".xml");
 		}
 	}
 	
-	public void exportLPN(){
-		exportLPN(this.lpn, this.outDir + File.separator + this.outFileName + ".lpn");
+	public void exportLPN(String outputDirectory, String outputFileName){
+		exportLPN(this.lpn, outputDirectory + File.separator + outputFileName + ".lpn");
 	}
 	
-	public void exportSBOL() throws IOException, SBOLConversionException{
+	public void exportSBOL(String outputDirectory) throws IOException, SBOLConversionException{
 		for (Map.Entry<String, WrappedSBOL> entry : this.vmoduleToSBOL.entrySet()) {
 			String verilogModuleId = entry.getKey();
 			SBOLDocument sbolDocument = entry.getValue().getSBOLDocument();
-			exportSBOL(sbolDocument, this.outDir + File.separator + verilogModuleId + ".xml");
+			exportSBOL(sbolDocument, outputDirectory + File.separator + verilogModuleId + ".xml");
 		}
 	}
 	

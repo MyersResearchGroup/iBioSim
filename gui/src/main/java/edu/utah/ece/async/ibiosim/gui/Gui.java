@@ -4746,6 +4746,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	private void importVerilogData(){
+
 		File verilogFile = getFile("verilog");
 		if(verilogFile == null) {
 			return;
@@ -4753,25 +4754,25 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		
 		try {
 			CompilerOptions compilerOptions = new CompilerOptions();
-			compilerOptions.setGenerateSBML(true);
 			compilerOptions.addVerilogFile(verilogFile);
+			compilerOptions.setGenerateSBML(false);
+			compilerOptions.exportCompiler(true);
 			compilerOptions.setOutputDirectory(root);
 			
-			VerilogCompiler parsedVerilog = VerilogRunner.runVerilogCompiler(compilerOptions);
+			VerilogCompiler parsedVerilog = VerilogRunner.runVerilogCompiler(compilerOptions.getVerilogFiles());
 			parsedVerilog.generateSBML();
-			parsedVerilog.exportSBML();
-			
+			parsedVerilog.exportSBML(compilerOptions.getOutputDirectory());
+
 			for (String verilogFileName : parsedVerilog.getSBMLWrapperMapper().keySet()) {
 				addToTree(verilogFileName + ".xml");
-				
+
 			}
-			
-		} 
-		catch (org.sbml.jsbml.text.parser.ParseException | XMLStreamException | IOException | BioSimException
-				| VerilogCompilerException e) {
+		} catch (SBMLException | XMLStreamException | IOException | BioSimException | VerilogCompilerException | org.sbml.jsbml.text.parser.ParseException e) {
 			JOptionPane.showMessageDialog(frame, e.toString(), "Verilog Compiler Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+
+
 	}
 	
 	private File getFile(String fileType) {

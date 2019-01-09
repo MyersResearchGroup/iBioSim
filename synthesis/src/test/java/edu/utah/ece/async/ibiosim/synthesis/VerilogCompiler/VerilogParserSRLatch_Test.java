@@ -1,13 +1,19 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import VerilogConstructs.AbstractVerilogConstruct;
 import VerilogConstructs.VerilogAssignment;
@@ -17,6 +23,7 @@ import VerilogConstructs.VerilogDelay;
 import VerilogConstructs.VerilogModule;
 import VerilogConstructs.VerilogModuleInstance;
 import VerilogConstructs.VerilogWait;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * 
@@ -29,7 +36,7 @@ public class VerilogParserSRLatch_Test {
 	private static VerilogBlock imp_alwaysblk, tb_alwaysblk;
 	
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		String files = String.join(" ", CompilerTestSuite.verilogSRLatch_impFile, CompilerTestSuite.verilogSRLatch_tbFile);	
 		String[] cmd = {"-v", files};
 		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 

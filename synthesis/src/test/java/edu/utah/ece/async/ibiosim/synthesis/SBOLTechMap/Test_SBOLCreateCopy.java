@@ -38,7 +38,7 @@ public class Test_SBOLCreateCopy {
 		
 		SBOLReader.setURIPrefix(SBOLUtility.getInstance().getURIPrefix());
 		try {
-			inputDoc = SBOLReader.read(new File(SBOLTechMapTestSuite.NOT2_LibSize1));
+			inputDoc = SBOLReader.read(new File(SBOLTechMapTestSuite.NOT1_LibSize1));
 		} catch (SBOLValidationException | IOException | SBOLConversionException e) {
 			e.printStackTrace();
 		}

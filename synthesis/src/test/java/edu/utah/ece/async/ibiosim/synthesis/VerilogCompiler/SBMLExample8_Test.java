@@ -1,8 +1,11 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,6 +18,11 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
+
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 
 /**
@@ -27,7 +35,7 @@ public class SBMLExample8_Test {
 	private static Model sbmlModel;
 
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt2_file, "-sbml"};
 		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
 		

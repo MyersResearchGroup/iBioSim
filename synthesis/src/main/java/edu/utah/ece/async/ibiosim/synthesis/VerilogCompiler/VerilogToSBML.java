@@ -29,6 +29,12 @@ import VerilogConstructs.VerilogWait;
  */
 public class VerilogToSBML {
 
+	private WrappedSBML sbmlWrapper;
+	
+	public VerilogToSBML() {
+		this.sbmlWrapper = new WrappedSBML();
+	}
+
 	/**
 	 * Converts a {@link VerilogModule} to an SBML model representing an LPN model.
 	 * 
@@ -36,54 +42,53 @@ public class VerilogToSBML {
 	 * @return An instance of an SBMLWrapper where the SBML model that was converted from the {@link VerilogModule} is contained within.
 	 * @throws ParseException: An SBML exception that has occurred when converting information from Verilog to SBML.
 	 */
-	public static WrappedSBML convertVerilogToSBML(VerilogModule module) throws ParseException {
-		WrappedSBML sbmlWrapper = new WrappedSBML();
+	public WrappedSBML convertVerilogToSBML(VerilogModule module) throws ParseException {
 
 		sbmlWrapper.setModuleID(module.getModuleId());
-		convertVerilogWires(sbmlWrapper, module.getWirePorts());
-		convertVerilogInputPorts(sbmlWrapper, module.getInputPorts());
-		convertVerilogOutputPorts(sbmlWrapper, module.getOutputPorts());
-		convertVerilogRegisters(sbmlWrapper, module.getRegisters());
-		convertVerilogContinuousAssignment(sbmlWrapper, module.getContinousAssignments());
-		convertVerilogSubmodule(sbmlWrapper,  module.getSubmodules());
-		convertVerilogInitialBlock(sbmlWrapper, module.getInitialBlockList());
-		convertVerilogAlwaysBlock(sbmlWrapper, module.getAlwaysBlockList());
+		convertVerilogWires(module.getWirePorts());
+		convertVerilogInputPorts(module.getInputPorts());
+		convertVerilogOutputPorts(module.getOutputPorts());
+		convertVerilogRegisters(module.getRegisters());
+		convertVerilogContinuousAssignment(module.getContinousAssignments());
+		convertVerilogSubmodule(module.getSubmodules());
+		convertVerilogInitialBlock(module.getInitialBlockList());
+		convertVerilogAlwaysBlock(module.getAlwaysBlockList());
 
 		return sbmlWrapper;
 	}
 	
-	private static void convertVerilogWires(WrappedSBML sbmlWrapper, List<String> wires) {
+	private void convertVerilogWires(List<String> wires) {
 		for(String w : wires) {
 			sbmlWrapper.addBoolean(w);
 		}
 	}
 
-	private static void convertVerilogInputPorts(WrappedSBML sbmlWrapper, List<String> inputPorts) {
+	private void convertVerilogInputPorts(List<String> inputPorts) {
 		for(String currentInput : inputPorts) {
 			sbmlWrapper.addInput(currentInput);
 		}
 	}
 
-	private static void convertVerilogOutputPorts(WrappedSBML sbmlWrapper, List<String> outputPorts) {
+	private void convertVerilogOutputPorts(List<String> outputPorts) {
 		for(String currentOutput : outputPorts) {
 			sbmlWrapper.addOutput(currentOutput);
 		}
 	}
 
-	private static void convertVerilogRegisters(WrappedSBML sbmlWrapper, List<String> registers) {
+	private void convertVerilogRegisters(List<String> registers) {
 		for(String currentRegister : registers) {
 			sbmlWrapper.addBoolean(currentRegister);
 		}
 	}
 	
-	private static void convertVerilogContinuousAssignment(WrappedSBML sbmlWrapper, List<VerilogAssignment> contAssigns) throws ParseException {
+	private void convertVerilogContinuousAssignment(List<VerilogAssignment> contAssigns) throws ParseException {
 		for(VerilogAssignment a : contAssigns) {
 			ASTNode expression = ASTNode.parseFormula(a.getExpression());
 			sbmlWrapper.addAssignmentRule(a.getVariable(), expression);
 		}
 	}
 	
-	private static void convertVerilogSubmodule(WrappedSBML sbmlWrapper, List<VerilogModuleInstance> submoduleList) {
+	private void convertVerilogSubmodule(List<VerilogModuleInstance> submoduleList) {
 		HashSet<String> moduleReferences = new HashSet<>();
 		for(VerilogModuleInstance submodule : submoduleList) {
 			
@@ -111,7 +116,7 @@ public class VerilogToSBML {
 	 * @param initialBlocks
 	 * @throws ParseException - Unable to parse expression to set the SBML ASTNode
 	 */
-	private static void convertVerilogInitialBlock(WrappedSBML sbmlWrapper, List<VerilogInitialBlock> initialBlocks) throws ParseException {
+	private void convertVerilogInitialBlock(List<VerilogInitialBlock> initialBlocks) throws ParseException {
 		for(VerilogInitialBlock currentInitialBlock : initialBlocks) {
 			VerilogBlock block = (VerilogBlock) currentInitialBlock.getBlock();
 			for(AbstractVerilogConstruct currentConstruct : block.getBlockConstructs()) {
@@ -124,7 +129,7 @@ public class VerilogToSBML {
 		}
 	}
 
-	private static void convertVerilogAlwaysBlock(WrappedSBML sbmlWrapper, List<VerilogAlwaysBlock> alwaysBlocks) throws ParseException {
+	private void convertVerilogAlwaysBlock(List<VerilogAlwaysBlock> alwaysBlocks) throws ParseException {
 		
 		for(VerilogAlwaysBlock currentAlwaysBlock : alwaysBlocks) {
 			// Start the petri net from the alway block by creating a place
@@ -138,20 +143,20 @@ public class VerilogToSBML {
 				
 				if (currentConstruct instanceof VerilogAssignment) {
 					VerilogAssignment blockingAssignment = (VerilogAssignment) currentConstruct;
-					convertVerilogAssignStatement(sbmlWrapper, blockingAssignment, preset);
+					convertVerilogAssignStatement(blockingAssignment, preset);
 				}
 				else if(currentConstruct instanceof VerilogConditional) {
 					VerilogConditional conditionalStatement = (VerilogConditional) currentConstruct;
-					convertVerilogCondition(sbmlWrapper, conditionalStatement, preset);
+					convertVerilogCondition(conditionalStatement, preset);
 					
 				}
 				else if(currentConstruct instanceof VerilogWait) {
 					VerilogWait waitStatement = (VerilogWait) currentConstruct;
-					convertVerilogWaitStatement(sbmlWrapper, waitStatement, preset);
+					convertVerilogWaitStatement(waitStatement, preset);
 				}
 				else if(currentConstruct instanceof VerilogDelay) {
 					VerilogDelay delayConstruct = (VerilogDelay) currentConstruct;
-					convertVerilogDelay(sbmlWrapper, delayConstruct, preset);
+					convertVerilogDelay(delayConstruct, preset);
 				}
 			}
 			
@@ -162,7 +167,7 @@ public class VerilogToSBML {
 		}
 	}
 	
-	private static void convertVerilogCondition(WrappedSBML sbmlWrapper, VerilogConditional conditionalStatement, HashSet<String> currentPostSet) throws ParseException {
+	private void convertVerilogCondition(VerilogConditional conditionalStatement, HashSet<String> currentPostSet) throws ParseException {
 		// Add to the queue the first if condition to perform conversion
 		boolean isFirst = true, processedElse = false;
 		
@@ -186,7 +191,7 @@ public class VerilogToSBML {
 				ASTNode currentNode = ASTNode.parseFormula(currentConditional.getIfCondition());
 				if(isFirst) {
 					isFirst = false;
-					createVerilogConditionalTransition(sbmlWrapper, currentNode, currentConditional, endPlace, currentPostSet);
+					createVerilogConditionalTransition(currentNode, currentConditional, endPlace, currentPostSet);
 					ASTNode notNode = new ASTNode(ASTNode.Type.LOGICAL_NOT);
 					notNode.addChild(currentNode);
 					
@@ -196,7 +201,7 @@ public class VerilogToSBML {
 					ASTNode andNode = new ASTNode(ASTNode.Type.LOGICAL_AND);
 					andNode.addChild(currentNode);
 					andNode.addChild(exclude1);
-					createVerilogConditionalTransition(sbmlWrapper, andNode, currentConditional, endPlace, currentPostSet);
+					createVerilogConditionalTransition(andNode, currentConditional, endPlace, currentPostSet);
 				
 					ASTNode notNode = new ASTNode(ASTNode.Type.LOGICAL_NOT);
 					notNode.addChild(currentNode);
@@ -220,7 +225,7 @@ public class VerilogToSBML {
 				preset.add(currentPlace);
 				sbmlWrapper.addMovementToTransition(currentPostSet, elseEvent, exclude1);
 				sbmlWrapper.addMovementToPlace(elseEvent, currentPlace);
-				convertVerilogConditionalBlock(sbmlWrapper, elseEvent, currentConstruct, preset);
+				convertVerilogConditionalBlock(elseEvent, currentConstruct, preset);
 
 				Event dummyEvent = sbmlWrapper.closeNet();
 				sbmlWrapper.addMovementToTransition(preset, dummyEvent, sbmlWrapper.getTrueNode());
@@ -239,46 +244,46 @@ public class VerilogToSBML {
 		currentPostSet.add(endPlace);
 	}
 	
-	private static void createVerilogConditionalTransition(WrappedSBML sbmlWrapper, ASTNode nodeConditional, VerilogConditional currentConditional, String endPlace, HashSet<String> currentPostSet) throws ParseException {
+	private void createVerilogConditionalTransition(ASTNode nodeConditional, VerilogConditional currentConditional, String endPlace, HashSet<String> currentPostSet) throws ParseException {
 		String newPlace = sbmlWrapper.addPlace(false);
 		Event ifEvent = sbmlWrapper.createConditionalTransition();
 		sbmlWrapper.addMovementToTransition(currentPostSet, ifEvent, nodeConditional);
 		sbmlWrapper.addMovementToPlace(ifEvent, newPlace);
 		HashSet<String> newPostSet = new HashSet<String>();
 		newPostSet.add(newPlace);
-		convertVerilogConditionalBlock(sbmlWrapper, ifEvent, currentConditional.getIfBlock(), newPostSet);
+		convertVerilogConditionalBlock(ifEvent, currentConditional.getIfBlock(), newPostSet);
 		
 		Event dummyEvent = sbmlWrapper.closeNet();
 		sbmlWrapper.addMovementToTransition(newPostSet, dummyEvent, sbmlWrapper.getTrueNode());
 		sbmlWrapper.addMovementToPlace(dummyEvent, endPlace);
 	}
 	
-	private static void convertVerilogConditionalBlock(WrappedSBML sbmlWrapper, Event transitionEvent, AbstractVerilogConstruct block, HashSet<String> currentPostSet) throws ParseException {
+	private void convertVerilogConditionalBlock(Event transitionEvent, AbstractVerilogConstruct block, HashSet<String> currentPostSet) throws ParseException {
 		if(block instanceof VerilogBlock) {
 			VerilogBlock blockConstruct = (VerilogBlock) block;
 			for(AbstractVerilogConstruct construct : blockConstruct.getBlockConstructs()) {
-				convertVerilogConditionalBlock(sbmlWrapper, transitionEvent, construct, currentPostSet);
+				convertVerilogConditionalBlock(transitionEvent, construct, currentPostSet);
 			}
 		}
 		else if(block instanceof VerilogAssignment) {
 			VerilogAssignment assignment = (VerilogAssignment) block;
-			convertVerilogAssignStatement(sbmlWrapper, assignment, currentPostSet);
+			convertVerilogAssignStatement(assignment, currentPostSet);
 		}
 		else if(block instanceof VerilogWait) {
 			VerilogWait waitStatement = (VerilogWait) block;
-			convertVerilogWaitStatement(sbmlWrapper, waitStatement, currentPostSet);
+			convertVerilogWaitStatement(waitStatement, currentPostSet);
 		}
 		else if(block instanceof VerilogConditional) {
 			VerilogConditional nestedCondition = (VerilogConditional) block;
-			convertVerilogCondition(sbmlWrapper, nestedCondition, currentPostSet);
+			convertVerilogCondition(nestedCondition, currentPostSet);
 		}
 		else if(block instanceof VerilogDelay) {
 			VerilogDelay delayConstruct = (VerilogDelay) block;
-			convertVerilogDelay(sbmlWrapper, delayConstruct, currentPostSet);
+			convertVerilogDelay(delayConstruct, currentPostSet);
 		}
 	}
 	
-	private static void convertVerilogAssignStatement(WrappedSBML sbmlWrapper, VerilogAssignment blockingAssignment, HashSet<String> preset) {
+	private void convertVerilogAssignStatement(VerilogAssignment blockingAssignment, HashSet<String> preset) {
 		// Create place and transition for this assignment 
 		String currentPlace = sbmlWrapper.addPlace(false);
 		Event currentTransition = sbmlWrapper.createAssignmentTransition();
@@ -294,11 +299,11 @@ public class VerilogToSBML {
 		AbstractVerilogConstruct waitConstruct = blockingAssignment.getDelayConstruct();
 		if(waitConstruct != null && waitConstruct instanceof VerilogDelay) {
 			VerilogDelay delayConstruct = (VerilogDelay) waitConstruct;
-			convertVerilogDelay(sbmlWrapper, delayConstruct, preset);
+			convertVerilogDelay(delayConstruct, preset);
 		}
 	}
 	
-	private static void convertVerilogDelay(WrappedSBML sbmlWrapper, VerilogDelay delayConstruct, HashSet<String> preset) {
+	private void convertVerilogDelay(VerilogDelay delayConstruct, HashSet<String> preset) {
 		String currentPlace = sbmlWrapper.addPlace(false);
 		Event delayEvent = sbmlWrapper.createDelay(delayConstruct.getDelayValue());
 		
@@ -311,7 +316,7 @@ public class VerilogToSBML {
 		preset.add(currentPlace);
 	}
 	
-	private static void convertVerilogWaitStatement(WrappedSBML sbmlWrapper, VerilogWait waitStatement, HashSet<String> currentPostSet) throws ParseException {
+	private void convertVerilogWaitStatement(VerilogWait waitStatement, HashSet<String> currentPostSet) throws ParseException {
 
 		String currentPlace = sbmlWrapper.addPlace(false);
 		Event waitEvent = sbmlWrapper.createWaitTransition();
@@ -326,7 +331,7 @@ public class VerilogToSBML {
 		AbstractVerilogConstruct waitConstruct = waitStatement.getDelayConstruct();
 		if(waitConstruct != null && waitConstruct instanceof VerilogDelay) {
 			VerilogDelay delayConstruct = (VerilogDelay) waitConstruct;
-			convertVerilogDelay(sbmlWrapper, delayConstruct, currentPostSet);
+			convertVerilogDelay(delayConstruct, currentPostSet);
 		}
 	}
 

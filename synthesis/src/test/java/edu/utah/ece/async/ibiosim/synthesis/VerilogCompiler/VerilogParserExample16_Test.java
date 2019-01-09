@@ -1,15 +1,22 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import VerilogConstructs.VerilogModule;
 import VerilogConstructs.VerilogModuleInstance;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * Test Verilog port connections with differt port name when connecting to submodule
@@ -20,7 +27,7 @@ public class VerilogParserExample16_Test {
 	private static VerilogModule verilogModule;
 
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 
 		String[] cmd = {"-v", CompilerTestSuite.verilogPortMapping_file};
 

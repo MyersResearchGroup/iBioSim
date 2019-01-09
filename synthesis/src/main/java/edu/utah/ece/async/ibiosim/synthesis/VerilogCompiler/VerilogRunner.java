@@ -1,7 +1,9 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -11,6 +13,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -33,26 +36,36 @@ public class VerilogRunner {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
-			VerilogCompiler compiledVerilog = runVerilogCompiler(compilerOptions);
-			if(compilerOptions.isExportOn()){
-				if(compilerOptions.isGenerateSBOL()){
-					compiledVerilog.generateSBOL();
-					compiledVerilog.exportSBOL();
-				}
-				else {
-					compiledVerilog.generateSBML();
-					if(compilerOptions.isGenerateSBML()){
-						compiledVerilog.exportSBML();
-					}
-					if(compilerOptions.isGenerateLPN()){
-						//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
-						compiledVerilog.exportSBML(); 
-						compiledVerilog.flattenSBML();
-						compiledVerilog.generateLPN();
-						compiledVerilog.exportLPN();
-					}
+			VerilogCompiler compiledVerilog = runVerilogCompiler(compilerOptions.getVerilogFiles());
+			
+			if(compilerOptions.isGenerateSBOL()){
+				compiledVerilog.generateSBOL(compilerOptions.isOutputFlatModel());
+			}
+			else {
+				compiledVerilog.generateSBML();
+				if(compilerOptions.isGenerateLPN()){
+					//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
+					String outputDirectory = compilerOptions.getOutputDirectory();
+					compiledVerilog.exportSBML(outputDirectory);
+					String hierModelFullPath = outputDirectory + File.separator + compilerOptions.getTestbenchModuleId() + ".xml";
+					SBMLDocument flattenSBML = compiledVerilog.flattenSBML(outputDirectory, hierModelFullPath);
+					compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), flattenSBML);
 				}
 			}
+			
+			if(compilerOptions.isExportOn()) {
+				String outputDirectory = compilerOptions.getOutputDirectory();
+				if(compilerOptions.isGenerateSBOL()) {
+					compiledVerilog.exportSBOL(outputDirectory);
+				}
+				if(compilerOptions.isGenerateSBML()){
+					compiledVerilog.exportSBML(outputDirectory);
+				}
+				if(compilerOptions.isGenerateLPN()) {
+					compiledVerilog.exportLPN(outputDirectory, compilerOptions.getOutputFileName());
+				}
+			}
+			
 		} 
 		catch (org.apache.commons.cli.ParseException e1) {
 			printUsage();
@@ -90,9 +103,9 @@ public class VerilogRunner {
 	public static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
 		
-		String sbolUsage = "-v <arg(s)> -od usr/dir/example/ -sbol \n";
+		String sbolUsage = "-v <arg(s)> -od usr/dir/example/ -sbol -flat \n";
 		String sbmlUsage = "usage: -v <arg(s)> -od usr/dir/example/ -sbml \n";
-		String lpnUsage = "usage: -v <arg(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/example/ -lpn \n";
+		String lpnUsage = "usage: -v <arg(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/ -lpn \n";
 		
 		formatter.printHelp(125, sbolUsage + sbmlUsage + lpnUsage , 
 				"VerilogCompiler Options", 
@@ -174,8 +187,8 @@ public class VerilogRunner {
 		return compilerOptions;
 	}
 
-	public static VerilogCompiler runVerilogCompiler(CompilerOptions compilerOptions) throws VerilogCompilerException, XMLStreamException, IOException, BioSimException {
-		VerilogCompiler compiler = new VerilogCompiler(compilerOptions); 
+	public static VerilogCompiler runVerilogCompiler(List<File> verilogFiles) throws XMLStreamException, IOException, BioSimException, VerilogCompilerException { 
+		VerilogCompiler compiler = new VerilogCompiler(verilogFiles); 
 		compiler.compile(); 
 		return compiler;
 	}

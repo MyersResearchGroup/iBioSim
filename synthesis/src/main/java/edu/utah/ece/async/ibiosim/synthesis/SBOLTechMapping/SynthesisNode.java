@@ -62,6 +62,7 @@ public class SynthesisNode
 		this.functionalComponent = fc;
 		
 		ComponentDefinition compDef = fc.getDefinition();
+		
 		this.componentDefinition = compDef;
 		this.compDefType = compDef.getTypes().iterator().next();
 		this.sequences = compDef.getSequences();

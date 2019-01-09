@@ -19,8 +19,8 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerExcep
 public class SyntheticGateBuilder {
 
 	public static void main(String[] args) {
-		int numOfNOTGates = 1, numOfTandemGates = 0;
-		String outputFileFullPath = SBOLTechMapTestSuite.sbolLibDir + File.separator + "NOTGate2_LibrarySize1.xml";
+		int numOfNOTGates = 1, numOfTandemGates = 1;
+		String outputFileFullPath = SBOLTechMapTestSuite.sbolLibDir + File.separator + "NOTNORGates_LibrarySize2.xml";
 		try {
 			GateGenerator gateBuilder = runGateGenerator(numOfNOTGates, numOfTandemGates);
 			SBOLUtility.getInstance().writeSBOLDocument(outputFileFullPath, gateBuilder.getGateSBOLDocument());
@@ -28,6 +28,7 @@ public class SyntheticGateBuilder {
 		catch (SBOLException | SBOLValidationException | VerilogCompilerException | FileNotFoundException | SBOLConversionException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Finished building synthetic gates.");
 	}
 	
 	public static GateGenerator runGateGenerator(int numOfNOTGates, int numOfTandemGates) throws SBOLException, SBOLValidationException, VerilogCompilerException {

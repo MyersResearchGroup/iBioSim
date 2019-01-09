@@ -2,18 +2,25 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLValidationException;
 
 import VerilogConstructs.AbstractVerilogConstruct;
 import VerilogConstructs.VerilogAssignment;
 import VerilogConstructs.VerilogBlock;
 import VerilogConstructs.VerilogInitialBlock;
 import VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 
 /**
  * Test parsing of urandom_range() verilog function for varying parameters
@@ -24,7 +31,7 @@ public class VerilogParserExample15_Test {
 	private static VerilogModule verilogModule;
 
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 
 		String[] cmd = {"-v", CompilerTestSuite.verilogSystemFunc3_file};
 

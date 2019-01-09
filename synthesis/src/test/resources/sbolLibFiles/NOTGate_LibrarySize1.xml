@@ -1,373 +1,173 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
-  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/NOTGate_md/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md"/>
-    <sbol:displayId>NOTGate_md</sbol:displayId>
-    <sbol:version>1</sbol:version>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/MD0_NOTGate/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate"/>
+    <sbol:displayId>MD0_NOTGate</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/NOTGate_md/S1/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/S1"/>
-        <sbol:displayId>S1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>S1</dcterms:title>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_NOTGate/FC0_tu/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/FC0_tu"/>
+        <sbol:displayId>FC0_tu</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_tu/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/NOTGate_md/NOT_tu/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu"/>
-        <sbol:displayId>NOT_tu</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>NOT_tu</dcterms:title>
-        <sbol:definition rdf:resource="http://async.utah.edu/NOT_tu/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_NOTGate/FC1_inputProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/FC1_inputProtein"/>
+        <sbol:displayId>FC1_inputProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD5_inputProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/NOTGate_md/S0/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/S0"/>
-        <sbol:displayId>S0</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <dcterms:title>S0</dcterms:title>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/Ara/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_NOTGate/FC2_outputProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/FC2_outputProtein"/>
+        <sbol:displayId>FC2_outputProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD6_outputProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1"/>
-        <sbol:displayId>NOT_tu_prod_S1</sbol:displayId>
-        <sbol:version>1</sbol:version>
+      <sbol:Interaction rdf:about="http://dummy.org/MD0_NOTGate/I1_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I1_Prod"/>
+        <sbol:displayId>I1_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1/NOT_tu/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1/NOT_tu"/>
-            <sbol:displayId>NOT_tu</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
-            <sbol:participant rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu/1"/>
+          <sbol:Participation rdf:about="http://dummy.org/MD0_NOTGate/I1_Prod/P2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I1_Prod/P2"/>
+            <sbol:displayId>P2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
+            <sbol:participant rdf:resource="http://dummy.org/MD0_NOTGate/FC0_tu/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1/S1/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu_prod_S1/S1"/>
-            <sbol:displayId>S1</sbol:displayId>
-            <sbol:version>1</sbol:version>
+          <sbol:Participation rdf:about="http://dummy.org/MD0_NOTGate/I1_Prod/P3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I1_Prod/P3"/>
+            <sbol:displayId>P3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://async.utah.edu/NOTGate_md/S1/1"/>
+            <sbol:participant rdf:resource="http://dummy.org/MD0_NOTGate/FC2_outputProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu"/>
-        <sbol:displayId>S0_rep_NOT_tu</sbol:displayId>
-        <sbol:version>1</sbol:version>
+      <sbol:Interaction rdf:about="http://dummy.org/MD0_NOTGate/I0_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I0_Inhib"/>
+        <sbol:displayId>I0_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu/NOT_tu/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu/NOT_tu"/>
-            <sbol:displayId>NOT_tu</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://async.utah.edu/NOTGate_md/NOT_tu/1"/>
+          <sbol:Participation rdf:about="http://dummy.org/MD0_NOTGate/I0_Inhib/P0/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I0_Inhib/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/MD0_NOTGate/FC1_inputProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu/S0/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_md/S0_rep_NOT_tu/S0"/>
-            <sbol:displayId>S0</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://async.utah.edu/NOTGate_md/S0/1"/>
+          <sbol:Participation rdf:about="http://dummy.org/MD0_NOTGate/I0_Inhib/P1/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_NOTGate/I0_Inhib/P1"/>
+            <sbol:displayId>P1</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/MD0_NOTGate/FC0_tu/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
-    <sbol:model rdf:resource="http://async.utah.edu/NOTGate_model/1"/>
   </sbol:ModuleDefinition>
-  <sbol:Model rdf:about="http://async.utah.edu/NOTGate_model/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOTGate_model"/>
-    <sbol:displayId>NOTGate_model</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:source rdf:resource="file:NOTGate.xml"/>
-    <sbol:language rdf:resource="http://identifiers.org/edam/format_2585"/>
-    <sbol:framework rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000063"/>
-  </sbol:Model>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1"/>
-    <sbol:displayId>P1</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>P1</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/Ara/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/Ara"/>
-    <sbol:displayId>Ara</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/Ara/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#SmallMolecule"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD"/>
-    <sbol:displayId>pBAD</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>pBAD</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/NOT_tu/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu"/>
-    <sbol:displayId>NOT_tu</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/NOT_tu_SBOLDesignerActivity/1"/>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_tu/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_tu"/>
+    <sbol:displayId>CD1_tu</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/NOT_tu/CDS_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/CDS_Component"/>
-        <sbol:displayId>CDS_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR/1"/>
+      <sbol:Component rdf:about="http://dummy.org/CD1_tu/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_tu/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD4_terminator/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/NOT_tu/RBS_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/RBS_Component"/>
-        <sbol:displayId>RBS_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
+      <sbol:Component rdf:about="http://dummy.org/CD1_tu/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_tu/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_ribosome/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/NOT_tu/Ter_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/Ter_Component"/>
-        <sbol:displayId>Ter_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1"/>
+      <sbol:Component rdf:about="http://dummy.org/CD1_tu/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_tu/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_cds/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/NOT_tu/Pro_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/Pro_Component"/>
-        <sbol:displayId>Pro_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD/1"/>
+      <sbol:Component rdf:about="http://dummy.org/CD1_tu/C0_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_tu/C0_part"/>
+        <sbol:displayId>C0_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD0_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation1/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation1"/>
-        <sbol:displayId>NOT_tu_SequenceAnnotation1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:location>
-          <sbol:Range rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation1/NOT_tu_SequenceAnnotation1_Range/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation1/NOT_tu_SequenceAnnotation1_Range"/>
-            <sbol:displayId>NOT_tu_SequenceAnnotation1_Range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:start>332</sbol:start>
-            <sbol:end>364</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="http://async.utah.edu/NOT_tu/RBS_Component/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation3/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation3"/>
-        <sbol:displayId>NOT_tu_SequenceAnnotation3</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:location>
-          <sbol:Range rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation3/NOT_tu_SequenceAnnotation3_Range/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation3/NOT_tu_SequenceAnnotation3_Range"/>
-            <sbol:displayId>NOT_tu_SequenceAnnotation3_Range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:start>1007</sbol:start>
-            <sbol:end>1053</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="http://async.utah.edu/NOT_tu/Ter_Component/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation2/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation2"/>
-        <sbol:displayId>NOT_tu_SequenceAnnotation2</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:location>
-          <sbol:Range rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation2/NOT_tu_SequenceAnnotation2_Range/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation2/NOT_tu_SequenceAnnotation2_Range"/>
-            <sbol:displayId>NOT_tu_SequenceAnnotation2_Range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:start>365</sbol:start>
-            <sbol:end>1006</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="http://async.utah.edu/NOT_tu/CDS_Component/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation"/>
-        <sbol:displayId>NOT_tu_SequenceAnnotation</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:location>
-          <sbol:Range rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation/NOT_tu_SequenceAnnotation_Range/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceAnnotation/NOT_tu_SequenceAnnotation_Range"/>
-            <sbol:displayId>NOT_tu_SequenceAnnotation_Range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:start>1</sbol:start>
-            <sbol:end>331</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="http://async.utah.edu/NOT_tu/Pro_Component/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceConstraint>
-      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint"/>
-        <sbol:displayId>NOT_tu_SequenceConstraint</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
-        <sbol:subject rdf:resource="http://async.utah.edu/NOT_tu/Pro_Component/1"/>
-        <sbol:object rdf:resource="http://async.utah.edu/NOT_tu/RBS_Component/1"/>
-      </sbol:SequenceConstraint>
-    </sbol:sequenceConstraint>
-    <sbol:sequenceConstraint>
-      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint1/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint1"/>
-        <sbol:displayId>NOT_tu_SequenceConstraint1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
-        <sbol:subject rdf:resource="http://async.utah.edu/NOT_tu/RBS_Component/1"/>
-        <sbol:object rdf:resource="http://async.utah.edu/NOT_tu/CDS_Component/1"/>
-      </sbol:SequenceConstraint>
-    </sbol:sequenceConstraint>
-    <sbol:sequenceConstraint>
-      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint2/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tu/NOT_tu_SequenceConstraint2"/>
-        <sbol:displayId>NOT_tu_SequenceConstraint2</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
-        <sbol:subject rdf:resource="http://async.utah.edu/NOT_tu/CDS_Component/1"/>
-        <sbol:object rdf:resource="http://async.utah.edu/NOT_tu/Ter_Component/1"/>
-      </sbol:SequenceConstraint>
-    </sbol:sequenceConstraint>
-    <sbol:sequence rdf:resource="http://async.utah.edu/NOT_tuSequence/1"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR"/>
-    <sbol:displayId>SrpR</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>SrpR</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR/1"/>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD2_ribosome/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_ribosome"/>
+    <sbol:displayId>CD2_ribosome</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_sequence/1"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31"/>
-    <sbol:displayId>L3S3P31</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>L3S3P31</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_protein"/>
-    <sbol:displayId>SrpR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>SrpR_protein</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_protein/1"/>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD6_outputProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD6_outputProtein"/>
+    <sbol:displayId>CD6_outputProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1_sequence/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1_sequence"/>
-    <sbol:displayId>P1_sequence</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>P1_sequence</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1_sequence/1"/>
-    <sbol:elements>CTATGGACTATGTTTGAAAGGGAGAAATACTAG</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="http://async.utah.edu/NOT_tuSequence/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/NOT_tuSequence"/>
-    <sbol:displayId>NOT_tuSequence</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/NOT_tu_SBOLDesignerActivity/1"/>
-    <sbol:elements>ACTTTTCATACTCCCGCCATTCAGAGAAGAAACCAATTGTCCATATTGCATCAGACATTGCCGTCACTGCGTCTTTTACTGGCTCTTCTCGCTAACCAAACCGGTAACCCCGCTTATTAAAAGCATTCTGTAACAAAGCGGGACCAAAGCCATGACAAAAACGCGTAACAAAAGTGTCTATAATCACGGCAGAAAAGTCCACATTGATTATTTGCACGGCGTCACACTTTGCTATGCCATAGCATTTTTATCCATAAGATTAGCGGATCCTACCTGACGCTTTTTATCGCAACTCTCTACTGTTTCTCCATACCCGTTTTTTTGGGCTAGCCTATGGACTATGTTTGAAAGGGAGAAATACTAGATGGCACGTAAAACCGCAGCAGAAGCAGAAGAAACCCGTCAGCGTATTATTGATGCAGCACTGGAAGTTTTTGTTGCACAGGGTGTTAGTGATGCAACCCTGGATCAGATTGCACGTAAAGCCGGTGTTACCCGTGGTGCAGTTTATTGGCATTTTAATGGTAAACTGGAAGTTCTGCAGGCAGTTCTGGCAAGCCGTCAGCATCCGCTGGAACTGGATTTTACACCGGATCTGGGTATTGAACGTAGCTGGGAAGCAGTTGTTGTTGCAATGCTGGATGCAGTTCATAGTCCGCAGAGCAAACAGTTTAGCGAAATTCTGATTTATCAGGGTCTGGATGAAAGCGGTCTGATTCATAATCGTATGGTTCAGGCAAGCGATCGTTTTCTGCAGTATATTCATCAGGTTCTGCGTCATGCAGTTACCCAGGGTGAACTGCCGATTAATCTGGATCTGCAGACCAGCATTGGTGTTTTTAAAGGTCTGATTACCGGTCTGCTGTATGAAGGTCTGCGTAGCAAAGATCAGCAGGCACAGATTATCAAAGTTGCACTGGGTAGCTTTTGGGCACTGCTGCGTGAACCGCCTCGTTTTCTGCTGTGTGAAGAAGCACAGATTAAACAGGTGAAATCCTTCGAATAACCAATTATTGAACACCCTAACGGGTGTTTTTTTTTTTTTGGTCTACC</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31_sequence/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31_sequence"/>
-    <sbol:displayId>L3S3P31_sequence</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>L3S3P31_sequence</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31_sequence/1"/>
-    <sbol:elements>CCAATTATTGAACACCCTAACGGGTGTTTTTTTTTTTTTGGTCTACC</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_sequence/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_sequence"/>
-    <sbol:displayId>SrpR_sequence</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>SrpR_sequence</dcterms:title>
-    <dcterms:created>2018-05-09T19:41:51.056Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_sequence/1"/>
-    <sbol:elements>ATGGCACGTAAAACCGCAGCAGAAGCAGAAGAAACCCGTCAGCGTATTATTGATGCAGCACTGGAAGTTTTTGTTGCACAGGGTGTTAGTGATGCAACCCTGGATCAGATTGCACGTAAAGCCGGTGTTACCCGTGGTGCAGTTTATTGGCATTTTAATGGTAAACTGGAAGTTCTGCAGGCAGTTCTGGCAAGCCGTCAGCATCCGCTGGAACTGGATTTTACACCGGATCTGGGTATTGAACGTAGCTGGGAAGCAGTTGTTGTTGCAATGCTGGATGCAGTTCATAGTCCGCAGAGCAAACAGTTTAGCGAAATTCTGATTTATCAGGGTCTGGATGAAAGCGGTCTGATTCATAATCGTATGGTTCAGGCAAGCGATCGTTTTCTGCAGTATATTCATCAGGTTCTGCGTCATGCAGTTACCCAGGGTGAACTGCCGATTAATCTGGATCTGCAGACCAGCATTGGTGTTTTTAAAGGTCTGATTACCGGTCTGCTGTATGAAGGTCTGCGTAGCAAAGATCAGCAGGCACAGATTATCAAAGTTGCACTGGGTAGCTTTTGGGCACTGCTGCGTGAACCGCCTCGTTTTCTGCTGTGTGAAGAAGCACAGATTAAACAGGTGAAATCCTTCGAATAA</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
-  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD_sequence/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD_sequence"/>
-    <sbol:displayId>pBAD_sequence</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pBAD_sequence/1"/>
-    <sbol:elements>ACTTTTCATACTCCCGCCATTCAGAGAAGAAACCAATTGTCCATATTGCATCAGACATTGCCGTCACTGCGTCTTTTACTGGCTCTTCTCGCTAACCAAACCGGTAACCCCGCTTATTAAAAGCATTCTGTAACAAAGCGGGACCAAAGCCATGACAAAAACGCGTAACAAAAGTGTCTATAATCACGGCAGAAAAGTCCACATTGATTATTTGCACGGCGTCACACTTTGCTATGCCATAGCATTTTTATCCATAAGATTAGCGGATCCTACCTGACGCTTTTTATCGCAACTCTCTACTGTTTCTCCATACCCGTTTTTTTGGGCTAGC</sbol:elements>
-    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
-  </sbol:Sequence>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_terminator"/>
+    <sbol:displayId>CD4_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_promoter"/>
+    <sbol:displayId>CD0_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD3_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_cds"/>
+    <sbol:displayId>CD3_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD5_inputProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD5_inputProtein"/>
+    <sbol:displayId>CD5_inputProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
 </rdf:RDF>
