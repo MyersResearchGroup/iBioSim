@@ -327,9 +327,7 @@ public class CelloModeling {
 				}
 			}
 		}
-		
-		//TODO PEDRO change generatesubmodel to the new SUBMODEL!
-		
+				
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -359,6 +357,7 @@ public class CelloModeling {
 	 * Convert the given SBOL ModuleDefinition and its submodule to equivalent SBML models. 
 	 * SBML replacement and replacedBy objects will be created for each SBOL MapsTo that occur in the given SBML submodule.
 	 * Annotation will be performed on SBML the given SBML submodule for any SBOL subModule information that can't be mapped directly.
+	 * NOTE: This method emulates almost exactly the same method in SBOL2SBML.java class
 	 * 
 	 * @param projectDirectory - The location to generate the SBML model. 
 	 * @param subModule - The SBOL subModule that is referenced within the given ModuleDefinition to be converted into SBML model.
@@ -400,6 +399,7 @@ public class CelloModeling {
 	 * Each SBML model will be generated into its own .xml file that will be stored into the given project directory.
 	 * To retain the the submodels that are referenced in the given SBOL ModuleDefinition, SBML replacement and replacedBy
 	 * will handle each submodels that are referenced from the "top level" moduleDefinition.
+	 * NOTE: This method emulates almost exactly the same method in SBOL2SBML.java class
 	 * 
 	 * @param projectDirectory - The location to generate the SBML model. 
 	 * @param subModule - The SBOL submodule referenced by the given SBOL ModuleDefinition.
@@ -427,13 +427,14 @@ public class CelloModeling {
 	}
 	
 	/**
-	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
+	 * This method is used when the model needs one SBML species per Transcriptional Unit (TU) rather than multiple promoter
 	 * species (per promoter sequence present in the TU) per TU. 
 	 * 
 	 * @author Pedro Fontanarrosa
-	 * @param promoter the TU the model needa to create a species from
+	 * @param promoter the TU the model needs to create a species from
 	 * @param sbolDoc the SBOLDocument being worked on
 	 * @param targetModel is the target model being created
+	 * 
 	 */
 	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
 			
@@ -454,7 +455,8 @@ public class CelloModeling {
 	}
 	
 	/**
-	 * This method will remove all Sensor proteins and Complexes species from the SBML document.
+	 * This method will remove all Sensor proteins and Complexes species from the SBML document. This is used because Cello modeling
+	 * doesn't use or model Complex formation between sensor proteins and small molecule inputs
 	 *
 	 * @author Pedro Fontanarrosa
 	 * @param sensorMolecules the sensor proteins and complexes to be removed
@@ -473,10 +475,10 @@ public class CelloModeling {
 	/**
 	 * This method returns a list of complex molecules formed, and their associated ligand. This is going to be used when
 	 * determining the sensor promoters, and who represses/activates them (since for Cello, the presence of input ligand
-	 * activates the promoters).
+	 * activates the promoters), and do the appropriate species replacements.
 	 *
 	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol document in use
+	 * @param sbolDoc the SBOL document in use
 	 * @return the hash map where "keys" are the complex molecules and "values" are the ligand associated
 	 */
 	private static HashMap<String, String> sensorMolecules(SBOLDocument sbolDoc){
@@ -649,11 +651,11 @@ public class CelloModeling {
 	}
 	
 	/**
-	 * This method returns a Hashmap with a protein, and Cello Parameters associated with it if it has any. This
-	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU
+	 * This method returns a HashMap with a activator/repressor, and Cello Parameters associated with it if it has any. This
+	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU.
 	 *
 	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol document being used
+	 * @param sbolDoc the SBOL document being used
 	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
 	 */
 	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
@@ -806,12 +808,6 @@ public class CelloModeling {
 				}
 			}
 		}
-
-/*		for (String com_prot : sensorMolecules.keySet()) {
-
-			moduleDef.removeFunctionalComponent(moduleDef.getFunctionalComponent(com_prot));
-
-		}*/
 	}
 
 	
@@ -819,6 +815,7 @@ public class CelloModeling {
 	 * Convert the given SBOL MapsTo object into SBML replacement for the given remote and local SBOL ModuleDefinition.
 	 * Annotation will be performed on SBML replacement for any SBOL MapsTo information that can't be mapped directly.
 	 * 
+	 * @author Pedro Fontanarrosa
 	 * @param mapping - The SBOL MapsTo to be converted to SBML replacement.  
 	 * @param subModule - The SBOL Module that is considered to be the remote model in the replacement object.
 	 * @param moduleDef - The SBOL ModuleDefinition that is considered to be the local model in the replacement object.
@@ -850,39 +847,12 @@ public class CelloModeling {
 		SBMLutilities.addReplacement(localSBMLSpecies, subModel, SBOL2SBML.getDisplayID(subModule), port, "(none)", 
 				new String[]{""}, new String[]{""}, new String[]{""}, new String[]{""}, false);
 
-		// Annotate SBML replacment with SBOL maps-to
+		// Annotate SBML replacement with SBOL maps-to
 		CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
 		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), 1);
 		//SBOL2SBML.annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
 	}
 	
-	/**
-	 * Convert the given SBOL MapsTo object into SBML replacedBy for the given remote and local SBOL ModuleDefinition.
-	 * Annotation will be performed on SBML replacedBy for any SBOL MapsTo information that can't be mapped directly.
-	 * 
-	 * @param mapping - The SBOL MapsTo to be converted to SBML replacedBy.  
-	 * @param subModule - The SBOL Module that is considered to be the remote model in the replacedBy object.
-	 * @param moduleDef - The SBOL ModuleDefinition that is considered to be the local model in the replacedBy object.
-	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML replacedBy.
-	 * @param subTargetModel - The SBML remote model that contain the SBML replacedBy.
-	 * @param targetModel - The SBML local model that contain the SBML replacedBy.
-	 */
-	private static void generateReplacedBy(MapsTo mapping, Module subModule, ModuleDefinition moduleDef, 
-			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
-		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
-		FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteURI());
-		FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
-
-		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(localSpecies));
-		Port port = subTargetModel.getPortByIdRef(SBOL2SBML.getDisplayID(remoteSpecies));
-		SBMLutilities.addReplacedBy(localSBMLSpecies, SBOL2SBML.getDisplayID(subModule), port.getId(), new String[]{""}, 
-				new String[]{""}, new String[]{""}, new String[]{""});
-
-		// Annotate SBML replaced-by with SBOL maps-to
-		CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
-		SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedBy(), 1);
-		SBOL2SBML.annotateReplacedBy(compSBML.getReplacedBy(), mapping);
-	}
 	
 	// TODO PEDRO generateCelloProductionsRxns
 	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
@@ -1022,7 +992,7 @@ public class CelloModeling {
 	}
 
 	/**
-	 * Generate cello degradation rxn using Cello optimized parameters. 
+	 * Generate cello degradation reaction using Cello optimized parameters of degradation.
 	 *
 	 * @author Pedro Fontanarrosa
 	 * @param degradation the degradation interaction

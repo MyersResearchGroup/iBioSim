@@ -284,6 +284,10 @@ public class SBOL2SBML {
 			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
 		}
 		
+		
+		System.out.println("What are you doing here!");
+		
+		
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -406,7 +410,7 @@ public class SBOL2SBML {
 		for (Interaction interact : resultMD.getInteractions()) {
 			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {	
 				if (Top_Level_Cello_Model) {
-					System.out.println("you are in new degradation method call");
+					
 					//TODO PEDRO: change this so that the degradation rate is only called for 
 					//proteins and mRNAs, but not for the rest (i.e. IPTG, complexes, etc)
 					generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
@@ -522,7 +526,7 @@ public class SBOL2SBML {
 				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
 				if (CelloModel) {
 					//go to the new generateProductionRxn method
-					System.out.println("you are in new method call");
+					
 					
 					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
 					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
@@ -1598,7 +1602,7 @@ public class SBOL2SBML {
 		}
 		if (isRNAComponent(species, sbolDoc)) {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
-			System.out.println("mRNA: " + species.getDisplayId());
+			
 		}
 		
 /*		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
