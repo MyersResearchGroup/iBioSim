@@ -374,9 +374,8 @@ public class LpnProcess extends LPN {
 	public void setStateMachineFlag(boolean isSM) {
 		isStateMachine = isSM;		
 	}
-	
 	public boolean getStateMachineFlag() {
 		return isStateMachine;
 	}
-	
 }
+

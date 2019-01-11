@@ -18,18 +18,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.print.Doc;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
@@ -43,7 +39,6 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
@@ -64,8 +59,6 @@ import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
-import org.synbiohub.frontend.SynBioHubFrontend;
-import org.virtualparts.sbol.Terms.sbo;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
@@ -136,6 +129,7 @@ public class SBOL2SBML {
 	 */
 	static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
+        
 		try {
 		
     	SBOLDocument doc = new SBOLDocument();
@@ -183,6 +177,7 @@ public class SBOL2SBML {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
     			URI value = local_map_uris.get(FC.getIdentity());
+    			// check if the pointer is not also pointed by someone, store the toppest level FC
     			while (local_map_uris.containsKey(value)) {
     				value = local_map_uris.get(value);
     			}
@@ -250,11 +245,11 @@ public class SBOL2SBML {
         			}
         		}
     		}
-    	}     
+    	}       
         return resultMD;} catch (Exception e) {e.printStackTrace();
         return MD;}
     }
-	
+
 	/**
 	 * Perform conversion from SBOL to SBML. 
 	 * All SBOL Interactions are converted to SBML degradation, complex formation, and production reactions. Depending
@@ -270,7 +265,7 @@ public class SBOL2SBML {
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
-	 * @throws SBOLValidationException 
+	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
 	 * @throws SynBioHubException 
 	 * @throws SBOLConversionException 
 	 */
@@ -283,10 +278,6 @@ public class SBOL2SBML {
 			System.out.println("--------------------");
 			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
 		}
-		
-		
-		System.out.println("What are you doing here!");
-		
 		
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
@@ -305,43 +296,9 @@ public class SBOL2SBML {
 				moduleDef.getClass().getSimpleName(), moduleDef.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(sbmlModel, modelAnno);
 		
-		//Determine the relationship between Sensor Molecules and their target. This method will return a list with Sensor Proteins/Complexes related
-		//the ligand they interact with.
-		HashMap<String, String> sensorMolecules = sensorMolecules(sbolDoc);
-		
-		//This method returns a map with each protein, and it's associated Cello parameters.
-		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
-		
-		//Determine the activations/repressions of each promoter in the SBOLDocument. Returns a map that relates each promoter, if it is activated/repressed
-		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
-		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
-		
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = MDFlattener(sbolDoc, moduleDef);
 		
-		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
-		removeSensorInteractios(resultMD, sensorMolecules);
-		
-		boolean Top_Level_Cello_Model = true;
-		
-		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		boolean CelloModel = false;
-		// TODO there has to be a better way to determine if we are in a Cello model generation or not
-		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
-			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
-				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
-				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
-				//using Cello Parameters.
-				celloParameters.put(promoter, hasCelloParameters(promoter));
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
-				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
-					CelloModel = true;
-				}
-			}
-		}
-		
-
-		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
 			if (isSpeciesComponent(comp, sbolDoc)) {
 				generateSpecies(comp, sbolDoc, targetModel);
@@ -351,51 +308,17 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-				// If CelloModel, generate only one species for each TU
-				if (CelloModel) {
-					generateTUSpecies(comp, sbolDoc, targetModel);
-				}
-				// else, we are in normal model generation, which creates one species for each promoter in the TU
-				else {
-					generatePromoterSpecies(comp, sbolDoc, targetModel);
-				}
+				generatePromoterSpecies(comp, sbolDoc, targetModel);
+				//generateTUSpecies(comp, sbolDoc, targetModel);
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
 					generateOutputPort(comp, targetModel);
 				}
 			} else {
+				//remove comments and print outs
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
-
-//			if (sensorMolecules.containsKey(comp.getDisplayId())) {
-//				break;
-//			} else {
-//				if (isSpeciesComponent(comp, sbolDoc)) {
-//					generateSpecies(comp, sbolDoc, targetModel);
-//					if (isInputComponent(comp)) {
-//						generateInputPort(comp, targetModel);
-//					} else if (isOutputComponent(comp)){
-//						generateOutputPort(comp, targetModel);
-//					}
-//				} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-//					// If CelloModel, generate only one species for each TU
-//					if (CelloModel) {
-//						generateTUSpecies(comp, sbolDoc, targetModel);
-//					}
-//					// else, we are in normal model generation, which creates one species for each promoter in the TU
-//					else {
-//						generatePromoterSpecies(comp, sbolDoc, targetModel);
-//					}
-//					if (isInputComponent(comp)) {
-//						generateInputPort(comp, targetModel);
-//					} else if (isOutputComponent(comp)){
-//						generateOutputPort(comp, targetModel);
-//					}
-//				} else {
-//					//System.out.println("Dropping "+comp.getIdentity());
-//				}
-			//}
 		}
 
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -406,17 +329,9 @@ public class SBOL2SBML {
 		HashMap<FunctionalComponent, List<Participation>> promoterToActivators = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToRepressors = new HashMap<FunctionalComponent, List<Participation>>();
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
-		
 		for (Interaction interact : resultMD.getInteractions()) {
-			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {	
-				if (Top_Level_Cello_Model) {
-					
-					//TODO PEDRO: change this so that the degradation rate is only called for 
-					//proteins and mRNAs, but not for the rest (i.e. IPTG, complexes, etc)
-					generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
-				} else {
-					generateDegradationRxn(interact, resultMD, targetModel);
-				}
+			if (isDegradationInteraction(interact, resultMD, sbolDoc)) {
+				generateDegradationRxn(interact, resultMD, targetModel);
 			} else if (isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
@@ -504,7 +419,6 @@ public class SBOL2SBML {
 				generateBiochemicalRxn(interact, resultMD, targetModel);
 			}
 		}
-		
 
 		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
 			if (isPromoterComponent(resultMD, promoter, sbolDoc)) {
@@ -522,31 +436,15 @@ public class SBOL2SBML {
 					promoterToTranscribed.put(promoter, new LinkedList<Participation>());
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
-				
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
-				if (CelloModel) {
-					//go to the new generateProductionRxn method
-					
-					
-					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
-					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-					//TODO PEDRO calling cello methods
-					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
-				}
-				//else call the normal model generating method
-				else {
-					generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
-				}
+				// TODO: Analyze "promoter" (TU) to see if it has Cello parameters
+				// if yes, call your generateProductionRxn method, else original
+				generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
 			}
 		}
-		
-		
+
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
@@ -563,370 +461,9 @@ public class SBOL2SBML {
 				}
 			}
 		}
+
 		models.put(getDisplayID(resultMD),targetModel);
-		
-		//This method will remove all Sensor proteins and Complexes species from the SBML document.
-		removeSensorProAndMole(sensorMolecules, targetModel);
 		return models;
-	}
-	
-	/**
-	 * This method will remove all Sensor proteins and Complexes species from the SBML document.
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param sensorMolecules the sensor proteins and complexes to be removed
-	 * @param targetModel the target model where the species will be removed
-	 */
-	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
-		
-		for (String species : sensorMolecules.keySet()) {
-			if (targetModel.getSBMLDocument().getModel().containsSpecies(species)) {
-				targetModel.getSBMLDocument().getModel().removeSpecies(species);
-			}	
-		}
-	}
-	
-	/**
-	 * This method returns a list of complex molecules formed, and their associated ligand. This is going to be used when
-	 * determining the sensor promoters, and who represses/activates them (since for Cello, the presence of input ligand
-	 * activates the promoters).
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol document in use
-	 * @return the hash map where "keys" are the complex molecules and "values" are the ligand associated
-	 */
-	private static HashMap<String, String> sensorMolecules(SBOLDocument sbolDoc){
-
-		HashMap<String, String> sensorMolecules = new HashMap<String, String>();
-				
-		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
-			for (Interaction interact : moduleDef.getInteractions()) {
-				if (isComplexFormationInteraction(interact, moduleDef, sbolDoc)) {
-					ComponentDefinition ligand = null;
-					ComponentDefinition complex = null;
-					ComponentDefinition prot = null;
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
-							complex = partici.getParticipantDefinition();
-							if (!sensorMolecules.containsKey(complex)) {
-								//promoterActivations.put(promoter.getDisplayId(), null);
-								sensorMolecules.put(complex.getDisplayId(),"");
-							}
-						}
-					}
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
-							prot = partici.getParticipantDefinition();
-							if(isProteinDefinition(prot)) {
-								if (!sensorMolecules.containsKey(prot)) {
-									//promoterActivations.put(promoter.getDisplayId(), null);
-									sensorMolecules.put(prot.getDisplayId(),"");
-									break;
-								}
-							}
-						}
-					}
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
-							FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-							ligand = partici.getParticipantDefinition();
-							ligand = comp.getDefinition();
-							if (isSmallMoleculeDefinition(ligand)) {
-								sensorMolecules.replace(complex.getDisplayId(), ligand.getDisplayId());
-								sensorMolecules.replace(prot.getDisplayId(), ligand.getDisplayId());
-								//.get(complex.getDisplayId())
-								//.put(partici.getParticipantDefinition().getDisplayId());
-							}
-						}
-					}
-				}
-			}
-		}
-		return sensorMolecules;
-	}
-	
-	/**
-	 * This method searches all activation and repression interactions and maps it to individual promoters (not TUs). This information
-	 * will be later used when creating the mathematical model using Hamid's paper for dynamic modeling using Cello Parameters.
-	 * 
-	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the SBOLDocument
-	 * @return the hash map with all the interactions per promoter
-	 */
-	//TODO PEDRO: promoterInteractions
-	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, String> sensorMolecules){
-
-		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
-		
-		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
-			for (Interaction interact : moduleDef.getInteractions()) {
-				if (isActivationInteraction(interact, moduleDef, sbolDoc)) {
-					List<Annotation> Annot = interact.getAnnotations();
-					String ymax = "";
-					String ymin = "";
-					for (int i = 0; i < Annot.size(); i++) {
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
-							ymax = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
-							ymin = Annot.get(i).getStringValue();
-						}
-					}
-					Boolean sensor = false;
-					if (!ymax.isEmpty() & !ymin.isEmpty()) {
-						sensor = true;
-					}
-					ComponentDefinition promoter = null;
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.PROMOTER)|| partici.containsRole(SystemsBiologyOntology.STIMULATED)) {
-							if (partici.getParticipantDefinition().getComponents().isEmpty()) {
-								promoter = partici.getParticipantDefinition();
-								if (!promoterInteractions.containsKey(promoter))
-									//promoterActivations.put(promoter.getDisplayId(), null);
-									promoterInteractions.put(promoter.getDisplayId(), new HashMap <String, String>());
-							}
-						}  else {
-							for (Component comp : partici.getParticipantDefinition().getComponents()) {
-								if (comp.getDefinition().containsRole(SystemsBiologyOntology.PROMOTER) || comp.getDefinition().containsRole(SystemsBiologyOntology.STIMULATED)) {
-									promoter = comp.getDefinition();
-									if (!promoterInteractions.containsKey(promoter)) {
-										promoterInteractions.put(promoter.getDisplayId(), new HashMap <String, String>());
-									}
-								}
-							}
-						}
-					}
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.STIMULATOR)) {
-							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
-							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
-							} else {
-								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
-							}
-							
-						}
-					}
-				} else if (isRepressionInteraction(interact, moduleDef, sbolDoc)) {
-					List<Annotation> Annot = interact.getAnnotations();
-					String ymax = "";
-					String ymin = "";
-					for (int i = 0; i < Annot.size(); i++) {
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
-							ymax = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
-							ymin = Annot.get(i).getStringValue();
-						}
-					}
-					Boolean sensor = false;
-					if (!ymax.isEmpty() & !ymin.isEmpty()) {
-						sensor = true;
-					}
-					ComponentDefinition promoter = null;
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.PROMOTER)|| partici.containsRole(SystemsBiologyOntology.INHIBITED)) {
-							if (partici.getParticipantDefinition().getComponents().isEmpty()) {
-								promoter = partici.getParticipantDefinition();
-								if (!promoterInteractions.containsKey(promoter)) {
-									promoterInteractions.put(promoter.getDisplayId(), new HashMap <String, String>());
-								}
-							} else {
-								for (Component comp : partici.getParticipantDefinition().getComponents()) {
-									if (comp.getDefinition().containsRole(SystemsBiologyOntology.PROMOTER) || comp.getDefinition().containsRole(SystemsBiologyOntology.INHIBITED)) {
-										promoter = comp.getDefinition();
-										if (!promoterInteractions.containsKey(promoter)) {
-											promoterInteractions.put(promoter.getDisplayId(), new HashMap <String, String>());
-										}
-									}
-								}
-								}
-						}
-					}
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.INHIBITOR)) {
-							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
-							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
-							} else {
-								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
-							}
-							
-						}
-					}
-				}
-			}
-		}
-
-		return promoterInteractions;
-	}
-	
-	/**
-	 * This method returns a Hashmap with a protein, and Cello Parameters associated with it if it has any. This
-	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param sbolDoc the sbol document being used
-	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
-	 */
-	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
-		
-		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
-		for (ComponentDefinition CD : sbolDoc.getComponentDefinitions()) {
-			if (CD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
-				for (Component comp : CD.getComponents()) {
-					if (comp.getDefinition().containsRole(SequenceOntology.CDS)) {
-						for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
-							for (Interaction interaction : moduleDef.getInteractions()) {
-								if (isProductionInteraction(interaction, moduleDef, sbolDoc)) {
-									for (Participation participator : interaction.getParticipations()) {
-										// use .equals() rather than == in the If statement, because .equals() compares objects and == only compares int.
-										if (participator.getParticipant().getDisplayId().equals(comp.getDefinition().getDisplayId())) {
-											for (Participation participator2 : interaction.getParticipations()) {
-												if (participator2.containsRole(SystemsBiologyOntology.PRODUCT)) {
-													String protein1 = participator2.getParticipant().getDisplayId();
-													if (!Prot_2_Param.containsKey(protein1)) {
-														Prot_2_Param.put(protein1, hasCelloParameters2(CD));
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return Prot_2_Param;
-	}
-
-	/**
-	 * Checks for Cello parameters. This method searches annotations of parts to see if there are stored any Cello parameters. 
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param promoter The TranscriptionalUnit (TU) where, if present, Cello parameters are stored
-	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
-	 */
-	
-	//TODO PEDRO hasCelloParameters
-	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
-		
-		//Initialize the parameters we are looking for
-		String n = "";
-		String K = "";
-		String ymax = "";
-		String ymin = "";
-		
-		if (promoter.getDefinition() != null) {
-			ComponentDefinition tuCD = promoter.getDefinition();
-			for (Component comp : tuCD.getComponents()) {
-				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-						ComponentDefinition Part = comp.getDefinition();
-						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
-						//the location of these parameters can change
-						List<Annotation> Annot = Part.getAnnotations();
-						//cicle through all annotations looking for Cello parameters
-						for (int i = 0; i < Annot.size(); i++) {
-							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
-								K = Annot.get(i).getStringValue();
-							}
-							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
-								n = Annot.get(i).getStringValue();
-							}
-							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
-								ymax = Annot.get(i).getStringValue();
-							}
-							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
-								ymin = Annot.get(i).getStringValue();
-							}
-						}
-					}
-				}
-			}
-		}
-		//Create HashMap where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
-		HashMap<String, String> celloParameters = new HashMap<String, String>();
-				
-		celloParameters.put("n", n);
-		celloParameters.put("K", K);
-		celloParameters.put("ymax", ymax);
-		celloParameters.put("ymin", ymin);
-		return celloParameters;
-	}
-	
-	//TODO PEDRO hasCelloParameters
-	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
-		
-		//Initialize the parameters we are looking for
-		String n = "";
-		String K = "";
-		String ymax = "";
-		String ymin = "";
-		
-		if (promoter != null) {
-			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-				//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
-				//the location of these parameters can change
-				List<Annotation> Annot = promoter.getAnnotations();
-					//cicle through all annotations looking for Cello parameters
-					for (int i = 0; i < Annot.size(); i++) {
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
-							K = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
-							n = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
-							ymax = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
-							ymin = Annot.get(i).getStringValue();
-						}
-					}
-			}
-		}
-		//Create list where to store all parameters. It will return empty "" string values if it hasn't found any Cello parameters.
-		ArrayList<String> CelloParameters2 = new ArrayList<String>();
-		CelloParameters2.add(n);
-		CelloParameters2.add(K);
-		CelloParameters2.add(ymax);
-		CelloParameters2.add(ymin);
-		
-		return CelloParameters2;
-	}
-	
-	/**
-	 * Removes the complex formation interaction (from sensor protein and ligand) from the document. This will remove the need to create these interactions for the SBML document
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param moduleDef the module def
-	 * @param sensorMolecules the sensor molecules
-	 * @throws SBOLValidationException the SBOL validation exception
-	 */
-	private static void removeSensorInteractios(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
-		
-		for (Interaction interact : moduleDef.getInteractions()) {
-			for (Participation part :interact.getParticipations()){
-				for (String com_prot : sensorMolecules.keySet()) {
-					if (part.getDisplayId().equals(com_prot)) {
-						moduleDef.removeInteraction(interact);
-						break;
-					}
-				}
-			}
-		}
-
-/*		for (String com_prot : sensorMolecules.keySet()) {
-
-			moduleDef.removeFunctionalComponent(moduleDef.getFunctionalComponent(com_prot));
-
-		}*/
 	}
 
 	/**
@@ -1162,7 +699,7 @@ public class SBOL2SBML {
 			}
 		}
 	}
-
+	
 	/**
 	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
 	 * species (per promoter sequence present in the TU) per TU. 
@@ -1173,8 +710,6 @@ public class SBOL2SBML {
 	 * @param targetModel is the target model being created
 	 */
 	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-			
-			//TODO PEDRO: generateTUSpecies
 			
 			String TU = promoter.getDisplayId();
 			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
@@ -1189,6 +724,7 @@ public class SBOL2SBML {
 			}
 		
 	}
+
 	/**
 	 * Convert the given SBOL biochemical reaction interaction to its equivalent SBML reaction with its corresponding SpeciesReference.
 	 * Each SBOL participation that takes place in the biochemical reaction will be given SBO terms to retain the role of the participation 
@@ -1324,8 +860,7 @@ public class SBOL2SBML {
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
-		
-		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
+
 		String rxnID = "";
 		if (productions!=null) {
 			for (Interaction production : productions) {
@@ -1353,7 +888,6 @@ public class SBOL2SBML {
 			}
 		}
 
-		// For each promoter in the TU, a new production reaction will be created, so we save the Identity of each promoter in this TU in promoterID
 		for (int i = 0; i < promoterCnt; i++) {
 			
 			String rxnIDi = rxnID; 
@@ -1380,7 +914,6 @@ public class SBOL2SBML {
 				}
 			}
 		
-			// create the actual production reaction, using a specific promoter in the TU. Returns a reaction.
 			Reaction productionRxn = targetModel.createProductionReaction(promoterId, rxnIDi, null, null, null, null, 
 					null, null, false, null);
 
@@ -1435,221 +968,7 @@ public class SBOL2SBML {
 			}
 		}
 	}
-	
-	// TODO PEDRO generateCelloProductionsRxns
-	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
-			List<Interaction> activations, List<Interaction> repressions,
-			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
-		
-		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
-		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
-		
-		if (productions == null) {
-			return;
-		}
-		
-		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
-		String rxnID = "";
-		if (products!=null) {
-			for (Participation production : products) {
-				if (rxnID.equals("")) {
-					rxnID = getDisplayID(production);
-				} else {
-					rxnID = rxnID + "_" + getDisplayID(production);
-				}
-			}
-		} else {
-			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
-			}
-				
-		//create reaction ID for SDproduction and TFproduction which is the display ID's of the products separated by underscores, check if it's unique using SMBLUtilities.getUniqueSBMLId()
-		String rxnIDSD = rxnID + "_" + "transcription";
-		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
-		String rxnIDTF = rxnID + "_" + "translation";
-		rxnIDTF = SBMLutilities.getUniqueSBMLId(rxnIDTF, targetModel);
-		
-		
-		// Count promoters
-		int promoterCnt = 0;
-		if (promoter.getDefinition() != null) {
-			ComponentDefinition tuCD = promoter.getDefinition();
-			for (Component comp : tuCD.getComponents()) {
-				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
-							comp.getDefinition().getRoles().contains(SequenceOntology.OPERATOR)) {
-						promoterCnt++;
-					}
-				}
-			}
-		}
-		
-		// each promoter will have a set of interactions
-		Set <String> promoters = new HashSet <String>();
-		for (int i = 0; i < promoterCnt; i++) {
-			
-			// if only one promoter in TU, then promoterId will be the name of the TU
-			String promoterId = getDisplayID(promoter);
-			
-			// Use the id of the actual promoter
-			if (promoterCnt >= 1) {
-				if (promoter.getDefinition() != null) {
-					ComponentDefinition tuCD = promoter.getDefinition();
-					int j = 0;
-					for (Component comp : tuCD.getComponents()) {
-						if (comp.getDefinition() != null) {
-							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
-								if (i==j) {
-									promoterId = getDisplayID(comp.getDefinition());
-									promoters.add(promoterId);
-									break;
-								}
-								j++;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
-		String kTFdegrad = String.valueOf(GlobalConstants.k_TF_DIM_S);
-		
-		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
-		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
-		mRNA.setId( rxnID + "_mRNA");
-		//TODO PEDRO This is to make TU a species on which to make it a modifier. This may have to change when we fix MDflatenner
-/*		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
-			targetModel.createPromoter(promoter.getDisplayId(), -1, -1, true, false, null);
-		}
-		Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId());
-		ComponentDefinition proDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
-		if (proDef!=null) {
-			annotateSpecies(sbmlPromoter, promoter, proDef, sbolDoc);
-		}*/ 
-		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(mRNA, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
-		targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
-		
-		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(mRNA, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
-			
-		
-		// Annotate SBML production reaction with SBOL production interactions
-		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-		if (productions!=null) productionsRegulations.addAll(productions);
-		productionsRegulations.addAll(activations);
-		productionsRegulations.addAll(repressions);
-		if (!productionsRegulations.isEmpty())
-			annotateRxn(SDproductionRxn, productionsRegulations);
-		if (!partici.isEmpty()) 
-			annotateSpeciesReference(SDproductionRxn.getModifier(0), partici);
-		
-		for (Participation activator : activators)
-			generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-		
-		for (Participation repressor : repressors)
-			generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-		
-		//for (Participation product : products)
-		//	generateProductReference(product, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);	
-		
-		//I think I should get the id of all promoters, and create 1 production reaction for the mRNA for the whole TU
-		// and another production reaction for the product, for the whole TU
-		
-		//Note: find the resulting ComponentDefinition that creates or result in the production reaction to annotate in its equivalent
-		// SBML species. 
-		for (int k = 0; k < transcribed.size(); k++) {
-			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
-			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
 
-			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-			if (compDef!=null) {
-				annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(getDisplayID(protein)), compDef);
-			}
-		}
-		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters)));
-		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
-		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+mRNA.getId()));
-		
-	}
-
-	/**
-	 * Generate cello degradation rxn using Cello optimized parameters. 
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param degradation the degradation interaction
-	 * @param moduleDef the ModuleDefinition in which the interaction is in
-	 * @param targetModel the target model being constructed for the TU
-	 * @throws BioSimException the bio sim exception
-	 */
-	// TODO PEDRO generateCelloDegradationRxn
-	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel, SBOLDocument sbolDoc) throws BioSimException {
-		Participation degraded = null;
-		for(Participation part : degradation.getParticipations())
-		{
-			degraded = part;
-			break;
-		}
-		Set<URI> species2 = degraded.getParticipantDefinition().getTypes();
-		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipantURI());
-		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
-				|| species.getDirection().equals(DirectionType.OUT));
-		
-		double kdegrad = 0;
-		
-		if (isProteinComponent(species, sbolDoc)) {
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-		}
-		if (isRNAComponent(species, sbolDoc)) {
-			kdegrad = GlobalConstants.k_SD_DIM_S;
-			
-		}
-		
-/*		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
-		if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
-			kdegrad = GlobalConstants.k_SD_DIM_S;
-		
-			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
-		//should it be .containsRole or .containsType for the Transcription Factor TF?
-		} else if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-		} else {
-			//TODO PEDRO: So I am using the constant of degradation for every species that's not mRNA. Should I change this?
-			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecules
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-			// Do nothing, kdegrad = 0
-		}*/
-		
-		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
-		if (kdegrad == 0) {
-			Reaction degradationRxn = targetModel.createDegradationReaction(getDisplayID(species), -1, null, onPort, null);
-			degradationRxn.setId(getDisplayID(degradation));
-
-			// Annotate SBML degradation reaction with SBOL interaction
-			annotateRxn(degradationRxn, degradation);
-
-			// Annotate SBML degraded reactant with SBOL participation
-			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
-			annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
-			
-		} 
-		// else, we call the celloDegradationReaction, which uses different degradation reaction rates for this reaction. 
-		else {
-			//create degradation reaction to be added to the model
-			Reaction degradationRxn = targetModel.createCelloDegradationReaction(getDisplayID(species), kdegrad, onPort, null);
-			degradationRxn.setId(getDisplayID(degradation));
-
-			// Annotate SBML degradation reaction with SBOL interaction
-			annotateRxn(degradationRxn, degradation);
-
-			// Annotate SBML degraded reactant with SBOL participation
-			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
-			annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
-		}
-	}
-	
-	
-	
 	/**
 	 * Convert SBOL participation that takes on the role of activator into its equivalent SBML SpeciesReference.
 	 * 
@@ -1843,7 +1162,7 @@ public class SBOL2SBML {
 	 * @param replacedBy - The SBML ReplacedBy object that stores the annotated SBOL MapsTo.
 	 * @param mapping - The SBOL MapsTo object to annotate into SBML ReplacedBy.
 	 */
-	static void annotateReplacedBy(ReplacedBy replacedBy, MapsTo mapping) {
+	private static void annotateReplacedBy(ReplacedBy replacedBy, MapsTo mapping) {
 		SBOLAnnotation replacedByAnno = new SBOLAnnotation(replacedBy.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity());
 		AnnotationUtility.setSBOLAnnotation(replacedBy, replacedByAnno);
@@ -1855,7 +1174,7 @@ public class SBOL2SBML {
 	 * @param replacement - The SBML replacement object that stores the annotated SBOL MapsTo.
 	 * @param mapping - The SBOL MapsTo object to annotate into SBML replacement.
 	 */
-	static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
+	private static void annotateReplacement(ReplacedElement replacement, MapsTo mapping) {
 		SBOLAnnotation replacementAnno = new SBOLAnnotation(replacement.getMetaId(),
 				mapping.getClass().getSimpleName(), mapping.getIdentity()); 
 		AnnotationUtility.setSBOLAnnotation(replacement, replacementAnno);
