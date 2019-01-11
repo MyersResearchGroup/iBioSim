@@ -265,7 +265,7 @@ public class AnalysisView extends PanelObservable implements ActionListener, Run
     
 
     try {
-      AnalysisPropertiesLoader.loadPropertiesFile(properties);
+      AnalysisPropertiesLoader.loadPropertiesFile(properties,null);
       AnalysisPropertiesLoader.loadSEDML(SedMLDoc, "", properties);
       if(properties.getListOfTasks().size() > 0)
       {
