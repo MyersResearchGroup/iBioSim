@@ -19,8 +19,8 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerExcep
 public class SyntheticGateBuilder {
 
 	public static void main(String[] args) {
-		int numOfNOTGates = 1, numOfTandemGates = 1;
-		String outputFileFullPath = SBOLTechMapTestSuite.sbolLibDir + File.separator + "NOTNORGates_LibrarySize2.xml";
+		int numOfNOTGates = 2, numOfTandemGates = 1;
+		String outputFileFullPath = SBOLTechMapTestSuite.sbolLibDir + File.separator + "NORNOTGates_LibrarySize3.xml";
 		try {
 			GateGenerator gateBuilder = runGateGenerator(numOfNOTGates, numOfTandemGates);
 			SBOLUtility.getInstance().writeSBOLDocument(outputFileFullPath, gateBuilder.getGateSBOLDocument());

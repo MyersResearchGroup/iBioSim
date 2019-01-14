@@ -65,32 +65,6 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod"/>
-        <sbol:displayId>I1_Prod</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/P2/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod/P2"/>
-            <sbol:displayId>P2</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_notNorDesign/FC3_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/P3/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod/P3"/>
-            <sbol:displayId>P3</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_notNorDesign/FC2_y/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
       <sbol:Interaction rdf:about="http://dummy.org/circuit_notNorDesign/I2_Inhib/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I2_Inhib"/>
         <sbol:displayId>I2_Inhib</sbol:displayId>
@@ -143,6 +117,32 @@
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod"/>
+        <sbol:displayId>I1_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/P2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod/P2"/>
+            <sbol:displayId>P2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_notNorDesign/FC3_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_notNorDesign/I1_Prod/P3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I1_Prod/P3"/>
+            <sbol:displayId>P3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_notNorDesign/FC2_y/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
       <sbol:Interaction rdf:about="http://dummy.org/circuit_notNorDesign/I4_Prod/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I4_Prod"/>
         <sbol:displayId>I4_Prod</sbol:displayId>
@@ -162,7 +162,7 @@
             <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_notNorDesign/I4_Prod/P8"/>
             <sbol:displayId>P8</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
             <sbol:participant rdf:resource="http://dummy.org/circuit_notNorDesign/FC5_norTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>

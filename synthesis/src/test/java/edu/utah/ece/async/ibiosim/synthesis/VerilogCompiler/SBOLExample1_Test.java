@@ -34,9 +34,10 @@ public class SBOLExample1_Test {
 
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		
-		String[] cmd = {"-v", CompilerTestSuite.verilogCont3_file, "-sbol", "-flat"};
-		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
+		CompilerOptions setupOpt = new CompilerOptions();
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogCont3_file);
+		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		compiledVerilog.compileVerilogOutputData(true);  
 		
 		String vName = "contAssign";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -72,7 +73,7 @@ public class SBOLExample1_Test {
 	public void Test_dnaSize() {
 		int actualSize = 0; 
 		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
-			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA)) {
+			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA_REGION)) {
 				actualSize++;
 			}
 		}

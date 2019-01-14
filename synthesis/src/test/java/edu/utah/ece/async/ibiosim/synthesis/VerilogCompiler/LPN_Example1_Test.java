@@ -9,32 +9,33 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.text.parser.ParseException;
-import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
-import edu.utah.ece.async.lema.verification.lpn.Transition;
 
 /**
+ * Test verilog files containing implementation and testbench design compiled to one LPN model.
  * 
  * @author Tramy Nguyen
- *
  */
 public class LPN_Example1_Test {
 	
 	private static LPN lpn;
 	
 	@BeforeClass
-	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
+	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
 		
-		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);	
-		String[] cmd = {"-v", files, "-lpn",
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
-				"-od", CompilerTestSuite.outputDirectory};
-				
-		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
+		CompilerOptions setupOpt = new CompilerOptions();
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_impFile);
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_tbFile);
+		setupOpt.setFlatModel(true);
+	
+		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
+		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", CompilerTestSuite.outputDirectory);
 	
 		lpn = compiledVerilog.getLPN();
 	}
@@ -56,7 +57,6 @@ public class LPN_Example1_Test {
 		    Assert.assertEquals(expected_in.get(actual_key), actual_value);
 		}	
 	}
-
 	
 	@Test
 	public void Test_outputSize(){
@@ -83,7 +83,6 @@ public class LPN_Example1_Test {
 		
 	}
 	
-	
 	@Test
 	public void Test_booleans(){
 		Map<String, String> expected_bool = new HashMap<String, String>();
@@ -101,15 +100,6 @@ public class LPN_Example1_Test {
 		}
 	}
 
-	@Test
-	public void Test_delays() {
-		for(Transition t : lpn.getAllTransitions()) {
-			//System.out.println(t.getLabel() + " " + t.getDelay());
-			//Assert.assertEquals("5.0", t.getDelay());
-		}
-	}
-	
-	
 	@Test
 	public void Test_TransitionSize() {
 		Assert.assertEquals(52, lpn.getAllTransitions().length);

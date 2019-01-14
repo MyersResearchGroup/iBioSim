@@ -60,6 +60,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -215,6 +216,8 @@ import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.CompilerOptions;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogRunner;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBML;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBOL;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerException;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompiler;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
@@ -2367,7 +2370,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			createModel(true, false);
 		} 
 		else if(e.getSource().equals(importVerilog)) {
-			importVerilogData();
+			File verilogFile = getFile("verilog");
+			if(verilogFile != null) {
+				importVerilogData(verilogFile);
+			}
 		}
 		else if (e.getSource().equals(importSbol)) {
 			importSBOL("Import SBOL");
@@ -4745,29 +4751,33 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-	private void importVerilogData(){
-
-		File verilogFile = getFile("verilog");
-		if(verilogFile == null) {
-			return;
-		}
-		
+	private void importVerilogData(File verilogFile){
 		try {
 			CompilerOptions compilerOptions = new CompilerOptions();
 			compilerOptions.addVerilogFile(verilogFile);
-			compilerOptions.setGenerateSBML(false);
-			compilerOptions.exportCompiler(true);
 			compilerOptions.setOutputDirectory(root);
 			
-			VerilogCompiler parsedVerilog = VerilogRunner.runVerilogCompiler(compilerOptions.getVerilogFiles());
-			parsedVerilog.generateSBML();
-			parsedVerilog.exportSBML(compilerOptions.getOutputDirectory());
-
-			for (String verilogFileName : parsedVerilog.getSBMLWrapperMapper().keySet()) {
-				addToTree(verilogFileName + ".xml");
-
+			VerilogCompiler parsedVerilog = VerilogRunner.compile(compilerOptions.getVerilogFiles());
+			parsedVerilog.compileVerilogOutputData(true);
+			if(parsedVerilog.containsSBMLData()) {
+				for (Entry<String, WrappedSBML> sbmlResult : parsedVerilog.getMappedSBMLWrapper().entrySet()) {
+					String verilogFileName = sbmlResult.getKey() + ".xml";
+					SBMLDocument sbmlDoc = sbmlResult.getValue().getSBMLDocument();
+					parsedVerilog.exportSBML(sbmlDoc, compilerOptions.getOutputDirectory() + File.separator + verilogFileName);
+					addToTree(verilogFileName);
+				}
 			}
-		} catch (SBMLException | XMLStreamException | IOException | BioSimException | VerilogCompilerException | org.sbml.jsbml.text.parser.ParseException e) {
+			else if(parsedVerilog.containsSBOLData()) {
+				for(Entry<String, WrappedSBOL> sbolResult : parsedVerilog.getMappedSBOLWrapper().entrySet()) {
+					String verilogFileName = sbolResult.getKey() + ".xml";
+					SBOLDocument sbolDoc = sbolResult.getValue().getSBOLDocument();
+					String sbolFullPath = compilerOptions.getOutputDirectory() + File.separator + verilogFileName;
+					parsedVerilog.exportSBOL(sbolDoc, sbolFullPath);
+					importSBOLFile(sbolFullPath);
+				}
+			}
+
+		} catch (SBMLException | XMLStreamException | IOException | BioSimException | VerilogCompilerException | org.sbml.jsbml.text.parser.ParseException | SBOLValidationException | SBOLConversionException e) {
 			JOptionPane.showMessageDialog(frame, e.toString(), "Verilog Compiler Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}

@@ -3,23 +3,37 @@ package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.sbolstandard.core2.DirectionType;
+import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.MapsTo;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
+import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
+
 /**
- * Perform tech. map on NOT gate connected in series to NOR gate
+ * Test SBOL tech. map on spec designed y = a + b. This will map one NOT gate connected in series to a NOR gate.
  * @author Tramy Nguyen
  */
 public class LibrarySize2_Test2 {
@@ -28,9 +42,18 @@ public class LibrarySize2_Test2 {
 	
 	@BeforeClass
 	public static void setupTest() {
-		
-		String[] cmd = {"-sf", SBOLTechMapTestSuite.NOTNOR_Spec, "-lf", SBOLTechMapTestSuite.NOTNOR_LibSize2, "-sbol"};
-		sbolDoc = SBOLTechMapTestSuite.testEnv.runTechMap(cmd);
+		try {
+			SBOLTechMapOptions techMapOptions = new SBOLTechMapOptions();
+			techMapOptions.setSpecificationFile(SBOLTechMapTestSuite.NOTNOR_Spec);
+			techMapOptions.setLibraryFile(SBOLTechMapTestSuite.NOTNOR_LibSize2);
+			
+			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
+			Map<SynthesisNode, SBOLGraph> solution = syn.getBestSolution();
+			sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
+		} 
+		catch (SBOLException | SBOLValidationException | IOException | SBOLConversionException | SBOLTechMapException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -69,7 +92,18 @@ public class LibrarySize2_Test2 {
 	@Test
 	public void Test_fcGateSize() {
 		assertEquals(4, sbolDoc.getModuleDefinition("MD1_TandemPromoterNORGate", "1.0").getFunctionalComponents().size());
-	}	
+	}
+	
+	@Test
+	public void Test_fcTopLevel() {
+		ModuleDefinition md = sbolDoc.getModuleDefinition("circuit_notNorDesign_solution", "1.0");
+		List<String> expectedFCList = Arrays.asList("FC0_FC2_outputProtein", "FC1_FC1_inputProtein", "FC3_FC5_inputProtein2", "FC2_FC4_inputProtein1");
+		for(String expectedFc : expectedFCList) {
+			FunctionalComponent fc = md.getFunctionalComponent(expectedFc);
+			assertNotNull(fc);
+			assertEquals(DirectionType.INOUT, fc.getDirection());
+		}
+	}
 	
 	@Test
 	public void Test_NOTInputInteraction() {
@@ -87,6 +121,9 @@ public class LibrarySize2_Test2 {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals("FC0_tu", p.getParticipant().getDisplayId());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	}
 	
@@ -100,11 +137,14 @@ public class LibrarySize2_Test2 {
 		
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals("FC0_tu", p.getParticipant().getDisplayId());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals("FC2_outputProtein", p.getParticipant().getDisplayId());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -125,6 +165,9 @@ public class LibrarySize2_Test2 {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals("FC3_tu", p.getParticipant().getDisplayId());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 		
 		inhibition = notGate.getInteraction("I3_Inhib");
@@ -140,6 +183,9 @@ public class LibrarySize2_Test2 {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals("FC3_tu", p.getParticipant().getDisplayId());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	}
 	
@@ -153,11 +199,14 @@ public class LibrarySize2_Test2 {
 		
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals("FC3_tu", p.getParticipant().getDisplayId());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals("FC6_outputProtein", p.getParticipant().getDisplayId());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -179,11 +228,14 @@ public class LibrarySize2_Test2 {
 				assertEquals(mp.getLocal(), fullCircuit.getFunctionalComponent(localId));
 				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC1_inputProtein"));
 			}
+			else {
+				Assert.fail("This MapsTo object has an unexpected Local ID: " + localId);
+			}
 		}
 	}
 	
 	@Test
-	public void Test_NOTMapsTo2() {
+	public void Test_NORMapsTo2() {
 		ModuleDefinition fullCircuit = sbolDoc.getModuleDefinition("circuit_notNorDesign_solution", "1.0");
 		ModuleDefinition gate = sbolDoc.getModuleDefinition("MD1_TandemPromoterNORGate", "1.0");
 		
@@ -191,17 +243,20 @@ public class LibrarySize2_Test2 {
 		for(MapsTo mp : circuit_instance.getMapsTos()) {
 			String localId = mp.getLocal().getDisplayId();
 			
-			if(localId.equals("FC4_inputProtein1")) {
+			if(localId.equals("FC1_FC1_inputProtein")) {
 				assertEquals(mp.getLocal(), fullCircuit.getFunctionalComponent(localId));
-				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC2_FC4_inputProtein1"));
+				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC6_outputProtein"));
 			}
-			else if(localId.equals("FC5_inputProtein2")) {
+			else if(localId.equals("FC3_FC5_inputProtein2")) {
 				assertEquals(mp.getLocal(), fullCircuit.getFunctionalComponent(localId));
-				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC3_FC5_inputProtein2"));
+				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC5_inputProtein2"));
 			}
-			else if(localId.equals("FC6_outputProtein")) {
+			else if(localId.equals("FC2_FC4_inputProtein1")) {
 				assertEquals(mp.getLocal(), fullCircuit.getFunctionalComponent(localId));
-				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC4_FC6_outputProtein"));
+				assertEquals(mp.getRemote(), gate.getFunctionalComponent("FC4_inputProtein1"));
+			}
+			else {
+				Assert.fail("This MapsTo object has an unexpected Local ID: " + localId);
 			}
 		}
 	}

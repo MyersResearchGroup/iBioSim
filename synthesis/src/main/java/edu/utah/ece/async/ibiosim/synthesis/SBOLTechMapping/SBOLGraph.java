@@ -59,8 +59,9 @@ public class SBOLGraph
 	 * Create an SBOLGraph for each SBOL ModuleDefinition where each FunctionalComponets represents the node 
 	 * for the graph.
 	 * @param md
+	 * @throws SBOLTechMapException 
 	 */
-	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md)
+	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException
 	{
 
 		for(FunctionalComponent f : md.getFunctionalComponents())
@@ -127,7 +128,7 @@ public class SBOLGraph
 				for(Participation p : i.getParticipations())
 				{
 					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.TEMPLATE) || role.equals(SystemsBiologyOntology.PROMOTER)) 
+					if(role.equals(SystemsBiologyOntology.TEMPLATE)) 
 					{
 						promoter = p.getParticipantURI();
 					}
@@ -145,7 +146,7 @@ public class SBOLGraph
 			}
 			else
 			{
-				System.out.println("Unidentified Interaction occurred: " + type);
+				throw new SBOLTechMapException("Unidentified Interaction occurred: " + type);
 			}
 		}
 

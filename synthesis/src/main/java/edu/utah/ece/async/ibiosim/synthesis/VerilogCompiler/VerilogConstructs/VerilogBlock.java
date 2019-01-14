@@ -1,4 +1,4 @@
-package VerilogConstructs;
+package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs;
 import java.util.ArrayList;
 import java.util.List;
 

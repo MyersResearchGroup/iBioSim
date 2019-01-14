@@ -20,7 +20,7 @@ public class VerilogSynthesizer{
 	private static ASTNode synthesize_recurs(ASTNode logicFunction, LinkedList<ASTNode> operands) throws VerilogCompilerException{
 		//locate the base operand 
 		if(logicFunction.getChildCount() > 2){
-			throw new VerilogCompilerException("ERROR: Synthesizer does not support more than 2 input logic functions");
+			throw new VerilogCompilerException("Synthesizer does not support more than 2 input logic functions");
 		}
 		if(logicFunction.getChildCount() < 1) {
 			return logicFunction;
@@ -48,7 +48,7 @@ public class VerilogSynthesizer{
 			
 		}
 		else{
-			throw new VerilogCompilerException("ERROR: The following expression contains a logic function that isn't supported during synthesis: " + logicFunction.getName());
+			throw new VerilogCompilerException("The following expression contains a logic function that isn't supported during synthesis: " + logicFunction.getName());
 		}
 		
 		return result;

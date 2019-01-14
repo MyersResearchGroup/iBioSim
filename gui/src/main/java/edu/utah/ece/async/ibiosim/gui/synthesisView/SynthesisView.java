@@ -623,8 +623,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					SBOLDocument sbolDoc = SBOLUtility.getInstance().loadFromDir(sbolDir, defaultURIPrefix);
 					libDoc.createCopy(sbolDoc);
 				}
-				Synthesis syn = new Synthesis();
-				Map<SynthesisNode, SBOLGraph> solution = SBOLTechMap.runSBOLTechMap(syn, specDoc, libDoc);
+				Synthesis syn = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
+				Map<SynthesisNode, SBOLGraph> solution =  syn.getBestSolution();
 				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
 				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;

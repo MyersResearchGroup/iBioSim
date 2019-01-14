@@ -25,6 +25,16 @@ public class Workflow_Test {
 	}
 	
 	@Test 
+	public void TestFlatEvenZeroes() {
+		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);
+		String[] cmd = {"-v", files,
+						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
+						"-sbml", "-flat", "-od", CompilerTestSuite.outputDirectory};
+		
+		VerilogRunner.main(cmd);
+	}
+	
+	@Test 
 	public void TestCounter() {
 		String files = String.join(" ", CompilerTestSuite.verilogCounter_impFile, CompilerTestSuite.verilogCounter_tbFile);
 		String[] cmd = {"-v", files, 
@@ -74,15 +84,24 @@ public class Workflow_Test {
 	}
 	
 	@Test	
-	public void Test_Filter() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogFilter_file,
+	public void Test_FilterSynthesized() throws ParseException, FileNotFoundException {
+		String[] cmd = {"-v", CompilerTestSuite.verilogSynthesizedFilter_file,
 				"-sbol", "-od", CompilerTestSuite.outputDirectory, "-flat"};
+		
+		VerilogRunner.main(cmd);
+	}
+	
+	@Test	
+	public void Test_Filter() throws ParseException, FileNotFoundException {
+		String files = String.join(" ", CompilerTestSuite.verilogFilter_impFile, CompilerTestSuite.verilogFilter_tbFile);
+		String[] cmd = {"-v", files,
+				"-sbml", "-od", CompilerTestSuite.outputDirectory};
 		
 		VerilogRunner.main(cmd);
 	}
 
 	@Test	
-	public void Test_small() throws ParseException, FileNotFoundException {
+	public void Test_design() throws ParseException, FileNotFoundException {
 		String[] cmd = {"-v", CompilerTestSuite.vSpec, "-flat",
 				"-sbol", "-od", CompilerTestSuite.outputDirectory};
 		

@@ -49,7 +49,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	SBMLExample8_Test.class,
 	SBMLExample9_Test.class,
 	SBMLExample10_Test.class,
-	SBMLExample11_Test.class,
 	SBOLExample1_Test.class,
 	SBOLExample2_Test.class,
 	SBOLExample3_Test.class,
@@ -62,8 +61,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 public class CompilerTestSuite {
 	
-	protected static VCompiler_TestEnvironment testEnv = new VCompiler_TestEnvironment();
-	
 	protected static String outputDirectory = "src" + File.separator + "test" + File.separator + 
 			"resources" + File.separator + "outputFiles";
 	
@@ -72,9 +69,7 @@ public class CompilerTestSuite {
 	protected static String sbmlEvenZero_tbFile   = outputDirectory + File.separator + "evenzeroes_testbench.xml";
 	protected static String sbmlEvenZero_flatFile = outputDirectory + File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml";
 	
-	
 	protected static String vSpec = CompilerTestSuite.class.getResource(File.separator + "NOT_Spec.v").getFile();
-
 	
 	protected static String verilogAlwaysBlock_file = CompilerTestSuite.class.getResource(File.separator + "always_block.v").getFile();
 	protected static String verilogAssign_file = CompilerTestSuite.class.getResource(File.separator + "assign.v").getFile();
@@ -97,14 +92,14 @@ public class CompilerTestSuite {
 	protected static String verilogSystemFunc2_file = CompilerTestSuite.class.getResource(File.separator + "system_func2.v").getFile();
 	protected static String verilogSystemFunc3_file = CompilerTestSuite.class.getResource(File.separator + "system_func3.v").getFile();
 	protected static String verilogWaitStmt_file = CompilerTestSuite.class.getResource(File.separator + "wait_stmt.v").getFile();
-	
 	protected static String verilogWaitStmt2_file = CompilerTestSuite.class.getResource(File.separator + "wait_stmt2.v").getFile();
 
 	protected static String verilogCounter_impFile = CompilerTestSuite.class.getResource(File.separator + "counter_imp.v").getFile();
 	protected static String verilogCounter_tbFile = CompilerTestSuite.class.getResource(File.separator + "counter_testbench.v").getFile();
 	protected static String verilogEvenZero_impFile = CompilerTestSuite.class.getResource(File.separator + "evenZeroes_imp.v").getFile();
 	protected static String verilogEvenZero_tbFile = CompilerTestSuite.class.getResource(File.separator + "evenZeroes_testbench.v").getFile();
-	protected static String verilogFilter_file = CompilerTestSuite.class.getResource(File.separator + "filter.v").getFile();
+	protected static String verilogFilter_impFile = CompilerTestSuite.class.getResource(File.separator + "filter_imp.v").getFile();
+	protected static String verilogFilter_tbFile = CompilerTestSuite.class.getResource(File.separator + "filter_testbench.v").getFile();
 	protected static String verilogLFSR_impFile = CompilerTestSuite.class.getResource(File.separator + "lfsr_imp.v").getFile();
 	protected static String verilogLFSR_tbFile = CompilerTestSuite.class.getResource(File.separator + "lfsr_testbench.v").getFile();
 	protected static String verilogMultThree_impFile = CompilerTestSuite.class.getResource(File.separator + "multThree_imp.v").getFile();
@@ -113,5 +108,7 @@ public class CompilerTestSuite {
 	protected static String verilogScanflop_tbFile = CompilerTestSuite.class.getResource(File.separator + "scanflop_testbench.v").getFile();
 	protected static String verilogSRLatch_impFile = CompilerTestSuite.class.getResource(File.separator + "srlatch_imp.v").getFile();
 	protected static String verilogSRLatch_tbFile = CompilerTestSuite.class.getResource(File.separator + "srlatch_testbench.v").getFile();
+
+	protected static String verilogSynthesizedFilter_file = CompilerTestSuite.class.getResource(File.separator + "filter.v").getFile();
 
 }

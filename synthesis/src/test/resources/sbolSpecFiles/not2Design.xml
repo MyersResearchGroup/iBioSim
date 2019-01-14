@@ -55,27 +55,27 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod"/>
-        <sbol:displayId>I1_Prod</sbol:displayId>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod"/>
+        <sbol:displayId>I3_Prod</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/P2/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod/P2"/>
-            <sbol:displayId>P2</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/P6/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod/P6"/>
+            <sbol:displayId>P6</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC2_notTU/1.0"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC4_notTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/P3/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod/P3"/>
-            <sbol:displayId>P3</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/P7/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod/P7"/>
+            <sbol:displayId>P7</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC1_y/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC3_wiredProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
@@ -107,32 +107,6 @@
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod"/>
-        <sbol:displayId>I3_Prod</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/P6/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod/P6"/>
-            <sbol:displayId>P6</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC4_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I3_Prod/P7/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I3_Prod/P7"/>
-            <sbol:displayId>P7</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC3_wiredProtein/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
       <sbol:Interaction rdf:about="http://dummy.org/circuit_not2Design/I0_Inhib/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I0_Inhib"/>
         <sbol:displayId>I0_Inhib</sbol:displayId>
@@ -154,6 +128,32 @@
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
             <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC2_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod"/>
+        <sbol:displayId>I1_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/P2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod/P2"/>
+            <sbol:displayId>P2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC2_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_not2Design/I1_Prod/P3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_not2Design/I1_Prod/P3"/>
+            <sbol:displayId>P3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_not2Design/FC1_y/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>

@@ -173,4 +173,17 @@ public class Test_SBOLCreateCopy {
 		}
 	}
 	
+	@Test
+	public void Test_dnaCD() throws SBOLValidationException {
+		SBOLDocument resultDoc = SBOLUtility.getInstance().createSBOLDocument();
+		ComponentDefinition dna = inputDoc.getComponentDefinition("CD1_tu", "1.0");
+		assertNotNull(dna);
+		inputDoc.createRecursiveCopy(resultDoc, dna);
+		assertEquals(5, resultDoc.getComponentDefinitions().size());
+		List<String> expectedCDList = Arrays.asList("CD0_promoter", "CD1_tu", "CD2_ribosome", "CD3_cds", "CD4_terminator");
+		for(String expectedCDId : expectedCDList) {
+			assertNotNull(resultDoc.getComponentDefinition(expectedCDId, "1.0"));
+		}
+	}
+	
 }

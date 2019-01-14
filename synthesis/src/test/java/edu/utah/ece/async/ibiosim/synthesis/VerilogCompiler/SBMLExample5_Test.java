@@ -35,8 +35,10 @@ public class SBMLExample5_Test {
 
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogWaitStmt_file, "-sbml"};
-		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
+		CompilerOptions setupOpt = new CompilerOptions();
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogWaitStmt_file);
+		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("wait_stmt");
 		Assert.assertNotNull(sbmlWrapper);

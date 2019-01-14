@@ -39,9 +39,10 @@ public class SBOLExample8_Test {
 		
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-
-		String[] cmd = {"-v", CompilerTestSuite.verilogCont5_file, "-sbol"};
-		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
+		CompilerOptions setupOpt = new CompilerOptions();
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogCont5_file);
+		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		compiledVerilog.compileVerilogOutputData(false);  
 		
 		String vName = "contAssign5";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -66,7 +67,7 @@ public class SBOLExample8_Test {
 
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(38, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(40, sbolDoc.getComponentDefinitions().size());
 	}
 	
 	@Test
@@ -108,6 +109,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	
 		Interaction production = subcircuit_q.getInteraction("I1_Prod");
@@ -117,11 +121,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(output, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -151,6 +158,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	
 		Interaction production = subcircuit_q.getInteraction("I3_Prod");
@@ -160,11 +170,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(output, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -196,6 +209,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 		
 		Interaction inhibition2 = subcircuit_q.getInteraction("I5_Inhib");
@@ -210,6 +226,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 		Interaction production = subcircuit_q.getInteraction("I6_Prod");
 		Assert.assertNotNull(production);
@@ -218,11 +237,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(out, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 		
@@ -252,6 +274,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	
 		Interaction production = subcircuit_qnot.getInteraction("I8_Prod");
@@ -261,11 +286,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(output, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -294,6 +322,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 	
 		Interaction production = subcircuit_qnot.getInteraction("I10_Prod");
@@ -303,11 +334,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(output, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -339,6 +373,9 @@ public class SBOLExample8_Test {
 			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
 				Assert.assertEquals(gate, p.getParticipant());
 			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
+			}
 		}
 		
 		Interaction inhibition2 = subcircuit_qnot.getInteraction("I12_Inhib");
@@ -361,11 +398,14 @@ public class SBOLExample8_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
 				Assert.assertEquals(out, p.getParticipant());
+			}
+			else {
+				Assert.fail("Unexpected role found: " + role);
 			}
 		}
 	}
@@ -474,11 +514,11 @@ public class SBOLExample8_Test {
 	public void Test_dnaSize() {
 		int actualSize = 0; 
 		for(ComponentDefinition cd : sbolDoc.getComponentDefinitions()) {
-			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA)) {
+			if(cd.getTypes().iterator().next().equals(ComponentDefinition.DNA_REGION)) {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(30, actualSize);
+		Assert.assertEquals(32, actualSize);
 	}
 	
 	@Test

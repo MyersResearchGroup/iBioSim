@@ -1,4 +1,4 @@
-package VerilogConstructs;
+package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs;
 
 /**
  * General template of what all Verilog class extending from this class should have.

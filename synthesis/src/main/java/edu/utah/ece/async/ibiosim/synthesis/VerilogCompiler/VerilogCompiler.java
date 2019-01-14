@@ -26,13 +26,13 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
 
-import VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Lexer;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Source_textContext;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
@@ -71,8 +71,7 @@ public class VerilogCompiler {
 	 * @throws IOException
 	 * @throws BioSimException
 	 */
-	public void compile() throws XMLStreamException, IOException, BioSimException {
-		
+	public void parseVerilog() throws XMLStreamException, IOException, BioSimException {
 		for(Source_textContext vFile : this.stcList) {
 			
 			VerilogParser v = new VerilogParser();
@@ -81,27 +80,40 @@ public class VerilogCompiler {
 			VerilogModule verilogModule = v.getVerilogModule();
 			this.verilogModules.put(verilogModule.getModuleId(), verilogModule);
 		}
-
-			
 	}
 	
-	public void generateSBOL(boolean generateFlatModel) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException { 
+	public void compileVerilogOutputData(boolean generateFlatModel) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
 		for(VerilogModule verilogModule : this.verilogModules.values()) {
-			VerilogToSBOL v2sbol_conv = new VerilogToSBOL(generateFlatModel); 
-			
-			WrappedSBOL sbolData = v2sbol_conv.convertVerilog2SBOL(verilogModule);
-			this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
+			if(verilogModule.getNumContinousAssignments() > 0 && verilogModule.getNumInitialBlock() == 0 && verilogModule.getNumAlwaysBlock() == 0) {
+				generateSBOL(generateFlatModel, verilogModule);
+			}
+			else {
+				generateSBML(verilogModule);
+			}
 		}
 	}
 	
-	public void generateSBML() throws ParseException {
-		for(VerilogModule verilogModule : this.verilogModules.values()) { 
-			VerilogToSBML v2sbml = new VerilogToSBML();
-			WrappedSBML	sbmlModel = v2sbml.convertVerilogToSBML(verilogModule);
-			String verilogModuleId = verilogModule.getModuleId();
-			this.vmoduleToSBML.put(verilogModuleId, sbmlModel);
-			
-		}
+	public boolean containsSBMLData() {
+		return this.vmoduleToSBML.isEmpty()? false : true;
+	}
+	
+	public boolean containsSBOLData() {
+		return this.vmoduleToSBOL.isEmpty()? false : true;
+	}
+	
+	public void generateSBOL(boolean generateFlatModel, VerilogModule verilogModule) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
+		VerilogToSBOL v2sbol_conv = new VerilogToSBOL(generateFlatModel); 
+		WrappedSBOL sbolData = v2sbol_conv.convertVerilog2SBOL(verilogModule);
+		this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
+
+	}
+	
+	public void generateSBML(VerilogModule verilogModule) throws ParseException {
+		VerilogToSBML v2sbml = new VerilogToSBML();
+		WrappedSBML	sbmlModel = v2sbml.convertVerilogToSBML(verilogModule);
+		String verilogModuleId = verilogModule.getModuleId();
+		this.vmoduleToSBML.put(verilogModuleId, sbmlModel);
+
 	}
 	
 	public SBMLDocument flattenSBML(String outputDirectory, String fileFullPath) throws BioSimException, XMLStreamException, IOException{
@@ -120,12 +132,18 @@ public class VerilogCompiler {
 		return flattenDoc;
 	}
 	
-	public void generateLPN(String implementationModuleId, String testbenchModuleId, SBMLDocument sbmlDoc) {
+	public void generateLPN(String implementationModuleId, String testbenchModuleId, String outputDirectory) throws SBMLException, XMLStreamException, ParseException, BioSimException, IOException {
+		//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
+		exportSBML(getMappedSBMLWrapper(), outputDirectory);	
+		String hierModelFullPath = outputDirectory + File.separator + testbenchModuleId + ".xml";
+		SBMLDocument flattenDoc = flattenSBML(outputDirectory, hierModelFullPath);
+		generateLPN(implementationModuleId, testbenchModuleId, flattenDoc);
+	}
 	
+	public void generateLPN(String implementationModuleId, String testbenchModuleId, SBMLDocument sbmlDoc) {
 		WrappedSBML tbWrapper = getSBMLWrapper(testbenchModuleId);
 		WrappedSBML impWrapper = getSBMLWrapper(implementationModuleId);
 		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, sbmlDoc);
-
 	}
 	
 	/**
@@ -147,8 +165,12 @@ public class VerilogCompiler {
 		return this.vmoduleToSBML.get(verilogModule_id);
 	}
 	
-	public Map<String, WrappedSBML> getSBMLWrapperMapper(){
+	public Map<String, WrappedSBML> getMappedSBMLWrapper(){
 		return this.vmoduleToSBML;
+	}
+	
+	public Map<String, WrappedSBOL> getMappedSBOLWrapper(){
+		return this.vmoduleToSBOL;
 	}
 
 	public WrappedSBOL getSBOLWrapper(String verilogModule_id) {
@@ -159,8 +181,8 @@ public class VerilogCompiler {
 		return this.lpn;
 	}
 	
-	public void exportSBML(String outputDirectory) throws SBMLException, FileNotFoundException, XMLStreamException{
-		for (Map.Entry<String, WrappedSBML> entry : this.vmoduleToSBML.entrySet()) {
+	public void exportSBML(Map<String, WrappedSBML> sbmlMapper, String outputDirectory) throws SBMLException, FileNotFoundException, XMLStreamException{
+		for (Map.Entry<String, WrappedSBML> entry : sbmlMapper.entrySet()) {
 			String verilogModuleId = entry.getKey();
 			SBMLDocument sbmlDocument = entry.getValue().getSBMLDocument();
 			exportSBML(sbmlDocument, outputDirectory + File.separator + verilogModuleId + ".xml");
@@ -171,8 +193,8 @@ public class VerilogCompiler {
 		exportLPN(this.lpn, outputDirectory + File.separator + outputFileName + ".lpn");
 	}
 	
-	public void exportSBOL(String outputDirectory) throws IOException, SBOLConversionException{
-		for (Map.Entry<String, WrappedSBOL> entry : this.vmoduleToSBOL.entrySet()) {
+	public void exportSBOL(Map<String, WrappedSBOL> sbolMapper, String outputDirectory) throws IOException, SBOLConversionException{
+		for (Map.Entry<String, WrappedSBOL> entry : sbolMapper.entrySet()) {
 			String verilogModuleId = entry.getKey();
 			SBOLDocument sbolDocument = entry.getValue().getSBOLDocument();
 			exportSBOL(sbolDocument, outputDirectory + File.separator + verilogModuleId + ".xml");
@@ -183,12 +205,12 @@ public class VerilogCompiler {
 		lpn.save(fullPath);
 	}
 	
-	private void exportSBML(SBMLDocument document, String fullPath) throws SBMLException, FileNotFoundException, XMLStreamException { 
+	public void exportSBML(SBMLDocument document, String fullPath) throws SBMLException, FileNotFoundException, XMLStreamException { 
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBMLToFile(document, fullPath);
 	}
 
-	private void exportSBOL(SBOLDocument document, String fullPath) throws IOException, SBOLConversionException {
+	public void exportSBOL(SBOLDocument document, String fullPath) throws IOException, SBOLConversionException {
 		SBOLWriter.write(document, fullPath);
 	}
 	

@@ -10,16 +10,16 @@ import org.sbml.jsbml.Event;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import VerilogConstructs.AbstractVerilogConstruct;
-import VerilogConstructs.VerilogAlwaysBlock;
-import VerilogConstructs.VerilogAssignment;
-import VerilogConstructs.VerilogBlock;
-import VerilogConstructs.VerilogConditional;
-import VerilogConstructs.VerilogDelay;
-import VerilogConstructs.VerilogInitialBlock;
-import VerilogConstructs.VerilogModule;
-import VerilogConstructs.VerilogModuleInstance;
-import VerilogConstructs.VerilogWait;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.AbstractVerilogConstruct;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAlwaysBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogConditional;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogDelay;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogInitialBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModuleInstance;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogWait;
 
 
 /**
@@ -49,7 +49,6 @@ public class VerilogToSBML {
 		convertVerilogInputPorts(module.getInputPorts());
 		convertVerilogOutputPorts(module.getOutputPorts());
 		convertVerilogRegisters(module.getRegisters());
-		convertVerilogContinuousAssignment(module.getContinousAssignments());
 		convertVerilogSubmodule(module.getSubmodules());
 		convertVerilogInitialBlock(module.getInitialBlockList());
 		convertVerilogAlwaysBlock(module.getAlwaysBlockList());
@@ -78,13 +77,6 @@ public class VerilogToSBML {
 	private void convertVerilogRegisters(List<String> registers) {
 		for(String currentRegister : registers) {
 			sbmlWrapper.addBoolean(currentRegister);
-		}
-	}
-	
-	private void convertVerilogContinuousAssignment(List<VerilogAssignment> contAssigns) throws ParseException {
-		for(VerilogAssignment a : contAssigns) {
-			ASTNode expression = ASTNode.parseFormula(a.getExpression());
-			sbmlWrapper.addAssignmentRule(a.getVariable(), expression);
 		}
 	}
 	

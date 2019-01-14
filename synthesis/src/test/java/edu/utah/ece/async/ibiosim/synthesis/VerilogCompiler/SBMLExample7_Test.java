@@ -34,8 +34,10 @@ public class SBMLExample7_Test {
 
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		String[] cmd = {"-v", CompilerTestSuite.verilogCondStmt2_file, "-sbml"};
-		VerilogCompiler compiledVerilog = CompilerTestSuite.testEnv.runCompiler(cmd); 
+		CompilerOptions setupOpt = new CompilerOptions();
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogCondStmt2_file);
+		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("conditional_stmt2");
 		Assert.assertNotNull(sbmlWrapper);

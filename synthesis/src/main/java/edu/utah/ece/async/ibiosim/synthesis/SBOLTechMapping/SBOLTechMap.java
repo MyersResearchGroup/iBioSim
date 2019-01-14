@@ -34,8 +34,8 @@ public class SBOLTechMap {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
-			Synthesis syn = new Synthesis();
-			Map<SynthesisNode, SBOLGraph> solution = SBOLTechMap.runSBOLTechMap(syn, techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
+			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
+			Map<SynthesisNode, SBOLGraph> solution = syn.getBestSolution(); 
 			SBOLDocument sbol_solution = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
 			
 			String outputPath = techMapOptions.getOutputFileDir() + File.separator + techMapOptions.getOuputFileName();
@@ -139,18 +139,19 @@ public class SBOLTechMap {
 	}
 
 
-	public static Map<SynthesisNode, SBOLGraph> runSBOLTechMap(Synthesis syn, SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException
+	public static Synthesis runSBOLTechMap(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException, SBOLTechMapException
 	{
+		Synthesis syn = new Synthesis();
 		syn.createSBOLGraph(specDoc, false);
 		syn.createSBOLGraph(libDoc, true);
-		
+
 		List<SBOLGraph> library = syn.getLibrary();
 		syn.setLibraryGateScores(library);
-		
+
 		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
 		syn.match_topLevel(syn.getSpecification(), matches);
-		Map<SynthesisNode, SBOLGraph> solution = syn.cover_topLevel(syn.getSpecification(), matches);
-		return solution;
+		syn.cover_topLevel(syn.getSpecification(), matches);
+		return syn;
 	}
 
 }

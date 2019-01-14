@@ -1,4 +1,4 @@
-package SBOLGates;
+package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates;
 
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;

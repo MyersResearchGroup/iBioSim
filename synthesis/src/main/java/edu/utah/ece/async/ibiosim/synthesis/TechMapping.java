@@ -153,8 +153,8 @@ public class TechMapping {
 			{
 				SBOLDocument specDoc = SBOLUtility.getInstance().loadSBOLFile(specFile, defaultPrefix);
 				SBOLDocument libDoc = SBOLUtility.getInstance().loadSBOLFile(sbolLibDir, defaultPrefix);
-				Synthesis syn = new Synthesis();
-				Map<SynthesisNode, SBOLGraph> solution = SBOLTechMap.runSBOLTechMap(syn, specDoc, libDoc);
+				Synthesis syn = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
+				Map<SynthesisNode, SBOLGraph> solution = syn.getBestSolution();
 				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
 				if(outSBOL)
 				{

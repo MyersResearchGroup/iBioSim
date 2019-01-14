@@ -5,6 +5,16 @@
     <sbol:displayId>MD0_TandemPromoterNORGate</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_TandemPromoterNORGate/FC3_outputProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/FC3_outputProtein"/>
+        <sbol:displayId>FC3_outputProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD8_outputProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_TandemPromoterNORGate/FC1_inputProtein1/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/FC1_inputProtein1"/>
         <sbol:displayId>FC1_inputProtein1</sbol:displayId>
@@ -34,16 +44,6 @@
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/MD0_TandemPromoterNORGate/FC3_outputProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/FC3_outputProtein"/>
-        <sbol:displayId>FC3_outputProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD8_outputProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
     <sbol:interaction>
       <sbol:Interaction rdf:about="http://dummy.org/MD0_TandemPromoterNORGate/I2_Prod/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/I2_Prod"/>
@@ -55,7 +55,7 @@
             <sbol:persistentIdentity rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/I2_Prod/P4"/>
             <sbol:displayId>P4</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
             <sbol:participant rdf:resource="http://dummy.org/MD0_TandemPromoterNORGate/FC0_tu/1.0"/>
           </sbol:Participation>
         </sbol:participation>
@@ -146,12 +146,12 @@
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD2_tu/C1_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_tu/C1_part"/>
-        <sbol:displayId>C1_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD2_tu/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_tu/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD1_promoter/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD4_cds/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
@@ -164,12 +164,12 @@
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD2_tu/C3_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_tu/C3_part"/>
-        <sbol:displayId>C3_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD2_tu/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_tu/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD4_cds/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>

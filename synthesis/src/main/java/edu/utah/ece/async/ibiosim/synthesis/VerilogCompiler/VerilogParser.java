@@ -5,18 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import VerilogConstructs.AbstractVerilogConstruct;
-import VerilogConstructs.VerilogAlwaysBlock;
-import VerilogConstructs.VerilogAssignment;
-import VerilogConstructs.VerilogBlock;
-import VerilogConstructs.VerilogConditional;
-import VerilogConstructs.VerilogDelay;
-import VerilogConstructs.VerilogInitialBlock;
-import VerilogConstructs.VerilogModule;
-import VerilogConstructs.VerilogModuleInstance;
-import VerilogConstructs.VerilogWait;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001BaseListener;
-import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Always_constructContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Binary_operatorContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Blocking_assignmentContext;
@@ -47,6 +36,16 @@ import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.System_function_ca
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Unary_operatorContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Variable_typeContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Wait_statementContext;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.AbstractVerilogConstruct;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAlwaysBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogConditional;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogDelay;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogInitialBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModuleInstance;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogWait;
 
 
 

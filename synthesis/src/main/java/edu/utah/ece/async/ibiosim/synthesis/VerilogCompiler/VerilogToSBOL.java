@@ -13,12 +13,12 @@ import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import SBOLGates.NORGate;
-import SBOLGates.NOTGate;
-import SBOLGates.SBOLLogicGate;
-import VerilogConstructs.VerilogAssignment;
-import VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.NORGate;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.NOTGate;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.SBOLLogicGate;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
 
 /**

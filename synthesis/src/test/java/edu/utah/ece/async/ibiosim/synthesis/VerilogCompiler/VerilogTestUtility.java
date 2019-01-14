@@ -1,14 +1,12 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-import java.util.List;
-
-import VerilogConstructs.AbstractVerilogConstruct;
-import VerilogConstructs.VerilogAlwaysBlock;
-import VerilogConstructs.VerilogAssignment;
-import VerilogConstructs.VerilogBlock;
-import VerilogConstructs.VerilogConditional;
-import VerilogConstructs.VerilogDelay;
-import VerilogConstructs.VerilogWait;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.AbstractVerilogConstruct;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAlwaysBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogBlock;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogConditional;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogDelay;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogWait;
 
 /**
  * A utility class used to easily access Verilog constructs when testing the structured Verilog classes. 

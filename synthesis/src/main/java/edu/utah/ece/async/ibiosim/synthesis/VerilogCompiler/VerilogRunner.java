@@ -13,7 +13,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -36,32 +35,20 @@ public class VerilogRunner {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
-			VerilogCompiler compiledVerilog = runVerilogCompiler(compilerOptions.getVerilogFiles());
+			VerilogCompiler compiledVerilog = compile(compilerOptions.getVerilogFiles());
+			compiledVerilog.compileVerilogOutputData(compilerOptions.isOutputFlatModel());
+			
+			String outputDirectory = compilerOptions.getOutputDirectory();
 			
 			if(compilerOptions.isGenerateSBOL()){
-				compiledVerilog.generateSBOL(compilerOptions.isOutputFlatModel());
+				compiledVerilog.exportSBOL(compiledVerilog.getMappedSBOLWrapper(), outputDirectory);
 			}
-			else {
-				compiledVerilog.generateSBML();
+			else{
+				if(compilerOptions.isGenerateSBML()) {
+					compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory);
+				}
 				if(compilerOptions.isGenerateLPN()){
-					//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
-					String outputDirectory = compilerOptions.getOutputDirectory();
-					compiledVerilog.exportSBML(outputDirectory);
-					String hierModelFullPath = outputDirectory + File.separator + compilerOptions.getTestbenchModuleId() + ".xml";
-					SBMLDocument flattenSBML = compiledVerilog.flattenSBML(outputDirectory, hierModelFullPath);
-					compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), flattenSBML);
-				}
-			}
-			
-			if(compilerOptions.isExportOn()) {
-				String outputDirectory = compilerOptions.getOutputDirectory();
-				if(compilerOptions.isGenerateSBOL()) {
-					compiledVerilog.exportSBOL(outputDirectory);
-				}
-				if(compilerOptions.isGenerateSBML()){
-					compiledVerilog.exportSBML(outputDirectory);
-				}
-				if(compilerOptions.isGenerateLPN()) {
+					compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), outputDirectory);
 					compiledVerilog.exportLPN(outputDirectory, compilerOptions.getOutputFileName());
 				}
 			}
@@ -100,7 +87,7 @@ public class VerilogRunner {
 		}
 	}
 	
-	public static void printUsage() {
+	private static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
 		
 		String sbolUsage = "-v <arg(s)> -od usr/dir/example/ -sbol -flat \n";
@@ -135,14 +122,14 @@ public class VerilogRunner {
 		return options;
 	}
 
-	public static CommandLine parseCommandLine(String[] args) throws org.apache.commons.cli.ParseException {
+	protected static CommandLine parseCommandLine(String[] args) throws org.apache.commons.cli.ParseException {
 		Options cmd_options = getCommandLineOptions();
 		CommandLineParser cmd_parser = new DefaultParser();
 		CommandLine cmd = cmd_parser.parse(cmd_options, args);
 		return cmd;
 	}
 
-	public static CompilerOptions createCompilerOptions(CommandLine cmd) throws FileNotFoundException {
+	protected static CompilerOptions createCompilerOptions(CommandLine cmd) throws FileNotFoundException {
 		CompilerOptions compilerOptions = new CompilerOptions();
 		
 		if(cmd.hasOption("h")) {
@@ -187,9 +174,9 @@ public class VerilogRunner {
 		return compilerOptions;
 	}
 
-	public static VerilogCompiler runVerilogCompiler(List<File> verilogFiles) throws XMLStreamException, IOException, BioSimException, VerilogCompilerException { 
+	public static VerilogCompiler compile(List<File> verilogFiles) throws XMLStreamException, IOException, BioSimException, VerilogCompilerException { 
 		VerilogCompiler compiler = new VerilogCompiler(verilogFiles); 
-		compiler.compile(); 
+		compiler.parseVerilog();
 		return compiler;
 	}
 

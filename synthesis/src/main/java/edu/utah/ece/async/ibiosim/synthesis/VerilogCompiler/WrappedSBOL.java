@@ -18,9 +18,9 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
-import SBOLGates.SBOLLogicGate;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.SBOLLogicGate;
 
 
 /**
@@ -74,14 +74,14 @@ public class WrappedSBOL {
 	
 	public Interaction createProductionInteraction(ModuleDefinition circuit, FunctionalComponent transcriptionalUnit, FunctionalComponent product) throws SBOLValidationException {
 		Interaction inter = addInteraction(circuit, getInteractionId() + "_Prod", SystemsBiologyOntology.GENETIC_PRODUCTION);
-		createInteractionParticipation(inter, SystemsBiologyOntology.PROMOTER, transcriptionalUnit.getIdentity()); //TODO: confirm
+		createInteractionParticipation(inter, SystemsBiologyOntology.TEMPLATE, transcriptionalUnit.getIdentity());
 		createInteractionParticipation(inter, SystemsBiologyOntology.PRODUCT, product.getIdentity());
 		return inter;
 	}
 
 	public FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id, ArrayList<ComponentDefinition> promoters) throws SBOLValidationException {
 		String id = "_" + tu_id;
-		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA);
+		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA_REGION);
 		tu.addRole(SequenceOntology.ENGINEERED_REGION);
 		
 		for(ComponentDefinition p : promoters) {
@@ -100,25 +100,25 @@ public class WrappedSBOL {
 	} 
 	
 	private ComponentDefinition createPromoter() throws SBOLValidationException{
-		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_promoter", ComponentDefinition.DNA);
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_promoter", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.PROMOTER);
 		return part;
 	}
 	
 	private ComponentDefinition createRibosome() throws SBOLValidationException{
-		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_ribosome", ComponentDefinition.DNA);
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_ribosome", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.RIBOSOME_ENTRY_SITE	);
 		return part;
 	}
 	
 	private ComponentDefinition createCDS() throws SBOLValidationException{
-		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_cds", ComponentDefinition.DNA);
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_cds", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.CDS);
 		return part;
 	}
 	
 	private ComponentDefinition createTerminator() throws SBOLValidationException{
-		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_terminator", ComponentDefinition.DNA);
+		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_terminator", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.TERMINATOR);
 		return part;
 	}
