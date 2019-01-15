@@ -94,15 +94,15 @@ public class Workflow_Test {
 	@Test	
 	public void Test_Filter() throws ParseException, FileNotFoundException {
 		String files = String.join(" ", CompilerTestSuite.verilogFilter_impFile, CompilerTestSuite.verilogFilter_tbFile);
-		String[] cmd = {"-v", files,
-				"-sbml", "-od", CompilerTestSuite.outputDirectory};
+		String[] cmd = {"-v", files, "-imp", "filter_imp", "-tb", "filter_testbench",
+				"-lpn", "-od", CompilerTestSuite.outputDirectory, "-o", "filter"};
 		
 		VerilogRunner.main(cmd);
 	}
 
 	@Test	
 	public void Test_design() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.vSpec, "-flat",
+		String[] cmd = {"-v", CompilerTestSuite.vSpec,
 				"-sbol", "-od", CompilerTestSuite.outputDirectory};
 		
 		VerilogRunner.main(cmd);

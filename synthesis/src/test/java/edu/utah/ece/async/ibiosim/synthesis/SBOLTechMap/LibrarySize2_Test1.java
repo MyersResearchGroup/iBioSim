@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -25,12 +24,10 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 
 /**
  * Test SBOL tech. map on spec designed y = !(~a). This will map one 2 NOT gates connected in series.
@@ -49,8 +46,7 @@ public class LibrarySize2_Test1 {
 			techMapOptions.setLibraryFile(SBOLTechMapTestSuite.NOT2_LibSize2);
 			
 			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
-			Map<SynthesisNode, SBOLGraph> solution = syn.getBestSolution();
-			sbolDoc = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
+			sbolDoc = syn.getSBOLfromTechMapping();
 		} 
 		catch (SBOLException | SBOLValidationException | IOException | SBOLConversionException | SBOLTechMapException e) {
 			e.printStackTrace();

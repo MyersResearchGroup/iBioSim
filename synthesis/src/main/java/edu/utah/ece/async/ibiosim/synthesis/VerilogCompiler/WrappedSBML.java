@@ -27,6 +27,7 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.text.parser.ParseException;
@@ -145,15 +146,36 @@ public class WrappedSBML {
 		return submodel;
 	}
 	
-	public void addReplacement(String topElementId, String modelRef, String submodelId, String replacedElement) {
-		SBase element = model.getElementBySId(topElementId);
-		CompSBasePlugin plugin = (CompSBasePlugin) element.createPlugin(sbmlCompPack);
-		ReplacedElement replacement = plugin.createReplacedElement();
+	private CompSBasePlugin getCompPlugin(String elementId) {
+		SBase element = model.getElementBySId(elementId);
+		if(element.isSetPlugin(sbmlCompPack)) {
+			return (CompSBasePlugin) element.getPlugin(sbmlCompPack);
+		}
+		CompSBasePlugin newPlugin = (CompSBasePlugin) element.createPlugin(sbmlCompPack);
+		return newPlugin;
+	}
+	
+	private ReplacedElement createReplacement(String modelRef, String submodelId, String replacedElement) {
+		ReplacedElement replacement = new ReplacedElement();
 		replacement.setSubmodelRef(submodelId);
 		String portName = modelRef + "__" + replacedElement;
 		replacement.setPortRef(portName);
+		return replacement;
 	}
 	
+	public void addReplacement(String topElementId, String modelRef, String submodelId, String replacedElement) {
+		CompSBasePlugin plugin = getCompPlugin(topElementId);
+		ReplacedElement replacement = createReplacement(modelRef, submodelId, replacedElement);
+		plugin.addReplacedElement(replacement);
+	}
+
+	public void addReplacedBy(String topElementId, String modelRef, String submodelId, String replacedElement) {
+		CompSBasePlugin plugin = getCompPlugin(topElementId);
+		ReplacedBy replacedBy = plugin.createReplacedBy();
+		replacedBy.setSubmodelRef(submodelId);
+		String portName = modelRef + "__" + replacedElement;
+		replacedBy.setPortRef(portName);
+	}
  
 	/**
 	 * Add the Verilog output to the SBML model.

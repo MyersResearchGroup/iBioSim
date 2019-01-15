@@ -54,8 +54,7 @@ public class SynthesisNode
 	private int degree; 
 	private boolean visited; 
 	
-	public SynthesisNode(SBOLDocument sbolDoc, ModuleDefinition md, FunctionalComponent fc) 
-	{
+	public SynthesisNode(SBOLDocument sbolDoc, ModuleDefinition md, FunctionalComponent fc) {
 		this.children = new ArrayList<SynthesisNode>();
 		this.parents = new ArrayList<SynthesisNode>();
 		
@@ -80,53 +79,43 @@ public class SynthesisNode
 		this.visited = false; 
 	}
 	
-	public void addChild(SynthesisNode node)
-	{
+	public void addChild(SynthesisNode node) {
 		children.add(node);
 	}
 	
-	public void addParent(SynthesisNode node)
-	{
+	public void addParent(SynthesisNode node) {
 		parents.add(node);
 	}
 	
-	public void addRelationship(SynthesisNode node, URI relation)
-	{
+	public void addRelationship(SynthesisNode node, URI relation) {
 		relations.put(node, relation);
 	}
 	
-	public URI getRelationship(SynthesisNode node)
-	{
+	public URI getRelationship(SynthesisNode node) {
 		return relations.get(node);
 	}
 	
-	public List<SynthesisNode> getChildren()
-	{
+	public List<SynthesisNode> getChildren() {
 		return children;
 	}
 	
-	public boolean getVisited()
-	{
+	public boolean getVisited() {
 		return this.visited; 
 	}
 	
-	public List<SynthesisNode> getParents()
-	{
+	public List<SynthesisNode> getParents() {
 		return parents;
 	}
 	
-	public URI getCompDefType()
-	{
+	public URI getCompDefType() {
 		return this.compDefType;
 	}
 	
-	public void setDegree(int degree)
-	{
+	public void setDegree(int degree) {
 		this.degree = degree;
 	}
 	
-	public ComponentDefinition getComponentDefinition()
-	{
+	public ComponentDefinition getComponentDefinition() {
 		return this.componentDefinition;
 	}
 	
@@ -134,54 +123,44 @@ public class SynthesisNode
 		return this.sequences;
 	}
 	
-	public String getFlattenedSequence()
-	{
+	public String getFlattenedSequence() {
 		return this.flattenedSequence;
 	}
 	
-	public ModuleDefinition getModuleDefinition()
-	{
+	public ModuleDefinition getModuleDefinition() {
 		return this.moduleDefinition;
 	}
 	
-	public SBOLDocument getSBOLDocument()
-	{
+	public SBOLDocument getSBOLDocument() {
 		return this.sbolDoc;
 	}
 	
-	public FunctionalComponent getFunctionalComponent()
-	{
+	public FunctionalComponent getFunctionalComponent() {
 		return this.functionalComponent;
 	}
 	
-	public int getDegree()
-	{
+	public int getDegree() {
 		return degree; 
 	}
 	
-	public double getScore()
-	{
+	public double getScore() {
 		return this.score;
 	}
 	
-	public void setScore(double value)
-	{
+	public void setScore(double value) {
 		this.score = value; 
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return moduleDefinition.getDisplayId() + "_" + this.functionalComponent.getDisplayId(); 
 	}
 	
-	public boolean isLeaf()
-	{
+	public boolean isLeaf() {
 		return children.size() == 0;
 	}
 	
-	public boolean isRoot()
-	{
+	public boolean isRoot() {
 		return parents.size() == 0;
 	}
 }

@@ -77,8 +77,8 @@ public class VerilogToSBOL {
 				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primaryProteins);
 		
 				//Connect primary input and output proteins for full circuit and subcircuit.
-				for(FunctionalComponent subcircuit_input : primaryProteins.keySet()) {
-					sbolWrapper.createMapsTo(subCircuit_instance, primaryProteins.get(subcircuit_input), subcircuit_input);
+				for(FunctionalComponent subcircuit_InputProtein : primaryProteins.keySet()) {
+					sbolWrapper.createMapsTo(subCircuit_instance, primaryProteins.get(subcircuit_InputProtein), subcircuit_InputProtein);
 				}
 			}
 			else {
@@ -158,7 +158,7 @@ public class VerilogToSBOL {
 			return sbolWrapper.getFunctionalComponent(circuit, proteinId);
 		}
 		
-		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.NONE);
+		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.INOUT);
 	}
 
 	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, SBOLLogicGate logicGate, HashMap<FunctionalComponent, FunctionalComponent> primaryProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {

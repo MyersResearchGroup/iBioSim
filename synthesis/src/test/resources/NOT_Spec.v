@@ -1,8 +1,9 @@
-module norNotDesign(a, b, y);
+module srlatchDesign(s, r, q, qnot);
 
-  input a, b;
-  output y;
+  input s, r;
+  output q, qnot;
 
-  assign y = a & b;
+  assign q = ~(r | qnot);
+  assign qnot = ~(s | q);
 
 endmodule

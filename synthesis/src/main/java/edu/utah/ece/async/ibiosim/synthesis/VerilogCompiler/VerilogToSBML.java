@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,9 +31,15 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.Ve
 public class VerilogToSBML {
 
 	private WrappedSBML sbmlWrapper;
+	private Map<String, VerilogModule> referredModules;
 	
-	public VerilogToSBML() {
+	VerilogToSBML() {
 		this.sbmlWrapper = new WrappedSBML();
+	}
+	
+	VerilogToSBML(Map<String, VerilogModule> referredModules) {
+		this();
+		this.referredModules = referredModules;
 	}
 
 	/**
@@ -89,13 +96,20 @@ public class VerilogToSBML {
 				moduleReferences.add(submodule.getModuleReference());
 			}
 			
-			Submodel submodel = sbmlWrapper.addSubmodel(submodule.getModuleReference(), submodule.getSubmoduleId());
+			String referredModuleId = submodule.getModuleReference();
+			VerilogModule referredModule = this.referredModules.get(referredModuleId);
+			Submodel submodel = sbmlWrapper.addSubmodel(referredModuleId, submodule.getSubmoduleId());
 			
 			Map<String, String> portNamedConnections = submodule.getNamedConnections();
 			if(portNamedConnections.size() > 0) {
 				for(String wire : portNamedConnections.keySet()) {
 					String varName = submodule.getNamedConnections().get(wire);
-					sbmlWrapper.addReplacement(wire, submodel.getModelRef(), submodel.getId(), varName);
+					if(referredModule.getInputPorts().contains(varName)){
+						sbmlWrapper.addReplacement(wire, submodel.getModelRef(), submodel.getId(), varName);
+					}
+					else if(referredModule.getOutputPorts().contains(varName)) {
+						sbmlWrapper.addReplacedBy(wire, submodel.getModelRef(), submodel.getId(), varName);
+					}
 				}
 			}
 		}

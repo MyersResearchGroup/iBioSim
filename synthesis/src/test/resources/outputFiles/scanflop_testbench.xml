@@ -31,21 +31,9 @@
             </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfParameters>
-      <parameter constant="false" id="q0" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="scanflop_imp__q0" comp:submodelRef="sf_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="q1" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="scanflop_imp__q1" comp:submodelRef="sf_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="scanflop_imp__ack" comp:submodelRef="sf_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
+      <parameter constant="false" id="q0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="q1" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="in1_0" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
           <comp:replacedElement comp:portRef="scanflop_imp__in1_0" comp:submodelRef="sf_instance"/>

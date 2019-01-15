@@ -31,10 +31,9 @@ public class LPN_Example1_Test {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_impFile);
 		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_tbFile);
-		setupOpt.setFlatModel(true);
 	
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
+		compiledVerilog.compileVerilogOutputData(true);
 		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", CompilerTestSuite.outputDirectory);
 	
 		lpn = compiledVerilog.getLPN();

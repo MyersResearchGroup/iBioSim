@@ -63,7 +63,6 @@ public class SBOLGraph
 	 */
 	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException
 	{
-
 		for(FunctionalComponent f : md.getFunctionalComponents())
 		{
 			if(!_nodes.containsKey(f.getIdentity()))
@@ -72,82 +71,11 @@ public class SBOLGraph
 				_nodes.put(f.getIdentity(), node);
 			}	
 		}
-		for(Interaction i : md.getInteractions())
+		for(Interaction interaction : md.getInteractions())
 		{
-			URI type = i.getTypes().iterator().next();
-			if(type.equals(SystemsBiologyOntology.INHIBITION))
-			{
-				List<URI> tf = new ArrayList<URI>();
-				URI promoter = null; 
-				for(Participation p : i.getParticipations())
-				{
-					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.INHIBITED))
-					{
-						promoter = p.getParticipantURI();
-					}
-					else
-					{
-						tf.add(p.getParticipantURI());
-					}
-				}
-				for(URI u : tf)
-				{
-					addChild(u, promoter);
-					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.INHIBITION);
-				}
-			}
-			else if(type.equals(SystemsBiologyOntology.STIMULATION))
-			{
-				List<URI> tf = new ArrayList<URI>();
-				URI promoter = null; 
-				for(Participation p : i.getParticipations())
-				{
-					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.TEMPLATE))
-					{
-						promoter = p.getParticipantURI();
-					}
-					else
-					{
-						tf.add(p.getParticipantURI());
-					}
-				}
-				for(URI u : tf)
-				{
-					addChild(u, promoter);
-					addParent(u, promoter);
-					addRelationship(promoter, u, SystemsBiologyOntology.STIMULATION);
-				}
-			}
-			else if(type.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) 
-			{
-				List<URI> tf = new ArrayList<URI>();
-				URI promoter = null; 
-				for(Participation p : i.getParticipations())
-				{
-					URI role = p.getRoles().iterator().next();
-					if(role.equals(SystemsBiologyOntology.TEMPLATE)) 
-					{
-						promoter = p.getParticipantURI();
-					}
-					else
-					{
-						tf.add(p.getParticipantURI());
-					}
-				}
-				for(URI u : tf)
-				{
-					addChild(promoter, u);
-					addParent(promoter, u);
-					addRelationship(promoter, u, SystemsBiologyOntology.PRODUCTION);
-				}
-			}
-			else
-			{
-				throw new SBOLTechMapException("Unidentified Interaction occurred: " + type);
-			}
+			assert(interaction.getTypes().size() == 1);
+			URI interactionType = interaction.getTypes().iterator().next();
+			addNodeRelationship(interactionType, interaction);
 		}
 
 		for(SynthesisNode node : _nodes.values())
@@ -159,6 +87,49 @@ public class SBOLGraph
 			node.setDegree(getDegree(node, node.getDegree()));
 		}
 
+	}
+	
+	private void addNodeRelationship(URI interactionType, Interaction interaction) throws SBOLTechMapException {
+		List<URI> tf = new ArrayList<URI>();
+		URI transcriptionalUnit = null; 
+		for(Participation participation : interaction.getParticipations()) {
+			URI role = participation.getRoles().iterator().next();
+			if(isTranscriptionalUnitNode(role)) {
+				transcriptionalUnit = participation.getParticipantURI();
+			}
+			else {
+				tf.add(participation.getParticipantURI());
+			}
+		}
+		
+		setNodeRelationship(tf, transcriptionalUnit, interactionType);
+	}
+	
+	private void setNodeRelationship(List<URI> transcriptionFactors, URI transcriptionalUnit, URI interactionType) throws SBOLTechMapException
+	{
+		for(URI tf : transcriptionFactors)
+		{
+			URI parentNode = null;
+			URI childNode = null;
+			if(interactionType.equals(SystemsBiologyOntology.INHIBITION) || interactionType.equals(SystemsBiologyOntology.STIMULATION)) {
+				parentNode = tf;
+				childNode = transcriptionalUnit;
+			}
+			else if(interactionType.equals(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
+				parentNode = transcriptionalUnit;
+				childNode = tf;
+			}
+			else {
+				throw new SBOLTechMapException("Unidentified Interaction occurred: " + interactionType);
+			}
+			addChild(parentNode, childNode);
+			addParent(parentNode, childNode);
+			addRelationship(parentNode, childNode, interactionType);
+		}
+	}
+	
+	private boolean isTranscriptionalUnitNode(URI nodeRole) {
+		return nodeRole.equals(SystemsBiologyOntology.INHIBITED) || nodeRole.equals(SystemsBiologyOntology.TEMPLATE);
 	}
 	
 	public void setScore(int value)
@@ -181,29 +152,24 @@ public class SBOLGraph
 			if(sortedElements.contains(n))
 				continue;
 			sortedElements.add(n);
-			for(SynthesisNode m: n.getChildren()) 
-			{
-				if(m.getParents().size() == 1)
-				{
+			for(SynthesisNode m: n.getChildren()) {
+				if(m.getParents().size() == 1) {
 					unsortedElements.add(m.getChildren().get(0));
 					break;
 				}
-				else if(m.getParents().size() == 2)//assume 2 input into promoter
-				{
+				else if(m.getParents().size() == 2){
+					//assume 2 input into promoter
 					List<SynthesisNode> parentNodes = m.getParents(); 
-					if(parentNodes.contains(n) && parentNodes.contains(unsortedElements.peek()))
-					{
+					if(parentNodes.contains(n) && parentNodes.contains(unsortedElements.peek())) {
 						SynthesisNode temp = unsortedElements.poll();
 						sortedElements.add(temp);
 						unsortedElements.add(m.getChildren().get(0));
 
 					}
-					else if(sortedElements.containsAll(parentNodes))
-					{
+					else if(sortedElements.containsAll(parentNodes)) {
 						unsortedElements.add(m.getChildren().get(0));
 					}
-					else
-					{
+					else {
 						unsortedElements.add(n);
 					}
 				}
@@ -216,8 +182,7 @@ public class SBOLGraph
 	 * Retrieves the root/output node of the SBOLGraph
 	 * @return
 	 */
-	public SynthesisNode getOutputNode()
-	{
+	public SynthesisNode getOutputNode() {
 		if(_topologicalSortNodes.size() <= 0)
 			return null; 
 		return _topologicalSortNodes.get(_topologicalSortNodes.size()-1);
@@ -227,29 +192,25 @@ public class SBOLGraph
 	 * Retrieve the leaf nodes of the SBOLGraph
 	 * @return
 	 */
-	public List<SynthesisNode> getRoots()
-	{
+	public List<SynthesisNode> getRoots() {
 		return this._root;
 	}
 
-	private void addChild(URI parent, URI child)
-	{
+	private void addChild(URI parent, URI child) {
 		SynthesisNode parentNode = _nodes.get(parent);
 		SynthesisNode childNode = _nodes.get(child);
 		parentNode.addChild(childNode);
 
 	}
 
-	private void addParent(URI parent, URI child)
-	{
+	private void addParent(URI parent, URI child) {
 		SynthesisNode parentNode = _nodes.get(parent);
 		SynthesisNode childNode = _nodes.get(child);
 		childNode.addParent(parentNode);
 
 	}
 
-	private void addRelationship(URI parent, URI child, URI relation)
-	{
+	private void addRelationship(URI parent, URI child, URI relation) {
 		SynthesisNode parentNode = _nodes.get(parent);
 		SynthesisNode childNode = _nodes.get(child);
 		parentNode.addRelationship(childNode, relation);
@@ -260,28 +221,22 @@ public class SBOLGraph
 	 * Get all nodes within an SBOLGraph
 	 * @return
 	 */
-	public List<SynthesisNode> getAllNodes()
-	{
+	public List<SynthesisNode> getAllNodes() {
 		List<SynthesisNode> nodes = new ArrayList<SynthesisNode>();
-		for (Map.Entry<URI,SynthesisNode> entry : this._nodes.entrySet()) 
-		{
+		for (Map.Entry<URI,SynthesisNode> entry : this._nodes.entrySet()) {
 			nodes.add(entry.getValue());
 		}
 		return nodes; 
 	}
 
-	private int getDegree(SynthesisNode node, int degree)
-	{
-		if(node.isLeaf())
-		{
+	private int getDegree(SynthesisNode node, int degree) {
+		if(node.isLeaf()) {
 			return degree;
 		}
 		int max = 0; int temp;
-		for(SynthesisNode child : node.getChildren())
-		{
+		for(SynthesisNode child : node.getChildren()) {
 			temp = getDegree(child, degree);
-			if(temp > max)
-			{
+			if(temp > max) {
 				max = temp;
 			}
 		}
@@ -292,8 +247,7 @@ public class SBOLGraph
 	 * Retrieve a list of nodes sorted from calling toplogical sort on an SBOLGraph
 	 * @return - The sorted species nodes of the SBOLGraph after calling topological sort
 	 */
-	public List<SynthesisNode> getTopologicalSortNodes()
-	{
+	public List<SynthesisNode> getTopologicalSortNodes() {
 		return _topologicalSortNodes;
 	}
 	
@@ -301,21 +255,16 @@ public class SBOLGraph
 	 * Generate a DOT file for the SBOLGraph
 	 * @param filename - Name of DOT file to be produced
 	 */
-	public void createDotFile(String filename)
-	{
-
+	public void createDotFile(String filename) {
 		BufferedWriter output = null;
-		try 
-		{
+		try {
 			File file = new File(filename + ".dot");
 			output = new BufferedWriter(new FileWriter(file));
 			output.write("digraph G {");
 
-			for(URI uri : _nodes.keySet())
-			{
+			for(URI uri : _nodes.keySet()) {
 				SynthesisNode node = _nodes.get(uri);
-				for(SynthesisNode child : node.getChildren())
-				{
+				for(SynthesisNode child : node.getChildren()) {
 					String parentId = node.toString();
 					String childId = child.toString();
 					output.write(parentId + " -> " + childId + ";");
@@ -323,20 +272,15 @@ public class SBOLGraph
 			}
 			output.write("}");
 		} 
-		catch ( IOException e ) 
-		{
+		catch ( IOException e ) {
 			e.printStackTrace();
 		} 
-		finally 
-		{
-			if ( output != null ) 
-			{
-				try
-				{
+		finally {
+			if (output != null ) {
+				try {
 					output.close();
 				}
-				catch (IOException e)
-				{
+				catch (IOException e) {
 					e.printStackTrace();
 				}
 			}

@@ -33,6 +33,7 @@ import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Lexer;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Source_textContext;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModuleInstance;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
@@ -109,7 +110,19 @@ public class VerilogCompiler {
 	}
 	
 	public void generateSBML(VerilogModule verilogModule) throws ParseException {
-		VerilogToSBML v2sbml = new VerilogToSBML();
+		VerilogToSBML v2sbml = null;
+		if(verilogModule.getNumSubmodules() > 0) {
+			Map<String, VerilogModule> referredModules = new HashMap<>();
+			for(VerilogModuleInstance subModule : verilogModule.getSubmodules()) {
+				String moduleId = subModule.getModuleReference();
+				VerilogModule module = verilogModules.get(moduleId);
+				referredModules.put(moduleId, module);
+			}
+			v2sbml = new VerilogToSBML(referredModules);
+		}
+		else { 
+			v2sbml = new VerilogToSBML();
+		}
 		WrappedSBML	sbmlModel = v2sbml.convertVerilogToSBML(verilogModule);
 		String verilogModuleId = verilogModule.getModuleId();
 		this.vmoduleToSBML.put(verilogModuleId, sbmlModel);

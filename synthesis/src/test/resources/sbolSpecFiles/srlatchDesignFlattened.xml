@@ -1,132 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#">
-  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_srLatchDesign/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign"/>
-    <sbol:displayId>circuit_srLatchDesign</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_srlatchDesign/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign"/>
+    <sbol:displayId>circuit_srlatchDesign</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC8_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC8_norTU"/>
-        <sbol:displayId>FC8_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD18_norTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC3_qnot/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC3_qnot"/>
-        <sbol:displayId>FC3_qnot</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC9_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC9_notTU"/>
-        <sbol:displayId>FC9_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD23_notTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC10_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC10_wiredProtein"/>
-        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD27_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC11_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC11_notTU"/>
-        <sbol:displayId>FC11_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD29_notTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC6_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC6_notTU"/>
-        <sbol:displayId>FC6_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD11_notTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC1_r/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC1_r"/>
-        <sbol:displayId>FC1_r</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD1_r/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC2_q/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC2_q"/>
-        <sbol:displayId>FC2_q</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC4_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC4_notTU"/>
-        <sbol:displayId>FC4_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD5_notTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC5_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC5_wiredProtein"/>
-        <sbol:displayId>FC5_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD9_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC12_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC12_wiredProtein"/>
-        <sbol:displayId>FC12_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD33_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC13_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC13_norTU"/>
-        <sbol:displayId>FC13_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD36_norTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC0_s/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC0_s"/>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC0_s/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC0_s"/>
         <sbol:displayId>FC0_s</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:definition rdf:resource="http://dummy.org/CD0_s/1.0"/>
@@ -135,8 +15,38 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srLatchDesign/FC7_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/FC7_wiredProtein"/>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC2_q/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC2_q"/>
+        <sbol:displayId>FC2_q</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC8_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC8_norTU"/>
+        <sbol:displayId>FC8_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD18_norTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC9_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC9_notTU"/>
+        <sbol:displayId>FC9_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD23_notTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC7_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC7_wiredProtein"/>
         <sbol:displayId>FC7_wiredProtein</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:definition rdf:resource="http://dummy.org/CD15_wiredProtein/1.0"/>
@@ -144,366 +54,456 @@
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I10_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I10_Prod"/>
-        <sbol:displayId>I10_Prod</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC12_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC12_wiredProtein"/>
+        <sbol:displayId>FC12_wiredProtein</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I10_Prod/P20/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I10_Prod/P20"/>
-            <sbol:displayId>P20</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC11_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I10_Prod/P21/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I10_Prod/P21"/>
-            <sbol:displayId>P21</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC10_wiredProtein/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I2_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I2_Inhib"/>
-        <sbol:displayId>I2_Inhib</sbol:displayId>
+        <sbol:definition rdf:resource="http://dummy.org/CD33_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC13_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC13_norTU"/>
+        <sbol:displayId>FC13_norTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I2_Inhib/P5/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I2_Inhib/P5"/>
-            <sbol:displayId>P5</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC6_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I2_Inhib/P4/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I2_Inhib/P4"/>
-            <sbol:displayId>P4</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC7_wiredProtein/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
+        <sbol:definition rdf:resource="http://dummy.org/CD36_norTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC6_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC6_notTU"/>
+        <sbol:displayId>FC6_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD11_notTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC10_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC10_wiredProtein"/>
+        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD27_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC3_qnot/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC3_qnot"/>
+        <sbol:displayId>FC3_qnot</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC4_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC4_notTU"/>
+        <sbol:displayId>FC4_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD5_notTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC1_r/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC1_r"/>
+        <sbol:displayId>FC1_r</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_r/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC5_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC5_wiredProtein"/>
+        <sbol:displayId>FC5_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD9_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_srlatchDesign/FC11_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/FC11_notTU"/>
+        <sbol:displayId>FC11_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD29_notTU/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I5_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I5_Inhib"/>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I5_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I5_Inhib"/>
         <sbol:displayId>I5_Inhib</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I5_Inhib/P10/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I5_Inhib/P10"/>
-            <sbol:displayId>P10</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC3_qnot/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I5_Inhib/P11/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I5_Inhib/P11"/>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I5_Inhib/P11/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I5_Inhib/P11"/>
             <sbol:displayId>P11</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC8_norTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I6_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I6_Prod"/>
-        <sbol:displayId>I6_Prod</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I6_Prod/P13/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I6_Prod/P13"/>
-            <sbol:displayId>P13</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC7_wiredProtein/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC8_norTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I6_Prod/P12/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I6_Prod/P12"/>
-            <sbol:displayId>P12</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC8_norTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I8_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I8_Prod"/>
-        <sbol:displayId>I8_Prod</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I8_Prod/P16/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I8_Prod/P16"/>
-            <sbol:displayId>P16</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC9_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I8_Prod/P17/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I8_Prod/P17"/>
-            <sbol:displayId>P17</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC3_qnot/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I0_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I0_Inhib"/>
-        <sbol:displayId>I0_Inhib</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I0_Inhib/P1/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I0_Inhib/P1"/>
-            <sbol:displayId>P1</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC4_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I0_Inhib/P0/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I0_Inhib/P0"/>
-            <sbol:displayId>P0</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I5_Inhib/P10/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I5_Inhib/P10"/>
+            <sbol:displayId>P10</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC5_wiredProtein/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC3_qnot/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I12_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I12_Inhib"/>
-        <sbol:displayId>I12_Inhib</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I12_Inhib/P24/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I12_Inhib/P24"/>
-            <sbol:displayId>P24</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC2_q/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I12_Inhib/P25/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I12_Inhib/P25"/>
-            <sbol:displayId>P25</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC13_norTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I11_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I11_Inhib"/>
-        <sbol:displayId>I11_Inhib</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I11_Inhib/P22/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I11_Inhib/P22"/>
-            <sbol:displayId>P22</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC0_s/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I11_Inhib/P23/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I11_Inhib/P23"/>
-            <sbol:displayId>P23</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC13_norTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I9_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I9_Inhib"/>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I9_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I9_Inhib"/>
         <sbol:displayId>I9_Inhib</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I9_Inhib/P19/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I9_Inhib/P19"/>
-            <sbol:displayId>P19</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC11_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I9_Inhib/P18/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I9_Inhib/P18"/>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I9_Inhib/P18/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I9_Inhib/P18"/>
             <sbol:displayId>P18</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC12_wiredProtein/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC12_wiredProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I4_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I4_Inhib"/>
-        <sbol:displayId>I4_Inhib</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I4_Inhib/P9/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I4_Inhib/P9"/>
-            <sbol:displayId>P9</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I9_Inhib/P19/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I9_Inhib/P19"/>
+            <sbol:displayId>P19</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC8_norTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I4_Inhib/P8/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I4_Inhib/P8"/>
-            <sbol:displayId>P8</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC1_r/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC11_notTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I1_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I1_Prod"/>
-        <sbol:displayId>I1_Prod</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I1_Prod/P2/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I1_Prod/P2"/>
-            <sbol:displayId>P2</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC4_notTU/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I1_Prod/P3/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I1_Prod/P3"/>
-            <sbol:displayId>P3</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC2_q/1.0"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I13_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I13_Prod"/>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I13_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I13_Prod"/>
         <sbol:displayId>I13_Prod</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I13_Prod/P27/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I13_Prod/P27"/>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I13_Prod/P27/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I13_Prod/P27"/>
             <sbol:displayId>P27</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC12_wiredProtein/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC12_wiredProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I13_Prod/P26/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I13_Prod/P26"/>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I13_Prod/P26/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I13_Prod/P26"/>
             <sbol:displayId>P26</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC13_norTU/1.0"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC13_norTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I7_Inhib/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I7_Inhib"/>
-        <sbol:displayId>I7_Inhib</sbol:displayId>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I0_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I0_Inhib"/>
+        <sbol:displayId>I0_Inhib</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I7_Inhib/P14/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I7_Inhib/P14"/>
-            <sbol:displayId>P14</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I0_Inhib/P0/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I0_Inhib/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC10_wiredProtein/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC5_wiredProtein/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I7_Inhib/P15/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I7_Inhib/P15"/>
-            <sbol:displayId>P15</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I0_Inhib/P1/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I0_Inhib/P1"/>
+            <sbol:displayId>P1</sbol:displayId>
             <sbol:version>1.0</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC9_notTU/1.0"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC4_notTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
     </sbol:interaction>
     <sbol:interaction>
-      <sbol:Interaction rdf:about="http://dummy.org/circuit_srLatchDesign/I3_Prod/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I3_Prod"/>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I10_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I10_Prod"/>
+        <sbol:displayId>I10_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I10_Prod/P20/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I10_Prod/P20"/>
+            <sbol:displayId>P20</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC11_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I10_Prod/P21/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I10_Prod/P21"/>
+            <sbol:displayId>P21</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC10_wiredProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I8_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I8_Prod"/>
+        <sbol:displayId>I8_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I8_Prod/P16/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I8_Prod/P16"/>
+            <sbol:displayId>P16</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC9_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I8_Prod/P17/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I8_Prod/P17"/>
+            <sbol:displayId>P17</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC3_qnot/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I11_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I11_Inhib"/>
+        <sbol:displayId>I11_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I11_Inhib/P22/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I11_Inhib/P22"/>
+            <sbol:displayId>P22</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC0_s/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I11_Inhib/P23/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I11_Inhib/P23"/>
+            <sbol:displayId>P23</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC13_norTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I6_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I6_Prod"/>
+        <sbol:displayId>I6_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I6_Prod/P12/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I6_Prod/P12"/>
+            <sbol:displayId>P12</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC8_norTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I6_Prod/P13/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I6_Prod/P13"/>
+            <sbol:displayId>P13</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC7_wiredProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I4_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I4_Inhib"/>
+        <sbol:displayId>I4_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I4_Inhib/P8/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I4_Inhib/P8"/>
+            <sbol:displayId>P8</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC1_r/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I4_Inhib/P9/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I4_Inhib/P9"/>
+            <sbol:displayId>P9</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC8_norTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I2_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I2_Inhib"/>
+        <sbol:displayId>I2_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I2_Inhib/P4/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I2_Inhib/P4"/>
+            <sbol:displayId>P4</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC7_wiredProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I2_Inhib/P5/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I2_Inhib/P5"/>
+            <sbol:displayId>P5</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC6_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I1_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I1_Prod"/>
+        <sbol:displayId>I1_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I1_Prod/P3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I1_Prod/P3"/>
+            <sbol:displayId>P3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC2_q/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I1_Prod/P2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I1_Prod/P2"/>
+            <sbol:displayId>P2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC4_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I3_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I3_Prod"/>
         <sbol:displayId>I3_Prod</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I3_Prod/P7/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I3_Prod/P7"/>
-            <sbol:displayId>P7</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I3_Prod/P6/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I3_Prod/P6"/>
+            <sbol:displayId>P6</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC5_wiredProtein/1.0"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC6_notTU/1.0"/>
           </sbol:Participation>
         </sbol:participation>
         <sbol:participation>
-          <sbol:Participation rdf:about="http://dummy.org/circuit_srLatchDesign/I3_Prod/P6/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srLatchDesign/I3_Prod/P6"/>
-            <sbol:displayId>P6</sbol:displayId>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I3_Prod/P7/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I3_Prod/P7"/>
+            <sbol:displayId>P7</sbol:displayId>
             <sbol:version>1.0</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000598"/>
-            <sbol:participant rdf:resource="http://dummy.org/circuit_srLatchDesign/FC6_notTU/1.0"/>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC5_wiredProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I7_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I7_Inhib"/>
+        <sbol:displayId>I7_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I7_Inhib/P15/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I7_Inhib/P15"/>
+            <sbol:displayId>P15</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC9_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I7_Inhib/P14/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I7_Inhib/P14"/>
+            <sbol:displayId>P14</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC10_wiredProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_srlatchDesign/I12_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I12_Inhib"/>
+        <sbol:displayId>I12_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I12_Inhib/P25/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I12_Inhib/P25"/>
+            <sbol:displayId>P25</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC13_norTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_srlatchDesign/I12_Inhib/P24/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_srlatchDesign/I12_Inhib/P24"/>
+            <sbol:displayId>P24</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_srlatchDesign/FC2_q/1.0"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>

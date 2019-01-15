@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -69,11 +68,9 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
@@ -624,8 +621,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					libDoc.createCopy(sbolDoc);
 				}
 				Synthesis syn = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-				Map<SynthesisNode, SBOLGraph> solution =  syn.getBestSolution();
-				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
+				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping();
 				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;
 				List<String> solutionFileIDs = new ArrayList<String>();

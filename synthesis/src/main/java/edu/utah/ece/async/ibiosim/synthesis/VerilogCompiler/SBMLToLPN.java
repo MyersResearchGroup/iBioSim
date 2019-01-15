@@ -19,6 +19,7 @@ import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -114,7 +115,7 @@ public class SBMLToLPN {
 										isOutput = true;
 										break;
 									}
-									else if(port.getSBOTerm() == 600) {
+									if(port.getSBOTerm() == 600) {
 										isInput = true;
 										break;
 									}

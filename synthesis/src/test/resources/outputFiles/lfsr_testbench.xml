@@ -31,41 +31,13 @@
             </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfParameters>
-      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__ack" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="a0" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__a0" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="a1" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__a1" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="b0" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__b0" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="b1" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__b1" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="c0" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__c0" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="c1" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="lfsr_imp__c1" comp:submodelRef="lfsr_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
+      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="a0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="a1" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="b0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="b1" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="c0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="c1" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="req" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
           <comp:replacedElement comp:portRef="lfsr_imp__req" comp:submodelRef="lfsr_instance"/>

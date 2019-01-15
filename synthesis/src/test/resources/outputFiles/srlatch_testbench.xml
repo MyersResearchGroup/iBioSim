@@ -31,16 +31,8 @@
             </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfParameters>
-      <parameter constant="false" id="q" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="srlatch_imp__q" comp:submodelRef="sl_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
-      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0">
-        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="srlatch_imp__ack" comp:submodelRef="sl_instance"/>
-        </comp:listOfReplacedElements>
-      </parameter>
+      <parameter constant="false" id="q" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="s" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
           <comp:replacedElement comp:portRef="srlatch_imp__s" comp:submodelRef="sl_instance"/>

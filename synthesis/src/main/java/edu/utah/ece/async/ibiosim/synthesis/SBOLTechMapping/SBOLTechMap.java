@@ -3,10 +3,6 @@ package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -34,22 +30,21 @@ public class SBOLTechMap {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
-			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
-			Map<SynthesisNode, SBOLGraph> solution = syn.getBestSolution(); 
-			SBOLDocument sbol_solution = syn.getSBOLfromTechMapping(solution, syn.getSpecification());
+			Synthesis synthesized = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
+			SBOLDocument sbol_solution = synthesized.getSBOLfromTechMapping();
 			
 			String outputPath = techMapOptions.getOutputFileDir() + File.separator + techMapOptions.getOuputFileName();
-			//print something to terminal
+			
 			if(techMapOptions.printCoveredGates()) {
-				syn.printCoveredGates(solution);
+				synthesized.printCoveredGates();
 			}
 			
 			//export to local machine
 			if(techMapOptions.isOutputDOT()) {
-				syn.getSpecification().createDotFile(outputPath);
+				
 			}
-			else {
-				syn.exportAsSBOLFile(outputPath, sbol_solution);
+			else if(techMapOptions.isOutputSBOL()){
+				synthesized.exportAsSBOLFile(outputPath, sbol_solution);
 			}
 		} 
 		catch (ParseException e) {
@@ -76,7 +71,7 @@ public class SBOLTechMap {
 		}
 	}
 	
-	public static SBOLTechMapOptions createTechMapOptions(CommandLine cmd) { 
+	private static SBOLTechMapOptions createTechMapOptions(CommandLine cmd) { 
 		SBOLTechMapOptions techMapOptions = new SBOLTechMapOptions();
 		
 		if(cmd.hasOption("h")) {
@@ -116,19 +111,18 @@ public class SBOLTechMap {
 		techMapOptions.addOption("od", "odir", true, "Path of output directory where the technology mapper will produce the results to.");
 		techMapOptions.addOption("dot", false, "Export solution into a dot file");
 		techMapOptions.addOption("sbol", false, "Export solution into SBOL");
-		techMapOptions.addOption("pg", "printGatesCovered", false, "Print name of gates that were selected for the technology mapping solution");
-		
+		techMapOptions.addOption("pg", "printGates", false, "Print name of gates that were selected for the technology mapping solution");
 		return techMapOptions;
 	}
 	
-	public static CommandLine parseCommandLine(String[] args) throws org.apache.commons.cli.ParseException {
+	private static CommandLine parseCommandLine(String[] args) throws org.apache.commons.cli.ParseException {
 		Options cmd_options = getCommandLineOptions();
 		CommandLineParser cmd_parser = new DefaultParser();
 		CommandLine cmd = cmd_parser.parse(cmd_options, args);
 		return cmd;
 	}
 	
-	public static void printUsage() {
+	private static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
 		
 		String usage = "-sf mySpec.xml -lf myLib.xml -od myDir -o result \n";
@@ -144,13 +138,8 @@ public class SBOLTechMap {
 		Synthesis syn = new Synthesis();
 		syn.createSBOLGraph(specDoc, false);
 		syn.createSBOLGraph(libDoc, true);
-
-		List<SBOLGraph> library = syn.getLibrary();
-		syn.setLibraryGateScores(library);
-
-		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<SynthesisNode, LinkedList<WeightedGraph>>();
-		syn.match_topLevel(syn.getSpecification(), matches);
-		syn.cover_topLevel(syn.getSpecification(), matches);
+		syn.setLibraryGateScores(syn.getLibrary());
+		syn.matchAndCover();
 		return syn;
 	}
 

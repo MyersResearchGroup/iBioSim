@@ -454,16 +454,26 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qMapsToSize() {
-		Module qCircuit_instance = fullCircuit.getModule("M0");
-		Assert.assertNotNull(qCircuit_instance);
-		Assert.assertEquals(3, qCircuit_instance.getMapsTos().size());
+		FunctionalComponent subcircuitProtein = subcircuit_q.getFunctionalComponent("FC10_r");
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		
+		subcircuitProtein = subcircuit_q.getFunctionalComponent("FC4_q");
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		
+		subcircuitProtein = subcircuit_q.getFunctionalComponent("FC11_qnot"); 
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
 	}
 
 	@Test
 	public void Test_qnotMapsToSize() {
-		Module qnotCircuit_instance = fullCircuit.getModule("M1");
-		Assert.assertNotNull(qnotCircuit_instance);
-		Assert.assertEquals(3, qnotCircuit_instance.getMapsTos().size());
+		FunctionalComponent subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC18_s");
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		
+		subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC19_q");
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		
+		subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC12_qnot"); 
+		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
 	}
 	
 	@Test
