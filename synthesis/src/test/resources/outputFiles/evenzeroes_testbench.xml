@@ -31,8 +31,12 @@
             </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfParameters>
-      <parameter constant="false" id="parity0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="parity1" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="parity0" sboTerm="SBO:0000602" value="0">
+        <comp:replacedBy xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" comp:portRef="evenzeroes_imp__parity0" comp:submodelRef="ez_instance"/>
+      </parameter>
+      <parameter constant="false" id="parity1" sboTerm="SBO:0000602" value="0">
+        <comp:replacedBy xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" comp:portRef="evenzeroes_imp__parity1" comp:submodelRef="ez_instance"/>
+      </parameter>
       <parameter constant="false" id="bit0" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
           <comp:replacedElement comp:portRef="evenzeroes_imp__bit0" comp:submodelRef="ez_instance"/>

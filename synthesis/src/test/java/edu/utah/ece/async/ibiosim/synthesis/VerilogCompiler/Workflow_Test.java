@@ -29,7 +29,7 @@ public class Workflow_Test {
 		String files = String.join(" ", CompilerTestSuite.verilogEvenZero_impFile, CompilerTestSuite.verilogEvenZero_tbFile);
 		String[] cmd = {"-v", files,
 						"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
-						"-sbml", "-flat", "-od", CompilerTestSuite.outputDirectory};
+						"-sbml", "-flat", "-od", CompilerTestSuite.outputDirectory, "-o", "evenzeroes_imp_evenzeroes_testbench_flattened"};
 		
 		VerilogRunner.main(cmd);
 	}

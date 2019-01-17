@@ -40,7 +40,7 @@ public class SBMLToLPN {
 	private Set<String> places;
 	private ArrayList<String> eventAssignmentBooleans;
 	private ASTNode ignoreNode = new ASTNode(Type.CONSTANT_TRUE);
-	
+
 	/**
 	 * The SBML to LPN constructor needed to setup the necessary variables before running conversion.
 	 * @param tbWrapper: The SBML testbench of the modeling circuit. Set this parameter to null if the SBML document has no external ports to convert.
@@ -58,15 +58,14 @@ public class SBMLToLPN {
 		this.ignoreVariables = new HashSet<>();
 		this.eventAssignmentBooleans = new ArrayList<>();
 	}
-	
-	
+
+
 	/**
 	 * Convert SBML to LPN.
 	 * @return The LPN model
 	 */
 	public LPN convert() {
 		lpn = new LPN();
-		
 		convertSBMLParameters();
 		addTransitions();
 		convertPorts();
@@ -74,7 +73,7 @@ public class SBMLToLPN {
 
 		return lpn;
 	}
-	
+
 	/**
 	 * Convert the given SBML document to an LPN model.
 	 * @param tbWrapper
@@ -86,31 +85,28 @@ public class SBMLToLPN {
 		SBMLToLPN converter = new SBMLToLPN(tbWrapper, impWrapper, sbmlDocument);
 		return converter.convert();
 	}
-	
 
 	private void convertPorts() {
-		Model model = sbmlDocument.getModel();
 		Model tbModel = tbWrapper.getModel();
-		CompModelPlugin modelPlugin = (CompModelPlugin) impWrapper.getModel().getPlugin("comp");
-		
+		CompModelPlugin impModelPlugin = (CompModelPlugin) impWrapper.getModel().getPlugin("comp");
 		boolean isOutput = false;
 		boolean isInput = false;
-		for(Parameter parameter : model.getListOfParameters()) {
+
+		for(Parameter parameter : sbmlDocument.getModel().getListOfParameters()) {
 			isOutput = false;
 			isInput = false;
-			//Go over all parameters of flat model that are marked as booleans
+
 			if(parameter.getSBOTerm() == 602) {
-				String id = parameter.getId();
-				if(!ignoreVariables.contains(id)) {
-					Parameter tbParameter = tbModel.getParameter(id);
+				String p_id = parameter.getId();
+				if(!ignoreVariables.contains(p_id)) {
+					Parameter tbParameter = tbModel.getParameter(p_id);
 					if(tbParameter != null) {
-						CompSBasePlugin plugin = (CompSBasePlugin) tbParameter.getPlugin("comp");
-						if(plugin != null) {
-							for (ReplacedElement replacement : plugin.getListOfReplacedElements()) {
-								String submoduleRefName = tbWrapper.getSubmoduleReferences().get(replacement.getSubmodelRef());
-								if(submoduleRefName != null && impWrapper.getModel().getId().equals(submoduleRefName)) {
+						CompSBasePlugin tbPlugin = (CompSBasePlugin) tbParameter.getPlugin("comp");
+						if(tbPlugin != null) {
+							for (ReplacedElement replacement : tbPlugin.getListOfReplacedElements()) {
+								if(containSubmodelRef(replacement.getSubmodelRef())) {
 									String portRef = replacement.getPortRef();
-									Port port = modelPlugin.getPort(portRef);
+									Port port = impModelPlugin.getPort(portRef);
 									if(port.getSBOTerm() == 601) {
 										isOutput = true;
 										break;
@@ -121,20 +117,43 @@ public class SBMLToLPN {
 									}
 								}
 							}
+							if(tbPlugin.isSetReplacedBy()) {
+								ReplacedBy replaceBy = tbPlugin.getReplacedBy();
+								if(containSubmodelRef(replaceBy.getSubmodelRef())) {
+									String portRef = replaceBy.getPortRef();
+									Port port = impModelPlugin.getPort(portRef);
+									if(port.getSBOTerm() == 601) {
+										isOutput = true;
+										
+									}
+									else if(port.getSBOTerm() == 600) {
+										isInput = true;
+									
+									}
+								}
+							}
 						}
 					}
 					if(isOutput) {
-						lpn.addOutput(id, "false");
-					} 
-					else if(isInput){
-						lpn.addInput(id, "false");
+						lpn.addOutput(p_id, "false");
+					}
+					else if(isInput) {
+						lpn.addInput(p_id, "false");
 					}
 					else {
-						lpn.addBoolean(id, "false");
+						lpn.addBoolean(p_id, "false");
 					}
 				}
 			}
 		}
+	}
+
+	private boolean containSubmodelRef(String submodelRef) {
+		String submoduleRefName = tbWrapper.getSubmoduleReferences().get(submodelRef);
+		if(submoduleRefName != null && impWrapper.getModel().getId().equals(submoduleRefName)) {
+			return true;
+		}
+		return false;
 	}
 
 	private void convertSBMLParameters() {
@@ -188,7 +207,7 @@ public class SBMLToLPN {
 				}
 			}
 			lpn.addTransition(event.getId());
-			
+
 		}
 	}
 
@@ -218,7 +237,7 @@ public class SBMLToLPN {
 					lpn.addBoolAssign(event.getId(), variable, convertSBMLASTNode(assignment));
 				}
 			}
-			
+
 		}
 	}
 
@@ -231,15 +250,15 @@ public class SBMLToLPN {
 		}
 
 	}
-	
+
 	private ASTNode removePresetFromASTNode(ASTNode math) {
 		ASTNode clone = math.clone();
 		Queue<ASTNode> queue = new LinkedList<>();
 		queue.add(clone);
-		
+
 		while(!queue.isEmpty()) {
 			ASTNode node = queue.poll();
-			
+
 			if(node.getType() == ASTNode.Type.RELATIONAL_EQ) {
 				if(node.getLeftChild().isName()) {
 					if(places.contains(node.getLeftChild().getName())) {
@@ -252,7 +271,7 @@ public class SBMLToLPN {
 					return ignoreNode;
 				}
 			}
-			
+
 			for(ASTNode child : node.getListOfNodes()) {
 				queue.add(child);
 			}
@@ -261,8 +280,8 @@ public class SBMLToLPN {
 			return clone.getChild(0);
 		}
 		return clone;
-		
-		
+
+
 	}
 
 	private String convertSBMLASTNode(ASTNode mathNode) {

@@ -36,11 +36,19 @@ public class VerilogModuleInstance implements AbstractVerilogConstruct {
 	public void setModuleReference(String moduleReference) {
 		this.moduleReference = moduleReference;
 	}
-	
+
+	/**
+	 * Get instantiated name of the submodule referenced.
+	 * @return
+	 */
 	public String getSubmoduleId() {
 		return this.submoduleId;
 	}
 	
+	/**
+	 * Get the referenced submodule id.
+	 * @return
+	 */
 	public String getModuleReference() {
 		return this.moduleReference;
 	}

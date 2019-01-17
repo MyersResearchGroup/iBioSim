@@ -1,6 +1,5 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URI;

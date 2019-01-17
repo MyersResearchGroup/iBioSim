@@ -1,6 +1,5 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

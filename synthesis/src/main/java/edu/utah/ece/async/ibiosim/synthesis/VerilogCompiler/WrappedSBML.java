@@ -3,7 +3,6 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,6 @@ public class WrappedSBML {
 	private CompSBMLDocumentPlugin docPlugin;
 	private int placeCounter, transitionCounter, waitCounter, delayCounter;
 	private int condCounter, assignCounter;
-	private LinkedList<String> expressionQueue;
 	private List<String> inputs;
 	private List<String> outputs;
 	private Map<String, String> submodulRef;
@@ -62,7 +60,6 @@ public class WrappedSBML {
 		this.model = sbmlDocument.createModel(); 
 		this.compPlugin = (CompModelPlugin) model.createPlugin(sbmlCompPack);
 		this.docPlugin = (CompSBMLDocumentPlugin) sbmlDocument.createPlugin(sbmlCompPack);
-		this.expressionQueue = new LinkedList<String>();
 		this.inputs = new ArrayList<>();
 		this.outputs = new ArrayList<>();
 		this.submodulRef = new HashMap<String, String>();
@@ -87,10 +84,6 @@ public class WrappedSBML {
 		bool.setValue(0);
 		bool.setConstant(false);
 		bool.setSBOTerm(602);
-	}
-
-	public void addExpressionToQueue(String expression) {
-		this.expressionQueue.addLast(expression);
 	}
 
 	/**

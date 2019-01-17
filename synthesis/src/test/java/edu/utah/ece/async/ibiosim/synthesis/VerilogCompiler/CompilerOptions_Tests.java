@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -9,6 +10,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
@@ -35,14 +37,22 @@ public class CompilerOptions_Tests{
 
 		if(setupOpt.isExportOn()) {
 			String outputDirectory = setupOpt.getOutputDirectory();
-			if(setupOpt.isGenerateSBOL()) {
+			if(setupOpt.isGenerateSBOL()){
 				compiledVerilog.exportSBOL(compiledVerilog.getMappedSBOLWrapper(), outputDirectory);
 			}
-			if(setupOpt.isGenerateSBML()){
-				compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory);
+			
+			if(setupOpt.isGenerateSBML()) {
+				compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory); 
+				if(setupOpt.isOutputFlatModel()) {
+					SBMLDocument flattenDoc = compiledVerilog.flattenSBML(outputDirectory, outputDirectory); 
+					compiledVerilog.exportSBML(flattenDoc, outputDirectory + setupOpt.getOutputFileName() + "_flattened.xml");
+				}
 			}
-			if(setupOpt.isGenerateLPN()) {
-				compiledVerilog.exportLPN(outputDirectory, setupOpt.getOutputFileName());
+			
+			if(setupOpt.isGenerateLPN()){
+				compiledVerilog.generateLPN(setupOpt.getImplementationModuleId(), setupOpt.getTestbenchModuleId(), outputDirectory);
+				compiledVerilog.exportLPN(compiledVerilog.getLPN(), outputDirectory + File.separator + setupOpt.getOutputFileName()); 
+
 			}
 		}
 		return compiledVerilog;

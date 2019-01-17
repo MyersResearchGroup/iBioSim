@@ -17,28 +17,28 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
- * Test verilog files containing implementation and testbench design compiled to one LPN model.
- * 
+ * Test lpn output for multiple of three design.
  * @author Tramy Nguyen
+ *
  */
-public class LPN_Example1_Test {
-	
+public class LPNExample5_Test {
+
 	private static LPN lpn;
-	
+
 	@BeforeClass
 	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
-		
+
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_impFile);
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_tbFile);
-	
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogMultThree_impFile);
+		setupOpt.addVerilogFile(CompilerTestSuite.verilogMultThree_tbFile);
+
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		compiledVerilog.compileVerilogOutputData(true);
-		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", CompilerTestSuite.outputDirectory);
-	
+		compiledVerilog.generateLPN("multthree_imp", "multThree_testbench", CompilerTestSuite.outputDirectory);
+
 		lpn = compiledVerilog.getLPN();
 	}
-	
+
 	@Test
 	public void Test_inputSize(){
 		Assert.assertEquals(2, lpn.getAllInputs().size());
@@ -50,11 +50,8 @@ public class LPN_Example1_Test {
 		expected_in.put("bit0", "false");
 		expected_in.put("bit1", "false");
 		
-		for (Map.Entry<String, String> entry : lpn.getAllInputs().entrySet()) {
-		    String actual_key = entry.getKey();
-		    String actual_value = entry.getValue();
-		    Assert.assertEquals(expected_in.get(actual_key), actual_value);
-		}	
+		Assert.assertTrue(expected_in.keySet().equals(lpn.getAllInputs().keySet()));
+		Assert.assertTrue(expected_in.equals(lpn.getAllInputs()));
 	}
 	
 	@Test
@@ -62,56 +59,34 @@ public class LPN_Example1_Test {
 		Assert.assertEquals(2, lpn.getAllOutputs().size());
 	}
 	
-	
 	@Test
 	public void Test_outputs(){
 		Map<String, String> expected_out = new HashMap<String, String>();
 		expected_out.put("parity0", "false");
 		expected_out.put("parity1", "false");
-		
-		for (Map.Entry<String, String> entry : lpn.getAllOutputs().entrySet()) {
-		    String actual_key = entry.getKey();
-		    String actual_value = entry.getValue();
-		    Assert.assertEquals(expected_out.get(actual_key), actual_value);
-		}	
+
+		Assert.assertTrue(expected_out.keySet().equals(lpn.getAllOutputs().keySet()));
+		Assert.assertTrue(expected_out.equals(lpn.getAllOutputs()));
 	}
 	
 	@Test
 	public void Test_booleanSize(){
-		Assert.assertEquals(5, lpn.getBooleans().size());
+		Assert.assertEquals(7, lpn.getBooleans().size());
 		
 	}
 	
 	@Test
 	public void Test_booleans(){
 		Map<String, String> expected_bool = new HashMap<String, String>();
-		
 		expected_bool.put("bit0", "false");
 		expected_bool.put("bit1", "false");
 		expected_bool.put("parity0", "false");
 		expected_bool.put("parity1", "false");
-		expected_bool.put("ez_instance__state", "false");
+		expected_bool.put("mt_instance__state0", "false");
+		expected_bool.put("mt_instance__state1", "false");
+		expected_bool.put("mt_instance__temp", "false");
 		
-		for (Map.Entry<String, String> entry : lpn.getBooleans().entrySet()) {
-		    String actual_key = entry.getKey();
-		    String actual_value = entry.getValue();
-		    Assert.assertEquals(expected_bool.get(actual_key), actual_value);
-		}
+		Assert.assertTrue(expected_bool.keySet().equals(lpn.getBooleans().keySet()));
+		Assert.assertTrue(expected_bool.equals(lpn.getBooleans()));
 	}
-
-	@Test
-	public void Test_TransitionSize() {
-		Assert.assertEquals(52, lpn.getAllTransitions().length);
-	}
-
-
-
-
-
-
-
-
-
-
-
 }

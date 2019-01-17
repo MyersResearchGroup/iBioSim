@@ -5,14 +5,15 @@
 // ----------------------------
 
 module init_block(in0, out0);
-	
+
 	input in0;
 	output reg out0;
-	reg state; 
-	
+	reg state;
+
   initial begin
     out0 = 1'b0;
     state = 1'b1;
   end
+
 
 endmodule

@@ -13,6 +13,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -43,14 +44,19 @@ public class VerilogRunner {
 			if(compilerOptions.isGenerateSBOL()){
 				compiledVerilog.exportSBOL(compiledVerilog.getMappedSBOLWrapper(), outputDirectory);
 			}
-			else{
-				if(compilerOptions.isGenerateSBML()) {
-					compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory);
+			
+			if(compilerOptions.isGenerateSBML()) {
+				compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory); 
+				if(compilerOptions.isOutputFlatModel()) {
+					SBMLDocument flattenDoc = compiledVerilog.flattenSBML(compilerOptions.getTestbenchModuleId(), compilerOptions.getOutputDirectory()); 
+					compiledVerilog.exportSBML(flattenDoc, outputDirectory + File.separator + compilerOptions.getOutputFileName() + ".xml");
 				}
-				if(compilerOptions.isGenerateLPN()){
-					compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), outputDirectory);
-					compiledVerilog.exportLPN(outputDirectory, compilerOptions.getOutputFileName());
-				}
+			}
+			
+			if(compilerOptions.isGenerateLPN()){
+				compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), outputDirectory);
+				compiledVerilog.exportLPN(compiledVerilog.getLPN(), outputDirectory + File.separator + compilerOptions.getOutputFileName() + ".lpn"); 
+
 			}
 			
 		} 

@@ -27,10 +27,6 @@
     <listOfCompartments/>
     <listOfSpecies/>
     <listOfParameters>
-      <parameter constant="false" id="parity0" metaid="iBioSim2" sboTerm="SBO:0000602" value="0">
-      </parameter>
-      <parameter constant="false" id="parity1" metaid="iBioSim3" sboTerm="SBO:0000602" value="0">
-      </parameter>
       <parameter constant="false" id="bit0" metaid="iBioSim4" sboTerm="SBO:0000602" value="0">
       </parameter>
       <parameter constant="false" id="bit1" metaid="iBioSim5" sboTerm="SBO:0000602" value="0">
@@ -57,6 +53,8 @@
       <parameter constant="false" id="P18" metaid="iBioSim25" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P19" metaid="iBioSim26" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P20" metaid="iBioSim27" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="parity0" metaid="ez_instance___iBioSim4" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="parity1" metaid="ez_instance___iBioSim5" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="ez_instance__state" metaid="ez_instance__iBioSim6" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="ez_instance__P0" metaid="ez_instance__iBioSim7" sboTerm="SBO:0000593" value="1"/>
       <parameter constant="false" id="ez_instance__P1" metaid="ez_instance__iBioSim8" sboTerm="SBO:0000593" value="0"/>

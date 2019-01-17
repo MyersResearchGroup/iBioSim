@@ -74,7 +74,6 @@ public class VerilogCompiler {
 	 */
 	public void parseVerilog() throws XMLStreamException, IOException, BioSimException {
 		for(Source_textContext vFile : this.stcList) {
-			
 			VerilogParser v = new VerilogParser();
 			ParseTreeWalker.DEFAULT.walk(v, vFile);
 			
@@ -95,21 +94,21 @@ public class VerilogCompiler {
 	}
 	
 	public boolean containsSBMLData() {
-		return this.vmoduleToSBML.isEmpty()? false : true;
+		return this.vmoduleToSBML.isEmpty();
 	}
 	
 	public boolean containsSBOLData() {
-		return this.vmoduleToSBOL.isEmpty()? false : true;
+		return this.vmoduleToSBOL.isEmpty();
 	}
 	
-	public void generateSBOL(boolean generateFlatModel, VerilogModule verilogModule) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
+	private void generateSBOL(boolean generateFlatModel, VerilogModule verilogModule) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
 		VerilogToSBOL v2sbol_conv = new VerilogToSBOL(generateFlatModel); 
 		WrappedSBOL sbolData = v2sbol_conv.convertVerilog2SBOL(verilogModule);
 		this.vmoduleToSBOL.put(verilogModule.getModuleId(), sbolData);
 
 	}
 	
-	public void generateSBML(VerilogModule verilogModule) throws ParseException {
+	private void generateSBML(VerilogModule verilogModule) throws ParseException {
 		VerilogToSBML v2sbml = null;
 		if(verilogModule.getNumSubmodules() > 0) {
 			Map<String, VerilogModule> referredModules = new HashMap<>();
@@ -128,35 +127,49 @@ public class VerilogCompiler {
 		this.vmoduleToSBML.put(verilogModuleId, sbmlModel);
 
 	}
-	
-	public SBMLDocument flattenSBML(String outputDirectory, String fileFullPath) throws BioSimException, XMLStreamException, IOException{
-		//Flatten the SBML models and then export to the same directory 
-		BioModel sbmlDoc = new BioModel(outputDirectory); 
-		if(fileFullPath == null) {
-			throw new FileNotFoundException("fileFullPath was not provided to perform SBML flattening.");
+
+	/**
+	 * Perform flattening on the verilog module with the given verilogModuleId and all its submodules that were compiled to SBML.
+	 * @param verilogModuleId: The id to locate the verilog module when flattening is performed. 
+	 * @param outputDirectory: The output directory where the hierarchical SBML models will be exported to.
+	 * @return An SBMLDocument with all of the merged contents.
+	 * @throws BioSimException
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
+	public SBMLDocument flattenSBML(String verilogModuleId, String outputDirectory) throws BioSimException, XMLStreamException, IOException{
+		if(verilogModuleId == null || verilogModuleId.isEmpty()) {
+			throw new FileNotFoundException("The given verilogModuleId was not provided to perform SBML flattening.");
 		}
 		
+		//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
+		WrappedSBML tbWrapper = getSBMLWrapper(verilogModuleId);
+		String hierModelFullPath = outputDirectory + File.separator + verilogModuleId + ".xml";
+		exportSBML(tbWrapper.getSBMLDocument(), hierModelFullPath);
+		
+		for(VerilogModuleInstance submodule : verilogModules.get(verilogModuleId).getSubmodules()) {
+			String refModule = submodule.getModuleReference();
+			WrappedSBML sbmlModel = getSBMLWrapper(submodule.getModuleReference());
+			exportSBML(sbmlModel.getSBMLDocument(), outputDirectory + File.separator + refModule + ".xml"); 
+		}
+				
+		//Flatten the SBML models and then export to the same directory 
+		BioModel sbmlDoc = new BioModel(outputDirectory); 
+		
 		//Loading the testbench file will also load the implementation file as well since externalModelDefinition is used.
-		boolean isDocumentLoaded = sbmlDoc.load(fileFullPath);
+		boolean isDocumentLoaded = sbmlDoc.load(hierModelFullPath);
 		if(!isDocumentLoaded) {
-			throw new BioSimException("Unable to perform flattening for the following SBML file " + fileFullPath, "Error Flattening SBML Files");
+			throw new BioSimException("Unable to perform flattening for the following SBML file " + hierModelFullPath, "Error Flattening SBML Files");
 		}
 		SBMLDocument flattenDoc = sbmlDoc.flattenModel(true);
 		return flattenDoc;
 	}
 	
 	public void generateLPN(String implementationModuleId, String testbenchModuleId, String outputDirectory) throws SBMLException, XMLStreamException, ParseException, BioSimException, IOException {
-		//iBioSim's flattening method will not perform flattening if the hierarchical SBML models are not exported into a file.
-		exportSBML(getMappedSBMLWrapper(), outputDirectory);	
-		String hierModelFullPath = outputDirectory + File.separator + testbenchModuleId + ".xml";
-		SBMLDocument flattenDoc = flattenSBML(outputDirectory, hierModelFullPath);
-		generateLPN(implementationModuleId, testbenchModuleId, flattenDoc);
-	}
-	
-	public void generateLPN(String implementationModuleId, String testbenchModuleId, SBMLDocument sbmlDoc) {
+		SBMLDocument flattenDoc = flattenSBML(testbenchModuleId, outputDirectory);
 		WrappedSBML tbWrapper = getSBMLWrapper(testbenchModuleId);
 		WrappedSBML impWrapper = getSBMLWrapper(implementationModuleId);
-		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, sbmlDoc);
+		this.lpn = SBMLToLPN.convertSBMLtoLPN(tbWrapper, impWrapper, flattenDoc);
 	}
 	
 	/**
@@ -172,10 +185,16 @@ public class VerilogCompiler {
 	 * This method will allow a user to access the SBMLWrapper based on the verilogModule_id that is assigned to the SBMLWrapper.
 	 * 
 	 * @param verilogModule_id : The Verilog Module identifier is used to locate the SBMLWrapper the the verilog module was converted into.
-	 * @return The corresponding SBMLWrapper that is assigned to the given verilogModule_id
+	 * @return The corresponding SBMLWrapper that is assigned to the given verilogModule_id. 
+	 * @throws FileNotFoundException 
 	 */
-	public WrappedSBML getSBMLWrapper(String verilogModule_id) {
-		return this.vmoduleToSBML.get(verilogModule_id);
+	public WrappedSBML getSBMLWrapper(String verilogModule_id) throws FileNotFoundException {
+		WrappedSBML sbmlWrapper = this.vmoduleToSBML.get(verilogModule_id);
+		if(sbmlWrapper == null) {
+			throw new FileNotFoundException("Unable to locate the corresponding WrappedSBML object with the given verilogModule_id: " + verilogModule_id);
+			
+		}
+		return sbmlWrapper;
 	}
 	
 	public Map<String, WrappedSBML> getMappedSBMLWrapper(){
@@ -193,7 +212,15 @@ public class VerilogCompiler {
 	public LPN getLPN(){
 		return this.lpn;
 	}
-	
+
+	/**
+	 * Export all SBML data compiled from verilog compiler. The output file names are assigned from the verilog module id. 
+	 * @param sbmlMapper: The compiled SBML data.
+	 * @param outputDirectory: The directory where the SBML data will be exported to.
+	 * @throws SBMLException
+	 * @throws FileNotFoundException
+	 * @throws XMLStreamException
+	 */
 	public void exportSBML(Map<String, WrappedSBML> sbmlMapper, String outputDirectory) throws SBMLException, FileNotFoundException, XMLStreamException{
 		for (Map.Entry<String, WrappedSBML> entry : sbmlMapper.entrySet()) {
 			String verilogModuleId = entry.getKey();
@@ -201,11 +228,14 @@ public class VerilogCompiler {
 			exportSBML(sbmlDocument, outputDirectory + File.separator + verilogModuleId + ".xml");
 		}
 	}
-	
-	public void exportLPN(String outputDirectory, String outputFileName){
-		exportLPN(this.lpn, outputDirectory + File.separator + outputFileName + ".lpn");
-	}
-	
+
+	/**
+	 * Export all SBOL data compiled from verilog compiler. The output file names are assigned from the verilog module id. 
+	 * @param sbolMapper: The compiled SBOL data.
+	 * @param outputDirectory: The directory where the SBOL data will be exported to.
+	 * @throws IOException
+	 * @throws SBOLConversionException
+	 */
 	public void exportSBOL(Map<String, WrappedSBOL> sbolMapper, String outputDirectory) throws IOException, SBOLConversionException{
 		for (Map.Entry<String, WrappedSBOL> entry : sbolMapper.entrySet()) {
 			String verilogModuleId = entry.getKey();
@@ -214,7 +244,7 @@ public class VerilogCompiler {
 		}
 	}
 	
-	private void exportLPN(LPN lpn, String fullPath) {
+	public void exportLPN(LPN lpn, String fullPath) {
 		lpn.save(fullPath);
 	}
 	
