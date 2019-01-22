@@ -190,15 +190,9 @@ public class CelloModeling {
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
 		
 		for (Interaction interact : resultMD.getInteractions()) {
-			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {	
-				if (Top_Level_Cello_Model) {
-					System.out.println("you are in new degradation method call");
-					//TODO PEDRO: change this so that the degradation rate is only called for 
-					//proteins and mRNAs, but not for the rest (i.e. IPTG, complexes, etc)
-					generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
-				} else {
-					SBOL2SBML.generateDegradationRxn(interact, resultMD, targetModel);
-				}
+			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {
+				generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
+				
 			} else if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
@@ -715,6 +709,8 @@ public class CelloModeling {
 				if (comp.getDefinition() != null) {
 					if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
 						ComponentDefinition Part = comp.getDefinition();
+						
+					
 						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 						//the location of these parameters can change
 						List<Annotation> Annot = Part.getAnnotations();
@@ -731,6 +727,16 @@ public class CelloModeling {
 							}
 							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 								ymin = Annot.get(i).getStringValue();
+							}
+						}
+						
+						for (Component comp2 : Part.getComponents()) {
+
+							if (comp2.getDisplayId().equals("YFP")) {
+								n = "Reporter";
+								K = "Reporter";
+								ymax = "Reporter";
+								ymin = "Reporter";
 							}
 						}
 					}
