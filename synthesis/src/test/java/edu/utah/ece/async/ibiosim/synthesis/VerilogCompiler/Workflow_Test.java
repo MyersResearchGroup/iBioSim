@@ -101,10 +101,10 @@ public class Workflow_Test {
 	}
 
 	@Test	
-	public void Test_design() throws ParseException, FileNotFoundException {
-		String[] cmd = {"-v", CompilerTestSuite.vSpec,
-				"-sbol", "-od", CompilerTestSuite.outputDirectory};
-		
+	public void Test_yosysDesign() throws ParseException, FileNotFoundException {
+		String[] cmd = {"-v", CompilerTestSuite.yosys,
+				"-sbol", "-od", "-flat", CompilerTestSuite.outputDirectory};
+		System.out.println("YOSYS ERROR HERE");
 		VerilogRunner.main(cmd);
 	}
 }

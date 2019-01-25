@@ -454,26 +454,14 @@ public class SBOLExample8_Test {
 	
 	@Test
 	public void Test_qMapsToSize() {
-		FunctionalComponent subcircuitProtein = subcircuit_q.getFunctionalComponent("FC10_r");
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
-		
-		subcircuitProtein = subcircuit_q.getFunctionalComponent("FC4_q");
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
-		
-		subcircuitProtein = subcircuit_q.getFunctionalComponent("FC11_qnot"); 
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		Module qModule = fullCircuit.getModule("M0");
+		Assert.assertEquals(3, qModule.getMapsTos().size());
 	}
 
 	@Test
 	public void Test_qnotMapsToSize() {
-		FunctionalComponent subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC18_s");
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
-		
-		subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC19_q");
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
-		
-		subcircuitProtein = subcircuit_qnot.getFunctionalComponent("FC12_qnot"); 
-		Assert.assertEquals(1, subcircuitProtein.getMapsTos().size());
+		Module qModule = fullCircuit.getModule("M1");
+		Assert.assertEquals(3, qModule.getMapsTos().size());
 	}
 	
 	@Test

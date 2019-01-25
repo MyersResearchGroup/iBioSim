@@ -12,9 +12,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 
 /**
- * 
+ * Setup class to list different options for running SBOL technology mapping. 
  * @author Tramy Nguyen
- *
  */
 public class SBOLTechMapOptions {
 

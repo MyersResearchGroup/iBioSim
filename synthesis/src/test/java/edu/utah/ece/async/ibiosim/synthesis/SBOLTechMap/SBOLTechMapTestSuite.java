@@ -33,13 +33,10 @@ public class SBOLTechMapTestSuite {
 	protected static String NORNOT_Spec = sbolSpecDir + File.separator + "norNotDesign.xml"; 
 	protected static String SRLATCH_Spec = sbolSpecDir + File.separator + "srlatchDesign.xml"; 
 
-	protected static String NOT1_LibSize1 = sbolLibDir + File.separator + "NOTGate_LibrarySize1.xml"; 
-	protected static String NOR1_LibSize1 = sbolLibDir + File.separator + "NORGate_LibrarySize1.xml"; 
-
-	protected static String NOT2_LibSize2 = sbolLibDir + File.separator + "NOTGates_LibrarySize2.xml"; 
-	protected static String NORNOT_LibSize2 = sbolLibDir + File.separator + "NORNOTGates_LibrarySize2.xml"; 
-	
-	protected static String NORNOT_LibSize3 = sbolLibDir + File.separator + "NORNOTGates_LibrarySize3.xml"; 
-	protected static String NORNOT_LibSize6 = sbolLibDir + File.separator + "NORNOTGates_LibrarySize6.xml"; 
-	
+	protected static String NOT1_LibSize1 = sbolLibDir + File.separator + "SynthNOTGate_LibrarySize1.xml"; 
+	protected static String NOR1_LibSize1 = sbolLibDir + File.separator + "SynthNORGate_LibrarySize1.xml"; 
+	protected static String NOT2_LibSize2 = sbolLibDir + File.separator + "SynthNOTGates_LibrarySize2.xml"; 
+	protected static String NORNOT_LibSize2 = sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize2.xml"; 
+	protected static String NORNOT_LibSize3 = sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize3.xml"; 
+	protected static String NORNOT_LibSize6 = sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize6.xml"; 
 }

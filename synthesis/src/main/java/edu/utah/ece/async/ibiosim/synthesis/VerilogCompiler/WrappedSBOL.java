@@ -20,7 +20,6 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Function_conditional_statementContext;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.SBOLLogicGate;
 
 
@@ -159,7 +158,6 @@ public class WrappedSBOL {
 	
 	public void createMapsTo(Module circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
 		circuit.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
-//		subCircuitProtein.createMapsTo(getMapsToId(), RefinementType.USELOCAL, subCircuitProtein.getDisplayId(), fullCircuitProtein.getDisplayId());
 	}
 	
 	public FunctionalComponent getFunctionalComponent(ModuleDefinition circuit, String fc_id) throws SBOLException {
