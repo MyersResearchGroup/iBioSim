@@ -156,6 +156,7 @@ public class SBOL2SBML {
 =======
 		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
 		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
+<<<<<<< Upstream, based on origin/master
 >>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
 		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
 		for (Module ChildModule : MD.getModules()) {
@@ -197,6 +198,22 @@ public class SBOL2SBML {
 		
 =======
 >>>>>>> 79375bb Verify if parts have Cello parameters, call different createproductionRXN method
+=======
+//		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
+//		for (Module ChildModule : MD.getModules()) {
+//			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
+//				Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
+//			}	
+//		}
+//		for (Module ChildModule : MD.getModules()) {
+//			for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
+//				if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
+//					return MD;
+//				}
+//			}					
+//		}
+//		
+>>>>>>> 78fd6c5 Uncommented broken MDFlattener code
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
 		
