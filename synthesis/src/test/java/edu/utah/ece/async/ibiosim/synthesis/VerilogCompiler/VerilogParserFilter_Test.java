@@ -14,6 +14,7 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModuleInstance;
 
@@ -28,8 +29,8 @@ public class VerilogParserFilter_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogFilter_impFile);
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogFilter_tbFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
 	
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();

@@ -11,6 +11,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+
 public class NORGate_Test {
 
 	private static SBOLDocument norLibrary;
@@ -18,7 +20,7 @@ public class NORGate_Test {
 	@BeforeClass
 	public static void setupTest() throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException, GateGenerationExeception {
 		GateGeneratorOptions setupOpt = new GateGeneratorOptions();
-		setupOpt.addTUFile(GateGeneratorTestSuite.norTU1_File);
+		setupOpt.addTUFile(TestingFiles.norTU1_File);
 
 
 		GateGeneration generator = GateGenerationRunner.run(setupOpt.getTUSBOLDocumentList(), "https://synbiohub.programmingbiology.org/");

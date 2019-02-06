@@ -1,17 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" comp:required="true" level="3" version="1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-  <model id="scanflop_imp">
+  <model id="counter_imp">
     <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:port comp:id="scanflop_imp__in1_0" comp:idRef="in1_0" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__in1_1" comp:idRef="in1_1" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__in2_0" comp:idRef="in2_0" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__in2_1" comp:idRef="in2_1" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__sel0" comp:idRef="sel0" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__sel1" comp:idRef="sel1" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__req" comp:idRef="req" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="scanflop_imp__q1" comp:idRef="q1" sboTerm="SBO:0000601"/>
-      <comp:port comp:id="scanflop_imp__q0" comp:idRef="q0" sboTerm="SBO:0000601"/>
-      <comp:port comp:id="scanflop_imp__ack" comp:idRef="ack" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="counter_imp__req" comp:idRef="req" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="counter_imp__a0" comp:idRef="a0" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="counter_imp__a1" comp:idRef="a1" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="counter_imp__b0" comp:idRef="b0" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="counter_imp__b1" comp:idRef="b1" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="counter_imp__ack" comp:idRef="ack" sboTerm="SBO:0000601"/>
     </comp:listOfPorts>
     <listOfFunctionDefinitions>
       <functionDefinition id="uniform">
@@ -37,17 +33,14 @@
             </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfParameters>
-      <parameter constant="false" id="in1_0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="in1_1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="in2_0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="in2_1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="sel0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="sel1" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="req" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="q1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="q0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="a0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="a1" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="b0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="b1" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="ack" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="state" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="state0" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="state1" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="P0" sboTerm="SBO:0000593" value="1"/>
       <parameter constant="false" id="P1" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P2" sboTerm="SBO:0000593" value="0"/>
@@ -111,24 +104,47 @@
       <parameter constant="false" id="P60" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P61" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P62" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P63" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P64" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P65" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P66" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P67" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P68" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P69" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P70" sboTerm="SBO:0000593" value="0"/>
     </listOfParameters>
     <listOfInitialAssignments>
-      <initialAssignment symbol="q0">
+      <initialAssignment symbol="a0">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
         </math>
             </initialAssignment>
-      <initialAssignment symbol="q1">
+      <initialAssignment symbol="a1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="b0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="b1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="state0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="state1">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
         </math>
             </initialAssignment>
       <initialAssignment symbol="ack">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
-        </math>
-            </initialAssignment>
-      <initialAssignment symbol="state">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
         </math>
@@ -182,7 +198,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -206,13 +222,13 @@
               <apply>
                 <and/>
                 <apply>
-                  <eq/>
-                  <ci> sel0 </ci>
+                  <neq/>
+                  <ci> state1 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
                 <apply>
-                  <eq/>
-                  <ci> in1_0 </ci>
+                  <neq/>
+                  <ci> state0 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
@@ -253,7 +269,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -294,7 +310,7 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="q0">
+          <eventAssignment variable="a0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -317,7 +333,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -358,6 +374,70 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="b0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P8 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P8">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P9">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P9 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P9">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P10">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
           <eventAssignment variable="ack">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
@@ -373,14 +453,14 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P8 </ci>
+                <ci> P10 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P8">
+          <eventAssignment variable="P10">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -402,13 +482,13 @@
                 <apply>
                   <and/>
                   <apply>
-                    <eq/>
-                    <ci> sel0 </ci>
+                    <neq/>
+                    <ci> state1 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                   <apply>
                     <eq/>
-                    <ci> in1_1 </ci>
+                    <ci> state0 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
@@ -417,13 +497,13 @@
                   <apply>
                     <and/>
                     <apply>
-                      <eq/>
-                      <ci> sel0 </ci>
+                      <neq/>
+                      <ci> state1 </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                     <apply>
-                      <eq/>
-                      <ci> in1_0 </ci>
+                      <neq/>
+                      <ci> state0 </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                   </apply>
@@ -443,71 +523,7 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P9">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P9 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P9">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P10">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P10 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P10">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P11">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="q1">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -530,7 +546,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -571,6 +587,134 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="a0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P13 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P13">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P14">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P14 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P14">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P15">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="b1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P15 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P15">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P16">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P16 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P16">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P17">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
           <eventAssignment variable="ack">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
@@ -586,14 +730,14 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P13 </ci>
+                <ci> P17 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P13">
+          <eventAssignment variable="P17">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -616,29 +760,13 @@
                   <and/>
                   <apply>
                     <eq/>
-                    <ci> sel0 </ci>
+                    <ci> state1 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                   <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> in1_0 </ci>
-                      <cn type="integer"> 0 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> in1_1 </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                    </apply>
+                    <eq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
                 <apply>
@@ -648,13 +776,13 @@
                     <apply>
                       <and/>
                       <apply>
-                        <eq/>
-                        <ci> sel0 </ci>
+                        <neq/>
+                        <ci> state1 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                       <apply>
                         <eq/>
-                        <ci> in1_1 </ci>
+                        <ci> state0 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                     </apply>
@@ -664,13 +792,13 @@
                     <apply>
                       <and/>
                       <apply>
-                        <eq/>
-                        <ci> sel0 </ci>
+                        <neq/>
+                        <ci> state1 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                       <apply>
-                        <eq/>
-                        <ci> in1_0 </ci>
+                        <neq/>
+                        <ci> state0 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                     </apply>
@@ -691,130 +819,194 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P14">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P14 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P14">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P15">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P15 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P15">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="q0">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P16 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P17 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P18">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P18 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P18">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P19">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P19 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P19">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P20">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="a1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P20 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P20">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P21">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P21 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P21">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P22">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="b0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P22 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P22">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P23">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P23 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P23">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P24">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -834,14 +1026,14 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P18 </ci>
+                <ci> P24 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P18">
+          <eventAssignment variable="P24">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -864,29 +1056,13 @@
                   <and/>
                   <apply>
                     <eq/>
-                    <ci> sel0 </ci>
+                    <ci> state1 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                   <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> in1_0 </ci>
-                      <cn type="integer"> 0 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> in1_1 </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
+                    <neq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
                 <apply>
@@ -897,29 +1073,13 @@
                       <and/>
                       <apply>
                         <eq/>
-                        <ci> sel0 </ci>
+                        <ci> state1 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                       <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> in1_0 </ci>
-                          <cn type="integer"> 0 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in1_1 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> state </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                        </apply>
+                        <eq/>
+                        <ci> state0 </ci>
+                        <cn type="integer"> 1 </cn>
                       </apply>
                     </apply>
                   </apply>
@@ -930,13 +1090,13 @@
                       <apply>
                         <and/>
                         <apply>
-                          <eq/>
-                          <ci> sel0 </ci>
+                          <neq/>
+                          <ci> state1 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
                           <eq/>
-                          <ci> in1_1 </ci>
+                          <ci> state0 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
@@ -946,13 +1106,13 @@
                       <apply>
                         <and/>
                         <apply>
-                          <eq/>
-                          <ci> sel0 </ci>
+                          <neq/>
+                          <ci> state1 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
-                          <eq/>
-                          <ci> in1_0 </ci>
+                          <neq/>
+                          <ci> state0 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
@@ -974,373 +1134,7 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P19 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P20">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P20 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P20">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P21">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="q1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P21 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P21">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P22">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P22 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P22">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P23">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="ack">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P23 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P23">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> sel1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> in2_0 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> sel0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> in1_0 </ci>
-                          <cn type="integer"> 0 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in1_1 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> state </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <not/>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> sel0 </ci>
-                          <cn type="integer"> 1 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in1_0 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> in1_1 </ci>
-                              <cn type="integer"> 0 </cn>
-                            </apply>
-                            <apply>
-                              <eq/>
-                              <ci> state </ci>
-                              <cn type="integer"> 0 </cn>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> in1_1 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> in1_0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P2 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P2">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P24">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P24 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P24">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P25">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P25 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P25">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P26">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="q0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -1355,7 +1149,7 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P26 </ci>
+                <ci> P25 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
@@ -1363,16 +1157,16 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P26">
+          <eventAssignment variable="P25">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P27">
+          <eventAssignment variable="P26">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -1387,12 +1181,49 @@
               <true/>
               <apply>
                 <eq/>
+                <ci> P26 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P26">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P27">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="a1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
                 <ci> P27 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P27">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -1404,14 +1235,9 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="ack">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1431,180 +1257,19 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> sel1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> in2_1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> sel1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> in2_0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <not/>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> sel0 </ci>
-                          <cn type="integer"> 1 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in1_0 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> in1_1 </ci>
-                              <cn type="integer"> 0 </cn>
-                            </apply>
-                            <apply>
-                              <eq/>
-                              <ci> state </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> in1_0 </ci>
-                              <cn type="integer"> 0 </cn>
-                            </apply>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> in1_1 </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                              <apply>
-                                <eq/>
-                                <ci> state </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <not/>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> sel0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                            <apply>
-                              <eq/>
-                              <ci> in1_1 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                          </apply>
-                        </apply>
-                        <apply>
-                          <not/>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> sel0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                            <apply>
-                              <eq/>
-                              <ci> in1_0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P2 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P2">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P29">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="b1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1620,7 +1285,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -1636,7 +1301,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1661,14 +1326,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="q1">
+          <eventAssignment variable="ack">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1682,72 +1347,8 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P31">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P32">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P32 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P32">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P33">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="ack">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P33 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P33">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -1759,7 +1360,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1767,31 +1368,18 @@
               <apply>
                 <and/>
                 <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> sel1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
+                  <not/>
                   <apply>
                     <and/>
                     <apply>
                       <eq/>
-                      <ci> in2_0 </ci>
-                      <cn type="integer"> 0 </cn>
+                      <ci> state1 </ci>
+                      <cn type="integer"> 1 </cn>
                     </apply>
                     <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> in2_1 </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
+                      <neq/>
+                      <ci> state0 </ci>
+                      <cn type="integer"> 1 </cn>
                     </apply>
                   </apply>
                 </apply>
@@ -1803,12 +1391,12 @@
                       <and/>
                       <apply>
                         <eq/>
-                        <ci> sel1 </ci>
+                        <ci> state1 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                       <apply>
                         <eq/>
-                        <ci> in2_1 </ci>
+                        <ci> state0 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                     </apply>
@@ -1820,119 +1408,30 @@
                       <apply>
                         <and/>
                         <apply>
-                          <eq/>
-                          <ci> sel1 </ci>
+                          <neq/>
+                          <ci> state1 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
                           <eq/>
-                          <ci> in2_0 </ci>
+                          <ci> state0 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
                     </apply>
                     <apply>
-                      <and/>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> in1_0 </ci>
-                              <cn type="integer"> 0 </cn>
-                            </apply>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> in1_1 </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                              <apply>
-                                <eq/>
-                                <ci> state </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
+                      <not/>
                       <apply>
                         <and/>
                         <apply>
-                          <not/>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> sel0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> in1_0 </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_1 </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> state </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
+                          <neq/>
+                          <ci> state1 </ci>
+                          <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
-                          <and/>
-                          <apply>
-                            <not/>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> sel0 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                              <apply>
-                                <eq/>
-                                <ci> in1_1 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                            </apply>
-                          </apply>
-                          <apply>
-                            <not/>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> sel0 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                              <apply>
-                                <eq/>
-                                <ci> in1_0 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                            </apply>
-                          </apply>
+                          <neq/>
+                          <ci> state0 </ci>
+                          <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
                     </apply>
@@ -1953,34 +1452,80 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P34">
+          <eventAssignment variable="P3">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <and/>
+                <apply>
+                  <eq/>
+                  <ci> a0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> b0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
               <apply>
                 <eq/>
-                <ci> P34 </ci>
+                <ci> P3 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P34">
+          <eventAssignment variable="P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P33">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="if_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <and/>
+                <apply>
+                  <neq/>
+                  <ci> state1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <neq/>
+                  <ci> state0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P33 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P33">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -2017,14 +1562,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="q0">
+          <eventAssignment variable="state0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2038,50 +1583,13 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P36">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P37">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P37 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P37">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P38">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="ack">
+          <eventAssignment variable="P34">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -2093,22 +1601,122 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <not/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <neq/>
+                    <ci> state1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <neq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
               <apply>
                 <eq/>
-                <ci> P38 </ci>
+                <ci> P33 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P38">
+          <eventAssignment variable="P33">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="P34">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P34 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P34">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P32">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="if_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <and/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> a0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> b1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <not/>
+                  <apply>
+                    <and/>
+                    <apply>
+                      <eq/>
+                      <ci> a0 </ci>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                    <apply>
+                      <eq/>
+                      <ci> b0 </ci>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
           <eventAssignment variable="P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P37">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -2123,223 +1731,26 @@
               <apply>
                 <and/>
                 <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> sel1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> in2_0 </ci>
-                      <cn type="integer"> 0 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> in2_1 </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
+                  <neq/>
+                  <ci> state1 </ci>
+                  <cn type="integer"> 1 </cn>
                 </apply>
                 <apply>
-                  <and/>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> sel1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> in2_0 </ci>
-                          <cn type="integer"> 0 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in2_1 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> state </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <not/>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> sel1 </ci>
-                          <cn type="integer"> 1 </cn>
-                        </apply>
-                        <apply>
-                          <eq/>
-                          <ci> in2_1 </ci>
-                          <cn type="integer"> 1 </cn>
-                        </apply>
-                      </apply>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel1 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> in2_0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <not/>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> sel0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> in1_0 </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_1 </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> state </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <not/>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> sel0 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_0 </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                                <apply>
-                                  <and/>
-                                  <apply>
-                                    <eq/>
-                                    <ci> in1_1 </ci>
-                                    <cn type="integer"> 0 </cn>
-                                  </apply>
-                                  <apply>
-                                    <eq/>
-                                    <ci> state </ci>
-                                    <cn type="integer"> 0 </cn>
-                                  </apply>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <not/>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> sel0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_1 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                            <apply>
-                              <not/>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> sel0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
-                        </apply>
-                      </apply>
-                    </apply>
-                  </apply>
+                  <eq/>
+                  <ci> state0 </ci>
+                  <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P2 </ci>
+                <ci> P37 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P2">
+          <eventAssignment variable="P37">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -2351,7 +1762,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2365,11 +1776,6 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P39">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -2381,9 +1787,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="state1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2403,24 +1814,177 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P41">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="q1">
+          <eventAssignment variable="P38">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <neq/>
+                    <ci> state1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P37 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P37">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P38">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <true/>
+              <apply>
+                <eq/>
+                <ci> P38 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P38">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P32">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="if_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <and/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> a1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> b0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <and/>
+                  <apply>
+                    <not/>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> a0 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <eq/>
+                        <ci> b1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <not/>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> a0 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <eq/>
+                        <ci> b0 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P41">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="if_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <and/>
+                <apply>
+                  <eq/>
+                  <ci> state1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> state0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P41 </ci>
@@ -2429,40 +1993,8 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P41">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P42">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P42 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P42">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -2472,14 +2004,9 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="ack">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2499,14 +2026,115 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P3">
+          <eventAssignment variable="P44">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="state0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P44 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P44">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P42">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> state1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P41 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P41">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P42">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P42 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P42">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P32">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="if_10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2514,35 +2142,16 @@
               <apply>
                 <and/>
                 <apply>
-                  <not/>
+                  <and/>
                   <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> sel1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> in2_0 </ci>
-                        <cn type="integer"> 0 </cn>
-                      </apply>
-                      <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> in2_1 </ci>
-                          <cn type="integer"> 0 </cn>
-                        </apply>
-                        <apply>
-                          <eq/>
-                          <ci> state </ci>
-                          <cn type="integer"> 1 </cn>
-                        </apply>
-                      </apply>
-                    </apply>
+                    <eq/>
+                    <ci> a1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> b1 </ci>
+                    <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
                 <apply>
@@ -2553,29 +2162,13 @@
                       <and/>
                       <apply>
                         <eq/>
-                        <ci> sel1 </ci>
+                        <ci> a1 </ci>
                         <cn type="integer"> 1 </cn>
                       </apply>
                       <apply>
-                        <and/>
-                        <apply>
-                          <eq/>
-                          <ci> in2_0 </ci>
-                          <cn type="integer"> 0 </cn>
-                        </apply>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> in2_1 </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> state </ci>
-                            <cn type="integer"> 0 </cn>
-                          </apply>
-                        </apply>
+                        <eq/>
+                        <ci> b0 </ci>
+                        <cn type="integer"> 1 </cn>
                       </apply>
                     </apply>
                   </apply>
@@ -2587,180 +2180,33 @@
                         <and/>
                         <apply>
                           <eq/>
-                          <ci> sel1 </ci>
+                          <ci> a0 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
                           <eq/>
-                          <ci> in2_1 </ci>
+                          <ci> b1 </ci>
                           <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
                     </apply>
                     <apply>
-                      <and/>
-                      <apply>
-                        <not/>
-                        <apply>
-                          <and/>
-                          <apply>
-                            <eq/>
-                            <ci> sel1 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                          <apply>
-                            <eq/>
-                            <ci> in2_0 </ci>
-                            <cn type="integer"> 1 </cn>
-                          </apply>
-                        </apply>
-                      </apply>
+                      <not/>
                       <apply>
                         <and/>
                         <apply>
-                          <not/>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <eq/>
-                              <ci> sel0 </ci>
-                              <cn type="integer"> 1 </cn>
-                            </apply>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> in1_0 </ci>
-                                <cn type="integer"> 0 </cn>
-                              </apply>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_1 </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> state </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
+                          <eq/>
+                          <ci> a0 </ci>
+                          <cn type="integer"> 1 </cn>
                         </apply>
                         <apply>
-                          <and/>
-                          <apply>
-                            <not/>
-                            <apply>
-                              <and/>
-                              <apply>
-                                <eq/>
-                                <ci> sel0 </ci>
-                                <cn type="integer"> 1 </cn>
-                              </apply>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_0 </ci>
-                                  <cn type="integer"> 0 </cn>
-                                </apply>
-                                <apply>
-                                  <and/>
-                                  <apply>
-                                    <eq/>
-                                    <ci> in1_1 </ci>
-                                    <cn type="integer"> 0 </cn>
-                                  </apply>
-                                  <apply>
-                                    <eq/>
-                                    <ci> state </ci>
-                                    <cn type="integer"> 0 </cn>
-                                  </apply>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
-                          <apply>
-                            <and/>
-                            <apply>
-                              <not/>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> sel0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_1 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                            <apply>
-                              <not/>
-                              <apply>
-                                <and/>
-                                <apply>
-                                  <eq/>
-                                  <ci> sel0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                                <apply>
-                                  <eq/>
-                                  <ci> in1_0 </ci>
-                                  <cn type="integer"> 1 </cn>
-                                </apply>
-                              </apply>
-                            </apply>
-                          </apply>
+                          <eq/>
+                          <ci> b0 </ci>
+                          <cn type="integer"> 1 </cn>
                         </apply>
                       </apply>
                     </apply>
                   </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P2 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P2">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> q0 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> state </ci>
-                  <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
               <apply>
@@ -2784,12 +2230,24 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <and/>
+                <apply>
+                  <eq/>
+                  <ci> state1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <neq/>
+                  <ci> state0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P45 </ci>
@@ -2804,96 +2262,6 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P46">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="state">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P46 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P46">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P44">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> q1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> state </ci>
-                    <cn type="integer"> 0 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <not/>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> q0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <eq/>
-                      <ci> state </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P3 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P47">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
@@ -2901,7 +2269,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_17" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2926,14 +2294,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="state">
+          <eventAssignment variable="state1">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
+              <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2953,14 +2321,83 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P44">
+          <eventAssignment variable="P46">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> state1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <neq/>
+                    <ci> state0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P45 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P45">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P46">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P46 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P46">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P32">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T17" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -2973,29 +2410,67 @@
                     <and/>
                     <apply>
                       <eq/>
-                      <ci> q1 </ci>
+                      <ci> a1 </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                     <apply>
                       <eq/>
-                      <ci> state </ci>
-                      <cn type="integer"> 0 </cn>
+                      <ci> b1 </ci>
+                      <cn type="integer"> 1 </cn>
                     </apply>
                   </apply>
                 </apply>
                 <apply>
-                  <not/>
+                  <and/>
+                  <apply>
+                    <not/>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> a1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <eq/>
+                        <ci> b0 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                    </apply>
+                  </apply>
                   <apply>
                     <and/>
                     <apply>
-                      <eq/>
-                      <ci> q0 </ci>
-                      <cn type="integer"> 1 </cn>
+                      <not/>
+                      <apply>
+                        <and/>
+                        <apply>
+                          <eq/>
+                          <ci> a0 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                        <apply>
+                          <eq/>
+                          <ci> b1 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                      </apply>
                     </apply>
                     <apply>
-                      <eq/>
-                      <ci> state </ci>
-                      <cn type="integer"> 1 </cn>
+                      <not/>
+                      <apply>
+                        <and/>
+                        <apply>
+                          <eq/>
+                          <ci> a0 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                        <apply>
+                          <eq/>
+                          <ci> b0 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                      </apply>
                     </apply>
                   </apply>
                 </apply>
@@ -3014,7 +2489,7 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P44">
+          <eventAssignment variable="P32">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -3032,39 +2507,135 @@
                   <and/>
                   <apply>
                     <eq/>
-                    <ci> q0 </ci>
+                    <ci> a0 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                   <apply>
-                    <neq/>
-                    <ci> state </ci>
-                    <cn type="integer"> 1 </cn>
+                    <and/>
+                    <apply>
+                      <eq/>
+                      <ci> b0 </ci>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <neq/>
+                        <ci> state1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <eq/>
+                        <ci> state0 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                    </apply>
                   </apply>
                 </apply>
                 <apply>
-                  <and/>
+                  <or/>
                   <apply>
-                    <eq/>
-                    <ci> q1 </ci>
-                    <cn type="integer"> 1 </cn>
+                    <and/>
+                    <apply>
+                      <eq/>
+                      <ci> a0 </ci>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> b1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <and/>
+                        <apply>
+                          <eq/>
+                          <ci> state1 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                        <apply>
+                          <eq/>
+                          <ci> state0 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                      </apply>
+                    </apply>
                   </apply>
                   <apply>
-                    <eq/>
-                    <ci> state </ci>
-                    <cn type="integer"> 1 </cn>
+                    <or/>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> a1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <and/>
+                        <apply>
+                          <eq/>
+                          <ci> b0 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                        <apply>
+                          <and/>
+                          <apply>
+                            <eq/>
+                            <ci> state1 </ci>
+                            <cn type="integer"> 1 </cn>
+                          </apply>
+                          <apply>
+                            <neq/>
+                            <ci> state0 </ci>
+                            <cn type="integer"> 1 </cn>
+                          </apply>
+                        </apply>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <and/>
+                      <apply>
+                        <eq/>
+                        <ci> a1 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                      <apply>
+                        <and/>
+                        <apply>
+                          <eq/>
+                          <ci> b1 </ci>
+                          <cn type="integer"> 1 </cn>
+                        </apply>
+                        <apply>
+                          <and/>
+                          <apply>
+                            <neq/>
+                            <ci> state1 </ci>
+                            <cn type="integer"> 1 </cn>
+                          </apply>
+                          <apply>
+                            <neq/>
+                            <ci> state0 </ci>
+                            <cn type="integer"> 1 </cn>
+                          </apply>
+                        </apply>
+                      </apply>
+                    </apply>
                   </apply>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P44 </ci>
+                <ci> P32 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P44">
+          <eventAssignment variable="P32">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -3076,7 +2647,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_17" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3092,7 +2663,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3139,7 +2710,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_18" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3155,7 +2726,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3171,14 +2742,14 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
                 <eq/>
-                <ci> q0 </ci>
+                <ci> a0 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
               <apply>
@@ -3202,7 +2773,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_19" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3218,7 +2789,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3234,7 +2805,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_18" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3259,14 +2830,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="q0">
+          <eventAssignment variable="a0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T18" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3293,7 +2864,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T19" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3302,7 +2873,7 @@
                 <not/>
                 <apply>
                   <eq/>
-                  <ci> q0 </ci>
+                  <ci> a0 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
@@ -3327,14 +2898,14 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
                 <eq/>
-                <ci> q1 </ci>
+                <ci> a1 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
               <apply>
@@ -3358,7 +2929,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_20" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3374,7 +2945,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -3390,7 +2961,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_19" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_17" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3415,14 +2986,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="q1">
+          <eventAssignment variable="a1">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T20" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3449,7 +3020,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T21" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3458,7 +3029,7 @@
                 <not/>
                 <apply>
                   <eq/>
-                  <ci> q1 </ci>
+                  <ci> a1 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
@@ -3483,12 +3054,16 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_21" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_14" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <eq/>
+                <ci> b0 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P57 </ci>
@@ -3497,11 +3072,131 @@
             </apply>
           </math>
                 </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P57">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P62">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_17" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P62 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P62">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P63">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_18" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P63 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P63">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P64">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="b0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T22" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P64 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P64">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P61">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T23" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <eq/>
+                  <ci> b0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P57 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
         <listOfEventAssignments>
           <eventAssignment variable="P57">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -3515,12 +3210,16 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_20" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_15" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <eq/>
+                <ci> b1 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P61 </ci>
@@ -3535,7 +3234,191 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P62">
+          <eventAssignment variable="P66">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_18" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P66 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P66">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P67">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_19" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P67 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P67">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P68">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="b1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T24" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P68 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P68">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P65">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T25" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <eq/>
+                  <ci> b1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P61 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P61">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P65">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_19" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P65 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P65">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P69">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_20" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P69 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P69">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P70">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -3547,7 +3430,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T16" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T26" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -3555,14 +3438,14 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P62 </ci>
+                <ci> P70 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P62">
+          <eventAssignment variable="P70">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>

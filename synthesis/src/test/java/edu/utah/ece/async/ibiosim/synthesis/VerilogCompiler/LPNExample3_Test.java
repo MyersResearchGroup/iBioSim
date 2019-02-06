@@ -14,6 +14,7 @@ import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
@@ -29,12 +30,12 @@ public class LPNExample3_Test {
 	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
 
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogFilter_impFile);
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogFilter_tbFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
 
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		compiledVerilog.compileVerilogOutputData(true);
-		compiledVerilog.generateLPN("filter_imp", "filter_testbench", CompilerTestSuite.outputDirectory);
+		compiledVerilog.generateLPN("filter_imp", "filter_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();
 	}

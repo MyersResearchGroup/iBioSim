@@ -24,6 +24,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
@@ -41,8 +42,8 @@ public class LibrarySize2_Test2 {
 	public static void setupTest() {
 		try {
 			SBOLTechMapOptions techMapOptions = new SBOLTechMapOptions();
-			techMapOptions.setSpecificationFile(SBOLTechMapTestSuite.NOTNOR_Spec);
-			techMapOptions.setLibraryFile(SBOLTechMapTestSuite.NORNOT_LibSize2);
+			techMapOptions.setSpecificationFile(TestingFiles.NOTNOR_Spec);
+			techMapOptions.setLibraryFile(TestingFiles.NORNOT_LibSize2);
 			
 			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
 			sbolDoc = syn.getSBOLfromTechMapping();

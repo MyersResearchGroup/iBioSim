@@ -1,12 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" comp:required="true" level="3" version="1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-  <model id="multthree_imp">
-    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:port comp:id="multthree_imp__in0" comp:idRef="in0" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="multthree_imp__in1" comp:idRef="in1" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="multthree_imp__parity0" comp:idRef="parity0" sboTerm="SBO:0000601"/>
-      <comp:port comp:id="multthree_imp__parity1" comp:idRef="parity1" sboTerm="SBO:0000601"/>
-    </comp:listOfPorts>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" fbc:required="false" level="3" version="2" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2">
+  <model fbc:strict="false" id="evenzeroes_testbench" metaid="iBioSim52" name="Created by iBioSim flatten routine">
     <listOfFunctionDefinitions>
       <functionDefinition id="uniform">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
@@ -30,53 +24,81 @@
         </math>
             </functionDefinition>
     </listOfFunctionDefinitions>
+    <listOfCompartments/>
+    <listOfSpecies/>
     <listOfParameters>
-      <parameter constant="false" id="in0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="in1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="parity0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="parity1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="state0" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="state1" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="temp" sboTerm="SBO:0000602" value="0"/>
-      <parameter constant="false" id="P0" sboTerm="SBO:0000593" value="1"/>
-      <parameter constant="false" id="P1" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P2" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P3" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P4" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P5" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P6" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P7" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P8" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P9" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P10" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P11" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P12" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P13" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P14" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P15" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P16" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P17" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P18" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P19" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P20" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P21" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P22" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P23" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P24" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P25" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P26" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P27" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P28" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P29" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P30" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P31" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P32" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P33" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P34" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P35" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P36" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="bit0" metaid="iBioSim4" sboTerm="SBO:0000602" value="0">
+      </parameter>
+      <parameter constant="false" id="bit1" metaid="iBioSim5" sboTerm="SBO:0000602" value="0">
+      </parameter>
+      <parameter constant="false" id="next" metaid="iBioSim6" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="P0" metaid="iBioSim7" sboTerm="SBO:0000593" value="1"/>
+      <parameter constant="false" id="P1" metaid="iBioSim8" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P2" metaid="iBioSim9" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P3" metaid="iBioSim10" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P4" metaid="iBioSim11" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P5" metaid="iBioSim12" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P6" metaid="iBioSim13" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P7" metaid="iBioSim14" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P8" metaid="iBioSim15" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P9" metaid="iBioSim16" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P10" metaid="iBioSim17" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P11" metaid="iBioSim18" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P12" metaid="iBioSim19" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P13" metaid="iBioSim20" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P14" metaid="iBioSim21" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P15" metaid="iBioSim22" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P16" metaid="iBioSim23" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P17" metaid="iBioSim24" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P18" metaid="iBioSim25" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P19" metaid="iBioSim26" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="P20" metaid="iBioSim27" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="parity0" metaid="ez_instance___iBioSim4" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="parity1" metaid="ez_instance___iBioSim5" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="ez_instance__state" metaid="ez_instance__iBioSim6" sboTerm="SBO:0000602" value="0"/>
+      <parameter constant="false" id="ez_instance__P0" metaid="ez_instance__iBioSim7" sboTerm="SBO:0000593" value="1"/>
+      <parameter constant="false" id="ez_instance__P1" metaid="ez_instance__iBioSim8" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P2" metaid="ez_instance__iBioSim9" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P3" metaid="ez_instance__iBioSim10" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P4" metaid="ez_instance__iBioSim11" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P5" metaid="ez_instance__iBioSim12" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P6" metaid="ez_instance__iBioSim13" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P7" metaid="ez_instance__iBioSim14" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P8" metaid="ez_instance__iBioSim15" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P9" metaid="ez_instance__iBioSim16" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P10" metaid="ez_instance__iBioSim17" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P11" metaid="ez_instance__iBioSim18" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P12" metaid="ez_instance__iBioSim19" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P13" metaid="ez_instance__iBioSim20" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P14" metaid="ez_instance__iBioSim21" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P15" metaid="ez_instance__iBioSim22" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P16" metaid="ez_instance__iBioSim23" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P17" metaid="ez_instance__iBioSim24" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P18" metaid="ez_instance__iBioSim25" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P19" metaid="ez_instance__iBioSim26" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P20" metaid="ez_instance__iBioSim27" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P21" metaid="ez_instance__iBioSim28" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P22" metaid="ez_instance__iBioSim29" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P23" metaid="ez_instance__iBioSim30" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P24" metaid="ez_instance__iBioSim31" sboTerm="SBO:0000593" value="0"/>
+      <parameter constant="false" id="ez_instance__P25" metaid="ez_instance__iBioSim32" sboTerm="SBO:0000593" value="0"/>
     </listOfParameters>
     <listOfInitialAssignments>
+      <initialAssignment symbol="bit0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="bit1">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
+      <initialAssignment symbol="next">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <cn type="integer"> 0 </cn>
+        </math>
+            </initialAssignment>
       <initialAssignment symbol="parity0">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
@@ -87,41 +109,19 @@
           <cn type="integer"> 0 </cn>
         </math>
             </initialAssignment>
-      <initialAssignment symbol="state0">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
-        </math>
-            </initialAssignment>
-      <initialAssignment symbol="state1">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
-        </math>
-            </initialAssignment>
-      <initialAssignment symbol="temp">
+      <initialAssignment symbol="ez_instance__state">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
         </math>
             </initialAssignment>
     </listOfInitialAssignments>
     <listOfEvents>
-      <event id="wait_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_0" metaid="iBioSim28" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <apply>
-                <or/>
-                <apply>
-                  <eq/>
-                  <ci> in0 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> in1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
+              <true/>
               <apply>
                 <eq/>
                 <ci> P0 </ci>
@@ -130,6 +130,11 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -143,7 +148,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_0" metaid="iBioSim29" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -157,11 +162,6 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P1">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -173,57 +173,38 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="next">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <piecewise>
+                <piece>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <lt/>
+                    <apply>
+                      <ci> uniform </ci>
+                      <cn type="integer"> 0 </cn>
+                      <cn type="integer"> 1 </cn>
+                    </apply>
+                    <cn> 0.5 </cn>
+                  </apply>
+                </piece>
+                <otherwise>
+                  <cn type="integer"> 0 </cn>
+                </otherwise>
+              </piecewise>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_0" metaid="iBioSim30" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
-                <or/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> in0 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <neq/>
-                      <ci> state1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <neq/>
-                      <ci> state0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> in1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <neq/>
-                      <ci> state1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <eq/>
-                      <ci> state0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
+                <neq/>
+                <ci> next </ci>
+                <cn type="integer"> 1 </cn>
               </apply>
               <apply>
                 <eq/>
@@ -246,7 +227,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_1" metaid="iBioSim31" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -262,7 +243,7 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
@@ -278,7 +259,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_1" metaid="iBioSim32" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -303,14 +284,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="parity1">
+          <eventAssignment variable="bit0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T0" metaid="iBioSim33" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -337,7 +318,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_1" metaid="iBioSim34" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -345,49 +326,9 @@
               <apply>
                 <not/>
                 <apply>
-                  <or/>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> in0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <neq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> in1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
+                  <neq/>
+                  <ci> next </ci>
+                  <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
               <apply>
@@ -411,16 +352,12 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_2" metaid="iBioSim35" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <apply>
-                <eq/>
-                <ci> state1 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
+              <true/>
               <apply>
                 <eq/>
                 <ci> P7 </ci>
@@ -429,8 +366,40 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P7">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P8">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="assign_2" metaid="iBioSim36" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P8 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P8">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -440,9 +409,14 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="bit1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T1" metaid="iBioSim37" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -462,19 +436,53 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P10">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="temp">
+          <eventAssignment variable="P3">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="wait_0" metaid="iBioSim38" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <or/>
+                <apply>
+                  <eq/>
+                  <ci> parity0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> parity1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P10">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_3" metaid="iBioSim39" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -488,42 +496,13 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P10">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P8">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <not/>
-                <apply>
-                  <eq/>
-                  <ci> state1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P7 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P7">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -535,12 +514,16 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_2" metaid="iBioSim40" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <eq/>
+                <ci> bit0 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P11 </ci>
@@ -555,70 +538,6 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P12">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="temp">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P12 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P12">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P8">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P8 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P8">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
           <eventAssignment variable="P13">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
@@ -626,7 +545,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_4" metaid="iBioSim41" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -640,6 +559,11 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P13">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -651,14 +575,9 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="parity0">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_3" metaid="iBioSim42" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -678,179 +597,85 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P3">
+          <eventAssignment variable="P15">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="bit0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T2" metaid="iBioSim43" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
+              <true/>
               <apply>
                 <eq/>
-                <ci> parity0 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P3 </ci>
+                <ci> P15 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P3">
+          <eventAssignment variable="P15">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P16">
+          <eventAssignment variable="P12">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="if_3" metaid="iBioSim44" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
-                <and/>
+                <not/>
                 <apply>
-                  <neq/>
-                  <ci> state1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <neq/>
-                  <ci> state0 </ci>
+                  <eq/>
+                  <ci> bit0 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P16 </ci>
+                <ci> P11 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
+          <eventAssignment variable="P11">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
           <eventAssignment variable="P16">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P18">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_5" metaid="iBioSim45" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <true/>
-              <apply>
-                <eq/>
-                <ci> P18 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P18">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="state0">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P19 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <neq/>
-                    <ci> state1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> state0 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <not/>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <neq/>
-                      <ci> state1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <neq/>
-                      <ci> state0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
               <apply>
                 <eq/>
                 <ci> P16 </ci>
@@ -859,297 +684,11 @@
             </apply>
           </math>
                 </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P20">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
+        <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P20 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
+            <cn> 5 </cn>
           </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P20">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P21">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="state1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P21 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P21">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> state1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> state0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <eq/>
-                      <ci> in0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <neq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P16 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P22">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P22 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P22">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P23">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="state1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P23 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P23">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <not/>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> state1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> in0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <not/>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <neq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P16 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P16">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -1163,7 +702,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_4" metaid="iBioSim46" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1183,192 +722,693 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P15">
+          <eventAssignment variable="P18">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="bit1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T3" metaid="iBioSim47" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P18 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P18">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P12">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="wait_1" metaid="iBioSim48" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
                 <and/>
+                <apply>
+                  <neq/>
+                  <ci> parity0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <neq/>
+                  <ci> parity1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> P12 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P12">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P19">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_6" metaid="iBioSim49" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P19 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P19">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P20">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="T4" metaid="iBioSim50" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P20 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="P20">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__wait_0" metaid="ez_instance__iBioSim33" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <or/>
+                <apply>
+                  <eq/>
+                  <ci> bit0 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> bit1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P0 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__delay_0" metaid="ez_instance__iBioSim34" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P1 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P2">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__if_0" metaid="ez_instance__iBioSim35" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <or/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <neq/>
+                    <ci> ez_instance__state </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> bit1 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
                 <apply>
                   <and/>
                   <apply>
                     <eq/>
-                    <ci> parity1 </ci>
+                    <ci> ez_instance__state </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
+                  <apply>
+                    <eq/>
+                    <ci> bit0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P2 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P2">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P4">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__delay_1" metaid="ez_instance__iBioSim36" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P4 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P4">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P5">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__assign_0" metaid="ez_instance__iBioSim37" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P5 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P5">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P6">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="parity1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__T0" metaid="ez_instance__iBioSim38" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P6 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P6">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__if_1" metaid="ez_instance__iBioSim39" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <or/>
                   <apply>
                     <and/>
                     <apply>
                       <neq/>
-                      <ci> state1 </ci>
+                      <ci> ez_instance__state </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                     <apply>
                       <eq/>
-                      <ci> state0 </ci>
+                      <ci> bit1 </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                   </apply>
-                </apply>
-                <apply>
-                  <not/>
-                  <apply>
-                    <eq/>
-                    <ci> parity0 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P3 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P24">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_7" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P24 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P24">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P25">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="state0">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P25 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P25">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P15">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <and/>
-                <apply>
-                  <not/>
                   <apply>
                     <and/>
                     <apply>
                       <eq/>
-                      <ci> parity1 </ci>
+                      <ci> ez_instance__state </ci>
                       <cn type="integer"> 1 </cn>
                     </apply>
                     <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
+                      <eq/>
+                      <ci> bit0 </ci>
+                      <cn type="integer"> 1 </cn>
                     </apply>
-                  </apply>
-                </apply>
-                <apply>
-                  <not/>
-                  <apply>
-                    <eq/>
-                    <ci> parity0 </ci>
-                    <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P3 </ci>
+                <ci> ez_instance__P2 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P3">
+          <eventAssignment variable="ez_instance__P2">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P15">
+          <eventAssignment variable="ez_instance__P7">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="wait_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__delay_2" metaid="ez_instance__iBioSim40" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P7 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn type="integer"> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P7">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P8">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__assign_1" metaid="ez_instance__iBioSim41" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P8 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P8">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P9">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="parity0">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__T1" metaid="ez_instance__iBioSim42" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P9 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P9">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__if_2" metaid="ez_instance__iBioSim43" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <eq/>
+                <ci> parity1 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P11">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__assign_2" metaid="ez_instance__iBioSim44" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P11 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P11">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P12">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__state">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__T2" metaid="ez_instance__iBioSim45" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P12 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P12">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P10">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__if_3" metaid="ez_instance__iBioSim46" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <apply>
+                <not/>
+                <apply>
+                  <eq/>
+                  <ci> parity1 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P13">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__assign_3" metaid="ez_instance__iBioSim47" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P13 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P13">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P14">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__state">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__T3" metaid="ez_instance__iBioSim48" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> ez_instance__P14 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="ez_instance__P14">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="ez_instance__P10">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="ez_instance__wait_1" metaid="ez_instance__iBioSim49" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1379,91 +1419,51 @@
                   <and/>
                   <apply>
                     <eq/>
+                    <ci> parity0 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> ez_instance__state </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
                     <ci> parity1 </ci>
                     <cn type="integer"> 1 </cn>
                   </apply>
                   <apply>
-                    <and/>
-                    <apply>
-                      <neq/>
-                      <ci> state0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <neq/>
-                      <ci> state1 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                </apply>
-                <apply>
-                  <or/>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> parity0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <neq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <and/>
-                    <apply>
-                      <eq/>
-                      <ci> parity0 </ci>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <apply>
-                      <and/>
-                      <apply>
-                        <eq/>
-                        <ci> state1 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                      <apply>
-                        <eq/>
-                        <ci> state0 </ci>
-                        <cn type="integer"> 1 </cn>
-                      </apply>
-                    </apply>
+                    <neq/>
+                    <ci> ez_instance__state </ci>
+                    <cn type="integer"> 1 </cn>
                   </apply>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P15 </ci>
+                <ci> ez_instance__P10 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P15">
+          <eventAssignment variable="ez_instance__P10">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P26">
+          <eventAssignment variable="ez_instance__P15">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__delay_3" metaid="ez_instance__iBioSim50" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1471,7 +1471,7 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P26 </ci>
+                <ci> ez_instance__P15 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
@@ -1479,23 +1479,23 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P26">
+          <eventAssignment variable="ez_instance__P15">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P27">
+          <eventAssignment variable="ez_instance__P16">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="wait_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__wait_2" metaid="ez_instance__iBioSim51" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1504,37 +1504,37 @@
                 <and/>
                 <apply>
                   <neq/>
-                  <ci> in0 </ci>
+                  <ci> bit0 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
                 <apply>
                   <neq/>
-                  <ci> in1 </ci>
+                  <ci> bit1 </ci>
                   <cn type="integer"> 1 </cn>
                 </apply>
               </apply>
               <apply>
                 <eq/>
-                <ci> P27 </ci>
+                <ci> ez_instance__P16 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P27">
+          <eventAssignment variable="ez_instance__P16">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P28">
+          <eventAssignment variable="ez_instance__P17">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__delay_4" metaid="ez_instance__iBioSim52" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1542,7 +1542,7 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P28 </ci>
+                <ci> ez_instance__P17 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
@@ -1550,23 +1550,23 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P28">
+          <eventAssignment variable="ez_instance__P17">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P29">
+          <eventAssignment variable="ez_instance__P18">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__if_4" metaid="ez_instance__iBioSim53" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1578,26 +1578,26 @@
               </apply>
               <apply>
                 <eq/>
-                <ci> P29 </ci>
+                <ci> ez_instance__P18 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P29">
+          <eventAssignment variable="ez_instance__P18">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P31">
+          <eventAssignment variable="ez_instance__P20">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__delay_5" metaid="ez_instance__iBioSim54" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1605,7 +1605,7 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P31 </ci>
+                <ci> ez_instance__P20 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
@@ -1613,23 +1613,23 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P31">
+          <eventAssignment variable="ez_instance__P20">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P32">
+          <eventAssignment variable="ez_instance__P21">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_8" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__assign_4" metaid="ez_instance__iBioSim55" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1637,19 +1637,19 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P32 </ci>
+                <ci> ez_instance__P21 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P32">
+          <eventAssignment variable="ez_instance__P21">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P33">
+          <eventAssignment variable="ez_instance__P22">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -1661,7 +1661,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T11" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__T4" metaid="ez_instance__iBioSim56" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1669,26 +1669,26 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P33 </ci>
+                <ci> ez_instance__P22 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P33">
+          <eventAssignment variable="ez_instance__P22">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P30">
+          <eventAssignment variable="ez_instance__P19">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_10" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__if_5" metaid="ez_instance__iBioSim57" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1703,26 +1703,26 @@
               </apply>
               <apply>
                 <eq/>
-                <ci> P29 </ci>
+                <ci> ez_instance__P18 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P29">
+          <eventAssignment variable="ez_instance__P18">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P34">
+          <eventAssignment variable="ez_instance__P23">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__delay_6" metaid="ez_instance__iBioSim58" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1730,7 +1730,7 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P34 </ci>
+                <ci> ez_instance__P23 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
@@ -1738,23 +1738,23 @@
                 </trigger>
         <delay>
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <ci> 5 </ci>
+            <cn type="integer"> 5 </cn>
           </math>
                 </delay>
         <listOfEventAssignments>
-          <eventAssignment variable="P34">
+          <eventAssignment variable="ez_instance__P23">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P35">
+          <eventAssignment variable="ez_instance__P24">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_9" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__assign_5" metaid="ez_instance__iBioSim59" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1762,19 +1762,19 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P35 </ci>
+                <ci> ez_instance__P24 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P35">
+          <eventAssignment variable="ez_instance__P24">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P36">
+          <eventAssignment variable="ez_instance__P25">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -1786,7 +1786,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T12" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__T5" metaid="ez_instance__iBioSim60" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1794,26 +1794,26 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P36 </ci>
+                <ci> ez_instance__P25 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P36">
+          <eventAssignment variable="ez_instance__P25">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P30">
+          <eventAssignment variable="ez_instance__P19">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T13" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="ez_instance__T6" metaid="ez_instance__iBioSim61" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -1821,19 +1821,19 @@
               <true/>
               <apply>
                 <eq/>
-                <ci> P30 </ci>
+                <ci> ez_instance__P19 </ci>
                 <cn type="integer"> 1 </cn>
               </apply>
             </apply>
           </math>
                 </trigger>
         <listOfEventAssignments>
-          <eventAssignment variable="P30">
+          <eventAssignment variable="ez_instance__P19">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P0">
+          <eventAssignment variable="ez_instance__P0">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>

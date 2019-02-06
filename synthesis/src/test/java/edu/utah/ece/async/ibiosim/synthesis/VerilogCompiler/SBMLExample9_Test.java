@@ -23,6 +23,7 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 
 
 /**
@@ -37,7 +38,7 @@ public class SBMLExample9_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogDelay_file);
+		setupOpt.addVerilogFile(TestingFiles.verilogDelay_file);
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
 		
@@ -116,8 +117,8 @@ public class SBMLExample9_Test {
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertTrue(delay.getMath().isString());
-		Assert.assertEquals("5", delay.getMath().getName());
+		Assert.assertTrue(delay.getMath().isReal());
+		Assert.assertTrue(5.0 ==  delay.getMath().getReal());
 	}
 	
 	@Test
@@ -252,8 +253,8 @@ public class SBMLExample9_Test {
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertTrue(delay.getMath().isString());
-		Assert.assertEquals("5", delay.getMath().getName());
+		Assert.assertTrue(delay.getMath().isReal());
+		Assert.assertTrue(5.0 ==  delay.getMath().getReal());
 	}
 	
 	@Test
@@ -384,8 +385,8 @@ public class SBMLExample9_Test {
 		
 		Assert.assertTrue(actual_event.isSetDelay());
 		Delay delay = actual_event.getDelay();
-		Assert.assertTrue(delay.getMath().isString());
-		Assert.assertEquals("5", delay.getMath().getName());
+		Assert.assertTrue(delay.getMath().isReal());
+		Assert.assertTrue(5.0 ==  delay.getMath().getReal());;
 	}
 	
 	@Test

@@ -20,6 +20,8 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.Port;
 
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+
 /**
  * Test SBML properties with evenzeroes example to ensure flattening method produces valid results.
  * 
@@ -34,9 +36,9 @@ public class FlatteningSBML_Test {
 	@BeforeClass
 	public static void setupTest() {
 		try {
-			SBMLDocument imp_doc = SBMLReader.read(new File(CompilerTestSuite.sbmlEvenZero_impFile));
-			SBMLDocument tb_doc = SBMLReader.read(new File(CompilerTestSuite.sbmlEvenZero_tbFile));
-			SBMLDocument flat_doc = SBMLReader.read(new File(CompilerTestSuite.sbmlEvenZero_flatFile));
+			SBMLDocument imp_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_impFile));
+			SBMLDocument tb_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_tbFile));
+			SBMLDocument flat_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_flatFile));
 			
 			imp_model = imp_doc.getModel();
 			tb_model = tb_doc.getModel();
@@ -105,7 +107,7 @@ public class FlatteningSBML_Test {
 		for(Event e : imp_model.getListOfEvents()){
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertEquals(ASTNode.Type.NAME, actual_delay.getMath().getType());
+				Assert.assertEquals(ASTNode.Type.REAL, actual_delay.getMath().getType());
 			}
 		}
 	}
@@ -115,7 +117,7 @@ public class FlatteningSBML_Test {
 		for(Event e : tb_model.getListOfEvents()){
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertEquals(ASTNode.Type.NAME, actual_delay.getMath().getType());
+				Assert.assertEquals(ASTNode.Type.REAL, actual_delay.getMath().getType());
 			}
 		}
 	}
@@ -127,7 +129,7 @@ public class FlatteningSBML_Test {
 				//flat SBML must only have id taken from imp and tb
 				String flat_id = flat_event.getId();
 				Type flat_delayType = flat_event.getDelay().getMath().getType();
-				Assert.assertEquals(ASTNode.Type.NAME, flat_delayType);
+				Assert.assertEquals(ASTNode.Type.REAL, flat_delayType);
 				if(flat_id.startsWith("ez_instance__")) {
 					Event imp_event = imp_model.getEvent(flat_id.substring(13));
 					Assert.assertNotNull(imp_event);
@@ -149,9 +151,8 @@ public class FlatteningSBML_Test {
 		for(Event e : imp_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(actual_delay.getMath().isString());
-				Assert.assertTrue(actual_delay.getMath().isSetName());
-				Assert.assertEquals("5", actual_delay.getMath().getName());
+				Assert.assertTrue(actual_delay.getMath().isReal());
+				Assert.assertTrue(5.0 ==  actual_delay.getMath().getReal());
 			}
 		}
 	}
@@ -161,9 +162,8 @@ public class FlatteningSBML_Test {
 		for(Event e : tb_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(actual_delay.getMath().isString());
-				Assert.assertTrue(actual_delay.getMath().isSetName());
-				Assert.assertEquals("5", actual_delay.getMath().getName());;
+				Assert.assertTrue(actual_delay.getMath().isReal());
+				Assert.assertTrue(5.0 ==  actual_delay.getMath().getReal());
 			}
 		}
 	}
@@ -173,9 +173,8 @@ public class FlatteningSBML_Test {
 		for(Event e : flat_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(actual_delay.getMath().isString());
-				Assert.assertTrue(actual_delay.getMath().isSetName());
-				Assert.assertEquals("5", actual_delay.getMath().getName());;
+				Assert.assertTrue(actual_delay.getMath().isReal());
+				Assert.assertTrue(5.0 ==  actual_delay.getMath().getReal());
 			}
 		}
 	}

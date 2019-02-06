@@ -24,6 +24,7 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 
 /**
  * Test libSBOLj createCopy methods
@@ -38,7 +39,7 @@ public class Test_SBOLCreateCopy {
 		
 		SBOLReader.setURIPrefix(SBOLUtility.getInstance().getURIPrefix());
 		try {
-			inputDoc = SBOLReader.read(new File(SBOLTechMapTestSuite.NOT1_LibSize1));
+			inputDoc = SBOLReader.read(new File(TestingFiles.NOT1_LibSize1));
 		} catch (SBOLValidationException | IOException | SBOLConversionException e) {
 			e.printStackTrace();
 		}

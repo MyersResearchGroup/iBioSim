@@ -20,6 +20,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 
 /**
  * Test for shared NOT output signals connected to 2 separate NOR gates. 
@@ -34,7 +35,7 @@ public class SBOLExample7_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogSynthesizedFilter_file);
+		setupOpt.addVerilogFile(TestingFiles.verilogSynthesizedFilter_file);
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		compiledVerilog.compileVerilogOutputData(true);   
 		

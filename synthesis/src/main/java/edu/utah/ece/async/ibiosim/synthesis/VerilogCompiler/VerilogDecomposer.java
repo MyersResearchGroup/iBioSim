@@ -8,16 +8,16 @@ import org.sbml.jsbml.ASTNode;
  * Decompose a given expression to NOT and OR logic functions.
  * @author Tramy Nguyen
  */
-public class VerilogSynthesizer{
+public class VerilogDecomposer{
 	
-	public static ASTNode synthesize(ASTNode logicFunction) throws VerilogCompilerException {
+	public static ASTNode decompose(ASTNode logicFunction) throws VerilogCompilerException {
 		
 		LinkedList<ASTNode> operands = new LinkedList<ASTNode>();
-		return synthesize_recurs(logicFunction.clone(), operands);
+		return decompose_recurs(logicFunction.clone(), operands);
 	}
 	
 	
-	private static ASTNode synthesize_recurs(ASTNode logicFunction, LinkedList<ASTNode> operands) throws VerilogCompilerException{
+	private static ASTNode decompose_recurs(ASTNode logicFunction, LinkedList<ASTNode> operands) throws VerilogCompilerException{
 		//locate the base operand 
 		if(logicFunction.getChildCount() > 2){
 			throw new VerilogCompilerException("Synthesizer does not support more than 2 input logic functions");
@@ -30,7 +30,7 @@ public class VerilogSynthesizer{
 		ASTNode result = null;
 		
 		for(int i = 0; i < logicFunction.getChildCount(); i++){
-			ASTNode temp = synthesize_recurs(logicFunction.getChild(i), operands);
+			ASTNode temp = decompose_recurs(logicFunction.getChild(i), operands);
 			operands.add(temp);
 		}
 		

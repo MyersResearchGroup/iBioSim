@@ -16,6 +16,7 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.AbstractVerilogConstruct;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogBlock;
@@ -38,8 +39,8 @@ public class VerilogParserEvenZeroes_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_impFile);
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_tbFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_impFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_tbFile);
 	
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();

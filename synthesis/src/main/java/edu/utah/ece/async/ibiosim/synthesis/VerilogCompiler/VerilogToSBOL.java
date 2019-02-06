@@ -62,7 +62,7 @@ public class VerilogToSBOL {
 		for(VerilogAssignment assign : contAssigns) {
 			String var = assign.getVariable();
 			ASTNode expression = ASTNode.parseFormula(assign.getExpression());
-			ASTNode synthExpression = VerilogSynthesizer.synthesize(expression);
+			ASTNode synthExpression = VerilogDecomposer.decompose(expression);
 			
 			FunctionalComponent fullCircuit_outputProtein = primaryProteins.get(var);
 			HashMap<FunctionalComponent, FunctionalComponent> primaryProteins = new HashMap<>();

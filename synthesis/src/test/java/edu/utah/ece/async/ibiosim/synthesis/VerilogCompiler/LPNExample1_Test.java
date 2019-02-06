@@ -14,6 +14,7 @@ import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
@@ -29,12 +30,13 @@ public class LPNExample1_Test {
 	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
 		
 		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_impFile);
-		setupOpt.addVerilogFile(CompilerTestSuite.verilogEvenZero_tbFile);
+		System.out.println(TestingFiles.verilogEvenZero_impFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_impFile);
+		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_tbFile);
 	
 		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
 		compiledVerilog.compileVerilogOutputData(true);
-		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", CompilerTestSuite.outputDirectory);
+		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", TestingFiles.writeOutputDir);
 	
 		lpn = compiledVerilog.getLPN();
 	}

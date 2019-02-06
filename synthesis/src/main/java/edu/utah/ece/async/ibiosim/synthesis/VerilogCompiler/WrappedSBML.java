@@ -288,8 +288,19 @@ public class WrappedSBML {
 	public Event createDelay(String delayValue) {
 		String delayName = getNextDelayId();
 		Event delayEvent = createTransition(delayName);
-		delayEvent.createDelay(new ASTNode(delayValue));
+		delayEvent.createDelay(createASTNode(delayValue));
 		return delayEvent;
+	}
+	
+	private ASTNode createASTNode(String math) {
+		try {
+			double value = Double.parseDouble(math);
+			return new ASTNode(value); 
+		}
+		catch(NumberFormatException e) {
+			//TODO:	log this exception 
+		}
+		return new ASTNode(math);
 	}
 
 	private Event createTransition(String transitionName) {

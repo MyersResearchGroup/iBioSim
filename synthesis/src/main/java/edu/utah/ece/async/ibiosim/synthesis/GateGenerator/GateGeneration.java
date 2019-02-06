@@ -128,10 +128,10 @@ public class GateGeneration {
 						ORGate identifiedGate = new ORGate(enrichedTU);
 						gates.add(identifiedGate);
 					}
-					else {
-						NotSupportedGate identifiedGate = new NotSupportedGate(enrichedTU);
-						gates.add(identifiedGate);
-					}
+//					else {
+//						NotSupportedGate identifiedGate = new NotSupportedGate(enrichedTU);
+//						gates.add(identifiedGate);
+//					}
 				}
 			}
 		}
@@ -292,6 +292,10 @@ public class GateGeneration {
 			}
 		}
 		return andLibary;
+	}
+	
+	public List<GeneticGate> getGeneticGateList(){
+		return this.gates;
 	}
 	
 	public void exportLibrary(SBOLDocument libraryDocument, String fullPath) throws IOException, SBOLConversionException {
