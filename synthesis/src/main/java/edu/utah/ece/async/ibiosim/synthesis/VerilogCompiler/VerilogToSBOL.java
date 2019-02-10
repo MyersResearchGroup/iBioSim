@@ -11,6 +11,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -46,6 +47,7 @@ public class VerilogToSBOL {
 		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
 		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);
 		convertVerilogPorts(fullCircuit, module.getRegisters(), DirectionType.INOUT);
+		convertVerilogPorts(fullCircuit, module.getWirePorts(), DirectionType.INOUT);
 		
 		convertVerilogContinousAssignments(fullCircuit, module.getContinousAssignments());
 		return sbolWrapper;
@@ -78,7 +80,15 @@ public class VerilogToSBOL {
 		
 				//Connect primary input and output proteins for full circuit and subcircuit.
 				for(FunctionalComponent subcircuit_InputProtein : primaryProteins.keySet()) {
-					sbolWrapper.createMapsTo(subCircuit_instance, primaryProteins.get(subcircuit_InputProtein), subcircuit_InputProtein);
+					FunctionalComponent portProtein = primaryProteins.get(subcircuit_InputProtein);
+					if(portProtein.getDirection().equals(DirectionType.IN)) {
+						
+						sbolWrapper.createMapsTo(RefinementType.USEREMOTE, subCircuit_instance, portProtein, subcircuit_InputProtein);
+					}
+					else if(portProtein.getDirection().equals(DirectionType.OUT)) {
+						
+						sbolWrapper.createMapsTo(RefinementType.USELOCAL, subCircuit_instance, portProtein, subcircuit_InputProtein);
+					}
 				}
 			}
 			else {
@@ -106,12 +116,9 @@ public class VerilogToSBOL {
 				
 				ASTNode norLeftChild = notOperand.getLeftChild();
 				ASTNode norRightChild = notOperand.getRightChild();
-				
 				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, mapped_primaryProteins);
 				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, mapped_primaryProteins);
-				
 				addOutput(circuit, sbolNOR, outputProtein);
-				
 				sbolWrapper.addGateMapping(gateId, sbolNOR);
 
 				buildSBOLExpression(circuit, norLeftChild, leftInputProtein, mapped_primaryProteins);
@@ -121,13 +128,9 @@ public class VerilogToSBOL {
 			else {
 				//a NOT gate was found
 				NOTGate sbolNOT = addNOTGate(circuit, gateId);
-				
 				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, mapped_primaryProteins); 
-				
 				addOutput(circuit, sbolNOT, outputProtein);
-				
 				sbolWrapper.addGateMapping(gateId, sbolNOT);
-
 				buildSBOLExpression(circuit, notOperand, inputProtein, mapped_primaryProteins);
 			}
 		}

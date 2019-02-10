@@ -68,7 +68,7 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
@@ -620,7 +620,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					SBOLDocument sbolDoc = SBOLUtility.getInstance().loadFromDir(sbolDir, defaultURIPrefix);
 					libDoc.createCopy(sbolDoc);
 				}
-				Synthesis syn = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
+				Synthesis syn = SBOLTechMapRunner.run(specDoc, libDoc);
 				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping();
 				// Note: Convert the solution back to SBML and load back to iBioSim workspace
 				String solution_dir = synthFilePath;

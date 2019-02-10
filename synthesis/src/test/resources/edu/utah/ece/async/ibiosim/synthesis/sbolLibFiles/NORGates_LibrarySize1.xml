@@ -492,12 +492,20 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/QacR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/QacR_protein"/>
+    <sbol:displayId>QacR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>QacR_protein</dcterms:title>
+    <dcterms:created>2019-01-25T02:55:36.685Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein"/>
     <sbol:displayId>PhlF_protein</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>PhlF_protein</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <dcterms:created>2019-01-25T02:55:36.685Z</dcterms:created>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR/1">
@@ -512,14 +520,6 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/QacR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/QacR_protein"/>
-    <sbol:displayId>QacR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>QacR_protein</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P24/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P24"/>
@@ -539,7 +539,7 @@
     <sbol:displayId>SrpR_protein</sbol:displayId>
     <sbol:version>1</sbol:version>
     <dcterms:title>SrpR_protein</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <dcterms:created>2019-01-25T02:55:36.685Z</dcterms:created>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.utah.edu/norTU/1">

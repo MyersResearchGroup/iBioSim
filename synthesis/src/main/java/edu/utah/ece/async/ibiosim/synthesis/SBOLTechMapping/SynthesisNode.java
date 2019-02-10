@@ -37,14 +37,10 @@ import org.sbolstandard.core2.Sequence;
 public class SynthesisNode
 {
 	private SBOLDocument sbolDoc; //SBOLDocument where the SBOL objects are referred to
-	private ModuleDefinition moduleDefinition; //Container where information about the gates are stored in
+	private ModuleDefinition moduleDefinition; //remember which node belongs in which MD
 	
-	private ComponentDefinition componentDefinition; 
 	private FunctionalComponent functionalComponent; //Represent each vertex node
-	private URI compDefType; 
-	
 	private Set<Sequence> sequences;
-	private String flattenedSequence;
 	
 	private List<SynthesisNode> parents;
 	private List<SynthesisNode> children; 
@@ -58,21 +54,10 @@ public class SynthesisNode
 		this.children = new ArrayList<SynthesisNode>();
 		this.parents = new ArrayList<SynthesisNode>();
 		
-		this.functionalComponent = fc;
-		
-		ComponentDefinition compDef = fc.getDefinition();
-		
-		this.componentDefinition = compDef;
-		this.compDefType = compDef.getTypes().iterator().next();
-		this.sequences = compDef.getSequences();
-		String completeSeq = "";
-		for(Sequence s: sequences)
-		{
-			completeSeq = completeSeq + s.getElements();
-		}
-		this.flattenedSequence = completeSeq;
 		this.moduleDefinition = md;
 		this.sbolDoc = sbolDoc;
+		this.functionalComponent = fc;
+		this.sequences = fc.getDefinition().getSequences();
 		
 		this.relations = new HashMap<SynthesisNode, URI>();
 		this.degree = 0; 
@@ -107,8 +92,18 @@ public class SynthesisNode
 		return parents;
 	}
 	
-	public URI getCompDefType() {
-		return this.compDefType;
+	public URI getCompDefType() throws SBOLTechMapException {
+		ComponentDefinition cd = this.functionalComponent.getDefinition();
+		Set<URI> cdTypes = cd.getTypes();
+
+		if(cdTypes.isEmpty()) {
+			throw new SBOLTechMapException("There are no type attached to this ComponentDefinition " + cd.getIdentity());
+		}
+		else if(cdTypes.size() > 1) {
+			//log that there are more than 1 cd types.
+		}
+		
+		return cdTypes.iterator().next();
 	}
 	
 	public void setDegree(int degree) {
@@ -116,7 +111,7 @@ public class SynthesisNode
 	}
 	
 	public ComponentDefinition getComponentDefinition() {
-		return this.componentDefinition;
+		return this.functionalComponent.getDefinition();
 	}
 	
 	public Set<Sequence> getSequences(){
@@ -124,7 +119,12 @@ public class SynthesisNode
 	}
 	
 	public String getFlattenedSequence() {
-		return this.flattenedSequence;
+		String completeSeq = "";
+		for(Sequence s: sequences)
+		{
+			completeSeq = completeSeq + s.getElements();
+		}
+		return completeSeq;
 	}
 	
 	public ModuleDefinition getModuleDefinition() {

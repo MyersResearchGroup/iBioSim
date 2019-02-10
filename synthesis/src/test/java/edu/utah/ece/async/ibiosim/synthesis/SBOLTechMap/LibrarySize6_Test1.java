@@ -11,7 +11,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
@@ -32,7 +32,7 @@ public class LibrarySize6_Test1 {
 			techMapOptions.setSpecificationFile(TestingFiles.SRLATCH_Spec);
 			techMapOptions.setLibraryFile(TestingFiles.NORNOT_LibSize6);
 			
-			Synthesis syn = SBOLTechMap.runSBOLTechMap(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
+			Synthesis syn = SBOLTechMapRunner.run(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
 			sbolDoc = syn.getSBOLfromTechMapping();
 		} 
 		catch (SBOLException | SBOLValidationException | IOException | SBOLConversionException | SBOLTechMapException e) {

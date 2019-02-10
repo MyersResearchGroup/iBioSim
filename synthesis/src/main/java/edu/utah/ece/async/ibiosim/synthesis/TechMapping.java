@@ -29,7 +29,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLGraph;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
@@ -156,7 +156,7 @@ public class TechMapping {
 				setupOpts.setLibraryFile(sbolLibDir);
 				setupOpts.setSpecificationFile(specFile);
 				
-				Synthesis syn = SBOLTechMap.runSBOLTechMap(setupOpts.getSpeficationFile(), setupOpts.getLibraryFile());
+				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpeficationFile(), setupOpts.getLibraryFile());
 				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping();
 				if(outSBOL)
 				{

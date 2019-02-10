@@ -62,81 +62,87 @@ public class GateGeneration {
 	public void sortEnrichedTUList(List<SBOLDocument> enrichedTU_list) throws GateGenerationExeception {
 		for(SBOLDocument enrichedTU : enrichedTU_list) {
 			for(ModuleDefinition mdGate : enrichedTU.getRootModuleDefinitions()) {
+				String proPattern = "";
+				String cdsPattern = "";
 				//collect interaction information
 				Map<Interaction, FunctionalComponent> gateInteractions = getGateInteractions(mdGate.getModules());
 				
 				//find tu design and verify connection
-				for(FunctionalComponent gatePart : mdGate.getFunctionalComponents()) {
-					int numOfRepressions = 0;
-					int numOfActivations = 0;
-					int numOfProductions = 0;
-					boolean promoterHasDoubleInteraction = false;
-					for(MapsTo fc_mp : gatePart.getMapsTos()) {
-						ComponentInstance mpObj = getMapsTo(fc_mp);
-						if(mpObj instanceof FunctionalComponent) {
-							FunctionalComponent fc = (FunctionalComponent) mpObj;
-							ComponentDefinition fc_cd = fc.getDefinition();
-							if(fc_cd.getRoles().contains(SequenceOntology.PROMOTER)) {
-								List<Interaction> interList = getInteractions(gateInteractions, fc);
-								if(interList.size() == 2) {
-									promoterHasDoubleInteraction = true;
-								}
-								else { 
-									//throw error
-								}
-								for(Interaction inter : interList) {
-									if(inter.getTypes().contains(SystemsBiologyOntology.INHIBITION)) {
-										numOfRepressions++;
-									}
-									else if(inter.getTypes().contains(SystemsBiologyOntology.STIMULATION)){
-										numOfActivations++;
-									}
-									
-								}
-							}
-							else if(fc_cd.getRoles().contains(SequenceOntology.CDS) || fc_cd.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-								FunctionalComponent gateCDS = fc;
-								if(fc_cd.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-									for(MapsTo er_mp : fc.getMapsTos()) {
-										ComponentInstance erComponent = getMapsTo(er_mp);
-										if(erComponent instanceof FunctionalComponent) {
-											FunctionalComponent erDNA = (FunctionalComponent) erComponent;
-											if(erDNA.getDefinition().getRoles().contains(SequenceOntology.CDS)) {
-												gateCDS = erDNA;
-											}
-										}
-									}
-								}
-								List<Interaction> interList = getInteractions(gateInteractions, gateCDS);
-								for(Interaction inter : interList) {
-									if(inter.getTypes().contains(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
-										numOfProductions++;
-									}
-								}
-							}
+				Map<FunctionalComponent, FunctionalComponent> tuPartMappings = getTUParts(mdGate.getFunctionalComponents());
+				for(FunctionalComponent dnaPart : tuPartMappings.keySet()) {
+					List<Interaction> interList = getInteractions(gateInteractions, dnaPart);
+					if(interList.size() == 0) {
+						proPattern = proPattern.concat(interList.size() + "u");
+					}
+					for(Interaction inter : interList) {
+						if(inter.getTypes().contains(SystemsBiologyOntology.INHIBITION)){
+							proPattern = proPattern.concat(interList.size() + "i");
+						}
+						else if(inter.getTypes().contains(SystemsBiologyOntology.STIMULATION)){
+							proPattern = proPattern.concat(interList.size() + "s");
+						}
+						else if(inter.getTypes().contains(SystemsBiologyOntology.GENETIC_PRODUCTION)){
+							cdsPattern = cdsPattern.concat(interList.size() + "p");
 						}
 					}
-					if(numOfRepressions == 1 && numOfProductions == 1 && !promoterHasDoubleInteraction) {
-						NOTGate identifiedGate = new NOTGate(enrichedTU);
-						gates.add(identifiedGate);
+					if(dnaPart.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
+						proPattern = proPattern.concat("pro");
 					}
-					else if(numOfRepressions == 2 && numOfProductions == 1 && !promoterHasDoubleInteraction) {
-						NORGate identifiedGate = new NORGate(enrichedTU);
-						gates.add(identifiedGate);
+					else if(dnaPart.getDefinition().getRoles().contains(SequenceOntology.CDS)) {
+						cdsPattern = cdsPattern.concat("cds");
 					}
-					else if(numOfActivations == 2 && numOfProductions == 1 && !promoterHasDoubleInteraction) {
-						ORGate identifiedGate = new ORGate(enrichedTU);
-						gates.add(identifiedGate);
-					}
-//					else {
-//						NotSupportedGate identifiedGate = new NotSupportedGate(enrichedTU);
-//						gates.add(identifiedGate);
-//					}
 				}
+				addGeneticGate(proPattern + cdsPattern, enrichedTU);
 			}
 		}
 	}
 	
+	private void addGeneticGate(String gatePattern, SBOLDocument enrichedTU) {
+		GeneticGate gate = null;
+		switch(gatePattern) {
+		case "1ipro1pcds":
+			gate = new NOTGate(enrichedTU);
+			break;
+		case "1ipro1ipro1cds":
+			gate = new NORGate(enrichedTU);
+			break;
+		default:
+			gate = new NotSupportedGate(enrichedTU);
+		}
+		gates.add(gate);
+	}
+	
+	private Map<FunctionalComponent, FunctionalComponent> getTUParts(Set<FunctionalComponent> set) throws GateGenerationExeception {
+		Map<FunctionalComponent, FunctionalComponent> dnaPartToTUMapping = new HashMap<>();
+		for(FunctionalComponent fc : set) {
+			for(MapsTo fc_mp : fc.getMapsTos()) {
+				ComponentInstance mpObj = getMapsTo(fc_mp);
+				if(mpObj instanceof FunctionalComponent) {
+					FunctionalComponent dnaPart_fc = (FunctionalComponent) mpObj;
+					ComponentDefinition dnaPart_cd = dnaPart_fc.getDefinition();
+					if(dnaPart_cd.getRoles().contains(SequenceOntology.PROMOTER)) {
+						dnaPartToTUMapping.put(dnaPart_fc, fc);
+					}
+					else if(dnaPart_cd.getRoles().contains(SequenceOntology.CDS) || dnaPart_cd.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+						FunctionalComponent cdsPart = dnaPart_fc;
+						if(dnaPart_cd.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+							for(MapsTo er_mp : dnaPart_fc.getMapsTos()) {
+								ComponentInstance erComponent = getMapsTo(er_mp);
+								if(erComponent instanceof FunctionalComponent) {
+									FunctionalComponent erDNA = (FunctionalComponent) erComponent;
+									if(erDNA.getDefinition().getRoles().contains(SequenceOntology.CDS)) {
+										cdsPart = erDNA;
+									}
+								}
+							}
+						}
+						dnaPartToTUMapping.put(cdsPart, fc);
+					}
+				}
+			}
+		}
+		return dnaPartToTUMapping;
+	}
 	
 	private List<Interaction> getInteractions(Map<Interaction, FunctionalComponent> interList, FunctionalComponent fc) {
 		List<Interaction> fcList = new ArrayList<>();
@@ -153,17 +159,17 @@ public class GateGeneration {
 		for(Module module : modules) {
 			ModuleDefinition referencedMD = module.getDefinition();
 			if(mdHasInteractionType(referencedMD, SystemsBiologyOntology.INHIBITION)) {
-				Interaction inhibitionInter = getInteraction(referencedMD, SystemsBiologyOntology.INHIBITION);
+				Interaction inhibitionInter = getInteractionWithType(referencedMD, SystemsBiologyOntology.INHIBITION);
 				FunctionalComponent promoter = getParticipant(module, inhibitionInter, SequenceOntology.PROMOTER);
 				gateInteractions.put(inhibitionInter, promoter);
 			}
 			else if(mdHasInteractionType(referencedMD, SystemsBiologyOntology.STIMULATION)) {
-				Interaction activationInter = getInteraction(referencedMD, SystemsBiologyOntology.STIMULATION);
+				Interaction activationInter = getInteractionWithType(referencedMD, SystemsBiologyOntology.STIMULATION);
 				FunctionalComponent promoter = getParticipant(module, activationInter, SequenceOntology.PROMOTER);
 				gateInteractions.put(activationInter, promoter);
 			}
 			else if(mdHasInteractionType(referencedMD, SystemsBiologyOntology.GENETIC_PRODUCTION)){
-				Interaction productionInter = getInteraction(referencedMD, SystemsBiologyOntology.GENETIC_PRODUCTION);
+				Interaction productionInter = getInteractionWithType(referencedMD, SystemsBiologyOntology.GENETIC_PRODUCTION);
 				FunctionalComponent cds = getParticipant(module, productionInter, SequenceOntology.CDS);
 				gateInteractions.put(productionInter, cds);
 			}
@@ -171,7 +177,7 @@ public class GateGeneration {
 		return gateInteractions;
 	}
 	
-	private Interaction getInteraction(ModuleDefinition md, URI interactionType) throws GateGenerationExeception {
+	private Interaction getInteractionWithType(ModuleDefinition md, URI interactionType) throws GateGenerationExeception {
 		List<Interaction> interWithType = new ArrayList<>();
 		for(Interaction inter : md.getInteractions()) {
 			if(inter.getTypes().contains(interactionType)) {
@@ -187,7 +193,7 @@ public class GateGeneration {
 	}
 	
 	/**
-	 * Find the Participant with given participant role from the given Interaction. 
+	 * Find the Participant on the given Interaction with the desired participant role.
 	 * Before the Participant is returned, verify that the desired Participant and the Module where the given Interaction is referenced in is pointing to the same ComponentDefinition.
 	 * @param module: The module that references the interaction.
 	 * @param interaction: The interaction to locate the given Participant role

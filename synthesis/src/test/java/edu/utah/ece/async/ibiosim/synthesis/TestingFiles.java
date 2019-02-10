@@ -25,7 +25,7 @@ public class TestingFiles {
 	public static String NORNOT_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "norNotDesign.xml").getFile(); 
 	public static String SRLATCH_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "srlatchDesign.xml").getFile(); 
 
-	public static String NOT1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNOTGate_LibrarySize1.xml").getFile(); 
+	public static String NOT1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize1.xml").getFile(); 
 	public static String NOR1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORGate_LibrarySize1.xml").getFile(); 
 	public static String NOT2_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNOTGates_LibrarySize2.xml").getFile(); 
 	public static String NORNOT_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize2.xml").getFile(); 

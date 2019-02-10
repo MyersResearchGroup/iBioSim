@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001BaseListener;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Always_constructContext;
+import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Attribute_instanceContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Binary_operatorContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Blocking_assignmentContext;
 import edu.utah.ece.async.ibiosim.synthesis.Verilog2001Parser.Conditional_statementContext;
@@ -165,6 +166,11 @@ public class VerilogParser extends Verilog2001BaseListener{
 		if(!this.constructCtx.isEmpty()) {
 			this.constructCtx.pop();
 		}
+	}
+	
+	@Override
+	public void exitAttribute_instance(Attribute_instanceContext ctx){ 
+		this.operators.clear();
 	}
 	
 	@Override
@@ -378,7 +384,6 @@ public class VerilogParser extends Verilog2001BaseListener{
 	
 	
 	public void exitFunction_declaration(Function_declarationContext ctx) {
-		System.out.println("141 " + ctx.getText());
 		operators.clear();
 	}
 

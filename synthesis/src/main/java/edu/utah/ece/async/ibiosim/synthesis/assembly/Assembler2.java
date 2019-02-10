@@ -37,7 +37,6 @@ import org.sbolstandard.core2.*;
  * 
  *
  * @author Nicholas Roehner
- * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -55,16 +54,6 @@ public class Assembler2
 		this.seqValidator = seqValidator;
 	}
 	
-//	public static ComponentDefinition exportDnaComponent(String exportFilePath) {
-//		ComponentDefinition assemblyComp = null;
-////		SBOLDocument sbolDoc = SBOLFactory.createDocument(); 
-//		SBOLDocument sbolDoc = new SBOLDocument();
-//		//		SBOLUtility2.addDNAComponent(assemblyComp, sbolDoc, false);
-//		SBOLUtility2.addDNAComponent(assemblyComp, sbolDoc, false); 
-//		SBOLUtility2.writeSBOLDocument(exportFilePath, sbolDoc);
-//		return assemblyComp;
-//	}
-//	
 	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc, String defaultURIPrefix) throws SBOLValidationException, SBOLException 
 	{	
 		// Orders list of subcomponents (to be assembled into composite component) 

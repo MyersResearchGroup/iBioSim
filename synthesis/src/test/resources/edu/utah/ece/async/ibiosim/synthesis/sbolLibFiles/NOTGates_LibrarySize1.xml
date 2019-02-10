@@ -1,37 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns0="http://cellocad.org/Terms/cello#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation"/>
-    <sbol:displayId>AmtR_protein_degradation</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein"/>
-        <sbol:displayId>AmtR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction"/>
-        <sbol:displayId>AmtR_degradation_interaction</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/AmtR_protein/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/AmtR_protein"/>
-            <sbol:displayId>AmtR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation"/>
     <sbol:displayId>SrpR_protein_degradation</sbol:displayId>
@@ -64,13 +32,43 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression"/>
-    <sbol:displayId>SrpR_protein_pSrpR_repression</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/notTU_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module"/>
+    <sbol:displayId>notTU_module</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR"/>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/A1_AmtR_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc"/>
+        <sbol:displayId>A1_AmtR_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/A1_AmtR_fc/AmtR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc/AmtR_mapsTo"/>
+            <sbol:displayId>AmtR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/SrpR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/pSrpR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/pSrpR"/>
         <sbol:displayId>pSrpR</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
@@ -79,6 +77,153 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/notTU_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc"/>
+        <sbol:displayId>notTU_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/notTU/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_fc/A1_AmtR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc/A1_AmtR_mapsTo"/>
+            <sbol:displayId>A1_AmtR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/notTU/Gen_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_fc/pSrpR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc/pSrpR_mapsTo"/>
+            <sbol:displayId>pSrpR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/notTU/Pro_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/AmtR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein"/>
+        <sbol:displayId>AmtR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/AmtR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/AmtR"/>
+        <sbol:displayId>AmtR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub"/>
+        <sbol:displayId>notTU_module_SrpR_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub"/>
+        <sbol:displayId>notTU_module_AmtR_protein_production_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein"/>
+            <sbol:displayId>notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/AmtR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_AmtR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_AmtR"/>
+            <sbol:displayId>notTU_module_AmtR_protein_production_sub_AmtR_AmtR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/AmtR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub"/>
+        <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub"/>
+        <sbol:displayId>notTU_module_AmtR_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein"/>
+            <sbol:displayId>notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression"/>
+    <sbol:displayId>SrpR_protein_pSrpR_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein"/>
         <sbol:displayId>SrpR_protein</sbol:displayId>
@@ -86,6 +231,16 @@
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -110,6 +265,38 @@
             <sbol:version>1</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
             <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation"/>
+    <sbol:displayId>AmtR_protein_degradation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein"/>
+        <sbol:displayId>AmtR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction"/>
+        <sbol:displayId>AmtR_degradation_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/AmtR_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_degradation_interaction/AmtR_protein"/>
+            <sbol:displayId>AmtR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
@@ -166,193 +353,14 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/notTU_module/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module"/>
-    <sbol:displayId>notTU_module</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein"/>
+    <sbol:displayId>AmtR_protein</sbol:displayId>
     <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/AmtR/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/AmtR"/>
-        <sbol:displayId>AmtR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/AmtR_protein/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein"/>
-        <sbol:displayId>AmtR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/SrpR_protein/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein"/>
-        <sbol:displayId>SrpR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/A1_AmtR_fc/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc"/>
-        <sbol:displayId>A1_AmtR_fc</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/A1_AmtR_fc/AmtR_mapsTo/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc/AmtR_mapsTo"/>
-            <sbol:displayId>AmtR_mapsTo</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/notTU_fc/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc"/>
-        <sbol:displayId>notTU_fc</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="http://async.utah.edu/notTU/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_fc/A1_AmtR_mapsTo/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc/A1_AmtR_mapsTo"/>
-            <sbol:displayId>A1_AmtR_mapsTo</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://async.utah.edu/notTU/Gen_Component/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/A1_AmtR_fc/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_fc/pSrpR_mapsTo/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_fc/pSrpR_mapsTo"/>
-            <sbol:displayId>pSrpR_mapsTo</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://async.utah.edu/notTU/Pro_Component/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/pSrpR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/notTU_module/pSrpR/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/pSrpR"/>
-        <sbol:displayId>pSrpR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub"/>
-        <sbol:displayId>notTU_module_AmtR_protein_production_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein"/>
-            <sbol:displayId>notTU_module_AmtR_protein_production_sub_AmtR_protein_AmtR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/AmtR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_AmtR/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_production_sub/notTU_module_AmtR_protein_production_sub_AmtR_AmtR"/>
-            <sbol:displayId>notTU_module_AmtR_protein_production_sub_AmtR_AmtR</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_production/AmtR/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub"/>
-        <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
-            <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/pSrpR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
-            <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub"/>
-        <sbol:displayId>notTU_module_AmtR_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_AmtR_protein_degradation_sub/notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein"/>
-            <sbol:displayId>notTU_module_AmtR_protein_degradation_sub_AmtR_protein_AmtR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein_degradation/AmtR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/AmtR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub"/>
-        <sbol:displayId>notTU_module_SrpR_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein"/>
-            <sbol:displayId>notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
+    <dcterms:title>AmtR_protein</dcterms:title>
+    <dcterms:created>2019-01-25T02:55:36.685Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1"/>
     <sbol:displayId>A1</sbol:displayId>
@@ -379,219 +387,6 @@
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BydvJ_sequence/1"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein"/>
-    <sbol:displayId>AmtR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>AmtR_protein</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR"/>
-    <sbol:displayId>AmtR</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>AmtR</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR"/>
-    <sbol:displayId>pSrpR</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>pSrpR</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein"/>
-    <sbol:displayId>SrpR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>SrpR_protein</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55"/>
-    <sbol:displayId>L3S2P55</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>L3S2P55</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR"/>
-    <sbol:displayId>A1_AmtR</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>A1_AmtR</dcterms:title>
-    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-    <ns0:color_hexcode>3BA9E0</ns0:color_hexcode>
-    <ns0:K>0.07</ns0:K>
-    <ns0:family>TetR</ns0:family>
-    <ns0:gate_type>NOR</ns0:gate_type>
-    <ns0:group_name>AmtR</ns0:group_name>
-    <ns0:n>1.6</ns0:n>
-    <ns0:response_function>ymin+(ymax-ymin)/(1.0+(x/K)^n)</ns0:response_function>
-    <ns0:x_off_threshold>0.071418036</ns0:x_off_threshold>
-    <ns0:x_on_threshold>0.917082477</ns0:x_on_threshold>
-    <ns0:ymax>3.8</ns0:ymax>
-    <ns0:ymin>0.06</ns0:ymin>
-    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009e6MfRskH8d81Tihto/1"/>
-    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009e6MevkTkL0IMZbeZU/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ"/>
-        <sbol:displayId>BydvJ</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BydvJ/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55"/>
-        <sbol:displayId>L3S2P55</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR"/>
-        <sbol:displayId>AmtR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1"/>
-        <sbol:displayId>A1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1"/>
-        <sbol:displayId>annotation1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-            <sbol:start>81</sbol:start>
-            <sbol:end>114</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2"/>
-        <sbol:displayId>annotation2</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-            <sbol:start>115</sbol:start>
-            <sbol:end>783</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3"/>
-        <sbol:displayId>annotation3</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-            <sbol:start>784</sbol:start>
-            <sbol:end>840</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0"/>
-        <sbol:displayId>annotation0</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-        <sbol:location>
-          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/range/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/range"/>
-            <sbol:displayId>range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
-            <sbol:start>1</sbol:start>
-            <sbol:end>80</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR_sequence/1"/>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.utah.edu/notTU/1">
     <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU"/>
     <sbol:displayId>notTU</sbol:displayId>
@@ -601,21 +396,21 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/notTU/Pro_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU/Pro_Component"/>
-        <sbol:displayId>Pro_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
       <sbol:Component rdf:about="http://async.utah.edu/notTU/Gen_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU/Gen_Component"/>
         <sbol:displayId>Gen_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/notTU/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
       </sbol:Component>
     </sbol:component>
     <sbol:sequenceAnnotation>
@@ -665,6 +460,211 @@
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.utah.edu/UnnamedPartSequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein"/>
+    <sbol:displayId>SrpR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>SrpR_protein</dcterms:title>
+    <dcterms:created>2019-01-25T02:55:36.685Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR"/>
+    <sbol:displayId>AmtR</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>AmtR</dcterms:title>
+    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR"/>
+    <sbol:displayId>pSrpR</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pSrpR</dcterms:title>
+    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55"/>
+    <sbol:displayId>L3S2P55</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>L3S2P55</dcterms:title>
+    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR"/>
+    <sbol:displayId>A1_AmtR</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>A1_AmtR</dcterms:title>
+    <dcterms:created>2018-12-24T22:58:28.461Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+    <ns0:color_hexcode>3BA9E0</ns0:color_hexcode>
+    <ns0:K>0.07</ns0:K>
+    <ns0:family>TetR</ns0:family>
+    <ns0:gate_type>NOR</ns0:gate_type>
+    <ns0:group_name>AmtR</ns0:group_name>
+    <ns0:n>1.6</ns0:n>
+    <ns0:response_function>ymin+(ymax-ymin)/(1.0+(x/K)^n)</ns0:response_function>
+    <ns0:x_off_threshold>0.071418036</ns0:x_off_threshold>
+    <ns0:x_on_threshold>0.917082477</ns0:x_on_threshold>
+    <ns0:ymax>3.8</ns0:ymax>
+    <ns0:ymin>0.06</ns0:ymin>
+    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009e6MfRskH8d81Tihto/1"/>
+    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009e6MevkTkL0IMZbeZU/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR"/>
+        <sbol:displayId>AmtR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55"/>
+        <sbol:displayId>L3S2P55</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ"/>
+        <sbol:displayId>BydvJ</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BydvJ/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1"/>
+        <sbol:displayId>A1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0"/>
+        <sbol:displayId>annotation0</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation0/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+            <sbol:start>1</sbol:start>
+            <sbol:end>80</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/BydvJ/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1"/>
+        <sbol:displayId>annotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation1/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+            <sbol:start>81</sbol:start>
+            <sbol:end>114</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/A1/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3"/>
+        <sbol:displayId>annotation3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation3/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+            <sbol:start>784</sbol:start>
+            <sbol:end>840</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/L3S2P55/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2"/>
+        <sbol:displayId>annotation2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/annotation2/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/1"/>
+            <sbol:start>115</sbol:start>
+            <sbol:end>783</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR/AmtR/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1_AmtR_sequence/1"/>
   </sbol:ComponentDefinition>
   <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence"/>

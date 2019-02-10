@@ -156,8 +156,8 @@ public class WrappedSBOL {
 		return fullCircuit.createModule(getModuleId(), subCircuit.getDisplayId());
 	}
 	
-	public void createMapsTo(Module circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
-		circuit.createMapsTo(getMapsToId(), RefinementType.USELOCAL, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
+	public void createMapsTo(RefinementType refinementType, Module circuit, FunctionalComponent fullCircuitProtein, FunctionalComponent subCircuitProtein) throws SBOLValidationException {
+		circuit.createMapsTo(getMapsToId(), refinementType, fullCircuitProtein.getDisplayId(), subCircuitProtein.getDisplayId());
 	}
 	
 	public FunctionalComponent getFunctionalComponent(ModuleDefinition circuit, String fc_id) throws SBOLException {
