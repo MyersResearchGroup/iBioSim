@@ -1,3 +1,6 @@
+/*
+ * @author Pedro Fontanarrosa
+ */
 package edu.utah.ece.async.ibiosim.conversion;
 
 import java.io.File;
@@ -326,6 +329,9 @@ public class CelloModeling {
 		for (Module subModule : resultMD.getModules()) {
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			ModuleDefinition subModuleDefFlatt = SBOL2SBML.MDFlattener(sbolDoc, subModuleDef);
+			if (SensorGateModule(subModuleDefFlatt, sensorMolecules, sbolDoc)) {
+				continue;
+			}
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + SBOL2SBML.getDisplayID(subModuleDefFlatt) + ".xml")) {
 				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
@@ -465,6 +471,35 @@ public class CelloModeling {
 		}
 	}
 	
+
+	/**
+	 * This method will return true, if the MD input is a SensorGate production Module Definition, in which the model should skip the production of 
+	 * a model of this. If it is, it returns true and the model generator doesn't generate a subTargetModel for it
+	 *
+	 * @param subModule the sub module being analyzed
+	 * @param sensorMolecules a HashMap where sensor proteins are part of the key set.
+	 * @param sbolDoc the sbol doc
+	 * @return true, if this is a subModuleDefinition for the production of sensor proteins from a sensor gate
+	 */
+	private static boolean SensorGateModule(ModuleDefinition subModule, HashMap<String, String> sensorMolecules, SBOLDocument sbolDoc){
+		
+		boolean SensorGate = false;
+		
+		//ModuleDefinition subModuleDef = subModule.getDefinition();
+		for (Interaction interact : subModule.getInteractions()) {
+			if (SBOL2SBML.isProductionInteraction(interact, subModule, sbolDoc)) {
+				for (Participation partici : interact.getParticipations()) {
+					if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
+						String product = partici.getParticipant().getDisplayId();
+						if (sensorMolecules.keySet().contains(product)) {
+							SensorGate = true;
+						}
+					}
+				}
+			}
+		}
+		return SensorGate;
+	}
 	
 	/**
 	 * This method returns a list of complex molecules formed, and their associated ligand. This is going to be used when
