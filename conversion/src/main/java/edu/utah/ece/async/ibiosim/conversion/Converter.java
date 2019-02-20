@@ -114,6 +114,8 @@ public class Converter {
 		boolean typesInURI = false; //-t
 		boolean isDiffFile = false; //indicate if diffing of SBOL files are done
 		boolean isValidation = false; //indicate if only validate SBOL files
+		
+		//TODO add VRP flag
 
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
@@ -125,7 +127,7 @@ public class Converter {
 		String externalSBOLPath = ""; //-rsbol
 		String topLevelURIStr = ""; //-s
 		String version = null; //-v
-
+		
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
 		int index = 0;
@@ -442,6 +444,7 @@ public class Converter {
 					try 
 					{	
 						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
+						
 						if(!topLevelURIStr.isEmpty())
 						{
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
@@ -450,6 +453,7 @@ public class Converter {
 						} 
 						else
 						{
+							//TODO call VPR on sboldoc
 							//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
