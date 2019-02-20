@@ -150,6 +150,7 @@ public class SBOL2SBML {
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
 		
+<<<<<<< Upstream, based on origin/master
 		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
 <<<<<<< Upstream, based on origin/master
 >>>>>>> 79375bb Verify if parts have Cello parameters, call different createproductionRXN method
@@ -214,6 +215,8 @@ public class SBOL2SBML {
 //		}
 //		
 >>>>>>> 78fd6c5 Uncommented broken MDFlattener code
+=======
+>>>>>>> a15c919 Added comments and removed unused lines of code
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
 		
@@ -340,8 +343,6 @@ public class SBOL2SBML {
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
 	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
-	 * @throws SynBioHubException 
-	 * @throws SBOLConversionException 
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
