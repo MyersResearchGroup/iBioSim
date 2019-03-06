@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
@@ -28,13 +29,17 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
+import org.virtualparts.VPRException;
+import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+//import edu.utah.ece.async.ibiosim.gui.Gui;
 
 /**
  * Command line for:
@@ -62,6 +67,7 @@ public class Converter {
 				+ "and can convert to/from SBOL 1.1, to/from SBML, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
+		//TODO PEDRO shouldnt this be conersion 3.0.0-SNAPSHOT?
 		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
 		System.err.println();
 		System.err.println("Convert SBOL to SBML Example:");
@@ -90,8 +96,51 @@ public class Converter {
 		System.err.println("\t-s  <topLevelURI> select only this object and those it references");
 		System.err.println("\t-t  uses types in URIs");
 		System.err.println("\t-v  <version> used for converted objects");
+		System.err.println("\t-r  <url> The specified synbiohub repository the user wants VPR model generator to connect to");
 		System.exit(1);
 	}
+	
+
+	
+/*	*//**
+	 * Convert SBOL to SBML.
+	 * @param inputSBOLDoc - The SBOLDocument to convert to SBML
+	 * @param filePath - The file location where the SBOL document is located.
+	 * @return The number of SBML models that was converted from SBOL. 
+	 *//*
+	public static int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+		int numGeneratedSBML = 0;
+		try {
+			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
+				if (moduleDef.getModels().size()==0) {
+					HashMap<String,BioModel> models;
+					try {
+						models = SBOL2SBML.generateModel(filePath, moduleDef, inputSBOLDoc);
+						for (BioModel model : models.values()) {
+							if (overwrite(filePath + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
+									model.getSBMLDocument().getModel().getId() + ".xml")) {
+								model.save(filePath + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
+							}
+							numGeneratedSBML++;
+						}
+					} catch (XMLStreamException e) {
+
+						e.printStackTrace();
+					}
+					catch (BioSimException e) {
+
+						e.printStackTrace();
+					}
+					catch (SBOLValidationException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (IOException e) {
+
+		} 
+		return numGeneratedSBML;
+	}*/
 
 	public static void main(String[] args) 
 	{
@@ -112,11 +161,10 @@ public class Converter {
 		boolean compliant = true; //-n
 		boolean noOutput = false; //-no
 		boolean typesInURI = false; //-t
+		boolean doVPR = false; //-r
 		boolean isDiffFile = false; //indicate if diffing of SBOL files are done
 		boolean isValidation = false; //indicate if only validate SBOL files
 		
-		//TODO add VRP flag
-
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
 		String mainFileResult = ""; //-mf
@@ -127,6 +175,7 @@ public class Converter {
 		String externalSBOLPath = ""; //-rsbol
 		String topLevelURIStr = ""; //-s
 		String version = null; //-v
+		String urlVPR = ""; //The specified synbiohub repository the user wants VPR model generator to connect to.
 		
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
@@ -267,6 +316,14 @@ public class Converter {
 				}
 				version = args[++index];
 				break;
+			case "-r":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				doVPR = true;
+				urlVPR = args[++index];
+				break;
 			default:
 				fullInputFileName = args[index];
 			}
@@ -298,7 +355,7 @@ public class Converter {
 		}
 		else
 		{
-			System.err.println("You must provide the full input file path as this is a required filed.");
+			System.err.println("You must provide the full input file path as this is a required field.");
 			usage();
 			return;
 		}
@@ -399,7 +456,7 @@ public class Converter {
 
 						org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,sbolVal_fileName, URIPrefix, complete, compliant, bestPractice, typesInURI,
 								version, keepGoing, compareFile, compFileResult, mainFileResult, 
-								topLevelURIStr, genBankOut, sbolV1out, fastaOut, sbolVal_outFileName, 
+								topLevelURIStr, genBankOut, sbolV1out, fastaOut, false, sbolVal_outFileName, 
 								showDetail, noOutput,true);
 					}
 
@@ -435,7 +492,7 @@ public class Converter {
 				// call the validation method and then skip the rest. 
 				org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,fullInputFileName, URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, false, fullPathOutput, 
 						showDetail, noOutput, true);
 
 				//User wants to convert SBOL2SBML, printing to console or saving to sbml file is done in SBMLutilities.
@@ -444,17 +501,52 @@ public class Converter {
 					try 
 					{	
 						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
-						
+					
 						if(!topLevelURIStr.isEmpty())
 						{
+							//TODO PEDRO calling VPR
+							if (doVPR) {
+								TopLevel top = sbolDoc.getTopLevel(URI.create(topLevelURIStr));
+								SBOLDocument newSbolDoc = sbolDoc.createRecursiveCopy(top);
+								try {
+									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
+								} catch (VPRException e) {
+									System.err.println("ERROR: VPR generation fails");
+									e.printStackTrace();
+								} catch (VPRTripleStoreException e) {
+									System.err.println("ERROR: VPR generation fails");
+									e.printStackTrace();
+								}
+								//generateSBMLFromSBOL(newSbolDoc, outputDir);
+								
+								for (ModuleDefinition moduleDef : newSbolDoc.getRootModuleDefinitions())
+								{
+									HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, newSbolDoc);
+									SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
+								} 
+							}
+							
+							else {
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
 							HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
 							SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
+							}
 						} 
 						else
 						{
-							//TODO call VPR on sboldoc
-							//No ModuleDefinition URI provided so loop over all rootModuleDefinition
+							//TODO PEDRO calling VPR
+							if (doVPR) {
+								try {
+									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
+								} catch (VPRException e) {
+									System.err.println("ERROR: VPR generation fails");
+									e.printStackTrace();
+								} catch (VPRTripleStoreException e) {
+									System.err.println("ERROR: VPR generation fails");
+									e.printStackTrace();
+								}
+							}
+							
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
 								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
@@ -504,7 +596,7 @@ public class Converter {
 			{
 				org.sbolstandard.core2.SBOLValidate.validate(System.out,System.err,eachFile.getAbsolutePath(), URIPrefix, complete, compliant, bestPractice, typesInURI, 
 						version, keepGoing, compareFile, compFileResult, mainFileResult, 
-						topLevelURIStr, genBankOut, sbolV1out, fastaOut, fullPathOutput, 
+						topLevelURIStr, genBankOut, sbolV1out, fastaOut, false, fullPathOutput, 
 						showDetail, noOutput,true);
 			}
 		}
