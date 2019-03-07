@@ -2062,9 +2062,12 @@ public class BioModel extends CoreObservable{
 								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
 								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
 								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
-								
+								smallMolecule.setCompartment(r.getCompartment());
+								smallMolecule.setHasOnlySubstanceUnits(true);
+								smallMolecule.setBoundaryCondition(true);
 								smallMolecule.setConstant(false);
-								//smallMolecule.setBoundaryCondition(true);
+								smallMolecule.setInitialAmount(0.0);
+								
 								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
 								
 								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
