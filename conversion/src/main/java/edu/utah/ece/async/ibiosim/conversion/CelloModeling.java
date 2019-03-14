@@ -104,9 +104,7 @@ public class CelloModeling {
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
-		
-		boolean Top_Level_Cello_Model = true;
-		
+				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		boolean CelloModel = false;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
@@ -126,6 +124,10 @@ public class CelloModeling {
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
+/*			if(sensorMolecules.containsKey(comp.getDisplayId())) {
+				continue;
+			}
+			else */
 			if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
 				SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
 				if (SBOL2SBML.isInputComponent(comp)) {
@@ -150,35 +152,6 @@ public class CelloModeling {
 			} else {
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
-
-//			if (sensorMolecules.containsKey(comp.getDisplayId())) {
-//				break;
-//			} else {
-//				if (isSpeciesComponent(comp, sbolDoc)) {
-//					generateSpecies(comp, sbolDoc, targetModel);
-//					if (isInputComponent(comp)) {
-//						generateInputPort(comp, targetModel);
-//					} else if (isOutputComponent(comp)){
-//						generateOutputPort(comp, targetModel);
-//					}
-//				} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-//					// If CelloModel, generate only one species for each TU
-//					if (CelloModel) {
-//						generateTUSpecies(comp, sbolDoc, targetModel);
-//					}
-//					// else, we are in normal model generation, which creates one species for each promoter in the TU
-//					else {
-//						generatePromoterSpecies(comp, sbolDoc, targetModel);
-//					}
-//					if (isInputComponent(comp)) {
-//						generateInputPort(comp, targetModel);
-//					} else if (isOutputComponent(comp)){
-//						generateOutputPort(comp, targetModel);
-//					}
-//				} else {
-//					//System.out.println("Dropping "+comp.getIdentity());
-//				}
-			//}
 		}
 
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -282,7 +255,6 @@ public class CelloModeling {
 			}
 		}
 		
-
 		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
 			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
 				if (!promoterToActivators.containsKey(promoter))
@@ -465,6 +437,12 @@ public class CelloModeling {
 		for (String species : sensorMolecules.keySet()) {
 			if (targetModel.getSBMLDocument().getModel().containsSpecies(species)) {
 				targetModel.getSBMLDocument().getModel().removeSpecies(species);
+				//targetModel.getSBMLCompModel().getListOfPorts();
+				//targetModel.getSBMLCompModel().getPortCount();
+/*				Port port = targetModel.getPortByIdRef(species);
+				if (!port.equals(null)) {
+					targetModel.getSBMLCompModel().removePort(port);
+				}*/
 			}	
 		}
 	}
