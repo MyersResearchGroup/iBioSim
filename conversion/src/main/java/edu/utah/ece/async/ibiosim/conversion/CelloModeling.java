@@ -124,10 +124,10 @@ public class CelloModeling {
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
-/*			if(sensorMolecules.containsKey(comp.getDisplayId())) {
+			if(sensorMolecules.containsKey(comp.getDisplayId())) {
 				continue;
 			}
-			else */
+			else 
 			if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
 				SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
 				if (SBOL2SBML.isInputComponent(comp)) {
@@ -297,6 +297,14 @@ public class CelloModeling {
 				
 		//option 1
 		for (Module subModule : resultMD.getModules()) {
+			//Remove MapsTo's from the submodules that reference the sensorMolecules that we are not using in this model
+			for (MapsTo subMaps : subModule.getMapsTos()) {
+				for (String toRemove : sensorMolecules.keySet()) {
+					if (subMaps.getRemoteDefinition().getDisplayId().equals(toRemove)) {
+						subModule.removeMapsTo(subMaps);
+					}
+				}
+			}
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			ModuleDefinition subModuleDefFlatt = SBOL2SBML.MDFlattener(sbolDoc, subModuleDef);
 			if (SensorGateModule(subModuleDefFlatt, sensorMolecules, sbolDoc)) {
@@ -315,9 +323,6 @@ public class CelloModeling {
 			}
 		}
 		models.put(SBOL2SBML.getDisplayID(resultMD),targetModel);
-		
-		//This method will remove all Sensor proteins and Complexes species from the SBML document.
-		removeSensorProAndMole(sensorMolecules, targetModel);
 		
 		return models;
 	}
@@ -424,28 +429,28 @@ public class CelloModeling {
 		
 	}
 	
-	/**
-	 * This method will remove all Sensor proteins and Complexes species from the SBML document. This is used because Cello modeling
-	 * doesn't use or model Complex formation between sensor proteins and small molecule inputs
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param sensorMolecules the sensor proteins and complexes to be removed
-	 * @param targetModel the target model where the species will be removed
-	 */
-	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
-		
-		for (String species : sensorMolecules.keySet()) {
-			if (targetModel.getSBMLDocument().getModel().containsSpecies(species)) {
-				targetModel.getSBMLDocument().getModel().removeSpecies(species);
-				//targetModel.getSBMLCompModel().getListOfPorts();
-				//targetModel.getSBMLCompModel().getPortCount();
-/*				Port port = targetModel.getPortByIdRef(species);
-				if (!port.equals(null)) {
-					targetModel.getSBMLCompModel().removePort(port);
-				}*/
-			}	
-		}
-	}
+//	/**
+//	 * This method will remove all Sensor proteins and Complexes species from the SBML document. This is used because Cello modeling
+//	 * doesn't use or model Complex formation between sensor proteins and small molecule inputs
+//	 *
+//	 * @author Pedro Fontanarrosa
+//	 * @param sensorMolecules the sensor proteins and complexes to be removed
+//	 * @param targetModel the target model where the species will be removed
+//	 */
+//	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
+//		
+//		for (String species : sensorMolecules.keySet()) {
+//			if (targetModel.getSBMLDocument().getModel().containsSpecies(species)) {
+//				targetModel.getSBMLDocument().getModel().removeSpecies(species);
+//				//targetModel.getSBMLCompModel().getListOfPorts();
+//				//targetModel.getSBMLCompModel().getPortCount();
+///*				Port port = targetModel.getPortByIdRef(species);
+//				if (!port.equals(null)) {
+//					targetModel.getSBMLCompModel().removePort(port);
+//				}*/
+//			}	
+//		}
+//	}
 	
 
 	/**
