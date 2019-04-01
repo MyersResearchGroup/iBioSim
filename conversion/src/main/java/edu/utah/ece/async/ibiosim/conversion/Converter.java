@@ -24,7 +24,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.math3.ode.ODEIntegrator;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -39,6 +41,17 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.ext.comp.Submodel;
+
+
 //import edu.utah.ece.async.ibiosim.gui.Gui;
 
 /**
@@ -97,6 +110,7 @@ public class Converter {
 		System.err.println("\t-t  uses types in URIs");
 		System.err.println("\t-v  <version> used for converted objects");
 		System.err.println("\t-r  <url> The specified synbiohub repository the user wants VPR model generator to connect to");
+		System.err.println("\t - env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
 		System.exit(1);
 	}
 	
@@ -164,6 +178,7 @@ public class Converter {
 		boolean doVPR = false; //-r
 		boolean isDiffFile = false; //indicate if diffing of SBOL files are done
 		boolean isValidation = false; //indicate if only validate SBOL files
+		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated 
 		
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
@@ -176,6 +191,7 @@ public class Converter {
 		String topLevelURIStr = ""; //-s
 		String version = null; //-v
 		String urlVPR = ""; //The specified synbiohub repository the user wants VPR model generator to connect to.
+		String environment ="";
 		
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
@@ -323,6 +339,14 @@ public class Converter {
 				}
 				doVPR = true;
 				urlVPR = args[++index];
+				break;
+			case "-env":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				topEnvir = true;
+				environment = args[++index];
 				break;
 			default:
 				fullInputFileName = args[index];
@@ -501,6 +525,9 @@ public class Converter {
 					try 
 					{	
 						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
+						String circuit_name = file.getName();
+						circuit_name = circuit_name.replace(".xml", "");
+						String vpr_output =  circuit_name + "_topModule";
 					
 						if(!topLevelURIStr.isEmpty())
 						{
@@ -508,8 +535,10 @@ public class Converter {
 							if (doVPR) {
 								TopLevel top = sbolDoc.getTopLevel(URI.create(topLevelURIStr));
 								SBOLDocument newSbolDoc = sbolDoc.createRecursiveCopy(top);
+								
 								try {
-									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
+									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, vpr_output);
+									//newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
 									e.printStackTrace();
@@ -537,7 +566,8 @@ public class Converter {
 							//TODO PEDRO calling VPR
 							if (doVPR) {
 								try {
-									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
+									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, vpr_output);
+									//sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
 									e.printStackTrace();
@@ -553,6 +583,28 @@ public class Converter {
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
+						if (doVPR) {
+							if (topEnvir) {
+								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);
+								
+								
+								CompSBMLDocumentPlugin docPlugin = (CompSBMLDocumentPlugin) topEnvironment.getPlugin("comp");					
+								ExternalModelDefinition exte = docPlugin.getExternalModelDefinition("TopModel");
+								exte.setId(vpr_output);
+								exte.setSource(vpr_output + ".xml");
+								//exte.setId("topModule");
+								//exte.setSource("topModule.xml");
+														
+								CompModelPlugin SBMLplugin = (CompModelPlugin) topEnvironment.getModel().getPlugin("comp");
+								Submodel top = SBMLplugin.getSubmodel("C1");
+								top.setModelRef(vpr_output);
+								//top.setModelRef("topModule");
+
+								SBMLWriter writing = new SBMLWriter();
+								
+								writing.writeSBMLToFile(topEnvironment, outputDir + File.separator + "Environment.xml");
+							}
+						}				
 					}
 					catch (FileNotFoundException e) 
 					{
