@@ -8,16 +8,15 @@ import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
-import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.NORGate;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.NOTGate;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.SBOLLogicGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NORGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NOTGate;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogAssignment;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
@@ -82,12 +81,10 @@ public class VerilogToSBOL {
 				for(FunctionalComponent subcircuit_InputProtein : primaryProteins.keySet()) {
 					FunctionalComponent portProtein = primaryProteins.get(subcircuit_InputProtein);
 					if(portProtein.getDirection().equals(DirectionType.IN)) {
-						
-						sbolWrapper.createMapsTo(RefinementType.USEREMOTE, subCircuit_instance, portProtein, subcircuit_InputProtein);
+						sbolWrapper.createMapsTo(RefinementType.VERIFYIDENTICAL, subCircuit_instance, portProtein, subcircuit_InputProtein);
 					}
 					else if(portProtein.getDirection().equals(DirectionType.OUT)) {
-						
-						sbolWrapper.createMapsTo(RefinementType.USELOCAL, subCircuit_instance, portProtein, subcircuit_InputProtein);
+						sbolWrapper.createMapsTo(RefinementType.VERIFYIDENTICAL, subCircuit_instance, portProtein, subcircuit_InputProtein);
 					}
 				}
 			}
@@ -116,9 +113,10 @@ public class VerilogToSBOL {
 				
 				ASTNode norLeftChild = notOperand.getLeftChild();
 				ASTNode norRightChild = notOperand.getRightChild();
-				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, mapped_primaryProteins);
-				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, mapped_primaryProteins);
-				addOutput(circuit, sbolNOR, outputProtein);
+				FunctionalComponent gateTU = sbolNOR.getTranscriptionalUnit();
+				FunctionalComponent leftInputProtein = addInput(circuit, norLeftChild, sbolNOR, gateTU, mapped_primaryProteins);
+				FunctionalComponent rightInputProtein = addInput(circuit, norRightChild, sbolNOR, gateTU, mapped_primaryProteins);
+				addOutput(circuit, sbolNOR, outputProtein, gateTU);
 				sbolWrapper.addGateMapping(gateId, sbolNOR);
 
 				buildSBOLExpression(circuit, norLeftChild, leftInputProtein, mapped_primaryProteins);
@@ -128,14 +126,15 @@ public class VerilogToSBOL {
 			else {
 				//a NOT gate was found
 				NOTGate sbolNOT = addNOTGate(circuit, gateId);
-				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, mapped_primaryProteins); 
-				addOutput(circuit, sbolNOT, outputProtein);
+				FunctionalComponent gateTU = sbolNOT.getTranscriptionalUnit(); 
+				FunctionalComponent inputProtein = addInput(circuit, notOperand, sbolNOT, gateTU, mapped_primaryProteins); 
+				addOutput(circuit, sbolNOT, outputProtein, gateTU);
 				sbolWrapper.addGateMapping(gateId, sbolNOT);
 				buildSBOLExpression(circuit, notOperand, inputProtein, mapped_primaryProteins);
 			}
 		}
 	}
-
+	
 	/**
 	 * Retrieve the desired protein from the given circuit with the given verilog variable name.
 	 * If a protein does not exist with the given verilog variable name a new protein is created and returned. 
@@ -164,24 +163,32 @@ public class VerilogToSBOL {
 		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.INOUT);
 	}
 
-	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, SBOLLogicGate logicGate, HashMap<FunctionalComponent, FunctionalComponent> primaryProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {
+	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, GeneticGate logicGate, FunctionalComponent tu, HashMap<FunctionalComponent, FunctionalComponent> primaryProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {
 		FunctionalComponent inputProtein = null;
-		FunctionalComponent tu = logicGate.getTranscriptionalUnit();
-		SBOLLogicGate inputGate = sbolWrapper.getGateMapping(logicNode.toString());
+		
+		GeneticGate inputGate = sbolWrapper.getGateMapping(logicNode.toString());
 		if(inputGate != null) {
-			inputProtein = inputGate.getOutputProtein();
-			addInputInteraction(circuit, logicGate, tu, inputProtein);
+			inputProtein = getOutputProteinForGate(inputGate);
+			logicGate.addInputMolecule(inputProtein);
+			sbolWrapper.createInhibitionInteraction(circuit, inputProtein, tu);
 		}
 		else {
 			inputProtein = getProtein(circuit, logicNode.toString());
 			//inputProtein already is an input on the current gate. Don't create interaction and continue. This will solve output proteins with multiple fan-outs
 			if(!checkIfProteinIsInput(inputProtein, logicGate)) {
-				addInputInteraction(circuit, logicGate, tu, inputProtein);
+				logicGate.addInputMolecule(inputProtein);
+				sbolWrapper.createInhibitionInteraction(circuit, inputProtein, tu);;
 			}
 		}
 		addPrimaryProteinMapping(logicNode.toString(), primaryProteinList, inputProtein);
 		
 		return inputProtein;
+	}
+	
+	private FunctionalComponent getOutputProteinForGate(GeneticGate gate) {
+		List<FunctionalComponent> gateOutputs = gate.getListOfOutputs();
+		assert(gateOutputs.size() == 1);
+		return gateOutputs.get(0);
 	}
 	
 	private void addPrimaryProteinMapping(String logicId, HashMap<FunctionalComponent, FunctionalComponent> proteinList, FunctionalComponent protein) {
@@ -191,38 +198,33 @@ public class VerilogToSBOL {
 		}
 	}
 	
-	private void addOutput(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent outputProtein) throws SBOLValidationException {
+	private void addOutput(ModuleDefinition circuit, GeneticGate logicGate, FunctionalComponent outputProtein, FunctionalComponent tu) throws SBOLValidationException {
 		//outputProtein is already set as an output onto the current gate. Don't create interaction and continue.
 		if(!checkIfProteinIsOutput(outputProtein, logicGate)) {
-			addOutputInteractin(circuit, logicGate, logicGate.getTranscriptionalUnit(), outputProtein);
+			logicGate.addOutputMolecule(outputProtein);
+			sbolWrapper.createProductionInteraction(circuit, tu, outputProtein);
 		}
 	}
 	
-	private void addInputInteraction(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent inputProtein) throws VerilogCompilerException, SBOLValidationException {
-		Interaction inputInteraction = sbolWrapper.createInhibitionInteraction(circuit, inputProtein, tu);
-		logicGate.addInput(inputProtein, inputInteraction);
-	}
-	
-	private void addOutputInteractin(ModuleDefinition circuit, SBOLLogicGate logicGate, FunctionalComponent tu, FunctionalComponent outputProtein) throws SBOLValidationException {
-		Interaction outputInteraction = sbolWrapper.createProductionInteraction(circuit, tu, outputProtein);
-		logicGate.setOutput(outputProtein, outputInteraction);
-	}
-	
-	private boolean checkIfProteinIsInput(FunctionalComponent inputProtein, SBOLLogicGate logicGate) {
+	private boolean checkIfProteinIsInput(FunctionalComponent inputProtein, GeneticGate logicGate) {
 		if(logicGate instanceof NOTGate) {
 			NOTGate gate = (NOTGate)logicGate;
-			return inputProtein.equals(gate.getInputProtein());
+			return gate.containsInput(inputProtein);
 		}
 		else if(logicGate instanceof NORGate) {
 			NORGate gate = (NORGate)logicGate;
-			return inputProtein.equals(gate.getLeftInputProtein())
-					|| inputProtein.equals(gate.getRightInputProtein()); 
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				if(fc.equals(inputProtein)) {
+					return true;
+				}
+			}
+			return false;
 		}
 		return false;
 	}
 	
-	private boolean checkIfProteinIsOutput(FunctionalComponent outputProtein, SBOLLogicGate logicGate) {
-		return outputProtein.equals(logicGate.getOutputProtein());
+	private boolean checkIfProteinIsOutput(FunctionalComponent outputProtein, GeneticGate logicGate) {
+		return logicGate.containsOutput(outputProtein);
 	}
 	
 	/**
@@ -234,12 +236,13 @@ public class VerilogToSBOL {
 	 * @throws VerilogCompilerException
 	 */
 	private NORGate addNORGate(ModuleDefinition circuit, String gateId) throws SBOLValidationException, VerilogCompilerException {
-		SBOLLogicGate currentGate = sbolWrapper.getGateMapping(gateId);
+		GeneticGate currentGate = sbolWrapper.getGateMapping(gateId);
 		NORGate sbolNOR = null;
 		if(currentGate == null) {
 			//this NOR gate does not exist. Create one. 
-			FunctionalComponent norTU = sbolWrapper.createGate(circuit, 2);
-			sbolNOR = new NORGate(gateId, norTU); 
+			FunctionalComponent norTU = sbolWrapper.createTranscriptionalUnit(circuit, "norTU");
+			sbolNOR = new NORGate(sbolWrapper.getSBOLDocument(), circuit);
+			sbolNOR.setTranscriptionalUnit(norTU);
 		}
 		else if(currentGate instanceof NORGate){
 			sbolNOR = (NORGate) currentGate; 
@@ -261,12 +264,13 @@ public class VerilogToSBOL {
 	 * @throws VerilogCompilerException
 	 */
 	private NOTGate addNOTGate(ModuleDefinition circuit, String gateId) throws SBOLValidationException, VerilogCompilerException {
-		SBOLLogicGate currentGate = sbolWrapper.getGateMapping(gateId);
+		GeneticGate currentGate = sbolWrapper.getGateMapping(gateId);
 		NOTGate sbolNOT = null;
 		if(currentGate == null) {
 			//this NOT gate does not exist. Create one. 
-			FunctionalComponent notTU = sbolWrapper.createGate(circuit, 1);
-			sbolNOT = new NOTGate(gateId, notTU); 
+			FunctionalComponent notTU = sbolWrapper.createTranscriptionalUnit(circuit, "notTU");
+			sbolNOT = new NOTGate(sbolWrapper.getSBOLDocument(), circuit);
+			sbolNOT.setTranscriptionalUnit(notTU);
 		}
 		else if(currentGate instanceof NOTGate){
 			sbolNOT = (NOTGate) currentGate;

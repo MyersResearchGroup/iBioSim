@@ -234,6 +234,9 @@ public class SBOLUtility
 	
 	public SBOLDocument parseSBOLFile(File file) throws SBOLValidationException, IOException, SBOLConversionException {
 		SBOLReader.setURIPrefix(getURIPrefix());
+		//SBOLDocument sbolDoc = new SBOLDocument();
+		//sbolDoc.setDefaultURIprefix(getURIPrefix());
+		//sbolDoc.read(file);
 		SBOLDocument sbolDoc = SBOLReader.read(file);
 		return sbolDoc;
 	}

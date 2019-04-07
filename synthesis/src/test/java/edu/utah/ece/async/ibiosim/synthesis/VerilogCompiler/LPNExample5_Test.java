@@ -33,8 +33,10 @@ public class LPNExample5_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogMultThree_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogMultThree_tbFile);
 
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("multthree_imp", "multThree_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();

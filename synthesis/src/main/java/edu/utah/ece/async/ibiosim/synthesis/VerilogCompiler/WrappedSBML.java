@@ -10,7 +10,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
-import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
@@ -97,12 +96,6 @@ public class WrappedSBML {
 		initialAssignment.setMath(assignmentMath);
 	}
 	
-	public void addAssignmentRule(String booleanId, ASTNode assignmentMath) {
-		AssignmentRule assignRule = model.createAssignmentRule();
-		assignRule.setVariable(booleanId);
-		assignRule.setMath(assignmentMath);
-	}
-
 	/**
 	 * Add the Verilog input to the SBML model.
 	 * @param input: Name of the Verilog input

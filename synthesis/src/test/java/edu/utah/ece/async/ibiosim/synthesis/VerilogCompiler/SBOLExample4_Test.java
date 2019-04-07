@@ -37,8 +37,9 @@ public class SBOLExample4_Test {
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCont5_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);   
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);   
 		
 		String vName = "contAssign5";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -51,7 +52,7 @@ public class SBOLExample4_Test {
 	
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(40, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(32, sbolDoc.getComponentDefinitions().size());
 	}
 
 	@Test
@@ -78,7 +79,7 @@ public class SBOLExample4_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(32, actualSize);
+		Assert.assertEquals(24, actualSize);
 	}
 
 	@Test

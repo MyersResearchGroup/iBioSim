@@ -33,8 +33,9 @@ public class LPNExample4_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogLFSR_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogLFSR_tbFile);
 
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("lfsr_imp", "lfsr_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();

@@ -33,8 +33,9 @@ public class LPNExample3_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
 
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();;
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("filter_imp", "filter_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();

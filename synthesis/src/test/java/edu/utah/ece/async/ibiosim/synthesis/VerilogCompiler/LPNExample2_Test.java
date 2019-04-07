@@ -33,8 +33,9 @@ public class LPNExample2_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogCounter_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogCounter_tbFile);
 
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("counter_imp", "counter_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();

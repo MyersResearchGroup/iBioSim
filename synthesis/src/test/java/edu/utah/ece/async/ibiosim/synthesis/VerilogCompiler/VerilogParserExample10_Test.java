@@ -36,7 +36,8 @@ public class VerilogParserExample10_Test {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCondStmt3_file);
 	
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(1, moduleList.size());
 		

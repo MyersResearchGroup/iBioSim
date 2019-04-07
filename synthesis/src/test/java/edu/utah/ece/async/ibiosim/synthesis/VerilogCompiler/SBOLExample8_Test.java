@@ -42,8 +42,9 @@ public class SBOLExample8_Test {
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCont5_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(false);  
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(false);  
 		
 		String vName = "contAssign5";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -68,7 +69,7 @@ public class SBOLExample8_Test {
 
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(40, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(32, sbolDoc.getComponentDefinitions().size());
 	}
 	
 	@Test
@@ -437,7 +438,7 @@ public class SBOLExample8_Test {
 		Assert.assertNotNull(qCircuit_instance);
 		
 		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
-			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+			Assert.assertEquals(RefinementType.VERIFYIDENTICAL, wire.getRefinement());
 			
 			String local = wire.getLocal().getDisplayId();
 			String remote = wire.getRemote().getDisplayId();
@@ -471,7 +472,7 @@ public class SBOLExample8_Test {
 		Assert.assertNotNull(qCircuit_instance);
 		
 		for(MapsTo wire : qCircuit_instance.getMapsTos()) {
-			Assert.assertEquals(RefinementType.USELOCAL, wire.getRefinement());
+			Assert.assertEquals(RefinementType.VERIFYIDENTICAL, wire.getRefinement());
 			
 			String local = wire.getLocal().getDisplayId();
 			String remote = wire.getRemote().getDisplayId();
@@ -517,7 +518,7 @@ public class SBOLExample8_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(32, actualSize);
+		Assert.assertEquals(24, actualSize);
 	}
 	
 	@Test

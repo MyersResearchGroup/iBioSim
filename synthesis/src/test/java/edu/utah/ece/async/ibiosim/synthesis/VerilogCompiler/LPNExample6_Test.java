@@ -33,8 +33,9 @@ public class LPNExample6_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogScanflop_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogScanflop_tbFile);
 
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("scanflop_imp", "scanflop_testbench", TestingFiles.writeOutputDir);
 
 		lpn = compiledVerilog.getLPN();

@@ -6,142 +6,82 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.sbolstandard.core2.ComponentInstance;
-import org.sbolstandard.core2.FunctionalComponent;
-import org.sbolstandard.core2.MapsTo;
-import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
-import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLDocument;
 
-public class SBOLTechMap {
 
+public class SBOLTechMap {
+	private List<SBOLGraph> specGraph;
 	private List<SBOLGraph> libraryGraphs; 
 
-
-
-	public SBOLTechMap(SBOLDocument libraryDoc) throws SBOLTechMapException {
-		libraryGraphs = setLibraryGates(libraryDoc);
-		setLibraryGateScores(libraryGraphs);
+	public SBOLTechMap(List<SBOLGraph> libraryGates, List<SBOLGraph> specification) throws SBOLTechMapException {
+		this.libraryGraphs = libraryGates;
+		this.specGraph = specification;
 	}
-
-	private List<SBOLGraph> setLibraryGates(SBOLDocument sbolDoc) throws SBOLTechMapException {
-		List<SBOLGraph> library = new ArrayList<SBOLGraph>();
-		for(ModuleDefinition gateMD : sbolDoc.getModuleDefinitions()) {
-			library.add(createSBOLGraph(sbolDoc, gateMD));
-		}
-		return library;
-	}
-
-	private void setLibraryGateScores(List<SBOLGraph> library) {
-		for(SBOLGraph g: library) {
-			setGraphScore(g);
-		}
-	}
-
-	private void setGraphScore(SBOLGraph graph) {
-		int totalScore = 0;
-		for(SynthesisNode node : graph.getAllNodes()) {
-			int score = node.getFlattenedSequence().length() - 1;
-			node.setScore(score);
-			totalScore += score;
-		}
-		graph.setScore(totalScore);
-	}
-
-	public SBOLGraph createSBOLGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException {
-		SBOLGraph sbolGraph = new SBOLGraph();
-		sbolGraph.createGraph(sbolDoc, md);
-		sbolGraph.topologicalSort();
-		return sbolGraph;
-	}
-
-	public void mapCoverSpecification(SBOLDocument sbolDoc) throws SBOLTechMapException {
-		Set<ModuleDefinition> rootMDList = sbolDoc.getRootModuleDefinitions();
-
-		//this is flattened spec
-		if(rootMDList.size() == 1) {
-			SBOLGraph spec = createSBOLGraph(sbolDoc, rootMDList.iterator().next());
-		}
-		else {
-			for(ModuleDefinition md : rootMDList) {
-				
-				//match and cover gates for subcircuits
-				Set<Module> subCircuitList = md.getModules();
-				Map<SynthesisNode, FunctionalComponent> feedbackNodeMapping = new HashMap<>();
-				boolean isFirstCircuitMapping = true;
-				for(Module circuitInstance : subCircuitList) {
-					
-					ModuleDefinition circuit = circuitInstance.getDefinition();
-					SBOLGraph spec = createSBOLGraph(sbolDoc, circuit);
-		
-					spec.getOutputNode().getFunctionalComponent();
-					for(SynthesisNode leafNode : spec.getRoots()) {
-						leafNode.getFunctionalComponent();
-					}
-					Map<SynthesisNode, SBOLGraph> solution = matchAndCover(spec);
-					if(isFirstCircuitMapping) {
-						for(MapsTo mp : circuitInstance.getMapsTos()) {
-							FunctionalComponent fc = getMapsToFunctionalComponent(mp);
-							
-						}
-						isFirstCircuitMapping = false;
-					}
-				}
+	
+	public SBOLDocument performTechnologyMapping() {
+		for(SBOLGraph subSpec : specGraph) {
+			Map<FunctionalComponentNode, LinkedList<WeightedGraph>> matches = match(subSpec);
+			Map<FunctionalComponentNode, SBOLGraph> solution = cover_topLevel(subSpec, matches);
+			for(SBOLGraph g : solution.values()) {
+				System.out.println("Sol: " + g.toString());
 			}
-
 		}
+		return null;
 	}
 	
-	private FunctionalComponent getMapsToFunctionalComponent(MapsTo mp) {
-		RefinementType refinement = mp.getRefinement();
-		ComponentInstance component = null;
-		if(refinement.equals(RefinementType.USELOCAL)) {
-			component = mp.getLocal();
-		}
-		else if(refinement.equals(RefinementType.USEREMOTE)) {
-			component = mp.getRemote();
-		}
-		else if(refinement.equals(RefinementType.VERIFYIDENTICAL)) {
-			component = mp.getLocal();
-		}
-
-		assert(component instanceof FunctionalComponent);
-		return (FunctionalComponent) component;
+	public Map<FunctionalComponentNode, SBOLGraph> cover_topLevel(SBOLGraph specGraph, Map<FunctionalComponentNode, LinkedList<WeightedGraph>> matches) {
+		double bestScore = Double.POSITIVE_INFINITY;
+		double currentScore = 0;
+		FunctionalComponentNode specOutNode = specGraph.getOutputNode();
+		return cover(specGraph, specOutNode, matches, bestScore, currentScore);
 	}
-
-	private Map<SynthesisNode, SBOLGraph> matchAndCover(SBOLGraph specGraph) {
-
-		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = match_topLevel(specGraph);
-		Map<SynthesisNode, SBOLGraph> solution = cover_topLevel(specGraph, matches);
 	
-		return solution;
+	
+
+
+	/**
+	 * Return a list of leaf nodes from the spec that maps to the specified library gate
+	 * @param spec
+	 * @param lib
+	 * @return
+	 */
+	public List<FunctionalComponentNode> getEndNodes(FunctionalComponentNode spec, FunctionalComponentNode lib,
+			ModuleDefinition specMD, ModuleDefinition libGateMD) {
+		List<FunctionalComponentNode> list = new ArrayList<FunctionalComponentNode>();
+		getNodes(spec, lib, list, specMD, libGateMD);
+		return list;
+
 	}
 
-	public Map<SynthesisNode, LinkedList<WeightedGraph>> match_topLevel(SBOLGraph specGraph) {
-		//map spec. node to possible matching library gates
-		Map<SynthesisNode, LinkedList<WeightedGraph>> matches = new HashMap<>();
+
+
+
+	
+	public Map<FunctionalComponentNode, LinkedList<WeightedGraph>> match(SBOLGraph specGraph) {
+		// map spec. node to possible matching library gates
+		Map<FunctionalComponentNode, LinkedList<WeightedGraph>> matches = new HashMap<>();
 
 		setAllGraphNodeScore(specGraph, Double.POSITIVE_INFINITY);
-
-		List<SynthesisNode> specNodeList = specGraph.getTopologicalSortNodes();
-		for(SynthesisNode currentSpecNode: specNodeList) //go through each species node in speciGraph
+		ModuleDefinition specMD = specGraph.getModuleDefinition();
+		List<FunctionalComponentNode> specNodeList = specGraph.getTopologicalSortNodes();
+		for(FunctionalComponentNode currentSpecNode: specNodeList)
 		{
-			if(currentSpecNode.isRoot()) {
-				currentSpecNode.setScore(0);
+			if(currentSpecNode.isRoot(specMD)) {
+				currentSpecNode.setScore(specMD, 0);
 				matches.put(currentSpecNode, new LinkedList<WeightedGraph>());
 			}
 			else {
 				double totalScore;
 				for(SBOLGraph gate : libraryGraphs) {
-					SynthesisNode gateOuputNode = gate.getOutputNode();
-					if(isMatch(currentSpecNode, gateOuputNode)) {
-						totalScore = gateOuputNode.getScore() + getSubNodeScore(currentSpecNode, gateOuputNode);
-						if(totalScore < currentSpecNode.getScore()) {
+					ModuleDefinition libGateMD = gate.getModuleDefinition();
+					FunctionalComponentNode gateOuputNode = gate.getOutputNode();
+					if(isMatch(specGraph, currentSpecNode, gateOuputNode, specMD, libGateMD)) {
+						totalScore = gateOuputNode.getScore(specMD) + getSubNodeScore(specMD, currentSpecNode, libGateMD, gateOuputNode);
+						if(totalScore < currentSpecNode.getScore(specMD)) {
 							//a lower score was found, add gate to the matched spec. node
-							currentSpecNode.setScore(totalScore); //update speciGraph with new libGate score
+							currentSpecNode.setScore(specMD, totalScore); //update speciGraph with new libGate score
 
 							if(!matches.containsKey(currentSpecNode)) {
 								matches.put(currentSpecNode, new LinkedList<WeightedGraph>());
@@ -176,32 +116,26 @@ public class SBOLTechMap {
 		return matches;
 	}
 
-	public Map<SynthesisNode, SBOLGraph> cover_topLevel(SBOLGraph specGraph, Map<SynthesisNode, LinkedList<WeightedGraph>> matches) {
-		double bestScore = Double.POSITIVE_INFINITY;
-		double currentScore = 0;
-		SynthesisNode specOutNode = specGraph.getOutputNode();
-		return cover(specGraph, specOutNode, matches, bestScore, currentScore);
-	}
-
-	private Map<SynthesisNode, SBOLGraph> cover(SBOLGraph specGraph, SynthesisNode specOutNode, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore) {
+	private Map<FunctionalComponentNode, SBOLGraph> cover(SBOLGraph specGraph, FunctionalComponentNode specOutNode, Map<FunctionalComponentNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore) {
 		LinkedList<WeightedGraph> matchedLibGates = matches.get(specOutNode);
-		Map<SynthesisNode, SBOLGraph> bestSolution = null;
-
+		Map<FunctionalComponentNode, SBOLGraph> bestSolution = null;
+		ModuleDefinition specMD = specGraph.getModuleDefinition();
 		for (WeightedGraph wg : matchedLibGates) {
 			SBOLGraph libGate = wg.getSBOLGraph();
-			double estimateScore = libGate.getOutputNode().getScore() + getSubNodeScore(specOutNode, libGate.getOutputNode());
+			ModuleDefinition libGateMD = libGate.getModuleDefinition();
+			double estimateScore = libGate.getOutputNode().getScore(specMD) + getSubNodeScore(specMD, specOutNode, libGate.getModuleDefinition(), libGate.getOutputNode());
 			if (estimateScore >= bestScore) {
 				continue;
 			}
 			else {
-				Map<SynthesisNode, SBOLGraph> tempSolution = new HashMap<SynthesisNode, SBOLGraph>();
+				Map<FunctionalComponentNode, SBOLGraph> tempSolution = new HashMap<FunctionalComponentNode, SBOLGraph>();
 				tempSolution.put(specOutNode, libGate);
-				double score = libGate.getOutputNode().getScore();
+				double score = libGate.getOutputNode().getScore(specMD);
 				tempSolution.put(specOutNode, libGate);
-				List<SynthesisNode> childrenNodes = getEndNodes(specOutNode, libGate.getOutputNode());
+				List<FunctionalComponentNode> childrenNodes = getEndNodes(specOutNode, libGate.getOutputNode(), specMD, libGateMD);
 				if (childrenNodes.size() > 0) {
-					for (SynthesisNode child : childrenNodes) {
-						tempSolution = coverRecursive(child, matches, bestScore, currentScore, tempSolution);
+					for (FunctionalComponentNode child : childrenNodes) {
+						tempSolution = coverRecursive(specGraph, child, matches, bestScore, currentScore, tempSolution);
 					}
 				}
 
@@ -217,32 +151,34 @@ public class SBOLTechMap {
 
 		return bestSolution;
 	}
-	
-	private Map<SynthesisNode, SBOLGraph> coverRecursive(SynthesisNode specOutNode, Map<SynthesisNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore, Map<SynthesisNode, SBOLGraph> solution) {
+
+	private Map<FunctionalComponentNode, SBOLGraph> coverRecursive(SBOLGraph specGraph, FunctionalComponentNode specOutNode, Map<FunctionalComponentNode, LinkedList<WeightedGraph>> matches, double bestScore, double currentScore, Map<FunctionalComponentNode, SBOLGraph> solution) {
 		LinkedList<WeightedGraph> matchedLibGates = matches.get(specOutNode);
-		Map<SynthesisNode, SBOLGraph> bestSolution = null;
-		if (specOutNode.isRoot()) {
+		Map<FunctionalComponentNode, SBOLGraph> bestSolution = null;
+		ModuleDefinition specMD = specGraph.getModuleDefinition();
+		if (specOutNode.isRoot(specMD)) {
 			return solution;
 		}
 		for (WeightedGraph wg : matchedLibGates) {
 			SBOLGraph libGate = wg.getSBOLGraph();
+			ModuleDefinition libGateMD = libGate.getModuleDefinition();
 			if (isCrossTalk(solution.values(), libGate)) {
 				continue;
 			}
 			else {
-				double estimateScore = currentScore + libGate.getOutputNode().getScore() + getSubNodeScore(specOutNode, libGate.getOutputNode());
+				double estimateScore = currentScore + libGate.getOutputNode().getScore(specMD) + getSubNodeScore(specMD, specOutNode, libGateMD, libGate.getOutputNode());
 				if (estimateScore >= bestScore) {
 					continue;
 				}
 				else {
-					Map<SynthesisNode, SBOLGraph> tempSolution = new HashMap<SynthesisNode, SBOLGraph>(solution);
+					Map<FunctionalComponentNode, SBOLGraph> tempSolution = new HashMap<FunctionalComponentNode, SBOLGraph>(solution);
 					currentScore = getCurrentCoveredScore(tempSolution.values());
 					tempSolution.put(specOutNode, libGate);
-					List<SynthesisNode> childrenNodes = getEndNodes(specOutNode, libGate.getOutputNode());
+					List<FunctionalComponentNode> childrenNodes = getEndNodes(specOutNode, libGate.getOutputNode(), specMD, libGateMD);
 					tempSolution.put(specOutNode, libGate);
 					if (childrenNodes.size() > 0) {
-						for (SynthesisNode child : childrenNodes) {
-							tempSolution = coverRecursive(child, matches, bestScore, currentScore, tempSolution);
+						for (FunctionalComponentNode child : childrenNodes) {
+							tempSolution = coverRecursive(specGraph, child, matches, bestScore, currentScore, tempSolution);
 							if (tempSolution == null) {
 								break;
 							}
@@ -263,29 +199,43 @@ public class SBOLTechMap {
 		}
 		return bestSolution;
 	}
-	
-	/**
-	 * Return a list of leaf nodes from the spec that maps to the specified library gate
-	 * @param spec
-	 * @param lib
-	 * @return
-	 */
-	public List<SynthesisNode> getEndNodes(SynthesisNode spec, SynthesisNode lib) {
-		List<SynthesisNode> list = new ArrayList<SynthesisNode>();
-		getNodes(spec, lib, list);
-		return list;
 
+	private double getCurrentCoveredScore(Collection<SBOLGraph> gatesUsed) {
+		double totalScore = 0; 
+		for(SBOLGraph g: gatesUsed) {
+			totalScore += g.getOutputNode().getScore(g.getModuleDefinition());
+		}
+		return totalScore; 
+	}
+
+	private int getDegree(FunctionalComponentNode node, ModuleDefinition graphMD) {
+		return node.getParents(graphMD).size();
 	}
 	
-	private void getNodes(SynthesisNode spec, SynthesisNode lib, List<SynthesisNode> nodes) {
-		if(lib.isRoot()) {
+	
+	private void getNodes(FunctionalComponentNode spec, FunctionalComponentNode lib, List<FunctionalComponentNode> nodes, 
+			ModuleDefinition specMD, ModuleDefinition libGateMD) {
+		if(lib.isRoot(libGateMD)) {
 			nodes.add(spec);
 		}
 		else {
-			for(int i=0; i<lib.getParents().size(); i++) {
-				getNodes(spec.getParents().get(i), lib.getParents().get(i), nodes);
+			for(int i=0; i<lib.getParents(libGateMD).size(); i++) {
+				getNodes(spec.getParents(specMD).get(i), lib.getParents(libGateMD).get(i), nodes, specMD, libGateMD);
 			}
 		}
+	}
+	
+	private double getSubNodeScore(ModuleDefinition specMD, FunctionalComponentNode spec, 
+			ModuleDefinition libMD, FunctionalComponentNode lib) {
+		if(lib.isRoot(libMD)) {
+			// The spec score is returned because the current best score is stored on spec not lib gate.
+			return spec.getScore(specMD); 
+		}
+		double total = 0;
+		for(int i = 0; i < lib.getParents(libMD).size(); i++) {
+			total += getSubNodeScore(specMD, spec.getParents(specMD).get(i), libMD, lib.getParents(libMD).get(i));
+		}
+		return total;
 	}
 
 	
@@ -300,8 +250,8 @@ public class SBOLTechMap {
 	}
 
 	private boolean isGateMatch(SBOLGraph g1, SBOLGraph g2) {
-		for(SynthesisNode g1Node: g1.getTopologicalSortNodes()) {
-			for(SynthesisNode g2Node: g2.getTopologicalSortNodes()) {
+		for(FunctionalComponentNode g1Node: g1.getTopologicalSortNodes()) {
+			for(FunctionalComponentNode g2Node: g2.getTopologicalSortNodes()) {
 				if(g1Node.getFunctionalComponent().getDefinitionURI().equals(g2Node.getFunctionalComponent().getDefinitionURI())) {
 					return true;
 				}
@@ -310,64 +260,39 @@ public class SBOLTechMap {
 		return false; 
 	}
 
-	private double getSubNodeScore(SynthesisNode spec, SynthesisNode lib) {
-		if(lib.isRoot()) {
-			//the spec score is returned because the current best score is stored on spec not lib gate.
-			return spec.getScore(); 
-		}
-		double total = 0;
-		for(int i = 0; i < lib.getParents().size(); i++) {
-			total += getSubNodeScore(spec.getParents().get(i), lib.getParents().get(i));
-		}
-		return total;
-	}
-
-	private double getCurrentCoveredScore(Collection<SBOLGraph> gatesUsed) {
-		double totalScore = 0; 
-		for(SBOLGraph g: gatesUsed) {
-			totalScore += g.getOutputNode().getScore();
-		}
-		return totalScore; 
-	}
-	
-	private boolean isMatch(SynthesisNode spec, SynthesisNode lib) {
-		if(lib.isRoot()) {
+	private boolean isMatch(SBOLGraph g, FunctionalComponentNode spec, FunctionalComponentNode lib,
+			ModuleDefinition specMD, ModuleDefinition libGateMD) {
+		if(lib.isRoot(g.getModuleDefinition())) {
 			return true;
 		}
-		else {
-			if(spec.isRoot()) { 
+		
+			if(spec.isRoot(g.getModuleDefinition())) { 
 				return false;
 			}
-			if(getDegree(spec) != getDegree(lib)) { 
+			if(getDegree(spec, specMD) != getDegree(lib, libGateMD)) { 
 				return false; 
 			}
-			if(getDegree(spec) == 1) {
-				SynthesisNode specChild = spec.getParents().get(0);
-				SynthesisNode libChild = lib.getParents().get(0);
-				return isMatch(specChild, libChild);
+			if(getDegree(spec, specMD) == 1) {
+				FunctionalComponentNode specChild = spec.getParents(g.getModuleDefinition()).get(0);
+				FunctionalComponentNode libChild = lib.getParents(g.getModuleDefinition()).get(0);
+				return isMatch(g, specChild, libChild, specMD, libGateMD);
 			}
-			else {
+			
 				//NOTE: this assumes it always has at most two children due to decomposition
-				SynthesisNode specLeftChild = spec.getParents().get(0);
-				SynthesisNode libLeftChild = lib.getParents().get(0);
-				SynthesisNode specRightChild = spec.getParents().get(1);
-				SynthesisNode libRightChild = lib.getParents().get(1);
-				return isMatch(specLeftChild, libLeftChild) && isMatch(specRightChild, libRightChild) || isMatch(specLeftChild, libRightChild) && isMatch(specRightChild, libLeftChild);
-			}
-		}
+				FunctionalComponentNode specLeftChild = spec.getParents(g.getModuleDefinition()).get(0);
+				FunctionalComponentNode libLeftChild = lib.getParents(g.getModuleDefinition()).get(0);
+				FunctionalComponentNode specRightChild = spec.getParents(g.getModuleDefinition()).get(1);
+				FunctionalComponentNode libRightChild = lib.getParents(g.getModuleDefinition()).get(1);
+				return isMatch(g, specLeftChild, libLeftChild, specMD, libGateMD) && isMatch(g, specRightChild, libRightChild, specMD, libGateMD) || isMatch(g, specLeftChild, libRightChild, specMD, libGateMD) && isMatch(g, specRightChild, libLeftChild, specMD, libGateMD);
+			
 	}
 
+	
 	private void setAllGraphNodeScore(SBOLGraph graph, Double score) {
-		for(SynthesisNode node : graph.getTopologicalSortNodes()) {
-			node.setScore(score);
+		for(FunctionalComponentNode node : graph.getTopologicalSortNodes()) {
+			node.setScore(graph.getModuleDefinition(), score);
 		}
 	}
 
-	private int getDegree(SynthesisNode node) {
-		return node.getParents().size();
-	}
 
-	public List<SBOLGraph> getLibrary(){
-		return this.libraryGraphs;
-	}
 }

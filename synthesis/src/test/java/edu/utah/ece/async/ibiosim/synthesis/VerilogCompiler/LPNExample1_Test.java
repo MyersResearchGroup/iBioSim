@@ -30,12 +30,12 @@ public class LPNExample1_Test {
 	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
 		
 		CompilerOptions setupOpt = new CompilerOptions();
-		System.out.println(TestingFiles.verilogEvenZero_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_tbFile);
 	
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);
 		compiledVerilog.generateLPN("evenzeroes_imp", "evenzeroes_testbench", TestingFiles.writeOutputDir);
 	
 		lpn = compiledVerilog.getLPN();

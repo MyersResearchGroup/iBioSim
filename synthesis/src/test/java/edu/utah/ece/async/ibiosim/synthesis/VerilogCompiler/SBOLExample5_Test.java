@@ -38,8 +38,9 @@ public class SBOLExample5_Test {
 
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCont6_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);   
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);   
 	
 		String vName = "contAssign6";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -53,7 +54,7 @@ public class SBOLExample5_Test {
 	
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(21, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(17, sbolDoc.getComponentDefinitions().size());
 	}
 	
 	@Test
@@ -80,7 +81,7 @@ public class SBOLExample5_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(16, actualSize);
+		Assert.assertEquals(12, actualSize);
 	}
 
 	@Test

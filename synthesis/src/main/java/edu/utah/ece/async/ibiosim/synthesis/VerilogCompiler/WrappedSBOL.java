@@ -20,7 +20,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.SBOLGates.SBOLLogicGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 
 
 /**
@@ -34,7 +34,7 @@ public class WrappedSBOL {
 	private final String sbolVersion = "1.0";
 	
 	private Map<String, String> proteinMapping; //map Verilog name to SBOL FunctionalComponent displayId 
-	private Map<String, SBOLLogicGate> gateMapping;
+	private Map<String, GeneticGate> gateMapping;
 	
 	//use to generate unique URIs
 	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter;
@@ -72,52 +72,59 @@ public class WrappedSBOL {
 		return inter;
 	}
 	
-	public Interaction createProductionInteraction(ModuleDefinition circuit, FunctionalComponent transcriptionalUnit, FunctionalComponent product) throws SBOLValidationException {
+	public Interaction createActivationInteraction(ModuleDefinition circuit, FunctionalComponent stimulator, FunctionalComponent stimulated) throws SBOLValidationException {
+		Interaction inter = addInteraction(circuit, getInteractionId() + "_Stim", SystemsBiologyOntology.STIMULATION);
+		createInteractionParticipation(inter, SystemsBiologyOntology.STIMULATOR, stimulator.getIdentity());
+		createInteractionParticipation(inter, SystemsBiologyOntology.STIMULATED, stimulated.getIdentity());
+		return inter;
+	}
+	
+	public Interaction createProductionInteraction(ModuleDefinition circuit, FunctionalComponent template, FunctionalComponent product) throws SBOLValidationException {
 		Interaction inter = addInteraction(circuit, getInteractionId() + "_Prod", SystemsBiologyOntology.GENETIC_PRODUCTION);
-		createInteractionParticipation(inter, SystemsBiologyOntology.TEMPLATE, transcriptionalUnit.getIdentity());
+		createInteractionParticipation(inter, SystemsBiologyOntology.TEMPLATE, template.getIdentity());
 		createInteractionParticipation(inter, SystemsBiologyOntology.PRODUCT, product.getIdentity());
 		return inter;
 	}
 
-	public FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id, ArrayList<ComponentDefinition> promoters) throws SBOLValidationException {
+	public FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id) throws SBOLValidationException {
 		String id = "_" + tu_id;
-		ComponentDefinition tu = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.DNA_REGION);
-		tu.addRole(SequenceOntology.ENGINEERED_REGION);
-		
-		for(ComponentDefinition p : promoters) {
-			tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, p.getIdentity());
-		}
-		ComponentDefinition ribosome = createRibosome();
+		ComponentDefinition tu = createEngineeredRegion();
+		ComponentDefinition pro1 = createPromoter();
 		ComponentDefinition cds = createCDS();
 		ComponentDefinition terminator = createTerminator();
-
-		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, ribosome.getIdentity());
+		
+		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, pro1.getIdentity());
 		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, cds.getIdentity());
 		tu.createComponent(getComponentId() + "_part", AccessType.PRIVATE, terminator.getIdentity());
-
 		FunctionalComponent tu_instance = addFunctionalComponent(circuit, getFunctionalComponentId() + id, AccessType.PUBLIC, tu.getIdentity(), DirectionType.NONE);
 		return tu_instance;
-	} 
+	}
 	
-	private ComponentDefinition createPromoter() throws SBOLValidationException{
+	public ComponentDefinition createEngineeredRegion() throws SBOLValidationException {
+		ComponentDefinition er = addComponentDefinition(getComponentDefinitionId() + "_er", ComponentDefinition.DNA_REGION);
+		er.addRole(SequenceOntology.ENGINEERED_REGION);
+		return er;
+	}
+	
+	public ComponentDefinition createPromoter() throws SBOLValidationException{
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_promoter", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.PROMOTER);
 		return part;
 	}
 	
-	private ComponentDefinition createRibosome() throws SBOLValidationException{
+	public ComponentDefinition createRibosome() throws SBOLValidationException{
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_ribosome", ComponentDefinition.DNA_REGION);
-		part.addRole(SequenceOntology.RIBOSOME_ENTRY_SITE	);
+		part.addRole(SequenceOntology.RIBOSOME_ENTRY_SITE);
 		return part;
 	}
 	
-	private ComponentDefinition createCDS() throws SBOLValidationException{
+	public ComponentDefinition createCDS() throws SBOLValidationException{
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_cds", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.CDS);
 		return part;
 	}
 	
-	private ComponentDefinition createTerminator() throws SBOLValidationException{
+	public ComponentDefinition createTerminator() throws SBOLValidationException{
 		ComponentDefinition part = addComponentDefinition(getComponentDefinitionId() + "_terminator", ComponentDefinition.DNA_REGION);
 		part.addRole(SequenceOntology.TERMINATOR);
 		return part;
@@ -141,17 +148,6 @@ public class WrappedSBOL {
 		return promoters;
 	}
 	
-	public FunctionalComponent createGate(ModuleDefinition circuit, int numGateInput) throws SBOLValidationException, VerilogCompilerException {
-		if(numGateInput < 1 || numGateInput > 2) {
-			throw new VerilogCompilerException("numGateInput must be 1 or 2 but was set to: " + numGateInput);
-		}
-		
-		if(numGateInput == 1) {
-			return createTranscriptionalUnit(circuit, "notTU", generatePromoters(1));
-		}
-		return createTranscriptionalUnit(circuit, "norTU", generatePromoters(2));
-	}
-	
 	public Module addSubCircuit(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {
 		return fullCircuit.createModule(getModuleId(), subCircuit.getDisplayId());
 	}
@@ -168,7 +164,7 @@ public class WrappedSBOL {
 		return circuit.getFunctionalComponent(fc_id);
 	}
 	
-	public void addGateMapping(String gateId, SBOLLogicGate logicGate) {
+	public void addGateMapping(String gateId, GeneticGate logicGate) {
 		this.gateMapping.put(gateId, logicGate);
 	}
 	
@@ -182,7 +178,7 @@ public class WrappedSBOL {
 		return this.proteinMapping.get(verilogPortName);
 	}
 
-	public SBOLLogicGate getGateMapping(String gateName) {
+	public GeneticGate getGateMapping(String gateName) {
 		return this.gateMapping.get(gateName);
 	}
 	

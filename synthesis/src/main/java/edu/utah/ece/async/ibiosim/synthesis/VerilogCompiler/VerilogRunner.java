@@ -3,7 +3,6 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -36,8 +35,9 @@ public class VerilogRunner {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
-			VerilogCompiler compiledVerilog = compile(compilerOptions.getVerilogFiles());
-			compiledVerilog.compileVerilogOutputData(compilerOptions.isOutputFlatModel());
+			VerilogCompiler compiledVerilog = new VerilogCompiler(compilerOptions.getVerilogFiles()); 
+			compiledVerilog.parseVerilog();
+			compiledVerilog.compile(compilerOptions.isOutputFlatModel());
 			
 			String outputDirectory = compilerOptions.getOutputDirectory();
 			
@@ -179,13 +179,6 @@ public class VerilogRunner {
 		}
 		return compilerOptions;
 	}
-
-	public static VerilogCompiler compile(List<File> verilogFiles) throws XMLStreamException, IOException, BioSimException, VerilogCompilerException { 
-		VerilogCompiler compiler = new VerilogCompiler(verilogFiles); 
-		compiler.parseVerilog();
-		return compiler;
-	}
-
 
 
 }

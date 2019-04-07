@@ -1,11 +1,8 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,48 +27,14 @@ public class SBOLTechMapRunner {
 	public static void main(String[] args) 
 	{
 
-		try {
-			CommandLine cmd = parseCommandLine(args);
-			SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
-			Synthesis synthesized = SBOLTechMapRunner.run(techMapOptions.getSpeficationFile(), techMapOptions.getLibraryFile());
-			SBOLDocument sbol_solution = synthesized.getSBOLfromTechMapping();
-			
-			String outputPath = techMapOptions.getOutputFileDir() + File.separator + techMapOptions.getOuputFileName();
-			
-			if(techMapOptions.printCoveredGates()) {
-				synthesized.printCoveredGates(synthesized.getBestSolution());
+			CommandLine cmd;
+			try {
+				cmd = parseCommandLine(args);
+				SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			//export to local machine
-			if(techMapOptions.isOutputDOT()) {
-				
-			}
-			else if(techMapOptions.isOutputSBOL()){
-				synthesized.exportAsSBOLFile(outputPath, sbol_solution);
-			}
-		} 
-		catch (ParseException e) {
-			System.err.println("Command-line ERROR: " + e.getMessage());
-			return;
-		} catch (FileNotFoundException e) {
-			System.err.println("File Not Found ERROR: " + e.getMessage());
-			e.printStackTrace();
-		} catch (SBOLException e) {
-			System.err.println("SBOL Data Model ERROR: " + e.getMessage());
-			e.printStackTrace();
-		} catch (SBOLValidationException e) {
-			System.err.println("SBOLValidation ERROR: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("SBOLReader ERROR: " + e.getMessage());
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			System.err.println("SBOLConversion ERROR: " + e.getMessage());
-			e.printStackTrace();
-		} catch (SBOLTechMapException e) { 
-			System.err.println("SBOL Technology Mapping ERROR: " + e.getMessage());
-			e.printStackTrace();
-		}
 	}
 	
 	private static SBOLTechMapOptions createTechMapOptions(CommandLine cmd) { 
@@ -139,18 +102,20 @@ public class SBOLTechMapRunner {
 	public static Synthesis run(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException, SBOLTechMapException
 	{
 		Synthesis syn = new Synthesis();
-		syn.createSBOLGraph(specDoc, false);
-		syn.createSBOLGraph(libDoc, true);
-		syn.setLibraryGateScores(syn.getLibrary());
-		syn.matchAndCover();
+//		syn.createSBOLGraph(specDoc, false);
+//		syn.createSBOLGraph(libDoc, true);
+//		syn.setLibraryGateScores(syn.getLibrary());
+//		syn.matchAndCover();
 		return syn;
 	}
 	
 	public static void asyncRun(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLTechMapException {
-		SBOLTechMap tm = new SBOLTechMap(libDoc);
-		tm.mapCoverSpecification(specDoc);
+		List<SBOLGraph> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
+		List<SBOLGraph> specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
+		SBOLTechMap techMap = new SBOLTechMap(libraryGates, specification);
+		techMap.performTechnologyMapping();
 		
-	
+		
 	}
 
 }

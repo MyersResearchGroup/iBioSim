@@ -190,9 +190,7 @@ public class SBMLToLPN {
 	}
 
 	private void addTransitions() {
-
 		List<Event> events = sbmlDocument.getModel().getListOfEvents();
-
 		for(Event event : events) {
 			for(EventAssignment eventAssign : event.getListOfEventAssignments()) {
 				String variable = eventAssign.getVariable();
@@ -207,7 +205,6 @@ public class SBMLToLPN {
 				}
 			}
 			lpn.addTransition(event.getId());
-
 		}
 	}
 

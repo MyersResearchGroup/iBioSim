@@ -16,6 +16,9 @@ public class TestingFiles {
 	public static String readOuputDir = synthDir + File.separator + "outputFiles";
 	
 	//Files used for test cases are recorded below.
+	public static String LPN_counterFile = TestingFiles.class.getResource(readOuputDir + File.separator + "counter.lpn").getFile();
+	
+	
 	public static String notTU1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "not1TU.xml").getFile();
 	public static String norTU1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "norTU.xml").getFile();
 	
@@ -24,19 +27,14 @@ public class TestingFiles {
 	public static String NOTNOR_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "notNorDesign.xml").getFile(); 
 	public static String NORNOT_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "norNotDesign.xml").getFile(); 
 	public static String SRLATCH_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "srlatchDesign.xml").getFile(); 
+	public static String flat_SRLATCH_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "srlatchDesignFlattened.xml").getFile(); 
 
 	public static String NOT1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize1.xml").getFile(); 
-	public static String NOR1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORGate_LibrarySize1.xml").getFile(); 
-	public static String NOT2_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNOTGates_LibrarySize2.xml").getFile(); 
-	public static String NORNOT_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize2.xml").getFile(); 
-	public static String NORNOT_LibSize3 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize3.xml").getFile(); 
-	public static String NORNOT_LibSize6 = TestingFiles.class.getResource(sbolLibDir + File.separator + "SynthNORNOTGates_LibrarySize6.xml").getFile(); 
 	
 	public static String sbmlEvenZero_impFile  = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_imp.xml").getFile();
 	public static String sbmlEvenZero_tbFile   = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_testbench.xml").getFile();
 	public static String sbmlEvenZero_flatFile = TestingFiles.class.getResource(readOuputDir+ File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml").getFile();
 	
-	public static String yosys = TestingFiles.class.getResource(verilogDir + File.separator  + "result.v").getFile();
 	
 	public static String verilogAlwaysBlock_file = TestingFiles.class.getResource(verilogDir + File.separator + "always_block.v").getFile();
 	public static String verilogAssign_file = TestingFiles.class.getResource(verilogDir + File.separator + "assign.v").getFile();
@@ -77,5 +75,7 @@ public class TestingFiles {
 	public static String verilogSRLatch_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "srlatch_testbench.v").getFile();
 
 	public static String verilogSynthesizedFilter_file = TestingFiles.class.getResource(verilogDir + File.separator + "filter.v").getFile();
+
+	public static String yosys = TestingFiles.class.getResource(verilogDir + File.separator  + "result.v").getFile();
 	
 }

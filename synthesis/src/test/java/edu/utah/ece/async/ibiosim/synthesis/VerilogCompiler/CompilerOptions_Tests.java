@@ -27,10 +27,10 @@ public class CompilerOptions_Tests{
 	private VerilogCompiler runCompiler(String[] args) throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException, org.sbml.jsbml.text.parser.ParseException {
 		CommandLine cmds = VerilogRunner.parseCommandLine(args);
 		CompilerOptions setupOpt = VerilogRunner.createCompilerOptions(cmds);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
 		if(setupOpt.isGenerateSBOL() || setupOpt.isGenerateSBML() || setupOpt.isGenerateLPN()) {
-			compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
+			compiledVerilog.compile(setupOpt.isOutputFlatModel());
 			if(setupOpt.isGenerateLPN()){
 				compiledVerilog.generateLPN(setupOpt.getImplementationModuleId(), setupOpt.getTestbenchModuleId(), setupOpt.getOutputDirectory());
 			}

@@ -64,12 +64,10 @@ public class VerilogDecomposer{
 	
 	private static ASTNode convertAndToNor(LinkedList<ASTNode> operands) {
 		ASTNode or = new ASTNode(ASTNode.Type.LOGICAL_OR);
-		
 		ASTNode righOp = invertNode(operands.removeLast());
 		ASTNode leftOP = invertNode(operands.removeLast());
 		or.addChild(leftOP);
 		or.addChild(righOp);
-		
 		return invertNode(or);
 	}
 	

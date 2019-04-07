@@ -33,7 +33,7 @@ import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SynthesisNode;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.FunctionalComponentNode;
 
 public class TechMapping {
 
@@ -157,25 +157,25 @@ public class TechMapping {
 				setupOpts.setSpecificationFile(specFile);
 				
 				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpeficationFile(), setupOpts.getLibraryFile());
-				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping();
-				if(outSBOL)
-				{
-					sbolDoc_sol.write(new File(outFileName));
-				}
-				else if (outSBML)
-				{
-					// TODO: Write solution to one SBML file
-					for (ModuleDefinition moduleDef : sbolDoc_sol.getRootModuleDefinitions())
-					{
-//						List<BioModel> models = SBOL2SBML.generateModel(outFileName, moduleDef, sbolDoc_sol);
-//						SBMLutilities.exportSBMLModels(models, outputDir, outFileName, false, true, true);
-					}
-				}
-				else
-				{
-					// Write to command line
-					sbolDoc_sol.write(System.out);
-				}
+//				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping();
+//				if(outSBOL)
+//				{
+//					sbolDoc_sol.write(new File(outFileName));
+//				}
+//				else if (outSBML)
+//				{
+//					// TODO: Write solution to one SBML file
+//					for (ModuleDefinition moduleDef : sbolDoc_sol.getRootModuleDefinitions())
+//					{
+////						List<BioModel> models = SBOL2SBML.generateModel(outFileName, moduleDef, sbolDoc_sol);
+////						SBMLutilities.exportSBMLModels(models, outputDir, outFileName, false, true, true);
+//					}
+//				}
+//				else
+//				{
+//					// Write to command line
+//					sbolDoc_sol.write(System.out);
+//				}
 			}
 			else if (sbmlTechMap)
 			{

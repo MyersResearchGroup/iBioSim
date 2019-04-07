@@ -42,17 +42,20 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
  */
 public class SBOLGraph
 {
-	private Map<URI, SynthesisNode> _nodes; 
-	private List<SynthesisNode> _root; 
-	private int _score;
-	private List<SynthesisNode> _topologicalSortNodes;
+	private Map<URI, FunctionalComponentNode> fcNodes; 
+	private List<FunctionalComponentNode> inputNodes; 
+	private int score;
+	private List<FunctionalComponentNode> topologicalSortNodes;
+	private Map<FunctionalComponent, FunctionalComponentNode> mappedNode;
+	private ModuleDefinition md;
 
 	public SBOLGraph()
 	{
-		_nodes = new HashMap<URI, SynthesisNode>();
-		_root = new ArrayList<SynthesisNode>();
-		_score = 0;
-		_topologicalSortNodes = new ArrayList<SynthesisNode>();
+		fcNodes = new HashMap<URI, FunctionalComponentNode>();
+		inputNodes = new ArrayList<FunctionalComponentNode>();
+		mappedNode = new HashMap<FunctionalComponent, FunctionalComponentNode>();
+		score = 0;
+		topologicalSortNodes = new ArrayList<FunctionalComponentNode>();
 	}
 
 	/**
@@ -61,14 +64,16 @@ public class SBOLGraph
 	 * @param md
 	 * @throws SBOLTechMapException 
 	 */
-	public void createGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException
+	public void initializeGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException
 	{
+		this.md = md;
 		for(FunctionalComponent f : md.getFunctionalComponents())
 		{
-			if(!_nodes.containsKey(f.getIdentity()))
+			if(!fcNodes.containsKey(f.getIdentity()))
 			{
-				SynthesisNode node = new SynthesisNode(sbolDoc, md, f);
-				_nodes.put(f.getIdentity(), node);
+				FunctionalComponentNode node = new FunctionalComponentNode(sbolDoc, f);
+				node.addContext(md);
+				fcNodes.put(f.getIdentity(), node);
 			}	
 		}
 		for(Interaction interaction : md.getInteractions())
@@ -78,15 +83,19 @@ public class SBOLGraph
 			addNodeRelationship(interactionType, interaction);
 		}
 
-		for(SynthesisNode node : _nodes.values())
+		for(FunctionalComponentNode node : fcNodes.values())
 		{
-			if(node.isRoot())
+			if(node.isRoot(md))
 			{
-				_root.add(node);
+				inputNodes.add(node);
 			}
-			node.setDegree(getDegree(node, node.getDegree()));
+			node.setDegree(md, getDegree(node, node.getDegree(md)));
 		}
 
+	}
+	
+	void addFunctionalComponentNode(FunctionalComponentNode fcNode, URI fcIdentity) {
+		this.fcNodes.put(fcIdentity, fcNode);
 	}
 	
 	private void addNodeRelationship(URI interactionType, Interaction interaction) throws SBOLTechMapException {
@@ -134,7 +143,7 @@ public class SBOLGraph
 	
 	public void setScore(int value)
 	{
-		_score = value;
+		score = value;
 	}
 	
 	/**
@@ -142,32 +151,32 @@ public class SBOLGraph
 	 */
 	public void topologicalSort()
 	{
-		List<SynthesisNode> sortedElements = new ArrayList<SynthesisNode>();
-		Queue<SynthesisNode> unsortedElements = new LinkedList<SynthesisNode>();
+		List<FunctionalComponentNode> sortedElements = new ArrayList<FunctionalComponentNode>();
+		Queue<FunctionalComponentNode> unsortedElements = new LinkedList<FunctionalComponentNode>();
 		unsortedElements.addAll(getRoots());
 
 		while(!unsortedElements.isEmpty())
 		{
-			SynthesisNode n = unsortedElements.poll();
+			FunctionalComponentNode n = unsortedElements.poll();
 			if(sortedElements.contains(n))
 				continue;
 			sortedElements.add(n);
-			for(SynthesisNode m: n.getChildren()) {
-				if(m.getParents().size() == 1) {
-					unsortedElements.add(m.getChildren().get(0));
+			for(FunctionalComponentNode m: n.getChildren(md)) {
+				if(m.getParents(md).size() == 1) {
+					unsortedElements.add(m.getChildren(md).get(0));
 					break;
 				}
-				else if(m.getParents().size() == 2){
+				else if(m.getParents(md).size() == 2){
 					//assume 2 input into promoter
-					List<SynthesisNode> parentNodes = m.getParents(); 
+					List<FunctionalComponentNode> parentNodes = m.getParents(md); 
 					if(parentNodes.contains(n) && parentNodes.contains(unsortedElements.peek())) {
-						SynthesisNode temp = unsortedElements.poll();
+						FunctionalComponentNode temp = unsortedElements.poll();
 						sortedElements.add(temp);
-						unsortedElements.add(m.getChildren().get(0));
+						unsortedElements.add(m.getChildren(md).get(0));
 
 					}
 					else if(sortedElements.containsAll(parentNodes)) {
-						unsortedElements.add(m.getChildren().get(0));
+						unsortedElements.add(m.getChildren(md).get(0));
 					}
 					else {
 						unsortedElements.add(n);
@@ -175,45 +184,49 @@ public class SBOLGraph
 				}
 			} //end of for loop
 		} //end of while loop
-		this._topologicalSortNodes = sortedElements;
+		this.topologicalSortNodes = sortedElements;
+	}
+	
+	public ModuleDefinition getModuleDefinition() {
+		return this.md;
 	}
 	
 	/**
 	 * Retrieves the root/output node of the SBOLGraph
 	 * @return
 	 */
-	public SynthesisNode getOutputNode() {
-		if(_topologicalSortNodes.size() <= 0)
+	public FunctionalComponentNode getOutputNode() {
+		if(topologicalSortNodes.size() <= 0)
 			return null; 
-		return _topologicalSortNodes.get(_topologicalSortNodes.size()-1);
+		return topologicalSortNodes.get(topologicalSortNodes.size()-1);
 	}
 
 	/**
 	 * Retrieve the leaf nodes of the SBOLGraph
 	 * @return
 	 */
-	public List<SynthesisNode> getRoots() {
-		return this._root;
+	public List<FunctionalComponentNode> getRoots() {
+		return this.inputNodes;
 	}
 
 	private void addChild(URI parent, URI child) {
-		SynthesisNode parentNode = _nodes.get(parent);
-		SynthesisNode childNode = _nodes.get(child);
-		parentNode.addChild(childNode);
+		FunctionalComponentNode parentNode = fcNodes.get(parent);
+		FunctionalComponentNode childNode = fcNodes.get(child);
+		parentNode.addChild(md, childNode);
 
 	}
 
 	private void addParent(URI parent, URI child) {
-		SynthesisNode parentNode = _nodes.get(parent);
-		SynthesisNode childNode = _nodes.get(child);
-		childNode.addParent(parentNode);
+		FunctionalComponentNode parentNode = fcNodes.get(parent);
+		FunctionalComponentNode childNode = fcNodes.get(child);
+		childNode.addParent(md, parentNode);
 
 	}
 
 	private void addRelationship(URI parent, URI child, URI relation) {
-		SynthesisNode parentNode = _nodes.get(parent);
-		SynthesisNode childNode = _nodes.get(child);
-		parentNode.addRelationship(childNode, relation);
+		FunctionalComponentNode parentNode = fcNodes.get(parent);
+		FunctionalComponentNode childNode = fcNodes.get(child);
+		parentNode.addRelationship(md, childNode, relation);
 
 	}
 
@@ -221,20 +234,20 @@ public class SBOLGraph
 	 * Get all nodes within an SBOLGraph
 	 * @return
 	 */
-	public List<SynthesisNode> getAllNodes() {
-		List<SynthesisNode> nodes = new ArrayList<SynthesisNode>();
-		for (Map.Entry<URI,SynthesisNode> entry : this._nodes.entrySet()) {
+	public List<FunctionalComponentNode> getAllNodes() {
+		List<FunctionalComponentNode> nodes = new ArrayList<FunctionalComponentNode>();
+		for (Map.Entry<URI,FunctionalComponentNode> entry : this.fcNodes.entrySet()) {
 			nodes.add(entry.getValue());
 		}
 		return nodes; 
 	}
 
-	private int getDegree(SynthesisNode node, int degree) {
-		if(node.isLeaf()) {
+	private int getDegree(FunctionalComponentNode node, int degree) {
+		if(node.isLeaf(md)) {
 			return degree;
 		}
 		int max = 0; int temp;
-		for(SynthesisNode child : node.getChildren()) {
+		for(FunctionalComponentNode child : node.getChildren(md)) {
 			temp = getDegree(child, degree);
 			if(temp > max) {
 				max = temp;
@@ -247,8 +260,8 @@ public class SBOLGraph
 	 * Retrieve a list of nodes sorted from calling toplogical sort on an SBOLGraph
 	 * @return - The sorted species nodes of the SBOLGraph after calling topological sort
 	 */
-	public List<SynthesisNode> getTopologicalSortNodes() {
-		return _topologicalSortNodes;
+	public List<FunctionalComponentNode> getTopologicalSortNodes() {
+		return topologicalSortNodes;
 	}
 	
 	/**
@@ -262,9 +275,9 @@ public class SBOLGraph
 			output = new BufferedWriter(new FileWriter(file));
 			output.write("digraph G {");
 
-			for(URI uri : _nodes.keySet()) {
-				SynthesisNode node = _nodes.get(uri);
-				for(SynthesisNode child : node.getChildren()) {
+			for(URI uri : fcNodes.keySet()) {
+				FunctionalComponentNode node = fcNodes.get(uri);
+				for(FunctionalComponentNode child : node.getChildren(md)) {
 					String parentId = node.toString();
 					String childId = child.toString();
 					output.write(parentId + " -> " + childId + ";");
@@ -291,7 +304,7 @@ public class SBOLGraph
 	@Override
 	public String toString()
 	{
-		return "SBOLGraph [Gate name = " + getOutputNode().getModuleDefinition() + "]";
+		return "SBOLGraph [Gate name = " + this.md + "]";
 	}
 	
 	

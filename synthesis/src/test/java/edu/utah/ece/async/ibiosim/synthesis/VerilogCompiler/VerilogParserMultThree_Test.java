@@ -42,7 +42,8 @@ public class VerilogParserMultThree_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogMultThree_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogMultThree_tbFile);
 	
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());
 		

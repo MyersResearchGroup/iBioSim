@@ -32,7 +32,8 @@ public class VerilogParserFilter_Test {
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
 	
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
 		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
 		Assert.assertEquals(2, moduleList.size());
 		

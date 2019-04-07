@@ -36,8 +36,9 @@ public class SBOLExample7_Test {
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogSynthesizedFilter_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);   
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);   
 		
 		String vName = "Start_Sensor_Actuator_net";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -50,7 +51,7 @@ public class SBOLExample7_Test {
 
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(47, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(37, sbolDoc.getComponentDefinitions().size());
 	}
 	
 	
@@ -78,7 +79,7 @@ public class SBOLExample7_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(38, actualSize);
+		Assert.assertEquals(28, actualSize);
 	}
 	
 	@Test

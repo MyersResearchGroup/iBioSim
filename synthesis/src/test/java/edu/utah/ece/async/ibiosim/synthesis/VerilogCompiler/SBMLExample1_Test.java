@@ -36,8 +36,9 @@ public class SBMLExample1_Test {
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogInitBlock_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel());
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(setupOpt.isOutputFlatModel());
 		
 		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("init_block");
 		Assert.assertNotNull(sbmlWrapper);		

@@ -15,7 +15,8 @@ import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
-import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GeneticGate.GateType;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
 
 
 /**

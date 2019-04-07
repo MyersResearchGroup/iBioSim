@@ -621,16 +621,16 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					libDoc.createCopy(sbolDoc);
 				}
 				Synthesis syn = SBOLTechMapRunner.run(specDoc, libDoc);
-				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping();
-				// Note: Convert the solution back to SBML and load back to iBioSim workspace
-				String solution_dir = synthFilePath;
-				List<String> solutionFileIDs = new ArrayList<String>();
-				for (ModuleDefinition moduleDef : sbolTechMap_solution.getRootModuleDefinitions())
-				{
-					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, sbolTechMap_solution);
-					solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
-				} 
-				return solutionFileIDs;
+//				SBOLDocument sbolTechMap_solution = syn.getSBOLfromTechMapping();
+//				// Note: Convert the solution back to SBML and load back to iBioSim workspace
+//				String solution_dir = synthFilePath;
+//				List<String> solutionFileIDs = new ArrayList<String>();
+//				for (ModuleDefinition moduleDef : sbolTechMap_solution.getRootModuleDefinitions())
+//				{
+//					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, sbolTechMap_solution);
+//					solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
+//				} 
+//				return solutionFileIDs;
 			} 
 			catch (SBOLValidationException e) 
 			{

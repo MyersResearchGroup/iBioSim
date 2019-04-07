@@ -48,23 +48,24 @@ public class VerilogCompiler {
 	private Map<String, WrappedSBML> vmoduleToSBML;
 	private Map<String, WrappedSBOL> vmoduleToSBOL;
 	private LPN lpn;
+
+	public VerilogCompiler() {
+		this.stcList = new ArrayList<>();
+		this.verilogModules = new HashMap<>();
+		this.vmoduleToSBML = new HashMap<>();
+		this.vmoduleToSBOL = new HashMap<>();
+	}
 	
 	/**
 	 * Load the verilog files into a binary tree to begin parsing.
 	 * @throws VerilogCompilerException 
 	 */
 	public VerilogCompiler(List<File> verilogFiles) throws VerilogCompilerException {
-	
-		this.stcList = new ArrayList<>();
-		this.verilogModules = new HashMap<>();
-		this.vmoduleToSBML = new HashMap<>();
-		this.vmoduleToSBOL = new HashMap<>();
-		
+		this();
 		for(File file : verilogFiles) {
-			parseFile(file);
+			addFile(file);
 		}
 	}
-	
 	
 	/**
 	 * 
@@ -82,7 +83,7 @@ public class VerilogCompiler {
 		}
 	}
 	
-	public void compileVerilogOutputData(boolean generateFlatModel) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
+	public void compile(boolean generateFlatModel) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
 		for(VerilogModule verilogModule : this.verilogModules.values()) {
 			if(verilogModule.getNumContinousAssignments() > 0 && verilogModule.getNumInitialBlock() == 0 && verilogModule.getNumAlwaysBlock() == 0) {
 				generateSBOL(generateFlatModel, verilogModule);
@@ -94,11 +95,11 @@ public class VerilogCompiler {
 	}
 	
 	public boolean containsSBMLData() {
-		return this.vmoduleToSBML.isEmpty();
+		return !this.vmoduleToSBML.isEmpty();
 	}
 	
 	public boolean containsSBOLData() {
-		return this.vmoduleToSBOL.isEmpty();
+		return !this.vmoduleToSBOL.isEmpty();
 	}
 	
 	private void generateSBOL(boolean generateFlatModel, VerilogModule verilogModule) throws SBOLException, SBOLValidationException, ParseException, VerilogCompilerException {
@@ -108,13 +109,16 @@ public class VerilogCompiler {
 
 	}
 	
-	private void generateSBML(VerilogModule verilogModule) throws ParseException {
+	private void generateSBML(VerilogModule verilogModule) throws ParseException, VerilogCompilerException {
 		VerilogToSBML v2sbml = null;
 		if(verilogModule.getNumSubmodules() > 0) {
 			Map<String, VerilogModule> referredModules = new HashMap<>();
 			for(VerilogModuleInstance subModule : verilogModule.getSubmodules()) {
 				String moduleId = subModule.getModuleReference();
 				VerilogModule module = verilogModules.get(moduleId);
+				if(module == null) {
+					throw new VerilogCompilerException("Unable to find the referenced Verilog Module " + moduleId);
+				}
 				referredModules.put(moduleId, module);
 			}
 			v2sbml = new VerilogToSBML(referredModules);
@@ -257,7 +261,7 @@ public class VerilogCompiler {
 		SBOLWriter.write(document, fullPath);
 	}
 	
-	private void parseFile(File file) {
+	public void addFile(File file) {
 		InputStream inputStream;
 		
 		try {

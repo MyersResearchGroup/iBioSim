@@ -345,6 +345,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected SEDMLDocument 			sedmlDocument		= null;
 
 	protected SBOLDocument			sbolDocument		= null;
+	private VerilogCompiler verilogCompiler = null;
 
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
@@ -359,6 +360,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @throws Exception
 	 */
 	public Gui() {
+		verilogCompiler = new VerilogCompiler();
 	}
 	
 	public void openGui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException { 
@@ -4753,26 +4755,25 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	private void importVerilogData(File verilogFile){
 		try {
-			CompilerOptions compilerOptions = new CompilerOptions();
-			compilerOptions.addVerilogFile(verilogFile);
-			compilerOptions.setOutputDirectory(root);
+			String outputDir = root;
 			
-			VerilogCompiler parsedVerilog = VerilogRunner.compile(compilerOptions.getVerilogFiles());
-			parsedVerilog.compileVerilogOutputData(true);
-			if(parsedVerilog.containsSBMLData()) {
-				for (Entry<String, WrappedSBML> sbmlResult : parsedVerilog.getMappedSBMLWrapper().entrySet()) {
+			verilogCompiler.addFile(verilogFile);
+			verilogCompiler.parseVerilog();
+			verilogCompiler.compile(true);
+			if(verilogCompiler.containsSBMLData()) {
+				for (Entry<String, WrappedSBML> sbmlResult : verilogCompiler.getMappedSBMLWrapper().entrySet()) {
 					String verilogFileName = sbmlResult.getKey() + ".xml";
 					SBMLDocument sbmlDoc = sbmlResult.getValue().getSBMLDocument();
-					parsedVerilog.exportSBML(sbmlDoc, compilerOptions.getOutputDirectory() + File.separator + verilogFileName);
+					verilogCompiler.exportSBML(sbmlDoc, outputDir + File.separator + verilogFileName);
 					addToTree(verilogFileName);
 				}
 			}
-			else if(parsedVerilog.containsSBOLData()) {
-				for(Entry<String, WrappedSBOL> sbolResult : parsedVerilog.getMappedSBOLWrapper().entrySet()) {
+			else if(verilogCompiler.containsSBOLData()) {
+				for(Entry<String, WrappedSBOL> sbolResult : verilogCompiler.getMappedSBOLWrapper().entrySet()) {
 					String verilogFileName = sbolResult.getKey() + ".xml";
 					SBOLDocument sbolDoc = sbolResult.getValue().getSBOLDocument();
-					String sbolFullPath = compilerOptions.getOutputDirectory() + File.separator + verilogFileName;
-					parsedVerilog.exportSBOL(sbolDoc, sbolFullPath);
+					String sbolFullPath = outputDir + File.separator + verilogFileName;
+					verilogCompiler.exportSBOL(sbolDoc, sbolFullPath);
 					importSBOLFile(sbolFullPath);
 				}
 			}

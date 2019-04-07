@@ -37,8 +37,9 @@ public class SBMLExample11_Test {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(setupOpt.isOutputFlatModel()); 
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(setupOpt.isOutputFlatModel()); 
 		
 		WrappedSBML tbWrapper = compiledVerilog.getSBMLWrapper("filter_testbench");
 		Assert.assertNotNull(tbWrapper);

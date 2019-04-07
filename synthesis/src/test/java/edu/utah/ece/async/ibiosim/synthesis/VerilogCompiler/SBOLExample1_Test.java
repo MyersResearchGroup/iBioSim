@@ -17,6 +17,7 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -37,8 +38,9 @@ public class SBOLExample1_Test {
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCont3_file);
-		VerilogCompiler compiledVerilog = VerilogRunner.compile(setupOpt.getVerilogFiles());
-		compiledVerilog.compileVerilogOutputData(true);  
+		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
+		compiledVerilog.parseVerilog();
+		compiledVerilog.compile(true);  
 		
 		String vName = "contAssign";
 		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
@@ -51,7 +53,7 @@ public class SBOLExample1_Test {
 	
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(7, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(6, sbolDoc.getComponentDefinitions().size());
 	}
 
 	@Test
@@ -78,7 +80,7 @@ public class SBOLExample1_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(5, actualSize);
+		Assert.assertEquals(4, actualSize);
 	}
 
 	@Test
@@ -141,7 +143,7 @@ public class SBOLExample1_Test {
 
 		for(Participation p : production.getParticipations()) {
 			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.PROMOTER)) {
+			if(role.equals(SequenceOntology.ENGINEERED_REGION)) {
 				Assert.assertEquals(gate, p.getParticipant());
 			}
 			else if(role.equals(SystemsBiologyOntology.PRODUCT)){

@@ -19,7 +19,7 @@ import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
 /**
- * Class to run Gate Generation.
+ * Class to run Gate Generation through command line.
  * @author Tramy Nguyen
  */
 public class GateGenerationRunner {
