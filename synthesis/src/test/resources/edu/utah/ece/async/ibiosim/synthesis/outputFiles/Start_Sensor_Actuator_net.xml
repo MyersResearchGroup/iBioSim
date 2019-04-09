@@ -5,13 +5,13 @@
     <sbol:displayId>circuit_Start_Sensor_Actuator_net</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC6_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC6_wiredProtein"/>
-        <sbol:displayId>FC6_wiredProtein</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC15_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC15_notTU"/>
+        <sbol:displayId>FC15_notTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD15_wiredProtein/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD33_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -19,19 +19,9 @@
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC12_notTU"/>
         <sbol:displayId>FC12_notTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD31_notTU/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD24_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC4_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC4_wiredProtein"/>
-        <sbol:displayId>FC4_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD8_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -39,7 +29,37 @@
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC3_notTU"/>
         <sbol:displayId>FC3_notTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD4_notTU/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC7_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC7_wiredProtein"/>
+        <sbol:displayId>FC7_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD13_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC9_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC9_wiredProtein"/>
+        <sbol:displayId>FC9_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD18_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC11_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC11_notTU"/>
+        <sbol:displayId>FC11_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD20_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -49,29 +69,9 @@
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC8_norTU"/>
         <sbol:displayId>FC8_norTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD19_norTU/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD14_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC10_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC10_wiredProtein"/>
-        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD24_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC7_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC7_wiredProtein"/>
-        <sbol:displayId>FC7_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD16_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -79,27 +79,7 @@
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC5_norTU"/>
         <sbol:displayId>FC5_norTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD11_norTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC15_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC15_notTU"/>
-        <sbol:displayId>FC15_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD43_notTU/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC11_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC11_notTU"/>
-        <sbol:displayId>FC11_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD26_notTU/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD8_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -115,21 +95,41 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC13_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC13_norTU"/>
-        <sbol:displayId>FC13_norTU</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC6_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC6_wiredProtein"/>
+        <sbol:displayId>FC6_wiredProtein</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD37_norTU/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD12_wiredProtein/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC9_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC9_wiredProtein"/>
-        <sbol:displayId>FC9_wiredProtein</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC4_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC4_wiredProtein"/>
+        <sbol:displayId>FC4_wiredProtein</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD23_wiredProtein/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD7_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC10_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC10_wiredProtein"/>
+        <sbol:displayId>FC10_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD19_wiredProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC14_wiredProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC14_wiredProtein"/>
+        <sbol:displayId>FC14_wiredProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD32_wiredProtein/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
@@ -145,16 +145,6 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC14_wiredProtein/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC14_wiredProtein"/>
-        <sbol:displayId>FC14_wiredProtein</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD41_wiredProtein/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC0_Start/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC0_Start"/>
         <sbol:displayId>FC0_Start</sbol:displayId>
@@ -162,6 +152,16 @@
         <sbol:definition rdf:resource="http://dummy.org/CD0_Start/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC13_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_Start_Sensor_Actuator_net/FC13_norTU"/>
+        <sbol:displayId>FC13_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD28_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -607,190 +607,38 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD5_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD5_ribosome"/>
-    <sbol:displayId>CD5_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD37_norTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU"/>
-    <sbol:displayId>CD37_norTU</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD37_norTU/C22_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU/C22_part"/>
-        <sbol:displayId>C22_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD35_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD37_norTU/C26_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU/C26_part"/>
-        <sbol:displayId>C26_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD40_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD37_norTU/C24_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU/C24_part"/>
-        <sbol:displayId>C24_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD38_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD37_norTU/C25_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU/C25_part"/>
-        <sbol:displayId>C25_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD39_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD37_norTU/C23_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_norTU/C23_part"/>
-        <sbol:displayId>C23_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD36_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD24_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_wiredProtein"/>
-    <sbol:displayId>CD24_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD32_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD32_ribosome"/>
-    <sbol:displayId>CD32_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD14_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_terminator"/>
-    <sbol:displayId>CD14_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD31_notTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_notTU"/>
-    <sbol:displayId>CD31_notTU</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD31_notTU/C20_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_notTU/C20_part"/>
-        <sbol:displayId>C20_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD33_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD31_notTU/C19_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_notTU/C19_part"/>
-        <sbol:displayId>C19_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD32_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD31_notTU/C21_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_notTU/C21_part"/>
-        <sbol:displayId>C21_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD34_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD31_notTU/C18_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_notTU/C18_part"/>
-        <sbol:displayId>C18_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD30_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD8_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_wiredProtein"/>
-    <sbol:displayId>CD8_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD43_notTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_notTU"/>
-    <sbol:displayId>CD43_notTU</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD43_notTU/C30_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_notTU/C30_part"/>
-        <sbol:displayId>C30_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD46_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD43_notTU/C27_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_notTU/C27_part"/>
-        <sbol:displayId>C27_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD42_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD43_notTU/C29_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_notTU/C29_part"/>
-        <sbol:displayId>C29_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD45_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD43_notTU/C28_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_notTU/C28_part"/>
-        <sbol:displayId>C28_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD44_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD6_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD6_cds"/>
-    <sbol:displayId>CD6_cds</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10_cds"/>
+    <sbol:displayId>CD10_cds</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD27_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD27_ribosome"/>
-    <sbol:displayId>CD27_ribosome</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD19_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_wiredProtein"/>
+    <sbol:displayId>CD19_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD36_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD36_terminator"/>
+    <sbol:displayId>CD36_terminator</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD15_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD15_promoter"/>
+    <sbol:displayId>CD15_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD18_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_wiredProtein"/>
+    <sbol:displayId>CD18_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_Sensor/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_Sensor"/>
@@ -798,251 +646,169 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD13_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD13_cds"/>
-    <sbol:displayId>CD13_cds</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD3_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_promoter"/>
-    <sbol:displayId>CD3_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD19_norTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU"/>
-    <sbol:displayId>CD19_norTU</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD8_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er"/>
+    <sbol:displayId>CD8_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD19_norTU/C13_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU/C13_part"/>
-        <sbol:displayId>C13_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD22_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD19_norTU/C9_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU/C9_part"/>
-        <sbol:displayId>C9_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD17_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD19_norTU/C12_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU/C12_part"/>
-        <sbol:displayId>C12_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD21_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD19_norTU/C10_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU/C10_part"/>
-        <sbol:displayId>C10_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD18_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD19_norTU/C11_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_norTU/C11_part"/>
-        <sbol:displayId>C11_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD20_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD36_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD36_promoter"/>
-    <sbol:displayId>CD36_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD18_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_promoter"/>
-    <sbol:displayId>CD18_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD46_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_terminator"/>
-    <sbol:displayId>CD46_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD11_norTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU"/>
-    <sbol:displayId>CD11_norTU</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD11_norTU/C7_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU/C7_part"/>
-        <sbol:displayId>C7_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD13_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD11_norTU/C6_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU/C6_part"/>
-        <sbol:displayId>C6_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD12_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD11_norTU/C4_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU/C4_part"/>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C4_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C4_part"/>
         <sbol:displayId>C4_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD10_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C5_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C5_part"/>
+        <sbol:displayId>C5_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD11_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:definition rdf:resource="http://dummy.org/CD9_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD11_norTU/C8_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU/C8_part"/>
-        <sbol:displayId>C8_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD14_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD11_norTU/C5_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_norTU/C5_part"/>
-        <sbol:displayId>C5_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD10_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD21_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD21_cds"/>
-    <sbol:displayId>CD21_cds</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10_promoter"/>
-    <sbol:displayId>CD10_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD26_notTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_notTU"/>
-    <sbol:displayId>CD26_notTU</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD20_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er"/>
+    <sbol:displayId>CD20_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_notTU/C16_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_notTU/C16_part"/>
-        <sbol:displayId>C16_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C10_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C10_part"/>
+        <sbol:displayId>C10_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD28_cds/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD22_cds/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_notTU/C15_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_notTU/C15_part"/>
-        <sbol:displayId>C15_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C11_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C11_part"/>
+        <sbol:displayId>C11_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD27_ribosome/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD23_terminator/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_notTU/C17_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_notTU/C17_part"/>
-        <sbol:displayId>C17_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C9_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C9_part"/>
+        <sbol:displayId>C9_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD29_terminator/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD21_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD5_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD5_cds"/>
+    <sbol:displayId>CD5_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD22_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_cds"/>
+    <sbol:displayId>CD22_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD30_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_cds"/>
+    <sbol:displayId>CD30_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD27_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD27_terminator"/>
+    <sbol:displayId>CD27_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD24_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er"/>
+    <sbol:displayId>CD24_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_notTU/C14_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_notTU/C14_part"/>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C14_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C14_part"/>
         <sbol:displayId>C14_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD27_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C12_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C12_part"/>
+        <sbol:displayId>C12_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:definition rdf:resource="http://dummy.org/CD25_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C13_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C13_part"/>
+        <sbol:displayId>C13_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD26_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD42_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_promoter"/>
-    <sbol:displayId>CD42_promoter</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD31_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_terminator"/>
+    <sbol:displayId>CD31_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD12_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_wiredProtein"/>
+    <sbol:displayId>CD12_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD26_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_cds"/>
+    <sbol:displayId>CD26_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD35_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD35_cds"/>
+    <sbol:displayId>CD35_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_promoter"/>
+    <sbol:displayId>CD4_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_notTU/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_notTU"/>
-    <sbol:displayId>CD4_notTU</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD4_notTU/C2_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_notTU/C2_part"/>
-        <sbol:displayId>C2_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD6_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD4_notTU/C1_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_notTU/C1_part"/>
-        <sbol:displayId>C1_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD5_ribosome/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD4_notTU/C0_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_notTU/C0_part"/>
-        <sbol:displayId>C0_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD3_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD4_notTU/C3_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_notTU/C3_part"/>
-        <sbol:displayId>C3_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD7_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_Start/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_Start"/>
@@ -1050,50 +816,50 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD35_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD35_promoter"/>
-    <sbol:displayId>CD35_promoter</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD3_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_er"/>
+    <sbol:displayId>CD3_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD3_er/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_er/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD5_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD3_er/C0_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_er/C0_part"/>
+        <sbol:displayId>C0_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD4_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD3_er/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_er/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD6_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD17_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD17_promoter"/>
-    <sbol:displayId>CD17_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD45_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD45_cds"/>
-    <sbol:displayId>CD45_cds</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD16_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_cds"/>
+    <sbol:displayId>CD16_cds</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD44_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD44_ribosome"/>
-    <sbol:displayId>CD44_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD16_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_wiredProtein"/>
-    <sbol:displayId>CD16_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD38_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD38_ribosome"/>
-    <sbol:displayId>CD38_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD7_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD7_terminator"/>
-    <sbol:displayId>CD7_terminator</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD6_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD6_terminator"/>
+    <sbol:displayId>CD6_terminator</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -1104,79 +870,160 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD33_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_cds"/>
-    <sbol:displayId>CD33_cds</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD12_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_ribosome"/>
-    <sbol:displayId>CD12_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD34_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD34_terminator"/>
-    <sbol:displayId>CD34_terminator</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD23_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD23_terminator"/>
+    <sbol:displayId>CD23_terminator</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD41_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD41_wiredProtein"/>
-    <sbol:displayId>CD41_wiredProtein</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD28_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er"/>
+    <sbol:displayId>CD28_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C17_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C17_part"/>
+        <sbol:displayId>C17_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD31_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C16_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C16_part"/>
+        <sbol:displayId>C16_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD30_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C15_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C15_part"/>
+        <sbol:displayId>C15_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD29_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD17_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD17_terminator"/>
+    <sbol:displayId>CD17_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD14_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er"/>
+    <sbol:displayId>CD14_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C7_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C7_part"/>
+        <sbol:displayId>C7_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD16_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C8_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C8_part"/>
+        <sbol:displayId>C8_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD17_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C6_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C6_part"/>
+        <sbol:displayId>C6_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD15_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD13_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD13_wiredProtein"/>
+    <sbol:displayId>CD13_wiredProtein</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD39_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD39_cds"/>
-    <sbol:displayId>CD39_cds</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD32_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD32_wiredProtein"/>
+    <sbol:displayId>CD32_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD33_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_er"/>
+    <sbol:displayId>CD33_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD33_er/C19_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_er/C19_part"/>
+        <sbol:displayId>C19_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD35_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD33_er/C18_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_er/C18_part"/>
+        <sbol:displayId>C18_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD34_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD33_er/C20_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_er/C20_part"/>
+        <sbol:displayId>C20_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD36_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD30_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_promoter"/>
-    <sbol:displayId>CD30_promoter</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD7_wiredProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD7_wiredProtein"/>
+    <sbol:displayId>CD7_wiredProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD34_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD34_promoter"/>
+    <sbol:displayId>CD34_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD40_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD40_terminator"/>
-    <sbol:displayId>CD40_terminator</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD21_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD21_promoter"/>
+    <sbol:displayId>CD21_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD23_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD23_wiredProtein"/>
-    <sbol:displayId>CD23_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD28_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_cds"/>
-    <sbol:displayId>CD28_cds</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD29_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD29_promoter"/>
+    <sbol:displayId>CD29_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD20_ribosome/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_ribosome"/>
-    <sbol:displayId>CD20_ribosome</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD15_wiredProtein/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD15_wiredProtein"/>
-    <sbol:displayId>CD15_wiredProtein</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD9_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD9_promoter"/>
@@ -1185,9 +1032,9 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD22_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_terminator"/>
-    <sbol:displayId>CD22_terminator</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD11_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_terminator"/>
+    <sbol:displayId>CD11_terminator</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
@@ -1198,12 +1045,5 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD29_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD29_terminator"/>
-    <sbol:displayId>CD29_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
 </rdf:RDF>

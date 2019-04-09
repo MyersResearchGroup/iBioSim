@@ -13,6 +13,12 @@ import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 
+/**
+ * Test VPR on a transcriptional unit made to generate the production of LacI protein forming a complex with a small molecule for one of the inputs to a NOR gate.
+ * The second input is the repression of a TetR protein on a pTet promoter. 
+ * @author Tramy Nguyen
+ *
+ */
 public class NORGate_Test {
 
 	private static SBOLDocument norLibrary;
@@ -20,7 +26,7 @@ public class NORGate_Test {
 	@BeforeClass
 	public static void setupTest() throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException, GateGenerationExeception {
 		GateGeneratorOptions setupOpt = new GateGeneratorOptions();
-		setupOpt.addTUFile(TestingFiles.norTU1_File);
+		setupOpt.addTUFile(TestingFiles.norTU3_File);
 
 
 		GateGeneration generator = GateGenerationRunner.run(setupOpt.getTUSBOLDocumentList(), "https://synbiohub.programmingbiology.org/");

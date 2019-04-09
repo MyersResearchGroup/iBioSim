@@ -2,6 +2,11 @@ package edu.utah.ece.async.ibiosim.synthesis;
 
 import java.io.File;
 
+/**
+ * Files used for testing Technology Mapping package
+ * @author Tramy Nguyen
+ *
+ */
 public class TestingFiles {
 	private static String resourceDir = String.join(File.separator, "src", "test", "resources");
 	public static String synthDir = File.separator + String.join(File.separator, "edu", "utah", "ece", "async", "ibiosim", "synthesis") ; 
@@ -21,6 +26,8 @@ public class TestingFiles {
 	
 	public static String notTU1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "not1TU.xml").getFile();
 	public static String norTU1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "norTU.xml").getFile();
+	public static String norTU2_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NOR_LacI_TU.xml").getFile();
+	public static String norTU3_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NOR_LacI_TU_v2.xml").getFile();
 	
 	public static String NOT_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "notDesign.xml").getFile(); 
 	public static String NOT2_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "not2Design.xml").getFile(); 

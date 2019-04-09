@@ -1,11 +1,11 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sbolstandard.core2.AccessType;
+import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
@@ -13,6 +13,7 @@ import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
+import org.sbolstandard.core2.RestrictionType;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
@@ -37,7 +38,7 @@ public class WrappedSBOL {
 	private Map<String, GeneticGate> gateMapping;
 	
 	//use to generate unique URIs
-	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter;
+	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter, seqConstraint;
 
 	public WrappedSBOL() {
 		this.sbolDoc = SBOLUtility.getInstance().createSBOLDocument();
@@ -45,7 +46,7 @@ public class WrappedSBOL {
 		this.gateMapping = new HashMap<>();
 	}
 	
-	public ModuleDefinition createCircuit(String id) throws SBOLValidationException {
+	public ModuleDefinition createModuleDefinition(String id) throws SBOLValidationException {
 		return this.sbolDoc.createModuleDefinition(id, sbolVersion);
 	}
 	
@@ -79,11 +80,23 @@ public class WrappedSBOL {
 		return inter;
 	}
 	
+	public Interaction createComplexFormationInteraction(ModuleDefinition circuit, FunctionalComponent reactant1, FunctionalComponent reactant2, FunctionalComponent complex) throws SBOLValidationException {
+		Interaction inter = addInteraction(circuit, getInteractionId() + "_Stim", SystemsBiologyOntology.NON_COVALENT_BINDING);
+		createInteractionParticipation(inter, SystemsBiologyOntology.REACTANT, reactant1.getIdentity());
+		createInteractionParticipation(inter, SystemsBiologyOntology.REACTANT, reactant2.getIdentity());
+		createInteractionParticipation(inter, SystemsBiologyOntology.PRODUCT, complex.getIdentity());
+		return inter;
+	}
+	
 	public Interaction createProductionInteraction(ModuleDefinition circuit, FunctionalComponent template, FunctionalComponent product) throws SBOLValidationException {
 		Interaction inter = addInteraction(circuit, getInteractionId() + "_Prod", SystemsBiologyOntology.GENETIC_PRODUCTION);
 		createInteractionParticipation(inter, SystemsBiologyOntology.TEMPLATE, template.getIdentity());
 		createInteractionParticipation(inter, SystemsBiologyOntology.PRODUCT, product.getIdentity());
 		return inter;
+	}
+	
+	public void createSequenceConstraint(ComponentDefinition tu, Component dnaComponent, URI subject, URI object) throws SBOLValidationException {
+		tu.createSequenceConstraint(getSequenceConstraintId(), RestrictionType.PRECEDES, subject, object);
 	}
 
 	public FunctionalComponent createTranscriptionalUnit(ModuleDefinition circuit, String tu_id) throws SBOLValidationException {
@@ -130,7 +143,7 @@ public class WrappedSBOL {
 		return part;
 	}
 	
-	public FunctionalComponent addProtein(ModuleDefinition circuit, String proteinId, DirectionType proteinDirection) throws SBOLValidationException, SBOLException {
+	public FunctionalComponent createProtein(ModuleDefinition circuit, String proteinId, DirectionType proteinDirection) throws SBOLValidationException, SBOLException {
 		String id = "_" + proteinId; 
 		
 		ComponentDefinition protein = addComponentDefinition(getComponentDefinitionId() + id, ComponentDefinition.PROTEIN);
@@ -139,16 +152,16 @@ public class WrappedSBOL {
 		return protein_fc;
 	}
 	
-	public ArrayList<ComponentDefinition> generatePromoters(int numofPromoters) throws SBOLValidationException{
-		ArrayList<ComponentDefinition> promoters = new ArrayList<ComponentDefinition>();
-		for(int i = 0; i < numofPromoters; i++) {
-			ComponentDefinition promoter = createPromoter();
-			promoters.add(promoter);
-		}
-		return promoters;
+	public FunctionalComponent createMolecule(ModuleDefinition circuit, String moleculeId, URI moleculeType, DirectionType moleculeDirection) throws SBOLValidationException, SBOLException {
+		String id = "_" + moleculeId; 
+		
+		ComponentDefinition molecule = addComponentDefinition(getComponentDefinitionId() + id, moleculeType);
+		FunctionalComponent molecule_fc = addFunctionalComponent(circuit, getFunctionalComponentId() + id, AccessType.PUBLIC, molecule.getIdentity(), moleculeDirection);
+		proteinMapping.put(moleculeId, molecule_fc.getDisplayId());
+		return molecule_fc;
 	}
 	
-	public Module addSubCircuit(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {
+	public Module createModule(ModuleDefinition fullCircuit, ModuleDefinition subCircuit) throws SBOLValidationException {
 		return fullCircuit.createModule(getModuleId(), subCircuit.getDisplayId());
 	}
 	
@@ -208,6 +221,10 @@ public class WrappedSBOL {
 	
 	private String getMapsToId() {
 		return "MT" + this.mapsToCounter++;
+	}
+	
+	private String getSequenceConstraintId() {
+		return "SequenceConstraint" + this.seqConstraint++;
 	}
 	
 	public SBOLDocument getSBOLDocument(){

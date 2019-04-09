@@ -41,7 +41,7 @@ public class VerilogToSBOL {
 	
 	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
 		
-		ModuleDefinition fullCircuit = sbolWrapper.createCircuit("circuit_" + module.getModuleId());
+		ModuleDefinition fullCircuit = sbolWrapper.createModuleDefinition("circuit_" + module.getModuleId());
 		
 		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
 		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);
@@ -54,7 +54,7 @@ public class VerilogToSBOL {
 
 	private void convertVerilogPorts(ModuleDefinition circuit, List<String> verilogPorts, DirectionType portType) throws SBOLValidationException, SBOLException {
 		for(String port : verilogPorts) {
-			FunctionalComponent portProtein = sbolWrapper.addProtein(circuit, port, portType);
+			FunctionalComponent portProtein = sbolWrapper.createProtein(circuit, port, portType);
 			primaryProteins.put(port, portProtein);
 		}
 	}
@@ -69,8 +69,8 @@ public class VerilogToSBOL {
 			HashMap<FunctionalComponent, FunctionalComponent> primaryProteins = new HashMap<>();
 			
 			if(!isFlatModel) {
-				ModuleDefinition subCircuit = sbolWrapper.createCircuit("circuit_" + var);
-				Module subCircuit_instance = sbolWrapper.addSubCircuit(circuit, subCircuit);
+				ModuleDefinition subCircuit = sbolWrapper.createModuleDefinition("circuit_" + var);
+				Module subCircuit_instance = sbolWrapper.createModule(circuit, subCircuit);
 				
 				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var, AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
 				addPrimaryProteinMapping(var, primaryProteins, subCircuit_outputProtein);
@@ -160,7 +160,7 @@ public class VerilogToSBOL {
 			return sbolWrapper.getFunctionalComponent(circuit, proteinId);
 		}
 		
-		return sbolWrapper.addProtein(circuit, "wiredProtein", DirectionType.INOUT);
+		return sbolWrapper.createProtein(circuit, "wiredProtein", DirectionType.INOUT);
 	}
 
 	private FunctionalComponent addInput(ModuleDefinition circuit, ASTNode logicNode, GeneticGate logicGate, FunctionalComponent tu, HashMap<FunctionalComponent, FunctionalComponent> primaryProteinList) throws SBOLValidationException, VerilogCompilerException, SBOLException {

@@ -15,6 +15,7 @@ import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
 
@@ -49,8 +50,7 @@ public class GateGeneration {
 		for(SBOLDocument enrichedTU : enrichedTU_list) {
 			for(ModuleDefinition mdGate : enrichedTU.getRootModuleDefinitions()) {
 				GateIdentifier gateUtil = new GateIdentifier(enrichedTU, mdGate);
-				String gatePattern = gateUtil.createGate();
-				GeneticGate gate = gateUtil.getGate(gatePattern);
+				GeneticGate gate = gateUtil.createGate();
 				gateList.add(gate);
 			}
 		}

@@ -6,7 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	NOTGate_Test.class
+	NOTGate_Test.class, 
+	NORGate_Test.class,
+	TestGateIdentifier.class,
+	Workflow.class
 })
 
 /**
