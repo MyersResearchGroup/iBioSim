@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
@@ -28,17 +30,10 @@ public class LPNExample6_Test {
 
 	@BeforeClass
 	public static void setupTest() throws XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBMLException, ParseException, SBOLValidationException { 
-
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogScanflop_impFile);
-		setupOpt.addVerilogFile(TestingFiles.verilogScanflop_tbFile);
-
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		compiledVerilog.compile(true);
-		compiledVerilog.generateLPN("scanflop_imp", "scanflop_testbench", TestingFiles.writeOutputDir);
-
-		lpn = compiledVerilog.getLPN();
+		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
+		VerilogModule spec = compiler.parseVerilogFile(new File(TestingFiles.verilogScanflop_impFile));
+		VerilogModule tb = compiler.parseVerilogFile(new File(TestingFiles.verilogScanflop_tbFile));
+		lpn = compiler.compileToLPN(spec, tb, TestingFiles.writeOutputDir);
 	}
 
 	@Test

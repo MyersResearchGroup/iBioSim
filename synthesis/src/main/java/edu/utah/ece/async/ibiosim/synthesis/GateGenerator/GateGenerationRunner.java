@@ -30,7 +30,11 @@ public class GateGenerationRunner {
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			GateGeneratorOptions setupOpt = createGateGenerationOptions(cmd);
-			GateGeneration generator = run(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
+			
+			GateGeneration generator = new GateGeneration();
+			List<SBOLDocument> enrichedTU_List = generator.enrichedTU(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
+			generator.sortEnrichedTUList(enrichedTU_List);
+			
 			String outDir = setupOpt.getOutputDirectory() + File.separator;
 			if(setupOpt.outputNOTLibrary()) {
 				SBOLDocument notLib = generator.getNOTLibrary();
@@ -40,6 +44,27 @@ public class GateGenerationRunner {
 				SBOLDocument norLib = generator.getNORLibrary();
 				generator.exportLibrary(norLib, outDir + "NORGates_LibrarySize" + norLib.getRootModuleDefinitions().size() + ".xml");
 			}
+			if(setupOpt.outputORLibrary()) {
+				SBOLDocument orLib = generator.getORLibrary();
+				generator.exportLibrary(orLib, outDir + "ORGates_LibrarySize" + orLib.getRootModuleDefinitions().size() + ".xml");
+			}
+			if(setupOpt.outputNANDLibrary()) {
+				SBOLDocument nandLib = generator.getNANDLibrary();
+				generator.exportLibrary(nandLib, outDir + "NANDGates_LibrarySize" + nandLib.getRootModuleDefinitions().size() + ".xml");
+			}
+			if(setupOpt.outputANDLibrary()) {
+				SBOLDocument andLib = generator.getANDLibrary();
+				generator.exportLibrary(andLib, outDir + "ANDGates_LibrarySize" + andLib.getRootModuleDefinitions().size() + ".xml");
+			}
+			if(setupOpt.outputNOTSUPPORTEDLibrary()) {
+				SBOLDocument notSuppLib = generator.getNOTSUPPORTEDLibrary();
+				generator.exportLibrary(notSuppLib, outDir + "NOTSUPPORTEDGates_LibrarySize" + notSuppLib.getRootModuleDefinitions().size() + ".xml");
+			}
+			if(setupOpt.outputLibrary()) {
+				SBOLDocument lib = generator.getLibrary();
+				generator.exportLibrary(lib, outDir + "AllGates_LibrarySize" + lib.getRootModuleDefinitions().size() + ".xml");
+			}
+			
 		} 
 		catch (SBOLValidationException e) {
 			e.printStackTrace();
@@ -85,6 +110,10 @@ public class GateGenerationRunner {
 		options.addOption("od", "odir", true, "Path of output directory where GateGeneration will produce the results to.");
 		options.addOption("NOT", false, "Export all the available NOT gates");
 		options.addOption("NOR", false, "Export all the available NOR gates");
+		options.addOption("OR", false, "Export all the available OR gates");
+		options.addOption("NAND", false, "Export all the available NAND gates");
+		options.addOption("AND", false, "Export all the available AND gates");
+		options.addOption("NOTSUPPORTED", false, "Export gates that were not identified during sorting.");
 		options.addOption("m", "merge", false, "Export selected logic gates into one SBOL file. If this flag is not turned on, each library of gates will be exported into separate files."); 
 		return options;
 	}
@@ -128,13 +157,20 @@ public class GateGenerationRunner {
 		if(cmd.hasOption("NOR")) {
 			gateGenOptions.setOutputNORLibrary(true);
 		}
+		if(cmd.hasOption("OR")) {
+			gateGenOptions.setOutputORLibrary(true);
+		}
+		if(cmd.hasOption("NAND")) {
+			gateGenOptions.setOutputNANDLibrary(true);
+		}
+		if(cmd.hasOption("AND")) {
+			gateGenOptions.setOutputANDLibrary(true);
+		}
+		if(cmd.hasOption("NOTSUPPORTED")) {
+			gateGenOptions.setOutputNANDLibrary(true);
+		}
+		
 		return gateGenOptions;
 	}
 	
-	public static GateGeneration run(List<SBOLDocument> transcriptionUnitList, String synbiohubRepository) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException, GateGenerationExeception {
-		GateGeneration generator = new GateGeneration();
-		List<SBOLDocument> enrichedTU_List = generator.enrichedTU(transcriptionUnitList, synbiohubRepository);
-		generator.sortEnrichedTUList(enrichedTU_List);
-		return generator;
-	}
 }

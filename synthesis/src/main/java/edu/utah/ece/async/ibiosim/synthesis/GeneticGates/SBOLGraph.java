@@ -11,7 +11,7 @@
  * and also available online at <http://www.async.ece.utah.edu/ibiosim/License>.
  *  
  *******************************************************************************/
-package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
+package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,6 +32,9 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.FunctionalComponentNode;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
+
 /**
  * 
  *
@@ -47,7 +50,7 @@ public class SBOLGraph
 	private int score;
 	private List<FunctionalComponentNode> topologicalSortNodes;
 	private Map<FunctionalComponent, FunctionalComponentNode> mappedNode;
-	private ModuleDefinition md;
+	private ModuleDefinition md, decomposedMD;
 
 	public SBOLGraph()
 	{
@@ -56,6 +59,11 @@ public class SBOLGraph
 		mappedNode = new HashMap<FunctionalComponent, FunctionalComponentNode>();
 		score = 0;
 		topologicalSortNodes = new ArrayList<FunctionalComponentNode>();
+	}
+	
+	public void initializeGraph(SBOLDocument sbolDoc, ModuleDefinition mdWithMapsTo, ModuleDefinition decomposedMD) throws SBOLTechMapException {
+		this.md = mdWithMapsTo;
+		initializeGraph(sbolDoc, decomposedMD);
 	}
 
 	/**
@@ -66,7 +74,7 @@ public class SBOLGraph
 	 */
 	public void initializeGraph(SBOLDocument sbolDoc, ModuleDefinition md) throws SBOLTechMapException
 	{
-		this.md = md;
+		this.decomposedMD = md;
 		for(FunctionalComponent f : md.getFunctionalComponents())
 		{
 			if(!fcNodes.containsKey(f.getIdentity()))
@@ -94,7 +102,7 @@ public class SBOLGraph
 
 	}
 	
-	void addFunctionalComponentNode(FunctionalComponentNode fcNode, URI fcIdentity) {
+	public void addFunctionalComponentNode(FunctionalComponentNode fcNode, URI fcIdentity) {
 		this.fcNodes.put(fcIdentity, fcNode);
 	}
 	
@@ -188,7 +196,7 @@ public class SBOLGraph
 	}
 	
 	public ModuleDefinition getModuleDefinition() {
-		return this.md;
+		return this.decomposedMD;
 	}
 	
 	/**

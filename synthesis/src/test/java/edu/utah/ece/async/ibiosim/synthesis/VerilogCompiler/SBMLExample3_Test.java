@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
 /**
  * 
@@ -31,17 +33,14 @@ public class SBMLExample3_Test {
 	
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogReg_file);
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		compiledVerilog.compile(setupOpt.isOutputFlatModel()); 
+		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
+		VerilogModule vModule = compiler.parseVerilogFile(new File(TestingFiles.verilogReg_file));
 		
-		WrappedSBML sbmlWrapper = compiledVerilog.getSBMLWrapper("registers");
-		Assert.assertNotNull(sbmlWrapper);
+		WrappedSBML sbmlWrapper = compiler.generateSBMLFromVerilog(vModule);
+		Assert.assertNotNull(sbmlWrapper);		
 		
 		sbmlModel = sbmlWrapper.getModel();
-		Assert.assertNotNull(sbmlModel);
+		Assert.assertNotNull(sbmlModel);;
 		Assert.assertEquals("registers", sbmlModel.getId());
 	}
 

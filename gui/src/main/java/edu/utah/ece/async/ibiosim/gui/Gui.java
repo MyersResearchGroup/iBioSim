@@ -60,6 +60,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
@@ -105,6 +106,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
+import org.apache.jena.ext.com.google.common.io.Files;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -153,6 +155,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
@@ -212,14 +215,14 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
-//import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.CompilerOptions;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogRunner;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToSBML;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToSBOL;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBML;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBOL;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerException;
-import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompiler;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogParser;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarLexer;
@@ -345,7 +348,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected SEDMLDocument 			sedmlDocument		= null;
 
 	protected SBOLDocument			sbolDocument		= null;
-	private VerilogCompiler verilogCompiler = null;
+	private Map<String, VerilogModule> verilogFiles;
 
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
@@ -360,7 +363,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @throws Exception
 	 */
 	public Gui() {
-		verilogCompiler = new VerilogCompiler();
+		verilogFiles = new HashMap<>();
 	}
 	
 	public void openGui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException { 
@@ -2374,7 +2377,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		else if(e.getSource().equals(importVerilog)) {
 			File verilogFile = getFile("verilog");
 			if(verilogFile != null) {
-				importVerilogData(verilogFile);
+				VerilogModule verilogModule = addVerilogFile(verilogFile);
+				importVerilogData(verilogModule);
 			}
 		}
 		else if (e.getSource().equals(importSbol)) {
@@ -4752,39 +4756,48 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
-	private void importVerilogData(File verilogFile){
+	
+	public void exportSBOL(SBOLDocument document, String fullPath) throws IOException, SBOLConversionException {
+		SBOLWriter.write(document, fullPath);
+	}
+	
+	private VerilogModule addVerilogFile(File file) {
+		VerilogParser verilogParser = new VerilogParser();
+		VerilogModule verilogModule = null;
 		try {
-			String outputDir = root;
-			
-			verilogCompiler.addFile(verilogFile);
-			verilogCompiler.parseVerilog();
-			verilogCompiler.compile(true);
-			if(verilogCompiler.containsSBMLData()) {
-				for (Entry<String, WrappedSBML> sbmlResult : verilogCompiler.getMappedSBMLWrapper().entrySet()) {
-					String verilogFileName = sbmlResult.getKey() + ".xml";
-					SBMLDocument sbmlDoc = sbmlResult.getValue().getSBMLDocument();
-					verilogCompiler.exportSBML(sbmlDoc, outputDir + File.separator + verilogFileName);
-					addToTree(verilogFileName);
-				}
-			}
-			else if(verilogCompiler.containsSBOLData()) {
-				for(Entry<String, WrappedSBOL> sbolResult : verilogCompiler.getMappedSBOLWrapper().entrySet()) {
-					String verilogFileName = sbolResult.getKey() + ".xml";
-					SBOLDocument sbolDoc = sbolResult.getValue().getSBOLDocument();
-					String sbolFullPath = outputDir + File.separator + verilogFileName;
-					verilogCompiler.exportSBOL(sbolDoc, sbolFullPath);
-					importSBOLFile(sbolFullPath);
-				}
-			}
-
-		} catch (SBMLException | XMLStreamException | IOException | BioSimException | VerilogCompilerException | org.sbml.jsbml.text.parser.ParseException | SBOLValidationException | SBOLConversionException e) {
-			JOptionPane.showMessageDialog(frame, e.toString(), "Verilog Compiler Error", JOptionPane.ERROR_MESSAGE);
+			verilogModule = verilogParser.parseVerilogFile(file);
+		} catch (XMLStreamException | IOException | BioSimException e) {
+			JOptionPane.showMessageDialog(frame, e.toString(), "Unable to Import Verilog", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
-
-
+		
+		verilogFiles.put(verilogModule.getModuleId(), verilogModule);
+		return verilogModule;
 	}
+	
+	private void importVerilogData(VerilogModule verilogModule) {
+		String outputDir = root;
+		String outputFileFullPath = outputDir + File.separator + verilogModule.getModuleId() + ".xml";
+		try {
+			if(verilogModule.getNumContinousAssignments() > 0) {
+				VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
+				WrappedSBOL conversionResult = sbolConverter.convertVerilog2SBOL(verilogModule);
+				SBOLWriter.write(conversionResult.getSBOLDocument(), outputFileFullPath);
+				importSBOLFile(outputFileFullPath);
+			}
+			else {
+				VerilogToSBML sbmlConverter = new VerilogToSBML(this.verilogFiles);
+				WrappedSBML conversionResult = sbmlConverter.convertVerilogToSBML(verilogModule);
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBMLToFile(conversionResult.getSBMLDocument(), outputFileFullPath);
+				addToTree(verilogModule.getModuleId() + ".xml");
+			}
+		} catch (IOException | SBOLConversionException | SBOLException | SBOLValidationException | org.sbml.jsbml.text.parser.ParseException | VerilogCompilerException | SBMLException | XMLStreamException e) {
+			JOptionPane.showMessageDialog(frame, e.toString(), "Unable to Load Verilog Data to iBioSim", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+
 	
 	private File getFile(String fileType) {
 		Preferences biosimrc = Preferences.userRoot();

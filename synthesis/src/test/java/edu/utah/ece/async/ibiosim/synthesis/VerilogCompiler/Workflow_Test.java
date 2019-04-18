@@ -115,4 +115,12 @@ public class Workflow_Test {
 				"-sbol", "-od", TestingFiles.writeOutputDir, "-flat"};
 		VerilogRunner.main(cmd);
 	}
+	
+	@Test 
+	public void Test() {
+		String[] cmd = {"-v", TestingFiles.verilogOrSpec_File,
+				"-sbol", "-od", TestingFiles.writeOutputDir, "-flat"};
+		
+		VerilogRunner.main(cmd);;
+	}
 }

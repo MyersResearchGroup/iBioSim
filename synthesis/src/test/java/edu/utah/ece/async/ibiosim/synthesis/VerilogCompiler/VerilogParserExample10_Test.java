@@ -1,8 +1,8 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -33,15 +33,8 @@ public class VerilogParserExample10_Test {
 	
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogCondStmt3_file);
-	
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
-		Assert.assertEquals(1, moduleList.size());
-		
-		verilogModule = moduleList.get("if_stmnt3");
+		VerilogParser compiledVerilog = new VerilogParser();
+		verilogModule = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogCondStmt3_file));
 		Assert.assertNotNull(verilogModule);
 	}
 	

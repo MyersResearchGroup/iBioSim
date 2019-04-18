@@ -15,6 +15,9 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.SBOLGraph;
 
 /**
  * 
@@ -109,9 +112,9 @@ public class SBOLTechMapRunner {
 		return syn;
 	}
 	
-	public static void asyncRun(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLTechMapException {
-		List<SBOLGraph> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
-		List<SBOLGraph> specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
+	public static void asyncRun(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLTechMapException, GateGenerationExeception, SBOLValidationException {
+		List<DecomposedGraph> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
+		List<DecomposedGraph> specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
 		SBOLTechMap techMap = new SBOLTechMap(libraryGates, specification);
 		techMap.performTechnologyMapping();
 		

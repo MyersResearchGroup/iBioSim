@@ -1,15 +1,18 @@
 package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sbolstandard.core2.CombinatorialDerivation;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
+import org.sbolstandard.core2.TopLevel;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
@@ -27,6 +30,7 @@ public class GateGeneration {
 	
 	private SBOLUtility sbolUtility;
 	private List<GeneticGate> gateList;
+	private int enrichedMdId;
 	
 	public GateGeneration() {
 		this.sbolUtility = SBOLUtility.getInstance();
@@ -36,14 +40,27 @@ public class GateGeneration {
 	public List<SBOLDocument> enrichedTU(List<SBOLDocument> transcriptionalUnitList, String SynBioHubRepository) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException {
 		List<SBOLDocument> enrichedTU_list = new ArrayList<>();
 		for(SBOLDocument document : transcriptionalUnitList) {
+			List<URI> templateURIs = getTemplateFromCombinatorialDerivation(document);
 			for(ComponentDefinition rootCD : document.getRootComponentDefinitions()) {
+				if(templateURIs.contains(rootCD.getIdentity())) {
+					continue;
+				}
 				SBOLDocument tuDesign = sbolUtility.createSBOLDocument();
 				document.createRecursiveCopy(tuDesign, rootCD);
-				SBOLDocument enrichedTU = VPRModelGenerator.generateModel(SynBioHubRepository, tuDesign, "");
+				SBOLDocument enrichedTU = VPRModelGenerator.generateModel(SynBioHubRepository, tuDesign, getEnrichedMdId() + "_" + rootCD.getDisplayId());
 				enrichedTU_list.add(enrichedTU);
+				System.out.println(rootCD.getDisplayId());
 			}
 		}
 		return enrichedTU_list;
+	}
+	
+	private List<URI> getTemplateFromCombinatorialDerivation(SBOLDocument doc) {
+		List<URI> templateURIs = new ArrayList<>();
+		for(CombinatorialDerivation combinDeriv : doc.getCombinatorialDerivations()) {
+			templateURIs.add(combinDeriv.getTemplateURI());
+		}
+		return templateURIs;
 	}
 	
 	public void sortEnrichedTUList(List<SBOLDocument> enrichedTU_list) throws GateGenerationExeception, SBOLValidationException {
@@ -67,53 +84,65 @@ public class GateGeneration {
 	}
 	
 	public SBOLDocument getNORLibrary() throws SBOLValidationException {
-		SBOLDocument norLibary = sbolUtility.createSBOLDocument();
+		SBOLDocument norLibrary = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(GateType.NOR)) {
-				norLibary.createCopy(gate.getSBOLDocument());
+				norLibrary.createCopy(gate.getSBOLDocument());
 			}
 		}
-		return norLibary;
+		return norLibrary;
 	}
 	
 	public SBOLDocument getORLibrary() throws SBOLValidationException {
-		SBOLDocument orLibary = sbolUtility.createSBOLDocument();
+		SBOLDocument orLibrary = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(GateType.OR)) {
-				orLibary.createCopy(gate.getSBOLDocument());
+				orLibrary.createCopy(gate.getSBOLDocument());
 			}
 		}
-		return orLibary;
+		return orLibrary;
 	}
 	
 	public SBOLDocument getNANDLibrary() throws SBOLValidationException {
-		SBOLDocument nandLibary = sbolUtility.createSBOLDocument();
+		SBOLDocument nandLibrary = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(GateType.NAND)) {
-				nandLibary.createCopy(gate.getSBOLDocument());
+				nandLibrary.createCopy(gate.getSBOLDocument());
 			}
 		}
-		return nandLibary;
+		return nandLibrary;
 	}
 	
 	public SBOLDocument getANDLibrary() throws SBOLValidationException {
-		SBOLDocument andLibary = sbolUtility.createSBOLDocument();
+		SBOLDocument andLibrary = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(GateType.AND)) {
-				andLibary.createCopy(gate.getSBOLDocument());
+				andLibrary.createCopy(gate.getSBOLDocument());
 			}
 		}
-		return andLibary;
+		return andLibrary;
 	}
 	
 	public SBOLDocument getNOTSUPPORTEDLibrary() throws SBOLValidationException {
-		SBOLDocument notSupportedLibary = sbolUtility.createSBOLDocument();
+		SBOLDocument notSupportedLibrary = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(GateType.NOTSUPPORTED)) {
-				notSupportedLibary.createCopy(gate.getSBOLDocument());
+				notSupportedLibrary.createCopy(gate.getSBOLDocument());
 			}
 		}
-		return notSupportedLibary;
+		return notSupportedLibrary;
+	}
+	
+	public SBOLDocument getLibrary() throws SBOLValidationException {
+		SBOLDocument library = sbolUtility.createSBOLDocument();
+		for(GeneticGate gate : this.gateList) {
+			library.createCopy(gate.getSBOLDocument());
+			//library.createCopy(gate.getModuleDefinition());
+			//for(TopLevel t : gate.getSBOLDocument().getTopLevels()) {
+			//	library.createCopy(t);
+			//}
+		}
+		return library;
 	}
 	
 	public List<GeneticGate> getGeneticGateList(){
@@ -122,6 +151,10 @@ public class GateGeneration {
 	
 	public void exportLibrary(SBOLDocument libraryDocument, String fullPath) throws IOException, SBOLConversionException {
 		SBOLWriter.write(libraryDocument, fullPath);
+	}
+	
+	private String getEnrichedMdId() {
+		return "TopLevel" + enrichedMdId++;
 	}
 	
 }

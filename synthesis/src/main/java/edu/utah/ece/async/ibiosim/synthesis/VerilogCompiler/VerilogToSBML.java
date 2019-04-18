@@ -32,11 +32,11 @@ public class VerilogToSBML {
 	private WrappedSBML sbmlWrapper;
 	private Map<String, VerilogModule> referredModules;
 	
-	VerilogToSBML() {
+	public VerilogToSBML() {
 		this.sbmlWrapper = new WrappedSBML();
 	}
 	
-	VerilogToSBML(Map<String, VerilogModule> referredModules) {
+	public VerilogToSBML(Map<String, VerilogModule> referredModules) {
 		this();
 		this.referredModules = referredModules;
 	}

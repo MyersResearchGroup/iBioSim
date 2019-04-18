@@ -3,6 +3,8 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -13,11 +15,15 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
  * Main class to call the Verilog compiler and Verilog synthesizer.
@@ -29,36 +35,52 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 public class VerilogRunner {
 
 	private static final char separator = ' ';
-	
+
 	public static void main(String[] args) {
-		
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			CompilerOptions compilerOptions = createCompilerOptions(cmd);
-			VerilogCompiler compiledVerilog = new VerilogCompiler(compilerOptions.getVerilogFiles()); 
-			compiledVerilog.parseVerilog();
-			compiledVerilog.compile(compilerOptions.isOutputFlatModel());
-			
-			String outputDirectory = compilerOptions.getOutputDirectory();
-			
-			if(compilerOptions.isGenerateSBOL()){
-				compiledVerilog.exportSBOL(compiledVerilog.getMappedSBOLWrapper(), outputDirectory);
+			VerilogParser verilogParser = new VerilogParser();
+			Map<String, VerilogModule> verilogModules = new HashMap<>();
+			for(File file : compilerOptions.getVerilogFiles()) {
+				VerilogModule verilogModule = verilogParser.parseVerilogFile(file);
+				verilogModules.put(verilogModule.getModuleId(), verilogModule);
 			}
-			
-			if(compilerOptions.isGenerateSBML()) {
-				compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory); 
-				if(compilerOptions.isOutputFlatModel()) {
-					SBMLDocument flattenDoc = compiledVerilog.flattenSBML(compilerOptions.getTestbenchModuleId(), compilerOptions.getOutputDirectory()); 
-					compiledVerilog.exportSBML(flattenDoc, outputDirectory + File.separator + compilerOptions.getOutputFileName() + ".xml");
+
+			String outputDir = compilerOptions.getOutputDirectory();
+			if(compilerOptions.isGenerateSBOL()){
+				VerilogToSBOL sbolConverter = new VerilogToSBOL(compilerOptions.isOutputFlatModel());
+				for (VerilogModule vModule : verilogModules.values()) {
+					WrappedSBOL sbolResult = sbolConverter.convertVerilog2SBOL(vModule);
+					SBOLWriter.write(sbolResult.getSBOLDocument(), outputDir + File.separator + vModule.getModuleId() + ".xml");
 				}
 			}
-			
-			if(compilerOptions.isGenerateLPN()){
-				compiledVerilog.generateLPN(compilerOptions.getImplementationModuleId(), compilerOptions.getTestbenchModuleId(), outputDirectory);
-				compiledVerilog.exportLPN(compiledVerilog.getLPN(), outputDirectory + File.separator + compilerOptions.getOutputFileName() + ".lpn"); 
+			else {
+				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
+
+				for(File file : compilerOptions.getVerilogFiles()) {
+					VerilogModule verilogModule = sbmlLPNConverter.parseVerilogFile(file);
+				}
+				if(compilerOptions.isGenerateLPN()){
+					VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
+					VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
+					LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
+					lpn.save(outputDir + File.separator + compilerOptions.getOutputFileName()  + ".lpn");
+				}
+//				if(compilerOptions.isGenerateSBML() && !compilerOptions.isOutputFlatModel()) {
+//					VerilogToSBML sbmlConverter = new VerilogToSBML(verilogModules);
+//					for (VerilogModule vModule : verilogModules.values()) {
+//						WrappedSBML sbmlResult = sbmlConverter.convertVerilogToSBML(vModule);
+//						SBMLWriter writer = new SBMLWriter();
+//						writer.writeSBMLToFile(sbmlResult.getSBMLDocument(), outputDir + File.separator + vModule.getModuleId() + ".xml");
+//					}
+//				}
+
 
 			}
-			
+
+
+
 		} 
 		catch (org.apache.commons.cli.ParseException e1) {
 			printUsage();
@@ -91,15 +113,17 @@ public class VerilogRunner {
 			System.err.println("SBOL Conversion ERROR: Unable to export SBOL data. " + e.getMessage());
 			return;
 		}
+
 	}
-	
+
+
 	private static void printUsage() {
 		HelpFormatter formatter = new HelpFormatter();
-		
+
 		String sbolUsage = "-v <arg(s)> -od usr/dir/example/ -sbol -flat \n";
 		String sbmlUsage = "usage: -v <arg(s)> -od usr/dir/example/ -sbml \n";
 		String lpnUsage = "usage: -v <arg(s)> -tb my_testbench -imp my_impCircuit -o example -od usr/dir/ -lpn \n";
-		
+
 		formatter.printHelp(125, sbolUsage + sbmlUsage + lpnUsage , 
 				"VerilogCompiler Options", 
 				getCommandLineOptions(), 
@@ -110,7 +134,7 @@ public class VerilogRunner {
 	private static Options getCommandLineOptions() {
 		Option verilogFiles = new Option("v", "verilogFiles",  true, "compile the given verilog file(s).");
 		verilogFiles.setValueSeparator(separator);
-		
+
 		Options options = new Options();
 		options.addOption(verilogFiles);
 		options.addOption("h", "help", false, "show the available command line needed to run this application.");
@@ -137,7 +161,7 @@ public class VerilogRunner {
 
 	protected static CompilerOptions createCompilerOptions(CommandLine cmd) throws FileNotFoundException {
 		CompilerOptions compilerOptions = new CompilerOptions();
-		
+
 		if(cmd.hasOption("h")) {
 			printUsage();
 		}

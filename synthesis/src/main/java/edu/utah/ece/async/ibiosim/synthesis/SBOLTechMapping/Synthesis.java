@@ -37,6 +37,7 @@ import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.SBOLGraph;
 
 
 /**

@@ -26,7 +26,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ORGate;
  * @author Tramy Nguyen
  *
  */
-public class TestGateIdentifier {
+public class GateIdentifier_Test {
 	
 	@Test
 	public void Test_NOT() throws SBOLValidationException {

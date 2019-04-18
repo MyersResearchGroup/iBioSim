@@ -2,6 +2,7 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -27,6 +28,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
 /**
  * Test hierarchical model for an SR-latch example exported into SBOL.
@@ -40,16 +42,12 @@ public class SBOLExample8_Test {
 		
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogCont5_file);
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		compiledVerilog.compile(false);  
-		
-		String vName = "contAssign5";
-		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
+		VerilogParser verilogParser = new VerilogParser();
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogCont5_file));
+		VerilogToSBOL sbolConverter = new VerilogToSBOL(false);
+		WrappedSBOL sbolWrapper = sbolConverter.convertVerilog2SBOL(verilogModule);
 		Assert.assertNotNull(sbolWrapper);
-	
+		
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		fullCircuit = sbolDoc.getModuleDefinition("circuit_contAssign5", "1.0");
 		Assert.assertNotNull(fullCircuit);
@@ -59,7 +57,6 @@ public class SBOLExample8_Test {
 		
 		subcircuit_qnot = sbolDoc.getModuleDefinition("circuit_qnot", "1.0");
 		Assert.assertNotNull(subcircuit_qnot);
-		
 	}
 
 	@Test 

@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,16 +29,8 @@ public class VerilogParserFilter_Test {
 	
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
-		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
-	
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
-		Assert.assertEquals(2, moduleList.size());
-		
-		verilog_tb = moduleList.get("filter_testbench");
+		VerilogParser compiledVerilog = new VerilogParser();
+		verilog_tb = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogFilter_tbFile));
 		Assert.assertNotNull(verilog_tb);
 	}
 	

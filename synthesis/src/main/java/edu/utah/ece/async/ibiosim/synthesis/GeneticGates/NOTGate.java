@@ -8,6 +8,8 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+
 /**
  * 
  * @author Tramy Nguyen
@@ -16,6 +18,7 @@ import org.sbolstandard.core2.SBOLDocument;
 public class NOTGate implements GeneticGate {
 
 	private SBOLDocument sbolDoc;
+	private DecomposedGraph decomposedNot;
 	private ModuleDefinition md;
 	private List<FunctionalComponent> outputs;
 	private FunctionalComponent input;
@@ -27,9 +30,9 @@ public class NOTGate implements GeneticGate {
 		this.outputs = new ArrayList<>();
 		this.md = md;
 	}
-	
-	public void setTranscriptionalUnit(FunctionalComponent fc) {
-		tu = fc;
+
+	public void setTranscriptionalUnit(FunctionalComponent tu) {
+		this.tu = tu;
 	}
 	
 	public FunctionalComponent getTranscriptionalUnit() {
@@ -87,6 +90,30 @@ public class NOTGate implements GeneticGate {
 		return outputs.contains(fc);
 	}
 
+	@Override
+	public DecomposedGraph getDecomposedGraph() {
+		if (decomposedNot == null) {
+			if(outputs.size() >= 1) {
+				decomposedNot = createDecomposedGate();
+			}
+		}
+		return decomposedNot;
+	}
+
+	private DecomposedGraph createDecomposedGate() {
+		DecomposedGraph decomposedNOT = new DecomposedGraph();
+		Node tuNode = new Node();
+		Node inputNode = new Node(input.getIdentity(), input.getDefinition());
+		Node outputNode = new Node(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		decomposedNOT.addAllNodes(tuNode, inputNode, outputNode);
+		
+		decomposedNOT.addNodeRelationship(tuNode, inputNode);
+		decomposedNOT.addNodeRelationship(outputNode, tuNode);
+		
+		decomposedNOT.setNodeAsLeaf(inputNode);
+		decomposedNOT.setNodeAsOutput(outputNode);
+		return decomposedNOT;
+	}
 	
 
 }

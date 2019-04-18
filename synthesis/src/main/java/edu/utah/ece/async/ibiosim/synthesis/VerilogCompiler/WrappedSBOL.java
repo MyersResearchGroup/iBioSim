@@ -18,6 +18,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
@@ -44,6 +45,10 @@ public class WrappedSBOL {
 		this.sbolDoc = SBOLUtility.getInstance().createSBOLDocument();
 		this.proteinMapping = new HashMap<>();
 		this.gateMapping = new HashMap<>();
+	}
+	
+	public TopLevel copyTopLevel(ComponentDefinition cd) throws SBOLValidationException {
+		return this.sbolDoc.createCopy(cd);
 	}
 	
 	public ModuleDefinition createModuleDefinition(String id) throws SBOLValidationException {

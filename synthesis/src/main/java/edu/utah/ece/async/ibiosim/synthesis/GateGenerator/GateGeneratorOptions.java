@@ -22,7 +22,7 @@ public class GateGeneratorOptions {
 	private SBOLUtility sbolUtility;
 	private String outFileName, outDir, selectedSBHRepo;
 	private List<File> tuFiles;
-	private boolean mergeLibrary, outputNOTGates, outputNORGates;
+	private boolean mergeLibrary, outputNOTGates, outputNORGates, outputORGates, outputNANDGates, outputANDGates, outputNOTSUPPORTEDGates;
 	
 	public GateGeneratorOptions() {
 		this.sbolUtility = SBOLUtility.getInstance();
@@ -95,8 +95,44 @@ public class GateGeneratorOptions {
 		this.outputNORGates = outNOR;
 	}
 	
+	public void setOutputORLibrary(boolean outOR) {
+		this.outputORGates = outOR;
+	}
+	
+	public void setOutputNANDLibrary(boolean outNAND) {
+		this.outputNANDGates = outNAND;
+	}
+	
+	public void setOutputANDLibrary(boolean outAND) {
+		this.outputANDGates = outAND;
+	}
+	
+	public void setOutputNOTSUPPORTEDLibrary(boolean outNotSupported) {
+		this.outputNOTSUPPORTEDGates = outNotSupported;
+	}
+	
 	public void setSelectedSBHRepo(String sbhRepository) {
 		this.selectedSBHRepo = sbhRepository;
+	}
+
+	public boolean outputLibrary() {
+		return this.mergeLibrary;
+	}
+	
+	public boolean outputNOTSUPPORTEDLibrary() {
+		return this.outputNOTSUPPORTEDGates;
+	}
+	
+	public boolean outputANDLibrary() {
+		return this.outputANDGates;
+	}
+	
+	public boolean outputNANDLibrary() {
+		return this.outputNANDGates;
+	}
+	
+	public boolean outputORLibrary() {
+		return this.outputORGates;
 	}
 	
 	public boolean outputNORLibrary() {

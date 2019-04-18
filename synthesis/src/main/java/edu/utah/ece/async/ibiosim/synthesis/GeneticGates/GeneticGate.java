@@ -32,5 +32,9 @@ public interface GeneticGate {
 	public GateType getType();
 	public SBOLDocument getSBOLDocument();
 	public ModuleDefinition getModuleDefinition();
+
+	public DecomposedGraph getDecomposedGraph();
+	
+
 	
 }

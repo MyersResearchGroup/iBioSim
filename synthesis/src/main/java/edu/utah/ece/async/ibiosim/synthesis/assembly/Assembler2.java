@@ -255,7 +255,6 @@ public class Assembler2
 			Sequence subSeq = subComp.getSequences().iterator().next();
 			if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
 			{
-				//TODO: How to handle this getReverseComplementaryNucleotides()?
 				parentSeq.setElements(parentSeq.getElements()
 						+ getReverseComplementaryNucleotides(subSeq.getElements()));
 			}

@@ -58,8 +58,7 @@ public class SBMLToLPN {
 		this.ignoreVariables = new HashSet<>();
 		this.eventAssignmentBooleans = new ArrayList<>();
 	}
-
-
+	
 	/**
 	 * Convert SBML to LPN.
 	 * @return The LPN model
@@ -68,7 +67,12 @@ public class SBMLToLPN {
 		lpn = new LPN();
 		convertSBMLParameters();
 		addTransitions();
-		convertPorts();
+		if(impWrapper != null && tbWrapper != null) {
+			convertPorts();
+		}
+		else {
+			convertPortWithoutWrappers();
+		}
 		convertSBMLEvents();
 
 		return lpn;
@@ -84,6 +88,45 @@ public class SBMLToLPN {
 	public static LPN convertSBMLtoLPN(WrappedSBML tbWrapper, WrappedSBML impWrapper, SBMLDocument sbmlDocument) { 
 		SBMLToLPN converter = new SBMLToLPN(tbWrapper, impWrapper, sbmlDocument);
 		return converter.convert();
+	}
+	
+	public static LPN convertSBMLtoLPN(SBMLDocument sbmlDocument) {
+		SBMLToLPN converter = new SBMLToLPN(null, null, sbmlDocument);
+		return converter.convert();
+	}
+	
+	private void convertPortWithoutWrappers() {
+		CompModelPlugin impModelPlugin = (CompModelPlugin) sbmlDocument.getModel().getPlugin("comp");
+		for (ReplacedElement replacement : impModelPlugin.getListOfReplacedElements()) {
+			String portRef = replacement.getPortRef();
+			Port port = impModelPlugin.getPort(portRef);
+			if(port.getSBOTerm() == 601) {
+				lpn.addOutput(portRef, "false");
+			}
+			if(port.getSBOTerm() == 600) {
+				lpn.addInput(portRef, "false");
+			}
+			else {
+				lpn.addBoolean(portRef, "false");
+			}
+
+		}
+		if(impModelPlugin.isSetReplacedBy()) {
+			ReplacedBy replaceBy = impModelPlugin.getReplacedBy();
+			if(containSubmodelRef(replaceBy.getSubmodelRef())) {
+				String portRef = replaceBy.getPortRef();
+				Port port = impModelPlugin.getPort(portRef);
+				if(port.getSBOTerm() == 601) {
+					lpn.addOutput(portRef, "false");
+				}
+				else if(port.getSBOTerm() == 600) {
+					lpn.addInput(portRef, "false");
+				}
+				else {
+					lpn.addBoolean(portRef, "false");
+				}
+			}
+		}
 	}
 
 	private void convertPorts() {

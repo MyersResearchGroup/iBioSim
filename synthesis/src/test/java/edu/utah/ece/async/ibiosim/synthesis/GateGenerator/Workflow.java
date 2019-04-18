@@ -17,7 +17,15 @@ public class Workflow {
 	
 	@Test 
 	public void Test_NOTGate() {
-		String files = String.join(" ", TestingFiles.notTU1_File);
+		String files = String.join(" ", TestingFiles.notTU1_Size1_File);
+		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NOT", "-od", TestingFiles.writeLibDir};
+		
+		GateGenerationRunner.main(cmd);
+	}
+	
+	@Test 
+	public void Test_NOT2Gate() {
+		String files = String.join(" ", TestingFiles.notTU2_Size1_File);
 		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NOT", "-od", TestingFiles.writeLibDir};
 		
 		GateGenerationRunner.main(cmd);
@@ -25,9 +33,18 @@ public class Workflow {
 	
 	@Test 
 	public void Test_NORGate() {
-		String files = String.join(" ", TestingFiles.norTU1_File);
+		String files = String.join(" ", TestingFiles.norTU2_Size1_File);
 		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NOR", "-od", TestingFiles.writeLibDir};
 		
 		GateGenerationRunner.main(cmd);
 	}
+
+	@Test 
+	public void Test_NANDGate() {
+		String files = String.join(" ", TestingFiles.nandTU_size1_File);
+		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NAND", "-od", TestingFiles.writeLibDir};
+		
+		GateGenerationRunner.main(cmd);
+	}
+	
 }

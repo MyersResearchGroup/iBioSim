@@ -1,6 +1,9 @@
 package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 
 
+import java.io.File;
+import java.io.IOException;
+
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -10,10 +13,13 @@ import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.RestrictionType;
+import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBOL;
 
 /**
@@ -77,6 +83,7 @@ public class SyntheticGateExamples {
 		Module x1_act_instance = ORGate.createModule("orGate_X1_protein_activation", x1_protein_act.getIdentity());
 		x1_act_instance.createMapsTo("expected_X1_protein_stim_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_x1_protein.getIdentity(), gen_x1_protein.getIdentity());
 		x1_act_instance.createMapsTo("expected_pro_stim2_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_pro_fc.getIdentity(), gen_x1pro_fc.getIdentity());
+		
 		return wrapper.getSBOLDocument();
 	}
 	

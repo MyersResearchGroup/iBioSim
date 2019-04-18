@@ -6,8 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	LibrarySize1_Test1.class,
-	LibrarySize1_Test3.class,
+	NotSpecification_Test.class,
+	OrSpecification_Test.class,
+	NandSpecification_Test.class,
+	AndSpecification_Test.class
 })
 
 /**

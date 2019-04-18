@@ -29,7 +29,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExecepti
  * @author Tramy Nguyen
  */
 public class GateIdentifier {
-
+	
 	private List<ComponentParticipation> promoters, cds;
 	private Map<URI, ComponentParticipation> fcToInteractionMap;
 
@@ -40,7 +40,7 @@ public class GateIdentifier {
 		this.fcToInteractionMap = new HashMap<>();
 		this.promoters = new ArrayList<>();
 		this.cds = new ArrayList<>();
-
+		
 		this.gateDocument = doc;
 		this.gateMD = md;
 	}
@@ -58,6 +58,7 @@ public class GateIdentifier {
 			if(componentDefinitionHasRole(cd, SequenceOntology.CDS)) {
 				cds.add(component);
 			}
+			
 		}
 
 		for(Module module : gateMD.getModules()) {
@@ -65,29 +66,127 @@ public class GateIdentifier {
 		}
 		return getGateType();
 	}
+	
 
 	private GeneticGate getGateType() {
 		if(isNOTGate()) {
-			NOTGate gate = new NOTGate(gateDocument, gateMD);
-			return gate;
+			return createNOTGate();
 		}
 		if(isNORGate()) {
-			NORGate gate = new NORGate(gateDocument, gateMD);
-			return gate;
+			return createNORGate();
 		}
 		if(isORGate()) {
-			ORGate gate = new ORGate(gateDocument, gateMD);
-			return gate;
+			return createORGate();
 		}
 		if(isNANDGate()) {
-			NANDGate gate = new NANDGate(gateDocument, gateMD);
-			return gate;
+			return createNANDGate();
 		}
 		if(isANDGate()) {
-			ANDGate gate = new ANDGate(gateDocument, gateMD);
-			return gate;
+			return createANDGate();
 		}
-		return new NotSupportedGate(gateDocument, gateMD);
+		return new NOTSUPPORTEDGate(gateDocument, gateMD);
+	}
+	
+	private NOTGate createNOTGate() {
+		NOTGate gate = new NOTGate(gateDocument, gateMD);
+		
+		InteractsWith inputInteraction= promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input = inputInteraction.components.get(0).component;
+		gate.addInputMolecule(input);
+
+		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
+		FunctionalComponent output = outputInteraction.components.get(0).component;
+		gate.addOutputMolecule(output);
+		
+		return gate;
+	}
+	
+	private NORGate createNORGate() {
+		NORGate gate = new NORGate(gateDocument, gateMD);
+		
+		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = input1Interaction.components.get(0).component;
+		gate.addInputMolecule(input1);
+		
+		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
+		FunctionalComponent output = outputInteraction.components.get(0).component;
+		gate.addOutputMolecule(output);
+		
+		int numOfPromoterRepression = promoters.get(0).outputOfInteraction.size();
+		if(numOfPromoterRepression == 1) {
+			InteractsWith outputProteinInteraction = outputInteraction.components.get(0).inputOfInteractions.get(0);
+			
+			InteractsWith complexProteinInteraction = outputProteinInteraction.components.get(0).inputOfInteractions.get(0);
+			FunctionalComponent temp1 = complexProteinInteraction.components.get(0).component;
+			FunctionalComponent temp2 = complexProteinInteraction.components.get(1).component;
+			if(temp1 == output) {
+				gate.addInputMolecule(temp2);
+			}
+			else if(temp2 == output) {
+				gate.addInputMolecule(temp1);
+			}
+			
+		}
+		else if(numOfPromoterRepression == 2) {
+			InteractsWith input2Interaction = promoters.get(0).outputOfInteraction.get(1);
+			FunctionalComponent input2 = input2Interaction.components.get(0).component;
+			gate.addInputMolecule(input2);
+		}
+		
+		return gate;
+	}
+	
+	private ORGate createORGate() {
+		ORGate gate = new ORGate(gateDocument, gateMD);
+		
+		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = input1Interaction.components.get(0).component;
+		gate.addInputMolecule(input1);
+		
+		InteractsWith input2Interaction = promoters.get(0).outputOfInteraction.get(1);
+		FunctionalComponent input2 = input2Interaction.components.get(0).component;
+		gate.addInputMolecule(input2);
+		
+		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
+		FunctionalComponent output = outputInteraction.components.get(0).component;
+		gate.addOutputMolecule(output);
+		
+		return gate;
+	}
+	
+	private NANDGate createNANDGate() {
+		NANDGate gate = new NANDGate(gateDocument, gateMD);
+		
+		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = input1Interaction.components.get(0).component;
+		gate.addInputMolecule(input1);
+		
+		InteractsWith input2Interaction = promoters.get(1).outputOfInteraction.get(0);
+		FunctionalComponent input2 = input2Interaction.components.get(0).component;
+		gate.addInputMolecule(input2);
+		
+		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
+		FunctionalComponent output = outputInteraction.components.get(0).component;
+		gate.addOutputMolecule(output);
+		
+		return gate;
+	}
+	
+	private ANDGate createANDGate() {
+		ANDGate gate = new ANDGate(gateDocument, gateMD);
+		
+		InteractsWith promoterInteraction = promoters.get(0).outputOfInteraction.get(0);
+		InteractsWith complexInteraction = promoterInteraction.components.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = complexInteraction.components.get(0).component;
+		FunctionalComponent input2 = complexInteraction.components.get(1).component;
+		gate.addInputMolecule(input1);
+		gate.addInputMolecule(input2);
+		
+		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
+		FunctionalComponent output = outputInteraction.components.get(0).component;
+		gate.addOutputMolecule(output);
+		
+		return gate;
 	}
 
 
@@ -279,7 +378,7 @@ public class GateIdentifier {
 
 			}
 			InteractionType interType = getInteractionType(interaction);
-			if(interType != interType.UNKNOWN) {
+			if(interType != InteractionType.UNKNOWN) {
 				for (ComponentParticipation output: outputs) {
 					output.outputOfInteraction.add(new InteractsWith(interType, inputs));
 				}

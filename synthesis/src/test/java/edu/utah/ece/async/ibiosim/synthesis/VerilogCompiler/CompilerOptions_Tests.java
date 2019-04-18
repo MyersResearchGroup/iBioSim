@@ -3,6 +3,8 @@ package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -11,11 +13,15 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
  * 
@@ -24,40 +30,59 @@ import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
  */
 public class CompilerOptions_Tests{
 
-	private VerilogCompiler runCompiler(String[] args) throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException, org.sbml.jsbml.text.parser.ParseException {
+	private void runCompiler(String[] args) throws ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLConversionException, SBOLValidationException, org.sbml.jsbml.text.parser.ParseException {
 		CommandLine cmds = VerilogRunner.parseCommandLine(args);
-		CompilerOptions setupOpt = VerilogRunner.createCompilerOptions(cmds);
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		if(setupOpt.isGenerateSBOL() || setupOpt.isGenerateSBML() || setupOpt.isGenerateLPN()) {
-			compiledVerilog.compile(setupOpt.isOutputFlatModel());
-			if(setupOpt.isGenerateLPN()){
-				compiledVerilog.generateLPN(setupOpt.getImplementationModuleId(), setupOpt.getTestbenchModuleId(), setupOpt.getOutputDirectory());
-			}
+		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmds);
+		VerilogParser verilogParser = new VerilogParser();
+		Map<String, VerilogModule> verilogModules = new HashMap<>();
+		for(File file : compilerOptions.getVerilogFiles()) {
+			VerilogModule verilogModule = verilogParser.parseVerilogFile(file);
+			verilogModules.put(verilogModule.getModuleId(), verilogModule);
 		}
 
-		if(setupOpt.isExportOn()) {
-			String outputDirectory = setupOpt.getOutputDirectory();
-			if(setupOpt.isGenerateSBOL()){
-				compiledVerilog.exportSBOL(compiledVerilog.getMappedSBOLWrapper(), outputDirectory);
+		String outputDir = compilerOptions.getOutputDirectory();
+		if(compilerOptions.isGenerateSBOL()){
+			VerilogToSBOL sbolConverter = new VerilogToSBOL(compilerOptions.isOutputFlatModel());
+			for (VerilogModule vModule : verilogModules.values()) {
+				WrappedSBOL sbolResult = sbolConverter.convertVerilog2SBOL(vModule);
+				SBOLWriter.write(sbolResult.getSBOLDocument(), outputDir + File.separator + vModule.getModuleId() + ".xml");
 			}
-			
-			if(setupOpt.isGenerateSBML()) {
-				compiledVerilog.exportSBML(compiledVerilog.getMappedSBMLWrapper(), outputDirectory); 
-				if(setupOpt.isOutputFlatModel()) {
-					SBMLDocument flattenDoc = compiledVerilog.flattenSBML(outputDirectory, outputDirectory); 
-					compiledVerilog.exportSBML(flattenDoc, outputDirectory + setupOpt.getOutputFileName() + "_flattened.xml");
+		}
+		else {
+			if(compilerOptions.isGenerateSBML() && !compilerOptions.isOutputFlatModel()) {
+				VerilogToSBML sbmlConverter = new VerilogToSBML(verilogModules);
+				for (VerilogModule vModule : verilogModules.values()) {
+					WrappedSBML sbmlResult = sbmlConverter.convertVerilogToSBML(vModule);
+					SBMLWriter writer = new SBMLWriter();
+					writer.writeSBMLToFile(sbmlResult.getSBMLDocument(), outputDir + File.separator + vModule.getModuleId() + ".xml");
 				}
 			}
-			
-			if(setupOpt.isGenerateLPN()){
-				compiledVerilog.generateLPN(setupOpt.getImplementationModuleId(), setupOpt.getTestbenchModuleId(), outputDirectory);
-				compiledVerilog.exportLPN(compiledVerilog.getLPN(), outputDirectory + File.separator + setupOpt.getOutputFileName()); 
+			VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
+
+			for(File file : compilerOptions.getVerilogFiles()) {
+				VerilogModule verilogModule = sbmlLPNConverter.parseVerilogFile(file);
+				sbmlLPNConverter.generateSBMLFromVerilog(verilogModule);
+			}
+			if(compilerOptions.isGenerateSBML() && compilerOptions.isOutputFlatModel()) {
+				SBMLDocument flattenDoc = sbmlLPNConverter.flattenSBML(compilerOptions.getTestbenchModuleId(), outputDir);
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBMLToFile(flattenDoc.getSBMLDocument(), 
+						outputDir + File.separator + compilerOptions.getImplementationModuleId() + "_" + compilerOptions.getTestbenchModuleId() + "_flattened.xml");
 
 			}
+			if(compilerOptions.isGenerateLPN()){
+				VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
+				VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
+				LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
+				lpn.save(outputDir + File.separator + compilerOptions.getOutputFileName()  + ".lpn");
+			}
+
+
 		}
-		return compiledVerilog;
+
 	}
+	
+	
 	
 	@Test
 	public void Test_inputSize() throws ParseException, FileNotFoundException {
@@ -138,10 +163,11 @@ public class CompilerOptions_Tests{
 				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
 				"-lpn", "-o", "evenzeroes"};
 		//error because missing output directory
-		runCompiler(args); 
+		runCompiler(args);
+		
 	}
 	
-	@Test()
+	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException5() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
 		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
 				"-sbml"};

@@ -77,9 +77,8 @@ public class SynthesisNode {
 		soFilterTypes.add(SequenceOntology.PROMOTER);
 		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
 		List<ComponentDefinition> signalComps = SBOLUtility.getInstance().filterDNAComponents(dnaComps, soFilterTypes);
-		//TODO: Why only get the first DnaComponent signal? Assume that signalComps always return 1 or 0?
 		if (signalComps.size() > 0)
-			signal = signalComps.get(0).getIdentity().toString(); //TODO: signal will store the uri of the 1st DnaComponent?
+			signal = signalComps.get(0).getIdentity().toString(); 
 		else 
 			signal = "";
 	}

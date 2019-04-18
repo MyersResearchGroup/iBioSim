@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,20 +39,13 @@ public class VerilogParserEvenZeroes_Test {
 
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_impFile);
-		setupOpt.addVerilogFile(TestingFiles.verilogEvenZero_tbFile);
-	
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
-		Assert.assertEquals(2, moduleList.size());
+		VerilogParser compiledVerilog = new VerilogParser();
 		
-		verilog_imp = moduleList.get("evenzeroes_imp");
+		verilog_imp = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogEvenZero_impFile));
 		Assert.assertNotNull(verilog_imp);
 		imp_alwaysblk = verilog_imp.getAlwaysBlock(0);
 		
-		verilog_tb = moduleList.get("evenzeroes_testbench");
+		verilog_tb = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogEvenZero_tbFile));
 		Assert.assertNotNull(verilog_tb);
 		tb_alwaysblk = verilog_tb.getAlwaysBlock(0);
 	}

@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -21,6 +22,7 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
 
 /**
@@ -35,19 +37,15 @@ public class SBOLExample3_Test {
 
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
-		CompilerOptions setupOpt = new CompilerOptions();
-		setupOpt.addVerilogFile(TestingFiles.verilogCont4_file);
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		compiledVerilog.compile(true);   
-		
-		String vName = "contAssign4";
-		WrappedSBOL sbolWrapper = compiledVerilog.getSBOLWrapper(vName);
+		VerilogParser verilogParser = new VerilogParser();
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogCont4_file));
+		VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
+		WrappedSBOL sbolWrapper = sbolConverter.convertVerilog2SBOL(verilogModule);
 		Assert.assertNotNull(sbolWrapper);
 	
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + vName, "1.0");
+		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + verilogModule.getModuleId(), "1.0");
 	}
 
 	@Test

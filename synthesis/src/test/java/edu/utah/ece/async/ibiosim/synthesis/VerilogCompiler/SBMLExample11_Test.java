@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
@@ -22,6 +23,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 
 /**
  * Test replacement and replacedBy objects for SBML conversion
@@ -37,17 +39,18 @@ public class SBMLExample11_Test {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_impFile);
 		setupOpt.addVerilogFile(TestingFiles.verilogFilter_tbFile);
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		compiledVerilog.compile(setupOpt.isOutputFlatModel()); 
 		
-		WrappedSBML tbWrapper = compiledVerilog.getSBMLWrapper("filter_testbench");
-		Assert.assertNotNull(tbWrapper);
+		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
+		VerilogModule spec = compiler.parseVerilogFile(new File(TestingFiles.verilogFilter_impFile));
+		VerilogModule tb = compiler.parseVerilogFile(new File(TestingFiles.verilogFilter_tbFile));
+		
+		WrappedSBML tbWrapper = compiler.generateSBMLFromVerilog(tb);
+		Assert.assertNotNull(tbWrapper);		
 		tbModel = tbWrapper.getModel();
 		Assert.assertNotNull(tbModel);
 		Assert.assertEquals("filter_testbench", tbModel.getId());
 		
-		WrappedSBML impWrapper = compiledVerilog.getSBMLWrapper("filter_imp");
+		WrappedSBML impWrapper = compiler.generateSBMLFromVerilog(spec);
 		Assert.assertNotNull(impWrapper);
 		impModel = impWrapper.getModel();
 		Assert.assertNotNull(impModel);

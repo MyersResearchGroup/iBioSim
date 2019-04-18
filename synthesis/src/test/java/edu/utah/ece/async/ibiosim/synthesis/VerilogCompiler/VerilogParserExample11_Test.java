@@ -1,7 +1,7 @@
 package edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -25,7 +25,7 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.Ve
  */
 public class VerilogParserExample11_Test {
 
-	private static VerilogModule verilog_imp;
+	private static VerilogModule verilogModule;
 	
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
@@ -33,18 +33,14 @@ public class VerilogParserExample11_Test {
 		CompilerOptions setupOpt = new CompilerOptions();
 		setupOpt.addVerilogFile(TestingFiles.verilogCont_file);
 	
-		VerilogCompiler compiledVerilog = new VerilogCompiler(setupOpt.getVerilogFiles());
-		compiledVerilog.parseVerilog();
-		Map<String, VerilogModule> moduleList = compiledVerilog.getVerilogModules();
-		Assert.assertEquals(1, moduleList.size());
-		
-		verilog_imp = moduleList.get("contAssign");
-		Assert.assertNotNull(verilog_imp);
+		VerilogParser compiledVerilog = new VerilogParser();
+		verilogModule = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogCont_file));
+		Assert.assertNotNull(verilogModule);
 	}
 	
 	@Test
 	public void Test_contAssign() {
-		VerilogAssignment actual_assign = verilog_imp.getContinuousAssignment(0);
+		VerilogAssignment actual_assign = verilogModule.getContinuousAssignment(0);
 		Assert.assertEquals("t", actual_assign.getVariable());
 		Assert.assertEquals("not(parity0)", actual_assign.getExpression());
 	}

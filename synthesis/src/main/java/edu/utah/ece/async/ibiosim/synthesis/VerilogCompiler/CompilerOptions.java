@@ -37,9 +37,10 @@ public class CompilerOptions {
 		}
 	}
 	
-	public void addVerilogFile(String fullFileName) throws FileNotFoundException {
+	public File addVerilogFile(String fullFileName) throws FileNotFoundException {
 		File verilogFile = new File(fullFileName);
 		addVerilogFile(verilogFile);
+		return verilogFile;
 	}
 	
 	public void addDirectoryVerilogFiles(File file) {
