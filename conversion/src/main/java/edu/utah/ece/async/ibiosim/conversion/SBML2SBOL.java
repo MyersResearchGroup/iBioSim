@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -62,7 +61,6 @@ import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtili
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.IBioSimPreferences;
 
 /**
  * Perform conversion from SBML to SBOL. 
@@ -99,21 +97,7 @@ public class SBML2SBOL {
 
 			if (sbolDoc != null) 
 			{
-				for(ComponentDefinition c : sbolDoc.getComponentDefinitions())
-				{
-					if(sbol_Library.getComponentDefinition(c.getIdentity()) == null) 
-					{
-						sbol_Library.createCopy(c);
-					}
-				}
-				for(Sequence c : sbolDoc.getSequences())
-				{
-					if(sbol_Library.getSequence(c.getIdentity()) == null) 
-					{
-						sbol_Library.createCopy(c);
-						
-					}
-				}
+				sbol_Library.createCopy(sbolDoc);
 			} 
 			else{
 				return false;
@@ -326,22 +310,13 @@ public class SBML2SBOL {
 		if (BioModel.isPromoterSpecies(species)) 
 		{
 			List<URI> sbolURIs = new LinkedList<URI>();
-			//String sbolStrand = 
 			AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
 			if (sbolURIs.size()>0) {
-				// TODO: need to figure out what to do when size is greater than 1
 				compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
-				if (compDef != null) {
-					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
-						sbolDoc.createCopy(compDef);
+				if(compDef != null) {
+					if(sbolDoc.getComponentDefinition(compDef.getIdentity()) == null) {
+						sbol_Library.createRecursiveCopy(sbolDoc, compDef);
 					}
-
-					for (Sequence sequence : compDef.getSequences()) {
-						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-							sbolDoc.createCopy(sequence);
-						}
-					}
-					recurseComponentDefinition(sbolDoc,compDef);
 					return compDef;
 				}
 			}
@@ -352,18 +327,10 @@ public class SBML2SBOL {
 				AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
 				if (sbolURIs.size()>0) {
 					compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
-					if (compDef != null) {
-						if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
-							sbolDoc.createCopy(compDef);
+					if(compDef != null) {
+						if(sbolDoc.getComponentDefinition(compDef.getIdentity()) == null) {
+							sbol_Library.createRecursiveCopy(sbolDoc, compDef);
 						}
-
-						for (Sequence sequence : compDef.getSequences()) {
-							if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-								sbolDoc.createCopy(sequence);
-
-							}
-						}
-						recurseComponentDefinition(sbolDoc,compDef);
 						return compDef;
 					}
 				}
@@ -379,18 +346,10 @@ public class SBML2SBOL {
 			if (sbolURIs.size()>0) {
 
 				compDef = sbol_Library.getComponentDefinition(sbolURIs.get(0));
-				if (compDef != null) {
-					if (sbolDoc.getComponentDefinition(compDef.getIdentity())==null) {
-						sbolDoc.createCopy(compDef);
+				if(compDef != null) {
+					if(sbolDoc.getComponentDefinition(compDef.getIdentity()) == null) {
+						sbol_Library.createRecursiveCopy(sbolDoc, compDef);
 					}
-
-					for (Sequence sequence : compDef.getSequences()) {
-						if (sbolDoc.getSequence(sequence.getIdentity())==null) {
-							sbolDoc.createCopy(sequence);
-
-						}
-					}
-					recurseComponentDefinition(sbolDoc,compDef);
 					return compDef;
 				}
 			}
@@ -763,12 +722,6 @@ public class SBML2SBOL {
 					ref_sbolInputFilePath.add(f.getAbsolutePath());
 				}
 			}
-
-//			if(sbolURIPre == null || sbolURIPre.isEmpty()){
-//				//SBOL Default URI is a required field. Set SBOL Document to the given SBOL Prefix if the user did not provide one.
-//				Preferences biosimrc = Preferences.userRoot();
-//				sbolURIPre = IBioSimPreferences.INSTANCE.getUserInfo().getURI().toString();
-//			}
 
 			SBMLDocument sbmlDoc = null;
 			try {
