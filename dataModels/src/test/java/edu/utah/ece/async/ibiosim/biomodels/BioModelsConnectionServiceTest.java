@@ -5,6 +5,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.BioModelsConnectionService;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.CuratedModelsResponse;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.ModelFileResponse;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.ModelResponse;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.ModelSummary;
+
 import java.util.Optional;
 
 import static org.junit.Assert.*;

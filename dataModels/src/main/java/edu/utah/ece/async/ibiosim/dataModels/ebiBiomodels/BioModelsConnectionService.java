@@ -1,8 +1,10 @@
-package edu.utah.ece.async.ibiosim.biomodels;
+package edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
+import static edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.Requests.SEARCH_RESULTS_PER_PAGE;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -11,8 +13,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static edu.utah.ece.async.ibiosim.biomodels.Requests.SEARCH_RESULTS_PER_PAGE;
 
 /**
  * @author Mihai Glon\u021b mglont@ebi.ac.uk

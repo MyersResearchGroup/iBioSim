@@ -1,4 +1,4 @@
-package edu.utah.ece.async.ibiosim.biomodels;
+package edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels;
 
 @SuppressWarnings("unused")
 public class ModelSummary implements Comparable<ModelSummary> {

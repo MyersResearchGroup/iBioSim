@@ -101,7 +101,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import edu.utah.ece.async.ibiosim.biomodels.*;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
@@ -201,6 +200,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.*;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
