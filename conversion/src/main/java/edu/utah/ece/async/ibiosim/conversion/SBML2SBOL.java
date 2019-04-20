@@ -368,7 +368,7 @@ public class SBML2SBOL {
 					}
 				}
 			}
-			compDef_type.add(ComponentDefinition.DNA);
+			compDef_type.add(ComponentDefinition.DNA_REGION);
 			compDef_role.add(SequenceOntology.PROMOTER);
 		} 
 		else 
@@ -397,10 +397,10 @@ public class SBML2SBOL {
 			if (species.isSetSBOTerm()) {
 				if (species.getSBOTermID().equals(GlobalConstants.SBO_DNA) ||
 						species.getSBOTermID().equals(GlobalConstants.SBO_DNA_SEGMENT)) {
-					compDef_type.add(ComponentDefinition.DNA);
+					compDef_type.add(ComponentDefinition.DNA_REGION);
 				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_RNA) ||
 						species.getSBOTermID().equals(GlobalConstants.SBO_RNA_SEGMENT)) {
-					compDef_type.add(ComponentDefinition.RNA);
+					compDef_type.add(ComponentDefinition.RNA_REGION);
 				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_PROTEIN)) {
 					compDef_type.add(ComponentDefinition.PROTEIN);
 				} else if (species.getSBOTermID().equals(GlobalConstants.SBO_NONCOVALENT_COMPLEX) ||

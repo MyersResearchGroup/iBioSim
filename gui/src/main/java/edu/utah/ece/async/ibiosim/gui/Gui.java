@@ -6144,7 +6144,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				try 
 				{
 					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1",
-							ComponentDefinition.DNA);
+							ComponentDefinition.DNA_REGION);
 					cd.addRole(SequenceOntology.ENGINEERED_REGION);
 					writeSBOLDocument();
 					Set<ComponentDefinition> selectedDesign = new HashSet<ComponentDefinition>();

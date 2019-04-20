@@ -304,11 +304,11 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	 */
 	private String getSpeciesSBOTerm(URI sbolSBOTerm)
 	{
-		if(sbolSBOTerm.equals(ComponentDefinition.DNA))
+		if(sbolSBOTerm.equals(ComponentDefinition.DNA_REGION))
 		{
 			return GlobalConstants.SBO_DNA_SEGMENT;
 		}
-		else if(sbolSBOTerm.equals(ComponentDefinition.RNA))
+		else if(sbolSBOTerm.equals(ComponentDefinition.RNA_REGION))
 		{
 			return GlobalConstants.SBO_RNA_SEGMENT;
 		}
@@ -423,7 +423,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		if(isComponentDefinition)
 		{
 			ComponentDefinition cd = (ComponentDefinition) sbolObj;
-			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc);
+			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc, false);
 			if (editedCD == null) {
 				// nothing was changed
 				return;
