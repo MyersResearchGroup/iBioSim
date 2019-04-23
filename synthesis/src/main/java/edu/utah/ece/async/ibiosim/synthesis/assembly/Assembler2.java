@@ -96,7 +96,7 @@ public class Assembler2
 //		assembledComp.setDnaSequence(synthSeq); 
 		
 //		ComponentDefinition  assembledComp = new ComponentDefinition(GlobalConstants.SBOL_AUTHORITY_DEFAULT, "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA)));
-		ComponentDefinition  assembledComp = sbolDoc.createComponentDefinition(defaultURIPrefix, "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA)));
+		ComponentDefinition  assembledComp = sbolDoc.createComponentDefinition(defaultURIPrefix, "assembledComp", "", new HashSet<URI>(Arrays.asList(ComponentDefinition.DNA_REGION)));
 		assembledComp.addRole(SequenceOntology.ENGINEERED_REGION);
 		Sequence synthSeq = sbolDoc.createSequence(defaultURIPrefix, "synthSeq", "", "", Sequence.IUPAC_DNA);
 		assembledComp.addSequence(synthSeq);

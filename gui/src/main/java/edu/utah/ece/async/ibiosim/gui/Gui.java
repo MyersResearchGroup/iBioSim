@@ -106,7 +106,8 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
-import org.apache.jena.ext.com.google.common.io.Files;
+
+import org.apache.http.impl.client.HttpClients;
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -170,7 +171,6 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
 import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
-import uk.ac.ebi.biomodels.ws.BioModelsWSException;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
@@ -195,6 +195,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.SEDMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
+import edu.utah.ece.async.ibiosim.dataModels.ebiBiomodels.*;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.analysisView.AnalysisView;
 import edu.utah.ece.async.ibiosim.gui.graphEditor.Graph;
@@ -306,13 +307,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	protected String viewer;
 
-	protected boolean runGetNames;
-
 	// protected boolean showParts = false;
 
 	// protected Thread getPartsThread = null;
 
-	private String[] BioModelIds = null;
+	private ModelSummary[] BioModelIds = null;
 
 	// protected Parts allVirtualParts = null;
 
@@ -2781,20 +2780,44 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
+	private ModelSummary[] retrieveCuratedBioModels() {
+		try(BioModelsConnectionService service = new BioModelsConnectionService()) {
+			CuratedModelsResponse response = service.getCuratedModelSet();
+			Set<ModelSummary> summaries = response.getModels();
+			return summaries.toArray(new ModelSummary[summaries.size()]);
+		}
+	}
+
+	private String getBioModelsModelFile(String modelId) {
+		try(BioModelsConnectionService service = new BioModelsConnectionService()) {
+			ModelFileResponse response = service.getModelFile(modelId);
+			return response.getFileContent();
+		}
+	}
+
+	private String getPublicationLinkForModel(String modelId) {
+		try (BioModelsConnectionService service = new BioModelsConnectionService()) {
+			ModelResponse modelInformation = service.getModel(modelId);
+			if (null == modelInformation) {
+				System.err.println("No entry found in BioModels for " + modelId);
+				return null;
+			}
+			return modelInformation.getPublicationLink();
+		}
+	}
+
 	private void downloadBioModel() {
-		final BioModelsWSClient client = new BioModelsWSClient();
 		if (BioModelIds == null) {
 			try {
-				BioModelIds = client.getAllCuratedModelsId();
-			} catch (BioModelsWSException e2) {
-				JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+				BioModelIds = retrieveCuratedBioModels();
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(frame, "Error Contacting BioModels", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
 		final JPanel BioModelsPanel = new JPanel(new BorderLayout());
-		final JList ListOfBioModels = new JList();
-		edu.utah.ece.async.ibiosim.dataModels.biomodel.util.Utility.sort(BioModelIds);
+		final JList<ModelSummary> ListOfBioModels = new JList<>();
 		ListOfBioModels.setListData(BioModelIds);
 		ListOfBioModels.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JLabel TextBioModels = new JLabel("List of BioModels");
@@ -2803,65 +2826,28 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		ScrollBioModels.setPreferredSize(new Dimension(552, 250));
 		ScrollBioModels.setViewportView(ListOfBioModels);
 		JPanel GetButtons = new JPanel();
-		JButton GetNames = new JButton("Get Names");
 		JButton GetDescription = new JButton("Get Description");
 		JButton GetReference = new JButton("Get Reference");
 		final JProgressBar progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
 		progressBar.setValue(0);
-		runGetNames = true;
-		final Thread getNamesThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				Preferences biosimrc = Preferences.userRoot();
-				for (int i = 0; i < BioModelIds.length && runGetNames; i++) {
-					try {
-						progressBar.setValue(100 * i / BioModelIds.length);
-						if (!BioModelIds[i].contains(" ")) {
-							if (!biosimrc.get(BioModelIds[i], "").equals("")) {
-								BioModelIds[i] += " " + biosimrc.get(BioModelIds[i], "");
-							} else {
-								String name = client.getModelNameById(BioModelIds[i]);
-								biosimrc.put(BioModelIds[i], name);
-								BioModelIds[i] += " " + name;
-							}
-							ListOfBioModels.setListData(BioModelIds);
-							ListOfBioModels.revalidate();
-							ListOfBioModels.repaint();
-						}
-					} catch (BioModelsWSException e1) {
-						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
-								JOptionPane.ERROR_MESSAGE);
-						runGetNames = false;
-					}
-				}
-				progressBar.setValue(100);
-				ListOfBioModels.setListData(BioModelIds);
-				runGetNames = false;
-			}
-		});
-		GetNames.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (runGetNames && !getNamesThread.isAlive()) {
-					getNamesThread.start();
-				}
-			}
-		});
+
 		GetDescription.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (ListOfBioModels.isSelectionEmpty()) {
 					return;
 				}
-				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+				String selectedModel = ListOfBioModels.getSelectedValue().getId();
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				command = command + " http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+				command = command + " http://identifiers.org/biomodels.db/" + selectedModel;
+				progressBar.setValue(25);
 				log.addText("Executing:\n" + command + "\n");
 				Runtime exec = Runtime.getRuntime();
 				try {
 					exec.exec(command);
+					progressBar.setValue(100);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2874,25 +2860,31 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				if (ListOfBioModels.isSelectionEmpty()) {
 					return;
 				}
-				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+				ModelSummary model = ListOfBioModels.getSelectedValue();
+				String modelId = model.getId();
 				try {
-					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
+					String pub = getPublicationLinkForModel(modelId);
+					progressBar.setValue(25);
+					progressBar.repaint();
+					if (null == pub) {
+						JOptionPane.showMessageDialog(frame,
+								"Could not find publication information in BioModels for " + modelId,
+								"Warning", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
 					Preferences biosimrc = Preferences.userRoot();
 					String command = biosimrc.get("biosim.general.browser", "");
-					command = command + " http://www.ncbi.nlm.nih.gov/pubmed/?term=" + Pub;
+					command = command + ' ' + pub;
 					log.addText("Executing:\n" + command + "\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command);
-				} catch (BioModelsWSException e2) {
-					JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					progressBar.setValue(100);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		GetButtons.add(GetNames);
 		GetButtons.add(GetDescription);
 		GetButtons.add(GetReference);
 		GetButtons.add(progressBar);
@@ -2902,17 +2894,16 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		Object[] options = { "OK", "Cancel" };
 		int value = JOptionPane.showOptionDialog(frame, BioModelsPanel, "List of BioModels", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		runGetNames = false;
 		if (value == JOptionPane.YES_OPTION && ListOfBioModels.getSelectedValue() != null) {
-			String ModelId = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
-			String filename = ModelId + ".xml";
+			String modelId = ListOfBioModels.getSelectedValue().getId();
+			String filename = modelId + ".xml";
 			try {
 				if (overwrite(root + File.separator + filename, filename)) {
-					String model = client.getModelSBMLById(ModelId);
-					Writer out = new BufferedWriter(new OutputStreamWriter(
-							new FileOutputStream(root + File.separator + filename), "UTF-8"));
-					out.write(model);
-					out.close();
+					String model = getBioModelsModelFile(modelId);
+					try (Writer out = new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream(root + File.separator + filename), "UTF-8"))) {
+						out.write(model);
+					}
 					String[] file = GlobalConstants.splitPath(filename.trim());
 					SBMLDocument document = SBMLutilities.readSBML(root + File.separator + filename.trim(), null, this);
 					Utils.check(root + File.separator + filename.trim(), document, false, null, this);
@@ -6191,7 +6182,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				try 
 				{
 					ComponentDefinition cd = getSBOLDocument().createComponentDefinition(partId, "1",
-							ComponentDefinition.DNA);
+							ComponentDefinition.DNA_REGION);
 					cd.addRole(SequenceOntology.ENGINEERED_REGION);
 					writeSBOLDocument();
 					Set<ComponentDefinition> selectedDesign = new HashSet<ComponentDefinition>();

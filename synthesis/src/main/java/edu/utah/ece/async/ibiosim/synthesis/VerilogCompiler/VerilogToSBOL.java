@@ -63,7 +63,6 @@ public class VerilogToSBOL {
 		for(VerilogAssignment assign : contAssigns) {
 			String var = assign.getVariable();
 			ASTNode expression = ASTNode.parseFormula(assign.getExpression());
-			ASTNode synthExpression = VerilogDecomposer.decompose(expression);
 			
 			FunctionalComponent fullCircuit_outputProtein = primaryProteins.get(var);
 			HashMap<FunctionalComponent, FunctionalComponent> primaryProteins = new HashMap<>();
@@ -75,7 +74,7 @@ public class VerilogToSBOL {
 				FunctionalComponent subCircuit_outputProtein = sbolWrapper.addFunctionalComponent(subCircuit, sbolWrapper.getFunctionalComponentId() + "_" + var, AccessType.PUBLIC, fullCircuit_outputProtein.getDefinition().getIdentity(), DirectionType.OUT);
 				addPrimaryProteinMapping(var, primaryProteins, subCircuit_outputProtein);
 				
-				buildSBOLExpression(subCircuit, synthExpression, subCircuit_outputProtein, primaryProteins);
+				buildSBOLExpression(subCircuit, expression, subCircuit_outputProtein, primaryProteins);
 		
 				//Connect primary input and output proteins for full circuit and subcircuit.
 				for(FunctionalComponent subcircuit_InputProtein : primaryProteins.keySet()) {
@@ -89,7 +88,7 @@ public class VerilogToSBOL {
 				}
 			}
 			else {
-				buildSBOLExpression(circuit, synthExpression, fullCircuit_outputProtein, primaryProteins);
+				buildSBOLExpression(circuit, expression, fullCircuit_outputProtein, primaryProteins);
 			}
 		}
 	}

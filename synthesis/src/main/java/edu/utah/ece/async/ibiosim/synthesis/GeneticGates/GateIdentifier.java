@@ -94,9 +94,12 @@ public class GateIdentifier {
 		FunctionalComponent input = inputInteraction.components.get(0).component;
 		gate.addInputMolecule(input);
 
-		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
-		FunctionalComponent output = outputInteraction.components.get(0).component;
-		gate.addOutputMolecule(output);
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+		}
+		
 		
 		return gate;
 	}
@@ -108,30 +111,32 @@ public class GateIdentifier {
 		FunctionalComponent input1 = input1Interaction.components.get(0).component;
 		gate.addInputMolecule(input1);
 		
-		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
-		FunctionalComponent output = outputInteraction.components.get(0).component;
-		gate.addOutputMolecule(output);
-		
 		int numOfPromoterRepression = promoters.get(0).outputOfInteraction.size();
-		if(numOfPromoterRepression == 1) {
-			InteractsWith outputProteinInteraction = outputInteraction.components.get(0).inputOfInteractions.get(0);
-			
-			InteractsWith complexProteinInteraction = outputProteinInteraction.components.get(0).inputOfInteractions.get(0);
-			FunctionalComponent temp1 = complexProteinInteraction.components.get(0).component;
-			FunctionalComponent temp2 = complexProteinInteraction.components.get(1).component;
-			if(temp1 == output) {
-				gate.addInputMolecule(temp2);
-			}
-			else if(temp2 == output) {
-				gate.addInputMolecule(temp1);
-			}
-			
-		}
-		else if(numOfPromoterRepression == 2) {
+		if(numOfPromoterRepression == 2) {
 			InteractsWith input2Interaction = promoters.get(0).outputOfInteraction.get(1);
 			FunctionalComponent input2 = input2Interaction.components.get(0).component;
 			gate.addInputMolecule(input2);
 		}
+		
+		
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+
+			if(outputInteraction.components.get(0).inputOfInteractions.size() == 1) {
+				InteractsWith complexProteinInteraction = outputInteraction.components.get(0).inputOfInteractions.get(0);
+				FunctionalComponent temp1 = complexProteinInteraction.components.get(0).outputOfInteraction.get(0).components.get(0).component;
+				FunctionalComponent temp2 = complexProteinInteraction.components.get(0).outputOfInteraction.get(0).components.get(1).component;
+				if(temp1 == output) {
+					gate.addInputMolecule(temp2);
+				}
+				else if(temp2 == output) {
+					gate.addInputMolecule(temp1);
+				}
+			}
+		}
+		
 		
 		return gate;
 	}
@@ -147,9 +152,11 @@ public class GateIdentifier {
 		FunctionalComponent input2 = input2Interaction.components.get(0).component;
 		gate.addInputMolecule(input2);
 		
-		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
-		FunctionalComponent output = outputInteraction.components.get(0).component;
-		gate.addOutputMolecule(output);
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+		}
 		
 		return gate;
 	}
@@ -164,10 +171,12 @@ public class GateIdentifier {
 		InteractsWith input2Interaction = promoters.get(1).outputOfInteraction.get(0);
 		FunctionalComponent input2 = input2Interaction.components.get(0).component;
 		gate.addInputMolecule(input2);
-		
-		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
-		FunctionalComponent output = outputInteraction.components.get(0).component;
-		gate.addOutputMolecule(output);
+	
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+		}
 		
 		return gate;
 	}
@@ -181,65 +190,111 @@ public class GateIdentifier {
 		FunctionalComponent input2 = complexInteraction.components.get(1).component;
 		gate.addInputMolecule(input1);
 		gate.addInputMolecule(input2);
-		
-		InteractsWith outputInteraction = cds.get(0).inputOfInteractions.get(0);
-		FunctionalComponent output = outputInteraction.components.get(0).component;
-		gate.addOutputMolecule(output);
-		
+	
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+		}
+
 		return gate;
 	}
 
 
 	private boolean isNOTGate() {
-		if(promoters.size() != 1 || cds.size() != 1) {
+		if(promoters.size() != 1 || cds.size() < 1) {
 			return false;
 		}
-		if(promoters.get(0).outputOfInteraction.size() != 1 || cds.get(0).inputOfInteractions.size() != 1) {
+		if(promoters.get(0).outputOfInteraction.size() != 1) {
 			return false;
 		}
 
 		InteractsWith reprInteraction= promoters.get(0).outputOfInteraction.get(0);
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION || reprInteraction.type !=  InteractionType.REPRESSION) {
+		if (reprInteraction.type !=  InteractionType.REPRESSION) {
 			return false;
 		}
-		if (reprInteraction.components.size() != 1 || prodInteraction.components.size() != 1) {
+		if (reprInteraction.components.size() != 1) {
 			return false;
 		}
-		if(checkIfInputIsComplex() || checkIfOutputIsComplex()) {
+		if(reprInteraction.components.get(0).outputOfInteraction.size() != 0 ) {
 			return false;
 		}
-		return reprInteraction.components.get(0).outputOfInteraction.size() == 0 && prodInteraction.components.get(0).inputOfInteractions.size() == 0;
+		for(ComponentParticipation currentCDS : cds) {
+			if(currentCDS.inputOfInteractions.size() != 1) {
+				return false;
+			}
+			InteractsWith prodInteraction = currentCDS.inputOfInteractions.get(0);
+			if(prodInteraction.type !=  InteractionType.PRODUCTION) {
+				return false;
+			}
+			if(prodInteraction.components.size() != 1){
+				return false;
+			}
+			if(prodInteraction.components.get(0).inputOfInteractions.size() != 0) {
+				return false;
+			}
+			if(checkIfOutputIsComplex(currentCDS)){
+				return false;
+			}
+		}
+		
+		return !checkIfInputIsComplex(promoters.get(0));
 	}
 
 	private boolean isNORGate() {
-		if(promoters.size() != 1 || cds.size() != 1) {
+		if(promoters.size() != 1 || cds.size() < 1) {
 			return false;
 		}
-		if(promoters.get(0).outputOfInteraction.size() < 1 || promoters.get(0).outputOfInteraction.size() > 2 || cds.get(0).inputOfInteractions.size() != 1) {
+		if(promoters.get(0).outputOfInteraction.size() != 1 && promoters.get(0).outputOfInteraction.size() != 2) {
 			return false;
 		}
-
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
+		
 		if(promoters.get(0).outputOfInteraction.size() == 1) {
 			InteractsWith reprInteraction = promoters.get(0).outputOfInteraction.get(0);
-			if (prodInteraction.type !=  InteractionType.PRODUCTION || reprInteraction.type !=  InteractionType.REPRESSION) {
+			if (reprInteraction.type !=  InteractionType.REPRESSION) {
 				return false;
 			}
-			if (reprInteraction.components.size() != 1 || prodInteraction.components.size() != 1) {
+			if (reprInteraction.components.size() != 1) {
 				return false;
 			}
-			return checkIfOutputIsComplex();
+		}
+		else {
+			InteractsWith reprInteraction = promoters.get(0).outputOfInteraction.get(0);
+			InteractsWith reprInteraction2 = promoters.get(0).outputOfInteraction.get(1);
+			if (reprInteraction.type !=  InteractionType.REPRESSION
+					|| reprInteraction2.type !=  InteractionType.REPRESSION ) {
+				return false;
+			}
+			if (reprInteraction.components.size() != 1 || reprInteraction2.components.size() != 1) {
+				return false;
+			}
+			if(reprInteraction.components.get(0).outputOfInteraction.size() != 0 || reprInteraction2.components.get(0).outputOfInteraction.size() != 0) {
+				return false;
+			}
+			if(checkIfInputIsComplex(promoters.get(0))){
+				return false;
+			}
 		}
 
-		InteractsWith reprInteraction = promoters.get(0).outputOfInteraction.get(0);
-		InteractsWith reprInteraction2 = promoters.get(0).outputOfInteraction.get(1);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION 
-				|| reprInteraction.type !=  InteractionType.REPRESSION
-				|| reprInteraction2.type !=  InteractionType.REPRESSION ) {
-			return false;
+		
+		int numOfOutputComplex = 0;
+		for(ComponentParticipation currentCDS : cds) {
+			if(currentCDS.inputOfInteractions.size() != 1) {
+				return false;
+			}
+			InteractsWith prodInteraction = currentCDS.inputOfInteractions.get(0);
+			if(prodInteraction.type !=  InteractionType.PRODUCTION) {
+				return false;
+			}
+			if(prodInteraction.components.size() != 1){
+				return false;
+			}
+			if(checkIfOutputIsComplex(currentCDS)){
+				numOfOutputComplex++;
+			}
 		}
-		return (reprInteraction.components.size() == 1 && reprInteraction2.components.size() == 1 && prodInteraction.components.size() == 1);
+		
+		return (promoters.get(0).outputOfInteraction.size() == 2 && numOfOutputComplex == 0) || (promoters.get(0).outputOfInteraction.size() == 1 && numOfOutputComplex == 1);
 	}
 
 	private boolean checkIfOutputIsComplex() {
@@ -250,6 +305,20 @@ public class GateIdentifier {
 			return false;
 		}
 		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
+		if (prodInteraction.type !=  InteractionType.PRODUCTION) {
+			return false;
+		}
+
+		return prodInteraction.components.get(0).inputOfInteractions.size() == 1 
+				&& prodInteraction.components.get(0).inputOfInteractions.get(0).type == InteractionType.COMPLEX_FORMATION;
+	}
+	
+	private boolean checkIfOutputIsComplex(ComponentParticipation outputComponent) {
+		
+		if(outputComponent.inputOfInteractions.size() != 1 || outputComponent.outputOfInteraction.size() != 0) {
+			return false;
+		}
+		InteractsWith prodInteraction = outputComponent.inputOfInteractions.get(0);
 		if (prodInteraction.type !=  InteractionType.PRODUCTION) {
 			return false;
 		}
@@ -279,70 +348,134 @@ public class GateIdentifier {
 				&& complexInteraction.components.get(1).outputOfInteraction.size() == 0;
 	}
 	
+	private boolean checkIfInputIsComplex(ComponentParticipation inputComponent) {
+		
+		if(inputComponent.outputOfInteraction.size() != 1 || inputComponent.inputOfInteractions.size() != 0) {
+			return false;
+		}
+		InteractsWith activInteraction = inputComponent.outputOfInteraction.get(0);
+		if (activInteraction.type !=  InteractionType.ACTIVATION) {
+			return false;
+		}
+		if(activInteraction.components.size() != 1) {
+			return false;
+		}
+		InteractsWith complexInteraction = activInteraction.components.get(0).outputOfInteraction.get(0);
+		return complexInteraction.type == InteractionType.COMPLEX_FORMATION 
+				&& complexInteraction.components.size() == 2
+				&& complexInteraction.components.get(0).outputOfInteraction.size() == 0
+				&& complexInteraction.components.get(1).outputOfInteraction.size() == 0;
+	}
+	
 	private boolean isORGate() {
-		if(promoters.size() != 1 || cds.size() != 1) {
+		if(promoters.size() != 1 || cds.size() < 1) {
 			return false;
 		}
-		if(promoters.get(0).outputOfInteraction.size() != 2 || cds.get(0).inputOfInteractions.size() != 1) {
+		if(promoters.get(0).outputOfInteraction.size() != 2) {
 			return false;
 		}
-
 		InteractsWith activInteraction1 = promoters.get(0).outputOfInteraction.get(0);
 		InteractsWith activInteraction2 = promoters.get(0).outputOfInteraction.get(1);
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION || activInteraction1.type !=  InteractionType.ACTIVATION || activInteraction2.type !=  InteractionType.ACTIVATION) {
+		if (activInteraction1.type !=  InteractionType.ACTIVATION || activInteraction2.type !=  InteractionType.ACTIVATION) {
 			return false;
 		}
-		if (activInteraction1.components.size() != 1 || activInteraction1.components.size() != 1 || prodInteraction.components.size() != 1) {
+		if (activInteraction1.components.size() != 1 || activInteraction1.components.size() != 1) {
+			return false;
+		}
+		if (activInteraction1.components.get(0).outputOfInteraction.size() != 0  || activInteraction2.components.get(0).outputOfInteraction.size() != 0 ) {
 			return false;
 		}
 
-		return activInteraction1.components.get(0).outputOfInteraction.size() == 0 
-				&& activInteraction2.components.get(0).outputOfInteraction.size() == 0 
-				&& prodInteraction.components.get(0).inputOfInteractions.size() == 0;
-
+		for(ComponentParticipation currentCDS : cds) {
+			if(currentCDS.inputOfInteractions.size() != 1) {
+				return false;
+			}
+			InteractsWith prodInteraction = currentCDS.inputOfInteractions.get(0);
+			if(prodInteraction.type !=  InteractionType.PRODUCTION) {
+				return false;
+			}
+			if(prodInteraction.components.size() != 1){
+				return false;
+			}
+			if(prodInteraction.components.get(0).inputOfInteractions.size() != 0) {
+				return false;
+			}
+			if(checkIfOutputIsComplex(currentCDS)) {
+				return false;
+			}
+		}
+		return !checkIfInputIsComplex(promoters.get(0));
 	}
 
 	private boolean isNANDGate() {
 		if(promoters.size() != 2 || cds.size() != 1) {
 			return false;
 		}
-		if(promoters.get(0).outputOfInteraction.size() != 1 || promoters.get(1).outputOfInteraction.size() != 1 
-				|| cds.get(0).inputOfInteractions.size() != 1) {
+		if(promoters.get(0).outputOfInteraction.size() != 1 || promoters.get(1).outputOfInteraction.size() != 1) {
 			return false;
 		}
 
 		InteractsWith inhibInteraction1= promoters.get(0).outputOfInteraction.get(0);
 		InteractsWith inhibInteraction2= promoters.get(1).outputOfInteraction.get(0);
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION || inhibInteraction1.type !=  InteractionType.REPRESSION) {
+		if (inhibInteraction1.type !=  InteractionType.REPRESSION) {
 			return false;
 		}
-		if (inhibInteraction1.components.size() != 1 || inhibInteraction2.components.size() != 1 
-				|| prodInteraction.components.size() != 1) {
+		if (inhibInteraction1.components.size() != 1 || inhibInteraction2.components.size() != 1) {
 			return false;
+		}
+		if (inhibInteraction1.components.get(0).outputOfInteraction.size() != 0  || inhibInteraction2.components.get(0).outputOfInteraction.size() != 0 ) {
+			return false;
+		}
+		
+		for(ComponentParticipation currentCDS : cds) {
+			if(currentCDS.inputOfInteractions.size() != 1) {
+				return false;
+			}
+			InteractsWith prodInteraction = currentCDS.inputOfInteractions.get(0);
+			if(prodInteraction.type !=  InteractionType.PRODUCTION) {
+				return false;
+			}
+			if(prodInteraction.components.size() != 1){
+				return false;
+			}
+			if(prodInteraction.components.get(0).inputOfInteractions.size() != 0) {
+				return false;
+			}
+			if(checkIfOutputIsComplex(currentCDS)) {
+				return false;
+			}
 		}
 
-		return inhibInteraction1.components.get(0).outputOfInteraction.size() == 0 
-				&& inhibInteraction2.components.get(0).outputOfInteraction.size() == 0 
-				&& prodInteraction.components.get(0).inputOfInteractions.size() == 0;
+		return !checkIfInputIsComplex(promoters.get(0)) && !checkIfInputIsComplex(promoters.get(1)) ;
 	}
 
 	private boolean isANDGate() {
-		if(cds.size() != 1) {
-			return false;	
-		}
-		if(cds.get(0).inputOfInteractions.size() != 1) {
+		if(promoters.size() != 1 || cds.size() < 1) {
 			return false;
 		}
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION) {
+		if(promoters.get(0).outputOfInteraction.size() != 1) {
 			return false;
 		}
-		if (prodInteraction.components.size() != 1) {
-			return false;
+
+		for(ComponentParticipation currentCDS : cds) {
+			if(currentCDS.inputOfInteractions.size() != 1) {
+				return false;
+			}
+			InteractsWith prodInteraction = currentCDS.inputOfInteractions.get(0);
+			if(prodInteraction.type !=  InteractionType.PRODUCTION) {
+				return false;
+			}
+			if(prodInteraction.components.size() != 1){
+				return false;
+			}
+			if(prodInteraction.components.get(0).inputOfInteractions.size() != 0) {
+				return false;
+			}
+			if(checkIfOutputIsComplex(currentCDS)) {
+				return false;
+			}
 		}
-		return checkIfInputIsComplex();
+		return checkIfInputIsComplex(promoters.get(0));
 
 	}
 

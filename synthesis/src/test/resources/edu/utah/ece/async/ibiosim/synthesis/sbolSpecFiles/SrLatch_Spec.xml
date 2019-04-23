@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/">
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_r_s_q_sl_instance__state_net/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_r_s_q_sl_instance__state_net"/>
+    <sbol:displayId>circuit_r_s_q_sl_instance__state_net</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC0_r/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC0_r"/>
+        <sbol:displayId>FC0_r</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD0_r/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC2_q/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC2_q"/>
+        <sbol:displayId>FC2_q</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC1_s/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_r_s_q_sl_instance__state_net/FC1_s"/>
+        <sbol:displayId>FC1_s</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_s/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+  </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_r/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_r"/>
+    <sbol:displayId>CD0_r</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_s/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_s"/>
+    <sbol:displayId>CD1_s</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD2_q/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_q"/>
+    <sbol:displayId>CD2_q</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>

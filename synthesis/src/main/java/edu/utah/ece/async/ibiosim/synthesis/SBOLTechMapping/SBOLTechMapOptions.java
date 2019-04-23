@@ -17,12 +17,14 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
  */
 public class SBOLTechMapOptions {
 
-	private String libFilePath, specFilePath, outputFileName, outDir;
+	private String outputFileName, outDir;
 	private boolean outputDot, outputSBOL, printCoveredGates;
 	private SBOLUtility sbolUtility;
+	private SBOLDocument library, specification;
 	
 	public SBOLTechMapOptions(){
 		this.sbolUtility = SBOLUtility.getInstance();
+		this.library = this.sbolUtility.createSBOLDocument();
 		
 	}
 	
@@ -34,12 +36,37 @@ public class SBOLTechMapOptions {
 		this.outDir = dirPath;
 	}
 	
-	public void setLibraryFile(String fileFullPath) {
-		this.libFilePath = fileFullPath;
+	public void addLibraryFile(String fileFullPath) {
+
+		try {
+			File file = sbolUtility.getFile(fileFullPath);
+			if(file.isFile()) {
+				SBOLDocument libFile = sbolUtility.parseSBOLFile(file);
+				library.createCopy(libFile);
+			}
+			else if(file.isDirectory()){
+				ArrayList<SBOLDocument> libDocs = sbolUtility.loadSBOLDir(fileFullPath);
+				SBOLDocument mergeDoc = sbolUtility.mergeSBOLDocuments(libDocs);
+				library.createCopy(mergeDoc);
+
+			}
+		} 
+		catch (SBOLValidationException | IOException | SBOLConversionException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setSpecificationFile(String fileFullPath) {
-		this.specFilePath = fileFullPath;
+		try {
+			File specFile = sbolUtility.getFile(fileFullPath);
+			if(specFile.isFile()) {
+				 this.specification = sbolUtility.parseSBOLFile(specFile);
+			}
+		} 
+		catch (SBOLValidationException | IOException | SBOLConversionException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void setOutputDotFile(boolean outputDot) {
@@ -66,22 +93,12 @@ public class SBOLTechMapOptions {
 		return this.outputSBOL;
 	}
 	
-	public SBOLDocument getSpeficationFile() throws SBOLValidationException, IOException, SBOLConversionException {
-		return sbolUtility.loadSBOLFile(specFilePath);
-		
+	public SBOLDocument getSpefication() throws SBOLValidationException, IOException, SBOLConversionException {
+		return specification;
 	}
 	
-	public SBOLDocument getLibraryFile() throws SBOLValidationException, IOException, SBOLConversionException {
-
-		File libFile = sbolUtility.getFile(libFilePath);
-		if(libFile.isFile()) {
-			return sbolUtility.parseSBOLFile(libFile);
-		}
-		
-		ArrayList<SBOLDocument> libDocs = sbolUtility.loadSBOLDir(libFilePath);
-		libDocs = sbolUtility.loadSBOLDir(libFilePath);
-		return sbolUtility.mergeSBOLDocuments(libDocs);
-
+	public SBOLDocument getLibrary() throws SBOLValidationException, IOException, SBOLConversionException {
+		return this.library;
 	}
 
 	public String getOuputFileName() {

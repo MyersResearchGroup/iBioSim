@@ -8,7 +8,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 
 /**
  * 
@@ -102,13 +102,13 @@ public class NOTGate implements GeneticGate {
 
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph decomposedNOT = new DecomposedGraph();
-		Node tuNode = new Node();
-		Node inputNode = new Node(input.getIdentity(), input.getDefinition());
-		Node outputNode = new Node(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		DecomposedGraphNode tuNode = new DecomposedGraphNode();
+		DecomposedGraphNode inputNode = new DecomposedGraphNode(input.getIdentity(), input.getDefinition());
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
 		decomposedNOT.addAllNodes(tuNode, inputNode, outputNode);
 		
-		decomposedNOT.addNodeRelationship(tuNode, inputNode);
-		decomposedNOT.addNodeRelationship(outputNode, tuNode);
+		decomposedNOT.addNodeRelationship(tuNode, inputNode, NodeInteractionType.REPRESSION);
+		decomposedNOT.addNodeRelationship(outputNode, tuNode, NodeInteractionType.PRODUCTION);
 		
 		decomposedNOT.setNodeAsLeaf(inputNode);
 		decomposedNOT.setNodeAsOutput(outputNode);

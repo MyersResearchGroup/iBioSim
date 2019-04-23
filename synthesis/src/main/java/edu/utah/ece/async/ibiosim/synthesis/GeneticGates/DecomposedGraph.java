@@ -6,14 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 
-import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 
 
 /**
@@ -25,8 +27,8 @@ import org.sbolstandard.core2.SystemsBiologyOntology;
 public class DecomposedGraph {
 
 
-	private Node outputNode;
-	private List<Node> nodeList, leafNodeList;
+	private DecomposedGraphNode outputNode;
+	private List<DecomposedGraphNode> nodeList, leafNodeList;
 	
 	public DecomposedGraph() {
 		nodeList = new ArrayList<>();
@@ -36,7 +38,7 @@ public class DecomposedGraph {
 	public void createDecomposedGraph(ModuleDefinition md) {
 		for(FunctionalComponent fc : md.getFunctionalComponents()) {
 			
-			Node newNode = new Node(fc.getIdentity(), fc.getDefinition());
+			DecomposedGraphNode newNode = new DecomposedGraphNode(fc.getIdentity(), fc.getDefinition());
 			addNode(newNode);
 			
 			if(fc.getDirection().equals(DirectionType.IN)) {
@@ -47,52 +49,50 @@ public class DecomposedGraph {
 			}
 		}
 		for(Interaction interaction : md.getInteractions()) {
-			Node parentNode = null;
-			Node childNode =  null;
 			if(interaction.containsType(SystemsBiologyOntology.INHIBITION)) {
-				childNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.INHIBITOR);
-				parentNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.INHIBITED);
+				DecomposedGraphNode childNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.INHIBITOR);
+				DecomposedGraphNode parentNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.INHIBITED);
+				addNodeRelationship(parentNode, childNode, NodeInteractionType.REPRESSION);
 			}
 			else if(interaction.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
-				parentNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.PRODUCT);
-				childNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.TEMPLATE);
-
+				DecomposedGraphNode parentNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.PRODUCT);
+				DecomposedGraphNode childNode = getNodeFromParticipationRole(interaction, SystemsBiologyOntology.TEMPLATE);
+				addNodeRelationship(parentNode, childNode, NodeInteractionType.PRODUCTION);
 			}
-			assert(parentNode != null && childNode != null);
-			addNodeRelationship(parentNode, childNode);
+			
 		}
 	}
 	
-	public void setNodeAsOutput(Node node) {
+	public void setNodeAsOutput(DecomposedGraphNode node) {
 		this.outputNode = node;
 	}
 	
-	public void setNodeAsLeaf(Node node) {
+	public void setNodeAsLeaf(DecomposedGraphNode node) {
 		if(leafNodeList.contains(node)) {
 			return;
 		}
 		leafNodeList.add(node);
 	}
 	
-	public List<Node> getLeafNodes(){
+	public List<DecomposedGraphNode> getLeafNodes(){
 		return this.leafNodeList;
 	}
 	
-	public Node getOutputNode() {
+	public DecomposedGraphNode getOutputNode() {
 		return this.outputNode;
 	}
 
-	public void addNodeRelationship(Node parent, Node child) {
-		parent.childrenNodeList.add(child);
-		child.parentNodeList.add(parent);
+	public void addNodeRelationship(DecomposedGraphNode parent, DecomposedGraphNode child, NodeInteractionType interactionType) {
+		parent.childrenNodeList.put(child, interactionType);
+		child.parentNodeList.put(parent, interactionType);
 	}
 	
 	
 	public boolean isMatch(DecomposedGraph graph) {
-		List<Node> topologicalSortNodes = topologicalSort();
-		for(Node n : topologicalSortNodes) {
-			List<Node> graphSortedNode = graph.topologicalSort();
-			for(Node m : graphSortedNode) {
+		List<DecomposedGraphNode> topologicalSortNodes = topologicalSort();
+		for(DecomposedGraphNode n : topologicalSortNodes) {
+			List<DecomposedGraphNode> graphSortedNode = graph.topologicalSort();
+			for(DecomposedGraphNode m : graphSortedNode) {
 				if(Optional.of(n).isPresent() && Optional.of(m).isPresent()) {
 					if(Optional.of(n).get().equals(Optional.of(m).get())) {
 						return true;
@@ -103,27 +103,14 @@ public class DecomposedGraph {
 		return false;
 	}
 	
-	private Node getNodeFromParticipationRole(Interaction interaction, URI participationType) {
-		List<Node> nodes = new ArrayList<>();
-		for(Participation participation : interaction.getParticipations()) {
-			if(participation.containsRole(participationType)) {
-				FunctionalComponent participant = participation.getParticipant();
-				Node node = getNode(participant.getIdentity());
-				nodes.add(node);
-			}
-		}
-		assert(nodes.size() == 1);
-		return nodes.get(0);
-	}
-	
-	public void addAllNodes(Node... nodes) {
-		for(Node n : nodes) {
+	public void addAllNodes(DecomposedGraphNode... nodes) {
+		for(DecomposedGraphNode n : nodes) {
 			addNode(n);
 		}
 	}
 	
 	
-	public void addNode(Node node) {
+	public void addNode(DecomposedGraphNode node) {
 		if(!nodeList.contains(node)) { 
 			nodeList.add(node);
 		}
@@ -131,29 +118,29 @@ public class DecomposedGraph {
 	
 	/**
 	 * Sort from bottom leaf nodes to root nodes
-	 * @return
+	 * @return Nodes sorted topological order
 	 */
-	public List<Node> topologicalSort()
+	public List<DecomposedGraphNode> topologicalSort()
 	{
-		List<Node> sortedElements = new ArrayList<Node>();
-		Queue<Node> unsortedElements = new LinkedList<Node>();
+		List<DecomposedGraphNode> sortedElements = new ArrayList<DecomposedGraphNode>();
+		Queue<DecomposedGraphNode> unsortedElements = new LinkedList<DecomposedGraphNode>();
 		unsortedElements.addAll(leafNodeList);
 
 		while(!unsortedElements.isEmpty())
 		{
-			Node currentUnsortedNode = unsortedElements.poll();
+			DecomposedGraphNode currentUnsortedNode = unsortedElements.poll();
 			if(sortedElements.contains(currentUnsortedNode))
 				continue;
 			sortedElements.add(currentUnsortedNode);
-			for(Node currentUnsortedParentNode : currentUnsortedNode.parentNodeList) {
+			for(DecomposedGraphNode currentUnsortedParentNode : currentUnsortedNode.parentNodeList.keySet()) {
 				if(currentUnsortedParentNode.childrenNodeList.size() == 1) {
 					unsortedElements.add(currentUnsortedParentNode);
 					break;
 				}
 				else if(currentUnsortedParentNode.childrenNodeList.size() == 2){
-					List<Node> childrenNodes = currentUnsortedParentNode.childrenNodeList; 
+					Set<DecomposedGraphNode> childrenNodes = currentUnsortedParentNode.childrenNodeList.keySet(); 
 					if(childrenNodes.contains(currentUnsortedNode) && childrenNodes.contains(unsortedElements.peek())) {
-						Node temp = unsortedElements.poll();
+						DecomposedGraphNode temp = unsortedElements.poll();
 						sortedElements.add(temp);
 						unsortedElements.add(currentUnsortedParentNode);
 
@@ -170,10 +157,10 @@ public class DecomposedGraph {
 		return sortedElements;
 	}
 	
-	private Node getNode(URI uri) {
-		List<Node> nodes = new ArrayList<>();
-		for(Node n : nodeList) {
-			if(n.uri.isPresent() && n.uri.get().equals(uri)) {
+	private DecomposedGraphNode getNode(URI uri) {
+		List<DecomposedGraphNode> nodes = new ArrayList<>();
+		for(DecomposedGraphNode n : nodeList) {
+			if(n.fcUri.isPresent() && n.fcUri.get().equals(uri)) {
 				nodes.add(n); 
 			}
 		}
@@ -181,42 +168,16 @@ public class DecomposedGraph {
 		return nodes.get(0);
 	}
 	
-	
-	
-	public static class Node {
-		Optional<URI> uri;
-		Optional<ComponentDefinition> cd;
-		double score; 
-		List<Node> parentNodeList, childrenNodeList;
-		
-		public Node(){
-			uri = Optional.empty();
-			parentNodeList = new ArrayList<>();
-			childrenNodeList = new ArrayList<>();
+	private DecomposedGraphNode getNodeFromParticipationRole(Interaction interaction, URI participationType) {
+		List<DecomposedGraphNode> nodes = new ArrayList<>();
+		for(Participation participation : interaction.getParticipations()) {
+			if(participation.containsRole(participationType)) {
+				FunctionalComponent participant = participation.getParticipant();
+				DecomposedGraphNode node = getNode(participant.getIdentity());
+				nodes.add(node);
+			}
 		}
-		
-		public Node(URI uri, ComponentDefinition cd){
-			this.uri = Optional.of(uri);
-			this.cd = Optional.of(cd);
-			
-			parentNodeList = new ArrayList<>();
-			childrenNodeList = new ArrayList<>();
-		}
-		
-		public List<Node> getParentNodeList() {
-			return this.parentNodeList;
-		}
-		
-		public List<Node> getChildrenNodeList(){
-			return this.childrenNodeList;
-		}
-		
-		public void setScore(double value) {
-			this.score = value;
-		}
-		
-		public double getScore() {
-			return this.score;
-		}
+		assert(nodes.size() == 1);
+		return nodes.get(0);
 	}
 }

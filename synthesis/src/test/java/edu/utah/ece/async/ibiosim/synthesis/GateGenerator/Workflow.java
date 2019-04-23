@@ -41,7 +41,7 @@ public class Workflow {
 
 	@Test 
 	public void Test_NANDGate() {
-		String files = String.join(" ", TestingFiles.nandTU_size1_File);
+		String files = String.join(" ", TestingFiles.nandTU_size2_File);
 		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NAND", "-od", TestingFiles.writeLibDir};
 		
 		GateGenerationRunner.main(cmd);

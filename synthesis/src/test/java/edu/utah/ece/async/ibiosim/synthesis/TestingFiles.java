@@ -32,16 +32,21 @@ public class TestingFiles {
 	public static String nandTU_size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size1.xml").getFile();
 	public static String nandTU_size2_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size2.xml").getFile();
 	public static String pSrpR_roadblockTU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_roadblock_11CombinatorialDerivations.xml").getFile();
+	public static String pSrpr_Bulk_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_117roadblockTUs.xml").getFile();
 	
 	public static String NOT_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Not_Spec.xml").getFile(); 
 	public static String NAND_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Nand_Spec.xml").getFile(); 
 	public static String AND_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "And_Spec.xml").getFile(); 
 	public static String OR_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Or_Spec.xml").getFile(); 
+	public static String SRLatch_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "SrLatch_Spec.xml").getFile(); 
 
-	public static String NOT1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize1.xml").getFile(); 
-	public static String OR1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ORGates_LibrarySize1.xml").getFile(); 
-	public static String NAND1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize1.xml").getFile(); 
-	public static String AND1_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ANDGates_LibrarySize1.xml").getFile(); 
+	public static String NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize1.xml").getFile(); 
+	public static String NOT_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize2.xml").getFile(); 
+	public static String NOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NORGates_LibrarySize1.xml").getFile(); 
+	public static String OR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ORGates_LibrarySize1.xml").getFile(); 
+	public static String NAND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize1.xml").getFile(); 
+	public static String NAND_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize2.xml").getFile(); 
+	public static String AND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ANDGates_LibrarySize1.xml").getFile(); 
 	
 	public static String sbmlEvenZero_impFile  = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_imp.xml").getFile();
 	public static String sbmlEvenZero_tbFile   = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_testbench.xml").getFile();
@@ -89,9 +94,11 @@ public class TestingFiles {
 	public static String verilogScanflop_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "scanflop_testbench.v").getFile();
 	public static String verilogSRLatch_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "srlatch_imp.v").getFile();
 	public static String verilogSRLatch_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "srlatch_testbench.v").getFile();
+	public static String verilog_gts_impFile= TestingFiles.class.getResource(verilogDir + File.separator + "gts_imp.v").getFile();
+	public static String verilog_gts_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "gts_testbench.v").getFile();
 
 	public static String verilogSynthesizedFilter_file = TestingFiles.class.getResource(verilogDir + File.separator + "filter.v").getFile();
 
-	public static String yosys = TestingFiles.class.getResource(verilogDir + File.separator  + "result.v").getFile();
+	public static String yosys = TestingFiles.class.getResource(verilogDir + File.separator  + "srlatch_decomposed.v").getFile();
 	
 }

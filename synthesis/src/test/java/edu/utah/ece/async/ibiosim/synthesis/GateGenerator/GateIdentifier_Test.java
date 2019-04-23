@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
@@ -29,20 +30,22 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ORGate;
 public class GateIdentifier_Test {
 	
 	@Test
-	public void Test_NOT() throws SBOLValidationException {
+	public void Test_NOT() {
 		try {
-			SBOLDocument inFile = SBOLReader.read(new File(TestingFiles.NOT1_LibSize1));
-			for(ModuleDefinition md : inFile.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(inFile, md);
-				
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof NOTGate);
-			}
+			SBOLDocument inFile = SBOLReader.read(new File(TestingFiles.NOT_LibSize1));
+			Assert.assertEquals(1, inFile.getRootModuleDefinitions().size());
+			ModuleDefinition md = inFile.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(inFile, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof NOTGate);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SBOLConversionException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}
@@ -51,11 +54,22 @@ public class GateIdentifier_Test {
 	public void Test_OR() {
 		try {
 			SBOLDocument orGate = SyntheticGateExamples.createORGate();
-			for(ModuleDefinition md : orGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(orGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof ORGate);
+			Assert.assertEquals(1, orGate.getRootModuleDefinitions().size());
+			ModuleDefinition md = orGate.getRootModuleDefinitions().iterator().next();
+
+			GateIdentifier sortInstance = new GateIdentifier(orGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof ORGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_protein"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}
+
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (SBOLValidationException e) {
@@ -64,85 +78,139 @@ public class GateIdentifier_Test {
 		catch (GateGenerationExeception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 	
 	@Test
-	public void Test_NOR1() throws SBOLValidationException {
+	public void Test_NOR1(){
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate1();
-			for(ModuleDefinition md : norGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(norGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof NORGate);
+			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(norGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof NORGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_protein"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}
+
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
-	public void Test_NOR2() throws SBOLValidationException {
+	public void Test_NOR2() {
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate2();
-			for(ModuleDefinition md : norGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(norGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof NORGate);
+			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(norGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof NORGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_protein"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}
+
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
-	public void Test_NOR3() throws SBOLValidationException {
+	public void Test_NOR3() {
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate3();
-			for(ModuleDefinition md : norGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(norGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof NORGate);
+			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(norGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof NORGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_smallMolecule"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}
+
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
-	public void Test_NAND() throws SBOLValidationException {
+	public void Test_NAND() {
 		try {
 			SBOLDocument nandGate = SyntheticGateExamples.createNANDGate();
-			for(ModuleDefinition md : nandGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(nandGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof NANDGate);
+			ModuleDefinition md = nandGate.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(nandGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof NANDGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_protein"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}
+
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Test
-	public void Test_AND() throws SBOLValidationException {
+	public void Test_AND() {
 		try {
 			SBOLDocument nandGate = SyntheticGateExamples.createANDGate();
-			for(ModuleDefinition md : nandGate.getRootModuleDefinitions()) {
-				GateIdentifier sortInstance = new GateIdentifier(nandGate, md);
-				GeneticGate gate = sortInstance.createGate();
-				Assert.assertTrue(gate instanceof ANDGate);
+			ModuleDefinition md = nandGate.getRootModuleDefinitions().iterator().next();
+			GateIdentifier sortInstance = new GateIdentifier(nandGate, md);
+			GeneticGate gate = sortInstance.createGate();
+			Assert.assertTrue(gate instanceof ANDGate);
+			Assert.assertEquals(2, gate.getListOfInputs().size());
+			for(FunctionalComponent fc : gate.getListOfInputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC1_x0_protein") || fc.getDisplayId().equals("FC2_x1_protein"));
 			}
+
+			Assert.assertEquals(1, gate.getListOfOutputs().size());
+			for(FunctionalComponent fc : gate.getListOfOutputs()) {
+				Assert.assertTrue(fc.getDisplayId().equals("FC0_Y_protein"));
+			}	
 		} catch (SBOLException e) {
 			e.printStackTrace();
 		} catch (GateGenerationExeception e) {
+			e.printStackTrace();
+		} catch (SBOLValidationException e) {
 			e.printStackTrace();
 		}
 	}

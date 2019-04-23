@@ -1,6 +1,7 @@
 package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 
 
+
 import java.io.File;
 import java.io.IOException;
 
@@ -142,6 +143,7 @@ public class SyntheticGateExamples {
 		Module x1_act_instance = NORGate.createModule("norGate_X1_protein_inhibition", x1_protein_inhib.getIdentity());
 		x1_act_instance.createMapsTo("expected_X1_protein_inhib1_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_x1_protein.getIdentity(), gen_x1_protein.getIdentity());
 		x1_act_instance.createMapsTo("expected_pro_inhib2_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_pro_fc.getIdentity(), gen_x1pro_fc.getIdentity());
+		
 		return wrapper.getSBOLDocument();
 	}
 	

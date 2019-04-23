@@ -197,6 +197,8 @@ public class SBOLUtility
 		}
 		return result;
 	}
+	
+	
 
 	/**
 	 * Creates a java File object from the given String. 

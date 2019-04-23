@@ -153,10 +153,10 @@ public class TechMapping {
 			if(sbolTechMap)
 			{
 				SBOLTechMapOptions setupOpts = new SBOLTechMapOptions();
-				setupOpts.setLibraryFile(sbolLibDir);
+				setupOpts.addLibraryFile(sbolLibDir);
 				setupOpts.setSpecificationFile(specFile);
 				
-				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpeficationFile(), setupOpts.getLibraryFile());
+				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpefication(), setupOpts.getLibrary());
 //				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping();
 //				if(outSBOL)
 //				{

@@ -34,6 +34,20 @@ public class TestRoadblockingGates {
 		Assert.assertEquals(11, generator.getGeneticGateList().size());
 		
 	}
+	
+	@Test 
+	public void Test_pSrpR_RoadblockGates_temp() throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException, GateGenerationExeception {
+		GateGeneratorOptions setupOpt = new GateGeneratorOptions();
+		setupOpt.addTUFile(TestingFiles.pSrpr_Bulk_File);
+		
+		GateGeneration generator = new GateGeneration();
+		List<SBOLDocument> enrichedTU_List = generator.enrichedTU(setupOpt.getTUSBOLDocumentList(), "https://synbiohub.programmingbiology.org/");
+		generator.sortEnrichedTUList(enrichedTU_List);
+		generator.exportLibrary(generator.getLibrary(), TestingFiles.writeLibDir + File.separator + "pSrpR_Library_temp.xml");
+		Assert.assertEquals(11, generator.getGeneticGateList().size());
+		
+	}
+
 
 	@Test 
 	public void Test_pSrpR_Size2() throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException, GateGenerationExeception {
@@ -43,10 +57,6 @@ public class TestRoadblockingGates {
 		GateGeneration generator = new GateGeneration();
 		List<SBOLDocument> enrichedTU_List = generator.enrichedTU(setupOpt.getTUSBOLDocumentList(), "https://synbiohub.programmingbiology.org/");
 		generator.sortEnrichedTUList(enrichedTU_List);
-		int iteration = 1; 
-		for(GeneticGate gate : generator.getGeneticGateList()) {
-			generator.exportLibrary(gate.getSBOLDocument(), TestingFiles.writeLibDir + File.separator + gate.getModuleDefinition().getDisplayId() + iteration++ + ".xml");
-		}
 		Assert.assertEquals(2, generator.getGeneticGateList().size());
 		
 	}

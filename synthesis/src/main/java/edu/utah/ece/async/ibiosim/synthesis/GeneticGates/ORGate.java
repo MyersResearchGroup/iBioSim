@@ -7,7 +7,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 
 /**
  * 
@@ -98,23 +98,23 @@ public class ORGate implements GeneticGate {
 	
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph decomposedOR = new DecomposedGraph();
-		Node norTuNode = new Node();
-		Node notTuNode = new Node();
-		Node internalNorOutNode = new Node();
-		Node inputNode1 = new Node(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
-		Node inputNode2 = new Node(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());;
-		Node outputNode = new Node(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		DecomposedGraphNode norTuNode = new DecomposedGraphNode();
+		DecomposedGraphNode notTuNode = new DecomposedGraphNode();
+		DecomposedGraphNode internalNorOutNode = new DecomposedGraphNode();
+		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
+		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());;
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
 
 		decomposedOR.addAllNodes(norTuNode, notTuNode, internalNorOutNode,
 				inputNode1, inputNode2, outputNode);
 		
 	
-		decomposedOR.addNodeRelationship(norTuNode, inputNode1);
-		decomposedOR.addNodeRelationship(norTuNode, inputNode2);
-		decomposedOR.addNodeRelationship(internalNorOutNode, norTuNode);
+		decomposedOR.addNodeRelationship(norTuNode, inputNode1, NodeInteractionType.REPRESSION);
+		decomposedOR.addNodeRelationship(norTuNode, inputNode2, NodeInteractionType.REPRESSION);
+		decomposedOR.addNodeRelationship(internalNorOutNode, norTuNode, NodeInteractionType.PRODUCTION);
 		
-		decomposedOR.addNodeRelationship(notTuNode, internalNorOutNode);
-		decomposedOR.addNodeRelationship(outputNode, notTuNode);
+		decomposedOR.addNodeRelationship(notTuNode, internalNorOutNode, NodeInteractionType.REPRESSION);
+		decomposedOR.addNodeRelationship(outputNode, notTuNode, NodeInteractionType.PRODUCTION);
 		
 		decomposedOR.setNodeAsLeaf(inputNode1);
 		decomposedOR.setNodeAsLeaf(inputNode2);

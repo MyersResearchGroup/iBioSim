@@ -7,12 +7,12 @@ import java.util.List;
 
 import org.sbolstandard.core2.CombinatorialDerivation;
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
-import org.sbolstandard.core2.TopLevel;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
@@ -21,6 +21,7 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NOTGate;
 
 /**
  * Class to automate the process of building genetic logic gates from a list of transcriptional units.  
@@ -30,7 +31,7 @@ public class GateGeneration {
 	
 	private SBOLUtility sbolUtility;
 	private List<GeneticGate> gateList;
-	private int enrichedMdId;
+	private int mdId;
 	
 	public GateGeneration() {
 		this.sbolUtility = SBOLUtility.getInstance();
@@ -41,6 +42,7 @@ public class GateGeneration {
 		List<SBOLDocument> enrichedTU_list = new ArrayList<>();
 		for(SBOLDocument document : transcriptionalUnitList) {
 			List<URI> templateURIs = getTemplateFromCombinatorialDerivation(document);
+			int counter = 1;
 			for(ComponentDefinition rootCD : document.getRootComponentDefinitions()) {
 				if(templateURIs.contains(rootCD.getIdentity())) {
 					continue;
@@ -49,7 +51,7 @@ public class GateGeneration {
 				document.createRecursiveCopy(tuDesign, rootCD);
 				SBOLDocument enrichedTU = VPRModelGenerator.generateModel(SynBioHubRepository, tuDesign, getEnrichedMdId() + "_" + rootCD.getDisplayId());
 				enrichedTU_list.add(enrichedTU);
-				System.out.println(rootCD.getDisplayId());
+				System.out.println(counter++ + ": " + rootCD.getDisplayId());
 			}
 		}
 		return enrichedTU_list;
@@ -71,6 +73,28 @@ public class GateGeneration {
 				gateList.add(gate);
 			}
 		}
+	}
+	
+	public void createWiredNOTGates() throws SBOLValidationException {
+		List<GeneticGate> notGates = getGatesWithType(GateType.NOT);
+		for(GeneticGate gate : notGates) {
+			NOTGate not = (NOTGate) gate;
+			List<FunctionalComponent> gateOutputs = not.getListOfOutputs();
+			if(gateOutputs.size() == 1) {
+				FunctionalComponent signal = gateOutputs.get(0);
+				
+			}
+		}
+	}
+	
+	private List<GeneticGate> getGatesWithType(GateType gateType) {
+		List<GeneticGate> gateList = new ArrayList<>();
+		for(GeneticGate gate : this.gateList) {
+			if(gate.getType().equals(gateType)) {
+				gateList.add(gate);
+			}
+		}
+		return gateList;
 	}
 	
 	public SBOLDocument getNOTLibrary() throws SBOLValidationException {
@@ -137,10 +161,6 @@ public class GateGeneration {
 		SBOLDocument library = sbolUtility.createSBOLDocument();
 		for(GeneticGate gate : this.gateList) {
 			library.createCopy(gate.getSBOLDocument());
-			//library.createCopy(gate.getModuleDefinition());
-			//for(TopLevel t : gate.getSBOLDocument().getTopLevels()) {
-			//	library.createCopy(t);
-			//}
 		}
 		return library;
 	}
@@ -154,7 +174,9 @@ public class GateGeneration {
 	}
 	
 	private String getEnrichedMdId() {
-		return "TopLevel" + enrichedMdId++;
+		return "TopLevel" + mdId++;
 	}
+	
+	
 	
 }

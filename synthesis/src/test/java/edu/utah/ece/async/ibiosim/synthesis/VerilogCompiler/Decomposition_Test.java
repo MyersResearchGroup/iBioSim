@@ -6,7 +6,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.text.parser.ParseException;
 
 /**
- * Test Verilog expression when it goes through synthesis
+ * Test decomposition method 
  * @author Tramy Nguyen
  */
 public class Decomposition_Test { 

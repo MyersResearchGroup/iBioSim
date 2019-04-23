@@ -1224,7 +1224,7 @@ public class SBOL2SBML {
 	 */
 	private static boolean isOutputComponent(FunctionalComponent comp) {
 		// TODO: hack to avoid mapping promoters
-		if (comp.getDefinition().getTypes().contains(ComponentDefinition.DNA)) return false;
+		if (comp.getDefinition().getTypes().contains(ComponentDefinition.DNA_REGION)) return false;
 		return comp.getDirection().equals(DirectionType.OUT) || comp.getDirection().equals(DirectionType.INOUT);
 	}
 
@@ -1248,7 +1248,7 @@ public class SBOL2SBML {
 	 * @return True if the given ComponentDefinition is a valid DNA species
 	 */
 	private static boolean isDNADefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ComponentDefinition.DNA);
+		return compDef.containsType(ComponentDefinition.DNA_REGION);
 	}
 
 	/**
@@ -1294,7 +1294,7 @@ public class SBOL2SBML {
 	 * @return True if the given ComponentDefinition is a valid RNA species
 	 */
 	private static boolean isRNADefinition(ComponentDefinition compDef) {
-		return compDef.containsType(ComponentDefinition.RNA);
+		return compDef.containsType(ComponentDefinition.RNA_REGION);
 	}
 
 	/**

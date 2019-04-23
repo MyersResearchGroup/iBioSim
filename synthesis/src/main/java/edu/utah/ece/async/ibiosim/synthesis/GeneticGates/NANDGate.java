@@ -7,7 +7,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 
 /**
  * 
@@ -91,33 +91,33 @@ public class NANDGate implements GeneticGate {
 	
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph decomposedNand = new DecomposedGraph();
-		Node norTuNode = new Node();
-		Node notTuNode1 = new Node();
-		Node notTuNode2 = new Node();
-		Node notTuNode3 = new Node();
-		Node internalNotOut1Node = new Node();
-		Node internalNotOut2Node = new Node();
-		Node internalNorOutNode = new Node();
-		Node inputNode1 = new Node(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
-		Node inputNode2 = new Node(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());
-		Node outputNode = new Node(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		DecomposedGraphNode norTuNode = new DecomposedGraphNode();
+		DecomposedGraphNode notTuNode1 = new DecomposedGraphNode();
+		DecomposedGraphNode notTuNode2 = new DecomposedGraphNode();
+		DecomposedGraphNode notTuNode3 = new DecomposedGraphNode();
+		DecomposedGraphNode internalNotOut1Node = new DecomposedGraphNode();
+		DecomposedGraphNode internalNotOut2Node = new DecomposedGraphNode();
+		DecomposedGraphNode internalNorOutNode = new DecomposedGraphNode();
+		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
+		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
 	
 		decomposedNand.addAllNodes(norTuNode, notTuNode1, notTuNode2, notTuNode3,
 				internalNorOutNode, internalNotOut1Node, internalNotOut2Node,
 				inputNode1, inputNode2, outputNode);
 	
-		decomposedNand.addNodeRelationship(notTuNode1, inputNode1);
-		decomposedNand.addNodeRelationship(internalNotOut1Node, notTuNode1);
+		decomposedNand.addNodeRelationship(notTuNode1, inputNode1, NodeInteractionType.REPRESSION);
+		decomposedNand.addNodeRelationship(internalNotOut1Node, notTuNode1, NodeInteractionType.PRODUCTION);
 
-		decomposedNand.addNodeRelationship(notTuNode2, inputNode2);
-		decomposedNand.addNodeRelationship(internalNotOut2Node, notTuNode2);
+		decomposedNand.addNodeRelationship(notTuNode2, inputNode2, NodeInteractionType.REPRESSION);
+		decomposedNand.addNodeRelationship(internalNotOut2Node, notTuNode2, NodeInteractionType.PRODUCTION);
 		
-		decomposedNand.addNodeRelationship(norTuNode, internalNotOut1Node);
-		decomposedNand.addNodeRelationship(norTuNode, internalNotOut2Node);
-		decomposedNand.addNodeRelationship(internalNorOutNode, norTuNode);
+		decomposedNand.addNodeRelationship(norTuNode, internalNotOut1Node, NodeInteractionType.REPRESSION);
+		decomposedNand.addNodeRelationship(norTuNode, internalNotOut2Node, NodeInteractionType.REPRESSION);
+		decomposedNand.addNodeRelationship(internalNorOutNode, norTuNode, NodeInteractionType.PRODUCTION);
 
-		decomposedNand.addNodeRelationship(notTuNode3, internalNorOutNode);
-		decomposedNand.addNodeRelationship(outputNode, notTuNode3);
+		decomposedNand.addNodeRelationship(notTuNode3, internalNorOutNode, NodeInteractionType.REPRESSION);
+		decomposedNand.addNodeRelationship(outputNode, notTuNode3, NodeInteractionType.PRODUCTION);
 		
 		decomposedNand.setNodeAsLeaf(inputNode1);
 		decomposedNand.setNodeAsLeaf(inputNode2);

@@ -19,7 +19,7 @@ import org.sbolstandard.core2.Sequence;
 
 import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 
@@ -37,7 +37,7 @@ public class TechMapUtility {
 
 		ModuleDefinition toplevelCircuit = specificationDocument.getRootModuleDefinitions().iterator().next();
 		Map<URI, DecomposedGraph> circuitGraphs = new HashMap<>();
-		Map<URI, Node> fcMap = new HashMap<>();
+		Map<URI, DecomposedGraphNode> fcMap = new HashMap<>();
 
 		// Create SBOL Graph for each subcircuit and skip the top.
 		for(ModuleDefinition circuit : specificationDocument.getModuleDefinitions()) {
@@ -51,7 +51,7 @@ public class TechMapUtility {
 
 		// Create functional component for each top-level protein and map them to the proteins in the subcircuits.
 		for(FunctionalComponent topFC : toplevelCircuit.getFunctionalComponents()) {
-			Node node = new Node(); 
+			DecomposedGraphNode node = new DecomposedGraphNode(); 
 			fcMap.put(topFC.getIdentity(), node);
 
 		}

@@ -1,37 +1,35 @@
-// ----------------------------
-// This module impelements an srlatch.
-//
-// Note:
-// - Syntax works and compiles with Verilog2LPN compiler
-// - async. design follows bundle data encoding
-//
-// author: Tramy Nguyen
-// ----------------------------
-
-module srlatch_imp (s, r, q, ack);
-
-	output reg q, ack;
+module srlatch_imp (s, r, q);
+	output reg q;
 	input wire s, r;
-
+	reg state;
 	initial begin
 		q = 1'b0;
-		ack = 1'b0;
+		state = 1'b0;
 	end
-
 	always begin
-		wait(s == 1'b1 || r == 1'b1) #5;
-
-		if(s == 1'b1) begin
+		wait((s == 1'b1 && r == 1'b0)
+			|| (s == 1'b0 && r == 1'b1)
+			|| (s == 1'b0 && r == 1'b0));
+		//input to output
+		if(s == 1'b1 && r == 1'b0) begin
 			#5 q = 1'b1;
-			#5 ack = 1'b1;
-		end else begin
+		end else if(s == 1'b0 && r == 1'b1 ) begin
 			#5 q = 1'b0;
-			#5 ack = 1'b1;
+		end else begin
+			if(state == 1'b1) begin
+				#5 q = 1'b1;
+			end else begin
+				#5 q = 1'b0;
+			end
 		end
-
-		wait(s != 1'b1 && r != 1'b1) #5;
-
-		#5 ack = 1'b0;
+		// output to current state
+		if(q == 1'b1 && state == 1'b0) begin
+			state = 1'b1;
+		end
+		else if(q == 1'b0 && state == 1'b1) begin
+			state = 1'b0;
+		end
+		wait((q == 1'b0 && state == 1'b0)
+			|| (q == 1'b1 && state == 1'b1));
 	end
-
 endmodule

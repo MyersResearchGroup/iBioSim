@@ -85,6 +85,16 @@ public class Workflow_Test {
 		VerilogRunner.main(cmd);
 	}
 	
+	@Test
+	public void TestGTS() {
+		String files = String.join(" ", TestingFiles.verilog_gts_impFile, TestingFiles.verilog_gts_tbFile);
+		String[] cmd = {"-v", files, 
+				"-imp", "gts_imp", "-tb", "gts_testbench", 
+				"-lpn", "-od", TestingFiles.writeOutputDir, "-o", "gts"};
+		
+		VerilogRunner.main(cmd);
+	}
+	
 	@Test	
 	public void Test_FilterSynthesized() throws ParseException, FileNotFoundException {
 		String[] cmd = {"-v", TestingFiles.verilogSynthesizedFilter_file,

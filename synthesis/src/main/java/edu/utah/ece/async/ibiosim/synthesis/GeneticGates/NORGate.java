@@ -7,7 +7,7 @@ import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph.Node;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 
 /**
  * 
@@ -103,19 +103,16 @@ public class NORGate implements GeneticGate{
 	
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph decomposedNOR = new DecomposedGraph();
-		Node tuNode = new Node();
-		Node inputNode1 = new Node(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
-		Node inputNode2 = new Node(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());
-		Node outputNode = new Node(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
-	
-		decomposedNOR.addNode(tuNode);
-		decomposedNOR.addNode(inputNode1);
-		decomposedNOR.addNode(inputNode2);
-		decomposedNOR.addNode(outputNode);
+		DecomposedGraphNode tuNode = new DecomposedGraphNode();
+		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
+		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+
+		decomposedNOR.addAllNodes(tuNode, inputNode1, inputNode2, outputNode);
 		
-		decomposedNOR.addNodeRelationship(tuNode, inputNode1);	
-		decomposedNOR.addNodeRelationship(tuNode, inputNode2);	
-		decomposedNOR.addNodeRelationship(outputNode, tuNode);
+		decomposedNOR.addNodeRelationship(tuNode, inputNode1, NodeInteractionType.REPRESSION);	
+		decomposedNOR.addNodeRelationship(tuNode, inputNode2, NodeInteractionType.REPRESSION);	
+		decomposedNOR.addNodeRelationship(outputNode, tuNode, NodeInteractionType.PRODUCTION);
 		
 		decomposedNOR.setNodeAsLeaf(inputNode1);
 		decomposedNOR.setNodeAsLeaf(inputNode2);
