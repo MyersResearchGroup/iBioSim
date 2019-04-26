@@ -106,20 +106,20 @@ public class CelloModeling {
 		removeSensorInteractios(resultMD, sensorMolecules);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		boolean CelloModel = false;
+		boolean CelloModel = true;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
-		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
-			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
-				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
-				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
-				//using Cello Parameters.
-				celloParameters.put(promoter, hasCelloParameters(promoter));
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
-				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
-					CelloModel = true;
-				}
-			}
-		}
+//		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+//			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
+//				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
+//				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
+//				//using Cello Parameters.
+//				celloParameters.put(promoter, hasCelloParameters(promoter));
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
+//				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
+//					CelloModel = true;
+//				}
+//			}
+//		}
 		
 
 		// Generate SBML Species for each part in the model
@@ -669,6 +669,9 @@ public class CelloModeling {
 	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
 	 */
 	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
+		
+		//Since it is not possible to determine in which production reactions each Engineered Region participates in, then we first have to look through all the ER, then through 
+		//all production reactions, and match them
 		
 		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
 		for (ComponentDefinition CD : sbolDoc.getComponentDefinitions()) {
