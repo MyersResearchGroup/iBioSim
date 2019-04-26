@@ -2019,6 +2019,21 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 	
+	/**
+	 * Creates the cello SD production reactions.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param mRNA the m RNA
+	 * @param reactionID the reaction ID
+	 * @param TU the tu
+	 * @param kSDdegrad the k S ddegrad
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @param targetModel the target model
+	 * @param promoters the promoters
+	 * @param promoterInteractions the promoter interactions
+	 * @return the reaction
+	 */
 	//TODO PEDRO createCelloSDProductionReaction
 	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, Set <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
@@ -2135,6 +2150,23 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 	
+	/**
+	 * Creates the cello TF production reactions.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param mRNA the m RNA
+	 * @param rxnID the rxn ID
+	 * @param products the products
+	 * @param celloParameters the cello parameters
+	 * @param kTFdegrad the k T fdegrad
+	 * @param ko the ko
+	 * @param kb the kb
+	 * @param KoStr the ko str
+	 * @param KaoStr the kao str
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @return the reaction
+	 */
 	//TODO PEDRO createCelloTFProductionReaction
 	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<String, List<String>> celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
@@ -2264,6 +2296,16 @@ public class BioModel extends CoreObservable{
 		return reaction;
 	}
 	
+	/**
+	 * Creates the cello production kinetic law.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param reaction the reaction
+	 * @param celloParameters the cello parameters
+	 * @param promoterInteractions the promoter interactions
+	 * @param promoters the promoters
+	 * @return the string
+	 */
 	//TODO PEDRO createCelloProductionKineticLaw
 	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
 		String kineticLaw = "";

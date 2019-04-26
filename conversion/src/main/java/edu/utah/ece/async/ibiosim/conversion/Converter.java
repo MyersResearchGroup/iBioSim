@@ -537,8 +537,8 @@ public class Converter {
 								SBOLDocument newSbolDoc = sbolDoc.createRecursiveCopy(top);
 								
 								try {
-									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, vpr_output);
-									//newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
+									//newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, vpr_output);
+									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
 									e.printStackTrace();
@@ -566,8 +566,8 @@ public class Converter {
 							//TODO PEDRO calling VPR
 							if (doVPR) {
 								try {
-									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, vpr_output);
-									//sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
+									//sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, vpr_output);
+									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
 									e.printStackTrace();
@@ -590,15 +590,15 @@ public class Converter {
 								
 								CompSBMLDocumentPlugin docPlugin = (CompSBMLDocumentPlugin) topEnvironment.getPlugin("comp");					
 								ExternalModelDefinition exte = docPlugin.getExternalModelDefinition("TopModel");
-								exte.setId(vpr_output);
-								exte.setSource(vpr_output + ".xml");
-								//exte.setId("topModule");
-								//exte.setSource("topModule.xml");
+								//exte.setId(vpr_output);
+								//exte.setSource(vpr_output + ".xml");
+								exte.setId("topModule");
+								exte.setSource("topModule.xml");
 														
 								CompModelPlugin SBMLplugin = (CompModelPlugin) topEnvironment.getModel().getPlugin("comp");
 								Submodel top = SBMLplugin.getSubmodel("C1");
-								top.setModelRef(vpr_output);
-								//top.setModelRef("topModule");
+								//top.setModelRef(vpr_output);
+								top.setModelRef("topModule");
 
 								SBMLWriter writing = new SBMLWriter();
 								
