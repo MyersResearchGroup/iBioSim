@@ -20,7 +20,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
@@ -106,7 +105,7 @@ public class CelloModeling {
 		removeSensorInteractios(resultMD, sensorMolecules);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		boolean CelloModel = true;
+		//boolean CelloModel = true;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
 //		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
 //			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
@@ -136,14 +135,15 @@ public class CelloModeling {
 					SBOL2SBML.generateOutputPort(comp, targetModel);
 				}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
+				generateTUSpecies(comp, sbolDoc, targetModel);
 				// If CelloModel, generate only one species for each TU
-				if (CelloModel) {
-					generateTUSpecies(comp, sbolDoc, targetModel);
-				}
-				// else, we are in normal model generation, which creates one species for each promoter in the TU
-				else {
-					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
-				}
+//				if (CelloModel) {
+//					generateTUSpecies(comp, sbolDoc, targetModel);
+//				}
+//				// else, we are in normal model generation, which creates one species for each promoter in the TU
+//				else {
+//					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
+//				}
 				if (SBOL2SBML.isInputComponent(comp)) {
 					SBOL2SBML.generateInputPort(comp, targetModel);
 				} else if (SBOL2SBML.isOutputComponent(comp)){
@@ -272,26 +272,31 @@ public class CelloModeling {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
-				if (CelloModel) {
-					//go to the new generateProductionRxn method
-					System.out.println("you are in new method call");
-					
-					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
-					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-					//TODO PEDRO calling cello methods
-					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
-				}
-				//else call the normal model generating method
-				else {
-					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
-				}
+				generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+				
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
+//				if (CelloModel) {
+//					//go to the new generateProductionRxn method
+//					System.out.println("you are in new method call");
+//					
+//					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
+//					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+//					//TODO PEDRO calling cello methods
+//					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
+//				}
+//				//else call the normal model generating method
+//				else {
+//					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+//				}
 			}
 		}
 				

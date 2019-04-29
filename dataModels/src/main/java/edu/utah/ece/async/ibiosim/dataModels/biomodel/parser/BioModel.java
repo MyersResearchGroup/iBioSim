@@ -2419,13 +2419,10 @@ public class BioModel extends CoreObservable{
 	    			 ymax_p.setId(ymax);
 	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
 	    			 ymin_p.setId(ymin);
-	    			 
-	    			 
+	    			  
 	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
 	    			 numerator = "piecewise(" + ymin + ", (" + sensor + " == 0), " + ymax + ")"; 
-	    			 
-	    			 System.out.println(numerator);
-	    			 
+	    			 	    			 
 	    			 if (celloParameters.get(sensor) != null) {
 		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
 		    			 ymax_p.setValue(ymax_value);
@@ -2440,7 +2437,6 @@ public class BioModel extends CoreObservable{
 	    	 }
 	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
 	     }
-	     System.out.println(kineticLaw);
 		return kineticLaw;
 	}
 		
