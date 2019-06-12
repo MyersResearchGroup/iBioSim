@@ -47,6 +47,10 @@ public class WrappedSBOL {
 		this.gateMapping = new HashMap<>();
 	}
 	
+	public void setSBOLDocument(SBOLDocument doc) {
+		this.sbolDoc = doc;
+	}
+	
 	public TopLevel copyTopLevel(ComponentDefinition cd) throws SBOLValidationException {
 		return this.sbolDoc.createCopy(cd);
 	}

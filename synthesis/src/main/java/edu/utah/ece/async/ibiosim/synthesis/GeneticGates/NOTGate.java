@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
@@ -103,8 +104,8 @@ public class NOTGate implements GeneticGate {
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph decomposedNOT = new DecomposedGraph();
 		DecomposedGraphNode tuNode = new DecomposedGraphNode();
-		DecomposedGraphNode inputNode = new DecomposedGraphNode(input.getIdentity(), input.getDefinition());
-		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		DecomposedGraphNode inputNode = new DecomposedGraphNode(input);
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0));
 		decomposedNOT.addAllNodes(tuNode, inputNode, outputNode);
 		
 		decomposedNOT.addNodeRelationship(tuNode, inputNode, NodeInteractionType.REPRESSION);
@@ -113,6 +114,22 @@ public class NOTGate implements GeneticGate {
 		decomposedNOT.setNodeAsLeaf(inputNode);
 		decomposedNOT.setNodeAsOutput(outputNode);
 		return decomposedNOT;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfInputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		cdList.add(input.getDefinition());
+		return cdList;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfOutputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		for(FunctionalComponent fc : outputs) {
+			cdList.add(fc.getDefinition());
+		}
+		return cdList;
 	}
 	
 

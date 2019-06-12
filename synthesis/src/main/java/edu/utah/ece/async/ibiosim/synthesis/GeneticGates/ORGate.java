@@ -3,6 +3,7 @@ package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
@@ -26,13 +27,6 @@ public class ORGate implements GeneticGate {
 		this.inputs = new ArrayList<>();
 		this.outputs = new ArrayList<>();
 		this.md = md;
-	}
-	
-	public DecomposedGraph getDecomposedGate() {
-		DecomposedGraph graph = new DecomposedGraph();
-		
-		
-		return graph;
 	}
 	
 	@Override
@@ -101,9 +95,9 @@ public class ORGate implements GeneticGate {
 		DecomposedGraphNode norTuNode = new DecomposedGraphNode();
 		DecomposedGraphNode notTuNode = new DecomposedGraphNode();
 		DecomposedGraphNode internalNorOutNode = new DecomposedGraphNode();
-		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0).getIdentity(), inputs.get(0).getDefinition());
-		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1).getIdentity(), inputs.get(1).getDefinition());;
-		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0).getIdentity(), outputs.get(0).getDefinition());
+		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0));
+		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1));
+		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0));
 
 		decomposedOR.addAllNodes(norTuNode, notTuNode, internalNorOutNode,
 				inputNode1, inputNode2, outputNode);
@@ -120,6 +114,24 @@ public class ORGate implements GeneticGate {
 		decomposedOR.setNodeAsLeaf(inputNode2);
 		decomposedOR.setNodeAsOutput(outputNode);
 		return decomposedOR;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfInputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		for(FunctionalComponent fc : inputs) {
+			cdList.add(fc.getDefinition());
+		}
+		return cdList;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfOutputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		for(FunctionalComponent fc : outputs) {
+			cdList.add(fc.getDefinition());
+		}
+		return cdList;
 	}
 
 }

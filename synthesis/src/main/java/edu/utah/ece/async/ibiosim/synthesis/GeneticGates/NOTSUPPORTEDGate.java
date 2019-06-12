@@ -2,20 +2,26 @@ package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.text.parser.ParseException;
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.DirectionType;
 import org.sbolstandard.core2.FunctionalComponent;
+import org.sbolstandard.core2.Interaction;
 import org.sbolstandard.core2.ModuleDefinition;
+import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode.NodeInteractionType;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerException;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogParser;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToSBOL;
@@ -26,7 +32,6 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 	private SBOLDocument sbolDoc;
 	private DecomposedGraph decomposedNotSupported;
 	private ModuleDefinition md;
-	private VerilogModule verilogModule;
 	private ArrayList<FunctionalComponent> inputs, outputs;
 	
 	public NOTSUPPORTEDGate(SBOLDocument doc, ModuleDefinition md) {
@@ -38,9 +43,21 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 	
 	public void setVerilogForGate(File verilogFile) throws XMLStreamException, IOException, BioSimException, SBOLValidationException, ParseException, VerilogCompilerException {
 		VerilogParser verilogParser = new VerilogParser();
-		verilogModule = verilogParser.parseVerilogFile(verilogFile);
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(verilogFile);
+		
+		VerilogToSBOL converter = new VerilogToSBOL(true);
+		SBOLDocument decomposedSBOLDoc = null;
+		try {
+			decomposedSBOLDoc = converter.convertVerilog2SBOL(verilogModule).getSBOLDocument();
+		} 
+		catch (SBOLException | SBOLValidationException | ParseException | VerilogCompilerException e) {
+			e.printStackTrace();
+		}
+		assert(decomposedSBOLDoc.getRootModuleDefinitions().size() == 1);
+		ModuleDefinition decomposedSBOLGate = decomposedSBOLDoc.getRootModuleDefinitions().iterator().next();
+		setInputAndOutputForGate(decomposedSBOLGate);
+		this.md = decomposedSBOLGate;
 	}
-	
 	
 	@Override
 	public GateType getType() {
@@ -95,7 +112,7 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 
 	@Override
 	public DecomposedGraph getDecomposedGraph() {
-		if (decomposedNotSupported == null && verilogModule != null) {
+		if (decomposedNotSupported == null && md != null) {
 			decomposedNotSupported = createDecomposedGate(); 
 		}
 		return decomposedNotSupported;
@@ -112,22 +129,66 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 		}
 	}
 	
-	private DecomposedGraph createDecomposedGate() {
-		VerilogToSBOL converter = new VerilogToSBOL(true);
-		SBOLDocument decomposedSBOLDoc = null;
-		try {
-			decomposedSBOLDoc = converter.convertVerilog2SBOL(verilogModule).getSBOLDocument();
-		} 
-		catch (SBOLException | SBOLValidationException | ParseException | VerilogCompilerException e) {
-			e.printStackTrace();
+	
+	private DecomposedGraphNode getNodeFromParticipationRole(DecomposedGraph graph, Interaction interaction, URI participationType) {
+		List<DecomposedGraphNode> nodes = new ArrayList<>();
+		for(Participation participation : interaction.getParticipations()) {
+			if(participation.containsRole(participationType)) {
+				FunctionalComponent participant = participation.getParticipant();
+				DecomposedGraphNode node = graph.getNode(participant);
+				nodes.add(node);
+			}
 		}
-		assert(decomposedSBOLDoc.getRootModuleDefinitions().size() == 1);
-		ModuleDefinition decomposedSBOLGate = decomposedSBOLDoc.getRootModuleDefinitions().iterator().next();
-		setInputAndOutputForGate(decomposedSBOLGate);
-		
+		assert(nodes.size() == 1);
+		return nodes.get(0);
+	}
+	
+	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph graph = new DecomposedGraph();
-		graph.createDecomposedGraph(decomposedSBOLGate);
+		for(FunctionalComponent fc : md.getFunctionalComponents()) {
+			DecomposedGraphNode newNode = new DecomposedGraphNode(fc);
+			graph.addNode(newNode);
+			
+			if(fc.getDirection().equals(DirectionType.IN)) {
+				graph.setNodeAsLeaf(newNode);
+			}
+			else if(fc.getDirection().equals(DirectionType.OUT)) {
+				graph.setNodeAsOutput(newNode);
+			}
+		}
+		for(Interaction interaction : md.getInteractions()) {
+			if(interaction.containsType(SystemsBiologyOntology.INHIBITION)) {
+				DecomposedGraphNode childNode = getNodeFromParticipationRole(graph, interaction, SystemsBiologyOntology.INHIBITOR);
+				DecomposedGraphNode parentNode = getNodeFromParticipationRole(graph, interaction, SystemsBiologyOntology.INHIBITED);
+				graph.addNodeRelationship(parentNode, childNode, NodeInteractionType.REPRESSION);
+			}
+			else if(interaction.containsType(SystemsBiologyOntology.GENETIC_PRODUCTION)) {
+				DecomposedGraphNode parentNode = getNodeFromParticipationRole(graph, interaction, SystemsBiologyOntology.PRODUCT);
+				DecomposedGraphNode childNode = getNodeFromParticipationRole(graph, interaction, SystemsBiologyOntology.TEMPLATE);
+				graph.addNodeRelationship(parentNode, childNode, NodeInteractionType.PRODUCTION);
+			}
+			
+		}
+		
 		return graph;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfInputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		for(FunctionalComponent fc : inputs) {
+			cdList.add(fc.getDefinition());
+		}
+		return cdList;
+	}
+
+	@Override
+	public List<ComponentDefinition> getListOfOutputsAsComponentDefinition() {
+		List<ComponentDefinition> cdList = new ArrayList<>();
+		for(FunctionalComponent fc : outputs) {
+			cdList.add(fc.getDefinition());
+		}
+		return cdList;
 	}
 
 }

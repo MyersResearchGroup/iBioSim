@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.sbolstandard.core2.ComponentDefinition;
@@ -22,6 +21,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NOTSUPPORTEDGate;
 
 public class TechMapUtility {
 
@@ -29,9 +29,8 @@ public class TechMapUtility {
 		// Flatten document
 		List<DecomposedGraph> specification = new ArrayList<>();
 		if(specificationDocument.getModuleDefinitions().size() == 1) {
-			DecomposedGraph decomposedGraph = new DecomposedGraph();
-			decomposedGraph.createDecomposedGraph(specificationDocument.getModuleDefinitions().iterator().next());
-			specification.add(decomposedGraph);
+			NOTSUPPORTEDGate specCircuit = new NOTSUPPORTEDGate(specificationDocument, specificationDocument.getModuleDefinitions().iterator().next());
+			specification.add(specCircuit.getDecomposedGraph());
 			return specification;
 		}
 
@@ -44,9 +43,8 @@ public class TechMapUtility {
 			if(circuit == toplevelCircuit) {
 				continue;
 			}
-			DecomposedGraph decomposedGraph = new DecomposedGraph();
-			decomposedGraph.createDecomposedGraph(circuit);
-			circuitGraphs.put(circuit.getIdentity(), decomposedGraph);
+			NOTSUPPORTEDGate specCircuit = new NOTSUPPORTEDGate(specificationDocument, circuit);
+			circuitGraphs.put(circuit.getIdentity(), specCircuit.getDecomposedGraph());
 		}
 
 		// Create functional component for each top-level protein and map them to the proteins in the subcircuits.
@@ -67,24 +65,17 @@ public class TechMapUtility {
 			}
 		}
 
-		// Initialize SBOL graphs.
-		for(Entry<URI, DecomposedGraph> entry : circuitGraphs.entrySet()) {
-			DecomposedGraph sbolGraph = entry.getValue();
-			sbolGraph.createDecomposedGraph(specificationDocument.getModuleDefinition(entry.getKey()));
-			specification.add(sbolGraph);
-			//sbolGraph.topologicalSort();
-		}
 		return specification;
 	}
 
-	public static List<DecomposedGraph> createLibraryGraphFromSBOL (SBOLDocument sbolDoc) throws SBOLTechMapException, GateGenerationExeception, SBOLValidationException {
-		List<DecomposedGraph> library = new ArrayList<>();
+	public static List<GeneticGate> createLibraryGraphFromSBOL (SBOLDocument sbolDoc) throws SBOLTechMapException, GateGenerationExeception, SBOLValidationException {
+		List<GeneticGate> library = new ArrayList<>();
 		for(ModuleDefinition gateMD : sbolDoc.getRootModuleDefinitions()){
 			GateIdentifier gateType = new GateIdentifier(sbolDoc, gateMD);
-			GeneticGate gate = gateType.createGate();
+			GeneticGate gate = gateType.getIdentifiedGate();
 			DecomposedGraph decomposedGate = gate.getDecomposedGraph();
 			decomposedGate.getOutputNode().setScore(getSequenceLength(gateMD));
-			library.add(decomposedGate);
+			library.add(gate);
 		}
 		return library;
 	}

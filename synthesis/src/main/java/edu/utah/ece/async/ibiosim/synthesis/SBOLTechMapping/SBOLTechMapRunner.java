@@ -17,8 +17,8 @@ import org.sbolstandard.core2.SBOLValidationException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.SBOLGraph;
 
 /**
  * 
@@ -30,15 +30,13 @@ public class SBOLTechMapRunner {
 
 	public static void main(String[] args) 
 	{
-
-			CommandLine cmd;
-			try {
-				cmd = parseCommandLine(args);
-				SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		CommandLine cmd;
+		try {
+			cmd = parseCommandLine(args);
+			SBOLTechMapOptions techMapOptions = createTechMapOptions(cmd);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static SBOLTechMapOptions createTechMapOptions(CommandLine cmd) { 
@@ -102,7 +100,6 @@ public class SBOLTechMapRunner {
 
 	}
 
-
 	public static Synthesis run(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException, SBOLTechMapException
 	{
 		Synthesis syn = new Synthesis();
@@ -114,12 +111,9 @@ public class SBOLTechMapRunner {
 	}
 	
 	public static void asyncRun(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLTechMapException, GateGenerationExeception, SBOLValidationException, GeneticGatesException {
-		List<DecomposedGraph> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
+		List<GeneticGate> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
 		List<DecomposedGraph> specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
-		SBOLTechMap techMap = new SBOLTechMap(libraryGates, specification);
-		techMap.performTechnologyMapping();
-		
-		
+		//SBOLTechMap techMap = new SBOLTechMap(libraryGates, specification);
 	}
 
 }

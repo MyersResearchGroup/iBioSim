@@ -11,9 +11,9 @@ initial begin
 end
 
 always begin
-  wait (IPTG == 1'b1) #5;
-  #5 assign GFP = 1'b1;
-  wait (aTc == 1'b1) #5;
-  #5 assign GFP = 1'b0;
+  wait (IPTG == 1'b1);
+  #5 GFP = 1'b1;
+  wait (aTc == 1'b1);
+  #5 GFP = 1'b0;
 end
 endmodule

@@ -1,0 +1,934 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:ns5="http://cellocad.org/Terms/cello#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation"/>
+    <sbol:displayId>IPTG_LacI_protein_degradation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein"/>
+        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein_degradation_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein_degradation_interaction"/>
+        <sbol:displayId>IPTG_LacI_protein_degradation_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein_degradation_interaction/IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein_degradation_interaction/IPTG_LacI_protein"/>
+            <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression"/>
+    <sbol:displayId>LacI_protein_pTac_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/pTac/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/pTac"/>
+        <sbol:displayId>pTac</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein"/>
+        <sbol:displayId>LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression"/>
+        <sbol:displayId>LacI_protein_pTac_repression</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <ns5:ymin>0.0034</ns5:ymin>
+        <ns5:ymax>2.8</ns5:ymax>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression/LacI_protein_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression/LacI_protein_participation"/>
+            <sbol:displayId>LacI_protein_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression/pTac_promoter_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein_pTac_repression/pTac_promoter_participation"/>
+            <sbol:displayId>pTac_promoter_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/pTac/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module"/>
+    <sbol:displayId>Cello_ecoli_tuYFP_module</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP_protein"/>
+        <sbol:displayId>YFP_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG"/>
+        <sbol:displayId>IPTG</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc/pTac_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc/pTac_mapsTo"/>
+            <sbol:displayId>pTac_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Pro_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/pTac/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc/YFP_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_fc/YFP_mapsTo"/>
+            <sbol:displayId>YFP_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/LacI_protein"/>
+        <sbol:displayId>LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/pTac/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/pTac"/>
+        <sbol:displayId>pTac</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP"/>
+        <sbol:displayId>YFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG_LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG_LacI_protein"/>
+        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub_YFP_protein_YFP_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub/Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub_YFP_protein_YFP_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_YFP_protein_degradation_sub_YFP_protein_YFP_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG_LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_pTac_pTac/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_pTac_pTac"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_pTac_pTac</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/pTac/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/pTac/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub/Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_LacI_protein_pTac_repression_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_pTac_repression/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub/Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/IPTG_LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub/Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_module_YFP_protein_production_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub/Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_protein_YFP_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub/Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_protein_YFP_protein"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_protein_YFP_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub/Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_YFP/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/Cello_ecoli_tuYFP_module_YFP_protein_production_sub/Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_YFP"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_module_YFP_protein_production_sub_YFP_YFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_module/YFP/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation"/>
+    <sbol:displayId>LacI_protein_degradation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein"/>
+        <sbol:displayId>LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_degradation_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_degradation_interaction"/>
+        <sbol:displayId>LacI_degradation_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_degradation_interaction/LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_degradation_interaction/LacI_protein"/>
+            <sbol:displayId>LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation"/>
+    <sbol:displayId>IPTG_LacI_protein_complex_formation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG"/>
+        <sbol:displayId>IPTG</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein"/>
+        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein"/>
+        <sbol:displayId>LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation"/>
+        <sbol:displayId>IPTG_LacI_protein_complex_formation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000177"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein"/>
+            <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/IPTG/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/IPTG"/>
+            <sbol:displayId>IPTG</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein_complex_formation/LacI_protein"/>
+            <sbol:displayId>LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation"/>
+    <sbol:displayId>YFP_protein_degradation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_protein"/>
+        <sbol:displayId>YFP_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_degradation_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_degradation_interaction"/>
+        <sbol:displayId>YFP_degradation_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_degradation_interaction/YFP_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_degradation_interaction/YFP_protein"/>
+            <sbol:displayId>YFP_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_degradation/YFP_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production"/>
+    <sbol:displayId>YFP_protein_production</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein"/>
+        <sbol:displayId>YFP_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP"/>
+        <sbol:displayId>YFP</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction"/>
+        <sbol:displayId>YFP_protein_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction/YFP/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction/YFP"/>
+            <sbol:displayId>YFP</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction/YFP_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein_interaction/YFP_protein"/>
+            <sbol:displayId>YFP_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein_production/YFP_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac"/>
+    <sbol:displayId>pTac</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pTac</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein"/>
+    <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>IPTG_LacI_protein</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Complex"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein"/>
+    <sbol:displayId>YFP_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>YFP_protein</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2"/>
+    <sbol:displayId>B2</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>B2</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein"/>
+    <sbol:displayId>LacI_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>LacI_protein</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP"/>
+    <sbol:displayId>Cello_ecoli_tuYFP</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity/1"/>
+    <dcterms:description></dcterms:description>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component"/>
+        <sbol:displayId>CDS_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/NGA_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/NGA_Component"/>
+        <sbol:displayId>NGA_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Ter_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Ter_Component"/>
+        <sbol:displayId>Ter_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/RBS_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/RBS_Component"/>
+        <sbol:displayId>RBS_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation2/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation2"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation2/Cello_ecoli_tuYFP_SequenceAnnotation2_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation2/Cello_ecoli_tuYFP_SequenceAnnotation2_Range"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation2_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>157</sbol:start>
+            <sbol:end>193</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/RBS_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation/Cello_ecoli_tuYFP_SequenceAnnotation_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation/Cello_ecoli_tuYFP_SequenceAnnotation_Range"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>1</sbol:start>
+            <sbol:end>71</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Pro_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation4/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation4"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation4</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation4/Cello_ecoli_tuYFP_SequenceAnnotation4_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation4/Cello_ecoli_tuYFP_SequenceAnnotation4_Range"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation4_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>1080</sbol:start>
+            <sbol:end>1128</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Ter_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation1"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation1/Cello_ecoli_tuYFP_SequenceAnnotation1_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation1/Cello_ecoli_tuYFP_SequenceAnnotation1_Range"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation1_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>72</sbol:start>
+            <sbol:end>156</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/NGA_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation3/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation3"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation3/Cello_ecoli_tuYFP_SequenceAnnotation3_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceAnnotation3/Cello_ecoli_tuYFP_SequenceAnnotation3_Range"/>
+            <sbol:displayId>Cello_ecoli_tuYFP_SequenceAnnotation3_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>194</sbol:start>
+            <sbol:end>1079</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint2/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint2"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceConstraint2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/RBS_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint1"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceConstraint1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/NGA_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/RBS_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint3/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint3"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceConstraint3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/CDS_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Ter_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Cello_ecoli_tuYFP_SequenceConstraint"/>
+        <sbol:displayId>Cello_ecoli_tuYFP_SequenceConstraint</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/Pro_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP/NGA_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequence rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFPSequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG"/>
+    <sbol:displayId>IPTG</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#SmallMolecule"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ"/>
+    <sbol:displayId>PlmJ</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>PlmJ</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440"/>
+    <sbol:displayId>ECK120015440</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ECK120015440</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP"/>
+    <sbol:displayId>YFP</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>YFP</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2_sequence"/>
+    <sbol:displayId>B2_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>B2_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/B2_sequence/1"/>
+    <sbol:elements>CTATGGACTATGTTTTTCAAAGACGAAAAACTACTAG</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence"/>
+    <sbol:displayId>ECK120015440_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ECK120015440_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1"/>
+    <sbol:elements>tccggcaattAAAAAAGCGGCTAACCACGCCGCTTTTTTtacgtctgca</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_sequence"/>
+    <sbol:displayId>YFP_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>YFP_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_sequence/1"/>
+    <sbol:elements>CTGAAGCTGTCACCGGATGTGCTTTCCGGTCTGATGAGTCCGTGAGGACGAAACAGCCTCTACAAATAATTTTGTTTAATACTAGAGAAAGAGGGGAAATACTAGATGGTGAGCAAGGGCGAGGAGCTGTTCACCGGGGTGGTGCCCATCCTGGTCGAGCTGGACGGCGACGTAAACGGCCACAAGTTCAGCGTGTCCGGCGAGGGCGAGGGCGATGCCACCTACGGCAAGCTGACCCTGAAGTTCATCTGCACCACAGGCAAGCTGCCCGTGCCCTGGCCCACCCTCGTGACCACCTTCGGCTACGGCCTGCAATGCTTCGCCCGCTACCCCGACCACATGAAGCTGCACGACTTCTTCAAGTCCGCCATGCCCGAAGGCTACGTCCAGGAGCGCACCATCTTCTTCAAGGACGACGGCAACTACAAGACCCGCGCCGAGGTGAAGTTCGAGGGCGACACCCTGGTGAACCGCATCGAGCTGAAGGGCATCGACTTCAAGGAGGACGGCAACATCCTGGGGCACAAGCTGGAGTACAACTACAACAGCCACAACGTCTATATCATGGCCGACAAGCAGAAGAACGGCATCAAGGTGAACTTCAAGATCCGCCACAACATCGAGGACGGCAGCGTGCAGCTCGCCGACCACTACCAGCAGAACACCCCAATCGGCGACGGCCCCGTGCTGCTGCCCGACAACCACTACCTTAGCTACCAGTCCGCCCTGAGCAAAGACCCCAACGAGAAGCGCGATCACATGGTCCTGCTGGAGTTCGTGACCGCCGCCGGGATCACTCTCGGCATGGACGAGCTGTACAAGTAACTCGGTACCAAATTCCAGAAAAGAGGCCTCCCGAAAGGGGGGCCTTTTTTCGTTTTGGTCC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac_sequence"/>
+    <sbol:displayId>pTac_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pTac_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pTac_sequence/1"/>
+    <sbol:elements>AACGATCGTTGGCTGTGTTGACAATTAATCATCGGCTCGTATAATGTGTGGAATTGTGAGCGCTCACAATT</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ_sequence"/>
+    <sbol:displayId>PlmJ_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>PlmJ_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PlmJ_sequence/1"/>
+    <sbol:elements>CTGAAGTCATAAGTCTGGGCTAAGCCCACTGATGAGTCGCTGAAATGCGACGAAACTTATGACCTCTACAAATAATTTTGTTTAA</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="http://async.utah.edu/Cello_ecoli_tuYFPSequence/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFPSequence"/>
+    <sbol:displayId>Cello_ecoli_tuYFPSequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity/1"/>
+    <sbol:elements>AACGATCGTTGGCTGTGTTGACAATTAATCATCGGCTCGTATAATGTGTGGAATTGTGAGCGCTCACAATTCTGAAGTCATAAGTCTGGGCTAAGCCCACTGATGAGTCGCTGAAATGCGACGAAACTTATGACCTCTACAAATAATTTTGTTTAACTATGGACTATGTTTTTCAAAGACGAAAAACTACTAGCTGAAGCTGTCACCGGATGTGCTTTCCGGTCTGATGAGTCCGTGAGGACGAAACAGCCTCTACAAATAATTTTGTTTAATACTAGAGAAAGAGGGGAAATACTAGATGGTGAGCAAGGGCGAGGAGCTGTTCACCGGGGTGGTGCCCATCCTGGTCGAGCTGGACGGCGACGTAAACGGCCACAAGTTCAGCGTGTCCGGCGAGGGCGAGGGCGATGCCACCTACGGCAAGCTGACCCTGAAGTTCATCTGCACCACAGGCAAGCTGCCCGTGCCCTGGCCCACCCTCGTGACCACCTTCGGCTACGGCCTGCAATGCTTCGCCCGCTACCCCGACCACATGAAGCTGCACGACTTCTTCAAGTCCGCCATGCCCGAAGGCTACGTCCAGGAGCGCACCATCTTCTTCAAGGACGACGGCAACTACAAGACCCGCGCCGAGGTGAAGTTCGAGGGCGACACCCTGGTGAACCGCATCGAGCTGAAGGGCATCGACTTCAAGGAGGACGGCAACATCCTGGGGCACAAGCTGGAGTACAACTACAACAGCCACAACGTCTATATCATGGCCGACAAGCAGAAGAACGGCATCAAGGTGAACTTCAAGATCCGCCACAACATCGAGGACGGCAGCGTGCAGCTCGCCGACCACTACCAGCAGAACACCCCAATCGGCGACGGCCCCGTGCTGCTGCCCGACAACCACTACCTTAGCTACCAGTCCGCCCTGAGCAAAGACCCCAACGAGAAGCGCGATCACATGGTCCTGCTGGAGTTCGTGACCGCCGCCGGGATCACTCTCGGCATGGACGAGCTGTACAAGTAACTCGGTACCAAATTCCAGAAAAGAGGCCTCCCGAAAGGGGGGCCTTTTTTCGTTTTGGTCCtccggcaattAAAAAAGCGGCTAACCACGCCGCTTTTTTtacgtctgca</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <prov:Activity rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity"/>
+    <sbol:displayId>Cello_ecoli_tuYFP_SBOLDesignerActivity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dc:creator>Tramy Nguyen</dc:creator>
+    <prov:endedAtTime>2019-05-17T00:14:44.679-06:00</prov:endedAtTime>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity/Association/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Cello_ecoli_tuYFP_SBOLDesignerActivity/Association"/>
+        <sbol:displayId>Association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#sequenceEditor"/>
+        <prov:agent rdf:resource="https://synbiohub.org/public/SBOL_Software/SBOLDesigner/3.0"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+  </prov:Activity>
+  <prov:Activity rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity"/>
+    <sbol:displayId>CelloUCF2sbol_Activity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Cello UCF to SBOL conversion</dcterms:title>
+    <dcterms:description>Conversion of the Cello UCF parts and metadata to SBOL 2 documents.</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <prov:endedAtTime>2019-02-20T16:57:58.314-07:00</prov:endedAtTime>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/association/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/association"/>
+        <sbol:displayId>association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+        <prov:agent rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/UCF_file/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/UCF_file"/>
+        <sbol:displayId>UCF_file</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+        <prov:entity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Agent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL"/>
+    <sbol:displayId>CelloUCF2SBOL</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Cello UCF to SBOL</dcterms:title>
+    <dcterms:description>A script to convert Cello UCF parts and metadata to SBOL 2 documents.</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <dc:creator>Prashant Vaidyanathan</dc:creator>
+    <dc:creator>Chris J. Myers</dc:creator>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1"/>
+    <dc:source rdf:resource="https://github.com/MyersResearchGroup/UCF2SBOL"/>
+  </prov:Agent>
+  <sbol:Attachment rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu"/>
+    <sbol:displayId>attachment_00009g2fklS69eiQUeolIu</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Eco1C1G1T1-synbiohub.UCF.json</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1"/>
+    <sbol:source rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1/download"/>
+    <sbol:format rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+    <sbol:size>3570439</sbol:size>
+    <sbol:hash>57292cc1b8f9be5abbc7a6e6824fdba12f35fb18</sbol:hash>
+  </sbol:Attachment>
+</rdf:RDF>

@@ -22,7 +22,7 @@ public class TestingFiles {
 	public static String readOuputDir = synthDir + File.separator + "outputFiles";
 	
 	//Files used for test cases are recorded below.
-	public static String LPN_counterFile = TestingFiles.class.getResource(readOuputDir + File.separator + "counter.lpn").getFile();
+	//public static String LPN_counterFile = TestingFiles.class.getResource(readOuputDir + File.separator + "counter.lpn").getFile();
 	
 	
 	public static String notTU1_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NotTu1_Size1.xml").getFile();
@@ -31,6 +31,10 @@ public class TestingFiles {
 	public static String norTU2_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Nor_LacI_TU_v2.xml").getFile();
 	public static String nandTU_size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size1.xml").getFile();
 	public static String nandTU_size2_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size2.xml").getFile();
+	public static String lacITU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuLacI.xml").getFile();
+	public static String tetRTU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuTetR.xml").getFile();
+	public static String yfp1TU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuYFP.xml").getFile();
+	public static String yfp2TU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuYFP2.xml").getFile();
 	public static String pSrpR_roadblockTU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_roadblock_11CombinatorialDerivations.xml").getFile();
 	public static String pSrpr_Bulk_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_117roadblockTUs.xml").getFile();
 	
@@ -47,10 +51,14 @@ public class TestingFiles {
 	public static String NAND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize1.xml").getFile(); 
 	public static String NAND_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize2.xml").getFile(); 
 	public static String AND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ANDGates_LibrarySize1.xml").getFile(); 
+	public static String lacINOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "lacINORGates_LibrarySize1.xml").getFile(); 
+	public static String tetRNOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "tetRNORGates_LibrarySize1.xml").getFile(); 
+	public static String yfp1NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "yfp1NOTGates_LibrarySize1.xml").getFile(); 
+	public static String yfp2NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "yfp2NOTGates_LibrarySize1.xml").getFile(); 
 	
 	public static String sbmlEvenZero_impFile  = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_imp.xml").getFile();
 	public static String sbmlEvenZero_tbFile   = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_testbench.xml").getFile();
-	public static String sbmlEvenZero_flatFile = TestingFiles.class.getResource(readOuputDir+ File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml").getFile();
+	//public static String sbmlEvenZero_flatFile = TestingFiles.class.getResource(readOuputDir+ File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml").getFile();
 	
 	public static String verilogNotSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "Not_Spec.v").getFile();
 	public static String verilogNandSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "Nand_Spec.v").getFile();

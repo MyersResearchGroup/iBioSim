@@ -54,8 +54,9 @@ public class VerilogToSBOL {
 
 	private void convertVerilogPorts(ModuleDefinition circuit, List<String> verilogPorts, DirectionType portType) throws SBOLValidationException, SBOLException {
 		for(String port : verilogPorts) {
-			FunctionalComponent portProtein = sbolWrapper.createProtein(circuit, port, portType);
-			primaryProteins.put(port, portProtein);
+			FunctionalComponent portMolecule = sbolWrapper.createProtein(circuit, port, portType);
+			portMolecule.setName(port); 
+			primaryProteins.put(port, portMolecule);
 		}
 	}
 	

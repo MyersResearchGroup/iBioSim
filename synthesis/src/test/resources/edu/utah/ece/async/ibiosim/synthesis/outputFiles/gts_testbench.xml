@@ -44,7 +44,6 @@
           <comp:replacedElement comp:portRef="gts_imp__aTc" comp:submodelRef="gts_instance"/>
         </comp:listOfReplacedElements>
       </parameter>
-      <parameter constant="false" id="next" sboTerm="SBO:0000602" value="0"/>
       <parameter constant="false" id="P0" sboTerm="SBO:0000593" value="1"/>
       <parameter constant="false" id="P1" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P2" sboTerm="SBO:0000593" value="0"/>
@@ -58,14 +57,6 @@
       <parameter constant="false" id="P10" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P11" sboTerm="SBO:0000593" value="0"/>
       <parameter constant="false" id="P12" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P13" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P14" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P15" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P16" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P17" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P18" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P19" sboTerm="SBO:0000593" value="0"/>
-      <parameter constant="false" id="P20" sboTerm="SBO:0000593" value="0"/>
     </listOfParameters>
     <listOfInitialAssignments>
       <initialAssignment symbol="IPTG">
@@ -74,11 +65,6 @@
         </math>
             </initialAssignment>
       <initialAssignment symbol="aTc">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
-        </math>
-            </initialAssignment>
-      <initialAssignment symbol="next">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <cn type="integer"> 0 </cn>
         </math>
@@ -142,38 +128,22 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="next">
+          <eventAssignment variable="IPTG">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <piecewise>
-                <piece>
-                  <cn type="integer"> 1 </cn>
-                  <apply>
-                    <lt/>
-                    <apply>
-                      <ci> uniform </ci>
-                      <cn type="integer"> 0 </cn>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                    <cn> 0.5 </cn>
-                  </apply>
-                </piece>
-                <otherwise>
-                  <cn type="integer"> 0 </cn>
-                </otherwise>
-              </piecewise>
+              <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="wait_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <apply>
                 <eq/>
-                <ci> next </ci>
-                <cn type="integer"> 0 </cn>
+                <ci> GFP </ci>
+                <cn type="integer"> 1 </cn>
               </apply>
               <apply>
                 <eq/>
@@ -189,7 +159,7 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P4">
+          <eventAssignment variable="P3">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -197,6 +167,38 @@
         </listOfEventAssignments>
       </event>
       <event id="delay_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <and/>
+              <true/>
+              <apply>
+                <eq/>
+                <ci> P3 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </apply>
+          </math>
+                </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="P3">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 0 </cn>
+            </math>
+                    </eventAssignment>
+          <eventAssignment variable="P4">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event id="delay_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -255,12 +257,12 @@
                     </eventAssignment>
           <eventAssignment variable="IPTG">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
+              <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -274,42 +276,13 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P6">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <not/>
-                <apply>
-                  <eq/>
-                  <ci> next </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P2 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P2">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -321,7 +294,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -335,11 +308,6 @@
             </apply>
           </math>
                 </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
-          </math>
-                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P7">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
@@ -351,14 +319,23 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
+          <eventAssignment variable="aTc">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <cn type="integer"> 1 </cn>
+            </math>
+                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="assign_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="wait_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <true/>
+              <apply>
+                <neq/>
+                <ci> GFP </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
               <apply>
                 <eq/>
                 <ci> P8 </ci>
@@ -378,14 +355,9 @@
               <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="aTc">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -399,39 +371,13 @@
             </apply>
           </math>
                 </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <cn> 5 </cn>
+          </math>
+                </delay>
         <listOfEventAssignments>
           <eventAssignment variable="P9">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P3">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="wait_0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <eq/>
-                <ci> GFP </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P3 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P3">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>
@@ -443,7 +389,7 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="delay_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="delay_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
@@ -475,16 +421,12 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="if_2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="assign_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
-              <apply>
-                <eq/>
-                <ci> aTc </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
+              <true/>
               <apply>
                 <eq/>
                 <ci> P11 </ci>
@@ -499,66 +441,7 @@
               <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
-          <eventAssignment variable="P13">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P13 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P13">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P14">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P14 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P14">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P15">
+          <eventAssignment variable="P12">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 1 </cn>
             </math>
@@ -570,168 +453,12 @@
                     </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="T2" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
+      <event id="T0" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
         <trigger initialValue="false" persistent="false">
           <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <and/>
               <true/>
-              <apply>
-                <eq/>
-                <ci> P15 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P15">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P12">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="if_3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <not/>
-                <apply>
-                  <eq/>
-                  <ci> aTc </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-              <apply>
-                <eq/>
-                <ci> P11 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P11">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_5" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P16 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P16">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="assign_4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P17 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P17">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P18">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="IPTG">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T3" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P18 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P18">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P12">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="wait_1" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <apply>
-                <neq/>
-                <ci> GFP </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
               <apply>
                 <eq/>
                 <ci> P12 </ci>
@@ -742,65 +469,6 @@
                 </trigger>
         <listOfEventAssignments>
           <eventAssignment variable="P12">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="delay_6" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P19 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <cn> 5 </cn>
-          </math>
-                </delay>
-        <listOfEventAssignments>
-          <eventAssignment variable="P19">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
-            </math>
-                    </eventAssignment>
-          <eventAssignment variable="P20">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
-            </math>
-                    </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="T4" sboTerm="SBO:0000591" useValuesFromTriggerTime="false">
-        <trigger initialValue="false" persistent="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
-            <apply>
-              <and/>
-              <true/>
-              <apply>
-                <eq/>
-                <ci> P20 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </apply>
-          </math>
-                </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="P20">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
               <cn type="integer"> 0 </cn>
             </math>

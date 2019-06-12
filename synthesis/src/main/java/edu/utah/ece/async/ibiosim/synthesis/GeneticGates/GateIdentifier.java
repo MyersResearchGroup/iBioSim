@@ -45,7 +45,7 @@ public class GateIdentifier {
 		this.gateMD = md;
 	}
 
-	public GeneticGate createGate() throws GateGenerationExeception, SBOLValidationException {
+	public GeneticGate getIdentifiedGate() throws GateGenerationExeception, SBOLValidationException {
 		//collect DNA parts where input and output molecules are attached
 		for(FunctionalComponent functionalComponent : gateMD.getFunctionalComponents()) {
 			ComponentDefinition cd = functionalComponent.getDefinition();
@@ -268,12 +268,12 @@ public class GateIdentifier {
 			if (reprInteraction.components.size() != 1 || reprInteraction2.components.size() != 1) {
 				return false;
 			}
-			if(reprInteraction.components.get(0).outputOfInteraction.size() != 0 || reprInteraction2.components.get(0).outputOfInteraction.size() != 0) {
-				return false;
-			}
-			if(checkIfInputIsComplex(promoters.get(0))){
-				return false;
-			}
+			//if(reprInteraction.components.get(0).outputOfInteraction.size() != 0 || reprInteraction2.components.get(0).outputOfInteraction.size() != 0) {
+			//	return false;
+			//}
+			//if(checkIfInputIsComplex(promoters.get(0))){
+			//	return false;
+			//}
 		}
 
 		
@@ -296,22 +296,6 @@ public class GateIdentifier {
 		
 		return (promoters.get(0).outputOfInteraction.size() == 2 && numOfOutputComplex == 0) || (promoters.get(0).outputOfInteraction.size() == 1 && numOfOutputComplex == 1);
 	}
-
-	private boolean checkIfOutputIsComplex() {
-		if( cds.size() != 1) {
-			return false;	
-		}
-		if(cds.get(0).inputOfInteractions.size() != 1 || cds.get(0).outputOfInteraction.size() != 0) {
-			return false;
-		}
-		InteractsWith prodInteraction = cds.get(0).inputOfInteractions.get(0);
-		if (prodInteraction.type !=  InteractionType.PRODUCTION) {
-			return false;
-		}
-
-		return prodInteraction.components.get(0).inputOfInteractions.size() == 1 
-				&& prodInteraction.components.get(0).inputOfInteractions.get(0).type == InteractionType.COMPLEX_FORMATION;
-	}
 	
 	private boolean checkIfOutputIsComplex(ComponentParticipation outputComponent) {
 		
@@ -327,27 +311,7 @@ public class GateIdentifier {
 				&& prodInteraction.components.get(0).inputOfInteractions.get(0).type == InteractionType.COMPLEX_FORMATION;
 	}
 
-	private boolean checkIfInputIsComplex() {
-		if(promoters.size() != 1) {
-			return false;	
-		}
-		if(promoters.get(0).outputOfInteraction.size() != 1 || promoters.get(0).inputOfInteractions.size() != 0) {
-			return false;
-		}
-		InteractsWith activInteraction = promoters.get(0).outputOfInteraction.get(0);
-		if (activInteraction.type !=  InteractionType.ACTIVATION) {
-			return false;
-		}
-		if(activInteraction.components.size() != 1) {
-			return false;
-		}
-		InteractsWith complexInteraction = activInteraction.components.get(0).outputOfInteraction.get(0);
-		return complexInteraction.type == InteractionType.COMPLEX_FORMATION 
-				&& complexInteraction.components.size() == 2
-				&& complexInteraction.components.get(0).outputOfInteraction.size() == 0
-				&& complexInteraction.components.get(1).outputOfInteraction.size() == 0;
-	}
-	
+
 	private boolean checkIfInputIsComplex(ComponentParticipation inputComponent) {
 		
 		if(inputComponent.outputOfInteraction.size() != 1 || inputComponent.inputOfInteractions.size() != 0) {

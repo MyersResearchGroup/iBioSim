@@ -6,12 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	MatchNotSpecification1_Test.class,
-	MatchOrSpecification_Test.class,
-	MatchNandSpecification1_Test.class,
-	MatchNandSpecification2_Test.class,
-	MatchNandSpecification3_Test.class,
-	MatchAndSpecification_Test.class
+	Match_Test.class, 
+	BranchAndBound_Test.class
 })
 
 /**

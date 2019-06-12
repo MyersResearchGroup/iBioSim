@@ -18,6 +18,7 @@ import org.virtualparts.VPRTripleStoreException;
 
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
@@ -38,7 +39,7 @@ public class GateGeneration {
 		this.gateList = new ArrayList<>();
 	}
 
-	public List<SBOLDocument> enrichedTU(List<SBOLDocument> transcriptionalUnitList, String SynBioHubRepository) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException {
+	public List<SBOLDocument> generateGatesFromTranscriptionalUnits(List<SBOLDocument> transcriptionalUnitList, String SynBioHubRepository) throws SBOLValidationException, IOException, SBOLConversionException, VPRException, VPRTripleStoreException {
 		List<SBOLDocument> enrichedTU_list = new ArrayList<>();
 		for(SBOLDocument document : transcriptionalUnitList) {
 			List<URI> templateURIs = getTemplateFromCombinatorialDerivation(document);
@@ -65,29 +66,37 @@ public class GateGeneration {
 		return templateURIs;
 	}
 	
-	public void sortEnrichedTUList(List<SBOLDocument> enrichedTU_list) throws GateGenerationExeception, SBOLValidationException {
-		for(SBOLDocument enrichedTU : enrichedTU_list) {
-			for(ModuleDefinition mdGate : enrichedTU.getRootModuleDefinitions()) {
-				GateIdentifier gateUtil = new GateIdentifier(enrichedTU, mdGate);
-				GeneticGate gate = gateUtil.createGate();
+	public void identifyGeneratedGates(List<SBOLDocument> enrichedTU_list) throws GateGenerationExeception, SBOLValidationException {
+		for(SBOLDocument enrichedTuDoc : enrichedTU_list) {
+			for(ModuleDefinition mdGate : enrichedTuDoc.getRootModuleDefinitions()) {
+				GateIdentifier gateUtil = new GateIdentifier(enrichedTuDoc, mdGate);
+				GeneticGate gate = gateUtil.getIdentifiedGate();
 				gateList.add(gate);
 			}
 		}
 	}
 	
-	public void createWiredNOTGates() throws SBOLValidationException {
+	public void generateWiredORGates() throws SBOLValidationException, SBOLException, GateGenerationExeception {
 		List<GeneticGate> notGates = getGatesWithType(GateType.NOT);
+		WiredGateGenerator generator = new WiredGateGenerator();
 		for(GeneticGate gate : notGates) {
 			NOTGate not = (NOTGate) gate;
-			List<FunctionalComponent> gateOutputs = not.getListOfOutputs();
-			if(gateOutputs.size() == 1) {
-				FunctionalComponent signal = gateOutputs.get(0);
-				
+			for(FunctionalComponent input : not.getListOfInputs()) {
+				ModuleDefinition wiredNotGate = generator.createWiredOrGate(input.getDefinition(), not.getSBOLDocument());
+				GateIdentifier gateUtil = new GateIdentifier(not.getSBOLDocument(), wiredNotGate);
+				GeneticGate notGate = gateUtil.getIdentifiedGate();
+				gateList.add(notGate);;
+			}
+			for(FunctionalComponent output : not.getListOfOutputs()) {
+				ModuleDefinition wiredNotGate = generator.createWiredOrGate(output.getDefinition(), not.getSBOLDocument());
+				GateIdentifier gateUtil = new GateIdentifier(not.getSBOLDocument(), wiredNotGate);
+				GeneticGate notGate = gateUtil.getIdentifiedGate();
+				gateList.add(notGate);
 			}
 		}
 	}
 	
-	private List<GeneticGate> getGatesWithType(GateType gateType) {
+	public List<GeneticGate> getGatesWithType(GateType gateType) {
 		List<GeneticGate> gateList = new ArrayList<>();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(gateType)) {
@@ -97,79 +106,20 @@ public class GateGeneration {
 		return gateList;
 	}
 	
-	public SBOLDocument getNOTLibrary() throws SBOLValidationException {
-		SBOLDocument notLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.NOT)) {
-				notLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return notLibrary;
-	}
-	
-	public SBOLDocument getNORLibrary() throws SBOLValidationException {
-		SBOLDocument norLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.NOR)) {
-				norLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return norLibrary;
-	}
-	
-	public SBOLDocument getORLibrary() throws SBOLValidationException {
-		SBOLDocument orLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.OR)) {
-				orLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return orLibrary;
-	}
-	
-	public SBOLDocument getNANDLibrary() throws SBOLValidationException {
-		SBOLDocument nandLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.NAND)) {
-				nandLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return nandLibrary;
-	}
-	
-	public SBOLDocument getANDLibrary() throws SBOLValidationException {
-		SBOLDocument andLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.AND)) {
-				andLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return andLibrary;
-	}
-	
-	public SBOLDocument getNOTSUPPORTEDLibrary() throws SBOLValidationException {
-		SBOLDocument notSupportedLibrary = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
-			if(gate.getType().equals(GateType.NOTSUPPORTED)) {
-				notSupportedLibrary.createCopy(gate.getSBOLDocument());
-			}
-		}
-		return notSupportedLibrary;
-	}
-	
-	public SBOLDocument getLibrary() throws SBOLValidationException {
+	public SBOLDocument getLibraryAsSbol(List<GeneticGate> listOfGates) throws SBOLValidationException {
 		SBOLDocument library = sbolUtility.createSBOLDocument();
-		for(GeneticGate gate : this.gateList) {
+		for(GeneticGate gate : listOfGates) {
 			library.createCopy(gate.getSBOLDocument());
 		}
 		return library;
 	}
 	
-	public List<GeneticGate> getGeneticGateList(){
+	public List<GeneticGate> getLibrary(){
 		return this.gateList;
 	}
 	
-	public void exportLibrary(SBOLDocument libraryDocument, String fullPath) throws IOException, SBOLConversionException {
+	public void exportLibrary(List<GeneticGate> listOfGates, String fullPath) throws SBOLValidationException, IOException, SBOLConversionException {
+		SBOLDocument libraryDocument = getLibraryAsSbol(listOfGates);
 		SBOLWriter.write(libraryDocument, fullPath);
 	}
 	

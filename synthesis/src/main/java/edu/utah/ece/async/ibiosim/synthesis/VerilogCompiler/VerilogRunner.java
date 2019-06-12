@@ -61,22 +61,13 @@ public class VerilogRunner {
 				for(File file : compilerOptions.getVerilogFiles()) {
 					VerilogModule verilogModule = sbmlLPNConverter.parseVerilogFile(file);
 				}
-				if(compilerOptions.isGenerateLPN()){
+				
 					VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
 					VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
 					LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
+				if(compilerOptions.isGenerateLPN()){
 					lpn.save(outputDir + File.separator + compilerOptions.getOutputFileName()  + ".lpn");
 				}
-//				if(compilerOptions.isGenerateSBML() && !compilerOptions.isOutputFlatModel()) {
-//					VerilogToSBML sbmlConverter = new VerilogToSBML(verilogModules);
-//					for (VerilogModule vModule : verilogModules.values()) {
-//						WrappedSBML sbmlResult = sbmlConverter.convertVerilogToSBML(vModule);
-//						SBMLWriter writer = new SBMLWriter();
-//						writer.writeSBMLToFile(sbmlResult.getSBMLDocument(), outputDir + File.separator + vModule.getModuleId() + ".xml");
-//					}
-//				}
-
-
 			}
 
 

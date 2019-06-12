@@ -32,300 +32,6 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression"/>
-    <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR"/>
-        <sbol:displayId>pAmeR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein"/>
-        <sbol:displayId>AmeR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression"/>
-        <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation"/>
-            <sbol:displayId>pAmeR_promoter_participation</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
-            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-        <sbol:participation>
-          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation"/>
-            <sbol:displayId>AmeR_protein_participation</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
-            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-  </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/LacI_NOR_module/1">
-    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module"/>
-    <sbol:displayId>LacI_NOR_module</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein"/>
-        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/pAmeR/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR"/>
-        <sbol:displayId>pAmeR</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/IPTG/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG"/>
-        <sbol:displayId>IPTG</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_protein/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein"/>
-        <sbol:displayId>LacI_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein"/>
-        <sbol:displayId>AmeR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc"/>
-        <sbol:displayId>LacI_NOR_fc</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="http://async.utah.edu/LacI_NOR/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/LacI_mapsTo/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/LacI_mapsTo"/>
-            <sbol:displayId>LacI_mapsTo</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://async.utah.edu/LacI_NOR/CDS_Component/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/pAmeR_mapsTo/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/pAmeR_mapsTo"/>
-            <sbol:displayId>pAmeR_mapsTo</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
-            <sbol:remote rdf:resource="http://async.utah.edu/LacI_NOR/Pro_Component/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI"/>
-        <sbol:displayId>LacI</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub"/>
-        <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_LacI/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_LacI"/>
-            <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub_LacI_LacI</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein"/>
-            <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub"/>
-        <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG"/>
-            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein"/>
-            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
-            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub"/>
-        <sbol:displayId>LacI_NOR_module_LacI_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein"/>
-            <sbol:displayId>LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub"/>
-        <sbol:displayId>LacI_NOR_module_AmeR_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein"/>
-            <sbol:displayId>LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/AmeR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub"/>
-        <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR"/>
-            <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein"/>
-            <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub"/>
-        <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
-            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation"/>
     <sbol:displayId>AmeR_protein_degradation</sbol:displayId>
@@ -353,6 +59,300 @@
             <sbol:version>1</sbol:version>
             <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
             <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/AmeR_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/LacI_NOR_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module"/>
+    <sbol:displayId>LacI_NOR_module</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein"/>
+        <sbol:displayId>AmeR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/IPTG/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG"/>
+        <sbol:displayId>IPTG</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein"/>
+        <sbol:displayId>LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein"/>
+        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/pAmeR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR"/>
+        <sbol:displayId>pAmeR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI"/>
+        <sbol:displayId>LacI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc"/>
+        <sbol:displayId>LacI_NOR_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/LacI_NOR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/pAmeR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/pAmeR_mapsTo"/>
+            <sbol:displayId>pAmeR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/LacI_NOR/Pro_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/LacI_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_fc/LacI_mapsTo"/>
+            <sbol:displayId>LacI_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/LacI_NOR/CDS_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub"/>
+        <sbol:displayId>LacI_NOR_module_AmeR_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_degradation_sub/LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein"/>
+            <sbol:displayId>LacI_NOR_module_AmeR_protein_degradation_sub_AmeR_protein_AmeR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_degradation/AmeR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub"/>
+        <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
+            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG"/>
+            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_IPTG_IPTG</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub/LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_complex_formation_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub"/>
+        <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_IPTG_LacI_protein_degradation_sub/LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein"/>
+            <sbol:displayId>LacI_NOR_module_IPTG_LacI_protein_degradation_sub_IPTG_LacI_protein_IPTG_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_degradation/IPTG_LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/IPTG_LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub"/>
+        <sbol:displayId>LacI_NOR_module_LacI_protein_degradation_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_degradation_sub/LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>LacI_NOR_module_LacI_protein_degradation_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_degradation/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub"/>
+        <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein"/>
+            <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub_LacI_protein_LacI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_LacI/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_LacI_protein_production_sub/LacI_NOR_module_LacI_protein_production_sub_LacI_LacI"/>
+            <sbol:displayId>LacI_NOR_module_LacI_protein_production_sub_LacI_LacI</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub"/>
+        <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein"/>
+            <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/AmeR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR_module/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub/LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR"/>
+            <sbol:displayId>LacI_NOR_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/LacI_NOR_module/pAmeR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression"/>
+    <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein"/>
+        <sbol:displayId>AmeR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR"/>
+        <sbol:displayId>pAmeR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression"/>
+        <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation"/>
+            <sbol:displayId>pAmeR_promoter_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation"/>
+            <sbol:displayId>AmeR_protein_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
           </sbol:Participation>
         </sbol:participation>
       </sbol:Interaction>
@@ -395,16 +395,6 @@
     <sbol:displayId>IPTG_LacI_protein_complex_formation</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein"/>
-        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG"/>
         <sbol:displayId>IPTG</sbol:displayId>
@@ -412,6 +402,16 @@
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein_complex_formation/IPTG_LacI_protein"/>
+        <sbol:displayId>IPTG_LacI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -465,21 +465,21 @@
     <sbol:displayId>LacI_protein_production</sbol:displayId>
     <sbol:version>1</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI"/>
-        <sbol:displayId>LacI</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI_protein/1">
         <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI_protein"/>
         <sbol:displayId>LacI_protein</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein_production/LacI"/>
+        <sbol:displayId>LacI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
       </sbol:FunctionalComponent>
@@ -532,67 +532,6 @@
     <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Complex"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ"/>
-    <sbol:displayId>RiboJ</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>RiboJ</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein"/>
-    <sbol:displayId>LacI_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>LacI_protein</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs"/>
-    <sbol:displayId>BBa_B0064_rbs</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>BBa_B0064_rbs</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator"/>
-    <sbol:displayId>L3S2P21_terminator</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
-    <dcterms:title>L3S2P21_terminator</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
-    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator/1"/>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG"/>
-    <sbol:displayId>IPTG</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#SmallMolecule"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein"/>
-    <sbol:displayId>AmeR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>AmeR_protein</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://async.utah.edu/LacI_NOR/1">
     <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR"/>
     <sbol:displayId>LacI_NOR</sbol:displayId>
@@ -601,24 +540,6 @@
     <dcterms:description></dcterms:description>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/LacI_NOR/Pro_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/Pro_Component"/>
-        <sbol:displayId>Pro_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.utah.edu/LacI_NOR/NGA_Component/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/NGA_Component"/>
-        <sbol:displayId>NGA_Component</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1"/>
-      </sbol:Component>
-    </sbol:component>
     <sbol:component>
       <sbol:Component rdf:about="http://async.utah.edu/LacI_NOR/RBS_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/RBS_Component"/>
@@ -646,6 +567,24 @@
         <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1"/>
       </sbol:Component>
     </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/LacI_NOR/NGA_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/NGA_Component"/>
+        <sbol:displayId>NGA_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/LacI_NOR/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+      </sbol:Component>
+    </sbol:component>
     <sbol:sequenceAnnotation>
       <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation2/1">
         <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation2"/>
@@ -662,24 +601,6 @@
           </sbol:Range>
         </sbol:location>
         <sbol:component rdf:resource="http://async.utah.edu/LacI_NOR/RBS_Component/1"/>
-      </sbol:SequenceAnnotation>
-    </sbol:sequenceAnnotation>
-    <sbol:sequenceAnnotation>
-      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1"/>
-        <sbol:displayId>LacI_NOR_SequenceAnnotation1</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:location>
-          <sbol:Range rdf:about="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/LacI_NOR_SequenceAnnotation1_Range/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/LacI_NOR_SequenceAnnotation1_Range"/>
-            <sbol:displayId>LacI_NOR_SequenceAnnotation1_Range</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:start>64</sbol:start>
-            <sbol:end>138</sbol:end>
-            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
-          </sbol:Range>
-        </sbol:location>
-        <sbol:component rdf:resource="http://async.utah.edu/LacI_NOR/NGA_Component/1"/>
       </sbol:SequenceAnnotation>
     </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
@@ -716,6 +637,24 @@
           </sbol:Range>
         </sbol:location>
         <sbol:component rdf:resource="http://async.utah.edu/LacI_NOR/CDS_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1"/>
+        <sbol:displayId>LacI_NOR_SequenceAnnotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:Range rdf:about="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/LacI_NOR_SequenceAnnotation1_Range/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/LacI_NOR/LacI_NOR_SequenceAnnotation1/LacI_NOR_SequenceAnnotation1_Range"/>
+            <sbol:displayId>LacI_NOR_SequenceAnnotation1_Range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:start>64</sbol:start>
+            <sbol:end>138</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/LacI_NOR/NGA_Component/1"/>
       </sbol:SequenceAnnotation>
     </sbol:sequenceAnnotation>
     <sbol:sequenceAnnotation>
@@ -777,6 +716,67 @@
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.utah.edu/LacI_NORSequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ"/>
+    <sbol:displayId>RiboJ</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>RiboJ</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/RiboJ_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein"/>
+    <sbol:displayId>LacI_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>LacI_protein</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs"/>
+    <sbol:displayId>BBa_B0064_rbs</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>BBa_B0064_rbs</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BBa_B0064_rbs_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator"/>
+    <sbol:displayId>L3S2P21_terminator</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>L3S2P21_terminator</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P21_terminator_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG"/>
+    <sbol:displayId>IPTG</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#SmallMolecule"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein"/>
+    <sbol:displayId>AmeR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>AmeR_protein</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI"/>

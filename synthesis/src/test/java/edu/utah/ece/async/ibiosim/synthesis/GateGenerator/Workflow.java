@@ -46,5 +46,12 @@ public class Workflow {
 		
 		GateGenerationRunner.main(cmd);
 	}
-	
+
+	@Test 
+	public void Test_Gate() {
+		String files = String.join(" ", TestingFiles.yfp2TU_File);
+		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NOT", "-od", TestingFiles.writeLibDir};
+		
+		GateGenerationRunner.main(cmd);
+	}
 }

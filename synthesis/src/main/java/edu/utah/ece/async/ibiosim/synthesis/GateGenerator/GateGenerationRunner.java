@@ -18,6 +18,9 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
+
 /**
  * Class to run Gate Generation through command line.
  * @author Tramy Nguyen
@@ -32,37 +35,37 @@ public class GateGenerationRunner {
 			GateGeneratorOptions setupOpt = createGateGenerationOptions(cmd);
 			
 			GateGeneration generator = new GateGeneration();
-			List<SBOLDocument> enrichedTU_List = generator.enrichedTU(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
-			generator.sortEnrichedTUList(enrichedTU_List);
+			List<SBOLDocument> enrichedTU_List = generator.generateGatesFromTranscriptionalUnits(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
+			generator.identifyGeneratedGates(enrichedTU_List);
 			
 			String outDir = setupOpt.getOutputDirectory() + File.separator;
 			if(setupOpt.outputNOTLibrary()) {
-				SBOLDocument notLib = generator.getNOTLibrary();
-				generator.exportLibrary(notLib, outDir + "NOTGates_LibrarySize" + notLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOT);
+				generator.exportLibrary(gates, outDir + "NOTGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputNORLibrary()) {
-				SBOLDocument norLib = generator.getNORLibrary();
-				generator.exportLibrary(norLib, outDir + "NORGates_LibrarySize" + norLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOR);
+				generator.exportLibrary(gates, outDir + "NORGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputORLibrary()) {
-				SBOLDocument orLib = generator.getORLibrary();
-				generator.exportLibrary(orLib, outDir + "ORGates_LibrarySize" + orLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.OR);
+				generator.exportLibrary(gates, outDir + "ORGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputNANDLibrary()) {
-				SBOLDocument nandLib = generator.getNANDLibrary();
-				generator.exportLibrary(nandLib, outDir + "NANDGates_LibrarySize" + nandLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.NAND);
+				generator.exportLibrary(gates, outDir + "NANDGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputANDLibrary()) {
-				SBOLDocument andLib = generator.getANDLibrary();
-				generator.exportLibrary(andLib, outDir + "ANDGates_LibrarySize" + andLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.AND);
+				generator.exportLibrary(gates, outDir + "ANDGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputNOTSUPPORTEDLibrary()) {
-				SBOLDocument notSuppLib = generator.getNOTSUPPORTEDLibrary();
-				generator.exportLibrary(notSuppLib, outDir + "NOTSUPPORTEDGates_LibrarySize" + notSuppLib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOTSUPPORTED);
+				generator.exportLibrary(gates, outDir + "NOTSUPPORTEDGates_LibrarySize" + gates.size() + ".xml");
 			}
 			if(setupOpt.outputLibrary()) {
-				SBOLDocument lib = generator.getLibrary();
-				generator.exportLibrary(lib, outDir + "AllGates_LibrarySize" + lib.getRootModuleDefinitions().size() + ".xml");
+				List<GeneticGate> gates = generator.getLibrary();
+				generator.exportLibrary(gates, outDir + "AllGates_LibrarySize" + gates.size() + ".xml");
 			}
 			
 		} 

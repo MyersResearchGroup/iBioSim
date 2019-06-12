@@ -20,6 +20,8 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.Port;
 
+import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 
 /**
@@ -34,11 +36,18 @@ public class FlatteningSBML_Test {
 	private static Model flat_model;
 	
 	@BeforeClass
-	public static void setupTest() {
+	public static void setupTest() throws BioSimException {
 		try {
 			SBMLDocument imp_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_impFile));
 			SBMLDocument tb_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_tbFile));
-			SBMLDocument flat_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_flatFile));
+			BioModel sbmlDoc = new BioModel(TestingFiles.writeOutputDir); 
+			
+			//Loading the testbench file will also load the implementation file as well since externalModelDefinition is used.
+			boolean isDocumentLoaded = sbmlDoc.load(TestingFiles.sbmlEvenZero_tbFile);
+			if(!isDocumentLoaded) {
+				throw new BioSimException("Unable to perform flattening for the following SBML file " + TestingFiles.sbmlEvenZero_tbFile, "Error Flattening SBML Files");
+			}
+			SBMLDocument flat_doc = sbmlDoc.flattenModel(true);
 			
 			imp_model = imp_doc.getModel();
 			tb_model = tb_doc.getModel();

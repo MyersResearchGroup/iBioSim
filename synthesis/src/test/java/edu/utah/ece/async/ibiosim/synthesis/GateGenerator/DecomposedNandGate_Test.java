@@ -30,7 +30,7 @@ public class DecomposedNandGate_Test {
 		
 		ModuleDefinition md = inFile.getRootModuleDefinitions().iterator().next();
 		GateIdentifier sortInstance = new GateIdentifier(inFile, md);
-		GeneticGate gate = sortInstance.createGate();
+		GeneticGate gate = sortInstance.getIdentifiedGate();
 		Assert.assertTrue(gate instanceof NANDGate);
 		
 		NANDGate nandGate = (NANDGate) gate;

@@ -30,7 +30,7 @@ public class DecomposedAndGate_Test {
 		Assert.assertEquals(1,  inFile.getRootModuleDefinitions().size());
 		ModuleDefinition md = inFile.getRootModuleDefinitions().iterator().next();
 		GateIdentifier sortInstance = new GateIdentifier(inFile, md);
-		GeneticGate gate = sortInstance.createGate();
+		GeneticGate gate = sortInstance.getIdentifiedGate();
 		Assert.assertTrue(gate instanceof ANDGate);
 		ANDGate andGate = (ANDGate) gate;
 		decomposedGraph = andGate.getDecomposedGraph();

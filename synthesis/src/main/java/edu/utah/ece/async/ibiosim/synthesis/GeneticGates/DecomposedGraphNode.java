@@ -1,59 +1,72 @@
 package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.sbolstandard.core2.ComponentDefinition;
+import org.sbolstandard.core2.FunctionalComponent;
+
+import com.google.common.collect.Lists;
 
 
 public class DecomposedGraphNode {
-	Optional<URI> fcUri;
-	Optional<ComponentDefinition> cd;
+	private Optional<FunctionalComponent> fc;
+	private Optional<ComponentDefinition> cd, preselectedCD;
 	private double score; 
 	Map<DecomposedGraphNode, NodeInteractionType> parentNodeList, childrenNodeList;
 
 	public DecomposedGraphNode(){
-		fcUri = Optional.empty();
+		fc = Optional.empty();
+		cd = Optional.empty();
+		preselectedCD = Optional.empty();
 		parentNodeList = new HashMap<>();
 		childrenNodeList = new HashMap<>();
 	}
 
-	public DecomposedGraphNode(URI uri, ComponentDefinition cd){
-		this.fcUri = Optional.of(uri);
-		this.cd = Optional.of(cd);
-
+	public DecomposedGraphNode(FunctionalComponent fc){
+		this.fc = Optional.of(fc);
+		this.cd = Optional.of(fc.getDefinition());
+		preselectedCD = Optional.empty();
 		parentNodeList = new HashMap<>();
 		childrenNodeList = new HashMap<>();
 	}
-
-	public Set<DecomposedGraphNode> getParentNodeList() {
-		return this.parentNodeList.keySet();
+	
+	public List<DecomposedGraphNode> getParentNodeList() {
+		return Lists.newArrayList(this.parentNodeList.keySet());
 	}
 
-	public Set<DecomposedGraphNode> getChildrenNodeList(){
-		return this.childrenNodeList.keySet();
+	public List<DecomposedGraphNode> getChildrenNodeList(){ this.childrenNodeList.keySet();
+		return Lists.newArrayList(this.childrenNodeList.keySet());
 	}
+	
+	public void setPreselectedComponentDefinition(ComponentDefinition componentDefinition) {
+		this.preselectedCD = Optional.of(componentDefinition);
+	}
+	
 
 	public void setScore(double value) {
 		this.score = value;
 	}
+	
+	public Optional<FunctionalComponent> getFunctionalComponent() {
+		return this.fc;
+	}
+	
+	public Optional<ComponentDefinition> getComponentDefinition() {
+		return this.cd;
+	}
 
+	public Optional<ComponentDefinition> getPreselectedComponentDefinition() {
+		
+		return this.preselectedCD;
+	}
+	
 	public double getScore() {
 		return this.score;
 	}
 
-	@Override
-	public String toString() {
-		if(fcUri.isPresent()) {
-			return fcUri.get().toString(); 
-		}
-		return "";
-	}
 
 	public NodeInteractionType getParentInteractionType(DecomposedGraphNode n) throws GeneticGatesException {
 		if(!parentNodeList.containsKey(n)) {
@@ -67,6 +80,14 @@ public class DecomposedGraphNode {
 			throw new GeneticGatesException("The given DecomposedGraphNode is not identified as a child of this DecomposedGraphNode.");
 		}
 		return childrenNodeList.get(n);
+	}
+
+	@Override
+	public String toString() {
+		if(fc.isPresent()) {
+			return fc.get().getIdentity().toString(); 
+		}
+		return "";
 	}
 
 	enum NodeInteractionType {

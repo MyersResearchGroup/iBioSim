@@ -31,7 +31,7 @@ public class DecomposedOrGate_Test {
 		Assert.assertEquals(1,  inFile.getRootModuleDefinitions().size());
 		ModuleDefinition md = inFile.getRootModuleDefinitions().iterator().next();
 		GateIdentifier sortInstance = new GateIdentifier(inFile, md);
-		GeneticGate gate = sortInstance.createGate();
+		GeneticGate gate = sortInstance.getIdentifiedGate();
 		Assert.assertTrue(gate instanceof ORGate);
 		ORGate orGate = (ORGate) gate;
 		decomposedGraph = orGate.getDecomposedGraph();

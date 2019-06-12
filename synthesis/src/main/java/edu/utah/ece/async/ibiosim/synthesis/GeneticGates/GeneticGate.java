@@ -2,6 +2,7 @@ package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
 import java.util.List;
 
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
@@ -24,6 +25,9 @@ public interface GeneticGate {
 	
 	public List<FunctionalComponent> getListOfInputs();
 	public List<FunctionalComponent> getListOfOutputs();
+	public List<ComponentDefinition> getListOfInputsAsComponentDefinition();
+	public List<ComponentDefinition> getListOfOutputsAsComponentDefinition();
+	
 	
 	public boolean containsInput(FunctionalComponent fc);
 	public boolean containsOutput(FunctionalComponent fc);

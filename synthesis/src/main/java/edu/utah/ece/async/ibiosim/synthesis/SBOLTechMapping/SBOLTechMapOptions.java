@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 
@@ -42,13 +43,17 @@ public class SBOLTechMapOptions {
 			File file = sbolUtility.getFile(fileFullPath);
 			if(file.isFile()) {
 				SBOLDocument libFile = sbolUtility.parseSBOLFile(file);
-				library.createCopy(libFile);
+				//library.createCopy(libFile);
+				for(TopLevel tl : libFile.getTopLevels()) {
+					if(library.getTopLevel(tl.getIdentity()) == null) {
+						libFile.createRecursiveCopy(library, tl);
+					}
+				}
 			}
 			else if(file.isDirectory()){
 				ArrayList<SBOLDocument> libDocs = sbolUtility.loadSBOLDir(fileFullPath);
 				SBOLDocument mergeDoc = sbolUtility.mergeSBOLDocuments(libDocs);
 				library.createCopy(mergeDoc);
-
 			}
 		} 
 		catch (SBOLValidationException | IOException | SBOLConversionException e) {
