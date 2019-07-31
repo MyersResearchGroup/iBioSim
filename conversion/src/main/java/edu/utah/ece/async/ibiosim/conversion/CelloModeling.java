@@ -38,6 +38,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.Measure;
 import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -103,6 +104,8 @@ public class CelloModeling {
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
+		
+		CreateMeasureClasses(sbolDoc);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		//boolean CelloModel = true;
@@ -738,7 +741,7 @@ public class CelloModeling {
 						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 						//the location of these parameters can change
 						List<Annotation> Annot = Part.getAnnotations();
-						//cicle through all annotations looking for Cello parameters
+						//circle through all annotations looking for Cello parameters
 						for (int i = 0; i < Annot.size(); i++) {
 							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
 								K = Annot.get(i).getStringValue();
@@ -777,6 +780,52 @@ public class CelloModeling {
 		return celloParameters;
 	}
 	
+	private static void CreateMeasureClasses(SBOLDocument sbolDoc) throws SBOLValidationException{
+		
+		//Initialize the parameters we are looking for
+		String n = "";
+		String K = "";
+		String ymax = "";
+		String ymin = "";
+		for(ModuleDefinition topModule : sbolDoc.getModuleDefinitions()) {
+			for (FunctionalComponent promoter : topModule.getFunctionalComponents()) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					for (Component comp: tuCD.getComponents()) {
+						ComponentDefinition tuCDcomp = comp.getDefinition();
+						if (tuCDcomp != null) {
+							if (tuCDcomp.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+								//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+								//the location of these parameters can change
+								List<Annotation> Annot = tuCDcomp.getAnnotations();
+								//circle through all annotations looking for Cello parameters
+								for (int i = 0; i < Annot.size(); i++) {
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+										K = Annot.get(i).getStringValue();
+										promoter.createMeasure("K", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+										n = Annot.get(i).getStringValue();
+										promoter.createMeasure("n", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+										ymax = Annot.get(i).getStringValue();
+										promoter.createMeasure("ymax", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+										ymin = Annot.get(i).getStringValue();
+										promoter.createMeasure("ymin", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+										//promoter.createMeasure(displayId, numericalValue, unit);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	//TODO PEDRO hasCelloParameters
 	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
 		
@@ -788,10 +837,11 @@ public class CelloModeling {
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+				
 				//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 				//the location of these parameters can change
 				List<Annotation> Annot = promoter.getAnnotations();
-					//cicle through all annotations looking for Cello parameters
+					//circle through all annotations looking for Cello parameters
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
 							K = Annot.get(i).getStringValue();
