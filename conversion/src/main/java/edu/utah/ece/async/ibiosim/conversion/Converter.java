@@ -115,47 +115,11 @@ public class Converter {
 	}
 	
 
-	
-/*	*//**
-	 * Convert SBOL to SBML.
-	 * @param inputSBOLDoc - The SBOLDocument to convert to SBML
-	 * @param filePath - The file location where the SBOL document is located.
-	 * @return The number of SBML models that was converted from SBOL. 
-	 *//*
-	public static int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
-		int numGeneratedSBML = 0;
-		try {
-			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
-				if (moduleDef.getModels().size()==0) {
-					HashMap<String,BioModel> models;
-					try {
-						models = SBOL2SBML.generateModel(filePath, moduleDef, inputSBOLDoc);
-						for (BioModel model : models.values()) {
-							if (overwrite(filePath + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
-									model.getSBMLDocument().getModel().getId() + ".xml")) {
-								model.save(filePath + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
-							}
-							numGeneratedSBML++;
-						}
-					} catch (XMLStreamException e) {
-
-						e.printStackTrace();
-					}
-					catch (BioSimException e) {
-
-						e.printStackTrace();
-					}
-					catch (SBOLValidationException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} catch (IOException e) {
-
-		} 
-		return numGeneratedSBML;
-	}*/
-
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) 
 	{
 		//-----REQUIRED FIELD-----
@@ -604,7 +568,7 @@ public class Converter {
 
 								SBMLWriter writing = new SBMLWriter();
 								
-								writing.writeSBMLToFile(topEnvironment, outputDir + File.separator + "Environment.xml");
+								writing.writeSBMLToFile(topEnvironment, outputDir + File.separator + "Simulation_Environment.xml");
 							}
 						}				
 					}
