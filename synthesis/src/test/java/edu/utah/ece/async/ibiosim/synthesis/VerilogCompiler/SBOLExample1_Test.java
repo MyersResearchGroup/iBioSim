@@ -18,7 +18,6 @@ import org.sbolstandard.core2.Participation;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 
@@ -40,15 +39,13 @@ public class SBOLExample1_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		VerilogParser verilogParser = new VerilogParser();
-		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogCont3_file));
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogNotDecomp_File));
 		VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
 		WrappedSBOL sbolWrapper = sbolConverter.convertVerilog2SBOL(verilogModule);
 		Assert.assertNotNull(sbolWrapper);
-	
 		sbolDoc = sbolWrapper.getSBOLDocument();
-		SBOLWriter.write(sbolDoc, TestingFiles.writeSpecDir);
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + verilogModule.getModuleId(), "1.0");
+		sbolDesign = sbolDoc.getModuleDefinition("MD0" + verilogModule.getModuleId(), "1.0");
 	}
 	
 	@Test

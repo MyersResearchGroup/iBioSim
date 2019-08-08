@@ -14,10 +14,8 @@ module srlatch_testbench ();
 		#5 s = 1'b1;
 		wait(q == 1'b1);
 		#5 s = 1'b0;
-		wait(q == 1'b1);
 		#5 r = 1'b1;
 		wait(q == 1'b0);
 		#5 r = 1'b0;
-		wait(q == 1'b0);
 	end
 endmodule

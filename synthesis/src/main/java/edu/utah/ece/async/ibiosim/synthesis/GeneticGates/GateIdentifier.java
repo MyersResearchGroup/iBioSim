@@ -67,8 +67,7 @@ public class GateIdentifier {
 		return getGateType();
 	}
 	
-
-	private GeneticGate getGateType() {
+	private GeneticGate getGateType() throws SBOLValidationException {
 		if(isNOTGate()) {
 			return createNOTGate();
 		}
@@ -76,6 +75,9 @@ public class GateIdentifier {
 			return createNORGate();
 		}
 		if(isORGate()) {
+			if(isWiredORGate()) {
+				return createWiredORGate();
+			}
 			return createORGate();
 		}
 		if(isNANDGate()) {
@@ -87,24 +89,22 @@ public class GateIdentifier {
 		return new NOTSUPPORTEDGate(gateDocument, gateMD);
 	}
 	
-	private NOTGate createNOTGate() {
+	private NOTGate createNOTGate() throws SBOLValidationException {
 		NOTGate gate = new NOTGate(gateDocument, gateMD);
 		
 		InteractsWith inputInteraction= promoters.get(0).outputOfInteraction.get(0);
 		FunctionalComponent input = inputInteraction.components.get(0).component;
 		gate.addInputMolecule(input);
-
+		
 		for(ComponentParticipation currentCDS : cds) {
 			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
 			FunctionalComponent output = outputInteraction.components.get(0).component;
 			gate.addOutputMolecule(output);
 		}
-		
-		
 		return gate;
 	}
 	
-	private NORGate createNORGate() {
+	private NORGate createNORGate() throws SBOLValidationException {
 		NORGate gate = new NORGate(gateDocument, gateMD);
 		
 		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
@@ -141,7 +141,49 @@ public class GateIdentifier {
 		return gate;
 	}
 	
-	private ORGate createORGate() {
+	private boolean isWiredORGate()
+	{
+		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = input1Interaction.components.get(0).component;
+		URI expectedSignal = input1.getDefinitionIdentity();
+		
+		InteractsWith input2Interaction = promoters.get(0).outputOfInteraction.get(1);
+		FunctionalComponent input2 = input2Interaction.components.get(0).component;
+		if(!input2.getDefinitionIdentity().equals(expectedSignal)) {
+			return false;
+		}
+		
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			if(!output.getDefinitionIdentity().equals(expectedSignal)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private WiredORGate createWiredORGate() {
+		WiredORGate gate = new WiredORGate(gateDocument, gateMD);
+		
+		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
+		FunctionalComponent input1 = input1Interaction.components.get(0).component;
+		gate.addInputMolecule(input1);
+		
+		InteractsWith input2Interaction = promoters.get(0).outputOfInteraction.get(1);
+		FunctionalComponent input2 = input2Interaction.components.get(0).component;
+		gate.addInputMolecule(input2);
+		
+		for(ComponentParticipation currentCDS : cds) {
+			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
+			FunctionalComponent output = outputInteraction.components.get(0).component;
+			gate.addOutputMolecule(output);
+		}
+		
+		return gate;
+	}
+	
+	private ORGate createORGate() throws SBOLValidationException {
 		ORGate gate = new ORGate(gateDocument, gateMD);
 		
 		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
@@ -161,7 +203,7 @@ public class GateIdentifier {
 		return gate;
 	}
 	
-	private NANDGate createNANDGate() {
+	private NANDGate createNANDGate() throws SBOLValidationException {
 		NANDGate gate = new NANDGate(gateDocument, gateMD);
 		
 		InteractsWith input1Interaction = promoters.get(0).outputOfInteraction.get(0);
@@ -181,7 +223,7 @@ public class GateIdentifier {
 		return gate;
 	}
 	
-	private ANDGate createANDGate() {
+	private ANDGate createANDGate() throws SBOLValidationException {
 		ANDGate gate = new ANDGate(gateDocument, gateMD);
 		
 		InteractsWith promoterInteraction = promoters.get(0).outputOfInteraction.get(0);
@@ -190,7 +232,7 @@ public class GateIdentifier {
 		FunctionalComponent input2 = complexInteraction.components.get(1).component;
 		gate.addInputMolecule(input1);
 		gate.addInputMolecule(input2);
-	
+		
 		for(ComponentParticipation currentCDS : cds) {
 			InteractsWith outputInteraction = currentCDS.inputOfInteractions.get(0);
 			FunctionalComponent output = outputInteraction.components.get(0).component;
@@ -268,12 +310,6 @@ public class GateIdentifier {
 			if (reprInteraction.components.size() != 1 || reprInteraction2.components.size() != 1) {
 				return false;
 			}
-			//if(reprInteraction.components.get(0).outputOfInteraction.size() != 0 || reprInteraction2.components.get(0).outputOfInteraction.size() != 0) {
-			//	return false;
-			//}
-			//if(checkIfInputIsComplex(promoters.get(0))){
-			//	return false;
-			//}
 		}
 
 		
@@ -445,7 +481,6 @@ public class GateIdentifier {
 
 	private void addGateInteraction(Module module) throws GateGenerationExeception {
 		HashMap<FunctionalComponent, MapsTo> remoteMappings = getRemoteWithMapsTo(module.getMapsTos());
-
 		ModuleDefinition referencedMD = module.getDefinition();
 		for(Interaction interaction : referencedMD.getInteractions()) {
 			List<ComponentParticipation> outputs =  new ArrayList<>();

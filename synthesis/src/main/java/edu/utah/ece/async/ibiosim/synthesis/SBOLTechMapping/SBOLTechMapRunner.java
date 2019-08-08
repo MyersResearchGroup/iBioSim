@@ -57,14 +57,8 @@ public class SBOLTechMapRunner {
 		if(cmd.hasOption("od")) {
 			techMapOptions.setOutputDirectory(cmd.getOptionValue("od"));
 		}
-		if(cmd.hasOption("dot")) {
-			techMapOptions.setOutputDotFile(true);
-		}
 		if(cmd.hasOption("sbol")) {
 			techMapOptions.setOutputSBOL(true);
-		}
-		if(cmd.hasOption("pg")) {
-			techMapOptions.setPrintToTerminalCoveredGates(true);
 		}
 		
 		return techMapOptions;
@@ -73,13 +67,15 @@ public class SBOLTechMapRunner {
 	private static Options getCommandLineOptions() {
 		Options techMapOptions = new Options();
 		techMapOptions.addOption("h", "help", false, "show the available command line needed to run this application.");
-		techMapOptions.addOption("sf", "specification", true, "An SBOL file describing the design specification");
-		techMapOptions.addOption("lf", "library", true, "An SBOL file or a directory to the SBOL files describing the library of gates used for technology mapping");
+		techMapOptions.addOption("s", "specification", true, "An SBOL file describing the design specification");
+		techMapOptions.addOption("l", "library", true, "An SBOL file or a directory to the SBOL files describing the library of gates used for technology mapping");
+		techMapOptions.addOption("bb", "branchbound", true, "Perform branch and bound for covering"); 
+		techMapOptions.addOption("e", "exhaustive", true, "Perform exhaustive for covering"); 
+		techMapOptions.addOption("g", "greedy", true, "Perform greedy for covering"); 
+		techMapOptions.addOption("nsol", "numOfSol", true, "Number of solution"); 
 		techMapOptions.addOption("o", "outFileName", true, "Name of output file"); 
 		techMapOptions.addOption("od", "odir", true, "Path of output directory where the technology mapper will produce the results to.");
-		techMapOptions.addOption("dot", false, "Export solution into a dot file");
 		techMapOptions.addOption("sbol", false, "Export solution into SBOL");
-		techMapOptions.addOption("pg", "printGates", false, "Print name of gates that were selected for the technology mapping solution");
 		return techMapOptions;
 	}
 	
@@ -103,17 +99,12 @@ public class SBOLTechMapRunner {
 	public static Synthesis run(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException, SBOLTechMapException
 	{
 		Synthesis syn = new Synthesis();
-//		syn.createSBOLGraph(specDoc, false);
-//		syn.createSBOLGraph(libDoc, true);
-//		syn.setLibraryGateScores(syn.getLibrary());
-//		syn.matchAndCover();
 		return syn;
 	}
 	
 	public static void asyncRun(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLTechMapException, GateGenerationExeception, SBOLValidationException, GeneticGatesException {
 		List<GeneticGate> libraryGates = TechMapUtility.createLibraryGraphFromSBOL(libDoc);
-		List<DecomposedGraph> specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
-		//SBOLTechMap techMap = new SBOLTechMap(libraryGates, specification);
+		DecomposedGraph specification = TechMapUtility.createSpecificationGraphFromSBOL(specDoc);
 	}
 
 }

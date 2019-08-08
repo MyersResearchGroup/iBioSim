@@ -3,6 +3,7 @@ package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -18,6 +19,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
 
@@ -38,35 +40,38 @@ public class GateGenerationRunner {
 			List<SBOLDocument> enrichedTU_List = generator.generateGatesFromTranscriptionalUnits(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
 			generator.identifyGeneratedGates(enrichedTU_List);
 			
-			String outDir = setupOpt.getOutputDirectory() + File.separator;
+			String outFullPath = setupOpt.getOutputDirectory() + File.separator + setupOpt.getOutputFileName() + ".xml";
+			List<GeneticGate> gates = new ArrayList<>();
+			if(setupOpt.outputAllLibrary()) {
+				List<GeneticGate> notList = generator.getGates(GateType.NOT);
+				generator.generateWiredORGates(notList);
+				gates.addAll(generator.getLibrary());
+				generator.exportLibrary(gates, outFullPath);
+				return;
+			}
 			if(setupOpt.outputNOTLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOT);
-				generator.exportLibrary(gates, outDir + "NOTGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.NOT));
 			}
 			if(setupOpt.outputNORLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOR);
-				generator.exportLibrary(gates, outDir + "NORGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.NOR));
 			}
 			if(setupOpt.outputORLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.OR);
-				generator.exportLibrary(gates, outDir + "ORGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.OR));
+			}
+			if(setupOpt.outputWiredORLibrary()) {
+				List<GeneticGate> notList = generator.getGates(GateType.NOT);
+				gates.addAll(generator.generateWiredORGates(notList));
 			}
 			if(setupOpt.outputNANDLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.NAND);
-				generator.exportLibrary(gates, outDir + "NANDGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.NAND));
 			}
 			if(setupOpt.outputANDLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.AND);
-				generator.exportLibrary(gates, outDir + "ANDGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.AND));
 			}
 			if(setupOpt.outputNOTSUPPORTEDLibrary()) {
-				List<GeneticGate> gates = generator.getGatesWithType(GateType.NOTSUPPORTED);
-				generator.exportLibrary(gates, outDir + "NOTSUPPORTEDGates_LibrarySize" + gates.size() + ".xml");
+				gates.addAll(generator.getGates(GateType.NOTSUPPORTED));
 			}
-			if(setupOpt.outputLibrary()) {
-				List<GeneticGate> gates = generator.getLibrary();
-				generator.exportLibrary(gates, outDir + "AllGates_LibrarySize" + gates.size() + ".xml");
-			}
+			generator.exportLibrary(gates, outFullPath);
 			
 		} 
 		catch (SBOLValidationException e) {
@@ -89,6 +94,9 @@ public class GateGenerationRunner {
 		} 
 		catch (ParseException e) {
 			e.printStackTrace();
+		} 
+		catch (SBOLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -110,14 +118,15 @@ public class GateGenerationRunner {
 		options.addOption("sbh", "sbhRepository", true, "Name of SynBioHub repository to obtain get interaction data from.");
 		options.addOption("h", "help", false, "show the available command line needed to run this application.");
 		options.addOption("o", "outFileName", true, "Name of output file");
-		options.addOption("od", "odir", true, "Path of output directory where GateGeneration will produce the results to.");
-		options.addOption("NOT", false, "Export all the available NOT gates");
-		options.addOption("NOR", false, "Export all the available NOR gates");
-		options.addOption("OR", false, "Export all the available OR gates");
-		options.addOption("NAND", false, "Export all the available NAND gates");
-		options.addOption("AND", false, "Export all the available AND gates");
-		options.addOption("NOTSUPPORTED", false, "Export gates that were not identified during sorting.");
-		options.addOption("m", "merge", false, "Export selected logic gates into one SBOL file. If this flag is not turned on, each library of gates will be exported into separate files."); 
+		options.addOption("od", "odir", true, "Path of output directory where GateGeneration stores the result.");
+		options.addOption("NOT", false, "Export NOT gates");
+		options.addOption("NOR", false, "Export NOR gates");
+		options.addOption("OR", false, "Export OR gates");
+		options.addOption("WiredOR", false, "Export Wired OR gates");
+		options.addOption("NAND", false, "Export NAND gates");
+		options.addOption("AND", false, "Export AND gates");
+		options.addOption("NOTSUPPORTED", false, "Export gates not identified.");
+		options.addOption("all", false, "Export all gates into an SBOL file."); 
 		return options;
 	}
 
@@ -151,8 +160,8 @@ public class GateGenerationRunner {
 			String sbhRepo = cmd.getOptionValue("sbh");
 			gateGenOptions.setSelectedSBHRepo(sbhRepo);
 		}
-		if(cmd.hasOption("m")) {
-			gateGenOptions.setMergeOutputLibrary(true);
+		if(cmd.hasOption("all")) {
+			gateGenOptions.setOutputAllLibrary(true);
 		}
 		if(cmd.hasOption("NOT")) {
 			gateGenOptions.setOutputNOTLibrary(true);
@@ -162,6 +171,9 @@ public class GateGenerationRunner {
 		}
 		if(cmd.hasOption("OR")) {
 			gateGenOptions.setOutputORLibrary(true);
+		}
+		if(cmd.hasOption("WiredOR")) {
+			gateGenOptions.setOutputWiredORLibrary(true);
 		}
 		if(cmd.hasOption("NAND")) {
 			gateGenOptions.setOutputNANDLibrary(true);

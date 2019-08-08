@@ -45,7 +45,7 @@ public class DecomposedNandGate_Test {
 	
 	@Test
 	public void Test_outputNode() {
-		DecomposedGraphNode n = decomposedGraph.getOutputNode();
+		DecomposedGraphNode n = decomposedGraph.getRootNode();
 		Assert.assertEquals(1, n.getChildrenNodeList().size());
 		Assert.assertEquals(0, n.getParentNodeList().size());
 	}

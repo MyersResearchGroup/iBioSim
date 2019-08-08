@@ -57,7 +57,6 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Identified;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
-import org.sbolstandard.core2.TopLevel;
 import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -262,14 +261,11 @@ public class SBOL2SBML {
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
 	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
-	 * @throws XMLStreamException - Invalid XML file occurred
-	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
-	 * @throws BioSimException - if something is wrong with the SBML model.
-	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
-	 * @throws SynBioHubException 
-	 * @throws SBOLConversionException 
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 * @throws BioSimException
+	 * @throws SBOLValidationException
 	 */
-    
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
@@ -501,14 +497,12 @@ public class SBOL2SBML {
 	 * @param subModule - The SBOL submodule referenced by the given SBOL ModuleDefinition.
 	 * @param moduleDef - The SBOL ModuleDefinition that contains the referenced submodules.
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML model.
-	 * @param targetModel - The SBML "top level" model that will referenced all converted SBML submodels. 
+	 * @param targetModel - The SBML "top level" model that will referenced all converted SBML submodels.
 	 * @return
-	 * @throws XMLStreamException - Invalid XML file.
-	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
-	 * @throws BioSimException - if something is wrong the with SBML model.
-	 * @throws SBOLValidationException 
-	 * @throws SynBioHubException 
-	 * @throws SBOLConversionException 
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 * @throws BioSimException
+	 * @throws SBOLValidationException
 	 */
 	private static HashMap<String,BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
 			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {

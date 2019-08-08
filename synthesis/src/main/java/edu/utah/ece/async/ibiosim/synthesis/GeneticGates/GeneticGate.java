@@ -8,14 +8,14 @@ import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLDocument;
 
 /**
- * 
+ * A class that defines the methods for what a genetic logic gate should contain. 
  * @author Tramy Nguyen
  *
  */
 public interface GeneticGate {
 	
 	enum GateType{
-		NOT, NOR, OR, 
+		NOT, NOR, OR, WIREDOR, 
 		AND, NAND,
 		NOTSUPPORTED;
 	}

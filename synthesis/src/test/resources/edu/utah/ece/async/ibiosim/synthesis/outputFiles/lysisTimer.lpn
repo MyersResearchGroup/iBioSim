@@ -1,0 +1,81 @@
+.inputs start 
+.outputs lysisProtein 
+.internal lt_instance__buffer1 lt_instance__buffer2 
+.dummy lt_instance__wait_2 lt_instance__wait_3 lt_instance__wait_4 lt_instance__wait_5 lt_instance__delay_11 lt_instance__wait_0 lt_instance__wait_1 lt_instance__assign_4 lt_instance__delay_10 lt_instance__assign_5 assign_0 lt_instance__assign_2 lt_instance__T0 assign_1 lt_instance__assign_3 lt_instance__assign_0 lt_instance__assign_1 delay_0 T0 delay_1 delay_2 delay_3 lt_instance__delay_1 lt_instance__delay_0 lt_instance__delay_3 lt_instance__delay_2 lt_instance__delay_5 lt_instance__delay_4 lt_instance__delay_7 lt_instance__delay_6 lt_instance__delay_9 lt_instance__delay_8 wait_1 wait_0 
+#|.places lt_instance__P8 lt_instance__P9 lt_instance__P4 lt_instance__P5 lt_instance__P6 lt_instance__P7 lt_instance__P0 lt_instance__P20 lt_instance__P1 lt_instance__P21 lt_instance__P2 lt_instance__P3 lt_instance__P24 lt_instance__P22 lt_instance__P23 P0 P1 P2 P3 P4 P5 P6 P7 P8 lt_instance__P10 lt_instance__P13 lt_instance__P14 lt_instance__P11 lt_instance__P12 lt_instance__P17 lt_instance__P18 lt_instance__P15 lt_instance__P16 lt_instance__P19 
+#@.init_state [0000]
+.graph
+lt_instance__P8 lt_instance__wait_2
+lt_instance__wait_2 lt_instance__P9
+lt_instance__P12 lt_instance__wait_3
+lt_instance__wait_3 lt_instance__P13
+lt_instance__P16 lt_instance__wait_4
+lt_instance__wait_4 lt_instance__P17
+lt_instance__P20 lt_instance__wait_5
+lt_instance__wait_5 lt_instance__P21
+lt_instance__P22 lt_instance__delay_11
+lt_instance__delay_11 lt_instance__P23
+lt_instance__P0 lt_instance__wait_0
+lt_instance__wait_0 lt_instance__P1
+lt_instance__P4 lt_instance__wait_1
+lt_instance__wait_1 lt_instance__P5
+lt_instance__P19 lt_instance__assign_4
+lt_instance__assign_4 lt_instance__P20
+lt_instance__P21 lt_instance__delay_10
+lt_instance__delay_10 lt_instance__P22
+lt_instance__P23 lt_instance__assign_5
+lt_instance__assign_5 lt_instance__P24
+P1 assign_0
+assign_0 P2
+lt_instance__P11 lt_instance__assign_2
+lt_instance__assign_2 lt_instance__P12
+lt_instance__P24 lt_instance__T0
+lt_instance__T0 lt_instance__P0
+P5 assign_1
+assign_1 P6
+lt_instance__P15 lt_instance__assign_3
+lt_instance__assign_3 lt_instance__P16
+lt_instance__P3 lt_instance__assign_0
+lt_instance__assign_0 lt_instance__P4
+lt_instance__P7 lt_instance__assign_1
+lt_instance__assign_1 lt_instance__P8
+P0 delay_0
+delay_0 P1
+P8 T0
+T0 P0
+P3 delay_1
+delay_1 P4
+P4 delay_2
+delay_2 P5
+P7 delay_3
+delay_3 P8
+lt_instance__P2 lt_instance__delay_1
+lt_instance__delay_1 lt_instance__P3
+lt_instance__P1 lt_instance__delay_0
+lt_instance__delay_0 lt_instance__P2
+lt_instance__P6 lt_instance__delay_3
+lt_instance__delay_3 lt_instance__P7
+lt_instance__P5 lt_instance__delay_2
+lt_instance__delay_2 lt_instance__P6
+lt_instance__P10 lt_instance__delay_5
+lt_instance__delay_5 lt_instance__P11
+lt_instance__P9 lt_instance__delay_4
+lt_instance__delay_4 lt_instance__P10
+lt_instance__P14 lt_instance__delay_7
+lt_instance__delay_7 lt_instance__P15
+lt_instance__P13 lt_instance__delay_6
+lt_instance__delay_6 lt_instance__P14
+lt_instance__P18 lt_instance__delay_9
+lt_instance__delay_9 lt_instance__P19
+lt_instance__P17 lt_instance__delay_8
+lt_instance__delay_8 lt_instance__P18
+P6 wait_1
+wait_1 P7
+P2 wait_0
+wait_0 P3
+.marking {lt_instance__P0 P0 }
+#@.enablings {<lt_instance__wait_2=[lt_instance__buffer2]><lt_instance__wait_3=[(start=0)]><lt_instance__wait_4=[(lt_instance__buffer1=0)]><lt_instance__wait_5=[(lt_instance__buffer2=0)]><lt_instance__delay_11=[true]><lt_instance__wait_0=[start]><lt_instance__wait_1=[lt_instance__buffer1]><lt_instance__assign_4=[true]><lt_instance__delay_10=[true]><lt_instance__assign_5=[true]><assign_0=[true]><lt_instance__assign_2=[true]><lt_instance__T0=[true]><assign_1=[true]><lt_instance__assign_3=[true]><lt_instance__assign_0=[true]><lt_instance__assign_1=[true]><delay_0=[true]><T0=[true]><delay_1=[true]><delay_2=[true]><delay_3=[true]><lt_instance__delay_1=[true]><lt_instance__delay_0=[true]><lt_instance__delay_3=[true]><lt_instance__delay_2=[true]><lt_instance__delay_5=[true]><lt_instance__delay_4=[true]><lt_instance__delay_7=[true]><lt_instance__delay_6=[true]><lt_instance__delay_9=[true]><lt_instance__delay_8=[true]><wait_1=[(lysisProtein=0)]><wait_0=[lysisProtein]>}
+#@.delay_assignments {<lt_instance__delay_11=[5]><lt_instance__delay_10=[5]><delay_0=[5.0]><delay_1=[5.0]><delay_2=[5.0]><delay_3=[5.0]><lt_instance__delay_1=[5]><lt_instance__delay_0=[5]><lt_instance__delay_3=[5]><lt_instance__delay_2=[5]><lt_instance__delay_5=[5]><lt_instance__delay_4=[5]><lt_instance__delay_7=[5]><lt_instance__delay_6=[5]><lt_instance__delay_9=[5]><lt_instance__delay_8=[5]>}
+#@.boolean_assignments {<lt_instance__assign_4=[lt_instance__buffer2:=0]><lt_instance__assign_5=[lysisProtein:=0]><assign_0=[start:=1]><lt_instance__assign_2=[lysisProtein:=1]><assign_1=[start:=0]><lt_instance__assign_3=[lt_instance__buffer1:=0]><lt_instance__assign_0=[lt_instance__buffer1:=1]><lt_instance__assign_1=[lt_instance__buffer2:=1]>}
+#@.continuous 
+.end

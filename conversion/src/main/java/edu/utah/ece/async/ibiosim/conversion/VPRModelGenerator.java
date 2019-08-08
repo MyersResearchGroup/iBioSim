@@ -165,7 +165,7 @@ public class VPRModelGenerator {
 		
 		try 
 		{
-			SBOLDocument inputSBOL = SBOLUtility.getInstance().loadSBOLFile(fullInputFileName, sbolURIPre);
+			SBOLDocument inputSBOL = SBOLUtility.getSBOLUtility().loadSBOLFile(fullInputFileName, sbolURIPre);
 			SBOLDocument outputSBOL = generateModel(selectedRepo, inputSBOL, null);
 			if(!noOutput)
 			{

@@ -39,7 +39,7 @@ public class SBMLExample5_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
-		VerilogModule vModule = compiler.parseVerilogFile(new File(TestingFiles.verilogWaitStmt_file));
+		VerilogModule vModule = compiler.parseVerilogFile(new File(TestingFiles.verilogWaitStmt_File));
 		
 		WrappedSBML sbmlWrapper = compiler.generateSBMLFromVerilog(vModule);
 		Assert.assertNotNull(sbmlWrapper);		

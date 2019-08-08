@@ -2,9 +2,13 @@ package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -12,6 +16,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidationException;
 
+import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.synthesis.TestingFiles;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ANDGate;
@@ -21,6 +26,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NANDGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NORGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NOTGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ORGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.WiredORGate;
 
 /**
  * Test gate types that are supported in GateIdentifier class
@@ -82,7 +88,7 @@ public class GateIdentifier_Test {
 	}
 	
 	@Test
-	public void Test_NOR1(){
+	public void Test1_NOR(){
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate1();
 			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
@@ -109,7 +115,7 @@ public class GateIdentifier_Test {
 	}
 	
 	@Test
-	public void Test_NOR2() {
+	public void Test2_NOR() {
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate2();
 			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
@@ -136,7 +142,7 @@ public class GateIdentifier_Test {
 	}
 	
 	@Test
-	public void Test_NOR3() {
+	public void Test3_NOR() {
 		try {
 			SBOLDocument norGate = SyntheticGateExamples.createNORGate3();
 			ModuleDefinition md = norGate.getRootModuleDefinitions().iterator().next();
@@ -212,6 +218,108 @@ public class GateIdentifier_Test {
 			e.printStackTrace();
 		} catch (SBOLValidationException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void Test1_WiredOR() throws SBOLValidationException, IOException, SBOLConversionException, GateGenerationExeception, SBOLException { 
+		SBOLDocument gate = SBOLUtility.getSBOLUtility().createSBOLDocument(); 
+		gate.read(TestingFiles.yfp1NOT_LibSize1);
+		GateIdentifier gateType = new GateIdentifier(gate, gate.getRootModuleDefinitions().iterator().next());
+		List<GeneticGate> listOfNot = new ArrayList<>();
+		listOfNot.add(gateType.getIdentifiedGate());
+		
+		GateGeneration gateGen = new GateGeneration();
+		List<GeneticGate> wiredGateList = gateGen.generateWiredORGates(listOfNot);
+		Assert.assertTrue(1 == wiredGateList.size());
+		Assert.assertTrue(wiredGateList.get(0) instanceof WiredORGate);
+		GeneticGate g1 = wiredGateList.get(0);
+		Assert.assertTrue(g1 instanceof WiredORGate);
+		List<ComponentDefinition> actualSignals = new ArrayList<>();
+		actualSignals.addAll(g1.getListOfInputsAsComponentDefinition());
+		actualSignals.addAll(g1.getListOfOutputsAsComponentDefinition());
+		URI yfpSignal = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1");
+		for(ComponentDefinition cd : actualSignals) {
+			Assert.assertTrue(cd.getIdentity().equals(yfpSignal));
+		}
+	}
+	
+	@Test
+	public void Test2_WiredOR() throws SBOLValidationException, IOException, SBOLConversionException, GateGenerationExeception, SBOLException { 
+		SBOLDocument gate = SBOLUtility.getSBOLUtility().createSBOLDocument(); 
+		gate.read(TestingFiles.yfp1NOT_LibSize1);
+		gate.read(TestingFiles.yfp2NOT_LibSize1);
+		GateIdentifier gateType = new GateIdentifier(gate, gate.getRootModuleDefinitions().iterator().next());
+		List<GeneticGate> listOfNot = new ArrayList<>();
+		listOfNot.add(gateType.getIdentifiedGate());
+		
+		GateGeneration gateGen = new GateGeneration();
+		List<GeneticGate> wiredGateList = gateGen.generateWiredORGates(listOfNot);
+		Assert.assertTrue(1 == wiredGateList.size());
+		Assert.assertTrue(wiredGateList.get(0) instanceof WiredORGate);
+		GeneticGate g1 = wiredGateList.get(0);
+		Assert.assertTrue(g1 instanceof WiredORGate);
+		List<ComponentDefinition> actualSignals = new ArrayList<>();
+		actualSignals.addAll(g1.getListOfInputsAsComponentDefinition());
+		actualSignals.addAll(g1.getListOfOutputsAsComponentDefinition());
+		URI yfpSignal = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1");
+		for(ComponentDefinition cd : actualSignals) {
+			Assert.assertTrue(cd.getIdentity().equals(yfpSignal));
+		}
+	}
+	
+	@Test
+	public void Test3_WiredOR() throws SBOLValidationException, IOException, SBOLConversionException, GateGenerationExeception, SBOLException { 
+		SBOLDocument gate = SBOLUtility.getSBOLUtility().createSBOLDocument(); 
+		gate.read(TestingFiles.NOT_LibSize2);
+		List<GeneticGate> listOfNot = new ArrayList<>();
+		for(ModuleDefinition md : gate.getRootModuleDefinitions()) {
+			GateIdentifier gateType = new GateIdentifier(gate, md);
+			listOfNot.add(gateType.getIdentifiedGate());
+		}
+		
+		GateGeneration gateGen = new GateGeneration();
+		List<GeneticGate> wiredGateList = gateGen.generateWiredORGates(listOfNot);
+		Assert.assertTrue(1 == wiredGateList.size());
+		Assert.assertTrue(wiredGateList.get(0) instanceof WiredORGate);
+		GeneticGate g1 = wiredGateList.get(0);
+		Assert.assertTrue(g1 instanceof WiredORGate);
+		List<ComponentDefinition> actualSignals = new ArrayList<>();
+		actualSignals.addAll(g1.getListOfInputsAsComponentDefinition());
+		actualSignals.addAll(g1.getListOfOutputsAsComponentDefinition());
+		URI psraSignal = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1");
+		for(ComponentDefinition cd : actualSignals) {
+			Assert.assertTrue(cd.getIdentity().equals(psraSignal));
+		}
+	}
+	
+	@Test
+	public void Test4_WiredOR() throws SBOLValidationException, IOException, SBOLConversionException, GateGenerationExeception, SBOLException { 
+		SBOLDocument gate = SBOLUtility.getSBOLUtility().createSBOLDocument(); 
+		gate.read(TestingFiles.NOT_LibSize2);
+		gate.read(TestingFiles.yfp1NOT_LibSize1);
+		List<GeneticGate> listOfNot = new ArrayList<>();
+		for(ModuleDefinition md : gate.getRootModuleDefinitions()) {
+			GateIdentifier gateType = new GateIdentifier(gate, md);
+			listOfNot.add(gateType.getIdentifiedGate());
+		}
+		
+		GateGeneration gateGen = new GateGeneration();
+		List<GeneticGate> wiredGateList = gateGen.generateWiredORGates(listOfNot);
+		Assert.assertTrue(2 == wiredGateList.size());
+		GeneticGate g1 = wiredGateList.get(0);
+		GeneticGate g2 = wiredGateList.get(1);
+		Assert.assertTrue(g1 instanceof WiredORGate);
+		Assert.assertTrue(g2 instanceof WiredORGate);
+		List<ComponentDefinition> actualSignals = new ArrayList<>();
+		actualSignals.addAll(g1.getListOfInputsAsComponentDefinition());
+		actualSignals.addAll(g1.getListOfOutputsAsComponentDefinition());
+		actualSignals.addAll(g2.getListOfOutputsAsComponentDefinition());
+		actualSignals.addAll(g2.getListOfOutputsAsComponentDefinition());
+		URI psraSignal = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1");
+		URI yfpSignal = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1");
+		for(ComponentDefinition cd : actualSignals) {
+			Assert.assertTrue(cd.getIdentity().equals(psraSignal) || cd.getIdentity().equals(yfpSignal));
 		}
 	}
 }

@@ -4,15 +4,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.sbolstandard.core2.CombinatorialDerivation;
 import org.sbolstandard.core2.ComponentDefinition;
 import org.sbolstandard.core2.FunctionalComponent;
+import org.sbolstandard.core2.Interaction;
+import org.sbolstandard.core2.MapsTo;
+import org.sbolstandard.core2.Module;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SBOLWriter;
+import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
@@ -35,7 +40,7 @@ public class GateGeneration {
 	private int mdId;
 	
 	public GateGeneration() {
-		this.sbolUtility = SBOLUtility.getInstance();
+		this.sbolUtility = SBOLUtility.getSBOLUtility();
 		this.gateList = new ArrayList<>();
 	}
 
@@ -74,29 +79,75 @@ public class GateGeneration {
 				gateList.add(gate);
 			}
 		}
-	}
-	
-	public void generateWiredORGates() throws SBOLValidationException, SBOLException, GateGenerationExeception {
-		List<GeneticGate> notGates = getGatesWithType(GateType.NOT);
-		WiredGateGenerator generator = new WiredGateGenerator();
-		for(GeneticGate gate : notGates) {
-			NOTGate not = (NOTGate) gate;
-			for(FunctionalComponent input : not.getListOfInputs()) {
-				ModuleDefinition wiredNotGate = generator.createWiredOrGate(input.getDefinition(), not.getSBOLDocument());
-				GateIdentifier gateUtil = new GateIdentifier(not.getSBOLDocument(), wiredNotGate);
-				GeneticGate notGate = gateUtil.getIdentifiedGate();
-				gateList.add(notGate);;
-			}
-			for(FunctionalComponent output : not.getListOfOutputs()) {
-				ModuleDefinition wiredNotGate = generator.createWiredOrGate(output.getDefinition(), not.getSBOLDocument());
-				GateIdentifier gateUtil = new GateIdentifier(not.getSBOLDocument(), wiredNotGate);
-				GeneticGate notGate = gateUtil.getIdentifiedGate();
-				gateList.add(notGate);
-			}
+		for(GeneticGate gate : gateList) {
+			removeInputDegradationProtein(gate);
 		}
 	}
 	
-	public List<GeneticGate> getGatesWithType(GateType gateType) {
+	private boolean removeInputDegradationProtein(GeneticGate gate) throws SBOLValidationException {
+		for(FunctionalComponent fc : gate.getListOfInputs()) {
+			if(isFunctionalComponentProtein(fc)) {
+				assert(removeDegradation(fc.getIdentity(), gate.getSBOLDocument(), gate.getModuleDefinition()));
+			}
+		}
+		return true;
+	}
+	
+	private boolean hasDegradationInteraction(ModuleDefinition md) {
+		for(Interaction inter : md.getInteractions()) {
+			if(inter.getTypes().contains(SystemsBiologyOntology.DEGRADATION)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isFunctionalComponentProtein(FunctionalComponent fc) {
+		ComponentDefinition cd = fc.getDefinition();
+		return cd.getTypes().contains(ComponentDefinition.PROTEIN);
+	}
+	
+	private boolean removeDegradation(URI fcUri, SBOLDocument gateDocument, ModuleDefinition gateMD) throws SBOLValidationException {
+		Module module = getModuleWithDegradation(fcUri, gateMD.getModules());
+		return gateDocument.removeModuleDefinition(module.getDefinition()) && gateMD.removeModule(module);
+	}
+	
+	private Module getModuleWithDegradation(URI fcUri, Set<Module> moduleList) {
+		List<Module> degModules = new ArrayList<>();
+		for(Module m : moduleList) {
+			for(MapsTo mt : m.getMapsTos()) {
+				if(mt.getLocalIdentity().equals(fcUri) && hasDegradationInteraction(m.getDefinition())) {
+					degModules.add(m);
+				}
+			}
+		}
+		assert(degModules.size() == 1);
+		return degModules.get(0);
+	}
+	
+	public List<GeneticGate> generateWiredORGates(List<GeneticGate> notGates) throws SBOLValidationException, SBOLException, GateGenerationExeception {
+		WiredGateGenerator generator = new WiredGateGenerator();
+		List<GeneticGate> wiredGates = new ArrayList<>();
+		List<ComponentDefinition> signals = new ArrayList<>();
+		for(GeneticGate gate : notGates) {
+			NOTGate not = (NOTGate) gate;
+			for(ComponentDefinition cd : not.getListOfOutputsAsComponentDefinition())
+			{
+				if(!signals.contains(cd))
+				{
+					ModuleDefinition wiredOrGate = generator.createWiredOrGate(cd, not.getSBOLDocument());
+					GateIdentifier gateUtil = new GateIdentifier(not.getSBOLDocument(), wiredOrGate);
+					GeneticGate orGate = gateUtil.getIdentifiedGate();
+					signals.add(cd);
+					wiredGates.add(orGate);
+					gateList.add(orGate);
+				}
+			}
+		}
+		return wiredGates;
+	}
+	
+	public List<GeneticGate> getGates(GateType gateType) {
 		List<GeneticGate> gateList = new ArrayList<>();
 		for(GeneticGate gate : this.gateList) {
 			if(gate.getType().equals(gateType)) {

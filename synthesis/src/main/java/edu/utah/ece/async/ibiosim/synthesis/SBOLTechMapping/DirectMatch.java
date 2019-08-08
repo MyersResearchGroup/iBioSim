@@ -10,6 +10,7 @@ import java.util.Queue;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGateScoreComparator;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
 
 /**
@@ -32,21 +33,6 @@ public class DirectMatch implements Match {
 		this.matches = new HashMap<>();
 	}
 
-
-	@Override
-	public List<GeneticGate> getGateList(DecomposedGraphNode node) throws GeneticGatesException {
-		if(!isInitialized) {
-			initialize();
-			isInitialized = true;
-		}
-		return matches.get(node);
-	}
-
-	@Override
-	public DecomposedGraph getSpecification() {
-		return specGraph;
-	}
-
 	public void initialize() throws GeneticGatesException {
 		// map spec. node to possible matching library gates
 		setAllGraphNodeScore(specGraph, Double.POSITIVE_INFINITY);
@@ -57,7 +43,7 @@ public class DirectMatch implements Match {
 			double totalScore;
 			for(GeneticGate gate : libraryGraphs) {
 				DecomposedGraph decomposedGate = gate.getDecomposedGraph();
-				DecomposedGraphNode gateOuputNode = decomposedGate.getOutputNode();
+				DecomposedGraphNode gateOuputNode = decomposedGate.getRootNode();
 				if(isMatch(currentSpecNode, gateOuputNode)) {
 					double tempSpecScore = currentSpecNode.getScore();
 					if(currentSpecNode.getScore() == Double.POSITIVE_INFINITY) {
@@ -89,6 +75,7 @@ public class DirectMatch implements Match {
 				}
 			}
 		}
+		isInitialized = true;
 	}
 
 	private boolean isMatch(DecomposedGraphNode specNode, DecomposedGraphNode libNode) throws GeneticGatesException {
@@ -133,10 +120,30 @@ public class DirectMatch implements Match {
 		}
 	}
 
+	@Override
+	public List<GeneticGate> getGateList(DecomposedGraphNode node) throws GeneticGatesException {
+		/**
+		 * Returns null if no gate is mapped to the given node.
+		 */
+		if(!isInitialized) {
+			initialize();
+		}
+		return matches.get(node);
+	}
+
+	@Override
+	public DecomposedGraph getSpecification() {
+		return specGraph;
+	}
 
 	@Override
 	public List<GeneticGate> getLibrary() {
 		return this.libraryGraphs; 
+	}
+
+	@Override
+	public void sortAscendingOrder(List<GeneticGate> library) {
+		library.sort(new GeneticGateScoreComparator());	
 	}
 
 

@@ -33,9 +33,9 @@ public class WiredGateGenerator {
 		FunctionalComponent exp_pro_fc = gateMd.createFunctionalComponent("expected_Pro", AccessType.PUBLIC, exp_pro.getIdentity(), DirectionType.INOUT);
 		FunctionalComponent exp_cds_fc = gateMd.createFunctionalComponent("expected_CDS", AccessType.PUBLIC, exp_cds.getIdentity(), DirectionType.INOUT);
 		
-		FunctionalComponent exp_y_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Output", AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);
-		FunctionalComponent exp_x0_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Input1", AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);
-		FunctionalComponent exp_x1_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Input2", AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);
+		FunctionalComponent exp_y_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Output", AccessType.PUBLIC, cd.getIdentity(), DirectionType.OUT);
+		FunctionalComponent exp_x0_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Input1", AccessType.PUBLIC, cd.getIdentity(), DirectionType.IN);
+		FunctionalComponent exp_x1_protein = gateMd.createFunctionalComponent(cd.getDisplayId() + "Input2", AccessType.PUBLIC, cd.getIdentity(), DirectionType.IN);
 		
 		ComponentDefinition tu = wrapper.createEngineeredRegion();
 		ComponentDefinition promoter = wrapper.createPromoter();
@@ -56,7 +56,7 @@ public class WiredGateGenerator {
 		tu_fc.createMapsTo("expectedCDS_mapsTo", RefinementType.USELOCAL, exp_cds_fc.getIdentity(), gen_cds.getIdentity());
 			
 		ModuleDefinition y_protein_prod = wrapper.createModuleDefinition(cd.getDisplayId() + "_production");
-		FunctionalComponent gen_y_protein = y_protein_prod.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);	
+		FunctionalComponent gen_y_protein = y_protein_prod.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.OUT);	
 		FunctionalComponent gen_cds_fc = y_protein_prod.createFunctionalComponent("gen_cds_fc", AccessType.PUBLIC, cds.getIdentity(), DirectionType.INOUT);		
 		wrapper.createProductionInteraction(y_protein_prod, gen_cds_fc, gen_y_protein);
 		Module y_prod_instance = gateMd.createModule(cd.getDisplayId() + "_production_module", y_protein_prod.getIdentity());
@@ -64,20 +64,20 @@ public class WiredGateGenerator {
 		y_prod_instance.createMapsTo("cds_prod_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_cds_fc.getIdentity(), gen_cds_fc.getIdentity());
 		
 		ModuleDefinition x0_protein_act = wrapper.createModuleDefinition(cd.getDisplayId() + "_activation");
-		FunctionalComponent gen_x0_protein = x0_protein_act.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);	
+		FunctionalComponent gen_x0_protein = x0_protein_act.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.IN);	
 		FunctionalComponent gen_pro_fc = x0_protein_act.createFunctionalComponent("gen_pro_fc", AccessType.PUBLIC, promoter.getIdentity(), DirectionType.INOUT);		
 		wrapper.createActivationInteraction(x0_protein_act, gen_x0_protein, gen_pro_fc);
-		Module x0_act_instance = gateMd.createModule(cd.getDisplayId() + "_activation_module", x0_protein_act.getIdentity());
-		x0_act_instance.createMapsTo(cd.getDisplayId() + "_stim_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_x0_protein.getIdentity(), gen_x0_protein.getIdentity());
+		Module x0_act_instance = gateMd.createModule(cd.getDisplayId() + "_activation_module1", x0_protein_act.getIdentity());
+		x0_act_instance.createMapsTo(cd.getDisplayId() + "_stim_interaction_mapsTo1", RefinementType.VERIFYIDENTICAL, exp_x0_protein.getIdentity(), gen_x0_protein.getIdentity());
 		x0_act_instance.createMapsTo("pro_stim1_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_pro_fc.getIdentity(), gen_pro_fc.getIdentity());
 		
 		
 		ModuleDefinition x1_protein_act = wrapper.createModuleDefinition(cd.getDisplayId() + "_activation");
-		FunctionalComponent gen_x1_protein = x1_protein_act.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.INOUT);	
+		FunctionalComponent gen_x1_protein = x1_protein_act.createFunctionalComponent("Gen" + cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), DirectionType.IN);	
 		FunctionalComponent gen_x1pro_fc = x1_protein_act.createFunctionalComponent("gen_pro_fc", AccessType.PUBLIC, promoter.getIdentity(), DirectionType.INOUT);		
 		wrapper.createActivationInteraction(x1_protein_act, gen_x1_protein, gen_x1pro_fc);
-		Module x1_act_instance = gateMd.createModule(cd.getDisplayId() + "_activation_module", x1_protein_act.getIdentity());
-		x1_act_instance.createMapsTo(cd.getDisplayId() + "_stim_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_x1_protein.getIdentity(), gen_x1_protein.getIdentity());
+		Module x1_act_instance = gateMd.createModule(cd.getDisplayId() + "_activation_module2", x1_protein_act.getIdentity());
+		x1_act_instance.createMapsTo(cd.getDisplayId() + "_stim_interaction_mapsTo2", RefinementType.VERIFYIDENTICAL, exp_x1_protein.getIdentity(), gen_x1_protein.getIdentity());
 		x1_act_instance.createMapsTo("pro_stim2_interaction_mapsTo", RefinementType.VERIFYIDENTICAL, exp_pro_fc.getIdentity(), gen_x1pro_fc.getIdentity());
 		
 		return gateMd;

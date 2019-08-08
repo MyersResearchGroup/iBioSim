@@ -57,7 +57,7 @@ public class Synthesis
 
 	public Synthesis()
 	{
-		sbolUtil = SBOLUtility.getInstance();
+		sbolUtil = SBOLUtility.getSBOLUtility();
 		_libraryGraph = new ArrayList<SBOLGraph>();
 		_specificationGraph = null; 
 		bestSolution = new HashMap<>();

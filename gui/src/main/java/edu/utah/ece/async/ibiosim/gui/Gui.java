@@ -174,13 +174,13 @@ import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
-import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
+import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -4032,7 +4032,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 				try 
 				{
-					sbolDocument = SBOLUtility.getInstance().loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+					sbolDocument = SBOLUtility.getSBOLUtility().loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					sbolDocument.setCreateDefaults(true);
 				} 
 				catch (FileNotFoundException e) 
@@ -6033,7 +6033,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				//update SBOL library file with newly generated components that vpr model generator created.
 				generateSBMLFromSBOL(chosenDesign, filePath);
 				// TODO: should be using libSBOLj for this
-				SBOLUtility.getInstance().copyAllTopLevels(chosenDesign, sbolDocument);
+				SBOLUtility.getSBOLUtility().copyAllTopLevels(chosenDesign, sbolDocument);
 				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
@@ -7488,7 +7488,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		//Properties synthProps;
 		try 
 		{
-			Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
+			Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
 				SynthesisView synthView = new SynthesisView(this, synthID, root, log);
@@ -8980,7 +8980,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				{
 					try 
 					{
-						Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(
+						Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(
 								root + File.separator + s, File.separator, Gui.frame);
 						if (synthProps != null) 
 						{

@@ -38,14 +38,16 @@ public class FlatteningSBML_Test {
 	@BeforeClass
 	public static void setupTest() throws BioSimException {
 		try {
-			SBMLDocument imp_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_impFile));
-			SBMLDocument tb_doc = SBMLReader.read(new File(TestingFiles.sbmlEvenZero_tbFile));
-			BioModel sbmlDoc = new BioModel(TestingFiles.writeOutputDir); 
+			String implement = TestingFiles.outputDir + File.separator + "evenzeroes_imp.xml";
+			String testbench = TestingFiles.outputDir + File.separator + "evenzeroes_testbench.xml";
+			SBMLDocument imp_doc = SBMLReader.read(new File(implement));
+			SBMLDocument tb_doc = SBMLReader.read(new File(testbench));
+			BioModel sbmlDoc = new BioModel(TestingFiles.outputDir); 
 			
 			//Loading the testbench file will also load the implementation file as well since externalModelDefinition is used.
-			boolean isDocumentLoaded = sbmlDoc.load(TestingFiles.sbmlEvenZero_tbFile);
+			boolean isDocumentLoaded = sbmlDoc.load(testbench);
 			if(!isDocumentLoaded) {
-				throw new BioSimException("Unable to perform flattening for the following SBML file " + TestingFiles.sbmlEvenZero_tbFile, "Error Flattening SBML Files");
+				throw new BioSimException("Unable to perform flattening for the following SBML file " + testbench, "Error Flattening SBML Files");
 			}
 			SBMLDocument flat_doc = sbmlDoc.flattenModel(true);
 			
@@ -135,17 +137,17 @@ public class FlatteningSBML_Test {
 	public void Test_flatDelayType() {
 		for(Event flat_event : flat_model.getListOfEvents()) {
 			if(flat_event.isSetDelay()) {
-				//flat SBML must only have id taken from imp and tb
 				String flat_id = flat_event.getId();
 				Type flat_delayType = flat_event.getDelay().getMath().getType();
-				Assert.assertEquals(ASTNode.Type.REAL, flat_delayType);
 				if(flat_id.startsWith("ez_instance__")) {
+					Assert.assertEquals(ASTNode.Type.INTEGER, flat_delayType);
 					Event imp_event = imp_model.getEvent(flat_id.substring(13));
 					Assert.assertNotNull(imp_event);
 					Assert.assertTrue(imp_event.isSetDelay());
-					Assert.assertEquals(imp_event.getDelay().getMath().getType(), flat_delayType);
+					Assert.assertEquals(imp_event.getDelay().getMath().getType(), ASTNode.Type.REAL);
 				}
 				else {
+					Assert.assertEquals(ASTNode.Type.REAL, flat_delayType);
 					Event tb_event = tb_model.getEvent(flat_id);
 					Assert.assertNotNull(tb_event);
 					Assert.assertTrue(tb_event.isSetDelay());
@@ -169,17 +171,6 @@ public class FlatteningSBML_Test {
 	@Test
 	public void Test_tbDelayValue() {
 		for(Event e : tb_model.getListOfEvents()) {
-			if(e.isSetDelay()) {
-				Delay actual_delay = e.getDelay();
-				Assert.assertTrue(actual_delay.getMath().isReal());
-				Assert.assertTrue(5.0 ==  actual_delay.getMath().getReal());
-			}
-		}
-	}
-
-	@Test
-	public void Test_flatDelayValue() {
-		for(Event e : flat_model.getListOfEvents()) {
 			if(e.isSetDelay()) {
 				Delay actual_delay = e.getDelay();
 				Assert.assertTrue(actual_delay.getMath().isReal());

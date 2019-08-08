@@ -33,7 +33,7 @@ public class LPNExample4_Test {
 		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
 		VerilogModule spec = compiler.parseVerilogFile(new File(TestingFiles.verilogLFSR_impFile));
 		VerilogModule tb = compiler.parseVerilogFile(new File(TestingFiles.verilogLFSR_tbFile));
-		lpn = compiler.compileToLPN(spec, tb, TestingFiles.writeOutputDir);;
+		lpn = compiler.compileToLPN(spec, tb, TestingFiles.outputDir);;
 	}
 
 	@Test

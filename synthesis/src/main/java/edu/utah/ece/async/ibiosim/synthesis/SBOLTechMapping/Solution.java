@@ -6,7 +6,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraphNode;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 
 /**
- * 
+ * A class the defines what a methods a technology mapping solution should have.
  * @author Tramy Nguyen
  *
  */

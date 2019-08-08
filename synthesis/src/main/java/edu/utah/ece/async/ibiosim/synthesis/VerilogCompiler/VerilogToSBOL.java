@@ -41,7 +41,7 @@ public class VerilogToSBOL {
 	
 	public WrappedSBOL convertVerilog2SBOL(VerilogModule module) throws SBOLValidationException, ParseException, VerilogCompilerException, SBOLException {
 		
-		ModuleDefinition fullCircuit = sbolWrapper.createModuleDefinition("circuit_" + module.getModuleId());
+		ModuleDefinition fullCircuit = sbolWrapper.createModuleDefinition(module.getModuleId());
 		
 		convertVerilogPorts(fullCircuit, module.getInputPorts(), DirectionType.IN);
 		convertVerilogPorts(fullCircuit, module.getOutputPorts(), DirectionType.OUT);

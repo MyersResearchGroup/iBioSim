@@ -38,25 +38,25 @@ public class SBOLExample5_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		VerilogParser verilogParser = new VerilogParser();
-		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogCont6_file));
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogNorDecomp_File));
 		VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
 		WrappedSBOL sbolWrapper = sbolConverter.convertVerilog2SBOL(verilogModule);
 		Assert.assertNotNull(sbolWrapper);
-	
+		
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + verilogModule.getModuleId(), "1.0"); 
+		sbolDesign = sbolDoc.getModuleDefinition("MD0" + verilogModule.getModuleId(), "1.0"); 
 	}
 
 	
 	@Test
 	public void Test_cdSize() {
-		Assert.assertEquals(17, sbolDoc.getComponentDefinitions().size());
+		Assert.assertEquals(7, sbolDoc.getComponentDefinitions().size());
 	}
 	
 	@Test
 	public void Test_fcSize() {
-		Assert.assertEquals(8, sbolDesign.getFunctionalComponents().size());
+		Assert.assertEquals(4, sbolDesign.getFunctionalComponents().size());
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class SBOLExample5_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(5, actualSize);
+		Assert.assertEquals(3, actualSize);
 	}
 
 	@Test
@@ -78,12 +78,12 @@ public class SBOLExample5_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(12, actualSize);
+		Assert.assertEquals(4, actualSize);
 	}
 
 	@Test
 	public void Test_interactionSize() {
-		Assert.assertEquals(7, sbolDesign.getInteractions().size());
+		Assert.assertEquals(3, sbolDesign.getInteractions().size());
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class SBOLExample5_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(4, actualSize);
+		Assert.assertEquals(2, actualSize);
 	}
 
 	@Test
@@ -105,109 +105,13 @@ public class SBOLExample5_Test {
 				actualSize++;
 			}
 		}
-		Assert.assertEquals(3, actualSize);
+		Assert.assertEquals(1, actualSize);
 	}
 
-	@Test
-	public void Test_NOT1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_notTU");
-		Assert.assertNotNull(gate);
-		
-		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
-		Assert.assertNotNull(input);
-		
-		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC2_y");
-		Assert.assertNotNull(output);
-		
-		Interaction inhibition = sbolDesign.getInteraction("I0_Inhib");
-		Assert.assertNotNull(inhibition);
-		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
-		Assert.assertEquals(2, inhibition.getParticipations().size());
-
-		for(Participation p : inhibition.getParticipations()) {
-			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.INHIBITOR)) {
-				Assert.assertEquals(input, p.getParticipant());
-			}
-			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
-				Assert.assertEquals(gate, p.getParticipant());
-			}
-			else {
-				Assert.fail("Unexpected role found: " + role);
-			}
-		}
 	
-		Interaction production = sbolDesign.getInteraction("I1_Prod");
-		Assert.assertNotNull(production);
-		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
-		Assert.assertEquals(2, production.getParticipations().size());
-
-		for(Participation p : production.getParticipations()) {
-			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
-				Assert.assertEquals(gate, p.getParticipant());
-			}
-			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
-				Assert.assertEquals(output, p.getParticipant());
-			}
-			else {
-				Assert.fail("Unexpected role found: " + role);
-			}
-		}
-	}
-
-
-	@Test
-	public void Test_NOT2() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_notTU");
-		Assert.assertNotNull(gate);
-		
-		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC6_wiredProtein");
-		Assert.assertNotNull(input);
-		
-		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
-		Assert.assertNotNull(output);
-		
-		Interaction inhibition = sbolDesign.getInteraction("I2_Inhib");
-		Assert.assertNotNull(inhibition);
-		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
-		Assert.assertEquals(2, inhibition.getParticipations().size());
-
-		for(Participation p : inhibition.getParticipations()) {
-			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.INHIBITOR)) {
-				Assert.assertEquals(input, p.getParticipant());
-			}
-			else if(role.equals(SystemsBiologyOntology.INHIBITED)){
-				Assert.assertEquals(gate, p.getParticipant());
-			}
-			else {
-				Assert.fail("Unexpected role found: " + role);
-			}
-		}
-	
-		Interaction production = sbolDesign.getInteraction("I3_Prod");
-		Assert.assertNotNull(production);
-		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
-		Assert.assertEquals(2, production.getParticipations().size());
-
-		for(Participation p : production.getParticipations()) {
-			URI role = p.getRoles().iterator().next();
-			if(role.equals(SystemsBiologyOntology.TEMPLATE)) {
-				Assert.assertEquals(gate, p.getParticipant());
-			}
-			else if(role.equals(SystemsBiologyOntology.PRODUCT)){
-				Assert.assertEquals(output, p.getParticipant());
-			}
-			else {
-				Assert.fail("Unexpected role found: " + role);
-			}
-		}
-	}
-
 	@Test
 	public void Test_NOR1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC7_norTU");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_norTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent in1 = sbolDesign.getFunctionalComponent("FC0_a");
@@ -217,10 +121,10 @@ public class SBOLExample5_Test {
 		Assert.assertNotNull(in2);
 		
 		
-		FunctionalComponent out = sbolDesign.getFunctionalComponent("FC6_wiredProtein");
+		FunctionalComponent out = sbolDesign.getFunctionalComponent("FC2_y");
 		Assert.assertNotNull(out);
 		
-		Interaction inhibition1 = sbolDesign.getInteraction("I4_Inhib");
+		Interaction inhibition1 = sbolDesign.getInteraction("I0_Inhib");
 		Assert.assertNotNull(inhibition1);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition1.getTypes().iterator().next());
 		
@@ -237,7 +141,7 @@ public class SBOLExample5_Test {
 			}
 		}
 		
-		Interaction inhibition2 = sbolDesign.getInteraction("I5_Inhib");
+		Interaction inhibition2 = sbolDesign.getInteraction("I1_Inhib");
 		Assert.assertNotNull(inhibition2);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition2.getTypes().iterator().next());
 
@@ -253,7 +157,7 @@ public class SBOLExample5_Test {
 				Assert.fail("Unexpected role found: " + role);
 			}
 		}
-		Interaction production = sbolDesign.getInteraction("I6_Prod");
+		Interaction production = sbolDesign.getInteraction("I2_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());

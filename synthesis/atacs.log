@@ -1,0 +1,36 @@
+Now generating atomic gate implementations.
+Verbose mode now turned ON.
+Using DBMs to obtain state graphs from LHPNs.
+Loading LPN: /Users/tramyn/Desktop/caseStudies/filter.lpn
+Expanding design: Making 0 implicit places explicit.
+Performing Petri net transformations.
+Initial net size: places=42 trans=42 rules=84
+Expanding design: Making 0 implicit places explicit.
+Temporarily removing ordering rules.
+places=42 trans=42 rules=84
+Adding ordering rules back in.
+Done performing Petri net transformations.
+Final net size: places=42 trans=42 rules=84
+Total transformation time: 0.000834
+places=42 trans=42 rules=84
+Using single-cube algorithm for synthesis.
+Finding reduced state graph; storing to:  /Users/tramyn/Desktop/caseStudies/filter.rsg
+Zones: 62
+States: 62
+CPU Time: 0.02
+Real Time: 0.00726581
+memory: max=3.10031 Mb inuse=2.4561 Mb allocated=29.2383 Mb
+Projecting out dummy transitions and storing to:  /Users/tramyn/Desktop/caseStudies/filter.rsg
+Checking output semi-modularity ... output semi-modular
+Checking CSC ... complete state coded
+Finding regions and storing to:  /Users/tramyn/Desktop/caseStudies/filter.es
+Finding conflicts and storing context rule tables to:  /Users/tramyn/Desktop/caseStudies/filter.crt
+Finding covers and storing to:  /Users/tramyn/Desktop/caseStudies/filter.cov
+EXCEPTION:  Storing unresolved conflicts to:  /Users/tramyn/Desktop/caseStudies/filter.err
+Resolving remaining covers and storing to:  /Users/tramyn/Desktop/caseStudies/filter.cov
+Storing production rules to:  /Users/tramyn/Desktop/caseStudies/filter.prs
+Synthesis succeeded with area = 9 literals 18 transistors
+Storing simulation file to:  /Users/tramyn/Desktop/caseStudies/filter.v
+DOT now being used for display and print routines.
+Generating dot file for net:  /Users/tramyn/Desktop/caseStudies/filter.dot
+Executing command:  shownet /Users/tramyn/Desktop/caseStudies/filter &

@@ -1,19 +1,134 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/">
-  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_qnot/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot"/>
-    <sbol:displayId>circuit_qnot</sbol:displayId>
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/contAssign5/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5"/>
+    <sbol:displayId>contAssign5</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_qnot/FC10_s/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot/FC10_s"/>
-        <sbol:displayId>FC10_s</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/contAssign5/FC3_qnot/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/FC3_qnot"/>
+        <sbol:displayId>FC3_qnot</sbol:displayId>
         <sbol:version>1.0</sbol:version>
+        <dcterms:title>qnot</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/contAssign5/FC0_s/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/FC0_s"/>
+        <sbol:displayId>FC0_s</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>s</dcterms:title>
         <sbol:definition rdf:resource="http://dummy.org/CD0_s/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/contAssign5/FC2_q/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/FC2_q"/>
+        <sbol:displayId>FC2_q</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>q</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/contAssign5/FC1_r/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/FC1_r"/>
+        <sbol:displayId>FC1_r</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>r</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_r/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://dummy.org/contAssign5/M1/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M1"/>
+        <sbol:displayId>M1</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/circuit_qnot"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M1/MT3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M1/MT3"/>
+            <sbol:displayId>MT3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC11_q/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC2_q/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M1/MT5/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M1/MT5"/>
+            <sbol:displayId>MT5</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC8_qnot/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC3_qnot/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M1/MT4/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M1/MT4"/>
+            <sbol:displayId>MT4</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC10_s/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC0_s/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://dummy.org/contAssign5/M0/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M0"/>
+        <sbol:displayId>M0</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/circuit_q"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M0/MT2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M0/MT2"/>
+            <sbol:displayId>MT2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC7_qnot/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC3_qnot/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M0/MT0/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M0/MT0"/>
+            <sbol:displayId>MT0</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC6_r/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC1_r/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://dummy.org/contAssign5/M0/MT1/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/contAssign5/M0/MT1"/>
+            <sbol:displayId>MT1</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC4_q/1.0"/>
+            <sbol:local rdf:resource="http://dummy.org/contAssign5/FC2_q/1.0"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_qnot/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot"/>
+    <sbol:displayId>circuit_qnot</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_qnot/FC11_q/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot/FC11_q"/>
@@ -25,13 +140,13 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_qnot/FC9_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot/FC9_norTU"/>
-        <sbol:displayId>FC9_norTU</sbol:displayId>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_qnot/FC10_s/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot/FC10_s"/>
+        <sbol:displayId>FC10_s</sbol:displayId>
         <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD8_er/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD0_s/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
@@ -42,6 +157,16 @@
         <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_qnot/FC9_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_qnot/FC9_norTU"/>
+        <sbol:displayId>FC9_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD8_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -123,157 +248,16 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_contAssign5/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5"/>
-    <sbol:displayId>circuit_contAssign5</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_contAssign5/FC3_qnot/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/FC3_qnot"/>
-        <sbol:displayId>FC3_qnot</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_contAssign5/FC1_r/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/FC1_r"/>
-        <sbol:displayId>FC1_r</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD1_r/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_contAssign5/FC0_s/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/FC0_s"/>
-        <sbol:displayId>FC0_s</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD0_s/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_contAssign5/FC2_q/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/FC2_q"/>
-        <sbol:displayId>FC2_q</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:module>
-      <sbol:Module rdf:about="http://dummy.org/circuit_contAssign5/M1/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M1"/>
-        <sbol:displayId>M1</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/circuit_qnot"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M1/MT5/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M1/MT5"/>
-            <sbol:displayId>MT5</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC8_qnot/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC3_qnot/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M1/MT3/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M1/MT3"/>
-            <sbol:displayId>MT3</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC10_s/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC0_s/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M1/MT4/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M1/MT4"/>
-            <sbol:displayId>MT4</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_qnot/FC11_q/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC2_q/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
-      <sbol:Module rdf:about="http://dummy.org/circuit_contAssign5/M0/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M0"/>
-        <sbol:displayId>M0</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/circuit_q"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M0/MT0/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M0/MT0"/>
-            <sbol:displayId>MT0</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC4_q/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC2_q/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M0/MT1/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M0/MT1"/>
-            <sbol:displayId>MT1</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC6_r/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC1_r/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://dummy.org/circuit_contAssign5/M0/MT2/1.0">
-            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_contAssign5/M0/MT2"/>
-            <sbol:displayId>MT2</sbol:displayId>
-            <sbol:version>1.0</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="http://dummy.org/circuit_q/FC7_qnot/1.0"/>
-            <sbol:local rdf:resource="http://dummy.org/circuit_contAssign5/FC3_qnot/1.0"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_q/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q"/>
     <sbol:displayId>circuit_q</sbol:displayId>
     <sbol:version>1.0</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_q/FC4_q/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q/FC4_q"/>
-        <sbol:displayId>FC4_q</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
     <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_q/FC6_r/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q/FC6_r"/>
         <sbol:displayId>FC6_r</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:definition rdf:resource="http://dummy.org/CD1_r/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_q/FC7_qnot/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q/FC7_qnot"/>
-        <sbol:displayId>FC7_qnot</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
@@ -286,6 +270,26 @@
         <sbol:definition rdf:resource="http://dummy.org/CD4_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_q/FC4_q/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q/FC4_q"/>
+        <sbol:displayId>FC4_q</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_q/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_q/FC7_qnot/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_q/FC7_qnot"/>
+        <sbol:displayId>FC7_qnot</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_qnot/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -374,25 +378,21 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10_cds/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10_cds"/>
-    <sbol:displayId>CD10_cds</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_r/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_r"/>
-    <sbol:displayId>CD1_r</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_er/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_er"/>
     <sbol:displayId>CD4_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD4_er/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_er/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD7_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
     <sbol:component>
       <sbol:Component rdf:about="http://dummy.org/CD4_er/C1_part/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_er/C1_part"/>
@@ -411,15 +411,19 @@
         <sbol:definition rdf:resource="http://dummy.org/CD5_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD4_er/C2_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_er/C2_part"/>
-        <sbol:displayId>C2_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD7_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10_cds"/>
+    <sbol:displayId>CD10_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_r/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_r"/>
+    <sbol:displayId>CD1_r</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD7_terminator/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD7_terminator"/>
@@ -434,6 +438,15 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD9_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
     <sbol:component>
       <sbol:Component rdf:about="http://dummy.org/CD8_er/C5_part/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C5_part"/>
@@ -450,15 +463,6 @@
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:definition rdf:resource="http://dummy.org/CD10_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD8_er/C3_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C3_part"/>
-        <sbol:displayId>C3_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD9_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
   </sbol:ComponentDefinition>

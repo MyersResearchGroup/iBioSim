@@ -6,8 +6,12 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Match_Test.class, 
-	BranchAndBound_Test.class
+	Match_Test.class,
+	MatchingSortAscending_Test.class,
+	Exhaustive_Test.class,
+	Greedy_Test.class,
+	BranchAndBound_Test.class, 
+	SBOLSolution_Test.class
 })
 
 /**

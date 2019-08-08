@@ -1,0 +1,846 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/">
+  <sbol:ModuleDefinition rdf:about="http://dummy.org/circuit_lysisTimer/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer"/>
+    <sbol:displayId>circuit_lysisTimer</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC8_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC8_notTU"/>
+        <sbol:displayId>FC8_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD8_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC1_lysisProtein/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC1_lysisProtein"/>
+        <sbol:displayId>FC1_lysisProtein</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>lysisProtein</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_lysisProtein/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC0_start/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC0_start"/>
+        <sbol:displayId>FC0_start</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>start</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD0_start/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC12_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC12_notTU"/>
+        <sbol:displayId>FC12_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD24_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC4_not3/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC4_not3"/>
+        <sbol:displayId>FC4_not3</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not3</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD4_not3/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC2_not1/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC2_not1"/>
+        <sbol:displayId>FC2_not1</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not1</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_not1/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC11_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC11_notTU"/>
+        <sbol:displayId>FC11_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD20_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC9_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC9_notTU"/>
+        <sbol:displayId>FC9_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD12_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC6_not5/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC6_not5"/>
+        <sbol:displayId>FC6_not5</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not5</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD6_not5/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC10_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC10_notTU"/>
+        <sbol:displayId>FC10_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD16_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC3_not2/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC3_not2"/>
+        <sbol:displayId>FC3_not2</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not2</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_not2/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC5_not4/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC5_not4"/>
+        <sbol:displayId>FC5_not4</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not4</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD5_not4/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC13_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC13_notTU"/>
+        <sbol:displayId>FC13_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD28_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/circuit_lysisTimer/FC7_not6/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/FC7_not6"/>
+        <sbol:displayId>FC7_not6</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>not6</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD7_not6/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I8_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I8_Inhib"/>
+        <sbol:displayId>I8_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I8_Inhib/P17/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I8_Inhib/P17"/>
+            <sbol:displayId>P17</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC12_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I8_Inhib/P16/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I8_Inhib/P16"/>
+            <sbol:displayId>P16</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC5_not4/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I6_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I6_Inhib"/>
+        <sbol:displayId>I6_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I6_Inhib/P13/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I6_Inhib/P13"/>
+            <sbol:displayId>P13</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC11_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I6_Inhib/P12/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I6_Inhib/P12"/>
+            <sbol:displayId>P12</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC4_not3/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I5_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I5_Prod"/>
+        <sbol:displayId>I5_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I5_Prod/P10/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I5_Prod/P10"/>
+            <sbol:displayId>P10</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC10_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I5_Prod/P11/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I5_Prod/P11"/>
+            <sbol:displayId>P11</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC4_not3/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I7_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I7_Prod"/>
+        <sbol:displayId>I7_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I7_Prod/P15/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I7_Prod/P15"/>
+            <sbol:displayId>P15</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC5_not4/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I7_Prod/P14/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I7_Prod/P14"/>
+            <sbol:displayId>P14</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC11_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I1_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I1_Prod"/>
+        <sbol:displayId>I1_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I1_Prod/P3/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I1_Prod/P3"/>
+            <sbol:displayId>P3</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC2_not1/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I1_Prod/P2/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I1_Prod/P2"/>
+            <sbol:displayId>P2</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC8_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I3_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I3_Prod"/>
+        <sbol:displayId>I3_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I3_Prod/P7/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I3_Prod/P7"/>
+            <sbol:displayId>P7</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC3_not2/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I3_Prod/P6/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I3_Prod/P6"/>
+            <sbol:displayId>P6</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC9_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I10_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I10_Inhib"/>
+        <sbol:displayId>I10_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I10_Inhib/P20/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I10_Inhib/P20"/>
+            <sbol:displayId>P20</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC6_not5/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I10_Inhib/P21/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I10_Inhib/P21"/>
+            <sbol:displayId>P21</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC13_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I0_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I0_Inhib"/>
+        <sbol:displayId>I0_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I0_Inhib/P0/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I0_Inhib/P0"/>
+            <sbol:displayId>P0</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC0_start/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I0_Inhib/P1/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I0_Inhib/P1"/>
+            <sbol:displayId>P1</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC8_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I2_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I2_Inhib"/>
+        <sbol:displayId>I2_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I2_Inhib/P4/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I2_Inhib/P4"/>
+            <sbol:displayId>P4</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC2_not1/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I2_Inhib/P5/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I2_Inhib/P5"/>
+            <sbol:displayId>P5</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC9_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I4_Inhib/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I4_Inhib"/>
+        <sbol:displayId>I4_Inhib</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I4_Inhib/P9/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I4_Inhib/P9"/>
+            <sbol:displayId>P9</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC10_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I4_Inhib/P8/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I4_Inhib/P8"/>
+            <sbol:displayId>P8</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC3_not2/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I9_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I9_Prod"/>
+        <sbol:displayId>I9_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I9_Prod/P19/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I9_Prod/P19"/>
+            <sbol:displayId>P19</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC6_not5/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I9_Prod/P18/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I9_Prod/P18"/>
+            <sbol:displayId>P18</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC12_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="http://dummy.org/circuit_lysisTimer/I11_Prod/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I11_Prod"/>
+        <sbol:displayId>I11_Prod</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I11_Prod/P23/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I11_Prod/P23"/>
+            <sbol:displayId>P23</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC1_lysisProtein/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="http://dummy.org/circuit_lysisTimer/I11_Prod/P22/1.0">
+            <sbol:persistentIdentity rdf:resource="http://dummy.org/circuit_lysisTimer/I11_Prod/P22"/>
+            <sbol:displayId>P22</sbol:displayId>
+            <sbol:version>1.0</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="http://dummy.org/circuit_lysisTimer/FC13_notTU/1.0"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10_cds"/>
+    <sbol:displayId>CD10_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD3_not2/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD3_not2"/>
+    <sbol:displayId>CD3_not2</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD8_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er"/>
+    <sbol:displayId>CD8_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C0_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C0_part"/>
+        <sbol:displayId>C0_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD9_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD11_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD8_er/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD8_er/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD10_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD2_not1/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD2_not1"/>
+    <sbol:displayId>CD2_not1</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD19_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_terminator"/>
+    <sbol:displayId>CD19_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD22_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_cds"/>
+    <sbol:displayId>CD22_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD6_not5/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD6_not5"/>
+    <sbol:displayId>CD6_not5</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD30_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_cds"/>
+    <sbol:displayId>CD30_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD5_not4/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD5_not4"/>
+    <sbol:displayId>CD5_not4</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD1_lysisProtein/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD1_lysisProtein"/>
+    <sbol:displayId>CD1_lysisProtein</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD27_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD27_terminator"/>
+    <sbol:displayId>CD27_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_not3/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_not3"/>
+    <sbol:displayId>CD4_not3</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD31_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD31_terminator"/>
+    <sbol:displayId>CD31_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD26_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_cds"/>
+    <sbol:displayId>CD26_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD20_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er"/>
+    <sbol:displayId>CD20_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C10_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C10_part"/>
+        <sbol:displayId>C10_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD22_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C11_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C11_part"/>
+        <sbol:displayId>C11_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD23_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD20_er/C9_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD20_er/C9_part"/>
+        <sbol:displayId>C9_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD21_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD12_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_er"/>
+    <sbol:displayId>CD12_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD12_er/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_er/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD13_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD12_er/C4_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_er/C4_part"/>
+        <sbol:displayId>C4_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD14_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD12_er/C5_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12_er/C5_part"/>
+        <sbol:displayId>C5_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD15_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD18_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_cds"/>
+    <sbol:displayId>CD18_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD17_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD17_promoter"/>
+    <sbol:displayId>CD17_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD7_not6/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD7_not6"/>
+    <sbol:displayId>CD7_not6</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD13_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD13_promoter"/>
+    <sbol:displayId>CD13_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD23_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD23_terminator"/>
+    <sbol:displayId>CD23_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_start/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_start"/>
+    <sbol:displayId>CD0_start</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD14_cds/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_cds"/>
+    <sbol:displayId>CD14_cds</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD16_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_er"/>
+    <sbol:displayId>CD16_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD16_er/C6_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_er/C6_part"/>
+        <sbol:displayId>C6_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD17_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD16_er/C7_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_er/C7_part"/>
+        <sbol:displayId>C7_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD18_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD16_er/C8_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD16_er/C8_part"/>
+        <sbol:displayId>C8_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD19_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD15_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD15_terminator"/>
+    <sbol:displayId>CD15_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD21_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD21_promoter"/>
+    <sbol:displayId>CD21_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD29_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD29_promoter"/>
+    <sbol:displayId>CD29_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD9_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD9_promoter"/>
+    <sbol:displayId>CD9_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD24_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er"/>
+    <sbol:displayId>CD24_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C12_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C12_part"/>
+        <sbol:displayId>C12_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD25_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C14_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C14_part"/>
+        <sbol:displayId>C14_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD27_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD24_er/C13_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD24_er/C13_part"/>
+        <sbol:displayId>C13_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD26_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD11_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD11_terminator"/>
+    <sbol:displayId>CD11_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD28_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er"/>
+    <sbol:displayId>CD28_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C16_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C16_part"/>
+        <sbol:displayId>C16_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD30_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C17_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C17_part"/>
+        <sbol:displayId>C17_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD31_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD28_er/C15_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD28_er/C15_part"/>
+        <sbol:displayId>C15_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD29_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD25_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD25_promoter"/>
+    <sbol:displayId>CD25_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+</rdf:RDF>

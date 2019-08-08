@@ -33,8 +33,9 @@ public class LPNExample2_Test {
 		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
 		VerilogModule spec = compiler.parseVerilogFile(new File(TestingFiles.verilogCounter_impFile));
 		VerilogModule tb = compiler.parseVerilogFile(new File(TestingFiles.verilogCounter_tbFile));
-		lpn = compiler.compileToLPN(spec, tb, TestingFiles.writeOutputDir);
+		lpn = compiler.compileToLPN(spec, tb, TestingFiles.outputDir);
 	}
+	
 
 	@Test
 	public void Test_inputSize(){

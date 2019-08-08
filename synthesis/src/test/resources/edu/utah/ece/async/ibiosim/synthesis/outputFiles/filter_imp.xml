@@ -158,9 +158,17 @@
             <apply>
               <and/>
               <apply>
-                <eq/>
-                <ci> Sensor </ci>
-                <cn type="integer"> 0 </cn>
+                <and/>
+                <apply>
+                  <eq/>
+                  <ci> Sensor </ci>
+                  <cn type="integer"> 0 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> Start </ci>
+                  <cn type="integer"> 0 </cn>
+                </apply>
               </apply>
               <apply>
                 <eq/>

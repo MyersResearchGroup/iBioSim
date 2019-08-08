@@ -33,7 +33,7 @@ public class LPNExample7_Test {
 		VerilogToLPNCompiler compiler = new VerilogToLPNCompiler();
 		VerilogModule spec = compiler.parseVerilogFile(new File(TestingFiles.verilogSRLatch_impFile));
 		VerilogModule tb = compiler.parseVerilogFile(new File(TestingFiles.verilogSRLatch_tbFile));
-		lpn = compiler.compileToLPN(spec, tb, TestingFiles.writeOutputDir);
+		lpn = compiler.compileToLPN(spec, tb, TestingFiles.outputDir);
 	}
 
 	@Test
@@ -53,14 +53,13 @@ public class LPNExample7_Test {
 	
 	@Test
 	public void Test_outputSize(){
-		Assert.assertEquals(2, lpn.getAllOutputs().size());
+		Assert.assertEquals(1, lpn.getAllOutputs().size());
 	}
 	
 	@Test
 	public void Test_outputs(){
 		Map<String, String> expected_out = new HashMap<String, String>();
 		expected_out.put("q", "false");
-		expected_out.put("ack", "false");
 
 		Assert.assertTrue(expected_out.keySet().equals(lpn.getAllOutputs().keySet()));
 		Assert.assertTrue(expected_out.equals(lpn.getAllOutputs()));
@@ -68,7 +67,7 @@ public class LPNExample7_Test {
 	
 	@Test
 	public void Test_booleanSize(){
-		Assert.assertEquals(4, lpn.getBooleans().size());
+		Assert.assertEquals(3, lpn.getBooleans().size());
 		
 	}
 	
@@ -78,7 +77,6 @@ public class LPNExample7_Test {
 		expected_bool.put("s", "false");
 		expected_bool.put("r", "false");
 		expected_bool.put("q", "false");
-		expected_bool.put("ack", "false");
 		
 		Assert.assertTrue(expected_bool.keySet().equals(lpn.getBooleans().keySet()));
 		Assert.assertTrue(expected_bool.equals(lpn.getBooleans()));

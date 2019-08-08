@@ -496,7 +496,7 @@ public class FileTree extends PanelObservable implements MouseListener {
 						}
 					} else if (new File(newPath + File.separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(newPath, File.separator, Gui.frame);
+							Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(newPath, File.separator, Gui.frame);
 							if (synthProps != null)
 								if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 									String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
@@ -619,7 +619,7 @@ public class FileTree extends PanelObservable implements MouseListener {
 				}
 			} else if (new File(path + File.separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility.getInstance().loadSBOLSynthesisProperties(path, File.separator, Gui.frame);
+					Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(path, File.separator, Gui.frame);
 					if (synthProps != null) {
 						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
 							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);

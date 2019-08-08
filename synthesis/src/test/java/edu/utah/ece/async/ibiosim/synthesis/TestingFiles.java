@@ -8,105 +8,116 @@ import java.io.File;
  *
  */
 public class TestingFiles {
-	private static String resourceDir = String.join(File.separator, "src", "test", "resources");
-	public static String synthDir = File.separator + String.join(File.separator, "edu", "utah", "ece", "async", "ibiosim", "synthesis") ; 
-	public static String verilogDir = synthDir + File.separator + "verilogFiles";
-	public static String sbolSpecDir = synthDir + File.separator + "sbolSpecFiles";
-	public static String sbolLibDir = synthDir + File.separator + "sbolLibFiles";
-	public static String tuFileDir = synthDir + File.separator + "tuFiles";
+	public static String verilogDir = TestingFiles.class.getResource("verilogFiles").getFile();
+	public static String sbolSpecDir = TestingFiles.class.getResource("sbolSpecFiles").getFile();
+	public static String sbolLibDir = TestingFiles.class.getResource("sbolLibFiles").getFile();
+	public static String tuFileDir = TestingFiles.class.getResource("tuFiles").getFile();
+	public static String outputDir = TestingFiles.class.getResource("outputFiles").getFile();
+	public static String writeOutputDir = String.join(File.separator, "src", "test", "resources", "edu", "utah", "ece", "async", "ibiosim", "synthesis", "outputFiles");
 	
-	//structure of mvn will not recognize resource directory. When writing to an output directory, the full path of output file must be provided.
-	public static String writeLibDir = resourceDir + File.separator + synthDir + File.separator + "sbolLibFiles";
-	public static String writeSpecDir = resourceDir + File.separator + synthDir + File.separator + "sbolSpecFiles";
-	public static String writeOutputDir = resourceDir + File.separator + synthDir + File.separator + "outputFiles";
-	public static String readOuputDir = synthDir + File.separator + "outputFiles";
+	private static String getVerilogFile(String fileName) {
+		return verilogDir + File.separator + fileName;
+	}
 	
-	//Files used for test cases are recorded below.
-	//public static String LPN_counterFile = TestingFiles.class.getResource(readOuputDir + File.separator + "counter.lpn").getFile();
+	private static String getTuFile(String fileName) {
+		return tuFileDir + File.separator + fileName;
+	}
 	
+	private static String getSpecFile(String fileName) {
+		return sbolSpecDir + File.separator + fileName;
+	}
 	
-	public static String notTU1_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NotTu1_Size1.xml").getFile();
-	public static String notTU2_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NotTu2_Size2.xml").getFile();
-	public static String norTU1_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Nor_LacI_TU.xml").getFile();
-	public static String norTU2_Size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Nor_LacI_TU_v2.xml").getFile();
-	public static String nandTU_size1_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size1.xml").getFile();
-	public static String nandTU_size2_File = TestingFiles.class.getResource(tuFileDir + File.separator + "NandTu_Size2.xml").getFile();
-	public static String lacITU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuLacI.xml").getFile();
-	public static String tetRTU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuTetR.xml").getFile();
-	public static String yfp1TU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuYFP.xml").getFile();
-	public static String yfp2TU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "Cello_ecoli_tuYFP2.xml").getFile();
-	public static String pSrpR_roadblockTU_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_roadblock_11CombinatorialDerivations.xml").getFile();
-	public static String pSrpr_Bulk_File = TestingFiles.class.getResource(tuFileDir + File.separator + "pSrpR_117roadblockTUs.xml").getFile();
+	private static String getLibFile(String fileName) {
+		return sbolLibDir + File.separator + fileName;
+	}
 	
-	public static String NOT_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Not_Spec.xml").getFile(); 
-	public static String NAND_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Nand_Spec.xml").getFile(); 
-	public static String AND_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "And_Spec.xml").getFile(); 
-	public static String OR_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "Or_Spec.xml").getFile(); 
-	public static String SRLatch_Spec = TestingFiles.class.getResource(sbolSpecDir + File.separator + "SrLatch_Spec.xml").getFile(); 
+	public static String celloEcoli_tu_File = getTuFile("Cello_ecoli_tu.xml");
+	public static String celloEcoli_tupAmeR_File = getTuFile("Cello_ecoli_tupAmeR.xml");
+	public static String celloEcoli_tupAmtR_File = getTuFile("Cello_ecoli_tupAmtR.xml");
+	public static String celloEcoli_tupBAD_File = getTuFile("Cello_ecoli_tupBAD.xml");
+	public static String celloEcoli_tupBetI_File = getTuFile("Cello_ecoli_tupBetI.xml");
+	public static String celloEcoli_tupBM3R1_File = getTuFile("Cello_ecoli_tupBM3R1.xml");
+	public static String celloEcoli_tupHlyIIR_File = getTuFile("Cello_ecoli_tupHlyIIR.xml");
+	public static String celloEcoli_tupIcaRA_File = getTuFile("Cello_ecoli_tupIcaRA.xml");
+	public static String celloEcoli_tupLitR_File = getTuFile("Cello_ecoli_tupLitR.xml");
+	public static String celloEcoli_tupPhlF_File = getTuFile("Cello_ecoli_tupPhlF.xml");
+	public static String celloEcoli_tupPsrA_File = getTuFile("Cello_ecoli_tupPsrA.xml");
+	public static String celloEcoli_tupQacR_File = getTuFile("Cello_ecoli_tupQacR.xml");
+	public static String celloEcoli_tupSrpR_File = getTuFile("Cello_ecoli_tupSrpR.xml");
+	public static String celloEcoli_tuReporter_File = getTuFile("Cello_ecoli_tuReporter.xml");
+	public static String celloEcoli_tuSensor_File = getTuFile("Cello_ecoli_tuSensor.xml");
+	
+	public static String notTU1_Size1_File = getTuFile("NotTu1_Size1.xml");
+	public static String notTU2_Size2_File = getTuFile("NotTu2_Size2.xml");
+	public static String norTU2_Size1_File = getTuFile("Nor_LacI_TU_v2.xml");
+	public static String nandTU_size1_File = getTuFile("NandTu_Size1.xml");
+	public static String nandTU_size2_File = getTuFile("NandTu_Size2.xml");
+	public static String lacITU_File = getTuFile("Cello_ecoli_tuLacI.xml");
+	public static String tetRTU_File = getTuFile("Cello_ecoli_tuTetR.xml");
+	
+	public static String sbolDecompNOT_File = getSpecFile("not_decomposed.xml"); 
+	public static String sbolDecompNAND_File = getSpecFile("Nand_Spec.xml"); 
+	public static String sbolDecompAND_File = getSpecFile("and_decomposed.xml"); 
+	public static String sbolDecompOR_File = getSpecFile("or_decomposed.xml"); 
+	public static String sbolDecompSRLatch_File = getSpecFile("srlatch_decomposed.xml"); 
 
-	public static String NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize1.xml").getFile(); 
-	public static String NOT_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NOTGates_LibrarySize2.xml").getFile(); 
-	public static String NOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NORGates_LibrarySize1.xml").getFile(); 
-	public static String OR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ORGates_LibrarySize1.xml").getFile(); 
-	public static String NAND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize1.xml").getFile(); 
-	public static String NAND_LibSize2 = TestingFiles.class.getResource(sbolLibDir + File.separator + "NANDGates_LibrarySize2.xml").getFile(); 
-	public static String AND_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "ANDGates_LibrarySize1.xml").getFile(); 
-	public static String lacINOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "lacINORGates_LibrarySize1.xml").getFile(); 
-	public static String tetRNOR_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "tetRNORGates_LibrarySize1.xml").getFile(); 
-	public static String yfp1NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "yfp1NOTGates_LibrarySize1.xml").getFile(); 
-	public static String yfp2NOT_LibSize1 = TestingFiles.class.getResource(sbolLibDir + File.separator + "yfp2NOTGates_LibrarySize1.xml").getFile(); 
+	public static String NOT_LibSize1 = getLibFile("NOTGates_LibrarySize1.xml"); 
+	public static String NOT_LibSize2 = getLibFile("NOTGates_LibrarySize2.xml"); 
+	public static String NOR_LibSize1 = getLibFile("NORGates_LibrarySize1.xml"); 
+	public static String OR_LibSize1 = getLibFile("ORGates_LibrarySize1.xml"); 
+	public static String NAND_LibSize1 = getLibFile("NANDGates_LibrarySize1.xml"); 
+	public static String NAND_LibSize2 = getLibFile("NANDGates_LibrarySize2.xml"); 
+	public static String AND_LibSize1 = getLibFile("ANDGates_LibrarySize1.xml"); 
+	public static String lacINOR_LibSize1 = getLibFile("lacINORGates_LibrarySize1.xml"); 
+	public static String tetRNOR_LibSize1 = getLibFile("tetRNORGates_LibrarySize1.xml"); 
+	public static String yfp1NOT_LibSize1 = getLibFile("yfp1NOTGates_LibrarySize1.xml"); 
+	public static String yfp2NOT_LibSize1 = getLibFile("yfp2NOTGates_LibrarySize1.xml"); 
 	
-	public static String sbmlEvenZero_impFile  = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_imp.xml").getFile();
-	public static String sbmlEvenZero_tbFile   = TestingFiles.class.getResource(readOuputDir + File.separator + "evenzeroes_testbench.xml").getFile();
-	//public static String sbmlEvenZero_flatFile = TestingFiles.class.getResource(readOuputDir+ File.separator + "evenzeroes_imp_evenzeroes_testbench_flattened.xml").getFile();
+	public static String verilogAlwaysBlock_File = getVerilogFile("always_block.v");
+	public static String verilogAssign_File = getVerilogFile("assign.v");
+	public static String verilogCondStmt1_File = getVerilogFile("conditional_stmt1.v");
+	public static String verilogCondStmt2_File = getVerilogFile("conditional_stmt2.v");
+	public static String verilogCondStmt3_File = getVerilogFile("conditional_stmt3.v");
+	public static String verilogCont_File = getVerilogFile("contAssign.v");
+	public static String verilogCont2_File = getVerilogFile("contAssign2.v");
+	public static String verilogCont3_File = getVerilogFile("contAssign3.v");
+	public static String verilogCont4_File = getVerilogFile("contAssign4.v");
+	public static String verilogCont6_File = getVerilogFile("contAssign6.v");
+	public static String verilogCont7_File = getVerilogFile("contAssign7.v");
+	public static String verilogDelay_File = getVerilogFile("delay.v");
+	public static String verilogInitBlock_File = getVerilogFile("init_block.v");
+	public static String verilogPortMapping_File = getVerilogFile("portMapping.v");
+	public static String verilogReg_File = getVerilogFile("register.v");
+	public static String verilogRegAssign_File = getVerilogFile("reg_assignments.v");
+	public static String verilogSystemFunc1_File = getVerilogFile("system_func1.v");
+	public static String verilogSystemFunc2_File = getVerilogFile("system_func2.v");
+	public static String verilogSystemFunc3_File = getVerilogFile("system_func3.v");
+	public static String verilogWaitStmt_File = getVerilogFile("wait_stmt.v");
+	public static String verilogWaitStmt2_File = getVerilogFile("wait_stmt2.v");
 	
-	public static String verilogNotSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "Not_Spec.v").getFile();
-	public static String verilogNandSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "Nand_Spec.v").getFile();
-	public static String verilogAndSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "And_Spec.v").getFile();
-	public static String verilogOrSpec_File = TestingFiles.class.getResource(verilogDir + File.separator + "Or_Spec.v").getFile();
-	
-	public static String verilogAlwaysBlock_file = TestingFiles.class.getResource(verilogDir + File.separator + "always_block.v").getFile();
-	public static String verilogAssign_file = TestingFiles.class.getResource(verilogDir + File.separator + "assign.v").getFile();
-	public static String verilogCondStmt1_file = TestingFiles.class.getResource(verilogDir + File.separator + "conditional_stmt1.v").getFile();
-	public static String verilogCondStmt2_file = TestingFiles.class.getResource(verilogDir + File.separator + "conditional_stmt2.v").getFile();
-	public static String verilogCondStmt3_file = TestingFiles.class.getResource(verilogDir + File.separator + "conditional_stmt3.v").getFile();
-	public static String verilogCont_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign.v").getFile();
-	public static String verilogCont2_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign2.v").getFile();
-	public static String verilogCont3_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign3.v").getFile();
-	public static String verilogCont4_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign4.v").getFile();
-	public static String verilogCont5_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign5.v").getFile();
-	public static String verilogCont6_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign6.v").getFile();
-	public static String verilogCont7_file = TestingFiles.class.getResource(verilogDir + File.separator + "contAssign7.v").getFile();
-	public static String verilogDelay_file = TestingFiles.class.getResource(verilogDir + File.separator + "delay.v").getFile();
-	public static String verilogInitBlock_file = TestingFiles.class.getResource(verilogDir + File.separator + "init_block.v").getFile();
-	public static String verilogPortMapping_file = TestingFiles.class.getResource(verilogDir + File.separator + "portMapping.v").getFile();
-	public static String verilogReg_file = TestingFiles.class.getResource(verilogDir + File.separator + "register.v").getFile();
-	public static String verilogRegAssign_file = TestingFiles.class.getResource(verilogDir + File.separator + "reg_assignments.v").getFile();
-	public static String verilogSystemFunc1_file = TestingFiles.class.getResource(verilogDir + File.separator + "system_func1.v").getFile();
-	public static String verilogSystemFunc2_file = TestingFiles.class.getResource(verilogDir + File.separator + "system_func2.v").getFile();
-	public static String verilogSystemFunc3_file = TestingFiles.class.getResource(verilogDir + File.separator + "system_func3.v").getFile();
-	public static String verilogWaitStmt_file = TestingFiles.class.getResource(verilogDir + File.separator + "wait_stmt.v").getFile();
-	public static String verilogWaitStmt2_file = TestingFiles.class.getResource(verilogDir + File.separator + "wait_stmt2.v").getFile();
+	public static String verilogNotDecomp_File = getVerilogFile("not_decomposed.v");
+	public static String verilogAndDecomp_File = getVerilogFile("and_decomposed.v");
+	public static String verilogOrDecomp_File = getVerilogFile("or_decomposed.v");
+	public static String verilogNorDecomp_File = getVerilogFile("cont6_decomposed.v");
+	public static String verilogCont7Decomp_File = getVerilogFile("cont7_decomposed.v");
+	public static String verilogSrLatchDecomp_File = getVerilogFile("srlatch_decomposed.v");
+	public static String verilogFilterDecomp_File = getVerilogFile("filter_decomposed.v");
 
-	public static String verilogCounter_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "counter_imp.v").getFile();
-	public static String verilogCounter_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "counter_testbench.v").getFile();
-	public static String verilogEvenZero_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "evenZeroes_imp.v").getFile();
-	public static String verilogEvenZero_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "evenZeroes_testbench.v").getFile();
-	public static String verilogFilter_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "filter_imp.v").getFile();
-	public static String verilogFilter_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "filter_testbench.v").getFile();
-	public static String verilogLFSR_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "lfsr_imp.v").getFile();
-	public static String verilogLFSR_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "lfsr_testbench.v").getFile();
-	public static String verilogMultThree_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "multThree_imp.v").getFile();
-	public static String verilogMultThree_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "multThree_testbench.v").getFile();
-	public static String verilogScanflop_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "scanflop_imp.v").getFile();
-	public static String verilogScanflop_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "scanflop_testbench.v").getFile();
-	public static String verilogSRLatch_impFile = TestingFiles.class.getResource(verilogDir + File.separator + "srlatch_imp.v").getFile();
-	public static String verilogSRLatch_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "srlatch_testbench.v").getFile();
-	public static String verilog_gts_impFile= TestingFiles.class.getResource(verilogDir + File.separator + "gts_imp.v").getFile();
-	public static String verilog_gts_tbFile = TestingFiles.class.getResource(verilogDir + File.separator + "gts_testbench.v").getFile();
+	public static String verilogCounter_impFile = getVerilogFile("counter_imp.v");
+	public static String verilogCounter_tbFile = getVerilogFile("counter_testbench.v");
+	public static String verilogEvenZero_impFile = getVerilogFile("evenZeroes_imp.v");
+	public static String verilogEvenZero_tbFile = getVerilogFile("evenZeroes_testbench.v");
+	public static String verilogFilter_impFile = getVerilogFile("gC_imp.v");
+	public static String verilogFilter_tbFile = getVerilogFile("filter_testbench.v");
+	public static String verilogLFSR_impFile = getVerilogFile("lfsr_imp.v");
+	public static String verilogLFSR_tbFile = getVerilogFile("lfsr_testbench.v");
+	public static String verilogMultThree_impFile = getVerilogFile("multThree_imp.v");
+	public static String verilogMultThree_tbFile = getVerilogFile("multThree_testbench.v");
+	public static String verilogScanflop_impFile = getVerilogFile("scanflop_imp.v");
+	public static String verilogScanflop_tbFile = getVerilogFile("scanflop_testbench.v");
+	public static String verilogSRLatch_impFile = getVerilogFile("srlatch_imp.v");
+	public static String verilogSRLatch_tbFile = getVerilogFile("srlatch_testbench.v");
+	public static String verilog_gts_impFile= getVerilogFile("gts_imp.v");
+	public static String verilog_gts_tbFile = getVerilogFile("gts_testbench.v");
 
-	public static String verilogSynthesizedFilter_file = TestingFiles.class.getResource(verilogDir + File.separator + "filter.v").getFile();
-
-	public static String yosys = TestingFiles.class.getResource(verilogDir + File.separator  + "srlatch_decomposed.v").getFile();
-	
 }

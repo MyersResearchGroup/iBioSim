@@ -34,7 +34,7 @@ public class VerilogParserExample10_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		VerilogParser compiledVerilog = new VerilogParser();
-		verilogModule = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogCondStmt3_file));
+		verilogModule = compiledVerilog.parseVerilogFile(new File(TestingFiles.verilogCondStmt3_File));
 		Assert.assertNotNull(verilogModule);
 	}
 	

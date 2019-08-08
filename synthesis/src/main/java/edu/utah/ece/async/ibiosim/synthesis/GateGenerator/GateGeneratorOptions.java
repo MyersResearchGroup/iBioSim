@@ -22,10 +22,11 @@ public class GateGeneratorOptions {
 	private SBOLUtility sbolUtility;
 	private String outFileName, outDir, selectedSBHRepo;
 	private List<File> tuFiles;
-	private boolean mergeLibrary, outputNOTGates, outputNORGates, outputORGates, outputNANDGates, outputANDGates, outputNOTSUPPORTEDGates;
+	private boolean allGates, outputNOTGates, outputNORGates, outputORGates, outputWiredORGates;
+	private boolean outputNANDGates, outputANDGates, outputNOTSUPPORTEDGates;
 	
 	public GateGeneratorOptions() {
-		this.sbolUtility = SBOLUtility.getInstance();
+		this.sbolUtility = SBOLUtility.getSBOLUtility();
 		this.tuFiles = new ArrayList<>();
 	}
 
@@ -83,8 +84,8 @@ public class GateGeneratorOptions {
 		this.outDir = dirPath;
 	}
 	
-	public void setMergeOutputLibrary(boolean mergeLibrary) {
-		this.mergeLibrary = mergeLibrary;
+	public void setOutputAllLibrary(boolean allLibrary) {
+		this.allGates = allLibrary;
 	}
 	
 	public void setOutputNOTLibrary(boolean outNOT) {
@@ -97,6 +98,10 @@ public class GateGeneratorOptions {
 	
 	public void setOutputORLibrary(boolean outOR) {
 		this.outputORGates = outOR;
+	}
+	
+	public void setOutputWiredORLibrary(boolean outOR) {
+		this.outputWiredORGates = outOR;
 	}
 	
 	public void setOutputNANDLibrary(boolean outNAND) {
@@ -115,8 +120,8 @@ public class GateGeneratorOptions {
 		this.selectedSBHRepo = sbhRepository;
 	}
 
-	public boolean outputLibrary() {
-		return this.mergeLibrary;
+	public boolean outputAllLibrary() {
+		return this.allGates;
 	}
 	
 	public boolean outputNOTSUPPORTEDLibrary() {
@@ -133,6 +138,10 @@ public class GateGeneratorOptions {
 	
 	public boolean outputORLibrary() {
 		return this.outputORGates;
+	}
+
+	public boolean outputWiredORLibrary() {
+		return this.outputWiredORGates;
 	}
 	
 	public boolean outputNORLibrary() {

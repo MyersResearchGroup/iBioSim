@@ -16,7 +16,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	FlatteningSBML_Test.class,
 	LPNExample1_Test.class,
 	LPNExample2_Test.class,
-	LPNExample3_Test.class,
 	LPNExample4_Test.class,
 	LPNExample5_Test.class,
 	LPNExample6_Test.class,
@@ -37,13 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	VerilogParserExample14_Test.class,
 	VerilogParserExample15_Test.class,
 	VerilogParserExample16_Test.class,
-	VerilogParserEvenZeroes_Test.class,
-	VerilogParserMultThree_Test.class, 
-	VerilogParserCounter_Test.class,
-	VerilogParserFilter_Test.class,
-	VerilogParserLFSR_Test.class,
-	VerilogParserSRLatch_Test.class,
-	VerilogParserScanflop_Test.class,
 	SBMLExample1_Test.class,
 	SBMLExample2_Test.class,
 	SBMLExample3_Test.class,
@@ -54,16 +46,13 @@ import org.junit.runners.Suite.SuiteClasses;
 	SBMLExample8_Test.class,
 	SBMLExample9_Test.class,
 	SBMLExample10_Test.class,
-	SBMLExample11_Test.class,
 	SBOLExample1_Test.class,
 	SBOLExample2_Test.class,
 	SBOLExample3_Test.class,
 	SBOLExample4_Test.class,
 	SBOLExample5_Test.class,
-	SBOLExample6_Test.class,
-	SBOLExample7_Test.class,
-	SBOLExample8_Test.class,
-	Workflow_Test.class}) 
+	SBOLExample6_Test.class
+	}) 
 
 public class CompilerTestSuite {
 	

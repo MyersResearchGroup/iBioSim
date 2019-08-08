@@ -68,7 +68,7 @@ public enum SynthesisPreferencesTab implements PreferencesTab {
 		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
 		
 		JPanel assemblyFields = new JPanel(new GridLayout(4 ,1));
-		String regex = SBOLUtility.getInstance().convertRegexSOTermsToNumbers(
+		String regex = SBOLUtility.getSBOLUtility().convertRegexSOTermsToNumbers(
 				IBioSimPreferences.INSTANCE.getSynthesisPreference(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE));
 		regexField = new JTextField(regex, 15);
 		assemblyBox = new JComboBox(new String[]{"True", "False"});

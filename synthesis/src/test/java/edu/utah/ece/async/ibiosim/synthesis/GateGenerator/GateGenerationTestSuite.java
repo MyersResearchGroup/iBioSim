@@ -11,7 +11,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	DecomposedNandGate_Test.class,
 	DecomposedAndGate_Test.class,
 	DecomposedOrGate_Test.class,
-	Workflow.class
 })
 
 /**

@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,14 +14,15 @@ import com.google.common.collect.Lists;
 
 public class DecomposedGraphNode {
 	private Optional<FunctionalComponent> fc;
-	private Optional<ComponentDefinition> cd, preselectedCD;
+	private Optional<ComponentDefinition> cd;
+	private Optional<URI> preselectedCdUri;
 	private double score; 
 	Map<DecomposedGraphNode, NodeInteractionType> parentNodeList, childrenNodeList;
 
 	public DecomposedGraphNode(){
 		fc = Optional.empty();
 		cd = Optional.empty();
-		preselectedCD = Optional.empty();
+		preselectedCdUri = Optional.empty();
 		parentNodeList = new HashMap<>();
 		childrenNodeList = new HashMap<>();
 	}
@@ -28,7 +30,7 @@ public class DecomposedGraphNode {
 	public DecomposedGraphNode(FunctionalComponent fc){
 		this.fc = Optional.of(fc);
 		this.cd = Optional.of(fc.getDefinition());
-		preselectedCD = Optional.empty();
+		preselectedCdUri = Optional.empty();
 		parentNodeList = new HashMap<>();
 		childrenNodeList = new HashMap<>();
 	}
@@ -41,8 +43,8 @@ public class DecomposedGraphNode {
 		return Lists.newArrayList(this.childrenNodeList.keySet());
 	}
 	
-	public void setPreselectedComponentDefinition(ComponentDefinition componentDefinition) {
-		this.preselectedCD = Optional.of(componentDefinition);
+	public void setPreselectedComponentDefinition(URI cdUri) {
+		this.preselectedCdUri = Optional.of(cdUri);
 	}
 	
 
@@ -58,9 +60,8 @@ public class DecomposedGraphNode {
 		return this.cd;
 	}
 
-	public Optional<ComponentDefinition> getPreselectedComponentDefinition() {
-		
-		return this.preselectedCD;
+	public Optional<URI> getPreselectedComponentDefinition() {
+		return this.preselectedCdUri;
 	}
 	
 	public double getScore() {
@@ -80,6 +81,10 @@ public class DecomposedGraphNode {
 			throw new GeneticGatesException("The given DecomposedGraphNode is not identified as a child of this DecomposedGraphNode.");
 		}
 		return childrenNodeList.get(n);
+	}
+	
+	public boolean isNodePreselected() {
+		return preselectedCdUri.isPresent();
 	}
 
 	@Override

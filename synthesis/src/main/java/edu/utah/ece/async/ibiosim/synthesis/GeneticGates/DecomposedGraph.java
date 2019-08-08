@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.sbolstandard.core2.FunctionalComponent;
+import org.sbolstandard.core2.ComponentDefinition;
 
 import com.google.common.collect.Lists;
 
@@ -24,10 +24,19 @@ public class DecomposedGraph {
 
 	private DecomposedGraphNode outputNode;
 	private List<DecomposedGraphNode> nodeList, leafNodeList;
+	private String graphId;
 	
 	public DecomposedGraph() {
 		nodeList = new ArrayList<>();
 		leafNodeList = new ArrayList<>();
+	}
+	
+	public void setGraphId(String id) {
+		this.graphId = id;
+	}
+	
+	public String getGraphId() {
+		return this.graphId == null || this.graphId.isEmpty() ? "" : this.graphId;
 	}
 	
 	public void setNodeAsOutput(DecomposedGraphNode node) {
@@ -45,7 +54,7 @@ public class DecomposedGraph {
 		return this.leafNodeList;
 	}
 	
-	public DecomposedGraphNode getOutputNode() {
+	public DecomposedGraphNode getRootNode() {
 		return this.outputNode;
 	}
 
@@ -60,6 +69,13 @@ public class DecomposedGraph {
 		}
 	}
 	
+	public boolean isLeaf(DecomposedGraphNode node) {
+		return leafNodeList.contains(node);
+	}
+	
+	public boolean isRoot(DecomposedGraphNode node) {
+		return outputNode == node ;
+	}
 	
 	public void addNode(DecomposedGraphNode node) {
 		if(!nodeList.contains(node)) { 
@@ -124,10 +140,10 @@ public class DecomposedGraph {
 		return sortedElements;
 	}
 	
-	public DecomposedGraphNode getNode(FunctionalComponent fc) {
+	public DecomposedGraphNode getNodeByComponentDefinition(ComponentDefinition cd) {
 		List<DecomposedGraphNode> nodes = new ArrayList<>();
 		for(DecomposedGraphNode n : nodeList) {
-			if(n.getComponentDefinition().isPresent() && n.getComponentDefinition().get().equals(fc.getDefinition())) {
+			if(n.getComponentDefinition().isPresent() && n.getComponentDefinition().get().equals(cd)) {
 				nodes.add(n); 
 			}
 		}
@@ -135,7 +151,12 @@ public class DecomposedGraph {
 		return nodes.get(0);
 	}
 	
-	public DecomposedGraphNode getNode(URI functionalComponentUri) {
+	/**
+	 * Get the DecomposedGraphNode with the given functionalComponent URI.
+	 * @param functionalComponentUri
+	 * @return A DecomposedGraphNode with the given URI. Otherwise, null is returned if the DecomposedGraphNode does not exist in this DecomposedGraph.
+	 */
+	public DecomposedGraphNode getNodeByFunctionalComponent(URI functionalComponentUri) {
 		List<DecomposedGraphNode> nodes = new ArrayList<>();
 		for(DecomposedGraphNode n : nodeList) {
 			if(n.getFunctionalComponent().isPresent() && n.getFunctionalComponent().get().getIdentity().equals(functionalComponentUri)) {

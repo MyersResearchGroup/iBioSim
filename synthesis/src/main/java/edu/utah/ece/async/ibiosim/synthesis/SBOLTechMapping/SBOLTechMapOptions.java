@@ -19,12 +19,12 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 public class SBOLTechMapOptions {
 
 	private String outputFileName, outDir;
-	private boolean outputDot, outputSBOL, printCoveredGates;
+	private boolean outputSBOL, printCoveredGates;
 	private SBOLUtility sbolUtility;
 	private SBOLDocument library, specification;
 	
 	public SBOLTechMapOptions(){
-		this.sbolUtility = SBOLUtility.getInstance();
+		this.sbolUtility = SBOLUtility.getSBOLUtility();
 		this.library = this.sbolUtility.createSBOLDocument();
 		
 	}
@@ -74,10 +74,6 @@ public class SBOLTechMapOptions {
 		
 	}
 	
-	public void setOutputDotFile(boolean outputDot) {
-		this.outputDot = outputDot;
-	}
-	
 	public void setOutputSBOL(boolean outputSBOL) {
 		this.outputSBOL = outputSBOL;
 	}
@@ -90,10 +86,6 @@ public class SBOLTechMapOptions {
 		return this.printCoveredGates;
 	}
 
-	public boolean isOutputDOT() {
-		return this.outputDot;
-	}
-	
 	public boolean isOutputSBOL() {
 		return this.outputSBOL;
 	}

@@ -38,14 +38,14 @@ public class SBOLExample3_Test {
 	@BeforeClass
 	public static void setupTest() throws ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, org.apache.commons.cli.ParseException, SBOLConversionException {
 		VerilogParser verilogParser = new VerilogParser();
-		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogCont4_file));
+		VerilogModule verilogModule = verilogParser.parseVerilogFile(new File(TestingFiles.verilogOrDecomp_File));
 		VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
 		WrappedSBOL sbolWrapper = sbolConverter.convertVerilog2SBOL(verilogModule);
 		Assert.assertNotNull(sbolWrapper);
-	
+		
 		sbolDoc = sbolWrapper.getSBOLDocument();
 		Assert.assertEquals(1, sbolDoc.getModuleDefinitions().size());
-		sbolDesign = sbolDoc.getModuleDefinition("circuit_" + verilogModule.getModuleId(), "1.0");
+		sbolDesign = sbolDoc.getModuleDefinition("MD0" + verilogModule.getModuleId(), "1.0");
 	}
 
 	@Test
@@ -109,16 +109,16 @@ public class SBOLExample3_Test {
 
 	@Test
 	public void Test_NOT1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC3_notTU");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_notTU");
 		Assert.assertNotNull(gate);
 		
-		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
+		FunctionalComponent input = sbolDesign.getFunctionalComponent("FC3__0_");
 		Assert.assertNotNull(input);
 		
 		FunctionalComponent output = sbolDesign.getFunctionalComponent("FC2_y");
 		Assert.assertNotNull(output);
 		
-		Interaction inhibition = sbolDesign.getInteraction("I0_Inhib");
+		Interaction inhibition = sbolDesign.getInteraction("I3_Inhib");
 		Assert.assertNotNull(inhibition);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition.getTypes().iterator().next());
 		Assert.assertEquals(2, inhibition.getParticipations().size());
@@ -136,7 +136,7 @@ public class SBOLExample3_Test {
 			}
 		}
 	
-		Interaction production = sbolDesign.getInteraction("I1_Prod");
+		Interaction production = sbolDesign.getInteraction("I4_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());
@@ -157,7 +157,7 @@ public class SBOLExample3_Test {
 
 	@Test
 	public void Test_NOR1() {
-		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC5_norTU");
+		FunctionalComponent gate = sbolDesign.getFunctionalComponent("FC4_norTU");
 		Assert.assertNotNull(gate);
 		
 		FunctionalComponent in1 = sbolDesign.getFunctionalComponent("FC0_a");
@@ -167,10 +167,10 @@ public class SBOLExample3_Test {
 		Assert.assertNotNull(in2);
 		
 		
-		FunctionalComponent out = sbolDesign.getFunctionalComponent("FC4_wiredProtein");
+		FunctionalComponent out = sbolDesign.getFunctionalComponent("FC3__0_");
 		Assert.assertNotNull(out);
 		
-		Interaction inhibition1 = sbolDesign.getInteraction("I2_Inhib");
+		Interaction inhibition1 = sbolDesign.getInteraction("I0_Inhib");
 		Assert.assertNotNull(inhibition1);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition1.getTypes().iterator().next());
 		
@@ -187,7 +187,7 @@ public class SBOLExample3_Test {
 			}
 		}
 		
-		Interaction inhibition2 = sbolDesign.getInteraction("I3_Inhib");
+		Interaction inhibition2 = sbolDesign.getInteraction("I1_Inhib");
 		Assert.assertNotNull(inhibition2);
 		Assert.assertEquals(SystemsBiologyOntology.INHIBITION, inhibition2.getTypes().iterator().next());
 
@@ -203,7 +203,7 @@ public class SBOLExample3_Test {
 				Assert.fail("Unexpected role found: " + role);
 			}
 		}
-		Interaction production = sbolDesign.getInteraction("I4_Prod");
+		Interaction production = sbolDesign.getInteraction("I2_Prod");
 		Assert.assertNotNull(production);
 		Assert.assertEquals(SystemsBiologyOntology.GENETIC_PRODUCTION, production.getTypes().iterator().next());
 		Assert.assertEquals(2, production.getParticipations().size());

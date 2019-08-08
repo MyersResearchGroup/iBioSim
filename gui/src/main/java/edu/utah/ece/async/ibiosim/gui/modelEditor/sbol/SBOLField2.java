@@ -489,7 +489,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	{
 		try 
 		{
-			SBOLUtility.getInstance().writeSBOLDocument(filePath, workingDoc);
+			SBOLUtility.getSBOLUtility().writeSBOLDocument(filePath, workingDoc);
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -518,7 +518,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		SBOLDocument doc = null;
 		try 
 		{
-			doc =  SBOLUtility.getInstance().loadSBOLFile(filePath, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+			doc =  SBOLUtility.getSBOLUtility().loadSBOLFile(filePath, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -586,7 +586,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) 
 			{
 				SBOLDocument sbolDoc = readSBOLFile(filePath);
-				SBOLUtility.getInstance().deleteDNAComponent(removedBioSimURI, sbolDoc);
+				SBOLUtility.getSBOLUtility().deleteDNAComponent(removedBioSimURI, sbolDoc);
 				writeSBOLDocument(filePath, sbolDoc);
 			}
 

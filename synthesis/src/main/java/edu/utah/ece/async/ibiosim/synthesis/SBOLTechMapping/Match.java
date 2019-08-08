@@ -13,15 +13,12 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
  *
  */
 public interface Match {
-   /** 
-	* 
-	*/
+  
 	public DecomposedGraph getSpecification();
 
-   /** 
-	* 
-	*/
 	public List<GeneticGate> getGateList(DecomposedGraphNode node)throws GeneticGatesException;
 	
 	public List<GeneticGate> getLibrary();
+	
+	public void sortAscendingOrder(List<GeneticGate> library);
 }

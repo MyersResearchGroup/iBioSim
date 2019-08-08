@@ -46,11 +46,10 @@ public class DecomposedNotGate_Test {
 	
 	@Test
 	public void Test_outputNode() {
-		DecomposedGraphNode n = decomposedGraph.getOutputNode();
+		DecomposedGraphNode n = decomposedGraph.getRootNode();
 		Assert.assertEquals(1, n.getChildrenNodeList().size());
 		Assert.assertEquals(0, n.getParentNodeList().size());
 		URI expectedUri = URI.create("https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1");
-		//Assert.assertTrue(n.uri.isPresent() && n.uri.get().equals(expectedUri));
 		
 	}
 	
@@ -64,7 +63,7 @@ public class DecomposedNotGate_Test {
 	
 	@Test
 	public void Test_tuNode() {
-		DecomposedGraphNode n = decomposedGraph.getOutputNode().getChildrenNodeList().iterator().next();
+		DecomposedGraphNode n = decomposedGraph.getRootNode().getChildrenNodeList().iterator().next();
 		Assert.assertEquals(1, n.getChildrenNodeList().size());
 		Assert.assertEquals(1, n.getParentNodeList().size());
 	}

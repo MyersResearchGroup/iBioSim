@@ -71,12 +71,12 @@ public class SynthesisNode {
 		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<ComponentDefinition> dnaComps = fileManager.resolveURIs(compURIs);
-		nucleotideCount = SBOLUtility.getInstance().countNucleotides(dnaComps);
+		nucleotideCount = SBOLUtility.getSBOLUtility().countNucleotides(dnaComps);
 		Set<URI> soFilterTypes = new HashSet<URI>();
 		soFilterTypes.add(SequenceOntology.CDS);
 		soFilterTypes.add(SequenceOntology.PROMOTER);
 		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
-		List<ComponentDefinition> signalComps = SBOLUtility.getInstance().filterDNAComponents(dnaComps, soFilterTypes);
+		List<ComponentDefinition> signalComps = SBOLUtility.getSBOLUtility().filterDNAComponents(dnaComps, soFilterTypes);
 		if (signalComps.size() > 0)
 			signal = signalComps.get(0).getIdentity().toString(); 
 		else 

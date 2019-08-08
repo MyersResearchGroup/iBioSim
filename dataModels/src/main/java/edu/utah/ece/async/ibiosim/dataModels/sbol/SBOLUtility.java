@@ -57,7 +57,7 @@ public class SBOLUtility
 	private String sbolURIPrefix;
 	private static SBOLUtility utility;
 	
-	public static SBOLUtility getInstance() {
+	public static SBOLUtility getSBOLUtility() {
 		if(utility == null) {
 			utility = new SBOLUtility();
 		}

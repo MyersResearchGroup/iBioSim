@@ -59,8 +59,8 @@ public class ModelGeneratorTests extends ConversionAbstractTests{
 		String selectedRepo = "https://synbiohub.org";
 		
 		try {
-			SBOLDocument inSBOL = SBOLUtility.getInstance().loadSBOLFile(sbolDir + "inverterExample.xml", uriPrefix);
-			SBOLDocument goldenSBOL = SBOLUtility.getInstance().loadSBOLFile(sbolDir + "inverterExample_output.xml", uriPrefix);
+			SBOLDocument inSBOL = SBOLUtility.getSBOLUtility().loadSBOLFile(sbolDir + "inverterExample.xml", uriPrefix);
+			SBOLDocument goldenSBOL = SBOLUtility.getSBOLUtility().loadSBOLFile(sbolDir + "inverterExample_output.xml", uriPrefix);
 			SBOLDocument generatedSBOL = edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator.generateModel(selectedRepo, inSBOL, null);
 			assertTrue(goldenSBOL.equals(generatedSBOL));
 			

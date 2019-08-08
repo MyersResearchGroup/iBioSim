@@ -14,8 +14,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
@@ -59,12 +57,12 @@ public class VerilogRunner {
 				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
 
 				for(File file : compilerOptions.getVerilogFiles()) {
-					VerilogModule verilogModule = sbmlLPNConverter.parseVerilogFile(file);
+					sbmlLPNConverter.parseVerilogFile(file);
 				}
-				
-					VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
-					VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
-					LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
+
+				VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
+				VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
+				LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
 				if(compilerOptions.isGenerateLPN()){
 					lpn.save(outputDir + File.separator + compilerOptions.getOutputFileName()  + ".lpn");
 				}

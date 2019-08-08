@@ -83,38 +83,6 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
-  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation"/>
-    <sbol:displayId>SrpR_protein_degradation</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein"/>
-        <sbol:displayId>SrpR_protein</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:interaction>
-      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_degradation_interaction/1">
-        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_degradation_interaction"/>
-        <sbol:displayId>SrpR_degradation_interaction</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
-        <sbol:participation>
-          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_degradation_interaction/SrpR_protein/1">
-            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_degradation_interaction/SrpR_protein"/>
-            <sbol:displayId>SrpR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
-            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein/1"/>
-          </sbol:Participation>
-        </sbol:participation>
-      </sbol:Interaction>
-    </sbol:interaction>
-  </sbol:ModuleDefinition>
   <sbol:ModuleDefinition rdf:about="http://async.utah.edu/notTU_module/1">
     <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module"/>
     <sbol:displayId>notTU_module</sbol:displayId>
@@ -256,24 +224,6 @@
       </sbol:Module>
     </sbol:module>
     <sbol:module>
-      <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/1">
-        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub"/>
-        <sbol:displayId>notTU_module_SrpR_protein_degradation_sub</sbol:displayId>
-        <sbol:version>1</sbol:version>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/1"/>
-        <sbol:mapsTo>
-          <sbol:MapsTo rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein/1">
-            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_degradation_sub/notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein"/>
-            <sbol:displayId>notTU_module_SrpR_protein_degradation_sub_SrpR_protein_SrpR_protein</sbol:displayId>
-            <sbol:version>1</sbol:version>
-            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
-            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_degradation/SrpR_protein/1"/>
-            <sbol:local rdf:resource="http://async.utah.edu/notTU_module/SrpR_protein/1"/>
-          </sbol:MapsTo>
-        </sbol:mapsTo>
-      </sbol:Module>
-    </sbol:module>
-    <sbol:module>
       <sbol:Module rdf:about="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub/1">
         <sbol:persistentIdentity rdf:resource="http://async.utah.edu/notTU_module/notTU_module_SrpR_protein_pSrpR_repression_sub"/>
         <sbol:displayId>notTU_module_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
@@ -353,6 +303,22 @@
       </sbol:Interaction>
     </sbol:interaction>
   </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein"/>
+    <sbol:displayId>AmtR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>AmtR_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein"/>
+    <sbol:displayId>SrpR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>SrpR_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/A1"/>
     <sbol:displayId>A1</sbol:displayId>
@@ -537,14 +503,6 @@
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BydvJ_sequence/1"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein"/>
-    <sbol:displayId>AmtR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>AmtR_protein</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR"/>
     <sbol:displayId>AmtR</sbol:displayId>
@@ -657,14 +615,6 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/L3S2P55_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1">
-    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein"/>
-    <sbol:displayId>SrpR_protein</sbol:displayId>
-    <sbol:version>1</sbol:version>
-    <dcterms:title>SrpR_protein</dcterms:title>
-    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
   <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence"/>

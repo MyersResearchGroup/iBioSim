@@ -617,7 +617,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				SBOLDocument libDoc = new SBOLDocument();
 				for(String sbolDir : libFilePaths)
 				{
-					SBOLDocument sbolDoc = SBOLUtility.getInstance().loadFromDir(sbolDir, defaultURIPrefix);
+					SBOLDocument sbolDoc = SBOLUtility.getSBOLUtility().loadFromDir(sbolDir, defaultURIPrefix);
 					libDoc.createCopy(sbolDoc);
 				}
 				Synthesis syn = SBOLTechMapRunner.run(specDoc, libDoc);

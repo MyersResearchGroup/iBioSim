@@ -39,10 +39,10 @@ public class WrappedSBOL {
 	private Map<String, GeneticGate> gateMapping;
 	
 	//use to generate unique URIs
-	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter, seqConstraint;
+	private int interCounter, partiCounter, cdCounter, fcCounter, cCounter, moduleCounter, mapsToCounter, seqConstraint, modDefCounter;
 
 	public WrappedSBOL() {
-		this.sbolDoc = SBOLUtility.getInstance().createSBOLDocument();
+		this.sbolDoc = SBOLUtility.getSBOLUtility().createSBOLDocument();
 		this.proteinMapping = new HashMap<>();
 		this.gateMapping = new HashMap<>();
 	}
@@ -56,7 +56,7 @@ public class WrappedSBOL {
 	}
 	
 	public ModuleDefinition createModuleDefinition(String id) throws SBOLValidationException {
-		return this.sbolDoc.createModuleDefinition(id, sbolVersion);
+		return this.sbolDoc.createModuleDefinition(getModuleDefinitionId() + id, sbolVersion);
 	}
 	
 	private ComponentDefinition addComponentDefinition(String cd_id, URI compDefType) throws SBOLValidationException {
@@ -234,6 +234,10 @@ public class WrappedSBOL {
 	
 	private String getSequenceConstraintId() {
 		return "SequenceConstraint" + this.seqConstraint++;
+	}
+	
+	private String getModuleDefinitionId() {
+		return "MD" + this.modDefCounter++;
 	}
 	
 	public SBOLDocument getSBOLDocument(){

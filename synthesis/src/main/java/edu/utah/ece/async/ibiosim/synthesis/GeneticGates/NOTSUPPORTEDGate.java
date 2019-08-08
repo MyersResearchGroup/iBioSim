@@ -135,7 +135,7 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 		for(Participation participation : interaction.getParticipations()) {
 			if(participation.containsRole(participationType)) {
 				FunctionalComponent participant = participation.getParticipant();
-				DecomposedGraphNode node = graph.getNode(participant);
+				DecomposedGraphNode node = graph.getNodeByComponentDefinition(participant.getDefinition());
 				nodes.add(node);
 			}
 		}
@@ -145,6 +145,7 @@ public class NOTSUPPORTEDGate implements GeneticGate {
 	
 	private DecomposedGraph createDecomposedGate() {
 		DecomposedGraph graph = new DecomposedGraph();
+		graph.setGraphId(md.getDisplayId());
 		for(FunctionalComponent fc : md.getFunctionalComponents()) {
 			DecomposedGraphNode newNode = new DecomposedGraphNode(fc);
 			graph.addNode(newNode);
