@@ -5,223 +5,11 @@
     <sbol:displayId>Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC0_QS1in/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC0_QS1in"/>
-        <sbol:displayId>FC0_QS1in</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>QS1in</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD0_QS1in/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC5_QS1out/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC5_QS1out"/>
-        <sbol:displayId>FC5_QS1out</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>QS1out</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD5_QS1out/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC9__02_/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC9__02_"/>
-        <sbol:displayId>FC9__02_</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>_02_</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD9__02_/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC21_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC21_norTU"/>
-        <sbol:displayId>FC21_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD42_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC17_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC17_notTU"/>
-        <sbol:displayId>FC17_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD26_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC14_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC14_notTU"/>
-        <sbol:displayId>FC14_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD14_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC11__04_/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC11__04_"/>
-        <sbol:displayId>FC11__04_</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>_04_</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD11__04_/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC3_Start/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC3_Start"/>
-        <sbol:displayId>FC3_Start</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>Start</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD3_Start/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC19_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC19_norTU"/>
-        <sbol:displayId>FC19_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD34_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC6_QS2out/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC6_QS2out"/>
-        <sbol:displayId>FC6_QS2out</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>QS2out</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD6_QS2out/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC12__05_/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC12__05_"/>
-        <sbol:displayId>FC12__05_</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>_05_</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD12__05_/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC13__06_/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC13__06_"/>
-        <sbol:displayId>FC13__06_</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>_06_</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD13__06_/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC4_Actuator/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC4_Actuator"/>
-        <sbol:displayId>FC4_Actuator</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>Actuator</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD4_Actuator/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC18_norTU/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC18_norTU"/>
         <sbol:displayId>FC18_norTU</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:definition rdf:resource="http://dummy.org/CD30_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC7__00_/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC7__00_"/>
-        <sbol:displayId>FC7__00_</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>_00_</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD7__00_/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC2_Sensor/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC2_Sensor"/>
-        <sbol:displayId>FC2_Sensor</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>Sensor</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD2_Sensor/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC1_QS2in/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC1_QS2in"/>
-        <sbol:displayId>FC1_QS2in</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <dcterms:title>QS2in</dcterms:title>
-        <sbol:definition rdf:resource="http://dummy.org/CD1_QS2in/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC20_notTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC20_notTU"/>
-        <sbol:displayId>FC20_notTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD38_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC16_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC16_norTU"/>
-        <sbol:displayId>FC16_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD22_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC22_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC22_norTU"/>
-        <sbol:displayId>FC22_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD46_er/1.0"/>
-        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
-      </sbol:FunctionalComponent>
-    </sbol:functionalComponent>
-    <sbol:functionalComponent>
-      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC15_norTU/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC15_norTU"/>
-        <sbol:displayId>FC15_norTU</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:definition rdf:resource="http://dummy.org/CD18_er/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
       </sbol:FunctionalComponent>
@@ -248,6 +36,111 @@
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC2_Sensor/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC2_Sensor"/>
+        <sbol:displayId>FC2_Sensor</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>Sensor</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD2_Sensor/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC16_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC16_norTU"/>
+        <sbol:displayId>FC16_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD22_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC1_QS2in/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC1_QS2in"/>
+        <sbol:displayId>FC1_QS2in</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>QS2in</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD1_QS2in/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC11__04_/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC11__04_"/>
+        <sbol:displayId>FC11__04_</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>_04_</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD11__04_/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC19_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC19_norTU"/>
+        <sbol:displayId>FC19_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD34_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC4_Actuator/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC4_Actuator"/>
+        <sbol:displayId>FC4_Actuator</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>Actuator</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD4_Actuator/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC0_QS1in/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC0_QS1in"/>
+        <sbol:displayId>FC0_QS1in</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>QS1in</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD0_QS1in/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC20_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC20_notTU"/>
+        <sbol:displayId>FC20_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD38_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC21_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC21_norTU"/>
+        <sbol:displayId>FC21_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD42_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC14_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC14_notTU"/>
+        <sbol:displayId>FC14_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD14_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
       <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC8__01_/1.0">
         <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC8__01_"/>
         <sbol:displayId>FC8__01_</sbol:displayId>
@@ -256,6 +149,113 @@
         <sbol:definition rdf:resource="http://dummy.org/CD8__01_/1.0"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
         <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC5_QS1out/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC5_QS1out"/>
+        <sbol:displayId>FC5_QS1out</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>QS1out</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD5_QS1out/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC9__02_/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC9__02_"/>
+        <sbol:displayId>FC9__02_</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>_02_</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD9__02_/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC22_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC22_norTU"/>
+        <sbol:displayId>FC22_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD46_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC7__00_/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC7__00_"/>
+        <sbol:displayId>FC7__00_</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>_00_</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD7__00_/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC3_Start/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC3_Start"/>
+        <sbol:displayId>FC3_Start</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>Start</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD3_Start/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC15_norTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC15_norTU"/>
+        <sbol:displayId>FC15_norTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD18_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC13__06_/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC13__06_"/>
+        <sbol:displayId>FC13__06_</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>_06_</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD13__06_/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC17_notTU/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC17_notTU"/>
+        <sbol:displayId>FC17_notTU</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:definition rdf:resource="http://dummy.org/CD26_er/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#none"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC12__05_/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC12__05_"/>
+        <sbol:displayId>FC12__05_</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>_05_</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD12__05_/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC6_QS2out/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/Start_QS2in_QS1in_Sensor_QS2out_QS1out_Actuator_net/FC6_QS2out"/>
+        <sbol:displayId>FC6_QS2out</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <dcterms:title>QS2out</dcterms:title>
+        <sbol:definition rdf:resource="http://dummy.org/CD6_QS2out/1.0"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#out"/>
       </sbol:FunctionalComponent>
     </sbol:functionalComponent>
     <sbol:interaction>
@@ -982,40 +982,6 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD46_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er"/>
-    <sbol:displayId>CD46_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD46_er/C24_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C24_part"/>
-        <sbol:displayId>C24_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD47_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD46_er/C25_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C25_part"/>
-        <sbol:displayId>C25_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD48_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD46_er/C26_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C26_part"/>
-        <sbol:displayId>C26_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD49_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD51_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD51_promoter"/>
     <sbol:displayId>CD51_promoter</sbol:displayId>
@@ -1070,40 +1036,6 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD26_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er"/>
-    <sbol:displayId>CD26_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_er/C9_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C9_part"/>
-        <sbol:displayId>C9_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD27_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_er/C11_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C11_part"/>
-        <sbol:displayId>C11_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD29_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD26_er/C10_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C10_part"/>
-        <sbol:displayId>C10_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD28_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD45_terminator/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD45_terminator"/>
     <sbol:displayId>CD45_terminator</sbol:displayId>
@@ -1139,12 +1071,80 @@
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
   </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD42_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er"/>
+    <sbol:displayId>CD42_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD42_er/C23_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C23_part"/>
+        <sbol:displayId>C23_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD45_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD42_er/C22_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C22_part"/>
+        <sbol:displayId>C22_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD44_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD42_er/C21_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C21_part"/>
+        <sbol:displayId>C21_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD43_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD48_cds/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD48_cds"/>
     <sbol:displayId>CD48_cds</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD22_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er"/>
+    <sbol:displayId>CD22_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD22_er/C6_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C6_part"/>
+        <sbol:displayId>C6_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD23_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD22_er/C8_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C8_part"/>
+        <sbol:displayId>C8_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD25_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD22_er/C7_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C7_part"/>
+        <sbol:displayId>C7_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD24_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD12__05_/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD12__05_"/>
@@ -1158,6 +1158,40 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD26_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er"/>
+    <sbol:displayId>CD26_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD26_er/C9_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C9_part"/>
+        <sbol:displayId>C9_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD27_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD26_er/C10_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C10_part"/>
+        <sbol:displayId>C10_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD28_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD26_er/C11_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD26_er/C11_part"/>
+        <sbol:displayId>C11_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD29_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD33_terminator/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD33_terminator"/>
@@ -1191,12 +1225,126 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD50_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er"/>
+    <sbol:displayId>CD50_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD50_er/C28_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C28_part"/>
+        <sbol:displayId>C28_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD52_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD50_er/C29_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C29_part"/>
+        <sbol:displayId>C29_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD53_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD50_er/C27_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C27_part"/>
+        <sbol:displayId>C27_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD51_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD19_promoter/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD19_promoter"/>
     <sbol:displayId>CD19_promoter</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_Actuator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_Actuator"/>
+    <sbol:displayId>CD4_Actuator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD21_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD21_terminator"/>
+    <sbol:displayId>CD21_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD43_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_promoter"/>
+    <sbol:displayId>CD43_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_QS1in/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_QS1in"/>
+    <sbol:displayId>CD0_QS1in</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD18_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er"/>
+    <sbol:displayId>CD18_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD18_er/C4_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C4_part"/>
+        <sbol:displayId>C4_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD20_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD18_er/C5_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C5_part"/>
+        <sbol:displayId>C5_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD21_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD18_er/C3_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C3_part"/>
+        <sbol:displayId>C3_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD19_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD9__02_/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD9__02_"/>
+    <sbol:displayId>CD9__02_</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD23_promoter/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD23_promoter"/>
+    <sbol:displayId>CD23_promoter</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD53_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD53_terminator"/>
+    <sbol:displayId>CD53_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD34_er/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD34_er"/>
@@ -1229,188 +1377,6 @@
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
         <sbol:definition rdf:resource="http://dummy.org/CD35_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD4_Actuator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD4_Actuator"/>
-    <sbol:displayId>CD4_Actuator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD21_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD21_terminator"/>
-    <sbol:displayId>CD21_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD43_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD43_promoter"/>
-    <sbol:displayId>CD43_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD0_QS1in/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD0_QS1in"/>
-    <sbol:displayId>CD0_QS1in</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD22_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er"/>
-    <sbol:displayId>CD22_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD22_er/C8_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C8_part"/>
-        <sbol:displayId>C8_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD25_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD22_er/C6_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C6_part"/>
-        <sbol:displayId>C6_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD23_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD22_er/C7_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD22_er/C7_part"/>
-        <sbol:displayId>C7_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD24_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD18_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er"/>
-    <sbol:displayId>CD18_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD18_er/C3_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C3_part"/>
-        <sbol:displayId>C3_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD19_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD18_er/C4_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C4_part"/>
-        <sbol:displayId>C4_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD20_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD18_er/C5_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD18_er/C5_part"/>
-        <sbol:displayId>C5_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD21_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD9__02_/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD9__02_"/>
-    <sbol:displayId>CD9__02_</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD23_promoter/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD23_promoter"/>
-    <sbol:displayId>CD23_promoter</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD53_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD53_terminator"/>
-    <sbol:displayId>CD53_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD30_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er"/>
-    <sbol:displayId>CD30_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD30_er/C14_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C14_part"/>
-        <sbol:displayId>C14_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD33_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD30_er/C13_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C13_part"/>
-        <sbol:displayId>C13_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD32_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD30_er/C12_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C12_part"/>
-        <sbol:displayId>C12_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD31_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD14_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er"/>
-    <sbol:displayId>CD14_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD14_er/C0_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C0_part"/>
-        <sbol:displayId>C0_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD15_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD14_er/C1_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C1_part"/>
-        <sbol:displayId>C1_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD16_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD14_er/C2_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C2_part"/>
-        <sbol:displayId>C2_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD17_terminator/1.0"/>
       </sbol:Component>
     </sbol:component>
   </sbol:ComponentDefinition>
@@ -1447,39 +1413,121 @@
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
   </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD50_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er"/>
-    <sbol:displayId>CD50_er</sbol:displayId>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD41_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD41_terminator"/>
+    <sbol:displayId>CD41_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD14_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er"/>
+    <sbol:displayId>CD14_er</sbol:displayId>
     <sbol:version>1.0</sbol:version>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD50_er/C27_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C27_part"/>
-        <sbol:displayId>C27_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C2_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C2_part"/>
+        <sbol:displayId>C2_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD51_promoter/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD17_terminator/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD50_er/C29_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C29_part"/>
-        <sbol:displayId>C29_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C1_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C1_part"/>
+        <sbol:displayId>C1_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD53_terminator/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD16_cds/1.0"/>
       </sbol:Component>
     </sbol:component>
     <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD50_er/C28_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD50_er/C28_part"/>
-        <sbol:displayId>C28_part</sbol:displayId>
+      <sbol:Component rdf:about="http://dummy.org/CD14_er/C0_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD14_er/C0_part"/>
+        <sbol:displayId>C0_part</sbol:displayId>
         <sbol:version>1.0</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD52_cds/1.0"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD15_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD46_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er"/>
+    <sbol:displayId>CD46_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD46_er/C25_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C25_part"/>
+        <sbol:displayId>C25_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD48_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD46_er/C26_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C26_part"/>
+        <sbol:displayId>C26_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD49_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD46_er/C24_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD46_er/C24_part"/>
+        <sbol:displayId>C24_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD47_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD30_er/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er"/>
+    <sbol:displayId>CD30_er</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD30_er/C14_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C14_part"/>
+        <sbol:displayId>C14_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD33_terminator/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD30_er/C13_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C13_part"/>
+        <sbol:displayId>C13_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD32_cds/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://dummy.org/CD30_er/C12_part/1.0">
+        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD30_er/C12_part"/>
+        <sbol:displayId>C12_part</sbol:displayId>
+        <sbol:version>1.0</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
+        <sbol:definition rdf:resource="http://dummy.org/CD31_promoter/1.0"/>
+      </sbol:Component>
+    </sbol:component>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD37_terminator/1.0">
+    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_terminator"/>
+    <sbol:displayId>CD37_terminator</sbol:displayId>
+    <sbol:version>1.0</sbol:version>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD38_er/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD38_er"/>
@@ -1514,54 +1562,6 @@
         <sbol:definition rdf:resource="http://dummy.org/CD39_promoter/1.0"/>
       </sbol:Component>
     </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD41_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD41_terminator"/>
-    <sbol:displayId>CD41_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD42_er/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er"/>
-    <sbol:displayId>CD42_er</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD42_er/C22_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C22_part"/>
-        <sbol:displayId>C22_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD44_cds/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD42_er/C23_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C23_part"/>
-        <sbol:displayId>C23_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD45_terminator/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://dummy.org/CD42_er/C21_part/1.0">
-        <sbol:persistentIdentity rdf:resource="http://dummy.org/CD42_er/C21_part"/>
-        <sbol:displayId>C21_part</sbol:displayId>
-        <sbol:version>1.0</sbol:version>
-        <sbol:access rdf:resource="http://sbols.org/v2#private"/>
-        <sbol:definition rdf:resource="http://dummy.org/CD43_promoter/1.0"/>
-      </sbol:Component>
-    </sbol:component>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://dummy.org/CD37_terminator/1.0">
-    <sbol:persistentIdentity rdf:resource="http://dummy.org/CD37_terminator"/>
-    <sbol:displayId>CD37_terminator</sbol:displayId>
-    <sbol:version>1.0</sbol:version>
-    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
-    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
   </sbol:ComponentDefinition>
   <sbol:ComponentDefinition rdf:about="http://dummy.org/CD10__03_/1.0">
     <sbol:persistentIdentity rdf:resource="http://dummy.org/CD10__03_"/>

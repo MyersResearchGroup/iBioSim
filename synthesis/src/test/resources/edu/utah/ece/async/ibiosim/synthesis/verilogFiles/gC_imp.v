@@ -18,9 +18,9 @@ module gC_imp(Start, Sensor, Actuator);
 
    always begin
       wait (Start == 1'b1 && Sensor == 1'b1);
-      #5 Actuator = 1'b1;  
+      #5 Actuator = 1'b1;
       wait (Sensor == 1'b0 && Start == 1'b0);
-      #5 Actuator = 1'b0; 
+      #5 Actuator = 1'b0;
    end
 
 endmodule

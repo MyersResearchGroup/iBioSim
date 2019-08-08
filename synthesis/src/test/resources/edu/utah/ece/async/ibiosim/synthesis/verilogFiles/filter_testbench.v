@@ -13,7 +13,7 @@ module filter_testbench ();
 	wire Actuator;
 	wire QS1out, QS2out;
 	reg QS1in, QS2in;
-  	reg Start, Sensor;
+  reg Start, Sensor;
 
 	initial begin
 		Start = 1'b0;
