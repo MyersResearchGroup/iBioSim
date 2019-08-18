@@ -188,7 +188,7 @@ public class SBOLUtility
 	
 	}
 	
-	public SBOLDocument mergeSBOLDocuments(ArrayList<SBOLDocument> documentList) throws SBOLValidationException {
+	public SBOLDocument mergeSBOLDocuments(List<SBOLDocument> documentList) throws SBOLValidationException {
 		String defaultPrefix = getURIPrefix();
 		SBOLDocument result = new SBOLDocument();
 		result.setDefaultURIprefix(defaultPrefix);

@@ -3,7 +3,6 @@ package edu.utah.ece.async.ibiosim.synthesis.GateGenerator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -30,8 +29,8 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
 public class GateGenerationRunner {
 	
 	private static final char separator = ' ';
+	
 	public static void main(String[] args) {
-		
 		try {
 			CommandLine cmd = parseCommandLine(args);
 			GateGeneratorOptions setupOpt = createGateGenerationOptions(cmd);
@@ -39,39 +38,50 @@ public class GateGenerationRunner {
 			GateGeneration generator = new GateGeneration();
 			List<SBOLDocument> enrichedTU_List = generator.generateGatesFromTranscriptionalUnits(setupOpt.getTUSBOLDocumentList(), setupOpt.getSelectedSBHRepo());
 			generator.identifyGeneratedGates(enrichedTU_List);
+			List<GeneticGate> notList = generator.getGates(GateType.NOT);
+			generator.generateWiredORGates(notList);
 			
-			String outFullPath = setupOpt.getOutputDirectory() + File.separator + setupOpt.getOutputFileName() + ".xml";
-			List<GeneticGate> gates = new ArrayList<>();
+			String outDir = setupOpt.getOutputDirectory() + File.separator ;
+			System.out.println("Total Gate size: " + generator.getLibrary().size());
 			if(setupOpt.outputAllLibrary()) {
-				List<GeneticGate> notList = generator.getGates(GateType.NOT);
-				generator.generateWiredORGates(notList);
-				gates.addAll(generator.getLibrary());
-				generator.exportLibrary(gates, outFullPath);
-				return;
+				List<GeneticGate> gates = generator.getLibrary();
+				generator.exportLibrary(gates, outDir + setupOpt.getOutputFileName() + ".xml");
 			}
 			if(setupOpt.outputNOTLibrary()) {
-				gates.addAll(generator.getGates(GateType.NOT));
+				List<GeneticGate> gates = generator.getGates(GateType.NOT);
+				generator.exportLibrary(gates, outDir + "NOTLibrary_size" + gates.size() + ".xml");
+				System.out.println("NOT Gate size: " + gates.size());
 			}
 			if(setupOpt.outputNORLibrary()) {
-				gates.addAll(generator.getGates(GateType.NOR));
+				List<GeneticGate> gates = generator.getGates(GateType.NOR);
+				generator.exportLibrary(gates, outDir + "NORLibrary_size" + gates.size() + ".xml");
+				System.out.println("NOR Gate size: " + gates.size());
 			}
 			if(setupOpt.outputORLibrary()) {
-				gates.addAll(generator.getGates(GateType.OR));
+				List<GeneticGate> gates = generator.getGates(GateType.OR);
+				generator.exportLibrary(gates, outDir + "ORLibrary_size" + gates.size() + ".xml");
+				System.out.println("OR Gate size: " + gates.size());
 			}
 			if(setupOpt.outputWiredORLibrary()) {
-				List<GeneticGate> notList = generator.getGates(GateType.NOT);
-				gates.addAll(generator.generateWiredORGates(notList));
+				List<GeneticGate> gates = generator.getGates(GateType.WIREDOR);
+				generator.exportLibrary(gates, outDir + "WiredORLibrary_size" + gates.size() + ".xml");
+				System.out.println("WiredOR Gate size: " + gates.size());
 			}
 			if(setupOpt.outputNANDLibrary()) {
-				gates.addAll(generator.getGates(GateType.NAND));
+				List<GeneticGate> gates = generator.getGates(GateType.NAND);
+				generator.exportLibrary(gates, outDir + "NANDLibrary_size" + gates.size() + ".xml");
+				System.out.println("NAND Gate size: " + gates.size());
 			}
 			if(setupOpt.outputANDLibrary()) {
-				gates.addAll(generator.getGates(GateType.AND));
+				List<GeneticGate> gates = generator.getGates(GateType.AND);
+				generator.exportLibrary(gates, outDir + "ANDLibrary_size" + gates.size() + ".xml");
+				System.out.println("AND Gate size: " + gates.size());
 			}
 			if(setupOpt.outputNOTSUPPORTEDLibrary()) {
-				gates.addAll(generator.getGates(GateType.NOTSUPPORTED));
+				List<GeneticGate> gates = generator.getGates(GateType.NOTSUPPORTED);
+				generator.exportLibrary(gates, outDir + "NOTSUPPORTEDLibrary_size" + gates.size() + ".xml");
+				System.out.println("NOTSUPPORTED Gate size: " + gates.size());
 			}
-			generator.exportLibrary(gates, outFullPath);
 			
 		} 
 		catch (SBOLValidationException e) {
@@ -182,7 +192,7 @@ public class GateGenerationRunner {
 			gateGenOptions.setOutputANDLibrary(true);
 		}
 		if(cmd.hasOption("NOTSUPPORTED")) {
-			gateGenOptions.setOutputNANDLibrary(true);
+			gateGenOptions.setOutputNOTSUPPORTEDLibrary(true);
 		}
 		
 		return gateGenOptions;

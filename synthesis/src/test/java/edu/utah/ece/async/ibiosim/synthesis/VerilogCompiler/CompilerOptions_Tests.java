@@ -24,7 +24,7 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.Ve
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
- * 
+ * Test command line options
  * @author Tramy Nguyen
  *
  */
@@ -130,18 +130,18 @@ public class CompilerOptions_Tests{
 
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException() throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
-				"-lpn", "-od", TestingFiles.outputDir, "-o", "evenzeroes"};
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
+				"-lpn", "-od", TestingFiles.outputDir, "-o", "srlatch"};
 		//error because missing module identifier names for imp and tb
 		runCompiler(args);
 	}
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException2( ) throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
-		String files = String.join(" ", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile);
+		String files = String.join(" ", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile);
 		
 		String[] args = {"-v", files, 
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
+				"-imp", "srlatch_imp", "-tb", "srlatch_testbench",  
 				"-lpn", "-od", TestingFiles.outputDir};
 		//error because missing output file name
 		runCompiler(args); 
@@ -149,9 +149,9 @@ public class CompilerOptions_Tests{
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException3() throws org.sbml.jsbml.text.parser.ParseException, SBOLValidationException, VerilogCompilerException, XMLStreamException, IOException, BioSimException, ParseException, SBOLConversionException { 
-		String files = String.join(" ", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile);
+		String files = String.join(" ", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile);
 		String[] args = {"-v", files,
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
+				"-imp", "srlatch_imp", "-tb", "srlatch_testbench",  
 				"-lpn"};
 		//no output directory. Generating LPN needs the SBML files exported to a directory before sbml to lpn can be called. 
 		runCompiler(args); 
@@ -159,9 +159,9 @@ public class CompilerOptions_Tests{
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException4() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench",  
-				"-lpn", "-o", "evenzeroes"};
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
+				"-imp", "srlatch_imp", "-tb", "srlatch_testbench",  
+				"-lpn", "-o", "tm_solution"};
 		//error because missing output directory
 		runCompiler(args);
 		
@@ -169,7 +169,7 @@ public class CompilerOptions_Tests{
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException5() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
 				"-sbml"};
 		//no output directory
 		runCompiler(args); 
@@ -177,8 +177,8 @@ public class CompilerOptions_Tests{
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException6() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
-				"-imp", "evenzeroes_imp",  
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
+				"-imp", "srlatch_imp",  
 				"-lpn", "-od", TestingFiles.outputDir};
 		//error because missing tb module identifier
 		runCompiler(args); 
@@ -186,8 +186,8 @@ public class CompilerOptions_Tests{
 	
 	@Test(expected = VerilogCompilerException.class)
 	public void Test_VerilogCompilerException7() throws ParseException, org.sbml.jsbml.text.parser.ParseException, XMLStreamException, IOException, BioSimException, VerilogCompilerException, SBOLValidationException, SBOLConversionException {
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
-				"-tb", "evenzeroes_testbench",
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
+				"-tb", "srlatch_testbench",
 				"-lpn", "-od", TestingFiles.outputDir};
 		//error because missing imp module identifier
 		runCompiler(args); 
@@ -210,9 +210,9 @@ public class CompilerOptions_Tests{
 	
 	@Test
 	public void Test_LPN() throws ParseException, FileNotFoundException {
-		String[] args = {"-v", TestingFiles.verilogEvenZero_impFile, TestingFiles.verilogEvenZero_tbFile, 
-				"-imp", "evenzeroes_imp", "-tb", "evenzeroes_testbench", 
-				"-lpn", "-od", TestingFiles.outputDir, "-o", "evenzeroes"};
+		String[] args = {"-v", TestingFiles.verilogSRLatch_impFile, TestingFiles.verilogSRLatch_tbFile, 
+				"-imp", "srlatch_imp", "-tb", "srlatch_testbench", 
+				"-lpn", "-od", TestingFiles.outputDir, "-o", "tm_solution"};
 		
 		CommandLine cmd = VerilogRunner.parseCommandLine(args);
 		CompilerOptions compilerOptions = VerilogRunner.createCompilerOptions(cmd);
@@ -250,11 +250,4 @@ public class CompilerOptions_Tests{
 		Assert.assertFalse(compilerOptions.isTestbenchModuleIdSet());
 	}
 
-	@Test
-	public void Test_help() throws ParseException, FileNotFoundException {
-		String[] args = {"-h"};
-		
-		CommandLine cmd = VerilogRunner.parseCommandLine(args);
-		VerilogRunner.createCompilerOptions(cmd);
-	}
 }

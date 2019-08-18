@@ -39,7 +39,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.AND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -55,7 +55,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NAND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -70,7 +70,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -93,7 +93,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.AND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -112,7 +112,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NAND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -128,7 +128,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NAND_LibSize2);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -146,7 +146,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -171,7 +171,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.AND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -185,7 +185,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NAND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNAND_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -204,7 +204,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNOT_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -220,7 +220,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize2);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNOT_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -236,7 +236,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNOT_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -250,7 +250,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompNOT_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -269,7 +269,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.OR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompOR_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -285,7 +285,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompOR_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -300,7 +300,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompOR_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -320,7 +320,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.OR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompOR_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -340,7 +340,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -367,7 +367,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -399,7 +399,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -432,7 +432,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -467,7 +467,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		
@@ -504,7 +504,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		DecomposedGraphNode s_input = specGraph.getNodeByFunctionalComponent(URI.create("http://dummy.org/r_s_q_net/FC1_s/1.0"));
@@ -538,7 +538,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
@@ -562,7 +562,7 @@ public class Match_Test {
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
 
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);

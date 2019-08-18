@@ -21,12 +21,22 @@ public class NANDGate implements GeneticGate {
 	private DecomposedGraph decomposedNand;
 	private ModuleDefinition md;
 	private List<FunctionalComponent> inputs, outputs;
-
+	private FunctionalComponent tu;
+	
+	
 	public NANDGate(SBOLDocument doc, ModuleDefinition md) {
 		this.sbolDoc = doc;
 		this.inputs = new ArrayList<>();
 		this.outputs = new ArrayList<>();
 		this.md = md;
+	}
+	
+	public void setTranscriptionalUnit(FunctionalComponent tu) {
+		this.tu = tu;
+	}
+	
+	public FunctionalComponent getTranscriptionalUnit() {
+		return tu;
 	}
 	
 	@Override
@@ -91,39 +101,39 @@ public class NANDGate implements GeneticGate {
 	}
 	
 	private DecomposedGraph createDecomposedGate() {
-		DecomposedGraph decomposedNand = new DecomposedGraph();
-		DecomposedGraphNode norTuNode = new DecomposedGraphNode();
-		DecomposedGraphNode notTuNode1 = new DecomposedGraphNode();
-		DecomposedGraphNode notTuNode2 = new DecomposedGraphNode();
-		DecomposedGraphNode notTuNode3 = new DecomposedGraphNode();
-		DecomposedGraphNode internalNotOut1Node = new DecomposedGraphNode();
-		DecomposedGraphNode internalNotOut2Node = new DecomposedGraphNode();
-		DecomposedGraphNode internalNorOutNode = new DecomposedGraphNode();
-		DecomposedGraphNode inputNode1 = new DecomposedGraphNode(inputs.get(0));
-		DecomposedGraphNode inputNode2 = new DecomposedGraphNode(inputs.get(1));
-		DecomposedGraphNode outputNode = new DecomposedGraphNode(outputs.get(0));
+		DecomposedGraph decompNand = new DecomposedGraph();
+		DecomposedGraphNode norTu = new DecomposedGraphNode();
+		DecomposedGraphNode not1Tu = new DecomposedGraphNode();
+		DecomposedGraphNode not2Tu = new DecomposedGraphNode();
+		DecomposedGraphNode not3Tu = new DecomposedGraphNode();
+		DecomposedGraphNode not1Out = new DecomposedGraphNode();
+		DecomposedGraphNode not2Out = new DecomposedGraphNode();
+		DecomposedGraphNode norOut = new DecomposedGraphNode();
+		DecomposedGraphNode in1 = new DecomposedGraphNode(inputs.get(0));
+		DecomposedGraphNode in2 = new DecomposedGraphNode(inputs.get(1));
+		DecomposedGraphNode out = new DecomposedGraphNode(outputs.get(0));
 	
-		decomposedNand.addAllNodes(norTuNode, notTuNode1, notTuNode2, notTuNode3,
-				internalNorOutNode, internalNotOut1Node, internalNotOut2Node,
-				inputNode1, inputNode2, outputNode);
+		decompNand.addAllNodes(norTu, not1Tu, not2Tu, not3Tu,
+				norOut, not1Out, not2Out,
+				in1, in2, out);
 	
-		decomposedNand.addNodeRelationship(notTuNode1, inputNode1, NodeInteractionType.REPRESSION);
-		decomposedNand.addNodeRelationship(internalNotOut1Node, notTuNode1, NodeInteractionType.PRODUCTION);
+		decompNand.addNodeRelationship(not1Tu, in1, NodeInteractionType.REPRESSION);
+		decompNand.addNodeRelationship(not1Out, not1Tu, NodeInteractionType.PRODUCTION);
 
-		decomposedNand.addNodeRelationship(notTuNode2, inputNode2, NodeInteractionType.REPRESSION);
-		decomposedNand.addNodeRelationship(internalNotOut2Node, notTuNode2, NodeInteractionType.PRODUCTION);
+		decompNand.addNodeRelationship(not2Tu, in2, NodeInteractionType.REPRESSION);
+		decompNand.addNodeRelationship(not2Out, not2Tu, NodeInteractionType.PRODUCTION);
 		
-		decomposedNand.addNodeRelationship(norTuNode, internalNotOut1Node, NodeInteractionType.REPRESSION);
-		decomposedNand.addNodeRelationship(norTuNode, internalNotOut2Node, NodeInteractionType.REPRESSION);
-		decomposedNand.addNodeRelationship(internalNorOutNode, norTuNode, NodeInteractionType.PRODUCTION);
+		decompNand.addNodeRelationship(norTu, not1Out, NodeInteractionType.REPRESSION);
+		decompNand.addNodeRelationship(norTu, not2Out, NodeInteractionType.REPRESSION);
+		decompNand.addNodeRelationship(norOut, norTu, NodeInteractionType.PRODUCTION);
 
-		decomposedNand.addNodeRelationship(notTuNode3, internalNorOutNode, NodeInteractionType.REPRESSION);
-		decomposedNand.addNodeRelationship(outputNode, notTuNode3, NodeInteractionType.PRODUCTION);
+		decompNand.addNodeRelationship(not3Tu, norOut, NodeInteractionType.REPRESSION);
+		decompNand.addNodeRelationship(out, not3Tu, NodeInteractionType.PRODUCTION);
 		
-		decomposedNand.setNodeAsLeaf(inputNode1);
-		decomposedNand.setNodeAsLeaf(inputNode2);
-		decomposedNand.setNodeAsOutput(outputNode);
-		return decomposedNand;
+		decompNand.setNodeAsLeaf(in1);
+		decompNand.setNodeAsLeaf(in2);
+		decompNand.setNodeAsOutput(out);
+		return decompNand;
 		
 	}
 

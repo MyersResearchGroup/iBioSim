@@ -24,10 +24,15 @@ import org.virtualparts.VPRTripleStoreException;
 import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ANDGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GateIdentifier;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NANDGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NORGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate.GateType;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.NOTGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.ORGate;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.WiredORGate;
 
 /**
  * Class to automate the process of building genetic logic gates from a list of transcriptional units.  
@@ -76,30 +81,35 @@ public class GateGeneration {
 			for(ModuleDefinition mdGate : enrichedTuDoc.getRootModuleDefinitions()) {
 				GateIdentifier gateUtil = new GateIdentifier(enrichedTuDoc, mdGate);
 				GeneticGate gate = gateUtil.getIdentifiedGate();
+				if(gate instanceof NOTGate || gate instanceof NORGate 
+					|| gate instanceof ANDGate || gate instanceof NANDGate 
+					|| gate instanceof ORGate || gate instanceof WiredORGate) {
+					removeInputDegradationProtein(gate);
+				}
 				gateList.add(gate);
 			}
 		}
-		for(GeneticGate gate : gateList) {
-			removeInputDegradationProtein(gate);
+	}
+	
+	private boolean hasDegradation(ModuleDefinition gateMd) {
+		for(Module m : gateMd.getModules()) {
+			ModuleDefinition interactionMd = m.getDefinition();
+			for(Interaction inter : interactionMd.getInteractions()) {
+				if(inter.getTypes().contains(SystemsBiologyOntology.DEGRADATION)) {
+					return true;
+				}
+			}
 		}
+		return false;
 	}
 	
 	private boolean removeInputDegradationProtein(GeneticGate gate) throws SBOLValidationException {
 		for(FunctionalComponent fc : gate.getListOfInputs()) {
-			if(isFunctionalComponentProtein(fc)) {
+			if(isFunctionalComponentProtein(fc) && hasDegradation(gate.getModuleDefinition())) {
 				assert(removeDegradation(fc.getIdentity(), gate.getSBOLDocument(), gate.getModuleDefinition()));
 			}
 		}
 		return true;
-	}
-	
-	private boolean hasDegradationInteraction(ModuleDefinition md) {
-		for(Interaction inter : md.getInteractions()) {
-			if(inter.getTypes().contains(SystemsBiologyOntology.DEGRADATION)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private boolean isFunctionalComponentProtein(FunctionalComponent fc) {
@@ -115,11 +125,18 @@ public class GateGeneration {
 	private Module getModuleWithDegradation(URI fcUri, Set<Module> moduleList) {
 		List<Module> degModules = new ArrayList<>();
 		for(Module m : moduleList) {
+			ModuleDefinition interactionMd = m.getDefinition();
 			for(MapsTo mt : m.getMapsTos()) {
-				if(mt.getLocalIdentity().equals(fcUri) && hasDegradationInteraction(m.getDefinition())) {
-					degModules.add(m);
+				if(mt.getLocalIdentity().equals(fcUri)) {
+					for(Interaction inter : interactionMd.getInteractions()) {
+						if(inter.getTypes().contains(SystemsBiologyOntology.DEGRADATION)) {
+							degModules.add(m);
+						}
+					}
+					
 				}
 			}
+			
 		}
 		assert(degModules.size() == 1);
 		return degModules.get(0);

@@ -140,6 +140,10 @@ public class DecomposedGraph {
 		return sortedElements;
 	}
 	
+	public List<DecomposedGraphNode> getAllNodes(){
+		return this.nodeList;
+	}
+	
 	public DecomposedGraphNode getNodeByComponentDefinition(ComponentDefinition cd) {
 		List<DecomposedGraphNode> nodes = new ArrayList<>();
 		for(DecomposedGraphNode n : nodeList) {

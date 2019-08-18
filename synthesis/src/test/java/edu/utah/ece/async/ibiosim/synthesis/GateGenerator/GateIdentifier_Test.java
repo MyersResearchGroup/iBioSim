@@ -322,4 +322,5 @@ public class GateIdentifier_Test {
 			Assert.assertTrue(cd.getIdentity().equals(psraSignal) || cd.getIdentity().equals(yfpSignal));
 		}
 	}
+	
 }

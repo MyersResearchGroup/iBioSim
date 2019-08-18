@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * This class is used to get and set the necessary information needed to perform the Verilog compiler.
  * @author Tramy Nguyen
@@ -24,23 +25,43 @@ public class CompilerOptions {
 		this.exportOutput = false;
 		this.flatModel = false;
 	}
+	
+	public void addVerilogFile(File file){
+		if(file.isFile()) {
+			this.verilogFiles.add(file);
+		}
+	}
 
-	public void addVerilogFile(File verilogFile) throws FileNotFoundException {
-		if(!verilogFile.exists()) {
-			throw new FileNotFoundException();
-		}
-		if(verilogFile.isDirectory()) {
-			addDirectoryVerilogFiles(verilogFile);
-		}
-		if(verilogFile.isFile()) {
-			this.verilogFiles.add(verilogFile);
+	private void search(final String pattern, final File folder, List<String> result) {
+		for (final File f : folder.listFiles()) {
+			if (f.isDirectory()) {
+				search(pattern, f, result);
+			}
+			if (f.isFile()) {
+				if (f.getName().matches(pattern)) {
+					result.add(f.getAbsolutePath());
+				}
+			}
 		}
 	}
 	
-	public File addVerilogFile(String fullFileName) throws FileNotFoundException {
-		File verilogFile = new File(fullFileName);
-		addVerilogFile(verilogFile);
-		return verilogFile;
+	public void addVerilogFile(String path) throws FileNotFoundException {
+		File file = new File(path);
+		if(!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		else if(file.isDirectory()) {
+			List<String> result = new ArrayList<>();
+			search(".*\\.v", file, result);
+
+			for (String s : result) {
+				System.out.println(s);
+				addVerilogFile(new File(s));
+			}
+		}
+		else {
+			addVerilogFile(file);
+		}
 	}
 	
 	public void addDirectoryVerilogFiles(File file) {

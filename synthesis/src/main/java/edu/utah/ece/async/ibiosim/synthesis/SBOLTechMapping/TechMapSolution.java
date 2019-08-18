@@ -1,7 +1,9 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import org.sbolstandard.core2.ComponentDefinition;
 
@@ -17,23 +19,38 @@ public class TechMapSolution implements Solution, Comparable<Solution> {
 	private double score;
 	private Map<DecomposedGraphNode, GeneticGate> assignedNodes;
 	private Map<DecomposedGraphNode, ComponentDefinition> mapOfAssignedNodes;
+	private Queue<DecomposedGraphNode> nodeQueue;
 	
 	public TechMapSolution() {
 		score = Double.POSITIVE_INFINITY;
 		assignedNodes = new HashMap<>();
 		mapOfAssignedNodes = new HashMap<>();
+		nodeQueue = new LinkedList<>();
 	}
 
 	public TechMapSolution(TechMapSolution copy) {
 		this.score = copy.score;
 		this.assignedNodes = new HashMap<>(copy.assignedNodes);
 		this.mapOfAssignedNodes = new HashMap<>(copy.mapOfAssignedNodes);
+		this.nodeQueue = new LinkedList<>(copy.nodeQueue);
 	}
 	
 	public void setScore(double value) {
 		score = value;
 	}
+	
+	public DecomposedGraphNode getNextUnmappedNode() {
+		return this.nodeQueue.poll();
+	}
 
+	public boolean hasUnmappedNode() {
+		return !this.nodeQueue.isEmpty();
+	}
+	
+	public void addUnmappedNode(DecomposedGraphNode node) {
+		this.nodeQueue.add(node);
+	}
+	
 	/**
 	 * Retrieve the {@link GeneticGate} assigned to the given {@link DecomposedGraphNode}.
 	 * @param node: A {@link DecomposedGraphNode} that a {@link GeneticGate} is assigned to.

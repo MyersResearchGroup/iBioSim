@@ -156,26 +156,7 @@ public class TechMapping {
 				setupOpts.addLibraryFile(sbolLibDir);
 				setupOpts.setSpecificationFile(specFile);
 				
-				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpefication(), setupOpts.getLibrary());
-//				SBOLDocument sbolDoc_sol = syn.getSBOLfromTechMapping();
-//				if(outSBOL)
-//				{
-//					sbolDoc_sol.write(new File(outFileName));
-//				}
-//				else if (outSBML)
-//				{
-//					// TODO: Write solution to one SBML file
-//					for (ModuleDefinition moduleDef : sbolDoc_sol.getRootModuleDefinitions())
-//					{
-////						List<BioModel> models = SBOL2SBML.generateModel(outFileName, moduleDef, sbolDoc_sol);
-////						SBMLutilities.exportSBMLModels(models, outputDir, outFileName, false, true, true);
-//					}
-//				}
-//				else
-//				{
-//					// Write to command line
-//					sbolDoc_sol.write(System.out);
-//				}
+//				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpefication(), setupOpts.getLibrary());
 			}
 			else if (sbmlTechMap)
 			{
@@ -258,8 +239,6 @@ public class TechMapping {
 		catch (SBOLConversionException e) 
 		{
 			System.err.println("ERROR: Unable to convert input file to SBOL data format.");
-			e.printStackTrace();
-		} catch (SBOLTechMapException e) {
 			e.printStackTrace();
 		}
 	}

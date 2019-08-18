@@ -2,13 +2,16 @@ package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
-import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 
@@ -19,14 +22,18 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 public class SBOLTechMapOptions {
 
 	private String outputFileName, outDir;
-	private boolean outputSBOL, printCoveredGates;
+	private boolean outputSBOL, isBranchBound, isExhaustive, isGreedy, listSpecNodes; 
+	private int numOfSol;
 	private SBOLUtility sbolUtility;
-	private SBOLDocument library, specification;
+	private List<SBOLDocument> libFiles;
+	private SBOLDocument specification;
+	private Map<String, String> preselectedInfo;
 	
 	public SBOLTechMapOptions(){
 		this.sbolUtility = SBOLUtility.getSBOLUtility();
-		this.library = this.sbolUtility.createSBOLDocument();
-		
+		this.libFiles = new ArrayList<>();
+		this.numOfSol = 0;
+		this.preselectedInfo = new HashMap<>();
 	}
 	
 	public void setOutputFileName(String fileName) {
@@ -37,27 +44,52 @@ public class SBOLTechMapOptions {
 		this.outDir = dirPath;
 	}
 	
-	public void addLibraryFile(String fileFullPath) {
+	public void addPreselection(String nodeId, String cdId) {
+		if(!preselectedInfo.containsKey(nodeId)) {
+			preselectedInfo.put(nodeId, cdId);
+		}
+	}
+	
+	public boolean hasPreselection() {
+		return !preselectedInfo.isEmpty();
+	}
 
-		try {
-			File file = sbolUtility.getFile(fileFullPath);
-			if(file.isFile()) {
-				SBOLDocument libFile = sbolUtility.parseSBOLFile(file);
-				//library.createCopy(libFile);
-				for(TopLevel tl : libFile.getTopLevels()) {
-					if(library.getTopLevel(tl.getIdentity()) == null) {
-						libFile.createRecursiveCopy(library, tl);
-					}
+	public void addLibraryFile(String path) throws SBOLValidationException, IOException, SBOLConversionException {
+		File file = new File(path);
+		if(!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		else if(file.isDirectory()) {
+			List<String> result = new ArrayList<>();
+			search(".*[.]xml", file, result);
+
+			for (String s : result) {
+				System.out.println(s);
+				addLibFile(new File(s));
+			}
+		}
+		else {
+			addLibFile(file);
+		}
+	}
+	
+	public void addLibFile(File file) throws SBOLValidationException, IOException, SBOLConversionException {
+		if(file.isFile()) {
+			SBOLDocument libFile = sbolUtility.parseSBOLFile(file);
+			this.libFiles.add(libFile);
+		}
+	}
+
+	private void search(final String pattern, final File folder, List<String> result) {
+		for (final File f : folder.listFiles()) {
+			if (f.isDirectory()) {
+				search(pattern, f, result);
+			}
+			if (f.isFile()) {
+				if (f.getName().matches(pattern)) {
+					result.add(f.getAbsolutePath());
 				}
 			}
-			else if(file.isDirectory()){
-				ArrayList<SBOLDocument> libDocs = sbolUtility.loadSBOLDir(fileFullPath);
-				SBOLDocument mergeDoc = sbolUtility.mergeSBOLDocuments(libDocs);
-				library.createCopy(mergeDoc);
-			}
-		} 
-		catch (SBOLValidationException | IOException | SBOLConversionException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -74,35 +106,70 @@ public class SBOLTechMapOptions {
 		
 	}
 	
+	public boolean  listSpecNodeIds(){
+		return this.listSpecNodes;
+	}
+	
+	public void setSpecNodeId() {
+		this.listSpecNodes = true;
+	}
+	
+	public void setNumOfSolutions(int value) {
+		this.numOfSol = value;
+	}
+
+	public void setBranchBound(boolean isBranchBound) {
+		this.isBranchBound = isBranchBound;
+	}
+	
+	public void setExhaustive(boolean isExhaustive) {
+		this.isExhaustive = isExhaustive;
+	}
+	
+	public void setGreedy(boolean isGreedy) {
+		this.isGreedy = isGreedy;
+	}
+	
 	public void setOutputSBOL(boolean outputSBOL) {
 		this.outputSBOL = outputSBOL;
 	}
 	
-	public void setPrintToTerminalCoveredGates(boolean coverGates) {
-		this.printCoveredGates = coverGates;
+	public Map<String, String> getPreselection(){
+		return this.preselectedInfo;
 	}
 	
-	public boolean printCoveredGates() {
-		return this.printCoveredGates;
+	public int getNumOfSolutions() {
+		return this.numOfSol;
 	}
-
+	
 	public boolean isOutputSBOL() {
 		return this.outputSBOL;
+	}
+	
+	public boolean isBranchBound() {
+		return this.isBranchBound;
+	}
+	public boolean isExhaustive() {
+		return this.isExhaustive;
+	}
+	
+	public boolean isGreedy() {
+		return this.isGreedy;
 	}
 	
 	public SBOLDocument getSpefication() throws SBOLValidationException, IOException, SBOLConversionException {
 		return specification;
 	}
 	
-	public SBOLDocument getLibrary() throws SBOLValidationException, IOException, SBOLConversionException {
-		return this.library;
+	public List<SBOLDocument> getLibrary() throws SBOLValidationException, IOException, SBOLConversionException {
+		return this.libFiles;
 	}
-
+	
 	public String getOuputFileName() {
 		return this.outputFileName;
 	}
 	
-	public String getOutputFileDir() {
+	public String getOutputDir() {
 		return this.outDir;
 	}
 	

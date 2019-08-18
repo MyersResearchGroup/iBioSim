@@ -38,12 +38,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.tetRNOR_LibSize1);
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(1);	
+		List<TechMapSolution> coverSols = c.greedyCover(1);	
 		Assert.assertEquals(1, coverSols.size());
 		TechMapSolution[] actualSols = coverSols.stream().toArray(TechMapSolution[]::new);
 		Assert.assertEquals(actualSols[0].getScore(), libGraph.stream().mapToDouble(x->x.getDecomposedGraph().getRootNode().getScore()).sum(), 0.001);
@@ -57,12 +57,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1); 
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1); 
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(2);	
+		List<TechMapSolution> coverSols = c.greedyCover(2);	
 		Assert.assertEquals(2, coverSols.size());
 		TechMapSolution[] actualSols = coverSols.stream().toArray(TechMapSolution[]::new);
 		
@@ -83,12 +83,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1); 
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1); 
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(1);	
+		List<TechMapSolution> coverSols = c.greedyCover(1);	
 		Assert.assertEquals(1, coverSols.size());
 	}
 	
@@ -100,12 +100,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1); 
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1); 
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(3);	
+		List<TechMapSolution> coverSols = c.greedyCover(3);	
 		Assert.assertEquals(2, coverSols.size());
 		
 	}
@@ -118,12 +118,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1); 
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1); 
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(1);	
+		List<TechMapSolution> coverSols = c.greedyCover(1);	
 		Assert.assertEquals(1, coverSols.size());
 		TechMapSolution[] actualSols = coverSols.stream().toArray(TechMapSolution[]::new);
 		Assert.assertTrue(actualSols[0].getScore() == 6112.0);
@@ -137,12 +137,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.tetRNOR_LibSize1);
 		setupOpt.addLibraryFile(TestingFiles.NOT_LibSize1); 
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(0);	
+		List<TechMapSolution> coverSols = c.greedyCover(0);	
 		Assert.assertEquals(0, coverSols.size());
 		
 	}
@@ -153,12 +153,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.lacINOR_LibSize1);
 		setupOpt.addLibraryFile(TestingFiles.tetRNOR_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(0);	
+		List<TechMapSolution> coverSols = c.greedyCover(0);	
 		Assert.assertEquals(0, coverSols.size());
 		
 	}
@@ -169,12 +169,12 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.OR_LibSize1);
 		setupOpt.addLibraryFile(TestingFiles.NAND_LibSize1);
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(0);	
+		List<TechMapSolution> coverSols = c.greedyCover(0);	
 		Assert.assertEquals(0, coverSols.size());
 		
 	}
@@ -187,7 +187,7 @@ public class Greedy_Test {
 		setupOpt.addLibraryFile(TestingFiles.yfp1NOT_LibSize1); 
 		setupOpt.addLibraryFile(TestingFiles.yfp2NOT_LibSize1); ;
 		setupOpt.setSpecificationFile(TestingFiles.sbolDecompSRLatch_File);
-		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSBOL(setupOpt.getLibrary());
+		List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(setupOpt.getLibrary());
 		DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(setupOpt.getSpefication());
 		
 		DecomposedGraphNode q_input = specGraph.getNodeByFunctionalComponent(URI.create("http://dummy.org/r_s_q_net/FC3__0_/1.0"));
@@ -195,7 +195,7 @@ public class Greedy_Test {
 		
 		Match m = new PreSelectedMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		Set<TechMapSolution> coverSols = c.greedyCover(1);	
+		List<TechMapSolution> coverSols = c.greedyCover(1);	
 		Assert.assertEquals(1, coverSols.size());
 	}
 }

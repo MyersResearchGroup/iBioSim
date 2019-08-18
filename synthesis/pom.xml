@@ -99,33 +99,17 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationRunner</mainClass>
+							<mainClass>edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
 			<!-- <plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogRunner.Main</mainClass>
+		<manifest>
 							<mainClass>edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationRunner</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
+							<mainClass>edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner</mainClass>
+							<mainClass>edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogRunner</mainClass>
+						</manifest	
 			</plugin> -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -135,7 +119,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationRunner</mainClass>
+									<mainClass>edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>

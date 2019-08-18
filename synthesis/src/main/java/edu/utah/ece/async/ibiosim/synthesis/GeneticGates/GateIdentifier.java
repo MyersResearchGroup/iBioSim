@@ -46,11 +46,13 @@ public class GateIdentifier {
 	}
 
 	public GeneticGate getIdentifiedGate() throws GateGenerationExeception, SBOLValidationException {
-		//collect DNA parts where input and output molecules are attached
-		for(FunctionalComponent functionalComponent : gateMD.getFunctionalComponents()) {
-			ComponentDefinition cd = functionalComponent.getDefinition();
-			ComponentParticipation component = new ComponentParticipation(functionalComponent);
-			fcToInteractionMap.put(functionalComponent.getIdentity(), component);
+		for(FunctionalComponent fc : gateMD.getFunctionalComponents()) {
+			ComponentDefinition cd = fc.getDefinition();
+			if(cd == null) {
+				continue;
+			}
+			ComponentParticipation component = new ComponentParticipation(fc);
+			fcToInteractionMap.put(fc.getIdentity(), component);
 
 			if(componentDefinitionHasRole(cd, SequenceOntology.PROMOTER)) {
 				promoters.add(component);
@@ -68,6 +70,9 @@ public class GateIdentifier {
 	}
 	
 	private GeneticGate getGateType() throws SBOLValidationException {
+		if(promoters.size() == 0 || cds.size() == 0) {
+			return new NOTSUPPORTEDGate(gateDocument, gateMD);
+		}
 		if(isNOTGate()) {
 			return createNOTGate();
 		}
@@ -360,6 +365,9 @@ public class GateIdentifier {
 		if(activInteraction.components.size() != 1) {
 			return false;
 		}
+		if(activInteraction.components.get(0).outputOfInteraction.isEmpty()) {
+			return false;
+		}
 		InteractsWith complexInteraction = activInteraction.components.get(0).outputOfInteraction.get(0);
 		return complexInteraction.type == InteractionType.COMPLEX_FORMATION 
 				&& complexInteraction.components.size() == 2
@@ -539,7 +547,7 @@ public class GateIdentifier {
 	}
 
 	private boolean componentDefinitionHasRole(ComponentDefinition cd, URI role) {
-		return cd.getRoles().contains(role);
+		return (!cd.getRoles().isEmpty() && cd.getRoles().contains(role));
 	}
 
 	private boolean participationHasRole(Participation participation, URI role) {

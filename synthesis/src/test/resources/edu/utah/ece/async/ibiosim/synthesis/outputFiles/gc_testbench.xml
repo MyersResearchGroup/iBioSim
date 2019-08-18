@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" comp:required="true" level="3" version="1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
   <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-    <comp:externalModelDefinition comp:id="filter_imp" comp:source="filter_imp.xml"/>
+    <comp:externalModelDefinition comp:id="gc_imp" comp:source="gc_imp.xml"/>
   </comp:listOfExternalModelDefinitions>
-  <model id="filter_testbench">
+  <model id="gc_testbench">
     <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:submodel comp:id="filter_instance" comp:modelRef="filter_imp"/>
+      <comp:submodel comp:id="gc_instance" comp:modelRef="gc_imp"/>
     </comp:listOfSubmodels>
     <listOfFunctionDefinitions>
       <functionDefinition id="uniform">
@@ -32,16 +32,16 @@
     </listOfFunctionDefinitions>
     <listOfParameters>
       <parameter constant="false" id="Actuator" sboTerm="SBO:0000602" value="0">
-        <comp:replacedBy xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" comp:portRef="filter_imp__Actuator" comp:submodelRef="filter_instance"/>
+        <comp:replacedBy xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" comp:portRef="gc_imp__Actuator" comp:submodelRef="gc_instance"/>
       </parameter>
       <parameter constant="false" id="Start" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="filter_imp__Start" comp:submodelRef="filter_instance"/>
+          <comp:replacedElement comp:portRef="gc_imp__Start" comp:submodelRef="gc_instance"/>
         </comp:listOfReplacedElements>
       </parameter>
       <parameter constant="false" id="Sensor" sboTerm="SBO:0000602" value="0">
         <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-          <comp:replacedElement comp:portRef="filter_imp__Sensor" comp:submodelRef="filter_instance"/>
+          <comp:replacedElement comp:portRef="gc_imp__Sensor" comp:submodelRef="gc_instance"/>
         </comp:listOfReplacedElements>
       </parameter>
       <parameter constant="false" id="P0" sboTerm="SBO:0000593" value="1"/>

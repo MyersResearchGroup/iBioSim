@@ -54,10 +54,9 @@ public class Workflow {
 	@Test 
 	public void Test_WiredORGate() {
 		String files = String.join(" ", TestingFiles.notTU1_Size1_File);
-		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-NOT", 
-				"-od", TestingFiles.sbolLibDir, "-o", "NOTGates_LibrarySize1"};
+		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-WiredOR", 
+				"-od", TestingFiles.writeLibDir, "-o", "WiredORGates_LibrarySize1"};
 		
 		GateGenerationRunner.main(cmd);
 	}
-	
 }

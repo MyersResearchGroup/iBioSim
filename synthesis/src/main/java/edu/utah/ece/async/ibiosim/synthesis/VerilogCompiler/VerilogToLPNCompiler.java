@@ -40,6 +40,13 @@ public class VerilogToLPNCompiler {
 		return verilogModule;
 	}
 	
+	public void addVerilog(VerilogModule verilogModule) throws VerilogCompilerException {
+		if(verilogModule == null) {
+			throw new VerilogCompilerException("verilog is null");
+		}
+		verilogModuleMap.put(verilogModule.getModuleId(), verilogModule);
+	}
+	
 	public VerilogModule getVerilogModule(String verilogModuleId) {
 		return verilogModuleMap.get(verilogModuleId);
 	}

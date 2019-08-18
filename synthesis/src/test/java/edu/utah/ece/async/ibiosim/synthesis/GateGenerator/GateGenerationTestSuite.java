@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	GateIdentifier_Test.class,
+	GateType_Test.class,
 	DecomposedNotGate_Test.class,
 	DecomposedNandGate_Test.class,
 	DecomposedAndGate_Test.class,

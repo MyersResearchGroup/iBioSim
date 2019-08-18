@@ -1,36 +1,36 @@
-.inputs Start QS2in QS1in Sensor 
-.outputs QS2out QS1out Actuator 
+.inputs Start Sensor 
+.outputs Actuator 
 .internal 
-.dummy cell3__delay_0 cell3__delay_1 cell2__assign_0 cell2__assign_1 delay_4 assign_4 delay_5 assign_5 delay_6 assign_6 cell1__T0 delay_7 assign_7 assign_0 assign_1 assign_2 assign_3 delay_0 T0 cell2__delay_1 delay_1 cell2__delay_0 delay_2 delay_3 cell1__assign_1 cell3__wait_0 cell1__delay_1 cell1__delay_0 cell2__T0 cell3__wait_1 cell3__assign_0 cell3__assign_1 wait_3 wait_2 cell2__wait_1 cell3__T0 cell2__wait_0 cell1__assign_0 cell1__wait_1 wait_1 wait_0 cell1__wait_0 
-#|.places cell1__P2 cell1__P1 cell1__P4 cell1__P3 cell1__P6 cell1__P5 P20 cell1__P0 P0 cell3__P4 P1 cell3__P3 P2 cell3__P6 P3 cell3__P5 P4 cell3__P0 P5 P6 cell3__P2 P7 cell3__P1 P8 P9 P10 P12 P11 cell2__P6 P14 cell2__P5 P13 cell2__P4 P16 cell2__P3 P15 cell2__P2 P18 cell2__P1 P17 cell2__P0 P19 
-#@.init_state [0000000]
+.dummy filter_instance__delay_0 filter_instance__delay_1 filter_instance__wait_1 filter_instance__wait_0 filter_instance__T0 delay_4 assign_4 wait_3 wait_2 delay_5 assign_5 filter_instance__assign_1 filter_instance__assign_0 assign_0 assign_1 assign_2 assign_3 delay_0 T0 delay_1 delay_2 wait_1 wait_0 delay_3 
+#|.places P0 P1 P2 P3 P4 filter_instance__P3 P5 filter_instance__P2 P6 filter_instance__P1 P7 filter_instance__P0 P8 P9 P10 P12 P11 P14 P13 P16 P15 filter_instance__P6 filter_instance__P5 filter_instance__P4 
+#@.init_state [000]
 .graph
-cell3__P1 cell3__delay_0
-cell3__delay_0 cell3__P2
-cell3__P4 cell3__delay_1
-cell3__delay_1 cell3__P5
-cell2__P2 cell2__assign_0
-cell2__assign_0 cell2__P3
-cell2__P5 cell2__assign_1
-cell2__assign_1 cell2__P6
+filter_instance__P1 filter_instance__delay_0
+filter_instance__delay_0 filter_instance__P2
+filter_instance__P4 filter_instance__delay_1
+filter_instance__delay_1 filter_instance__P5
+filter_instance__P3 filter_instance__wait_1
+filter_instance__wait_1 filter_instance__P4
+filter_instance__P0 filter_instance__wait_0
+filter_instance__wait_0 filter_instance__P1
+filter_instance__P6 filter_instance__T0
+filter_instance__T0 filter_instance__P0
 P11 delay_4
 delay_4 P12
 P12 assign_4
 assign_4 P13
+P15 wait_3
+wait_3 P16
+P10 wait_2
+wait_2 P11
 P13 delay_5
 delay_5 P14
 P14 assign_5
 assign_5 P15
-P15 delay_6
-delay_6 P16
-P16 assign_6
-assign_6 P17
-cell1__P6 cell1__T0
-cell1__T0 cell1__P0
-P17 delay_7
-delay_7 P18
-P18 assign_7
-assign_7 P19
+filter_instance__P5 filter_instance__assign_1
+filter_instance__assign_1 filter_instance__P6
+filter_instance__P2 filter_instance__assign_0
+filter_instance__assign_0 filter_instance__P3
 P1 assign_0
 assign_0 P2
 P3 assign_1
@@ -41,57 +41,21 @@ P9 assign_3
 assign_3 P10
 P0 delay_0
 delay_0 P1
-P20 T0
+P16 T0
 T0 P0
-cell2__P4 cell2__delay_1
-cell2__delay_1 cell2__P5
 P2 delay_1
 delay_1 P3
-cell2__P1 cell2__delay_0
-cell2__delay_0 cell2__P2
 P5 delay_2
 delay_2 P6
-P8 delay_3
-delay_3 P9
-cell1__P5 cell1__assign_1
-cell1__assign_1 cell1__P6
-cell3__P0 cell3__wait_0
-cell3__wait_0 cell3__P1
-cell1__P4 cell1__delay_1
-cell1__delay_1 cell1__P5
-cell1__P1 cell1__delay_0
-cell1__delay_0 cell1__P2
-cell2__P6 cell2__T0
-cell2__T0 cell2__P0
-cell3__P3 cell3__wait_1
-cell3__wait_1 cell3__P4
-cell3__P2 cell3__assign_0
-cell3__assign_0 cell3__P3
-cell3__P5 cell3__assign_1
-cell3__assign_1 cell3__P6
-P19 wait_3
-wait_3 P20
-P10 wait_2
-wait_2 P11
-cell2__P3 cell2__wait_1
-cell2__wait_1 cell2__P4
-cell3__P6 cell3__T0
-cell3__T0 cell3__P0
-cell2__P0 cell2__wait_0
-cell2__wait_0 cell2__P1
-cell1__P2 cell1__assign_0
-cell1__assign_0 cell1__P3
-cell1__P3 cell1__wait_1
-cell1__wait_1 cell1__P4
 P7 wait_1
 wait_1 P8
 P4 wait_0
 wait_0 P5
-cell1__P0 cell1__wait_0
-cell1__wait_0 cell1__P1
-.marking {cell1__P0 P0 cell3__P0 cell2__P0 }
-#@.enablings {<cell3__delay_0=[true]><cell3__delay_1=[true]><cell2__assign_0=[true]><cell2__assign_1=[true]><delay_4=[true]><assign_4=[true]><delay_5=[true]><assign_5=[true]><delay_6=[true]><assign_6=[true]><cell1__T0=[true]><delay_7=[true]><assign_7=[true]><assign_0=[true]><assign_1=[true]><assign_2=[true]><assign_3=[true]><delay_0=[true]><T0=[true]><cell2__delay_1=[true]><delay_1=[true]><cell2__delay_0=[true]><delay_2=[true]><delay_3=[true]><cell1__assign_1=[true]><cell3__wait_0=[(QS2in&Sensor)]><cell1__delay_1=[true]><cell1__delay_0=[true]><cell2__T0=[true]><cell3__wait_1=[((Sensor=0)&(QS2in=0))]><cell3__assign_0=[true]><cell3__assign_1=[true]><wait_3=[((QS1out=0)&((QS2out=0)&(Actuator=0)))]><wait_2=[Actuator]><cell2__wait_1=[((Sensor=0)&(QS1in=0))]><cell3__T0=[true]><cell2__wait_0=[(QS1in&Sensor)]><cell1__assign_0=[true]><cell1__wait_1=[((Sensor=0)&(Start=0))]><wait_1=[QS2out]><wait_0=[QS1out]><cell1__wait_0=[(Start&Sensor)]>}
-#@.delay_assignments {<cell3__delay_0=[5]><cell3__delay_1=[5]><delay_4=[5.0]><delay_5=[5.0]><delay_6=[5.0]><delay_7=[5.0]><delay_0=[5.0]><cell2__delay_1=[5]><delay_1=[5.0]><cell2__delay_0=[5]><delay_2=[5.0]><delay_3=[5.0]><cell1__delay_1=[5]><cell1__delay_0=[5]>}
-#@.boolean_assignments {<cell2__assign_0=[QS2out:=1]><cell2__assign_1=[QS2out:=0]><assign_4=[Start:=0]><assign_5=[Sensor:=0]><assign_6=[QS1in:=0]><assign_7=[QS2in:=0]><assign_0=[Sensor:=1]><assign_1=[Start:=1]><assign_2=[QS1in:=QS1out]><assign_3=[QS2in:=QS2out]><cell1__assign_1=[QS1out:=0]><cell3__assign_0=[Actuator:=1]><cell3__assign_1=[Actuator:=0]><cell1__assign_0=[QS1out:=1]>}
+P8 delay_3
+delay_3 P9
+.marking {P0 filter_instance__P0 }
+#@.enablings {<filter_instance__delay_0=[true]><filter_instance__delay_1=[true]><filter_instance__wait_1=[(Sensor=0)]><filter_instance__wait_0=[(Start&Sensor)]><filter_instance__T0=[true]><delay_4=[true]><assign_4=[true]><wait_3=[(Actuator=0)]><wait_2=[Actuator]><delay_5=[true]><assign_5=[true]><filter_instance__assign_1=[true]><filter_instance__assign_0=[true]><assign_0=[true]><assign_1=[true]><assign_2=[true]><assign_3=[true]><delay_0=[true]><T0=[true]><delay_1=[true]><delay_2=[true]><wait_1=[(Actuator=0)]><wait_0=[Actuator]><delay_3=[true]>}
+#@.delay_assignments {<filter_instance__delay_0=[5]><filter_instance__delay_1=[5]><delay_4=[5.0]><delay_5=[5.0]><delay_0=[5.0]><delay_1=[5.0]><delay_2=[5.0]><delay_3=[5.0]>}
+#@.boolean_assignments {<assign_4=[Start:=0]><assign_5=[Sensor:=0]><filter_instance__assign_1=[Actuator:=0]><filter_instance__assign_0=[Actuator:=1]><assign_0=[Sensor:=1]><assign_1=[Start:=1]><assign_2=[Sensor:=0]><assign_3=[Sensor:=1]>}
 #@.continuous 
 .end

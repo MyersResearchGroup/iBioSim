@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" comp:required="true" level="3" version="1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-  <model id="filter_imp">
+  <model id="gc_imp">
     <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
-      <comp:port comp:id="filter_imp__Start" comp:idRef="Start" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="filter_imp__Sensor" comp:idRef="Sensor" sboTerm="SBO:0000600"/>
-      <comp:port comp:id="filter_imp__Actuator" comp:idRef="Actuator" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="gc_imp__Start" comp:idRef="Start" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="gc_imp__Sensor" comp:idRef="Sensor" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="gc_imp__Actuator" comp:idRef="Actuator" sboTerm="SBO:0000601"/>
     </comp:listOfPorts>
     <listOfFunctionDefinitions>
       <functionDefinition id="uniform">

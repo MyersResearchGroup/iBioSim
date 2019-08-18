@@ -55,13 +55,13 @@ public class VerilogRunner {
 			}
 			else {
 				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
-
-				for(File file : compilerOptions.getVerilogFiles()) {
-					sbmlLPNConverter.parseVerilogFile(file);
+				for(VerilogModule v : verilogModules.values()) {
+					sbmlLPNConverter.addVerilog(v);
 				}
 
 				VerilogModule impVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getImplementationModuleId());
 				VerilogModule tbVerilog = sbmlLPNConverter.getVerilogModule(compilerOptions.getTestbenchModuleId());
+				
 				LPN lpn = sbmlLPNConverter.compileToLPN(impVerilog, tbVerilog, outputDir);
 				if(compilerOptions.isGenerateLPN()){
 					lpn.save(outputDir + File.separator + compilerOptions.getOutputFileName()  + ".lpn");

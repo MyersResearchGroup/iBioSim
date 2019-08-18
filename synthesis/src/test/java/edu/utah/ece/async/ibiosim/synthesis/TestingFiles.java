@@ -14,6 +14,7 @@ public class TestingFiles {
 	public static String tuFileDir = TestingFiles.class.getResource("tuFiles").getFile();
 	public static String outputDir = TestingFiles.class.getResource("outputFiles").getFile();
 	public static String writeOutputDir = String.join(File.separator, "src", "test", "resources", "edu", "utah", "ece", "async", "ibiosim", "synthesis", "outputFiles");
+	public static String writeLibDir = String.join(File.separator, "src", "test", "resources", "edu", "utah", "ece", "async", "ibiosim", "synthesis", "sbolLibFiles");
 	
 	private static String getVerilogFile(String fileName) {
 		return verilogDir + File.separator + fileName;
@@ -30,22 +31,7 @@ public class TestingFiles {
 	private static String getLibFile(String fileName) {
 		return sbolLibDir + File.separator + fileName;
 	}
-	
-	public static String celloEcoli_tu_File = getTuFile("Cello_ecoli_tu.xml");
-	public static String celloEcoli_tupAmeR_File = getTuFile("Cello_ecoli_tupAmeR.xml");
-	public static String celloEcoli_tupAmtR_File = getTuFile("Cello_ecoli_tupAmtR.xml");
-	public static String celloEcoli_tupBAD_File = getTuFile("Cello_ecoli_tupBAD.xml");
-	public static String celloEcoli_tupBetI_File = getTuFile("Cello_ecoli_tupBetI.xml");
-	public static String celloEcoli_tupBM3R1_File = getTuFile("Cello_ecoli_tupBM3R1.xml");
-	public static String celloEcoli_tupHlyIIR_File = getTuFile("Cello_ecoli_tupHlyIIR.xml");
-	public static String celloEcoli_tupIcaRA_File = getTuFile("Cello_ecoli_tupIcaRA.xml");
-	public static String celloEcoli_tupLitR_File = getTuFile("Cello_ecoli_tupLitR.xml");
-	public static String celloEcoli_tupPhlF_File = getTuFile("Cello_ecoli_tupPhlF.xml");
-	public static String celloEcoli_tupPsrA_File = getTuFile("Cello_ecoli_tupPsrA.xml");
-	public static String celloEcoli_tupQacR_File = getTuFile("Cello_ecoli_tupQacR.xml");
-	public static String celloEcoli_tupSrpR_File = getTuFile("Cello_ecoli_tupSrpR.xml");
-	public static String celloEcoli_tuReporter_File = getTuFile("Cello_ecoli_tuReporter.xml");
-	public static String celloEcoli_tuSensor_File = getTuFile("Cello_ecoli_tuSensor.xml");
+
 	
 	public static String notTU1_Size1_File = getTuFile("NotTu1_Size1.xml");
 	public static String notTU2_Size2_File = getTuFile("NotTu2_Size2.xml");
@@ -60,6 +46,7 @@ public class TestingFiles {
 	public static String sbolDecompAND_File = getSpecFile("and_decomposed.xml"); 
 	public static String sbolDecompOR_File = getSpecFile("or_decomposed.xml"); 
 	public static String sbolDecompSRLatch_File = getSpecFile("srlatch_decomposed.xml"); 
+	public static String sbolNandDecompSRLatch_File = getSpecFile("srlatch_nandDecomposed.xml"); 
 
 	public static String NOT_LibSize1 = getLibFile("NOTGates_LibrarySize1.xml"); 
 	public static String NOT_LibSize2 = getLibFile("NOTGates_LibrarySize2.xml"); 
@@ -72,6 +59,7 @@ public class TestingFiles {
 	public static String tetRNOR_LibSize1 = getLibFile("tetRNORGates_LibrarySize1.xml"); 
 	public static String yfp1NOT_LibSize1 = getLibFile("yfp1NOTGates_LibrarySize1.xml"); 
 	public static String yfp2NOT_LibSize1 = getLibFile("yfp2NOTGates_LibrarySize1.xml"); 
+	public static String srlatchNand_Lib = getLibFile("srlatchNand_allGates.xml"); 
 	
 	public static String verilogAlwaysBlock_File = getVerilogFile("always_block.v");
 	public static String verilogAssign_File = getVerilogFile("assign.v");
@@ -94,6 +82,15 @@ public class TestingFiles {
 	public static String verilogSystemFunc3_File = getVerilogFile("system_func3.v");
 	public static String verilogWaitStmt_File = getVerilogFile("wait_stmt.v");
 	public static String verilogWaitStmt2_File = getVerilogFile("wait_stmt2.v");
+
+	public static String verilogSRLatch_impFile = getVerilogFile("srlatch_imp.v");
+	public static String verilogSRLatch_tbFile = getVerilogFile("srlatch_testbench.v");
+	public static String verilogEvenZeroes_impFile = getVerilogFile("evenZeroes_imp.v");
+	public static String verilogEvenZeroes_tbFile = getVerilogFile("evenZeroes_testbench.v");
+	public static String verilogFilter_impFile = getVerilogFile("gc_imp.v");
+	public static String verilogFilter_tbFile = getVerilogFile("gc_testbench.v");
+	public static String verilogLfsr_impFile = getVerilogFile("lfsr_imp.v");
+	public static String verilogLfsr_tbFile = getVerilogFile("lfsr_testbench.v");
 	
 	public static String verilogNotDecomp_File = getVerilogFile("not_decomposed.v");
 	public static String verilogAndDecomp_File = getVerilogFile("and_decomposed.v");
@@ -101,23 +98,7 @@ public class TestingFiles {
 	public static String verilogNorDecomp_File = getVerilogFile("cont6_decomposed.v");
 	public static String verilogCont7Decomp_File = getVerilogFile("cont7_decomposed.v");
 	public static String verilogSrLatchDecomp_File = getVerilogFile("srlatch_decomposed.v");
-	public static String verilogFilterDecomp_File = getVerilogFile("filter_decomposed.v");
+	public static String verilogSrLatchNandDecomp_File = getVerilogFile("srlatchNand_decomposed.v");
 
-	public static String verilogCounter_impFile = getVerilogFile("counter_imp.v");
-	public static String verilogCounter_tbFile = getVerilogFile("counter_testbench.v");
-	public static String verilogEvenZero_impFile = getVerilogFile("evenZeroes_imp.v");
-	public static String verilogEvenZero_tbFile = getVerilogFile("evenZeroes_testbench.v");
-	public static String verilogFilter_impFile = getVerilogFile("gC_imp.v");
-	public static String verilogFilter_tbFile = getVerilogFile("filter_testbench.v");
-	public static String verilogLFSR_impFile = getVerilogFile("lfsr_imp.v");
-	public static String verilogLFSR_tbFile = getVerilogFile("lfsr_testbench.v");
-	public static String verilogMultThree_impFile = getVerilogFile("multThree_imp.v");
-	public static String verilogMultThree_tbFile = getVerilogFile("multThree_testbench.v");
-	public static String verilogScanflop_impFile = getVerilogFile("scanflop_imp.v");
-	public static String verilogScanflop_tbFile = getVerilogFile("scanflop_testbench.v");
-	public static String verilogSRLatch_impFile = getVerilogFile("srlatch_imp.v");
-	public static String verilogSRLatch_tbFile = getVerilogFile("srlatch_testbench.v");
-	public static String verilog_gts_impFile= getVerilogFile("gts_imp.v");
-	public static String verilog_gts_tbFile = getVerilogFile("gts_testbench.v");
 
 }
