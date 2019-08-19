@@ -42,4 +42,23 @@ public class Workflow_Test {
 		
 		SBOLTechMapRunner.main(cmd);
 	}
+	
+	@Test 
+	public void Test_gc() {
+		String files = "/Users/tramyn/Desktop/TechMap/filterLib_cell3";
+		String spec = "/Users/tramyn/Desktop/TechMap/gc_nandDecomposed.xml";
+		String[] preselect = new String[] {
+				"http://dummy.org/MD0Start_Sensor_Actuator_net/FC2_Actuator/1.0",
+				"https://synbiohub.programmingbiology.org/public/Cello_Parts/SrpR_protein/1",
+				"http://dummy.org/MD0Start_Sensor_Actuator_net/FC0_Sensor/1.0",
+				"https://synbiohub.programmingbiology.org/public/Cello_Parts/LacI_protein/1", 
+				"http://dummy.org/MD0Start_Sensor_Actuator_net/FC1_Start/1.0",
+				"https://synbiohub.programmingbiology.org/public/Cello_Parts/AmtR_protein/1",
+		};
+		String[] cmd = {"-l", files, "-s", spec, "-g", "-nsol", "3",
+				"-ps", String.join(" ", preselect),
+				"-od", TestingFiles.writeOutputDir, "-o", "gcTm"};
+		
+		SBOLTechMapRunner.main(cmd);
+	}
 }

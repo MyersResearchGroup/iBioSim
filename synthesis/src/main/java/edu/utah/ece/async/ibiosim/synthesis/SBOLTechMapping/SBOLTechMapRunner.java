@@ -183,7 +183,11 @@ public class SBOLTechMapRunner {
 			int index = 0;
 			for( ; index < preselection.length; index++) {
 				if(index+1 < preselection.length) {
-					techMapOptions.addPreselection(preselection[index], preselection[++index]);
+					String nodeId = preselection[index];
+					String cd = preselection[++index];
+					System.out.println("ps node: " + nodeId);
+					System.out.println("ps cd: " + cd);
+					techMapOptions.addPreselection(nodeId, cd);
 				}
 			}
 		}
@@ -192,7 +196,7 @@ public class SBOLTechMapRunner {
 	}
 	
 	private static Options getCommandLineOptions() {
-		Option libFiles = new Option("l", "library", true, "A list of files or a directory of genetic gates used for technology mapping");
+		Option libFiles = new Option("l", "library", true, "A file or a directory of genetic gates used for technology mapping");
 		libFiles.setValueSeparator(separator);
 		Option preselect = new Option("ps",  "preselect", true, "Select nodes in the specification and assign with a ComponentDefinition URI.");
 		preselect.setValueSeparator(separator);

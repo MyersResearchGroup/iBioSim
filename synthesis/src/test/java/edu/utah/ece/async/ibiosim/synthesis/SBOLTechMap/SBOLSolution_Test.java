@@ -112,7 +112,7 @@ public class SBOLSolution_Test {
 		
 		Match m = new DirectMatch(specGraph, libGraph);
 		Cover c = new Cover(m);
-		TechMapSolution branchAndBoundSolution = c.branchAndBoundCover();	
+		TechMapSolution branchAndBoundSolution = c.greedyCover(1).get(0);	
 		SBOLNetList sbolSol = new SBOLNetList(specGraph, branchAndBoundSolution);
 		SBOLDocument result = sbolSol.generateSbol();
 		Assert.assertTrue(result.getModuleDefinitions().size() == 16);

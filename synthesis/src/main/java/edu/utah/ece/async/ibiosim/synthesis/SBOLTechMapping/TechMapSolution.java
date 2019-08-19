@@ -1,5 +1,6 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -18,7 +19,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 public class TechMapSolution implements Solution, Comparable<Solution> {
 	private double score;
 	private Map<DecomposedGraphNode, GeneticGate> assignedNodes;
-	private Map<DecomposedGraphNode, ComponentDefinition> mapOfAssignedNodes;
+	private Map<DecomposedGraphNode, URI> mapOfAssignedNodes;
 	private Queue<DecomposedGraphNode> nodeQueue;
 	
 	public TechMapSolution() {
@@ -71,22 +72,11 @@ public class TechMapSolution implements Solution, Comparable<Solution> {
 
 	
 
-	/**
-	 * Get the ComponentDefinition that was assigned to the given {@link DecomposedGraphNode}.
-	 * @param node A {@link DecomposedGraphNode}
-	 * @return A {@link ComponentDefinition} that is assigned to the given {@link DecomposedGraphNode}. 
-	 * Null is returned if the {@link DecomposedGraphNode} was not found or no {@link ComponentDefinition} was assigned to the given {@link DecomposedGraphNode}.
-	 */
-	public ComponentDefinition getAssignedComponent(DecomposedGraphNode node) {
+	public URI getAssignedComponent(DecomposedGraphNode node) {
 		return mapOfAssignedNodes.get(node);
 	}
 
-	/**
-	 * Assign the given {@link DecomposedGraphNode} with the given {@link ComponentDefinition}.
-	 * @param node The {@link DecomposedGraphNode} that the {@link ComponentDefinition} is assigned to.
-	 * @param component The {@link ComponentDefinition} that the {@link DecomposedGraphNode} is assigned with.
-	 */
-	public void assignComponentToNode(DecomposedGraphNode node, ComponentDefinition component) {
+	public void assignComponentToNode(DecomposedGraphNode node, URI component) {
 		mapOfAssignedNodes.put(node, component);
 	}
 	

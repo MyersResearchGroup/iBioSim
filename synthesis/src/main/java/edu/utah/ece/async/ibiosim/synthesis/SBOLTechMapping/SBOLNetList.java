@@ -1,9 +1,12 @@
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.sbolstandard.core2.AccessType;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -24,91 +27,154 @@ public class SBOLNetList {
 
 	private TechMapSolution solution;
 	private DecomposedGraph specGraph;
-	private SBOLDocument sbolDoc;
-	private ModuleDefinition topLevelCircuit;
-	private	Map<ComponentDefinition, FunctionalComponent> topLevelIOMapping;
-	private HashSet<DecomposedGraphNode> visited;
+	private int mapsToCounter, fcCounter, moduleCounter;
+
 
 	public SBOLNetList(DecomposedGraph specGraph, TechMapSolution solution) {
 		this.specGraph = specGraph;
-		this.solution = solution;
-		SBOLDocument doc = SBOLUtility.getSBOLUtility().createSBOLDocument();
-		this.sbolDoc = doc;
-		this.topLevelIOMapping = new HashMap<>();
-		this.visited = new HashSet<>();
+		this.solution = solution; 
+
+	}
+
+	public List<GateConnection> getTopLevelConnections() throws SBOLValidationException {
+		List<GateConnection> gateConnections = new ArrayList<>();
+		Map<ComponentDefinition, TopLevelConnection> topLevelIOMapping = new HashMap<>();
+		HashSet<DecomposedGraphNode> visited = new HashSet<>();
+		Queue<DecomposedGraphNode> queue = new LinkedList<>();
+		DecomposedGraphNode currNode = specGraph.getRootNode();
+		queue.add(currNode);
+
+		while(!queue.isEmpty())
+		{
+			currNode = queue.poll();
+			if(visited.contains(currNode)) {
+				continue;
+			}
+			visited.add(currNode);
+			GeneticGate gate = solution.getGateFromNode(currNode);
+			if(gate != null) {
+				GateConnection gc = new GateConnection(gate);
+				
+				for(FunctionalComponent fc : gate.getListOfInputs()) {
+					ComponentDefinition cd = fc.getDefinition();
+					if(topLevelIOMapping.containsKey(cd)) {
+
+						TopLevelConnection topLevelFc = topLevelIOMapping.get(cd);
+						if(topLevelFc.dirType == DirectionType.OUT) {
+							topLevelFc.dirType = DirectionType.INOUT;
+						}
+						gc.addConnection(topLevelFc);
+						topLevelFc.addGateFc(gate, fc);
+					}
+					else {
+						TopLevelConnection connection = new TopLevelConnection(cd, DirectionType.IN);
+						topLevelIOMapping.put(cd, connection);
+						gc.addConnection(connection);
+						connection.addGateFc(gate, fc);
+					}
+				}
+
+				for(FunctionalComponent fc : gate.getListOfOutputs()) {
+					ComponentDefinition cd = fc.getDefinition();
+					if(topLevelIOMapping.containsKey(cd)) {
+						TopLevelConnection topLevelFc = topLevelIOMapping.get(cd);
+						if(topLevelFc.dirType == DirectionType.IN) {
+							topLevelFc.dirType = DirectionType.INOUT;
+						}
+						gc.addConnection(topLevelFc);
+						topLevelFc.addGateFc(gate, fc);
+					}
+					else {
+						TopLevelConnection connection = new TopLevelConnection(cd, DirectionType.OUT);
+						topLevelIOMapping.put(cd, connection);
+						gc.addConnection(connection);
+						connection.addGateFc(gate, fc);
+					}
+				}
+				List<DecomposedGraphNode> nextSpecNode = EndNode.getMatchingEndNodes(currNode, gate.getDecomposedGraph().getRootNode());
+				for(DecomposedGraphNode n : nextSpecNode) {
+					queue.add(n);
+				}
+				gateConnections.add(gc);
+			}
+			
+		}
+		return gateConnections;
+		
 	}
 
 	public SBOLDocument generateSbol() throws SBOLValidationException {
-		topLevelCircuit = sbolDoc.createModuleDefinition(specGraph.getGraphId(), "1.0");
+		SBOLDocument doc = SBOLUtility.getSBOLUtility().createSBOLDocument();
+		ModuleDefinition topLevelCircuit = doc.createModuleDefinition(specGraph.getGraphId(), "1.0");
 		
-		genSBOLrecurs(specGraph.getRootNode(), getDirectionType(specGraph.getRootNode()));
-		return sbolDoc;
-	}
+		Map<TopLevelConnection, FunctionalComponent> fcMap = new HashMap<>();
+		List<GateConnection> listOfGateConnections = getTopLevelConnections();
 
-	private void genSBOLrecurs(DecomposedGraphNode node, DirectionType directionType) throws SBOLValidationException {
-		GeneticGate gate = solution.getGateFromNode(node);
-		if(gate == null || visited.contains(node)) {
-			return;
-		}
-		
-		//add gate to solution
-		gate.getSBOLDocument().createRecursiveCopy(sbolDoc, gate.getModuleDefinition());
-		ModuleDefinition gateMd = sbolDoc.getModuleDefinition(gate.getModuleDefinition().getIdentity());
-		Module gateInstance = topLevelCircuit.createModule(gateMd.getDisplayId() + "_", gateMd.getIdentity());
-		visited.add(node);
-		
-		//get next spec node
-		List<DecomposedGraphNode> nextSpecNode = EndNode.getMatchingEndNodes(node, gate.getDecomposedGraph().getRootNode());
-		for(DecomposedGraphNode childSpec : nextSpecNode) {
-			createToplevelFc(childSpec);
-		}
-		mapIOSignals(gate.getListOfOutputs(), gateInstance, directionType);
-		mapIOSignals(gate.getListOfInputs(), gateInstance, directionType);
-		
-		for(DecomposedGraphNode childSpec : nextSpecNode) {
-			genSBOLrecurs(childSpec, getDirectionType(childSpec));
-		}
-	}
-	
-	private FunctionalComponent createToplevelFc(DecomposedGraphNode node) throws SBOLValidationException {
-		ComponentDefinition cd = solution.getAssignedComponent(node);
-		FunctionalComponent topLevelFc = null;
-		if(topLevelIOMapping.containsKey(cd)) {
-			topLevelFc = topLevelIOMapping.get(cd);
-		}
-		else {
-			DirectionType directionType = getDirectionType(node);
-			topLevelFc = topLevelCircuit.createFunctionalComponent(cd.getDisplayId(), AccessType.PUBLIC, cd.getIdentity(), directionType);
-			topLevelIOMapping.put(cd, topLevelFc);
-		}
-		return topLevelFc;
-	}
-	
-	private void mapIOSignals(List<FunctionalComponent> signals, Module gateInstance, DirectionType directionType) throws SBOLValidationException {
-		for(FunctionalComponent fc : signals) {
-			FunctionalComponent topLevelFc = null;
-			if(topLevelIOMapping.containsKey(fc.getDefinition())) {
-				topLevelFc = topLevelIOMapping.get(fc.getDefinition());
+		for(GateConnection gc : listOfGateConnections) {
+			GeneticGate gate = gc.gate;
+			gate.getSBOLDocument().createRecursiveCopy(doc, gate.getModuleDefinition());
+			ModuleDefinition gateMd = doc.getModuleDefinition(gate.getModuleDefinition().getIdentity());
+			Module gateInstance = topLevelCircuit.createModule(getModuleCounter() + gateMd.getDisplayId(), gateMd.getIdentity());
+			
+			List<TopLevelConnection> connections = gc.connections;
+			for(TopLevelConnection c : connections) {
+				if(!fcMap.containsKey(c)) {
+					fcMap.put(c, topLevelCircuit.createFunctionalComponent(getFcCounter() + c.cd.getDisplayId(), AccessType.PUBLIC, c.cd.getIdentity(), c.dirType));
+						
+				}
+				FunctionalComponent topFc = fcMap.get(c);
+				gateInstance.createMapsTo(getMapsToCounter() + c.cd.getDisplayId(), RefinementType.VERIFYIDENTICAL, topFc.getIdentity(), c.gateFcMap.get(gate).getIdentity());
 			}
-			else {
-				topLevelFc = topLevelCircuit.createFunctionalComponent(fc.getDisplayId(), AccessType.PUBLIC, fc.getDefinition().getIdentity(), directionType);
-				topLevelIOMapping.put(fc.getDefinition(), topLevelFc);
-			}
-			gateInstance.createMapsTo("MT_" + fc.getDisplayId(), RefinementType.VERIFYIDENTICAL, topLevelFc.getIdentity(), fc.getIdentity());
+			
 			
 		}
-	}
-	
-	private DirectionType getDirectionType(DecomposedGraphNode node) {
-		if(specGraph.isLeaf(node)) {
-			return DirectionType.IN;
-		}
-		else if(specGraph.isRoot(node)) {
-			return DirectionType.OUT;
-		}
-		return DirectionType.INOUT;
+		
+		return doc;
+
 	}
 	
 
+
+	private String getFcCounter() {
+		return "FC" + this.fcCounter++ + "_";
+	}
+
+	private String getMapsToCounter() {
+		return "MT" + this.mapsToCounter++ + "_";
+	}
+
+	private String getModuleCounter() {
+		return "M" + this.moduleCounter++ + "_";
+	}
+	
+	private class GateConnection{
+		GeneticGate gate;
+		List<TopLevelConnection> connections;
+		
+		GateConnection(GeneticGate g){
+			this.gate = g;
+			this.connections = new ArrayList<>();
+		}
+		
+		void addConnection(TopLevelConnection c) {
+			connections.add(c);
+		}
+	}
+
+	private class TopLevelConnection{
+		ComponentDefinition cd;
+		DirectionType dirType;
+		Map<GeneticGate, FunctionalComponent> gateFcMap;
+		
+		TopLevelConnection(ComponentDefinition cd, DirectionType dirType){
+			this.cd = cd;
+			this.dirType = dirType;
+			this.gateFcMap = new HashMap<>();
+		}
+		
+		void addGateFc(GeneticGate gate, FunctionalComponent fc) {
+			this.gateFcMap.put(gate, fc);
+		}
+	}
 
 }

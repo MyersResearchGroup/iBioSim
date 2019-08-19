@@ -17,30 +17,30 @@ public class DecomposedGraphNode {
 	private Optional<ComponentDefinition> cd;
 	private Optional<URI> preselectedCdUri;
 	private double score; 
-	Map<DecomposedGraphNode, NodeInteractionType> parentNodeList, childrenNodeList;
+	Map<DecomposedGraphNode, NodeInteractionType> parentNodeMap, childrenNodeMap;
 
 	public DecomposedGraphNode(){
 		fc = Optional.empty();
 		cd = Optional.empty();
 		preselectedCdUri = Optional.empty();
-		parentNodeList = new HashMap<>();
-		childrenNodeList = new HashMap<>();
+		parentNodeMap = new HashMap<>();
+		childrenNodeMap = new HashMap<>();
 	}
 
 	public DecomposedGraphNode(FunctionalComponent fc){
 		this.fc = Optional.of(fc);
 		this.cd = Optional.of(fc.getDefinition());
 		preselectedCdUri = Optional.empty();
-		parentNodeList = new HashMap<>();
-		childrenNodeList = new HashMap<>();
+		parentNodeMap = new HashMap<>();
+		childrenNodeMap = new HashMap<>();
 	}
 	
 	public List<DecomposedGraphNode> getParentNodeList() {
-		return Lists.newArrayList(this.parentNodeList.keySet());
+		return Lists.newArrayList(this.parentNodeMap.keySet());
 	}
 
-	public List<DecomposedGraphNode> getChildrenNodeList(){ this.childrenNodeList.keySet();
-		return Lists.newArrayList(this.childrenNodeList.keySet());
+	public List<DecomposedGraphNode> getChildrenNodeList(){ this.childrenNodeMap.keySet();
+		return Lists.newArrayList(this.childrenNodeMap.keySet());
 	}
 	
 	public void setPreselectedComponentDefinition(URI cdUri) {
@@ -70,17 +70,17 @@ public class DecomposedGraphNode {
 
 
 	public NodeInteractionType getParentInteractionType(DecomposedGraphNode n) throws GeneticGatesException {
-		if(!parentNodeList.containsKey(n)) {
+		if(!parentNodeMap.containsKey(n)) {
 			throw new GeneticGatesException("The given DecomposedGraphNode is not identified as a parent of this DecomposedGraphNode.");
 		}
-		return parentNodeList.get(n);
+		return parentNodeMap.get(n);
 	}
 
 	public NodeInteractionType getChildInteractionType(DecomposedGraphNode n) throws GeneticGatesException {
-		if(!childrenNodeList.containsKey(n)) {
+		if(!childrenNodeMap.containsKey(n)) {
 			throw new GeneticGatesException("The given DecomposedGraphNode is not identified as a child of this DecomposedGraphNode.");
 		}
-		return childrenNodeList.get(n);
+		return childrenNodeMap.get(n);
 	}
 	
 	public boolean isNodePreselected() {

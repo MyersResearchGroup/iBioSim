@@ -2,6 +2,7 @@ package edu.utah.ece.async.ibiosim.synthesis.GeneticGates;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -59,8 +60,8 @@ public class DecomposedGraph {
 	}
 
 	public void addNodeRelationship(DecomposedGraphNode parent, DecomposedGraphNode child, NodeInteractionType interactionType) {
-		parent.childrenNodeList.put(child, interactionType);
-		child.parentNodeList.put(parent, interactionType);
+		parent.childrenNodeMap.put(child, interactionType);
+		child.parentNodeMap.put(parent, interactionType);
 	}
 	
 	public void addAllNodes(DecomposedGraphNode... nodes) {
@@ -83,60 +84,61 @@ public class DecomposedGraph {
 		}
 	}
 	
-	/**
-	 * Sort from bottom leaf nodes to root nodes
-	 * @return Nodes sorted in topological order
-	 */
+	
 	public List<DecomposedGraphNode> topologicalSort()
 	{
 		List<DecomposedGraphNode> sortedElements = new ArrayList<DecomposedGraphNode>();
 		Queue<DecomposedGraphNode> unsortedElements = new LinkedList<DecomposedGraphNode>();
-		unsortedElements.addAll(leafNodeList);
+		unsortedElements.add(outputNode);
 
 		while(!unsortedElements.isEmpty())
 		{
-			DecomposedGraphNode currentUnsortedNode = unsortedElements.poll();
-			if(sortedElements.contains(currentUnsortedNode))
+			DecomposedGraphNode currNode = unsortedElements.poll();
+			if(sortedElements.contains(currNode)) {
 				continue;
-			sortedElements.add(currentUnsortedNode);
-			for(DecomposedGraphNode currentUnsortedParentNode : currentUnsortedNode.parentNodeList.keySet()) {
-				if(currentUnsortedParentNode.childrenNodeList.size() == 1) {
-					unsortedElements.add(currentUnsortedParentNode);
-					break;
-				}
-				else if(currentUnsortedParentNode.childrenNodeList.size() == 2){
-					List<DecomposedGraphNode> childrenNodes = Lists.newArrayList(currentUnsortedParentNode.childrenNodeList.keySet());
-					DecomposedGraphNode child1 = childrenNodes.get(0);
-					DecomposedGraphNode child2 = childrenNodes.get(1);
-
-					if(sortedElements.containsAll(childrenNodes)) {
-						unsortedElements.add(currentUnsortedParentNode);
-					}
-					else if(childrenNodes.contains(currentUnsortedNode)) {
-						DecomposedGraphNode temp = null;
-						if(sortedElements.contains(child1) && !sortedElements.contains(child2)) {
-							temp = child2;
-						}
-						else if(sortedElements.contains(child2) && !sortedElements.contains(child1)){
-							temp = child1;
-						}
-						
-						if(unsortedElements.contains(temp)) {
-							sortedElements.add(temp);
-							unsortedElements.add(currentUnsortedParentNode);
-						}
-						else {
-							unsortedElements.add(currentUnsortedParentNode);
-						}
-						
-
-					}
-					else {
-						unsortedElements.add(currentUnsortedNode);
-					}
-				}
+			}
+			
+			sortedElements.add(currNode);
+			for(DecomposedGraphNode childNode : currNode.childrenNodeMap.keySet()) {
+				unsortedElements.add(childNode);
+//				if(childNode.childrenNodeMap.size() == 1) {
+//					unsortedElements.add(childNode);
+//					break;
+//				}
+//				else if(childNode.childrenNodeMap.size() == 2){
+//					List<DecomposedGraphNode> childrenNodes = Lists.newArrayList(childNode.childrenNodeMap.keySet());
+//					DecomposedGraphNode child1 = childrenNodes.get(0);
+//					DecomposedGraphNode child2 = childrenNodes.get(1);
+//
+//					if(sortedElements.containsAll(childrenNodes)) {
+//						unsortedElements.add(childNode);
+//					}
+//					else if(childrenNodes.contains(currNode)) {
+//						DecomposedGraphNode temp = null;
+//						if(sortedElements.contains(child1) && !sortedElements.contains(child2)) {
+//							temp = child2;
+//						}
+//						else if(sortedElements.contains(child2) && !sortedElements.contains(child1)){
+//							temp = child1;
+//						}
+//						
+//						if(unsortedElements.contains(temp)) {
+//							sortedElements.add(temp);
+//							unsortedElements.add(childNode);
+//						}
+//						else {
+//							unsortedElements.add(childNode);
+//						}
+//						
+//
+//					}
+//					else {
+//						unsortedElements.add(currNode);
+//					}
+//				}
 			} 
 		} 
+		Collections.reverse(sortedElements);
 		return sortedElements;
 	}
 	
