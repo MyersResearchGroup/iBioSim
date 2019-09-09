@@ -101,41 +101,6 @@ public class DecomposedGraph {
 			sortedElements.add(currNode);
 			for(DecomposedGraphNode childNode : currNode.childrenNodeMap.keySet()) {
 				unsortedElements.add(childNode);
-//				if(childNode.childrenNodeMap.size() == 1) {
-//					unsortedElements.add(childNode);
-//					break;
-//				}
-//				else if(childNode.childrenNodeMap.size() == 2){
-//					List<DecomposedGraphNode> childrenNodes = Lists.newArrayList(childNode.childrenNodeMap.keySet());
-//					DecomposedGraphNode child1 = childrenNodes.get(0);
-//					DecomposedGraphNode child2 = childrenNodes.get(1);
-//
-//					if(sortedElements.containsAll(childrenNodes)) {
-//						unsortedElements.add(childNode);
-//					}
-//					else if(childrenNodes.contains(currNode)) {
-//						DecomposedGraphNode temp = null;
-//						if(sortedElements.contains(child1) && !sortedElements.contains(child2)) {
-//							temp = child2;
-//						}
-//						else if(sortedElements.contains(child2) && !sortedElements.contains(child1)){
-//							temp = child1;
-//						}
-//						
-//						if(unsortedElements.contains(temp)) {
-//							sortedElements.add(temp);
-//							unsortedElements.add(childNode);
-//						}
-//						else {
-//							unsortedElements.add(childNode);
-//						}
-//						
-//
-//					}
-//					else {
-//						unsortedElements.add(currNode);
-//					}
-//				}
 			} 
 		} 
 		Collections.reverse(sortedElements);

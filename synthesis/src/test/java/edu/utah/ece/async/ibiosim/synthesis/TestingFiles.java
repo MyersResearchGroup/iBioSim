@@ -33,6 +33,8 @@ public class TestingFiles {
 	}
 
 	
+	public static String tetRSensor_Size1_File = getTuFile("Cello_ecoli_tuTetRSensor.xml");
+	public static String lacISensor_Size1_File = getTuFile("Cello_ecoli_tulacISensor.xml");
 	public static String notTU1_Size1_File = getTuFile("NotTu1_Size1.xml");
 	public static String notTU2_Size2_File = getTuFile("NotTu2_Size2.xml");
 	public static String norTU2_Size1_File = getTuFile("Nor_LacI_TU_v2.xml");
@@ -91,6 +93,8 @@ public class TestingFiles {
 	public static String verilogFilter_tbFile = getVerilogFile("gc_testbench.v");
 	public static String verilogLfsr_impFile = getVerilogFile("lfsr_imp.v");
 	public static String verilogLfsr_tbFile = getVerilogFile("lfsr_testbench.v");
+	public static String verilogCounter_impFile = getVerilogFile("2bitCounter_imp.v");
+	public static String verilogCounter_tbFile = getVerilogFile("2bitCounter_tb.v");
 	
 	public static String verilogNotDecomp_File = getVerilogFile("not_decomposed.v");
 	public static String verilogAndDecomp_File = getVerilogFile("and_decomposed.v");

@@ -72,7 +72,7 @@ public class SBOLTechMapRunner {
 			System.out.println("Performing Covering Step");
 			Cover c = new Cover(m);
 			
-			String outDir = techMapOptions.getOutputDir() + File.separator;
+			String outPath = techMapOptions.getOutputDir() + File.separator + techMapOptions.getOuputFileName();
 			if(techMapOptions.isExhaustive()) {
 				List<TechMapSolution> coverSols = c.exhaustiveCover();
 				System.out.println(m.getGateList(specGraph.getRootNode()).size() + " mSize");
@@ -82,7 +82,7 @@ public class SBOLTechMapRunner {
 					if(eSol.getScore() != 0.0) {
 						SBOLNetList sbolSol = new SBOLNetList(specGraph, eSol);
 						SBOLDocument result = sbolSol.generateSbol();
-						SBOLWriter.write(result, outDir + specGraph.getGraphId() + "Sol" + count++ + ".xml" );
+						SBOLWriter.write(result, outPath + count++ + ".xml" );
 					}
 				}
 			}
@@ -97,7 +97,7 @@ public class SBOLTechMapRunner {
 					if(gSol.getScore() != 0.0) {
 						SBOLNetList sbolSol = new SBOLNetList(specGraph, gSol);
 						SBOLDocument result = sbolSol.generateSbol();
-						SBOLWriter.write(result, outDir + specGraph.getGraphId() + "Sol" + count++ + ".xml" );
+						SBOLWriter.write(result, outPath + count++ + ".xml" );
 					}
 				}
 			}
@@ -110,7 +110,7 @@ public class SBOLTechMapRunner {
 					System.out.println("Best Solution found!");
 					SBOLNetList sbolSol = new SBOLNetList(specGraph, bbSol);
 					SBOLDocument result = sbolSol.generateSbol();
-					SBOLWriter.write(result, outDir + techMapOptions.getOuputFileName() + ".xml");
+					SBOLWriter.write(result, outPath + ".xml");
 				}
 			}
 			System.out.println("Tech. map complete!");

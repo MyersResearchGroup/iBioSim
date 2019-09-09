@@ -28,10 +28,10 @@ public class Workflow_Test {
 	
 	@Test 
 	public void Test_playground() {
-		String files = String.join(" ", TestingFiles.verilogLfsr_impFile, TestingFiles.verilogLfsr_tbFile);
+		String files = String.join(" ", TestingFiles.verilogCounter_impFile, TestingFiles.verilogCounter_tbFile);
 		String[] cmd = {"-v", files,
-						"-imp", "lfsr_imp", "-tb", "lfsr_testbench", 
-						"-lpn", "-od", TestingFiles.writeOutputDir, "-o", "lfsr"};
+						"-imp", "counter_imp", "-tb", "counter_testbench", 
+						"-lpn", "-od", TestingFiles.writeOutputDir, "-o", "counter"};
 		
 		VerilogRunner.main(cmd);
 	}

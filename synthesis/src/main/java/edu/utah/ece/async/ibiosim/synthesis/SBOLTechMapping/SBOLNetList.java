@@ -59,12 +59,12 @@ public class SBOLNetList {
 					ComponentDefinition cd = fc.getDefinition();
 					if(topLevelIOMapping.containsKey(cd)) {
 
-						TopLevelConnection topLevelFc = topLevelIOMapping.get(cd);
-						if(topLevelFc.dirType == DirectionType.OUT) {
-							topLevelFc.dirType = DirectionType.INOUT;
+						TopLevelConnection connection = topLevelIOMapping.get(cd);
+						if(connection.dirType == DirectionType.OUT) {
+							connection.dirType = DirectionType.INOUT;
 						}
-						gc.addConnection(topLevelFc);
-						topLevelFc.addGateFc(gate, fc);
+						gc.addConnection(connection);
+						connection.addGateFc(gate, fc);
 					}
 					else {
 						TopLevelConnection connection = new TopLevelConnection(cd, DirectionType.IN);

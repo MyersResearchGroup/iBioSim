@@ -32,7 +32,7 @@ public class Cover {
 	}
 
 	public List<TechMapSolution> exhaustiveCover() throws GeneticGatesException {
-		return cover_(Integer.MAX_VALUE, false);
+		return baseCover(Integer.MAX_VALUE, false);
 	}
 	
 	private TechMapSolution getInitialSolution() {
@@ -48,7 +48,7 @@ public class Cover {
 		return currentSolution;
 	}
 
-	private List<TechMapSolution> cover_(int numOfSol, boolean sortMatches) throws GeneticGatesException {
+	private List<TechMapSolution> baseCover(int numOfSol, boolean sortMatches) throws GeneticGatesException {
 		Queue<TechMapSolution> queueOfSol = new LinkedList<>();
 		List<TechMapSolution> listOfSolutions = new ArrayList<>();
 		DecomposedGraph specGraph  = matches.getSpecification();
@@ -190,7 +190,7 @@ public class Cover {
 
 	public List<TechMapSolution> greedyCover(int numOfSolutions) throws GeneticGatesException {
 		
-		return cover_(numOfSolutions, true);
+		return baseCover(numOfSolutions, true);
 	}
 	
 	private boolean isSolutionComplete(DecomposedGraph specGraph, TechMapSolution solution) {

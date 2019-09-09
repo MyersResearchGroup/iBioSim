@@ -9,9 +9,9 @@ module gc_imp (Start, Sensor, Actuator);
 	end
 
    always begin
-      wait (Start == 1'b1 && Sensor == 1'b1);
+      wait (Start == 1'b0 && Sensor == 1'b0);
       #5 Actuator = 1'b1;
-      wait (Sensor == 1'b0);
+      wait (Sensor == 1'b1);
       #5 Actuator = 1'b0;
    end
 

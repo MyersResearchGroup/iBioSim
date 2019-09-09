@@ -1,0 +1,79 @@
+.inputs start 
+.outputs ack 
+.internal counter_instance__count1 counter_instance__count0 
+.dummy counter_instance__T5 counter_instance__T4 counter_instance__delay_3 counter_instance__T1 counter_instance__delay_2 counter_instance__T0 counter_instance__delay_1 counter_instance__T3 counter_instance__wait_1 counter_instance__wait_0 counter_instance__delay_0 counter_instance__T2 assign_0 assign_1 counter_instance__assign_3 counter_instance__assign_2 counter_instance__assign_1 counter_instance__assign_0 delay_0 T0 delay_1 counter_instance__assign_5 counter_instance__assign_4 counter_instance__if_1 counter_instance__delay_7 counter_instance__if_0 counter_instance__delay_6 counter_instance__delay_5 counter_instance__delay_4 wait_1 counter_instance__if_3 wait_0 counter_instance__if_2 
+#|.places counter_instance__P1 counter_instance__P0 counter_instance__P3 counter_instance__P2 counter_instance__P5 counter_instance__P4 counter_instance__P7 counter_instance__P6 counter_instance__P20 counter_instance__P21 counter_instance__P19 P0 counter_instance__P11 P1 counter_instance__P12 P2 counter_instance__P13 P3 counter_instance__P14 P4 counter_instance__P15 P5 counter_instance__P16 P6 counter_instance__P17 counter_instance__P18 counter_instance__P10 counter_instance__P9 counter_instance__P8 
+#@.init_state [0000]
+.graph
+counter_instance__P21 counter_instance__T5
+counter_instance__T5 counter_instance__P0
+counter_instance__P4 counter_instance__T4
+counter_instance__T4 counter_instance__P5
+counter_instance__P9 counter_instance__delay_3
+counter_instance__delay_3 counter_instance__P10
+counter_instance__P11 counter_instance__T1
+counter_instance__T1 counter_instance__P5
+counter_instance__P6 counter_instance__delay_2
+counter_instance__delay_2 counter_instance__P7
+counter_instance__P8 counter_instance__T0
+counter_instance__T0 counter_instance__P5
+counter_instance__P2 counter_instance__delay_1
+counter_instance__delay_1 counter_instance__P3
+counter_instance__P17 counter_instance__T3
+counter_instance__T3 counter_instance__P5
+counter_instance__P5 counter_instance__wait_1
+counter_instance__wait_1 counter_instance__P18
+counter_instance__P0 counter_instance__wait_0
+counter_instance__wait_0 counter_instance__P1
+counter_instance__P1 counter_instance__delay_0
+counter_instance__delay_0 counter_instance__P2
+counter_instance__P14 counter_instance__T2
+counter_instance__T2 counter_instance__P5
+P1 assign_0
+assign_0 P2
+P4 assign_1
+assign_1 P5
+counter_instance__P13 counter_instance__assign_3
+counter_instance__assign_3 counter_instance__P14
+counter_instance__P10 counter_instance__assign_2
+counter_instance__assign_2 counter_instance__P11
+counter_instance__P7 counter_instance__assign_1
+counter_instance__assign_1 counter_instance__P8
+counter_instance__P3 counter_instance__assign_0
+counter_instance__assign_0 counter_instance__P4
+P0 delay_0
+delay_0 P1
+P6 T0
+T0 P0
+P3 delay_1
+delay_1 P4
+counter_instance__P20 counter_instance__assign_5
+counter_instance__assign_5 counter_instance__P21
+counter_instance__P16 counter_instance__assign_4
+counter_instance__assign_4 counter_instance__P17
+counter_instance__P4 counter_instance__if_1
+counter_instance__if_1 counter_instance__P9
+counter_instance__P19 counter_instance__delay_7
+counter_instance__delay_7 counter_instance__P20
+counter_instance__P4 counter_instance__if_0
+counter_instance__if_0 counter_instance__P6
+counter_instance__P18 counter_instance__delay_6
+counter_instance__delay_6 counter_instance__P19
+counter_instance__P15 counter_instance__delay_5
+counter_instance__delay_5 counter_instance__P16
+counter_instance__P12 counter_instance__delay_4
+counter_instance__delay_4 counter_instance__P13
+P5 wait_1
+wait_1 P6
+counter_instance__P4 counter_instance__if_3
+counter_instance__if_3 counter_instance__P15
+P2 wait_0
+wait_0 P3
+counter_instance__P4 counter_instance__if_2
+counter_instance__if_2 counter_instance__P12
+.marking {counter_instance__P0 P0 }
+#@.enablings {<counter_instance__T5=[true]><counter_instance__T4=[(~((counter_instance__count1&(counter_instance__count0=0)))&(~((counter_instance__count1&counter_instance__count0))&(~(((counter_instance__count1=0)&counter_instance__count0))&~(((counter_instance__count1=0)&(counter_instance__count0=0))))))]><counter_instance__delay_3=[true]><counter_instance__T1=[true]><counter_instance__delay_2=[true]><counter_instance__T0=[true]><counter_instance__delay_1=[true]><counter_instance__T3=[true]><counter_instance__wait_1=[(start=0)]><counter_instance__wait_0=[start]><counter_instance__delay_0=[true]><counter_instance__T2=[true]><assign_0=[true]><assign_1=[true]><counter_instance__assign_3=[true]><counter_instance__assign_2=[true]><counter_instance__assign_1=[true]><counter_instance__assign_0=[true]><delay_0=[true]><T0=[true]><delay_1=[true]><counter_instance__assign_5=[true]><counter_instance__assign_4=[true]><counter_instance__if_1=[(((counter_instance__count1=0)&counter_instance__count0)&~(((counter_instance__count1=0)&(counter_instance__count0=0))))]><counter_instance__delay_7=[true]><counter_instance__if_0=[((counter_instance__count1=0)&(counter_instance__count0=0))]><counter_instance__delay_6=[true]><counter_instance__delay_5=[true]><counter_instance__delay_4=[true]><wait_1=[(ack=0)]><counter_instance__if_3=[((counter_instance__count1&(counter_instance__count0=0))&(~((counter_instance__count1&counter_instance__count0))&(~(((counter_instance__count1=0)&counter_instance__count0))&~(((counter_instance__count1=0)&(counter_instance__count0=0))))))]><wait_0=[ack]><counter_instance__if_2=[((counter_instance__count1&counter_instance__count0)&(~(((counter_instance__count1=0)&counter_instance__count0))&~(((counter_instance__count1=0)&(counter_instance__count0=0)))))]>}
+#@.delay_assignments {<counter_instance__delay_3=[5]><counter_instance__delay_2=[5]><counter_instance__delay_1=[5]><counter_instance__delay_0=[5]><delay_0=[5.0]><delay_1=[5.0]><counter_instance__delay_7=[5]><counter_instance__delay_6=[5]><counter_instance__delay_5=[5]><counter_instance__delay_4=[5]>}
+#@.boolean_assignments {<assign_0=[start:=1]><assign_1=[start:=0]><counter_instance__assign_3=[counter_instance__count0:=0]><counter_instance__assign_2=[counter_instance__count1:=1]><counter_instance__assign_1=[counter_instance__count0:=1]><counter_instance__assign_0=[ack:=1]><counter_instance__assign_5=[ack:=0]><counter_instance__assign_4=[counter_instance__count1:=0]>}
+#@.continuous 
+.end

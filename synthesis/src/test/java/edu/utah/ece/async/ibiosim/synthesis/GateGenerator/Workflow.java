@@ -59,4 +59,13 @@ public class Workflow {
 		
 		GateGenerationRunner.main(cmd);
 	}
+	
+//	@Test 
+//	public void Test_Sensor() {
+//		String files = String.join(" ", TestingFiles.lacISensor_Size1_File);
+//		String[] cmd = {"-f", files, "-sbh", "https://synbiohub.programmingbiology.org/", "-all", 
+//				"-od", TestingFiles.writeLibDir, "-o", "lacI_sensor"};
+//		
+//		GateGenerationRunner.main(cmd);
+//	}
 }

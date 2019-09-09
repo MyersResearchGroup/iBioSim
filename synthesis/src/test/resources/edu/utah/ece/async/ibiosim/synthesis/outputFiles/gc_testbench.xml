@@ -65,12 +65,12 @@
     <listOfInitialAssignments>
       <initialAssignment symbol="Start">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
+          <cn type="integer"> 1 </cn>
         </math>
             </initialAssignment>
       <initialAssignment symbol="Sensor">
         <math xmlns="http://www.w3.org/1998/Math/MathML">        
-          <cn type="integer"> 0 </cn>
+          <cn type="integer"> 1 </cn>
         </math>
             </initialAssignment>
     </listOfInitialAssignments>
@@ -134,7 +134,7 @@
                     </eventAssignment>
           <eventAssignment variable="Sensor">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
+              <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
@@ -198,7 +198,7 @@
                     </eventAssignment>
           <eventAssignment variable="Start">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
+              <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
@@ -293,7 +293,7 @@
                     </eventAssignment>
           <eventAssignment variable="Sensor">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
+              <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
@@ -388,7 +388,7 @@
                     </eventAssignment>
           <eventAssignment variable="Sensor">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 1 </cn>
+              <cn type="integer"> 0 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
@@ -483,7 +483,7 @@
                     </eventAssignment>
           <eventAssignment variable="Start">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
+              <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
@@ -547,7 +547,7 @@
                     </eventAssignment>
           <eventAssignment variable="Sensor">
             <math xmlns="http://www.w3.org/1998/Math/MathML">            
-              <cn type="integer"> 0 </cn>
+              <cn type="integer"> 1 </cn>
             </math>
                     </eventAssignment>
         </listOfEventAssignments>
