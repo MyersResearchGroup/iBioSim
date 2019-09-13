@@ -84,7 +84,7 @@ public class SBOL2SBML {
 	 * @param sbolElement - The SBOL element to retrieve its displayId
 	 * @return The displayId of the given SBOL element.
 	 */
-	static String getDisplayID(Identified sbolElement) { 
+	public static String getDisplayID(Identified sbolElement) { 
 		if (sbolElement.isSetDisplayId()) {
 			return sbolElement.getDisplayId();
 		}
@@ -127,54 +127,11 @@ public class SBOL2SBML {
 	 * @return the flattened module definition to be used for creating the models
 	 * @throws SBOLValidationException the SBOL validation exception
 	 */
-	static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
+	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
         
 		try {
-=======
-=======
-        
-=======
->>>>>>> fa2c440 Changing hashmaps from raw to hashmaps with types
-=======
-        
->>>>>>> da3efba Changed visibility of SBOL2SBML methods to 'package' so that CelloModeling can use them
-		try {
 		
-    	SBOLDocument doc = new SBOLDocument();
-		doc.setComplete(false);
-		doc.setCreateDefaults(false);
-		doc.createCopy(sbolDoc);
-		
-<<<<<<< Upstream, based on origin/master
-		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
-<<<<<<< Upstream, based on origin/master
->>>>>>> 79375bb Verify if parts have Cello parameters, call different createproductionRXN method
-=======
-		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
-		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
-<<<<<<< Upstream, based on origin/master
->>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
-		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
-		for (Module ChildModule : MD.getModules()) {
-			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
-				Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
-			}	
-		}
-		for (Module ChildModule : MD.getModules()) {
-			for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
-				if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
-					return MD;
-				}
-			}					
-		}
->>>>>>> cba497b Added for loops to determine if a flattening has to occur or if we just pass back the unflattened ModuleDefinition
-		
-<<<<<<< Upstream, based on origin/master
     	SBOLDocument doc = new SBOLDocument();
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
@@ -197,26 +154,6 @@ public class SBOL2SBML {
 			}					
 		}*/
 		
-=======
->>>>>>> 79375bb Verify if parts have Cello parameters, call different createproductionRXN method
-=======
-//		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
-//		for (Module ChildModule : MD.getModules()) {
-//			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
-//				Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
-//			}	
-//		}
-//		for (Module ChildModule : MD.getModules()) {
-//			for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
-//				if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
-//					return MD;
-//				}
-//			}					
-//		}
-//		
->>>>>>> 78fd6c5 Uncommented broken MDFlattener code
-=======
->>>>>>> a15c919 Added comments and removed unused lines of code
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
 		
@@ -240,26 +177,12 @@ public class SBOL2SBML {
     		//Check if the FC is referenced in any local identity
     		if (local_map_uris.containsKey(FC.getIdentity())) {
     			URI value = local_map_uris.get(FC.getIdentity());
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
     			// check if the pointer is not also pointed by someone, store the toppest level FC
-=======
->>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
-=======
-    			// check if the pointer is not also pointed by someone, store the toppest level FC
->>>>>>> da3efba Changed visibility of SBOL2SBML methods to 'package' so that CelloModeling can use them
     			while (local_map_uris.containsKey(value)) {
     				value = local_map_uris.get(value);
     			}
     			//don't copy the FC because it is not a root FC, then add it to the HashMap to reference it later
     			hash_map.put(FC.getIdentity(), value);
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-=======
-    			//TODO PEDRO: check if the pointer is not also pointed by someone
->>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
-=======
->>>>>>> fe87c46 Comments
     		} else {
     			//The FC is a "root" FC so it can be copied to resultMD
     			resultMD.createFunctionalComponent(FC.getDisplayId(), FC.getAccess(), FC.getDefinitionURI(), FC.getDirection());
@@ -343,17 +266,12 @@ public class SBOL2SBML {
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
 	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
+	 * @throws SynBioHubException 
+	 * @throws SBOLConversionException 
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
-		
-		boolean CelloModelGenerator = true;
-		
-		if (CelloModelGenerator) {
-			System.out.println("--------------------");
-			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
-		}
-		
+
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -383,33 +301,8 @@ public class SBOL2SBML {
 					generateOutputPort(comp, targetModel);
 				}
 			} else if (isPromoterComponent(resultMD, comp, sbolDoc)) {
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
 				generatePromoterSpecies(comp, sbolDoc, targetModel);
 				//generateTUSpecies(comp, sbolDoc, targetModel);
-=======
-				//generatePromoterSpecies(comp, sbolDoc, targetModel);
-				generateTUSpecies(comp, sbolDoc, targetModel);
->>>>>>> 7b0ae6d Updated MDFlattener to compile with multiple promoters
-=======
-				// If CelloModel, generate only one species for each TU
-				if (CelloModel) {
-					generateTUSpecies(comp, sbolDoc, targetModel);
-				}
-				// else, we are in normal model generation, which creates one species for each promoter in the TU
-				else {
-					generatePromoterSpecies(comp, sbolDoc, targetModel);
-				}
-<<<<<<< Upstream, based on origin/master
-				
->>>>>>> c0bf0af added new decision point for Cello or normal modeling
-=======
->>>>>>> d178269 createCelloSDProduction removal of unnecessary variables
-=======
-				generatePromoterSpecies(comp, sbolDoc, targetModel);
-				//generateTUSpecies(comp, sbolDoc, targetModel);
->>>>>>> da3efba Changed visibility of SBOL2SBML methods to 'package' so that CelloModeling can use them
 				if (isInputComponent(comp)) {
 					generateInputPort(comp, targetModel);
 				} else if (isOutputComponent(comp)){
@@ -561,14 +454,7 @@ public class SBOL2SBML {
 				}
 			}
 		}
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
 
-=======
->>>>>>> d178269 createCelloSDProduction removal of unnecessary variables
-=======
-
->>>>>>> da3efba Changed visibility of SBOL2SBML methods to 'package' so that CelloModeling can use them
 		models.put(getDisplayID(resultMD),targetModel);
 		return models;
 	}
@@ -754,7 +640,7 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML promoter species.
 	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
 	 */
-	static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
 	
 		// Count promoters
 		int promoterCnt = 0;
@@ -807,34 +693,6 @@ public class SBOL2SBML {
 		}
 	}
 	
-<<<<<<< Upstream, based on origin/master
-	/**
-	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
-	 * species (per promoter sequence present in the TU) per TU. 
-	 * 
-	 * @author Pedro Fontanarrosa
-	 * @param promoter the TU the model needa to create a species from
-	 * @param sbolDoc the SBOLDocument being worked on
-	 * @param targetModel is the target model being created
-	 */
-	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-			
-			String TU = promoter.getDisplayId();
-			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
-				targetModel.createPromoter(TU, -1, -1, true, false, null);
-			}
-			Species sbmlPromoter = targetModel.getSBMLDocument().getModel().getSpecies(TU);
-			
-			// Annotate SBML promoter species with SBOL component and component definition
-			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
-			if (compDef!=null) {
-				annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
-			}
-		
-	}
-
-=======
->>>>>>> da3efba Changed visibility of SBOL2SBML methods to 'package' so that CelloModeling can use them
 	/**
 	 * This method is used when the model needs one species per Transcriptional Unit (TU) instead of multiple promoter
 	 * species (per promoter sequence present in the TU) per TU. 
@@ -915,7 +773,7 @@ public class SBOL2SBML {
 	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL degradation objects to convert to SBML degradation reaction.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
+	private static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
 		{
@@ -991,7 +849,7 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML production reaction.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
+	private static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {
