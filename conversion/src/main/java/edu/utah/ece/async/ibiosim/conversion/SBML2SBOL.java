@@ -136,6 +136,7 @@ public class SBML2SBOL {
 	 * @throws XMLStreamException - Invalid XML file.
 	 * @throws IOException - Input Exception occurred. 
 	 * @throws SBOLConversionException - SBOL conversion exception occurred when reading in the referenced SBOL files.
+	 * @return returning the URI of the SBOL object created
 	 */
 	public static URI convert_SBML2SBOL(SBOLDocument sbolDoc, String externalSBMLPath, 
 			SBMLDocument sbmlDoc, String fileName, HashSet<String> sbolFiles, String sbolURIPrefix) 

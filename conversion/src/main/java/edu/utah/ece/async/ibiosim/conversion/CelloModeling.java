@@ -20,7 +20,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
@@ -39,6 +38,7 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.Measure;
 import org.synbiohub.frontend.SynBioHubException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
@@ -104,22 +104,24 @@ public class CelloModeling {
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
+		
+		CreateMeasureClasses(sbolDoc);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		boolean CelloModel = false;
+		//boolean CelloModel = true;
 		// TODO there has to be a better way to determine if we are in a Cello model generation or not
-		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
-			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
-				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
-				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
-				//using Cello Parameters.
-				celloParameters.put(promoter, hasCelloParameters(promoter));
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
-				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
-					CelloModel = true;
-				}
-			}
-		}
+//		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+//			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
+//				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
+//				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
+//				//using Cello Parameters.
+//				celloParameters.put(promoter, hasCelloParameters(promoter));
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
+//				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
+//					CelloModel = true;
+//				}
+//			}
+//		}
 		
 
 		// Generate SBML Species for each part in the model
@@ -136,14 +138,15 @@ public class CelloModeling {
 					SBOL2SBML.generateOutputPort(comp, targetModel);
 				}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
+				generateTUSpecies(comp, sbolDoc, targetModel);
 				// If CelloModel, generate only one species for each TU
-				if (CelloModel) {
-					generateTUSpecies(comp, sbolDoc, targetModel);
-				}
-				// else, we are in normal model generation, which creates one species for each promoter in the TU
-				else {
-					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
-				}
+//				if (CelloModel) {
+//					generateTUSpecies(comp, sbolDoc, targetModel);
+//				}
+//				// else, we are in normal model generation, which creates one species for each promoter in the TU
+//				else {
+//					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
+//				}
 				if (SBOL2SBML.isInputComponent(comp)) {
 					SBOL2SBML.generateInputPort(comp, targetModel);
 				} else if (SBOL2SBML.isOutputComponent(comp)){
@@ -272,26 +275,31 @@ public class CelloModeling {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
-				if (CelloModel) {
-					//go to the new generateProductionRxn method
-					System.out.println("you are in new method call");
-					
-					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
-					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-					//TODO PEDRO calling cello methods
-					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
-				}
-				//else call the normal model generating method
-				else {
-					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
-				}
+				generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+				
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
+//				if (CelloModel) {
+//					//go to the new generateProductionRxn method
+//					System.out.println("you are in new method call");
+//					
+//					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
+//					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+//					//TODO PEDRO calling cello methods
+//					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
+//				}
+//				//else call the normal model generating method
+//				else {
+//					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+//				}
 			}
 		}
 				
@@ -670,6 +678,9 @@ public class CelloModeling {
 	 */
 	private static HashMap<String, List<String>> productionInteractions(SBOLDocument sbolDoc){
 		
+		//Since it is not possible to determine in which production reactions each Engineered Region participates in, then we first have to look through all the ER, then through 
+		//all production reactions, and match them
+		
 		HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();
 		for (ComponentDefinition CD : sbolDoc.getComponentDefinitions()) {
 			if (CD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
@@ -730,7 +741,7 @@ public class CelloModeling {
 						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 						//the location of these parameters can change
 						List<Annotation> Annot = Part.getAnnotations();
-						//cicle through all annotations looking for Cello parameters
+						//circle through all annotations looking for Cello parameters
 						for (int i = 0; i < Annot.size(); i++) {
 							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
 								K = Annot.get(i).getStringValue();
@@ -769,6 +780,52 @@ public class CelloModeling {
 		return celloParameters;
 	}
 	
+	private static void CreateMeasureClasses(SBOLDocument sbolDoc) throws SBOLValidationException{
+		
+		//Initialize the parameters we are looking for
+		String n = "";
+		String K = "";
+		String ymax = "";
+		String ymin = "";
+		for(ModuleDefinition topModule : sbolDoc.getModuleDefinitions()) {
+			for (FunctionalComponent promoter : topModule.getFunctionalComponents()) {
+				if (promoter.getDefinition() != null) {
+					ComponentDefinition tuCD = promoter.getDefinition();
+					for (Component comp: tuCD.getComponents()) {
+						ComponentDefinition tuCDcomp = comp.getDefinition();
+						if (tuCDcomp != null) {
+							if (tuCDcomp.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+								//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+								//the location of these parameters can change
+								List<Annotation> Annot = tuCDcomp.getAnnotations();
+								//circle through all annotations looking for Cello parameters
+								for (int i = 0; i < Annot.size(); i++) {
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+										K = Annot.get(i).getStringValue();
+										promoter.createMeasure("K", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+										n = Annot.get(i).getStringValue();
+										promoter.createMeasure("n", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+										ymax = Annot.get(i).getStringValue();
+										promoter.createMeasure("ymax", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+									}
+									if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+										ymin = Annot.get(i).getStringValue();
+										promoter.createMeasure("ymin", Annot.get(i).getDoubleValue(), URI.create("http://www.ontology-of-units-of-measure.org/resource/om-2/Measure"));
+										//promoter.createMeasure(displayId, numericalValue, unit);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	//TODO PEDRO hasCelloParameters
 	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
 		
@@ -780,10 +837,11 @@ public class CelloModeling {
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+				
 				//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 				//the location of these parameters can change
 				List<Annotation> Annot = promoter.getAnnotations();
-					//cicle through all annotations looking for Cello parameters
+					//circle through all annotations looking for Cello parameters
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
 							K = Annot.get(i).getStringValue();
