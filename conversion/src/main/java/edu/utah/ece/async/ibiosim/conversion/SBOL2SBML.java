@@ -84,7 +84,7 @@ public class SBOL2SBML {
 	 * @param sbolElement - The SBOL element to retrieve its displayId
 	 * @return The displayId of the given SBOL element.
 	 */
-	public static String getDisplayID(Identified sbolElement) { 
+	static String getDisplayID(Identified sbolElement) { 
 		if (sbolElement.isSetDisplayId()) {
 			return sbolElement.getDisplayId();
 		}
@@ -127,7 +127,7 @@ public class SBOL2SBML {
 	 * @return the flattened module definition to be used for creating the models
 	 * @throws SBOLValidationException the SBOL validation exception
 	 */
-	public static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
+	static ModuleDefinition MDFlattener( SBOLDocument sbolDoc, ModuleDefinition MD ) throws SBOLValidationException
     {
         
 		try {
@@ -136,23 +136,6 @@ public class SBOL2SBML {
 		doc.setComplete(false);
 		doc.setCreateDefaults(false);
 		doc.createCopy(sbolDoc);
-		
-		//The following two for loops determine if a flattening process has to occur, or if we just return the unflattened ModuleDefinition
-		//This is because if we have multi-level nested modules and ModuleDefinitions, we should skip the flattening in this step
-		//since the flattening will occur later in the generateModel() method when the flattening method will be called upon the sub-models.
-/*		Set<URI> Modules_remote_mapsto = new HashSet<URI>();
-		for (Module ChildModule : MD.getModules()) {
-			for (MapsTo M_MapsTos : ChildModule.getMapsTos()) {
-				Modules_remote_mapsto.add(M_MapsTos.getRemoteIdentity());	
-			}	
-		}
-		for (Module ChildModule : MD.getModules()) {
-			for (FunctionalComponent FC_M : ChildModule.getDefinition().getFunctionalComponents()) {
-				if (!Modules_remote_mapsto.contains(FC_M.getIdentity())) {
-					return MD;
-				}
-			}					
-		}*/
 		
 		//remove the Root MD you are going to flatten
 		doc.removeModuleDefinition(MD);
@@ -266,12 +249,17 @@ public class SBOL2SBML {
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
 	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
-	 * @throws SynBioHubException 
-	 * @throws SBOLConversionException 
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
-
+		
+		boolean CelloModelGenerator = true;
+		
+		if (CelloModelGenerator) {
+			System.out.println("--------------------");
+			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
+		}
+		
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -640,7 +628,7 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML promoter species.
 	 * @param targetModel - The SBML model to store the SBML promoter species created from the conversion.
 	 */
-	private static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
+	static void generatePromoterSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
 	
 		// Count promoters
 		int promoterCnt = 0;
@@ -773,7 +761,7 @@ public class SBOL2SBML {
 	 * @param moduleDef - The SBOL ModuleDefinition that contain the SBOL degradation objects to convert to SBML degradation reaction.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	private static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
+	static void generateDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel) {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
 		{
@@ -849,7 +837,7 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML production reaction.
 	 * @param targetModel - The SBML model to store the SBML Reaction and SpeciesReference created from the conversion.
 	 */
-	private static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
+	static void generateProductionRxn(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
 			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel) {

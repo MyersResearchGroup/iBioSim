@@ -105,7 +105,8 @@ public class CelloModeling {
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
 		
-		CreateMeasureClasses(sbolDoc);
+		//TODO PEDRO hacer measure classes
+		//CreateMeasureClasses(sbolDoc);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
 		//boolean CelloModel = true;
