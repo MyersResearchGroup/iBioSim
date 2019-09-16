@@ -322,7 +322,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	protected JMenuItem save, saveAs, check, run, refresh;
 	
-	protected JMenuItem saveModel, createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll;
+	protected JMenuItem saveModel, createAnal, createLearn, createSbml, createSynth, createSeqSyn, createVer, close, closeAll, saveAll;
 
 	protected String ENVVAR;
 
@@ -554,6 +554,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
 		createSynth = new JMenuItem("Synthesis Tool");
+		createSeqSyn = new JMenuItem("Sequential Synthesis Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
 		select.addActionListener(this);
@@ -642,6 +643,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn.addActionListener(this);
 		createSbml.addActionListener(this);
 		createSynth.addActionListener(this);
+		createSeqSyn.addActionListener(this);
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
@@ -786,6 +788,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn.setEnabled(false);
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
+		createSeqSyn.setEnabled(false);
 		createVer.setEnabled(false);
 		edit.add(undo);
 		edit.add(redo);
@@ -902,6 +905,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		tools.add(createAnal);
 		tools.add(createLearn);
 		tools.add(createSynth);
+		tools.add(createSeqSyn);
 		tools.add(createVer);
 		root = null;
 
@@ -1179,17 +1183,24 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					return;
 				}
 			}
-			new File(filename).mkdir();
-			try {
-				new FileWriter(new File(filename + File.separator + "BioSim.prj")).close();
-			} catch (IOException e1) {
+//			new File(filename).mkdir();
+//			try {
+//				new FileWriter(new File(filename + File.separator + "BioSim.prj")).close();
+//			} catch (IOException e1) {
+//				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
+//						JOptionPane.ERROR_MESSAGE);
+//				System.out.println(filename);
+//				e1.printStackTrace();
+//				
+//				return;
+//			}
+			File newDir = new File(filename);
+			if(!newDir.mkdir()) {
 				JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
 						JOptionPane.ERROR_MESSAGE);
-				System.out.println(filename);
-				e1.printStackTrace();
-				
 				return;
 			}
+				
 			root = filename;
 			currentProjectId = GlobalConstants.getFilename(root);
 
@@ -1557,6 +1568,23 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		// if the synthesis popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createSynthesis")) {
+			if (root != null) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (getTitleAt(i).equals(GlobalConstants.getFilename(tree.getFile()))) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
+					}
+				}
+				createSBOLSynthesisView();
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getActionCommand().equals("createSeqSyn")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (getTitleAt(i).equals(GlobalConstants.getFilename(tree.getFile()))) {
@@ -4761,7 +4789,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			JOptionPane.showMessageDialog(frame, e.toString(), "Unable to Import Verilog", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
-		
+		addToTree(file.getName());
 		verilogFiles.put(verilogModule.getModuleId(), verilogModule);
 		return verilogModule;
 	}
@@ -7120,6 +7148,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
 				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createSeqSynthesis = new JMenuItem("Create Sequential Synthesis View");
+				createSeqSynthesis.addActionListener(this);
+				createSeqSynthesis.addMouseListener(this);
+				createSeqSynthesis.setActionCommand("createSeqSyn");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -7150,6 +7182,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				rename.setActionCommand("rename");
 				popup.add(create);
 				popup.add(createSynthesis);
+				popup.add(createSeqSynthesis);
 				popup.add(createLearn);
 				popup.add(createVerification);
 				popup.addSeparator();
@@ -7427,8 +7460,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	private void synthesizeSBOL(SynthesisView synthView) {
 		synthView.save();
+		String specId = synthView.getSpecFileID().replace(".xml", "");
+		if(!synthView.isSbmlTechMap()) {
+			specId = currentProjectId;
+			
+		}
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
-				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
+				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + specId);
 		actionPerformed(projectSynthesized);
 		if (!synthView.getRootDirectory().equals(root)) 
 		{
@@ -8738,6 +8776,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	private void enableTreeMenu() {
 		createAnal.setEnabled(false);
 		createSynth.setEnabled(false);
+		createSeqSyn.setEnabled(false);
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -8755,7 +8794,9 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("createAnalysis");
 				createSynth.setEnabled(true);
+				createSeqSyn.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createSeqSyn.setActionCommand("createSeqSyn");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);

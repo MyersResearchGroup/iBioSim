@@ -83,7 +83,7 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SynthesisView extends JTabbedPane implements ActionListener, Runnable {
+public class SbolSynthesisView extends JTabbedPane implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = 1L;
 	private String synthID; 	 // ID of synthesis file
@@ -118,7 +118,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 * @param rootFilePath - Path to the iBioSim project
 	 * @param log - Log file used in each iBioSim project
 	 */
-	public SynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
+	public SbolSynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
 	{
 		this.gui = ibioSimGUI;
 		this.synthID = synthID;

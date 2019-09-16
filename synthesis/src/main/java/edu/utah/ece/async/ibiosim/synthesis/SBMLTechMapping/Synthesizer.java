@@ -60,12 +60,9 @@ public class Synthesizer {
 
 	public List<List<SynthesisGraph>> mapSpecification(SynthesisGraph spec) 
 	{
-		//NOTE: begin matching library parts with the specified biomodel (spec) from output working down
-		//		long startTime = System.nanoTime();
-		//NOTE: postOrderNodes() will return all nodes in library that points to the output node
 		for (SynthesisNode node : spec.postOrderNodes()) 
 		{
-			matchNode(node, spec); //NOTE: match the output (upper) node with the entire biomodel graph
+			matchNode(node, spec); 
 			boundNode(node, spec);
 		}
 		List<List<SynthesisGraph>> solutions = new LinkedList<List<SynthesisGraph>>();

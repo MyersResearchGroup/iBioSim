@@ -202,7 +202,9 @@ public class GlobalConstants {
 	public static final String SBOL_SYNTH_EXHAUST_BB = "Exact Branch and Bound";
 	public static final String SBOL_SYNTH_METHOD_DEFAULT = SBOL_SYNTH_EXHAUST_BB;
 	public static final String SBOL_SYNTH_GREEDY_BB = "Greedy Branch and Bound";
-	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = SBOL_SYNTH_EXHAUST_BB + "," + SBOL_SYNTH_GREEDY_BB;
+	public static final String SBOL_SYNTH_GREEDY = "Greedy";
+	public static final String SBOL_SYNTH_EXHAUSTIVE = "Exhaustive";
+	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = SBOL_SYNTH_EXHAUST_BB + "," + SBOL_SYNTH_GREEDY_BB + "," + SBOL_SYNTH_GREEDY + "," + SBOL_SYNTH_EXHAUSTIVE;
 	
 	public static final String SBOL_SYNTH_NUM_SOLNS_PROPERTY = "synthesis.numsolutions";
 	public static final String SBOL_SYNTH_NUM_SOLNS_PREFERENCE = "biosim." + SBOL_SYNTH_NUM_SOLNS_PROPERTY;

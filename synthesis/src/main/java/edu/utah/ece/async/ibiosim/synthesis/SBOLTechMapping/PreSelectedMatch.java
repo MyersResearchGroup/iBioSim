@@ -94,9 +94,6 @@ public class PreSelectedMatch implements Match {
 				return false;
 			}
 			else {
-				if(!node.libNode.getComponentDefinition().isPresent()) {
-					return false;
-				}
 				if(node.specNode.isNodePreselected()) {
 					if(!node.specNode.getPreselectedComponentDefinition().get().equals(node.libNode.getComponentDefinition().get().getIdentity())) {
 						return false;

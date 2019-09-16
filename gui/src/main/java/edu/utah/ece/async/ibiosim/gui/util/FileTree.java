@@ -57,8 +57,6 @@ public class FileTree extends PanelObservable implements MouseListener {
 	
 	private Gui gui;
 
-	//private File dir; // root directory
-
 	public JTree tree; // JTree
 
 	private boolean lema, atacs, async, lpn;
@@ -194,7 +192,7 @@ public class FileTree extends PanelObservable implements MouseListener {
 									|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
 									|| parentNode.endsWith(".g") || parentNode.endsWith(".lpn") || parentNode.endsWith(".csp")
 									|| parentNode.endsWith(".hse") || parentNode.endsWith(".unc") || parentNode.endsWith(".csp")
-									|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv")
+									|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv") || parentNode.endsWith(".v")
 									|| parentNode.endsWith(".grf") || parentNode.endsWith(".prb")) {
 								node = (DefaultMutableTreeNode) node.getParent();
 							}
@@ -216,7 +214,7 @@ public class FileTree extends PanelObservable implements MouseListener {
 										|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
 										|| parentNode.endsWith(".g") || parentNode.endsWith(".lpn") || parentNode.endsWith(".csp")
 										|| parentNode.endsWith(".hse") || parentNode.endsWith(".unc") || parentNode.endsWith(".csp")
-										|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv")
+										|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv") || parentNode.endsWith(".v")
 										|| parentNode.endsWith(".grf") || parentNode.endsWith(".prb")) {
 									node = (DefaultMutableTreeNode) node.getParent();
 								}
@@ -377,9 +375,13 @@ public class FileTree extends PanelObservable implements MouseListener {
 				if (!atacs && files.get(fnum).toString().endsWith(".sbml") || 
 						!atacs && files.get(fnum).toString().endsWith(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-				} else if (!async && files.get(fnum).toString().endsWith(".sbol") &&
+				} 
+				else if (!async && files.get(fnum).toString().endsWith(".sbol") &&
 						(files.get(fnum).equals(gui.getCurrentProjectId()+".sbol"))) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
+				}
+				else if (!async && files.get(fnum).toString().endsWith(".v")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
 				else if (async && files.get(fnum).toString().endsWith(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
@@ -430,6 +432,9 @@ public class FileTree extends PanelObservable implements MouseListener {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
 				} else if (!async && files.get(fnum).toString().endsWith(".sbol")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
+				}
+				else if (!async && files.get(fnum).toString().endsWith(".v")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, files.get(fnum)));
 				}
 				else if (async && files.get(fnum).toString().endsWith(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
@@ -791,15 +796,12 @@ public class FileTree extends PanelObservable implements MouseListener {
 			} else if (!async && item.endsWith(".sbol")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, item));
 			}
-			/*
-			else if (!async && item.endsWith(".gcm")) {
-				node = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, item));
+			else if (!async && item.endsWith(".v")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_VERILOG, null, item));
 			}
-			*/
 			else if (async && item.endsWith(".vhd")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, item));
 			} 
-			
 			else if (async && item.endsWith(".prop")) {  //DK
 				node = new DefaultMutableTreeNode(new IconData(ICON_PROP, null, item));
 			}
