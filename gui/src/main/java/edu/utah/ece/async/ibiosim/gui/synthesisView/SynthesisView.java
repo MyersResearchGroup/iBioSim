@@ -57,27 +57,14 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.synthesis.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
-import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Cover;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Match;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.PreSelectedMatch;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapSolution;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapUtility;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
  * 
- * @author Tramy Nguyen
  * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
@@ -105,10 +92,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JComboBox methodBox;
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
-
-	private JRadioButton select_sbmlTechMap;
-	private JRadioButton select_sbolTechMap;
-	private boolean selectSbml;
 
 	/**
 	 * Constructor to create the technology mapping for the UI.
@@ -194,20 +177,10 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	private JPanel constructSpecPanel() {
 		JPanel specPanel = createLabeledPanel("Specification File:");
-//		specText = new JTextField();
-//		specText.setEditable(false);
-//		specPanel.add(specText);
-		
-		JPanel buttonPanel = new JPanel();
-		specButton = new JButton("Browse...");
-		specButton.addActionListener(this);
-		buttonPanel.add(specButton);
-
-		specText = new JTextField(20);
-		specText.setEnabled(false);
+		specText = new JTextField();
+		specText.setEditable(false);
 		specPanel.add(specText);
 
-		specPanel.add(buttonPanel);
 		return specPanel;
 	}
 
@@ -261,30 +234,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		JPanel methodPanel = new JPanel(new BorderLayout());
 		JPanel labelPanel = constructMethodLabelPanel();
 		JPanel inputPanel = constructMethodInputPanel();
-		JPanel techMapPanel = constructTechnologyMappingOptions();
 		topPanel.add(methodPanel);
 		methodPanel.add(labelPanel, BorderLayout.WEST);
 		methodPanel.add(inputPanel, BorderLayout.CENTER);
-		methodPanel.add(techMapPanel, BorderLayout.SOUTH);
 		return topPanel;
 	}
 
-	/**
-	 * Set up technology mapping buttons on Synthesis View for user to select
-	 * @return the technology mapping option panel.
-	 */
-	private JPanel constructTechnologyMappingOptions(){
-		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
-
-		select_sbmlTechMap = new JRadioButton("SBML Technology Mapping");
-		select_sbmlTechMap.setSelected(true);
-		techMapPanel.add(select_sbmlTechMap);
-
-		select_sbolTechMap = new JRadioButton("SBOL Technology Mapping");	
-		techMapPanel.add(select_sbolTechMap); 
-
-		return techMapPanel;
-	}
 
 
 	/**
@@ -408,47 +363,19 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		else if(e.getSource() == specButton) {
 			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);
 			if(!isValidSynthesisFile(selectedFilePath)) {
-				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You can only select SBML or SBOL files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
+
 			specText.setText(selectedFilePath);
 		}
 		else if (e.getSource() == methodBox)
 		{
 			toggleMethodSettings();
 		}
-		else if(e.getSource() == select_sbmlTechMap)
-		{
-			if(select_sbmlTechMap.isSelected())
-			{
-				select_sbolTechMap.setSelected(false);
-			}
-			else 
-			{
-				select_sbmlTechMap.setSelected(true);
-				select_sbolTechMap.setSelected(false);
-			}
-			this.selectSbml = true;
-		}
-		else if(e.getSource() == select_sbolTechMap)
-		{
-			if(select_sbolTechMap.isSelected())
-			{
-				select_sbmlTechMap.setSelected(false);
-			}
-			else 
-			{
-				select_sbolTechMap.setSelected(true);
-				select_sbmlTechMap.setSelected(false);
-			}
-			this.selectSbml = false;
-		}
+
 	}
-	
-	public boolean isSbmlTechMap() {
-		return this.selectSbml;
-	}
+
 
 	private void toggleMethodSettings() {
 		if (methodBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_EXHAUST_BB)) 
@@ -517,211 +444,111 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	 */
 	public List<String> run(String synthFilePath) 
 	{
-		if(select_sbmlTechMap.isSelected())
+		try
 		{
-			try
+			//Find all .sbol files and store into a collection of files (SBOLFileManager)
+			Set<String> sbolFilePaths = new HashSet<String>();
+			for (String libFilePath : libFilePaths) 
+				for (String fileID : new File(libFilePath).list())
+					if (fileID.endsWith(".sbol"))
+						sbolFilePaths.add(libFilePath + File.separator + fileID);
+
+			SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+
+
+			Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
+			//boolean flatImport = libFilePaths.size() > 1;
+
+			/* Find .xml files for the available library of gates and create a bioModel for each file then load 
+			 * them to the synthesis graph library.
+			 * This is where the loading of the SBML library takes place. 
+			 */
+			for (String libFilePath : libFilePaths) 
 			{
-				//Find all .sbol files and store into a collection of files (SBOLFileManager)
-				Set<String> sbolFilePaths = new HashSet<String>();
-				for (String libFilePath : libFilePaths) 
-					for (String fileID : new File(libFilePath).list())
-						if (fileID.endsWith(".sbol"))
-							sbolFilePaths.add(libFilePath + File.separator + fileID);
-
-				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-
-
-				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
-				//boolean flatImport = libFilePaths.size() > 1;
-
-				/* Find .xml files for the available library of gates and create a bioModel for each file then load 
-				 * them to the synthesis graph library.
-				 * This is where the loading of the SBML library takes place. 
-				 */
-				for (String libFilePath : libFilePaths) 
+				for (String gateFileID : new File(libFilePath).list()) 
 				{
-					for (String gateFileID : new File(libFilePath).list()) 
+					if (gateFileID.endsWith(".xml")) 
 					{
-						if (gateFileID.endsWith(".xml")) 
+						BioModel gateModel = new BioModel(libFilePath);
+						try 
 						{
-							BioModel gateModel = new BioModel(libFilePath);
-							try 
-							{
-								gateModel.load(gateFileID);
-							} 
-							catch (XMLStreamException e) 
-							{
-								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-							}
-							catch (BioSimException e) {
-								JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-										JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-							}
-							graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
+							gateModel.load(gateFileID);
+						} 
+						catch (XMLStreamException e) 
+						{
+							JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
 						}
+						catch (BioSimException e) {
+							JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
+									JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+						}
+						graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
 					}
 				}
-				//Load synthProps that has synthesis.spec as property into the biomodel
-				BioModel specModel = new BioModel(rootFilePath); 
-				try 
-				{
-					specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-				}
-				catch (XMLStreamException e) 
-				{
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				} 
-				catch (BioSimException e) 
-				{
-					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
-
-				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
-
-
-				Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
-				List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
-				List<String> solutionFileIDs;
-
-				solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
-				return solutionFileIDs;
 			}
-			catch (SBOLValidationException e) 
+			//Load synthProps that has synthesis.spec as property into the biomodel
+			BioModel specModel = new BioModel(rootFilePath); 
+			try 
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-				return null;
-			} 
-			catch (SBOLException e) 
+				specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
+			}
+			catch (XMLStreamException e) 
 			{
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
-						e.getTitle(), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} 
-			catch (FileNotFoundException e) 
+			catch (BioSimException e) 
 			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to locate input file(s).", "File Not Found",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write SBOL file", "File Not Found",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} 
-			catch (SBOLConversionException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
 						JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+
+			SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
+
+
+			Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
+			List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
+			List<String> solutionFileIDs;
+
+			solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
+			return solutionFileIDs;
 		}
-		else if(select_sbolTechMap.isSelected()){
-			SBOLTechMapOptions techMapOptions = setSequentialTechMapProperties();
-			try {
-				List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
-				DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
-
-				Match m = new PreSelectedMatch(specGraph, libGraph);
-				Cover c = new Cover(m);
-				List<TechMapSolution> coverSols = new ArrayList<>();
-				try {
-					if(techMapOptions.isBranchBound()) {
-						coverSols.add(c.branchAndBoundCover());
-					}
-					else if(techMapOptions.isExhaustive()) {
-						coverSols = c.exhaustiveCover();
-					}
-					else if(techMapOptions.isGreedy()) {
-						coverSols = c.greedyCover(techMapOptions.getNumOfSolutions());
-					}
-				} 
-				catch (GeneticGatesException e) {
-					e.printStackTrace();
-				}
-
-			} 
-			catch (SBOLTechMapException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (GateGenerationExeception e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (SBOLValidationException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (SBOLConversionException e) 
-			{
-				e.printStackTrace();
-			}
-
+		catch (SBOLValidationException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			return null;
+		} 
+		catch (SBOLException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
+					e.getTitle(), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (FileNotFoundException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to locate input file(s).", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write SBOL file", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		} 
+		catch (SBOLConversionException e) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
+					JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
+
 		return null;
 	}
-
-	private SBOLTechMapOptions setSequentialTechMapProperties() {
-		SBOLTechMapOptions techMapOptions = new SBOLTechMapOptions();
-
-		//		Synthesis synRunner = new Synthesis();
-		//		String lpnFile = "";
-		//		try {
-		//			synRunner.runSynthesis(lpnFile, techMapOptions.getOutputDir());
-		//			synRunner.runDecomposition(techMapOptions.getOutputDir(), true);
-		//		} 
-		//		catch (IOException e1) {
-		//			e1.printStackTrace();
-		//		} 
-		//		catch (InterruptedException e1) {
-		//			e1.printStackTrace();
-		//		}
-
-		//techMapOptions.setSpecificationFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-		techMapOptions.setSpecificationFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY) + ".sbol");
-
-		for (String libFilePath : libFilePaths) {
-			try {
-				techMapOptions.addLibraryFile(libFilePath);
-
-			} 
-			catch (SBOLValidationException e) {
-
-			} 
-			catch (IOException e) {
-
-			} 
-			catch (SBOLConversionException e) {
-
-			}
-		}
-
-		techMapOptions.setNumOfSolutions(Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY)));
-
-		switch(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY)){
-		case GlobalConstants.SBOL_SYNTH_EXHAUST_BB:
-			techMapOptions.setBranchBound(true);
-		case GlobalConstants.SBOL_SYNTH_EXHAUSTIVE:
-			techMapOptions.setExhaustive(true);
-		case GlobalConstants.SBOL_SYNTH_GREEDY:
-			techMapOptions.setGreedy(true);
-		default:
-			techMapOptions.setBranchBound(true);
-		}
-		return techMapOptions;
-	}
-
 
 
 	private List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 

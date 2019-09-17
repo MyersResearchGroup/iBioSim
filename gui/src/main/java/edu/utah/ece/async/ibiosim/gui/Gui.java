@@ -7466,10 +7466,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	private void synthesizeSBOL(SynthesisView synthView) {
 		synthView.save();
 		String specId = synthView.getSpecFileID().replace(".xml", "");
-		if(!synthView.isSbmlTechMap()) {
-			specId = currentProjectId;
-			
-		}
+		
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
 				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + specId);
 		actionPerformed(projectSynthesized);
