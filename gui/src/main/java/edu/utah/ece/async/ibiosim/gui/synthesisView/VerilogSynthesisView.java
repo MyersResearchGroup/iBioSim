@@ -57,7 +57,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
-import edu.utah.ece.async.ibiosim.synthesis.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
@@ -78,19 +77,17 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
  * 
  * @author Tramy Nguyen
- * @author Nicholas Roehner 
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
  */
-public class SbolSynthesisView extends JTabbedPane implements ActionListener, Runnable {
+public class VerilogSynthesisView extends JTabbedPane implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = 1L;
 	private String synthID; 	 // ID of synthesis file
 	private String rootFilePath; // Path to the iBioSim project
-	private String tbFilePath; 
 
-	private Log log; // Log file used in each iBioSim project
+	private Log log; 
 	private JFrame frame;
 	private Gui gui;
 	private Properties synthProps; //Store fields needed for technology mapping in a property file
@@ -98,16 +95,16 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	private JTextField specText, tbTextBox;
 
 	private List<String> libFilePaths;
-	private JList<String> libList; //The path to all the library files.
+	private JList<String> libList; 
 
 	private JScrollPane libScroll;
-	private JButton addLibButton, removeLibButton, tbButton, specButton;
+	private JButton addLibButton, removeLibButton, tbButton;
 	private JComboBox methodBox;
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
 
-	private JRadioButton select_sbmlTechMap;
-	private JRadioButton select_sbolTechMap;
+	private JRadioButton select_atacs;
+	private JRadioButton select_yosys;
 	private boolean selectSbml;
 
 	/**
@@ -118,7 +115,7 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	 * @param rootFilePath - Path to the iBioSim project
 	 * @param log - Log file used in each iBioSim project
 	 */
-	public SbolSynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
+	public VerilogSynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
 	{
 		this.gui = ibioSimGUI;
 		this.synthID = synthID;
@@ -127,8 +124,8 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 
 		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
 		JPanel optionsPanel = constructOptionsPanel(); 
-		addTab("Synthesis Options", optionsPanel); 
-		getComponentAt(getComponents().length - 1).setName("Synthesis Options"); 
+		addTab("Verilog Synthesis Options", optionsPanel); 
+		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
 	}
 
 	/**
@@ -194,20 +191,11 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	 */
 	private JPanel constructSpecPanel() {
 		JPanel specPanel = createLabeledPanel("Specification File:");
-//		specText = new JTextField();
-//		specText.setEditable(false);
-//		specPanel.add(specText);
-		
-		JPanel buttonPanel = new JPanel();
-		specButton = new JButton("Browse...");
-		specButton.addActionListener(this);
-		buttonPanel.add(specButton);
 
 		specText = new JTextField(20);
 		specText.setEnabled(false);
 		specPanel.add(specText);
 
-		specPanel.add(buttonPanel);
 		return specPanel;
 	}
 
@@ -276,12 +264,12 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	private JPanel constructTechnologyMappingOptions(){
 		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
 
-		select_sbmlTechMap = new JRadioButton("SBML Technology Mapping");
-		select_sbmlTechMap.setSelected(true);
-		techMapPanel.add(select_sbmlTechMap);
+		select_atacs = new JRadioButton("Run ATACS");
+		select_atacs.setSelected(true);
+		techMapPanel.add(select_atacs);
 
-		select_sbolTechMap = new JRadioButton("SBOL Technology Mapping");	
-		techMapPanel.add(select_sbolTechMap); 
+		select_yosys = new JRadioButton("Run Yosys");	
+		techMapPanel.add(select_yosys); 
 
 		return techMapPanel;
 	}
@@ -305,7 +293,11 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	 */
 	private JPanel constructMethodInputPanel() {
 		JPanel inputPanel = new JPanel(new GridLayout(2, 1));
-		methodBox = new JComboBox(GlobalConstants.SBOL_SYNTH_STRUCTURAL_METHODS.split(","));
+		String[] coverAlgs = new String[3];
+		coverAlgs[0] = GlobalConstants.SBOL_SYNTH_GREEDY;
+		coverAlgs[1] = GlobalConstants.SBOL_SYNTH_EXHAUSTIVE;
+		coverAlgs[2] = GlobalConstants.SBOL_SYNTH_EXHAUST_BB;
+		methodBox = new JComboBox(coverAlgs);
 		methodBox.addActionListener(this);
 		numSolnsText = new JTextField(39); 
 		numSolnsText.addActionListener(this);
@@ -380,9 +372,7 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	}
 
 	private boolean isValidSynthesisFile(String fileFullPath) {
-		return fileFullPath.endsWith(GlobalConstants.SBOL_FILE_EXTENSION) ||
-				fileFullPath.endsWith(GlobalConstants.XML_FILE_EXTENSION) ||
-				fileFullPath.endsWith(GlobalConstants.VERILOG_FILE_EXTENTION);	
+		return fileFullPath.endsWith(GlobalConstants.VERILOG_FILE_EXTENTION);	
 	}
 
 	@Override
@@ -402,45 +392,35 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			tbFilePath = selectedFilePath;
 			tbTextBox.setText(selectedFilePath);
-		}
-		else if(e.getSource() == specButton) {
-			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);
-			if(!isValidSynthesisFile(selectedFilePath)) {
-				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
-			specText.setText(selectedFilePath);
 		}
 		else if (e.getSource() == methodBox)
 		{
 			toggleMethodSettings();
 		}
-		else if(e.getSource() == select_sbmlTechMap)
+		else if(e.getSource() == select_atacs)
 		{
-			if(select_sbmlTechMap.isSelected())
+			if(select_atacs.isSelected())
 			{
-				select_sbolTechMap.setSelected(false);
+				select_yosys.setSelected(false);
 			}
 			else 
 			{
-				select_sbmlTechMap.setSelected(true);
-				select_sbolTechMap.setSelected(false);
+				select_atacs.setSelected(true);
+				select_yosys.setSelected(false);
 			}
 			this.selectSbml = true;
 		}
-		else if(e.getSource() == select_sbolTechMap)
+		else if(e.getSource() == select_yosys)
 		{
-			if(select_sbolTechMap.isSelected())
+			if(select_yosys.isSelected())
 			{
-				select_sbmlTechMap.setSelected(false);
+				select_atacs.setSelected(false);
 			}
 			else 
 			{
-				select_sbolTechMap.setSelected(true);
-				select_sbmlTechMap.setSelected(false);
+				select_yosys.setSelected(true);
+				select_atacs.setSelected(false);
 			}
 			this.selectSbml = false;
 		}
@@ -517,7 +497,7 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 	 */
 	public List<String> run(String synthFilePath) 
 	{
-		if(select_sbmlTechMap.isSelected())
+		if(select_atacs.isSelected())
 		{
 			try
 			{
@@ -622,7 +602,7 @@ public class SbolSynthesisView extends JTabbedPane implements ActionListener, Ru
 				e.printStackTrace();
 			}
 		}
-		else if(select_sbolTechMap.isSelected()){
+		else if(select_yosys.isSelected()){
 			SBOLTechMapOptions techMapOptions = setSequentialTechMapProperties();
 			try {
 				List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
