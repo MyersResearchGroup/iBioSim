@@ -1150,7 +1150,7 @@ public class BioModel extends CoreObservable{
 			r.setId(GlobalConstants.COMPLEXATION + "_" + s);
 			r.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(true);
 			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
@@ -1167,8 +1167,8 @@ public class BioModel extends CoreObservable{
 				k.getListOfLocalParameters().remove(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 			}
 		}
-		SBMLutilities.cloneDimensions(sbml.getModel().getSpecies(s), r);
-		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(s), r.getProduct(0), "species");
+		//SBMLutilities.cloneDimensions(sbml.getModel().getSpecies(s), r);
+		//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(s), r.getProduct(0), "species");
 		updateComplexParameters(r,KcStr);
 		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
@@ -1176,7 +1176,7 @@ public class BioModel extends CoreObservable{
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -1185,7 +1185,7 @@ public class BioModel extends CoreObservable{
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		return r;
@@ -1202,12 +1202,12 @@ public class BioModel extends CoreObservable{
 			return r;
 		}
 		if (modifier!=null) {
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(regulatorId), modifier, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(regulatorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(productId);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			product.setStoichiometry(np);
 			product.setConstant(true);
@@ -1495,7 +1495,7 @@ public class BioModel extends CoreObservable{
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId+"_mRNA")!=null) {
 				r.removeProduct(promoterId+"_mRNA");
 			}
@@ -1523,7 +1523,7 @@ public class BioModel extends CoreObservable{
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (modifier!=null) {
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(activatorId), modifier, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(activatorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1536,7 +1536,7 @@ public class BioModel extends CoreObservable{
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
 			}
@@ -1565,7 +1565,7 @@ public class BioModel extends CoreObservable{
 			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (modifier!=null) {
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(repressorId), modifier, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(repressorId), modifier, "species");
 		}
 		if (!productId.equals("none") && r.getProductForSpecies(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1578,7 +1578,7 @@ public class BioModel extends CoreObservable{
 				product.setStoichiometry(np);
 			}
 			product.setConstant(true);
-			SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
+			//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(productId), product, "species");
 			if (r.getProductForSpecies(promoterId + "_mRNA")!=null) {
 				r.removeProduct(promoterId + "_mRNA");
 			}
@@ -1619,7 +1619,7 @@ public class BioModel extends CoreObservable{
 			reactant.setSpecies(reactantId);
 			reactant.setConstant(true);
 		}
-		SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(reactantId), reactant, "species");
+		//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(reactantId), reactant, "species");
 		updateComplexCooperativity(reactantId, r, CoopStr, sbml.getModel());
 		return r;
 	}
@@ -1661,7 +1661,7 @@ public class BioModel extends CoreObservable{
 			reaction.setId("MembraneDiffusion_"+s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(true);
 			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -1670,12 +1670,12 @@ public class BioModel extends CoreObservable{
 			reactant.setConstant(true);
 		}
 		String indexStr = "";
-		if (dimensions!=null && dimensions.length>0) {
+/*		if (dimensions!=null && dimensions.length>0) {
 			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
 			SBMLutilities.createDimensions(reaction, dimIds, dimensions);
 			SBMLutilities.addIndices(reaction.getReactant(0), "species", dimIds, 0);
 			indexStr = SBMLutilities.getIndicesString(reaction.getReactant(0), "species");
-		}
+		}*/
 		reaction.createKineticLaw();
 		updateDiffusionParameters(reaction,kmdiffStr);
 		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+indexStr+"-"+
@@ -1685,7 +1685,7 @@ public class BioModel extends CoreObservable{
 			if (onPort) {
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -1694,7 +1694,7 @@ public class BioModel extends CoreObservable{
 				port = sbmlCompModel.createPort();
 				port.setId(reaction.getId());
 				port.setIdRef(reaction.getId());
-				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
 			}
 		}
 		return reaction;
@@ -1709,7 +1709,7 @@ public class BioModel extends CoreObservable{
 			r.setId("Constitutive_"+s);
 			r.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			//r.setFast(false);
 			SpeciesReference product = r.createProduct();
@@ -1766,7 +1766,7 @@ public class BioModel extends CoreObservable{
 			if (onPort) {
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			} else {
 				sbmlCompModel.removePort(port);
 			}
@@ -1775,7 +1775,7 @@ public class BioModel extends CoreObservable{
 				port = sbmlCompModel.createPort();
 				port.setId(r.getId());
 				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
 			}
 		}
 		return r;
@@ -1789,7 +1789,7 @@ public class BioModel extends CoreObservable{
 			reaction.setId(GlobalConstants.DEGRADATION + "_" + s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
 			reaction.setReversible(false);
 			//reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -2083,7 +2083,7 @@ public class BioModel extends CoreObservable{
 								smallMolecule.setConstant(false);
 								smallMolecule.setInitialAmount(0.0);
 								
-								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
 								
 								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
 								
@@ -4105,7 +4105,7 @@ public class BioModel extends CoreObservable{
 			port.setId(dir + "__" + SId);
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
-			SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
+			//SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
 		} else if (dir.equals(GlobalConstants.OUTPUT)) {
 			if (port==null) {
 				port = sbmlCompModel.createPort();
@@ -4113,7 +4113,7 @@ public class BioModel extends CoreObservable{
 			port.setId(dir + "__" + SId);
 			port.setIdRef(SId);
 			port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
-			SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
+			//SBMLutilities.cloneDimensionAddIndex(variable,port,"comp:idRef");
 		} else if (port != null) {
 			sbmlCompModel.removePort(port);
 		}
@@ -4676,7 +4676,7 @@ public class BioModel extends CoreObservable{
 					Species mRNA = sbml.getModel().createSpecies();
 					mRNA.setId(promoterId+"_mRNA");
 					mRNA.setCompartment(reaction.getCompartment()); 
-					SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),mRNA,"compartment");
+					//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),mRNA,"compartment");
 					mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
 					mRNA.setInitialAmount(0.0);
 					mRNA.setBoundaryCondition(false);
@@ -4957,7 +4957,7 @@ public class BioModel extends CoreObservable{
 			r.setId(GlobalConstants.DEGRADATION + "_" + speciesID);
 			SBMLutilities.setMetaId(r, r.getId());
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 			r.setReversible(false);
 			//r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
@@ -5059,7 +5059,7 @@ public class BioModel extends CoreObservable{
 				r.setId("Diffusion_" + speciesID + "_" + direction);
 				SBMLutilities.setMetaId(r, r.getId());
 				r.setCompartment(diffComp);
-				SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
+				//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(r.getCompartment()),r,"compartment");
 				r.setReversible(true);
 				//r.setFast(false);
 
@@ -5403,7 +5403,7 @@ public class BioModel extends CoreObservable{
 			// Set default species metaID
 			metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, species, metaIDIndex); 
 			species.setCompartment(compartment);
-			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),species,"compartment");
+			//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),species,"compartment");
 			species.setBoundaryCondition(false);
 			species.setConstant(false);
 			species.setInitialAmount(0);
@@ -5479,7 +5479,7 @@ public class BioModel extends CoreObservable{
 		// Set default reaction metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex); 
 		r.setCompartment(compartment);
-		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),r,"compartment");
+		//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),r,"compartment");
 		r.setReversible(false);
 		//r.setFast(false);
 		KineticLaw k = r.createKineticLaw();
@@ -5608,7 +5608,7 @@ public class BioModel extends CoreObservable{
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
 
 		promoter.setCompartment(compartment);
-		SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),promoter,"compartment");
+		//SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(compartment),promoter,"compartment");
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
@@ -6014,7 +6014,7 @@ public class BioModel extends CoreObservable{
 						SBaseRef sbaseRef = port.createSBaseRef();
 						sbaseRef.setPortRef(subPort.getId());
 						// TODO: need to support arrays of subModels which has arrays of ports
-						SBMLutilities.cloneDimensionAddIndex(submodel, port, "comp:idRef");
+						//SBMLutilities.cloneDimensionAddIndex(submodel, port, "comp:idRef");
 						SBMLutilities.updatePortDimensionsIndices(submodel, port, sbaseRef, subPort, 
 								subBioModel.getSBMLDocument(), sbml);
 					} else {

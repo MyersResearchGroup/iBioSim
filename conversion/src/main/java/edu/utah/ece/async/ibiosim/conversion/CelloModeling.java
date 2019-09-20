@@ -108,7 +108,22 @@ public class CelloModeling {
 		//TODO PEDRO hacer measure classes
 		//CreateMeasureClasses(sbolDoc);
 				
-		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();		
+		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
+		//boolean CelloModel = true;
+		// TODO there has to be a better way to determine if we are in a Cello model generation or not
+//		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
+//			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
+//				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
+//				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
+//				//using Cello Parameters.
+//				celloParameters.put(promoter, hasCelloParameters(promoter));
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
+//				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
+//					CelloModel = true;
+//				}
+//			}
+//		}
+		
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
@@ -125,14 +140,6 @@ public class CelloModeling {
 				}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generateTUSpecies(comp, sbolDoc, targetModel);
-				// If CelloModel, generate only one species for each TU
-//				if (CelloModel) {
-//					generateTUSpecies(comp, sbolDoc, targetModel);
-//				}
-//				// else, we are in normal model generation, which creates one species for each promoter in the TU
-//				else {
-//					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
-//				}
 				if (SBOL2SBML.isInputComponent(comp)) {
 					SBOL2SBML.generateInputPort(comp, targetModel);
 				} else if (SBOL2SBML.isOutputComponent(comp)){
@@ -276,6 +283,7 @@ public class CelloModeling {
 //							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 //							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
 //							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+//					//TODO PEDRO calling cello methods
 //					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
 //				}
 //				//else call the normal model generating method
@@ -405,7 +413,9 @@ public class CelloModeling {
 	 * 
 	 */
 	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-					
+			
+			//TODO PEDRO: generateTUSpecies
+			
 			String TU = promoter.getDisplayId();
 			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
 				targetModel.createPromoter(TU, -1, -1, true, false, null);
@@ -495,6 +505,9 @@ public class CelloModeling {
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.PRODUCT)) {
 							complex = partici.getParticipantDefinition();
+							if (complex.getDisplayId().equals("HSL_LuxR_protein")) {
+								break;
+							}
 							if (!sensorMolecules.containsKey(complex)) {
 								//promoterActivations.put(promoter.getDisplayId(), null);
 								sensorMolecules.put(complex.getDisplayId(),"");
@@ -504,6 +517,9 @@ public class CelloModeling {
 					for (Participation partici : interact.getParticipations()) {
 						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
 							prot = partici.getParticipantDefinition();
+							if (prot.getDisplayId().equals("LuxR_protein")) {
+								break;
+							}
 							if(SBOL2SBML.isProteinDefinition(prot)) {
 								if (!sensorMolecules.containsKey(prot)) {
 									//promoterActivations.put(promoter.getDisplayId(), null);
@@ -513,11 +529,14 @@ public class CelloModeling {
 							}
 						}
 					}
-					for (Participation partici : interact.getParticipations()) {
-						if (partici.containsRole(SystemsBiologyOntology.REACTANT)) {
-							FunctionalComponent comp = moduleDef.getFunctionalComponent(partici.getParticipantURI());
-							ligand = partici.getParticipantDefinition();
+					for (Participation partici2 : interact.getParticipations()) {
+						if (partici2.containsRole(SystemsBiologyOntology.REACTANT)) {
+							FunctionalComponent comp = moduleDef.getFunctionalComponent(partici2.getParticipantURI());
+							ligand = partici2.getParticipantDefinition();
 							ligand = comp.getDefinition();
+							if (ligand.getDisplayId().equals("HSL")) {
+								break;
+							}
 							if (SBOL2SBML.isSmallMoleculeDefinition(ligand)) {
 								sensorMolecules.replace(complex.getDisplayId(), ligand.getDisplayId());
 								sensorMolecules.replace(prot.getDisplayId(), ligand.getDisplayId());
@@ -541,6 +560,7 @@ public class CelloModeling {
 	 * @param sbolDoc the SBOLDocument
 	 * @return the hash map with all the interactions per promoter
 	 */
+	//TODO PEDRO: promoterInteractions
 	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, String> sensorMolecules){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
@@ -551,9 +571,6 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
-					String alpha = "";
-					String beta = "";
-					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
@@ -561,16 +578,16 @@ public class CelloModeling {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
 						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
-							alpha = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
-							beta = Annot.get(i).getStringValue();
-						}
 					}
 					Boolean sensor = false;
-					if (!ymax.isEmpty() & !ymin.isEmpty()) {
-						sensor = true;
+					if (interact.getDisplayId().equals("HSL_LuxR_protein_pLuxStar_activation")) {
+						System.out.println("LuxR!");
+					}
+					
+					if (!interact.getDisplayId().equals("HSL_LuxR_protein_pLuxStar_activation")) {
+						if (!ymax.isEmpty() & !ymin.isEmpty()) {
+							sensor = true;
+						}
 					}
 					ComponentDefinition promoter = null;
 					for (Participation partici : interact.getParticipations()) {
@@ -597,7 +614,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -608,21 +625,12 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
-					String alpha = "";
-					String beta = "";
-					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
-							alpha = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
-							beta = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -654,7 +662,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -695,7 +703,12 @@ public class CelloModeling {
 											for (Participation participator2 : interaction.getParticipations()) {
 												if (participator2.containsRole(SystemsBiologyOntology.PRODUCT)) {
 													String protein1 = participator2.getParticipant().getDisplayId();
-													if (!Prot_2_Param.containsKey(protein1)) {
+													if (protein1.equals("LuxR_protein")) {
+														if (!Prot_2_Param.containsKey(protein1)) {
+															Prot_2_Param.put("HSL_LuxR_protein", hasCelloParameters2(CD));
+														}
+													}
+													else if (!Prot_2_Param.containsKey(protein1)) {
 														Prot_2_Param.put(protein1, hasCelloParameters2(CD));
 													}
 												}
@@ -826,14 +839,7 @@ public class CelloModeling {
 		}
 	}
 
-	
-	/**
-	 * Checks for cello parameters 2.
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param promoter - The promoter or TU that we want to check if it has cello parameters
-	 * @return the array list with the parameters found, if any
-	 */
+	//TODO PEDRO hasCelloParameters
 	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
 		
 		//Initialize the parameters we are looking for
@@ -841,8 +847,6 @@ public class CelloModeling {
 		String K = "";
 		String ymax = "";
 		String ymin = "";
-		String alpha = "";
-		String beta = "";
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
@@ -852,23 +856,17 @@ public class CelloModeling {
 				List<Annotation> Annot = promoter.getAnnotations();
 					//circle through all annotations looking for Cello parameters
 					for (int i = 0; i < Annot.size(); i++) {
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K"))) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}K")) || Annot.get(i).getQName().toString().equals(new String("{www.dummy.org#}K")) ) {
 							K = Annot.get(i).getStringValue();
 						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n"))) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}n")) || Annot.get(i).getQName().toString().equals(new String("{www.dummy.org#}n"))) {
 							n = Annot.get(i).getStringValue();
 						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax")) || Annot.get(i).getQName().toString().equals(new String("{www.dummy.org#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin")) || Annot.get(i).getQName().toString().equals(new String("{www.dummy.org#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
-							alpha = Annot.get(i).getStringValue();
-						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
-							beta = Annot.get(i).getStringValue();
 						}
 					}
 			}
@@ -879,8 +877,6 @@ public class CelloModeling {
 		CelloParameters2.add(K);
 		CelloParameters2.add(ymax);
 		CelloParameters2.add(ymin);
-		CelloParameters2.add(alpha);
-		CelloParameters2.add(beta);
 		
 		return CelloParameters2;
 	}
@@ -951,27 +947,7 @@ public class CelloModeling {
 	}
 	
 	
-	
-	/**
-	 * Generate cello production rxns.
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param promoter the promoter
-	 * @param partici the partici
-	 * @param productions the productions
-	 * @param activations the activations
-	 * @param repressions the repressions
-	 * @param products the products
-	 * @param transcribed the transcribed
-	 * @param activators the activators
-	 * @param repressors the repressors
-	 * @param moduleDef the module def
-	 * @param sbolDoc the sbol doc
-	 * @param targetModel the target model
-	 * @param celloParameters the cello parameters
-	 * @param promoterInteractions the promoter interactions
-	 * @throws BioSimException the bio sim exception
-	 */
+	// TODO PEDRO generateCelloProductionsRxns
 	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
@@ -1053,7 +1029,7 @@ public class CelloModeling {
 		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
 		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
 		mRNA.setId( rxnID + "_mRNA");
-		
+		//TODO PEDRO This is to make TU a species on which to make it a modifier. This may have to change when we fix MDflatenner
 /*		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
 			targetModel.createPromoter(promoter.getDisplayId(), -1, -1, true, false, null);
 		}
@@ -1117,6 +1093,7 @@ public class CelloModeling {
 	 * @param targetModel the target model being constructed for the TU
 	 * @throws BioSimException the bio sim exception
 	 */
+	// TODO PEDRO generateCelloDegradationRxn
 	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel, SBOLDocument sbolDoc) throws BioSimException {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
@@ -1138,6 +1115,25 @@ public class CelloModeling {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
 			System.out.println("mRNA: " + species.getDisplayId());
 		}
+		
+		if (species.getDisplayId().equals("HSL_LuxR_protein")) {
+			kdegrad = GlobalConstants.k_TF_DIM_S;
+		}
+		
+/*		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
+		if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
+			kdegrad = GlobalConstants.k_SD_DIM_S;
+		
+			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
+		//should it be .containsRole or .containsType for the Transcription Factor TF?
+		} else if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
+			kdegrad = GlobalConstants.k_TF_DIM_S;
+		} else {
+			//TODO PEDRO: So I am using the constant of degradation for every species that's not mRNA. Should I change this?
+			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecules
+			kdegrad = GlobalConstants.k_TF_DIM_S;
+			// Do nothing, kdegrad = 0
+		}*/
 		
 		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
 		if (kdegrad == 0) {
