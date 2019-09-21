@@ -423,7 +423,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		if(isComponentDefinition)
 		{
 			ComponentDefinition cd = (ComponentDefinition) sbolObj;
-			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc);
+			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc, false);
 			if (editedCD == null) {
 				// nothing was changed
 				return;
