@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,7 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -75,7 +73,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private static final long serialVersionUID = 1L;
 	private String synthID; 	 // ID of synthesis file
 	private String rootFilePath; // Path to the iBioSim project
-	private String tbFilePath; 
 
 	private Log log; // Log file used in each iBioSim project
 	private JFrame frame;
@@ -88,7 +85,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JList<String> libList; //The path to all the library files.
 
 	private JScrollPane libScroll;
-	private JButton addLibButton, removeLibButton, tbButton, specButton;
+	private JButton addLibButton, removeLibButton, specButton;
 	private JComboBox methodBox;
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
@@ -156,9 +153,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		JPanel designPanel = new JPanel(new BorderLayout());
 		JPanel inputPanel = new JPanel(new BorderLayout());
 		JPanel specPanel = constructSpecPanel();
-		JPanel tbPanel = constructTestbenchPanel();
 		designPanel.add(specPanel, BorderLayout.NORTH);
-		designPanel.add(tbPanel, BorderLayout.SOUTH);
 
 		libScroll = new JScrollPane();
 		libScroll.setPreferredSize(new Dimension(276, 55));
@@ -182,22 +177,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		specPanel.add(specText);
 
 		return specPanel;
-	}
-
-	private JPanel constructTestbenchPanel(){
-		JPanel tbPanel = createLabeledPanel("Testbench File:");
-
-		JPanel buttonPanel = new JPanel();
-		tbButton = new JButton("Browse...");
-		tbButton.addActionListener(this);
-		buttonPanel.add(tbButton);
-
-		tbTextBox = new JTextField(20);
-		tbTextBox.setEnabled(false);
-		tbPanel.add(tbTextBox);
-
-		tbPanel.add(buttonPanel);
-		return tbPanel;
 	}
 
 	private JPanel createLabeledPanel(String panelName) {
@@ -350,15 +329,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		else if (e.getSource() == removeLibButton)
 		{
 			removeLibraryFiles(libList.getSelectedIndices());
-		}
-		else if(e.getSource() == tbButton) {
-			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);
-			if(!isValidSynthesisFile(selectedFilePath)) {
-				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			tbFilePath = selectedFilePath;
-			tbTextBox.setText(selectedFilePath);
 		}
 		else if(e.getSource() == specButton) {
 			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);

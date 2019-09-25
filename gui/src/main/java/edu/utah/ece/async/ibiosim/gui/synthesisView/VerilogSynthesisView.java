@@ -13,7 +13,6 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.gui.synthesisView;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -22,9 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,16 +41,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.xml.stream.XMLStreamException;
 
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
-import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
-import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
-import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
@@ -62,8 +54,6 @@ import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExecepti
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
-import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
-import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Cover;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Match;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.PreSelectedMatch;
@@ -71,7 +61,6 @@ import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapSolution;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapUtility;
-import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 
 /**
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
@@ -91,21 +80,16 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	private JFrame frame;
 	private Gui gui;
 	private Properties synthProps; //Store fields needed for technology mapping in a property file
-
-	private JTextField specText, tbTextBox;
-
+	private String verilogSpecPath;
+	
+	private JTextField specTextBox, testEnvTextBox;
 	private List<String> libFilePaths;
 	private JList<String> libList; 
-
 	private JScrollPane libScroll;
-	private JButton addLibButton, removeLibButton, tbButton;
-	private JComboBox methodBox;
-	private JLabel numSolnsLabel;
+	private JButton addLibButton, removeLibButton, testEnvButton;
+	private JComboBox<String> coverAlgOptBox, atacsAlgBox;
 	private JTextField numSolnsText;
-
-	private JRadioButton select_atacs;
-	private JRadioButton select_yosys;
-	private boolean selectSbml;
+	private JRadioButton yosysNandDecomp_button, yosysNorDecomp_button, runAtacs_button;
 
 	/**
 	 * Constructor to create the technology mapping for the UI.
@@ -115,207 +99,142 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	 * @param rootFilePath - Path to the iBioSim project
 	 * @param log - Log file used in each iBioSim project
 	 */
-	public VerilogSynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log) 
+	public VerilogSynthesisView(Gui ibioSimGUI, String synthID, String rootFilePath, Log log, String verilogSpecPath) 
 	{
 		this.gui = ibioSimGUI;
 		this.synthID = synthID;
 		this.rootFilePath = rootFilePath;
 		this.log = log;
+		this.verilogSpecPath = verilogSpecPath;
 
 		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
-		JPanel optionsPanel = constructOptionsPanel(); 
+		JPanel optionsPanel = createVerilogSynthPanel(); 
 		addTab("Verilog Synthesis Options", optionsPanel); 
 		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
 	}
 
-	/**
-	 * Create all panels to be displayed in the Synthesis View needed for performing technology mapping.
-	 * 
-	 * @return The complete panel for Synthesis View 
-	 */
-	private JPanel constructOptionsPanel() 
-	{
-		JPanel topPanel = new JPanel();
-		JPanel optionsPanel = new JPanel(new BorderLayout());
-		JPanel specLibPanel = constructSpecLibPanel();
-		JPanel methodPanel = constructMethodPanel();
-		topPanel.add(optionsPanel);
-		optionsPanel.add(specLibPanel, BorderLayout.NORTH);
-		optionsPanel.add(methodPanel, BorderLayout.CENTER);
-		return topPanel;
+	private JPanel createVerilogSynthPanel() {
+		JPanel synthOverviewPanel = new JPanel();
+		JPanel techmapPanel = createTechmapPanel();
+		JPanel synthesisPanel = createSynthesisPanel();
+
+		synthOverviewPanel.add(techmapPanel);
+		synthOverviewPanel.add(synthesisPanel);
+		return synthOverviewPanel;
 	}
 
-	/**
-	 * Construct the technology mapping library gate panel for users to upload the library file(s).
-	 * 
-	 * @return The library file panel that was constructed for technology mapping.
-	 */
-	private JPanel constructSpecLibPanel() 
-	{
-		JPanel specLibPanel = new JPanel();
-		JLabel libLabel = new JLabel("Library Files: ");
-		JPanel inputPanel = constructSpecLibInputPanel();
-		specLibPanel.add(libLabel);
-		specLibPanel.add(inputPanel);
-		return specLibPanel;
-	}
+	private JPanel createTechmapPanel() {
+		JPanel techmapPanel = new JPanel(new GridLayout(4, 1));
+		int textBoxWidth = 20;
 
-	/**
-	 * Construct the scrolling text box where the names of the gate library files are loaded in.
-	 * 
-	 * @return The panel of the scrolling text box to store the gate library files
-	 */
-	private JPanel constructSpecLibInputPanel() 
-	{
-		JPanel designPanel = new JPanel(new BorderLayout());
-		JPanel inputPanel = new JPanel(new BorderLayout());
-		JPanel specPanel = constructSpecPanel();
-		JPanel tbPanel = constructTestbenchPanel();
-		designPanel.add(specPanel, BorderLayout.NORTH);
-		designPanel.add(tbPanel, BorderLayout.SOUTH);
+		JPanel specPanel = new JPanel(new GridLayout(1, 2));
+		JPanel specLabelPanel = new JPanel(new GridLayout(1,1));
+		specLabelPanel.add(new JLabel("Specification File:"));
+		specTextBox = new JTextField(textBoxWidth);
+		specTextBox.setEnabled(false);
+		specPanel.add(specLabelPanel);
+		specPanel.add(specTextBox);
+		techmapPanel.add(specPanel);
 
+		JPanel testEnvPanel2 = new JPanel(new GridLayout(1, 3));
+		JPanel testEnvLabelPanel2 = new JPanel(new GridLayout(1,1));
+		testEnvLabelPanel2.add(new JLabel("Testing Environment File:"));
+		JPanel testEnvInputPanel = new JPanel(new GridLayout(1, 1));
+		testEnvTextBox = new JTextField();
+		testEnvTextBox.setEnabled(false);
+		testEnvInputPanel.add(testEnvTextBox);
+		JPanel testEnvBrowsePanel = new JPanel(new GridLayout(1,1));
+		testEnvButton = new JButton("Browse...");
+		testEnvButton.addActionListener(this);
+		testEnvBrowsePanel.add(testEnvButton);
+		testEnvPanel2.add(testEnvLabelPanel2);
+		testEnvPanel2.add(testEnvInputPanel);
+		testEnvPanel2.add(testEnvBrowsePanel);
+		techmapPanel.add(testEnvPanel2);
+
+		JPanel libPanel = new JPanel(new GridLayout(1, 3));
+		JPanel libLabelPanel = new JPanel(new GridLayout(1,1));
+		libLabelPanel.add(new JLabel("Library Files: "));
+		JPanel libInputPanel = new JPanel(new GridLayout(1, 1));
 		libScroll = new JScrollPane();
 		libScroll.setPreferredSize(new Dimension(276, 55));
-
-		JPanel buttonPanel = constructLibButtonPanel();
-		inputPanel.add(designPanel, BorderLayout.NORTH);
-
-		inputPanel.add(libScroll, BorderLayout.WEST);
-		inputPanel.add(buttonPanel, BorderLayout.SOUTH);
-		return inputPanel;
-	}
-
-	/**
-	 * Create the specification panel for technology mapping.
-	 * @return The specification panel.
-	 */
-	private JPanel constructSpecPanel() {
-		JPanel specPanel = createLabeledPanel("Specification File:");
-
-		specText = new JTextField(20);
-		specText.setEnabled(false);
-		specPanel.add(specText);
-
-		return specPanel;
-	}
-
-	private JPanel constructTestbenchPanel(){
-		JPanel tbPanel = createLabeledPanel("Testbench File:");
-
-		JPanel buttonPanel = new JPanel();
-		tbButton = new JButton("Browse...");
-		tbButton.addActionListener(this);
-		buttonPanel.add(tbButton);
-
-		tbTextBox = new JTextField(20);
-		tbTextBox.setEnabled(false);
-		tbPanel.add(tbTextBox);
-
-		tbPanel.add(buttonPanel);
-		return tbPanel;
-	}
-
-	private JPanel createLabeledPanel(String panelName) {
-		JPanel panel = new JPanel();
-		JLabel panelLabel = new JLabel(panelName);
-		panel.add(panelLabel);
-		return panel;
-	}
-
-	/**
-	 * Create buttons to add and remove gate library files.
-	 * @return the button panel for the gate library
-	 */
-	private JPanel constructLibButtonPanel() {
-		JPanel buttonContainer = new JPanel();
-
+		libInputPanel.add(libScroll);
+		JPanel buttonContainer = new JPanel(new GridLayout(2, 1));
 		addLibButton = new JButton("Add");
 		removeLibButton = new JButton("Remove");
 		addLibButton.addActionListener(this);
 		removeLibButton.addActionListener(this);
 		buttonContainer.add(addLibButton);
 		buttonContainer.add(removeLibButton);
+		libPanel.add(libLabelPanel);
+		libPanel.add(libInputPanel);
+		libPanel.add(buttonContainer);
+		techmapPanel.add(libPanel);
 
-		return buttonContainer;
-	}
-
-	/**
-	 * Create the supported technology mapping algorithms panel.
-	 * @return The technology mapping algorithms panel
-	 */
-	private JPanel constructMethodPanel() 
-	{
-		JPanel topPanel = new JPanel();
-		JPanel methodPanel = new JPanel(new BorderLayout());
-		JPanel labelPanel = constructMethodLabelPanel();
-		JPanel inputPanel = constructMethodInputPanel();
-		JPanel techMapPanel = constructTechnologyMappingOptions();
-		topPanel.add(methodPanel);
-		methodPanel.add(labelPanel, BorderLayout.WEST);
-		methodPanel.add(inputPanel, BorderLayout.CENTER);
-		methodPanel.add(techMapPanel, BorderLayout.SOUTH);
-		return topPanel;
-	}
-
-	/**
-	 * Set up technology mapping buttons on Synthesis View for user to select
-	 * @return the technology mapping option panel.
-	 */
-	private JPanel constructTechnologyMappingOptions(){
-		JPanel techMapPanel = new JPanel(new GridLayout(1, 2));
-
-		select_atacs = new JRadioButton("Run ATACS");
-		select_atacs.setSelected(true);
-		techMapPanel.add(select_atacs);
-
-		select_yosys = new JRadioButton("Run Yosys");	
-		techMapPanel.add(select_yosys); 
-
-		return techMapPanel;
-	}
-
-
-	/**
-	 * Set method label in Synthesis View
-	 * @return The label panel for the synthesis method.
-	 */
-	private JPanel constructMethodLabelPanel() {
-		JPanel labelPanel = new JPanel(new GridLayout(2, 1));
-		labelPanel.add(new JLabel("Synthesis Method:  "));
-		numSolnsLabel = new JLabel("Number of Solutions:  ");
-		labelPanel.add(numSolnsLabel);
-		return labelPanel;
-	}
-
-	/**
-	 * Set method input that user selected from Synthesis View
-	 * @return The method panel
-	 */
-	private JPanel constructMethodInputPanel() {
-		JPanel inputPanel = new JPanel(new GridLayout(2, 1));
-		String[] coverAlgs = new String[3];
-		coverAlgs[0] = GlobalConstants.SBOL_SYNTH_GREEDY;
-		coverAlgs[1] = GlobalConstants.SBOL_SYNTH_EXHAUSTIVE;
-		coverAlgs[2] = GlobalConstants.SBOL_SYNTH_EXHAUST_BB;
-		methodBox = new JComboBox(coverAlgs);
-		methodBox.addActionListener(this);
-		numSolnsText = new JTextField(39); 
+		JPanel coverPanel = new JPanel(new GridLayout(2, 1));
+		JPanel coverAlgPanel = new JPanel(new GridLayout(1, 2));
+		coverAlgPanel.add(new JLabel("Covering Method:  "));
+		coverAlgOptBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_GREEDY, GlobalConstants.SBOL_SYNTH_EXHAUSTIVE, GlobalConstants.SBOL_SYNTH_EXHAUST_BB});
+		coverAlgOptBox.addActionListener(this);
+		coverAlgPanel.add(coverAlgOptBox);
+		coverPanel.add(coverAlgPanel);
+		JPanel coverSolPanel = new JPanel(new GridLayout(1, 2));
+		coverSolPanel.add(new JLabel("Number of Solutions:  "));
+		numSolnsText = new JTextField(textBoxWidth); 
 		numSolnsText.addActionListener(this);
-		inputPanel.add(methodBox);
-		inputPanel.add(numSolnsText);
-		return inputPanel;
+		coverSolPanel.add(numSolnsText);
+		coverPanel.add(coverSolPanel);
+		techmapPanel.add(coverPanel);
+
+		return techmapPanel;
 	}
+
+	private JPanel createSynthesisPanel() {
+		JPanel synthesisPanel = new JPanel(new GridLayout(2, 1));
+		JPanel atacsPanel = new JPanel(new GridLayout(1, 2));
+		runAtacs_button = new JRadioButton("ATACS Synthesis", false);
+		runAtacs_button.addActionListener(this);
+		atacsPanel.add(runAtacs_button);
+		atacsAlgBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES, GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES});
+		atacsAlgBox.setEnabled(false);
+		atacsAlgBox.addActionListener(this);
+		atacsPanel.add(atacsAlgBox);
+		synthesisPanel.add(atacsPanel);
+
+		JPanel decompLabelPanel = new JPanel(new GridLayout(1,1));
+		decompLabelPanel.add(new JLabel("Specification Decomposition Type :"));
+		yosysNandDecomp_button = new JRadioButton("NAND Logic", true);
+		yosysNorDecomp_button = new JRadioButton("NOR Logic", false);
+		yosysNandDecomp_button.addActionListener(this);
+		yosysNorDecomp_button.addActionListener(this);
+		JPanel decompOptPanel = new JPanel(new GridLayout(1, 2));
+		decompOptPanel.add(yosysNandDecomp_button);
+		decompOptPanel.add(yosysNorDecomp_button);
+		JPanel decompPanel = new JPanel(new GridLayout(1, 2));
+		decompPanel.add(decompLabelPanel);
+		decompPanel.add(decompOptPanel);
+		synthesisPanel.add(decompPanel); 
+		return synthesisPanel;
+	}
+
 
 	/**
 	 * Load default fields for Synthesis View Window
-	 * @param specFileID - ID of specification file.
+	 * @param specFileId - ID of specification file.
 	 */
-	public void loadDefaultSynthesisProperties(String specFileID) {
-		synthProps = TechMapping.createDefaultSynthesisProperties(specFileID);
+	public void loadDefaultSynthesisProperties(String specFileId) {
+		Preferences prefs = Preferences.userRoot();
+
+		synthProps = new Properties();
+		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileId);
+		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY, this.verilogSpecPath);
+		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_LIBS_PREFERENCE, ""));
+		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, GlobalConstants.SBOL_SYNTH_EXHAUST_BB));
+		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
+		
 		saveSynthesisProperties();
 		loadSynthesisOptions();
 	}
-
 
 
 	/**
@@ -336,14 +255,14 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, 
-					"Unable to write SBML Technology Mapping property file to the specified " + propFilePath + ".",
-					"File Not Created",
+					"Unable to locate the following SBOL Technology Mapping property file:" + propFilePath + ".",
+					"File Not Found",
 					JOptionPane.ERROR_MESSAGE);
 		} 
 		catch (IOException e) 
 		{
 			JOptionPane.showMessageDialog(Gui.frame, 
-					"Unable to create SBML Technology Mapping property file.",
+					"Unable to write to SBOL Technology Mapping property file.",
 					"File Not Created",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -359,16 +278,53 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	 */
 	private void loadSynthesisOptions() 
 	{
-		specText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-		libFilePaths = new LinkedList<String>();
-		for (String libFilePath : synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(","))
-			if (libFilePath.length() > 0)
-				libFilePaths.add(libFilePath);
-		libList = new JList<String>();
-		updateLibraryFiles();
-		libScroll.setViewportView(libList);
-		methodBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY));
-		numSolnsText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
+			specTextBox.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY)) {
+			testEnvTextBox.setEnabled(true);
+			testEnvTextBox.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY));
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY)) {
+			libFilePaths = new LinkedList<String>();
+			for (String libFilePath : synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(",")) {
+				if (libFilePath.length() > 0) {
+					libFilePaths.add(libFilePath);
+				}
+			}
+			libList = new JList<String>();
+			updateLibraryFiles();
+			libScroll.setViewportView(libList);
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY)) {
+			coverAlgOptBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY));
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY)) {
+			numSolnsText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
+			runAtacs_button.setSelected(true);
+			atacsAlgBox.setEnabled(true);
+			atacsAlgBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY));
+		}
+		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
+			switch(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
+				case GlobalConstants.SBOL_SYNTH_YOSYS_NAND:
+					yosysNandDecomp_button.setSelected(true);
+					yosysNorDecomp_button.setSelected(false);
+					break;
+				case GlobalConstants.SBOL_SYNTH_YOSYS_NOR:
+					yosysNorDecomp_button.setSelected(true);
+					yosysNandDecomp_button.setSelected(false);
+					break;
+				default:
+					yosysNandDecomp_button.setSelected(false);
+					yosysNorDecomp_button.setSelected(false);
+					break;
+			}
+		}
+
+
 	}
 
 	private boolean isValidSynthesisFile(String fileFullPath) {
@@ -386,52 +342,50 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		{
 			removeLibraryFiles(libList.getSelectedIndices());
 		}
-		else if(e.getSource() == tbButton) {
+		else if(e.getSource() == testEnvButton) {
 			String selectedFilePath = openFileBrowser(JFileChooser.FILES_ONLY);
 			if(!isValidSynthesisFile(selectedFilePath)) {
-				JOptionPane.showMessageDialog(frame, "You can only select SBML, SBOL, or Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You can only select Verilog files.", "Invalid File", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			tbTextBox.setText(selectedFilePath);
+			testEnvTextBox.setText(selectedFilePath);
 		}
-		else if (e.getSource() == methodBox)
+		else if (e.getSource() == coverAlgOptBox)
 		{
 			toggleMethodSettings();
 		}
-		else if(e.getSource() == select_atacs)
+		else if(e.getSource() == yosysNandDecomp_button)
 		{
-			if(select_atacs.isSelected())
-			{
-				select_yosys.setSelected(false);
+			if(yosysNandDecomp_button.isSelected()) {
+				yosysNorDecomp_button.setSelected(false);
 			}
-			else 
-			{
-				select_atacs.setSelected(true);
-				select_yosys.setSelected(false);
+			else {
+				yosysNorDecomp_button.setSelected(true);
 			}
-			this.selectSbml = true;
 		}
-		else if(e.getSource() == select_yosys)
+		else if(e.getSource() == yosysNorDecomp_button)
 		{
-			if(select_yosys.isSelected())
-			{
-				select_atacs.setSelected(false);
+			if(yosysNorDecomp_button.isSelected()) {
+				yosysNandDecomp_button.setSelected(false);
 			}
-			else 
-			{
-				select_yosys.setSelected(true);
-				select_atacs.setSelected(false);
+			else {
+				yosysNandDecomp_button.setSelected(true);
 			}
-			this.selectSbml = false;
 		}
-	}
-	
-	public boolean isSbmlTechMap() {
-		return this.selectSbml;
+		else if(e.getSource() == runAtacs_button)
+		{
+			if(runAtacs_button.isSelected()) {
+				atacsAlgBox.setEnabled(true);
+			}
+			else {
+				atacsAlgBox.setEnabled(false);
+
+			}
+		}
 	}
 
 	private void toggleMethodSettings() {
-		if (methodBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_EXHAUST_BB)) 
+		if (coverAlgOptBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_EXHAUST_BB)) 
 			numSolnsText.setText("1");
 	}
 
@@ -490,164 +444,63 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 
 	}
 
-	/**
-	 * Perform SBML Technology Mapping
-	 * @param synthFilePath - Path to the synthesis file attached to the specification SBML document to perform technology mapping
-	 * @return
-	 */
+
 	public List<String> run(String synthFilePath) 
 	{
-		if(select_atacs.isSelected())
-		{
-			try
+		if(runAtacs_button.isSelected()) {
+			if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES))
 			{
-				//Find all .sbol files and store into a collection of files (SBOLFileManager)
-				Set<String> sbolFilePaths = new HashSet<String>();
-				for (String libFilePath : libFilePaths) 
-					for (String fileID : new File(libFilePath).list())
-						if (fileID.endsWith(".sbol"))
-							sbolFilePaths.add(libFilePath + File.separator + fileID);
 
-				SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-
-
-				Set<SynthesisGraph> graphlibrary = new HashSet<SynthesisGraph>();
-				//boolean flatImport = libFilePaths.size() > 1;
-
-				/* Find .xml files for the available library of gates and create a bioModel for each file then load 
-				 * them to the synthesis graph library.
-				 * This is where the loading of the SBML library takes place. 
-				 */
-				for (String libFilePath : libFilePaths) 
-				{
-					for (String gateFileID : new File(libFilePath).list()) 
-					{
-						if (gateFileID.endsWith(".xml")) 
-						{
-							BioModel gateModel = new BioModel(libFilePath);
-							try 
-							{
-								gateModel.load(gateFileID);
-							} 
-							catch (XMLStreamException e) 
-							{
-								JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-							}
-							catch (BioSimException e) {
-								JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-										JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-							}
-							graphlibrary.add(new SynthesisGraph(gateModel, fileManager));
-						}
-					}
-				}
-				//Load synthProps that has synthesis.spec as property into the biomodel
-				BioModel specModel = new BioModel(rootFilePath); 
-				try 
-				{
-					specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-				}
-				catch (XMLStreamException e) 
-				{
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				} 
-				catch (BioSimException e) 
-				{
-					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
-
-				SynthesisGraph spec = new SynthesisGraph(specModel, fileManager); //NOTE: load the SBML library file
-
-
-				Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
-				List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
-				List<String> solutionFileIDs;
-
-				solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
-				return solutionFileIDs;
 			}
-			catch (SBOLValidationException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "One or more of the input file(s) are invalid SBOL files.", "Invalid SBOL",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-				return null;
-			} 
-			catch (SBOLException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
-						e.getTitle(), JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} 
-			catch (FileNotFoundException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to locate input file(s).", "File Not Found",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to read or write SBOL file", "File Not Found",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} 
-			catch (SBOLConversionException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to convert input file to SBOL data model.", "Failed SBOL Conversion",
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
+			else if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)){
+
 			}
 		}
-		else if(select_yosys.isSelected()){
-			SBOLTechMapOptions techMapOptions = setSequentialTechMapProperties();
+
+
+		SBOLTechMapOptions techMapOptions = setSequentialTechMapProperties();
+		try {
+			List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
+			DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
+
+			Match m = new PreSelectedMatch(specGraph, libGraph);
+			Cover c = new Cover(m);
+			List<TechMapSolution> coverSols = new ArrayList<>();
 			try {
-				List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
-				DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
-
-				Match m = new PreSelectedMatch(specGraph, libGraph);
-				Cover c = new Cover(m);
-				List<TechMapSolution> coverSols = new ArrayList<>();
-				try {
-					if(techMapOptions.isBranchBound()) {
-						coverSols.add(c.branchAndBoundCover());
-					}
-					else if(techMapOptions.isExhaustive()) {
-						coverSols = c.exhaustiveCover();
-					}
-					else if(techMapOptions.isGreedy()) {
-						coverSols = c.greedyCover(techMapOptions.getNumOfSolutions());
-					}
-				} 
-				catch (GeneticGatesException e) {
-					e.printStackTrace();
+				if(techMapOptions.isBranchBound()) {
+					coverSols.add(c.branchAndBoundCover());
 				}
-
+				else if(techMapOptions.isExhaustive()) {
+					coverSols = c.exhaustiveCover();
+				}
+				else if(techMapOptions.isGreedy()) {
+					coverSols = c.greedyCover(techMapOptions.getNumOfSolutions());
+				}
 			} 
-			catch (SBOLTechMapException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (GateGenerationExeception e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (SBOLValidationException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (SBOLConversionException e) 
-			{
+			catch (GeneticGatesException e) {
 				e.printStackTrace();
 			}
 
+		} 
+		catch (SBOLTechMapException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (GateGenerationExeception e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (SBOLValidationException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (SBOLConversionException e) 
+		{
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -702,182 +555,6 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		return techMapOptions;
 	}
 
-
-
-	private List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
-			SBOLFileManager fileManager, String synthFilePath) throws SBOLValidationException {
-		List<BioModel> solutionModels = new LinkedList<BioModel>();
-		Set<String> solutionFileIDs = new HashSet<String>();
-		for (List<SynthesisGraph> solutionGraphs : solutions) {
-			solutionFileIDs.addAll(importSolutionSubModels(solutionGraphs, synthFilePath));
-			solutionFileIDs.add(importSolutionDNAComponents(solutionGraphs, fileManager, synthFilePath));
-		}
-		int idIndex = 0;
-		for (List<SynthesisGraph> solutionGraphs : solutions) {
-			System.out.println(solutionGraphs.toString());
-			BioModel solutionModel = new BioModel(synthFilePath);
-			solutionModel.createSBMLDocument("tempID_" + idIndex, false, false);	
-			idIndex++;
-			try {
-				Synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			catch (BioSimException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			solutionModels.add(solutionModel);
-		}
-		List<String> orderedSolnFileIDs = new LinkedList<String>();
-		idIndex = 0;
-		for (BioModel solutionModel : solutionModels) {
-			String solutionID = spec.getModelFileID().replace(".xml", "");
-			do {
-				idIndex++;
-			} while (solutionFileIDs.contains(solutionID + "_" + idIndex + ".xml"));
-			solutionModel.setSBMLFile(solutionID + "_" + idIndex + ".xml");
-			solutionModel.getSBMLDocument().getModel().setId(solutionID + "_" + idIndex);
-			try {
-				solutionModel.save(synthFilePath + File.separator + solutionID + "_" + idIndex + ".xml");
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			catch (BioSimException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			orderedSolnFileIDs.add(solutionID + "_" + idIndex + ".xml");
-		}
-		orderedSolnFileIDs.addAll(solutionFileIDs);
-		return orderedSolnFileIDs;
-	}
-
-	private Set<String> importSolutionSubModels(List<SynthesisGraph> solutionGraphs, 
-			String synthFilePath) {
-		HashMap<String, SynthesisGraph> solutionFileToGraph = new HashMap<String, SynthesisGraph>();
-		Set<String> clashingFileIDs = new HashSet<String>();
-		for (SynthesisGraph solutionGraph : solutionGraphs) {
-			BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
-			try {
-				solutionSubModel.load(solutionGraph.getModelFileID());
-			} catch (XMLStreamException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			catch (BioSimException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-						JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-			if (solutionFileToGraph.containsKey(solutionGraph.getModelFileID())) {
-				SynthesisGraph clashingGraph = solutionFileToGraph.get(solutionGraph.getModelFileID());
-				BioModel clashingSubModel = new BioModel(clashingGraph.getProjectPath());
-				try {
-					clashingSubModel.load(clashingGraph.getModelFileID());
-				} catch (XMLStreamException e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
-				catch (BioSimException e) {
-					JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
-				if (!TechMapping.compareModels(solutionSubModel, clashingSubModel)) {
-					clashingFileIDs.add(solutionGraph.getModelFileID());
-					solutionFileToGraph.remove(solutionGraph.getModelFileID());
-					solutionFileToGraph.put(flattenProjectIntoModelFileID(solutionSubModel, solutionFileToGraph.keySet()), 
-							solutionGraph);
-					solutionFileToGraph.put(flattenProjectIntoModelFileID(clashingSubModel, solutionFileToGraph.keySet()), 
-							clashingGraph);
-				}
-			} else if (clashingFileIDs.contains(solutionGraph.getModelFileID())) 
-				solutionFileToGraph.put(flattenProjectIntoModelFileID(solutionSubModel, solutionFileToGraph.keySet()), 
-						solutionGraph);
-			else
-				solutionFileToGraph.put(solutionGraph.getModelFileID(), solutionGraph);
-		}
-		try {
-			for (String subModelFileID : solutionFileToGraph.keySet()) {
-				SynthesisGraph solutionGraph = solutionFileToGraph.get(subModelFileID);
-				BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
-				solutionSubModel.load(solutionGraph.getModelFileID());
-				solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID.replace(".xml", ""));
-				solutionSubModel.save(synthFilePath + File.separator + subModelFileID);
-				solutionGraph.setModelFileID(subModelFileID);
-			}
-		} catch (XMLStreamException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file", "Error Checking File", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file", "Error Opening File", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		}
-		catch (BioSimException e) {
-			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), e.getTitle(),
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		}
-		return solutionFileToGraph.keySet();
-	}
-
-	private String flattenProjectIntoModelFileID(BioModel biomodel, Set<String> modelFileIDs) {
-		String[] splitPath = biomodel.getPath().split(File.separator);
-		String flatModelFileID = splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
-		int fileIndex = 0;
-		while (modelFileIDs.contains(flatModelFileID)) {
-			fileIndex++;
-			flatModelFileID = splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile().replace(".xml", "") 
-					+ "_" + fileIndex + ".xml";
-		}
-		return splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
-	}
-
-	private String importSolutionDNAComponents(List<SynthesisGraph> solutionGraphs, SBOLFileManager fileManager, 
-			String synthFilePath) throws SBOLValidationException {
-		Set<URI> compURIs = new HashSet<URI>();
-		for (SynthesisGraph solutionGraph : solutionGraphs) {
-			for (URI compURI : solutionGraph.getCompURIs())
-				if (!compURIs.contains(compURI))
-					compURIs.add(compURI);
-		}
-		String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
-		try {
-			SBOLFileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
-					synthFilePath + File.separator + sbolFileID);
-			return sbolFileID;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SBOLException e) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), 
-					e.getTitle(), JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		} catch (SBOLConversionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public void save() {
 		Set<Integer> saveIndices = new HashSet<Integer>();
 		for (int i = 0; i < getTabCount(); i++)
@@ -900,18 +577,40 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	private void updateSynthesisProperties(Set<Integer> tabIndices) {
 		for (int tabIndex : tabIndices)
 			if (tabIndex == 0) {
+				String testEnvPath = testEnvTextBox.getText();
+				if(!testEnvPath.isEmpty()) {
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY, testEnvPath);
+				}
+				String specId = specTextBox.getText();
+				if(!specId.isEmpty()) {
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specId);
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY, this.verilogSpecPath);
+				}
 				String libFileProp = "";
-				for (String libFilePath : libFilePaths)
+				for (String libFilePath : libFilePaths) {
 					libFileProp = libFileProp + libFilePath + ",";
-				if (libFileProp.length() > 0)
+				}
+				if (libFileProp.length() > 0) {
 					libFileProp = libFileProp.substring(0, libFileProp.length() - 1);
-				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, 
-						libFileProp);
-				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY, 
-						methodBox.getSelectedItem().toString());
-				if (Integer.parseInt(numSolnsText.getText()) <= 0)
+				}
+				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, libFileProp);
+				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY, coverAlgOptBox.getSelectedItem().toString());
+
+				if (Integer.parseInt(numSolnsText.getText()) <= 0) {
 					numSolnsText.setText("0");
+				}
 				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, numSolnsText.getText());
+				if(runAtacs_button.isEnabled()) {
+					String atacsAlg = atacsAlgBox.getSelectedItem().toString();
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY, atacsAlg);
+
+				}
+				if(yosysNandDecomp_button.isSelected()) {
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY, GlobalConstants.SBOL_SYNTH_YOSYS_NAND);
+				}
+				else if(yosysNorDecomp_button.isSelected()) {
+					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY, GlobalConstants.SBOL_SYNTH_YOSYS_NOR);	
+				}
 			}
 	}
 
@@ -936,7 +635,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	}
 
 	private boolean methodChanged() {
-		String currentMethod = methodBox.getSelectedItem().toString();
+		String currentMethod = coverAlgOptBox.getSelectedItem().toString();
 		String previousMethod = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY);
 		return !currentMethod.equals(previousMethod);
 	}
@@ -948,7 +647,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	}
 
 	public String getSpecFileID() {
-		return specText.getText();
+		return specTextBox.getText();
 	}
 
 	public String getRootDirectory() {
