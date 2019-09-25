@@ -81,7 +81,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	private Gui gui;
 	private Properties synthProps; //Store fields needed for technology mapping in a property file
 	private String verilogSpecPath;
-	
+
 	private JTextField specTextBox, testEnvTextBox;
 	private List<String> libFilePaths;
 	private JList<String> libList; 
@@ -231,7 +231,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_LIBS_PREFERENCE, ""));
 		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, GlobalConstants.SBOL_SYNTH_EXHAUST_BB));
 		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, prefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
-		
+
 		saveSynthesisProperties();
 		loadSynthesisOptions();
 	}
@@ -309,18 +309,18 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		}
 		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
 			switch(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
-				case GlobalConstants.SBOL_SYNTH_YOSYS_NAND:
-					yosysNandDecomp_button.setSelected(true);
-					yosysNorDecomp_button.setSelected(false);
-					break;
-				case GlobalConstants.SBOL_SYNTH_YOSYS_NOR:
-					yosysNorDecomp_button.setSelected(true);
-					yosysNandDecomp_button.setSelected(false);
-					break;
-				default:
-					yosysNandDecomp_button.setSelected(false);
-					yosysNorDecomp_button.setSelected(false);
-					break;
+			case GlobalConstants.SBOL_SYNTH_YOSYS_NAND:
+				yosysNandDecomp_button.setSelected(true);
+				yosysNorDecomp_button.setSelected(false);
+				break;
+			case GlobalConstants.SBOL_SYNTH_YOSYS_NOR:
+				yosysNorDecomp_button.setSelected(true);
+				yosysNandDecomp_button.setSelected(false);
+				break;
+			default:
+				yosysNandDecomp_button.setSelected(false);
+				yosysNorDecomp_button.setSelected(false);
+				break;
 			}
 		}
 
@@ -379,7 +379,6 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			}
 			else {
 				atacsAlgBox.setEnabled(false);
-
 			}
 		}
 	}
@@ -600,7 +599,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 					numSolnsText.setText("0");
 				}
 				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, numSolnsText.getText());
-				if(runAtacs_button.isEnabled()) {
+				if(runAtacs_button.isSelected()) {
 					String atacsAlg = atacsAlgBox.getSelectedItem().toString();
 					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY, atacsAlg);
 
@@ -616,7 +615,46 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 
 	public boolean tabChanged(int tabIndex) {
 		if (tabIndex == 0) {
-			return (libsChanged() || methodChanged() || numSolnsChanged());
+			if(runAtacs_button.isSelected() && !synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
+				return true;
+			}
+			else if(!runAtacs_button.isSelected() && synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
+				String prevAtacsProperty = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY);
+				if(prevAtacsProperty.equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES)) {
+					if(runAtacs_button.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)) {
+						return true;
+					}
+				}
+				else if(prevAtacsProperty.equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)) {
+					if(runAtacs_button.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES)) {
+						return true;
+					}
+				}
+			}
+			if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
+				String prevYosysProperty = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY);
+				if(prevYosysProperty.equals(GlobalConstants.SBOL_SYNTH_YOSYS_NAND)) {
+					if(yosysNorDecomp_button.isSelected()) {
+						return true;
+					}
+				}
+				else if(prevYosysProperty.equals(GlobalConstants.SBOL_SYNTH_YOSYS_NOR)) {
+					if(yosysNandDecomp_button.isSelected()) {
+						return true;
+					}
+				}
+			}
+			if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY)) {
+				String savedTb = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY);
+				String currTb = testEnvTextBox.getText();
+				if(!savedTb.equals(currTb)){
+					return true;
+				}
+			}
+			if(libsChanged() || methodChanged() || numSolnsChanged()) {
+				return true;
+			}
+
 		}
 		return false;
 	}

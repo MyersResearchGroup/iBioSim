@@ -7589,7 +7589,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
-				String filePath = GlobalConstants.getPath(tree.getFile());
 				boolean veriSynth = false;
 				if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY)) {
 					veriSynth = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY).endsWith(GlobalConstants.VERILOG_FILE_EXTENTION)? true : false;
@@ -7600,7 +7599,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					addTab(synthID, synthView, null);
 				}
 				else {
-					VerilogSynthesisView veriSynthView = new VerilogSynthesisView(this, synthID, root, log, filePath);
+					String verilogSpecPath = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY);
+					VerilogSynthesisView veriSynthView = new VerilogSynthesisView(this, synthID, root, log, verilogSpecPath);
 					veriSynthView.loadSynthesisProperties(synthProps);
 					addTab(synthID, veriSynthView, null);
 				}
