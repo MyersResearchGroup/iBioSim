@@ -22,9 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -41,15 +43,20 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
+import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
+import edu.utah.ece.async.ibiosim.synthesis.Synthesis;
 import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
+import edu.utah.ece.async.ibiosim.synthesis.YosysScriptGenerator;
 import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGate;
@@ -61,6 +68,12 @@ import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapSolution;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapUtility;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.CompilerOptions;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerException;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogParser;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToLPNCompiler;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
+import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
  * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
@@ -446,14 +459,79 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 
 	public List<String> run(String synthFilePath) 
 	{
-		if(runAtacs_button.isSelected()) {
-			if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES))
-			{
-
+		Synthesis synthesizer = new Synthesis();
+		VerilogParser verilogParser = new VerilogParser();
+		CompilerOptions compilerOptions = new CompilerOptions();
+		try {
+			File specFile = compilerOptions.addVerilogFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY));
+			File testEnvFile = compilerOptions.addVerilogFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY));
+			VerilogModule specVerilogModule = verilogParser.parseVerilogFile(specFile);
+			VerilogModule testEnvVerilogModule = verilogParser.parseVerilogFile(testEnvFile);
+			compilerOptions.setImplementationModuleId(specVerilogModule.getModuleId());
+			compilerOptions.setTestbenchModuleId(testEnvVerilogModule.getModuleId());
+			compilerOptions.setOutputDirectory(rootFilePath);
+			String outputFileName = synthID.endsWith(".v")? synthID.replace(".v", "") : synthID;
+			compilerOptions.setOutputFileName(outputFileName);
+			
+			if(runAtacs_button.isSelected()) {
+				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
+				sbmlLPNConverter.addVerilog(specVerilogModule);
+				sbmlLPNConverter.addVerilog(testEnvVerilogModule);
+				LPN lpn = sbmlLPNConverter.compileToLPN(specVerilogModule, testEnvVerilogModule, compilerOptions.getOutputDirectory());
+				String lpnPath = compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName()  + "_synthesized.lpn";
+				lpn.save(lpnPath);
+				if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES))
+				{
+					synthesizer.runAtomicGateSynthesis(lpnPath, compilerOptions.getOutputDirectory());
+				}
+				else if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)){
+					synthesizer.runGeneralizedCGateSynthesis(lpnPath, compilerOptions.getOutputDirectory());
+				}
 			}
-			else if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)){
-
+			
+			YosysScriptGenerator yosysScript = new YosysScriptGenerator(compilerOptions.getOutputDirectory(), compilerOptions.getOutputFileName() + "_decomposed");
+			yosysScript.read_verilog(compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName()  + "_synthesized.v");
+			
+			if(yosysNandDecomp_button.isSelected()) {
+				yosysScript.setAbc_cmd("-g", "NAND");
 			}
+			else if(yosysNorDecomp_button.isSelected()) {
+				yosysScript.setAbc_cmd("-g", "NOR");
+			}
+			yosysScript.generateScript();
+			synthesizer.runSynthesis(compilerOptions.getOutputDirectory(), new String[] {"yosys", "-s", yosysScript.getScriptLocation()});
+			
+		} catch (FileNotFoundException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Unable to locate specification file:" + synthFilePath + ".",
+					"File Not Found",
+					JOptionPane.WARNING_MESSAGE);
+			e1.printStackTrace();
+			return null;
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (BioSimException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (VerilogCompilerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
 
 
@@ -631,6 +709,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 					}
 				}
 			}
+
 			if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY)) {
 				String prevYosysProperty = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_YOSYS_PROPERTY);
 				if(prevYosysProperty.equals(GlobalConstants.SBOL_SYNTH_YOSYS_NAND)) {
@@ -644,6 +723,12 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 					}
 				}
 			}
+			else {
+				if(yosysNorDecomp_button.isSelected() || yosysNandDecomp_button.isSelected()) {
+					return true;
+				}	
+			}
+
 			if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY)) {
 				String savedTb = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY);
 				String currTb = testEnvTextBox.getText();

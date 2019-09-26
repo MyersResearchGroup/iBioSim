@@ -14,7 +14,7 @@ public class Synthesis {
 		yosys = Runtime.getRuntime();
 	}
 	
-	public int runSynthesis(String lpnFile, String outputDirectory) throws IOException, InterruptedException {
+	public int runGeneralizedCGateSynthesis(String lpnFile, String outputDirectory) throws IOException, InterruptedException {
 		String[] command = new String[] {"atacs", "-tLllyssV", "-oddn", lpnFile};
 		File outDir = new File(outputDirectory);
 	    Process synthesizer = atacs.exec(command, Executables.envp, outDir);
@@ -27,12 +27,26 @@ public class Synthesis {
 	    return exitValue;
 	}
 	
-	public int runDecomposition(String outputDirectory, boolean decomposedToNand) throws IOException, InterruptedException {
-		String yosysScript = "";
-		String[] command = new String[] {"yosys", "-s", yosysScript};
+	public int runAtomicGateSynthesis(String lpnFile, String outputDirectory) throws InterruptedException, IOException {
+		String[] command = new String[] {"atacs", "-ot", "-ov", "-tL", "-llys", "-sV", "-oddn", lpnFile};
 		File outDir = new File(outputDirectory);
-	    Process decomposer = yosys.exec(command, Executables.envp, outDir);
-	    yosys.exec(command, null, outDir);
+	    Process synthesizer = atacs.exec(command, Executables.envp, outDir);
+	    atacs.exec(command, null, outDir);
+	    
+	    int exitValue = 0;
+	    if (synthesizer != null) {
+	    	exitValue = synthesizer.waitFor();
+	    }
+	    return exitValue;
+	}
+	
+	public int runSynthesis (String outputDirectory, String[] cmd) throws IOException, InterruptedException {
+		File outDir = new File(outputDirectory);
+		if(outDir.isDirectory()) {
+			System.out.println("output directory detected");
+		}
+	    Process decomposer = yosys.exec(cmd, Executables.envp, outDir);
+	    yosys.exec(cmd, null, outDir);
 	    
 	    int exitValue = 0;
 	    if (decomposer != null) {

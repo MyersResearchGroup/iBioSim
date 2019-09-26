@@ -184,7 +184,7 @@ public class VerilogRunner {
 		if(cmd.hasOption("v")) {
 			String[] files = cmd.getOptionValue("v").split(String.valueOf(separator));
 			for(String file : files) {
-				compilerOptions.addVerilogFile(file);
+				compilerOptions.addVerilogPath(file);
 			}
 		}
 		if(cmd.hasOption("flat")) {

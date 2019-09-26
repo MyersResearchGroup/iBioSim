@@ -31,6 +31,15 @@ public class CompilerOptions {
 			this.verilogFiles.add(file);
 		}
 	}
+	
+	public File addVerilogFile(String path) throws FileNotFoundException {
+		File file = new File(path);
+		if(!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		addVerilogFile(file);
+		return file; 
+	}
 
 	private void search(final String pattern, final File folder, List<String> result) {
 		for (final File f : folder.listFiles()) {
@@ -45,7 +54,7 @@ public class CompilerOptions {
 		}
 	}
 	
-	public void addVerilogFile(String path) throws FileNotFoundException {
+	public void addVerilogPath(String path) throws FileNotFoundException {
 		File file = new File(path);
 		if(!file.exists()) {
 			throw new FileNotFoundException();

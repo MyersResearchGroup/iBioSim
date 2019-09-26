@@ -54,7 +54,6 @@ public class VerilogToLPNCompiler {
 	public LPN compileToLPN(VerilogModule specification, VerilogModule testbench, String outputDirForCompilation) throws ParseException, VerilogCompilerException, BioSimException, XMLStreamException, IOException {
 		WrappedSBML	specModel = generateSBMLFromVerilog(specification);
 		WrappedSBML	tbModel = generateSBMLFromVerilog(testbench);
-		
 		SBMLDocument flattenSBMLDoc = flattenSBML(testbench.getModuleId(), outputDirForCompilation);
 		LPN lpn = SBMLToLPN.convertSBMLtoLPN(tbModel, specModel, flattenSBMLDoc);
 		return lpn;
