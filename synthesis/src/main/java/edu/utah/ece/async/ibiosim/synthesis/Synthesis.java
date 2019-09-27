@@ -42,9 +42,7 @@ public class Synthesis {
 	
 	public int runSynthesis (String outputDirectory, String[] cmd) throws IOException, InterruptedException {
 		File outDir = new File(outputDirectory);
-		if(outDir.isDirectory()) {
-			System.out.println("output directory detected");
-		}
+		
 	    Process decomposer = yosys.exec(cmd, Executables.envp, outDir);
 	    yosys.exec(cmd, null, outDir);
 	    

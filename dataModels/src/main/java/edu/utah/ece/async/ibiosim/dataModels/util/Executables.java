@@ -19,13 +19,15 @@ import java.util.Map;
 
 public class Executables {
 
-	public static String reb2sacExecutable = null;
+	public static String reb2sacExecutable = "reb2sac";
 	public static String[] envp  = null;
-	public static String geneNetExecutable  = null;
+	public static String geneNetExecutable  = "GeneNet";
+	public static String yosysExecutable  = "yosys";
 
 	public static Boolean			libsbmlFound		= false;
 	public static Boolean			reb2sacFound		= false;
 	public static Boolean			geneNetFound		= false;
+	public static Boolean			yosysFound		= false;
 
 	private static boolean hasChecked = false;
 
@@ -40,14 +42,14 @@ public class Executables {
 			libsbmlFound		= true;
 			reb2sacFound		= true;
 			geneNetFound		= true;
+			yosysFound = true;
 			
 			checkLibsbml();
-			
-      Executables.reb2sacExecutable = "reb2sac";
-      Executables.geneNetExecutable = "GeneNet";
+		
       
       reb2sacFound = checkProcess(Executables.reb2sacExecutable);
       geneNetFound = checkProcess(Executables.geneNetExecutable);
+      yosysFound = checkProcess(Executables.yosysExecutable);
 			
 		}
 	}

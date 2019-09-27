@@ -1,18 +1,17 @@
 package edu.utah.ece.async.ibiosim.synthesis;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class YosysScriptGenerator {
 
-	private final String yosysScriptName = "ibiosimYosysScript.sh";
+	private StringBuilder cmdBuilder;
 	private String inputFilePath, outputDir, outputName;
 	private String abc_cmd;
 
 	public YosysScriptGenerator(String outputDirectory, String outputFileName) {
 		this.inputFilePath = "";
 		this.abc_cmd = "";
+		this.cmdBuilder = new StringBuilder();
 		this.outputDir = outputDirectory;
 		this.outputName = outputFileName;
 	}
@@ -22,39 +21,27 @@ public class YosysScriptGenerator {
 	}
 	
 	public void setAbc_cmd(String options, String selections) {
-		abc_cmd = "abc " + options + " " + selections + " " + "\n";
+		abc_cmd = "abc " + "-" + options + " " + selections + "; ";
 	}
 
 
-	public void generateScript() {
-		try {
-			FileWriter writer = new FileWriter(this.outputDir + File.separator + yosysScriptName);
+	public String generateScript() {
 			String outputFile = outputDir + File.separator + outputName;
-			writer.write("#!/bin/bash" + "\n");
-			writer.write("input_verilog " + inputFilePath + "\n");
-			writer.write("flatten " + "\n");
-			writer.write("splitnets -ports " + "\n");
-			writer.write("hierarchy -auto-top " + "\n");
-			writer.write("proc " + "\n");
-			writer.write("techmap " + "\n");
-			writer.write("opt " + "\n");
-			writer.write(abc_cmd);
-			writer.write("show -format pdf -prefix " + outputFile + "\n");
-			writer.write("write_edif " + outputFile + ".edif" + "\n");
-			writer.write("write_json " + outputFile + ".json" + "\n");
-			writer.write("write_verilog " + outputFile + ".v" + "\n");
-
-			writer.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			cmdBuilder.append("read_verilog " + inputFilePath + "; ");
+			cmdBuilder.append("flatten; ");
+			cmdBuilder.append("splitnets -ports; ");
+			cmdBuilder.append("hierarchy -auto-top; ");
+			cmdBuilder.append("proc; ");
+			cmdBuilder.append("techmap; ");
+			cmdBuilder.append("opt; ");
+			cmdBuilder.append(abc_cmd);
+			cmdBuilder.append("opt; ");
+			cmdBuilder.append("hierarchy -auto-top; ");
+			cmdBuilder.append("show -format pdf -prefix " + outputFile + "; ");
+			cmdBuilder.append("write_edif " + outputFile + ".edif; ");
+			cmdBuilder.append("write_json " + outputFile + ".json; ");
+			cmdBuilder.append("write_verilog " + outputFile + ".v; ");
+			return cmdBuilder.toString();
 	}
 	
-	public String getScriptLocation() {
-		return this.outputDir + File.separator + yosysScriptName;
-	}
-
-
 }

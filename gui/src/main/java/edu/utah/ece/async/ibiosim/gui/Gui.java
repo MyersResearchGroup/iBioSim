@@ -208,6 +208,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLInputDialog;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.VerilogSynthesisView;
+import edu.utah.ece.async.ibiosim.gui.synthesisView.VerilogSynthesisView2;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
@@ -7504,6 +7505,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		if (!synthView.getRootDirectory().equals(root)) 
 		{
 			List<String> solutionFileIDs = synthView.run(root);
+			
+			if(solutionFileIDs == null) {
+				JOptionPane.showMessageDialog(frame, "Unable to execute synthesis.", "Synthesis Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
 			if (solutionFileIDs.size() > 0) {
 				for (String solutionFileID : solutionFileIDs) {
 					addToTree(solutionFileID);

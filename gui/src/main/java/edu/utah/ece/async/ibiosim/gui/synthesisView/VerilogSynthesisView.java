@@ -22,11 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -55,7 +53,6 @@ import edu.utah.ece.async.ibiosim.gui.Gui;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.synthesis.Synthesis;
-import edu.utah.ece.async.ibiosim.synthesis.TechMapping;
 import edu.utah.ece.async.ibiosim.synthesis.YosysScriptGenerator;
 import edu.utah.ece.async.ibiosim.synthesis.GateGenerator.GateGenerationExeception;
 import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
@@ -76,7 +73,7 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.Ve
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
 /**
- * This class is reserved for performing technology mapping on the GUI front end for SBML models and SBOL designs.
+ * This class is reserved for performing technology mapping on the GUI front end for Verilog designs.
  * 
  * @author Tramy Nguyen
  * @author Chris Myers
@@ -93,7 +90,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	private JFrame frame;
 	private Gui gui;
 	private Properties synthProps; //Store fields needed for technology mapping in a property file
-	private String verilogSpecPath;
+	private String verilogSpecPath, synthDirPath;
 
 	private JTextField specTextBox, testEnvTextBox;
 	private List<String> libFilePaths;
@@ -119,8 +116,9 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		this.rootFilePath = rootFilePath;
 		this.log = log;
 		this.verilogSpecPath = verilogSpecPath;
-
-		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
+		this.synthDirPath = rootFilePath + File.separator + synthID;
+		new File(synthDirPath).mkdir(); // Create the synthesis directory
+		
 		JPanel optionsPanel = createVerilogSynthPanel(); 
 		addTab("Verilog Synthesis Options", optionsPanel); 
 		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
@@ -469,7 +467,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			VerilogModule testEnvVerilogModule = verilogParser.parseVerilogFile(testEnvFile);
 			compilerOptions.setImplementationModuleId(specVerilogModule.getModuleId());
 			compilerOptions.setTestbenchModuleId(testEnvVerilogModule.getModuleId());
-			compilerOptions.setOutputDirectory(rootFilePath);
+			compilerOptions.setOutputDirectory(synthDirPath);
 			String outputFileName = synthID.endsWith(".v")? synthID.replace(".v", "") : synthID;
 			compilerOptions.setOutputFileName(outputFileName);
 			
@@ -493,13 +491,13 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			yosysScript.read_verilog(compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName()  + "_synthesized.v");
 			
 			if(yosysNandDecomp_button.isSelected()) {
-				yosysScript.setAbc_cmd("-g", "NAND");
+				yosysScript.setAbc_cmd("g", "NAND");
 			}
 			else if(yosysNorDecomp_button.isSelected()) {
-				yosysScript.setAbc_cmd("-g", "NOR");
+				yosysScript.setAbc_cmd("g", "NOR");
 			}
-			yosysScript.generateScript();
-			synthesizer.runSynthesis(compilerOptions.getOutputDirectory(), new String[] {"yosys", "-s", yosysScript.getScriptLocation()});
+			
+			synthesizer.runSynthesis(compilerOptions.getOutputDirectory(), new String[] {"yosys", "-p", yosysScript.generateScript()});
 			
 		} catch (FileNotFoundException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, 
