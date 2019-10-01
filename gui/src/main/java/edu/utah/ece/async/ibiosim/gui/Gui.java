@@ -219,6 +219,8 @@ import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLNetList;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapSolution;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
 import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarLexer;
@@ -342,7 +344,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected SEDMLDocument 			sedmlDocument		= null;
 
 	protected SBOLDocument			sbolDocument		= null;
-	private Map<String, String> mapFile2TreeId;
 
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
@@ -357,7 +358,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @throws Exception
 	 */
 	public Gui() {
-		mapFile2TreeId = new HashMap<>();
 	}
 	
 	public void openGui() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException { 
@@ -7504,28 +7504,19 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		actionPerformed(projectSynthesized);
 		if (!synthView.getRootDirectory().equals(root)) 
 		{
-			List<String> solutionFileIDs = synthView.run(root);
+			List<String> techmap_sols = synthView.run(root);
 			
-			if(solutionFileIDs == null) {
+			if(techmap_sols == null) {
 				JOptionPane.showMessageDialog(frame, "Unable to execute synthesis.", "Synthesis Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
-			if (solutionFileIDs.size() > 0) {
-				for (String solutionFileID : solutionFileIDs) {
-					addToTree(solutionFileID);
-				}
-				ModelEditor modelEditor;
-				try {
-					modelEditor = new ModelEditor(root + File.separator, solutionFileIDs.get(0), this, log,
-							false, null, null, null, false, false, false);
-					modelEditor.addObserver(this);
-					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED,
-							"layout_verticalHierarchical");
-					modelEditor.getSchematic().actionPerformed(applyLayout);
-					addTab(solutionFileIDs.get(0), modelEditor, "Model Editor");
-				} catch (Exception e1) {
-					e1.printStackTrace();
+			else if(techmap_sols.isEmpty()) {
+				JOptionPane.showMessageDialog(frame, "No solution was found after perfirming Verilog Synthesis.", "Synthesis Solution Not Found", JOptionPane.WARNING_MESSAGE);
+				return;
+			}	
+			else {
+				for(String solFilePath : techmap_sols) {
+					importSBOLFile(solFilePath);
 				}
 			}
 		}
@@ -7554,7 +7545,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
 			}
-			mapFile2TreeId.put(verilogPath, synthID);
 		}
 	}
 

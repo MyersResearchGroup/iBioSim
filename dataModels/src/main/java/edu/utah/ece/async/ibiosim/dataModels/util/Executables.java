@@ -22,7 +22,7 @@ public class Executables {
 	public static String reb2sacExecutable = "reb2sac";
 	public static String[] envp  = null;
 	public static String geneNetExecutable  = "GeneNet";
-	public static String yosysExecutable  = "yosys";
+	public static String yosysExecutable  = "Yosys";
 
 	public static Boolean			libsbmlFound		= false;
 	public static Boolean			reb2sacFound		= false;

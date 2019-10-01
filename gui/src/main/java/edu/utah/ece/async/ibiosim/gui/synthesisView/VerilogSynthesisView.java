@@ -45,7 +45,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbolstandard.core2.SBOLConversionException;
+import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
@@ -61,6 +63,7 @@ import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.GeneticGatesException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Cover;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Match;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.PreSelectedMatch;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLNetList;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.TechMapSolution;
@@ -69,6 +72,8 @@ import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.CompilerOptions;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogCompilerException;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogParser;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToLPNCompiler;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogToSBOL;
+import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.WrappedSBOL;
 import edu.utah.ece.async.ibiosim.synthesis.VerilogCompiler.VerilogConstructs.VerilogModule;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 
@@ -118,7 +123,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		this.verilogSpecPath = verilogSpecPath;
 		this.synthDirPath = rootFilePath + File.separator + synthID;
 		new File(synthDirPath).mkdir(); // Create the synthesis directory
-		
+
 		JPanel optionsPanel = createVerilogSynthPanel(); 
 		addTab("Verilog Synthesis Options", optionsPanel); 
 		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
@@ -457,20 +462,26 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 
 	public List<String> run(String synthFilePath) 
 	{
+		List<String> techmapSolPath = new ArrayList<>();
 		Synthesis synthesizer = new Synthesis();
 		VerilogParser verilogParser = new VerilogParser();
 		CompilerOptions compilerOptions = new CompilerOptions();
 		try {
 			File specFile = compilerOptions.addVerilogFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY));
-			File testEnvFile = compilerOptions.addVerilogFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY));
 			VerilogModule specVerilogModule = verilogParser.parseVerilogFile(specFile);
-			VerilogModule testEnvVerilogModule = verilogParser.parseVerilogFile(testEnvFile);
+			VerilogModule testEnvVerilogModule = null;
+			if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY)) {
+				File testEnvFile = compilerOptions.addVerilogFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_TESTBENCH_PROPERTY));
+				testEnvVerilogModule = verilogParser.parseVerilogFile(testEnvFile);
+				compilerOptions.setTestbenchModuleId(testEnvVerilogModule.getModuleId());
+
+			}
 			compilerOptions.setImplementationModuleId(specVerilogModule.getModuleId());
-			compilerOptions.setTestbenchModuleId(testEnvVerilogModule.getModuleId());
 			compilerOptions.setOutputDirectory(synthDirPath);
 			String outputFileName = synthID.endsWith(".v")? synthID.replace(".v", "") : synthID;
 			compilerOptions.setOutputFileName(outputFileName);
-			
+
+			String yosysInputPath = specFile.getAbsolutePath();
 			if(runAtacs_button.isSelected()) {
 				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
 				sbmlLPNConverter.addVerilog(specVerilogModule);
@@ -485,20 +496,61 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 				else if(atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)){
 					synthesizer.runGeneralizedCGateSynthesis(lpnPath, compilerOptions.getOutputDirectory());
 				}
+				yosysInputPath = compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName()  + "_synthesized.v";
 			}
-			
+
+
 			YosysScriptGenerator yosysScript = new YosysScriptGenerator(compilerOptions.getOutputDirectory(), compilerOptions.getOutputFileName() + "_decomposed");
-			yosysScript.read_verilog(compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName()  + "_synthesized.v");
-			
+			yosysScript.read_verilog(yosysInputPath);
+
 			if(yosysNandDecomp_button.isSelected()) {
 				yosysScript.setAbc_cmd("g", "NAND");
 			}
 			else if(yosysNorDecomp_button.isSelected()) {
 				yosysScript.setAbc_cmd("g", "NOR");
 			}
-			
+
 			synthesizer.runSynthesis(compilerOptions.getOutputDirectory(), new String[] {"yosys", "-p", yosysScript.generateScript()});
-			
+			File decomposedFile = compilerOptions.addVerilogFile(compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName() + "_decomposed.v");
+			VerilogModule decompVerilog = verilogParser.parseVerilogFile(decomposedFile);
+			VerilogToSBOL sbolConverter = new VerilogToSBOL(true);
+			WrappedSBOL decomposedSbol = sbolConverter.convertVerilog2SBOL(decompVerilog);
+			String decomposedSbolPath = compilerOptions.getOutputDirectory() + File.separator + compilerOptions.getOutputFileName() + "_decomposed.xml";
+			SBOLWriter.write(decomposedSbol.getSBOLDocument(), decomposedSbolPath);
+
+			SBOLTechMapOptions techMapOptions = setVerilogTechMapProperties(decomposedSbolPath);
+			techMapOptions.setOutputDirectory(synthFilePath);
+			techMapOptions.setOutputFileName(outputFileName);
+
+			List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
+			DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
+
+			Match m = new PreSelectedMatch(specGraph, libGraph);
+			Cover c = new Cover(m);
+			List<TechMapSolution> coverSols = new ArrayList<>();
+
+
+			if(techMapOptions.isBranchBound()) {
+				coverSols.add(c.branchAndBoundCover());
+			}
+			else if(techMapOptions.isExhaustive()) {
+				coverSols = c.exhaustiveCover();
+			}
+			else if(techMapOptions.isGreedy()) {
+				coverSols = c.greedyCover(techMapOptions.getNumOfSolutions());
+			}
+
+			int count = 1;
+			for(TechMapSolution sol : coverSols) {
+				if(sol.getScore() != 0.0 && sol.getScore() != Double.POSITIVE_INFINITY) {
+					SBOLNetList sbolSol = new SBOLNetList(specGraph, sol);
+					SBOLDocument result = sbolSol.generateSbol();
+					String solFilePath = techMapOptions.getOutputDir() + File.separator + techMapOptions.getOuputFileName() + "_sol" + count++ + ".xml";
+					SBOLWriter.write(result, solFilePath);	
+					techmapSolPath.add(solFilePath);
+				}
+			}
+
 		} catch (FileNotFoundException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"Unable to locate specification file:" + synthFilePath + ".",
@@ -530,74 +582,29 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
-		}
-
-
-		SBOLTechMapOptions techMapOptions = setSequentialTechMapProperties();
-		try {
-			List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
-			DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
-
-			Match m = new PreSelectedMatch(specGraph, libGraph);
-			Cover c = new Cover(m);
-			List<TechMapSolution> coverSols = new ArrayList<>();
-			try {
-				if(techMapOptions.isBranchBound()) {
-					coverSols.add(c.branchAndBoundCover());
-				}
-				else if(techMapOptions.isExhaustive()) {
-					coverSols = c.exhaustiveCover();
-				}
-				else if(techMapOptions.isGreedy()) {
-					coverSols = c.greedyCover(techMapOptions.getNumOfSolutions());
-				}
-			} 
-			catch (GeneticGatesException e) {
-				e.printStackTrace();
-			}
-
-		} 
-		catch (SBOLTechMapException e) 
-		{
+		} catch (SBOLValidationException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (GateGenerationExeception e) 
-		{
+		} catch (SBOLConversionException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (SBOLValidationException e) 
-		{
+		} catch (SBOLTechMapException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
+		} catch (GeneticGatesException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (SBOLConversionException e) 
-		{
+		} catch (GateGenerationExeception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+
+		return techmapSolPath;
 	}
 
-	private SBOLTechMapOptions setSequentialTechMapProperties() {
+	private SBOLTechMapOptions setVerilogTechMapProperties(String decomposedSbolPath) {
 		SBOLTechMapOptions techMapOptions = new SBOLTechMapOptions();
-
-		//		Synthesis synRunner = new Synthesis();
-		//		String lpnFile = "";
-		//		try {
-		//			synRunner.runSynthesis(lpnFile, techMapOptions.getOutputDir());
-		//			synRunner.runDecomposition(techMapOptions.getOutputDir(), true);
-		//		} 
-		//		catch (IOException e1) {
-		//			e1.printStackTrace();
-		//		} 
-		//		catch (InterruptedException e1) {
-		//			e1.printStackTrace();
-		//		}
-
-		//techMapOptions.setSpecificationFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
-		techMapOptions.setSpecificationFile(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY) + ".sbol");
+		techMapOptions.setSpecificationFile(decomposedSbolPath);
 
 		for (String libFilePath : libFilePaths) {
 			try {
