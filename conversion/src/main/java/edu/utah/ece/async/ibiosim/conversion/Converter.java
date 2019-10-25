@@ -124,7 +124,7 @@ public class Converter {
 	{
 		//-----REQUIRED FIELD-----
 		String fullInputFileName = ""; //input file name
-
+		//TODO PEDRO: add option for cello or not to cello
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
 		boolean showDetail = false; //-d

@@ -1603,7 +1603,7 @@ public class SBOL2SBML {
 		String inputDir = null; 
 
 		File fileFullPath;
-		
+		//TODO PEDRO: add option for cello or not to cello
 		//GOAL: inputFile -o outputLocation -u optionalURI
 		if(args.length == 0){
 			usage();
