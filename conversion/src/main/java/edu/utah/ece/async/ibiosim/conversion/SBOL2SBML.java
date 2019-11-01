@@ -251,12 +251,9 @@ public class SBOL2SBML {
 	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
 	 */
     
-	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
+	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc, boolean CelloModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		
-		boolean CelloModelGenerator = true;
-		
-		if (CelloModelGenerator) {
-			System.out.println("--------------------");
+		if (CelloModel) {
 			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
 		}
 		
@@ -432,11 +429,11 @@ public class SBOL2SBML {
 			ModuleDefinition subModuleDefFlatt = MDFlattener(sbolDoc, subModuleDef);
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + getDisplayID(subModuleDefFlatt) + ".xml")) {
-				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
+				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel, CelloModel);
 			} if ((subTargetModel=models.get(getDisplayID(subModuleDefFlatt)))!=null) {
-				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
+				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel, CelloModel);
 			} else {
-				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, targetModel);
+				HashMap<String,BioModel> subModels = generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, targetModel, CelloModel);
 				for (String key : subModels.keySet()) {
 					models.put(key,subModels.get(key));
 				}
@@ -460,7 +457,7 @@ public class SBOL2SBML {
 	 * @param targetModel - The SBML local model.
 	 */
 	private static void generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel subTargetModel, BioModel targetModel) {
+			BioModel subTargetModel, BioModel targetModel, boolean CelloModel) {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		String md5 = Utility.MD5(subTargetModel.getSBMLDocument());
 		targetModel.addComponent(getDisplayID(subModule), getDisplayID(subModuleDef) + ".xml", 
@@ -499,14 +496,14 @@ public class SBOL2SBML {
 	 * @throws SBOLConversionException 
 	 */
 	private static HashMap<String,BioModel> generateSubModel(String projectDirectory, Module subModule, ModuleDefinition moduleDef, SBOLDocument sbolDoc, 
-			BioModel targetModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
+			BioModel targetModel, boolean CelloModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 		//convert each submodules into its own SBML model stored in their own .xml file.
-		HashMap<String,BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc);
+		HashMap<String,BioModel> subModels = generateModel(projectDirectory, subModuleDef, sbolDoc, CelloModel);
 		BioModel subTargetModel = subModels.get(getDisplayID(subModuleDef));
 		
 		//Perform replacement and replacedBy with each subModules to its referenced ModuleDefinition.
-		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+		generateSubModel(projectDirectory, subModule, moduleDef, sbolDoc, subTargetModel, targetModel, CelloModel);
 		return subModels;
 	}
 
@@ -643,7 +640,6 @@ public class SBOL2SBML {
 				}
 			}
 		}
-		System.out.println(getDisplayID(promoter) + " has " + promoterCnt + " promoters");
 		
 		for (int i = 0; i < promoterCnt; i++) {
 			
@@ -1591,6 +1587,7 @@ public class SBOL2SBML {
 		System.err.println();
 		System.err.println("Options:");
 		System.err.println("\t-u  URI of ModuleDefinition to convert (optional)");
+		System.err.println("\t-Cello  This option is for dynamic modeling of Cello parts and parametrization (optional)");
 		System.exit(1);
 	}
 
@@ -1600,7 +1597,8 @@ public class SBOL2SBML {
 		String outputName = null;
 		String uri = null;
 		String outputDir = null;
-		String inputDir = null; 
+		String inputDir = null;
+		boolean CelloModel = false;
 
 		File fileFullPath;
 		//TODO PEDRO: add option for cello or not to cello
@@ -1637,6 +1635,8 @@ public class SBOL2SBML {
 				case "-u":
 					uri = value;
 					break;
+				case "CelloModel":
+					CelloModel = true;
 				default:
 					usage();
 					return;
@@ -1653,7 +1653,7 @@ public class SBOL2SBML {
 
 				if(uri!=null){
 					ModuleDefinition topModuleDef= sbolDoc.getModuleDefinition(URI.create(uri));
-					HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+					HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc, CelloModel);
 					for (BioModel model : models.values())
 					{
 						model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);
@@ -1663,7 +1663,7 @@ public class SBOL2SBML {
 					//No ModuleDefinition URI provided so loop over all rootModuleDefinition
 					for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 					{
-						HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+						HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc, CelloModel);
 						for (BioModel model : models.values())
 						{
 							model.save(outputDir + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",false);

@@ -110,7 +110,8 @@ public class Converter {
 		System.err.println("\t-t  uses types in URIs");
 		System.err.println("\t-v  <version> used for converted objects");
 		System.err.println("\t-r  <url> The specified synbiohub repository the user wants VPR model generator to connect to");
-		System.err.println("\t - env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
+		System.err.println("\t -env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
+		System.err.println("\t-Cello  This option is for dynamic modeling of Cello parts and parametrization");
 		System.exit(1);
 	}
 	
@@ -124,7 +125,6 @@ public class Converter {
 	{
 		//-----REQUIRED FIELD-----
 		String fullInputFileName = ""; //input file name
-		//TODO PEDRO: add option for cello or not to cello
 		//-----OPTIONAL FIELD-----
 		boolean bestPractice = false; //-b
 		boolean showDetail = false; //-d
@@ -142,7 +142,9 @@ public class Converter {
 		boolean doVPR = false; //-r
 		boolean isDiffFile = false; //indicate if diffing of SBOL files are done
 		boolean isValidation = false; //indicate if only validate SBOL files
-		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated 
+		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated
+		//TODO PEDRO: add option for cello or not to cello
+		boolean CelloModel = false; // determines if Cello-based modeling should be done
 		
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
@@ -166,6 +168,9 @@ public class Converter {
 			String flag = args[index];
 			switch(flag)
 			{
+			case "-Cello":
+				CelloModel = true;
+				break;
 			case "-b":
 				bestPractice = true;
 				break;	
@@ -515,20 +520,19 @@ public class Converter {
 								
 								for (ModuleDefinition moduleDef : newSbolDoc.getRootModuleDefinitions())
 								{
-									HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, newSbolDoc);
+									HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, newSbolDoc, CelloModel);
 									SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 								} 
 							}
 							
 							else {
 							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
-							HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc);
+							HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc, CelloModel);
 							SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							}
 						} 
 						else
 						{
-							//TODO PEDRO calling VPR
 							if (doVPR) {
 								try {
 									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, vpr_output);
@@ -545,7 +549,7 @@ public class Converter {
 							
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
-								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc);
+								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc, CelloModel);
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}

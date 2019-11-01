@@ -106,13 +106,15 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private static final Part ALL_PARTS = new Part("All parts", "All");
 	
 	private JCheckBox showRootDefs;
+	private JCheckBox celloModel;
+	
 	private JRadioButton showModDefs, showCompDefs;
 	
 	private JButton openSBOLDesigner, openVPRGenerator, optionsButton; //, cancelButton;
 
 	private SBOLDocument sbolDesigns;
 	
-	private boolean sbolDesigner, vprGenerator;
+	private boolean sbolDesigner, vprGenerator, CelloModel;
 
 	/**
 	 * An instance of the SBOL Design/Part selection dialog that will allow the user to open their selected design
@@ -211,6 +213,23 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			}
 		});
 		filteredDesignPanel.add(showRootDefs);
+		builder.add("", filteredDesignPanel);
+		
+		celloModel = new JCheckBox("Cello Modeling");
+		celloModel.setSelected(false);
+		celloModel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (celloModel.isSelected()) {
+					CelloModel = true;
+				}
+				else if (!celloModel.isSelected()) {
+					CelloModel = false;
+				}
+				
+			}
+		});
+		filteredDesignPanel.add(celloModel);
 		builder.add("", filteredDesignPanel);
 		
 		typeSelection = new JComboBox<Types>(Types.values());
@@ -406,6 +425,18 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return outputDoc;
 	}
 	
+	/**
+	 * Check if Cello Modeling is to be performed
+	 */
+	public boolean isCelloModel() {
+	
+		if (CelloModel == true) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	private void updateRoleRefinement() 
 	{
