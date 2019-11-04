@@ -215,6 +215,8 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		filteredDesignPanel.add(showRootDefs);
 		builder.add("", filteredDesignPanel);
 		
+		// This gives the option to generate a Cello model using dynamic modeling and cello parameters and parts. 
+		// for more information, check Pedro Fontanarrosa's MS Thesis at the University of Utah. 
 		celloModel = new JCheckBox("Cello Modeling");
 		celloModel.setSelected(false);
 		celloModel.addActionListener(new ActionListener() {
@@ -229,8 +231,7 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 			}
 		});
 		filteredDesignPanel.add(celloModel);
-		builder.add("", filteredDesignPanel);
-		
+				
 		typeSelection = new JComboBox<Types>(Types.values());
 		typeSelection.setSelectedItem(Types.DNA);
 		typeSelection.addActionListener(new ActionListener() {
