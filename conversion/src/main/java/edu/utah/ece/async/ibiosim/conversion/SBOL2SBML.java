@@ -1601,7 +1601,6 @@ public class SBOL2SBML {
 		boolean CelloModel = false;
 
 		File fileFullPath;
-		//TODO PEDRO: add option for cello or not to cello
 		//GOAL: inputFile -o outputLocation -u optionalURI
 		if(args.length == 0){
 			usage();

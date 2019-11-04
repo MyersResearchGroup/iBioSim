@@ -143,7 +143,6 @@ public class Converter {
 		boolean isDiffFile = false; //indicate if diffing of SBOL files are done
 		boolean isValidation = false; //indicate if only validate SBOL files
 		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated
-		//TODO PEDRO: add option for cello or not to cello
 		boolean CelloModel = false; // determines if Cello-based modeling should be done
 		
 		String compFileResult = ""; //-cf
@@ -500,7 +499,6 @@ public class Converter {
 					
 						if(!topLevelURIStr.isEmpty())
 						{
-							//TODO PEDRO calling VPR
 							if (doVPR) {
 								TopLevel top = sbolDoc.getTopLevel(URI.create(topLevelURIStr));
 								SBOLDocument newSbolDoc = sbolDoc.createRecursiveCopy(top);

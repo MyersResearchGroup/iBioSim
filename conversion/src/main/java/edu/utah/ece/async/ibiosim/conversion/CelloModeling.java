@@ -108,22 +108,7 @@ public class CelloModeling {
 		//TODO PEDRO hacer measure classes
 		//CreateMeasureClasses(sbolDoc);
 				
-		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();
-		//boolean CelloModel = true;
-		// TODO there has to be a better way to determine if we are in a Cello model generation or not
-//		for (FunctionalComponent promoter : resultMD.getFunctionalComponents()) { 
-//			if (SBOL2SBML.isPromoterComponent(resultMD, promoter, sbolDoc)) {
-//				//retrieve Cello Parameters, if the TU (promoter) has them. If this is true, then we are in the Cello Model Generation
-//				//and both Degradation reactions and Production reactions will be modeled using Hamid's paper for dynamic modeling
-//				//using Cello Parameters.
-//				celloParameters.put(promoter, hasCelloParameters(promoter));
-//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, we are in a Cello Model generation case
-//				if (!celloParameters.get(promoter).get("n").isEmpty() && !celloParameters.get(promoter).get("K").isEmpty() && !celloParameters.get(promoter).get("ymax").isEmpty() && !celloParameters.get(promoter).get("ymin").isEmpty()) {
-//					CelloModel = true;
-//				}
-//			}
-//		}
-		
+		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();		
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
@@ -291,7 +276,6 @@ public class CelloModeling {
 //							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 //							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
 //							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-//					//TODO PEDRO calling cello methods
 //					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
 //				}
 //				//else call the normal model generating method
@@ -421,9 +405,7 @@ public class CelloModeling {
 	 * 
 	 */
 	private static void generateTUSpecies(FunctionalComponent promoter, SBOLDocument sbolDoc, BioModel targetModel) {
-			
-			//TODO PEDRO: generateTUSpecies
-			
+					
 			String TU = promoter.getDisplayId();
 			if (targetModel.getSBMLDocument().getModel().getSpecies(TU)==null) {
 				targetModel.createPromoter(TU, -1, -1, true, false, null);
@@ -559,7 +541,6 @@ public class CelloModeling {
 	 * @param sbolDoc the SBOLDocument
 	 * @return the hash map with all the interactions per promoter
 	 */
-	//TODO PEDRO: promoterInteractions
 	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, String> sensorMolecules){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
@@ -827,7 +808,14 @@ public class CelloModeling {
 		}
 	}
 
-	//TODO PEDRO hasCelloParameters
+	
+	/**
+	 * Checks for cello parameters 2.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param promoter - The promoter or TU that we want to check if it has cello parameters
+	 * @return the array list with the parameters found, if any
+	 */
 	private static ArrayList<String> hasCelloParameters2(ComponentDefinition promoter){
 		
 		//Initialize the parameters we are looking for
@@ -935,7 +923,27 @@ public class CelloModeling {
 	}
 	
 	
-	// TODO PEDRO generateCelloProductionsRxns
+	
+	/**
+	 * Generate cello production rxns.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param promoter the promoter
+	 * @param partici the partici
+	 * @param productions the productions
+	 * @param activations the activations
+	 * @param repressions the repressions
+	 * @param products the products
+	 * @param transcribed the transcribed
+	 * @param activators the activators
+	 * @param repressors the repressors
+	 * @param moduleDef the module def
+	 * @param sbolDoc the sbol doc
+	 * @param targetModel the target model
+	 * @param celloParameters the cello parameters
+	 * @param promoterInteractions the promoter interactions
+	 * @throws BioSimException the bio sim exception
+	 */
 	private static void generateCelloProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
@@ -1017,7 +1025,7 @@ public class CelloModeling {
 		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
 		Species mRNA = targetModel.getSBMLDocument().getModel().createSpecies();
 		mRNA.setId( rxnID + "_mRNA");
-		//TODO PEDRO This is to make TU a species on which to make it a modifier. This may have to change when we fix MDflatenner
+		
 /*		if (targetModel.getSBMLDocument().getModel().getSpecies(promoter.getDisplayId())==null) {
 			targetModel.createPromoter(promoter.getDisplayId(), -1, -1, true, false, null);
 		}
@@ -1081,7 +1089,6 @@ public class CelloModeling {
 	 * @param targetModel the target model being constructed for the TU
 	 * @throws BioSimException the bio sim exception
 	 */
-	// TODO PEDRO generateCelloDegradationRxn
 	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel, SBOLDocument sbolDoc) throws BioSimException {
 		Participation degraded = null;
 		for(Participation part : degradation.getParticipations())
@@ -1103,21 +1110,6 @@ public class CelloModeling {
 			kdegrad = GlobalConstants.k_SD_DIM_S;
 			System.out.println("mRNA: " + species.getDisplayId());
 		}
-		
-/*		//Check if the species is mRNA, in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
-		if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
-			kdegrad = GlobalConstants.k_SD_DIM_S;
-		
-			//Check if the species is Transcription Factor (TF or protein), in which case we choose the degradation constant for mRNA obtained from Amin's Report Paper from literature
-		//should it be .containsRole or .containsType for the Transcription Factor TF?
-		} else if (species.getDefinition().containsRole(SequenceOntology.MRNA) || species.getDefinition().containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000250"))) {
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-		} else {
-			//TODO PEDRO: So I am using the constant of degradation for every species that's not mRNA. Should I change this?
-			//the problem is, that the degraded species, don't contain a role, so I can't distinguish between TF and other molecules
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-			// Do nothing, kdegrad = 0
-		}*/
 		
 		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
 		if (kdegrad == 0) {
