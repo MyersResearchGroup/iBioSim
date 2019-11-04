@@ -226,7 +226,6 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 				else if (!celloModel.isSelected()) {
 					CelloModel = false;
 				}
-				
 			}
 		});
 		filteredDesignPanel.add(celloModel);
