@@ -13,3 +13,9 @@ bin/iBioSim.jar
 .settings/
 **/.project
 /.metadata/
+
+# intellij artefacts
+out
+*.iws
+*.ipr
+*.iml
