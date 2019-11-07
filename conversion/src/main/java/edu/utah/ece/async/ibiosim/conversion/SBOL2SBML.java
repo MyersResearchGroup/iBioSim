@@ -266,8 +266,6 @@ public class SBOL2SBML {
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
 	 * @throws BioSimException - if something is wrong with the SBML model.
 	 * @throws SBOLValidationException - thrown when there is an SBOL validation error
-	 * @throws SynBioHubException 
-	 * @throws SBOLConversionException 
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {

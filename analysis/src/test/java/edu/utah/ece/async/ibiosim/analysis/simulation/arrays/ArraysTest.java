@@ -31,7 +31,7 @@ public class ArraysTest {
     try {
       properties.setModelFile("test_1.xml");
       HierarchicalSimulation simulator = new HierarchicalSSADirectSimulator(properties);
-      ModelSetup.setupModels(simulator, ModelType.NONE);
+//      ModelSetup.setupModels(simulator, ModelType.NONE);
 
     }
     catch (IOException | XMLStreamException | BioSimException e) {
