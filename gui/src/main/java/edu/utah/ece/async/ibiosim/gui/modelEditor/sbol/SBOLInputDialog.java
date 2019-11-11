@@ -106,13 +106,15 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 	private static final Part ALL_PARTS = new Part("All parts", "All");
 	
 	private JCheckBox showRootDefs;
+	private JCheckBox celloModel;
+	
 	private JRadioButton showModDefs, showCompDefs;
 	
 	private JButton openSBOLDesigner, openVPRGenerator, optionsButton; //, cancelButton;
 
 	private SBOLDocument sbolDesigns;
 	
-	private boolean sbolDesigner, vprGenerator;
+	private boolean sbolDesigner, vprGenerator, CelloModel;
 
 	/**
 	 * An instance of the SBOL Design/Part selection dialog that will allow the user to open their selected design
@@ -213,6 +215,23 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		filteredDesignPanel.add(showRootDefs);
 		builder.add("", filteredDesignPanel);
 		
+		// This gives the option to generate a Cello model using dynamic modeling and cello parameters and parts. 
+		// for more information, check Pedro Fontanarrosa's MS Thesis at the University of Utah. 
+		celloModel = new JCheckBox("Cello Modeling");
+		celloModel.setSelected(false);
+		celloModel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (celloModel.isSelected()) {
+					CelloModel = true;
+				}
+				else if (!celloModel.isSelected()) {
+					CelloModel = false;
+				}
+			}
+		});
+		filteredDesignPanel.add(celloModel);
+				
 		typeSelection = new JComboBox<Types>(Types.values());
 		typeSelection.setSelectedItem(Types.DNA);
 		typeSelection.addActionListener(new ActionListener() {
@@ -406,6 +425,18 @@ public class SBOLInputDialog extends InputDialog<SBOLDocument> {
 		return outputDoc;
 	}
 	
+	/**
+	 * Check if Cello Modeling is to be performed
+	 */
+	public boolean isCelloModel() {
+	
+		if (CelloModel == true) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	private void updateRoleRefinement() 
 	{

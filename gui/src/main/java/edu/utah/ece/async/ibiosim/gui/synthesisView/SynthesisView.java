@@ -586,7 +586,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 				List<String> solutionFileIDs = new ArrayList<String>();
 				for (ModuleDefinition moduleDef : solution.getRootModuleDefinitions())
 				{
-					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution);
+					//TODO PEDRO revisit what boolean value to input here
+					HashMap<String,BioModel> models = SBOL2SBML.generateModel(solution_dir, moduleDef, solution, false);
 					solutionFileIDs.addAll(SBMLutilities.exportMultSBMLFile(models, solution_dir));
 				} 
 				return solutionFileIDs;
