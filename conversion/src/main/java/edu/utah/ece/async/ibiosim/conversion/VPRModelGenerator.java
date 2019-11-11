@@ -49,7 +49,7 @@ public class VPRModelGenerator {
 	 * @param rootModuleID - Name of the top level genetic circuit to be constructed by VPR.
 	 * 
 	 * @return The generated model.
-	 * @throws SBOLValidationException - Error in the SBOL document
+	 * @throws SBOLValidationException - Validation error in the SBOLDocument.
 	 * @throws IOException - Unable to read or write the given SBOLDocument
 	 * @throws SBOLConversionException - Unable to perform conversion for the given SBOLDocument.
 	 * @throws VPRException - Unable to perform VPR Model Generation on the given SBOLDocument.

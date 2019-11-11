@@ -1689,4 +1689,3 @@ public class SBOL2SBML {
 	}
 
 }
-
