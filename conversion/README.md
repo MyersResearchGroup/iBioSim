@@ -1,11 +1,13 @@
-The conversion package currently supports three types of data conversion and VPR API model generation. 
+The conversion package currently supports four types of data conversion and VPR API model generation. 
 
-1. Design to modeling: [SBOL2SBML](http://pubs.acs.org/doi/10.1021/sb5003289)  
+1. Design to modeling: 
+  a. [SBOL2SBML](http://pubs.acs.org/doi/10.1021/sb5003289)
+  b. [CelloModeling]
 2. Modeling to Design: [SBML2SBOL](http://pubs.acs.org/doi/abs/10.1021/acssynbio.5b00212)  
 3. Interconversion supported by the libSBOLj2 library: [SBOL1 to SBOL2](http://ieeexplore.ieee.org/document/7440806/)
 
 SBOL2SBML and SBML2SBOL can be build as a standalone JAR. 
-There is also a main Java [Converter.java](https://github.com/MyersResearchGroup/iBioSim/blob/master/conversion/src/main/java/edu/utah/ece/async/ibiosim/conversion/Converter.java) file that supports all three types of conversion.
+There is also a main Java [Converter.java](https://github.com/MyersResearchGroup/iBioSim/blob/master/conversion/src/main/java/edu/utah/ece/async/ibiosim/conversion/Converter.java) file that supports all four types of conversion.
 
 ## How to use it:
 
@@ -41,6 +43,7 @@ where
 | -s [value] | select only this object and those it references |
 | -t [value] |  uses types in URIs |
 | -v [value] | mark version of data objects created during conversion |
+| -Cello | This option is for dynamic modeling of Cello parts and parametrization |
 
 ## Example run for SBOL to SBML:
 ```
