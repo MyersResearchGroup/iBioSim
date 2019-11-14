@@ -1,8 +1,8 @@
 The conversion package currently supports four types of data conversion and VPR API model generation. 
 
-1. Design to modeling: 
-  a. [SBOL2SBML](http://pubs.acs.org/doi/10.1021/sb5003289)
-  b. [CelloModeling]
+1. Design to modeling:  
+  a. [SBOL2SBML](http://pubs.acs.org/doi/10.1021/sb5003289)  
+  b. CelloModeling
 2. Modeling to Design: [SBML2SBOL](http://pubs.acs.org/doi/abs/10.1021/acssynbio.5b00212)  
 3. Interconversion supported by the libSBOLj2 library: [SBOL1 to SBOL2](http://ieeexplore.ieee.org/document/7440806/)
 
