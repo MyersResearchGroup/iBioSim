@@ -231,10 +231,5 @@ public class SBOLTechMapRunner {
 
 	}
 
-	public static Synthesis run(SBOLDocument specDoc, SBOLDocument libDoc) throws SBOLValidationException, FileNotFoundException, SBOLException, IOException, SBOLConversionException, SBOLTechMapException
-	{
-		Synthesis syn = new Synthesis();
-		return syn;
-	}
-	
+
 }

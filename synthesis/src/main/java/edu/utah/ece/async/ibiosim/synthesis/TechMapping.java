@@ -22,18 +22,12 @@ import org.sbolstandard.core2.SBOLValidationException;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLFileManager;
-import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
-import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
 import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.FunctionalComponentNode;
 
 public class TechMapping {
 
