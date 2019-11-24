@@ -104,7 +104,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
-import org.apache.http.impl.client.HttpClients;
+
 import org.jdom2.JDOMException;
 import org.jlibsedml.AbstractTask;
 import org.jlibsedml.ArchiveComponents;
@@ -153,20 +153,14 @@ import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLReader;
 import org.sbolstandard.core2.SBOLValidate;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SBOLWriter;
 import org.sbolstandard.core2.SequenceOntology;
 import org.synbiohub.frontend.SynBioHubException;
 import org.synbiohub.frontend.SynBioHubFrontend;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent.AboutEvent;
-import com.apple.eawt.AppEvent.PreferencesEvent;
-import com.apple.eawt.AppEvent.QuitEvent;
-import com.apple.eawt.Application;
-import com.apple.eawt.PreferencesHandler;
-import com.apple.eawt.QuitHandler;
-import com.apple.eawt.QuitResponse;
+import com.google.common.io.Files;
 
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registries;
 import edu.utah.ece.async.sboldesigner.sbol.editor.Registry;
@@ -175,17 +169,16 @@ import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLDesignerPlugin;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SBOLEditorPreferences;
 import edu.utah.ece.async.sboldesigner.sbol.editor.SynBioHubFrontends;
 import edu.utah.ece.async.sboldesigner.sbol.editor.dialog.RegistryInputDialog;
-import uk.ac.ebi.biomodels.ws.BioModelsWSClient;
 import de.unirostock.sems.cbarchive.ArchiveEntry;
 import de.unirostock.sems.cbarchive.CombineArchive;
 import de.unirostock.sems.cbarchive.CombineArchiveException;
-import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.analysis.Run;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesLoader;
 import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisPropertiesWriter;
 import edu.utah.ece.async.ibiosim.conversion.SBML2SBOL;
 import edu.utah.ece.async.ibiosim.conversion.SBOL2SBML;
+import edu.utah.ece.async.ibiosim.conversion.VPRModelGenerator;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.SBOLAnnotation;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -212,6 +205,7 @@ import edu.utah.ece.async.ibiosim.gui.modelEditor.sbmlcore.ElementsPanel;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.sbol.SBOLInputDialog;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.ModelEditor;
 import edu.utah.ece.async.ibiosim.gui.modelEditor.schematic.Utils;
+import edu.utah.ece.async.ibiosim.gui.synthesisView.VerilogSynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
@@ -221,7 +215,6 @@ import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
 import edu.utah.ece.async.ibiosim.gui.util.tabs.CloseAndMaxTabbedPane;
-//import edu.utah.ece.async.ibiosim.gui.verificationView.AbstractionPanel;
 import edu.utah.ece.async.ibiosim.gui.verificationView.VerificationView;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
 import edu.utah.ece.async.lema.verification.lpn.Translator;
@@ -234,7 +227,6 @@ import edu.utah.ece.async.lema.verification.platu.platuLpn.io.PlatuGrammarParser
  * are selected.
  * 
  * @author Curtis Madsen
- * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim
  *         Contributors </a>
@@ -251,7 +243,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	protected JMenu importModelMenu;
 	protected JMenuItem importSbml, importLpn;
 	private JMenu importDesignMenu;
-	private JMenuItem importSbol, importGenBank, importFasta;
+	private JMenuItem importSbol, importGenBank, importFasta, importVerilog;
 	protected JMenuItem importSedml, importArchive;
 	protected JMenu exportModelMenu;
 	protected JMenuItem exportSBML, exportFlatSBML;
@@ -322,7 +314,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	protected JMenuItem save, saveAs, check, run, refresh;
 	
-	protected JMenuItem saveModel, createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll, saveAll;
+	protected JMenuItem saveModel, createAnal, createLearn, createSbml, createSynth, createVerilogSyn, createVer, close, closeAll, saveAll;
 
 	protected String ENVVAR;
 
@@ -505,12 +497,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		newGridModel = new JMenuItem("Grid Model");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
+		
+		importVerilog = new JMenuItem("Verilog File");
 		importSbol = new JMenuItem("SBOL File");
 		importGenBank = new JMenuItem("GenBank File");
 		importFasta = new JMenuItem("Fasta File");
 		importSedml = new JMenuItem("SED-ML File");
 		importArchive = new JMenuItem("Archive");
 		importSbml = new JMenuItem("SBML Model");
+		
 		// importDot = new JMenuItem("iBioSim Model");
 		importLpn = new JMenuItem("LPN Model");
 		exportSBML = new JMenuItem("SBML");
@@ -549,6 +544,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
 		createSynth = new JMenuItem("Synthesis Tool");
+		createVerilogSyn = new JMenuItem("Verilog Synthesis Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
 		select.addActionListener(this);
@@ -589,6 +585,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		newGridModel.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
+		
+		importVerilog.addActionListener(this);
 		importSbol.addActionListener(this);
 		importGenBank.addActionListener(this);
 		importFasta.addActionListener(this);
@@ -596,6 +594,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importArchive.addActionListener(this);
 		importSbml.addActionListener(this);
 		importLpn.addActionListener(this);
+		
 		exportSBML.addActionListener(this);
 		exportFlatSBML.addActionListener(this);
 		exportSBOL1.addActionListener(this);
@@ -634,6 +633,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn.addActionListener(this);
 		createSbml.addActionListener(this);
 		createSynth.addActionListener(this);
+		createVerilogSyn.addActionListener(this);
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
@@ -696,6 +696,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
 
+		importVerilog.setEnabled(false);
 		importSbol.setEnabled(false);
 		importGenBank.setEnabled(false);
 		importFasta.setEnabled(false);
@@ -703,6 +704,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		importArchive.setEnabled(false);
 		importSbml.setEnabled(false);
 		importLpn.setEnabled(false);
+		
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportFlatSBML.setEnabled(false);
@@ -776,6 +778,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		createLearn.setEnabled(false);
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
+		createVerilogSyn.setEnabled(false);
 		createVer.setEnabled(false);
 		edit.add(undo);
 		edit.add(redo);
@@ -831,11 +834,13 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		// importMenu.add(importVirtualPart);
 		importModelMenu.add(importLpn);
 		importMenu.add(importDesignMenu);
+		importDesignMenu.add(importVerilog);
 		importDesignMenu.add(importSbol);
 		importDesignMenu.add(importGenBank);
 		importDesignMenu.add(importFasta);
 		importMenu.add(importSedml);
 		importMenu.add(importArchive);
+		
 		file.add(exportMenu);
 		exportMenu.add(exportModelMenu);
 		exportModelMenu.add(exportSBML);
@@ -890,6 +895,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		tools.add(createAnal);
 		tools.add(createLearn);
 		tools.add(createSynth);
+		tools.add(createVerilogSyn);
 		tools.add(createVer);
 		root = null;
 
@@ -1199,6 +1205,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importMenu.setEnabled(true);
 			importModelMenu.setEnabled(true);
 			importDesignMenu.setEnabled(true);
+			importVerilog.setEnabled(true);
 			importSbol.setEnabled(true);
 			importGenBank.setEnabled(true);
 			importFasta.setEnabled(true);
@@ -1206,6 +1213,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			importArchive.setEnabled(true);
 			importSbml.setEnabled(true);
 			importLpn.setEnabled(true);
+			
 			downloadMenu.setEnabled(true);
 			downloadBioModel.setEnabled(true);
 			downloadVirtualPart.setEnabled(true);
@@ -1296,6 +1304,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					importMenu.setEnabled(true);
 					importModelMenu.setEnabled(true);
 					importDesignMenu.setEnabled(true);
+					importVerilog.setEnabled(true);
 					importSbol.setEnabled(true);
 					importGenBank.setEnabled(true);
 					importFasta.setEnabled(true);
@@ -1552,7 +1561,26 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						break;
 					}
 				}
-				createSBOLSynthesisView();
+				createSynthesisView();
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getActionCommand().equals("createVerilogSyn")) {
+
+			if (root != null) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (getTitleAt(i).equals(GlobalConstants.getFilename(tree.getFile()))) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
+					}
+
+				}
+				createVerilogSynthesisView();
 			} else {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -2229,7 +2257,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				// int index = -1;
 				if (comp instanceof SynthesisView) {
 					synthesizeSBOL((SynthesisView) comp);
-				} else {
+				} 
+				else if (comp instanceof VerilogSynthesisView) {
+					synthesizeVerilog((VerilogSynthesisView) comp);
+				} 
+				else {
 					for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 						Component component = ((JTabbedPane) comp).getComponent(i);
 						if (component instanceof AnalysisView) {
@@ -2357,7 +2389,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			createDesign();
 		} else if (e.getSource() == newGridModel) {
 			createModel(true, false);
-		} else if (e.getSource().equals(importSbol)) {
+		} 
+		else if(e.getSource().equals(importVerilog)) {
+			File verilogFile = getFile("verilog");
+			if(verilogFile != null) {
+				addVerilogFile(verilogFile);
+			}
+		}
+		else if (e.getSource().equals(importSbol)) {
 			importSBOL("Import SBOL");
 		} else if (e.getSource().equals(importGenBank)) {
 			importSBOL("Import GenBank");
@@ -4009,7 +4048,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		{
 				try 
 				{
-					sbolDocument = SBOLUtility.loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+					sbolDocument = SBOLUtility.getSBOLUtility().loadSBOLFile(sbolFilename, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					sbolDocument.setCreateDefaults(true);
 				} 
 				catch (FileNotFoundException e) 
@@ -4727,6 +4766,46 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 	
+	public void exportSBOL(SBOLDocument document, String fullPath) throws IOException, SBOLConversionException {
+		SBOLWriter.write(document, fullPath);
+	}
+	
+	private void addVerilogFile(File file) {
+		try {
+			Files.copy(file, new File(root + File.separator + file.getName()));
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(frame, e.toString(), "Unable to Import Verilog", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+		addToTree(file.getName());
+		
+	}
+	
+	
+
+	
+	private File getFile(String fileType) {
+		Preferences biosimrc = Preferences.userRoot();
+		String prevFilePath = biosimrc.get("biosim.general.import_dir", "");
+		File prevFileLoaded = prevFilePath.isEmpty()? null : new File(prevFilePath); 
+		String selectedFilePath = Utility.browse(frame, prevFileLoaded, null, JFileChooser.FILES_ONLY, fileType, -1);
+		
+		if (selectedFilePath.isEmpty()) {
+			return null;
+		}
+		
+		File selectedFile = new File(selectedFilePath);
+		String fileNameExt = selectedFile.getName();
+		String selectedFileName = fileNameExt.endsWith(".v") ? fileNameExt.substring(0, fileNameExt.length() -2) : fileNameExt;
+		if (!overwrite(root + File.separator + selectedFileName + ".xml", selectedFileName + ".xml")) {
+			//user do not want to overwrite file
+			return null;
+		}
+		
+		biosimrc.put("biosim.general.import_dir", selectedFilePath.trim());
+		return selectedFile;
+	}
+	
 	private void importSBOL(String fileType) {
 		Preferences biosimrc = Preferences.userRoot();
 		File importFile;
@@ -4742,46 +4821,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 	}
 
-	protected void importFile(String fileType, String extension1, String extension2) {
-		File importFile;
-		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
-			importFile = null;
-		} else {
-			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
-		}
-		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import " + fileType, -1);
-		if (filename.length() > 1 && !filename.endsWith(extension1) && !filename.endsWith(extension2)) {
-			JOptionPane.showMessageDialog(frame, "You must select a valid " + fileType + " file to import.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		} else if (!filename.equals("")) {
-			biosimrc.put("biosim.general.import_dir", filename);
-			String[] file = GlobalConstants.splitPath(filename);
-			try {
-				file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
-				file[file.length - 1] = file[file.length - 1].replaceAll(extension2, extension1);
-				if (checkFiles(root + File.separator + file[file.length - 1], filename.trim())) {
-					if (overwrite(root + File.separator + file[file.length - 1], file[file.length - 1])) {
-						FileOutputStream out = new FileOutputStream(
-								new File(root + File.separator + file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
-						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
-					}
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
 
 	protected void createGraph() {
 		String graphName = JOptionPane.showInputDialog(frame, "Enter A Name For The TSD Graph:", "TSD Graph Name",
@@ -5989,7 +6028,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				//update SBOL library file with newly generated components that vpr model generator created.
 				generateSBMLFromSBOL(chosenDesign, filePath, CelloModel);
 				// TODO: should be using libSBOLj for this
-				SBOLUtility.copyAllTopLevels(chosenDesign, sbolDocument);
+				SBOLUtility.getSBOLUtility().copyAllTopLevels(chosenDesign, sbolDocument);
 				writeSBOLDocument();
 				JOptionPane.showMessageDialog(Gui.frame, "VPR Model Generator has completed.");
 			}
@@ -6475,7 +6514,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		tree = new FileTree(new File(root), this, lema, atacs, lpn);
 		topSplit.setLeftComponent(tree);
 		// mainPanel.add(tree, "West");
-		mainPanel.validate();
+		mainPanel.validate(); 
 	}
 
 	public void addToTree(String item) {
@@ -6750,7 +6789,36 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 						}
 					}
 					synthView.saveTabs(saveIndices);
-				} else {
+				} 
+				else if(tab.getComponentAt(index) instanceof VerilogSynthesisView) {
+					VerilogSynthesisView synthView = (VerilogSynthesisView) tab.getComponentAt(index);
+					Set<Integer> saveIndices = new HashSet<Integer>();
+					for (int i = 0; i < synthView.getTabCount(); i++) {
+						JPanel synthTab = (JPanel) synthView.getComponentAt(i);
+						if (synthView.tabChanged(i)) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save changes to " + synthTab.getName() + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
+										OPTIONS[0]);
+								if (value == YES_OPTION) {
+									saveIndices.add(i);
+								} else if (value == CANCEL_OPTION) {
+									return 0;
+								} else if (value == YES_TO_ALL_OPTION) {
+									saveIndices.add(i);
+									autosave = 1;
+								} else if (value == NO_TO_ALL_OPTION) {
+									autosave = 2;
+								}
+							} else if (autosave == 1) {
+								saveIndices.add(i);
+							}
+						}
+					}
+					synthView.saveTabs(saveIndices);
+				}
+				else {
 					for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
 						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
@@ -7114,7 +7182,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
-			} else if (tree.getFile().endsWith(".grf")) {
+			} 
+			else if (tree.getFile().endsWith(".v")) {
+				JMenuItem createSeqSynthesis = new JMenuItem("Create Synthesis View");
+				createSeqSynthesis.addActionListener(this);
+				createSeqSynthesis.addMouseListener(this);
+				createSeqSynthesis.setActionCommand("createVerilogSyn");
+				popup.add(createSeqSynthesis);
+			}
+			else if (tree.getFile().endsWith(".grf")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
@@ -7135,7 +7211,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
-			} else if (tree.getFile().endsWith(".prb")) {
+			}
+			else if (tree.getFile().endsWith(".prb")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
@@ -7246,7 +7323,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			} else if (tree.getFile().length() >= 5
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				openSBOLOptions();
-			} else if (tree.getFile().length() >= 4
+			} 
+			else if (tree.getFile().length() >= 2
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".v")) {
+				openModel("Verilog");
+			} 
+			else if (tree.getFile().length() >= 4
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				openModel("VHDL");
 			} else if (tree.getFile().length() >= 2
@@ -7383,8 +7465,10 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	private void synthesizeSBOL(SynthesisView synthView) {
 		synthView.save();
+		String specId = synthView.getSpecFileID().replace(".xml", "");
+		
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
-				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
+				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + specId);
 		actionPerformed(projectSynthesized);
 		if (!synthView.getRootDirectory().equals(root)) 
 		{
@@ -7408,11 +7492,64 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 		}
 	}
+	
+	private void synthesizeVerilog(VerilogSynthesisView synthView) {
+		synthView.save();
+		String specId = synthView.getSpecFileID().replace(".v", "");
+		
+		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED,
+				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + specId);
+		actionPerformed(projectSynthesized);
+		if (!synthView.getRootDirectory().equals(root)) 
+		{
+			List<String> techmap_sols = synthView.run(root);
+			
+			if(techmap_sols == null) {
+				JOptionPane.showMessageDialog(frame, "Unable to execute synthesis.", "Synthesis Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else if(techmap_sols.isEmpty()) {
+				JOptionPane.showMessageDialog(frame, "No solution was found after performing Verilog Synthesis.", "Synthesis Solution Not Found", JOptionPane.WARNING_MESSAGE);
+				return;
+			}	
+			else {
+				for(String solFilePath : techmap_sols) {
+					importSBOLFile(solFilePath);
+				}
+			}
+		}
+	}
+	
+	private void createVerilogSynthesisView() {
+		String verilogPath = tree.getFile();
+		String specFileID = GlobalConstants.getFilename(verilogPath);
+		String defaultSynthID = specFileID.replace(".v", "");
+		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
+				"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
+		if (synthID != null) 
+		{
+			if (synthID.length() == 0) 
+			{
+				synthID = defaultSynthID;
+			} 
+			else 
+			{
+				synthID = synthID.trim();
+			}
+			if (overwrite(root + File.separator + synthID, synthID)) 
+			{
+				VerilogSynthesisView synthView = new VerilogSynthesisView(this, synthID, root, log, verilogPath);
+				synthView.loadDefaultSynthesisProperties(specFileID);
+				addTab(synthID, synthView, null);
+				addToTree(synthID);
+			}
+		}
+	}
 
 	/**
 	 * Create a synthesis tab to perform technology mapping in the iBioSim workspace
 	 */
-	private void createSBOLSynthesisView() {
+	private void createSynthesisView() {
 		String specFileID = GlobalConstants.getFilename(tree.getFile());
 		String defaultSynthID = specFileID.replace(".xml", "");
 		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):",
@@ -7429,7 +7566,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			if (overwrite(root + File.separator + synthID, synthID)) 
 			{
-				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
+				SynthesisView synthView = new SynthesisView(this, synthID, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7438,18 +7575,31 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	}
 
 	/**
-	 * Open up the Synthesis View and load up the fields that were stored in the property file 
+	 * Open up the Synthesis View 
 	 */
 	private void openSBOLSynthesisView() {
 		//Properties synthProps;
 		try 
 		{
-			Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
+			Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(tree.getFile(), File.separator, frame);
 			if (synthProps != null) {
 				String synthID = GlobalConstants.getFilename(tree.getFile());
-				SynthesisView synthView = new SynthesisView(this, synthID, File.separator, root, log);
-				synthView.loadSynthesisProperties(synthProps);
-				addTab(synthID, synthView, null);
+				boolean veriSynth = false;
+				if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY)) {
+					veriSynth = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY).endsWith(GlobalConstants.VERILOG_FILE_EXTENTION)? true : false;
+				}
+				if(!veriSynth) {
+					SynthesisView synthView = new SynthesisView(this, synthID, root, log);
+					synthView.loadSynthesisProperties(synthProps);
+					addTab(synthID, synthView, null);
+				}
+				else {
+					String verilogSpecPath = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PATH_PROPERTY);
+					VerilogSynthesisView veriSynthView = new VerilogSynthesisView(this, synthID, root, log, verilogSpecPath);
+					veriSynthView.loadSynthesisProperties(synthProps);
+					addTab(synthID, veriSynthView, null);
+				}
+				
 			}
 		} 
 		catch (IOException e) 
@@ -7635,6 +7785,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}
 		if (!done) {
 			boolean sbolSynth = false;
+			
 			if (new File(tree.getFile()).isDirectory()) {
 				String[] fileIDs = new File(tree.getFile()).list();
 				for (int i = 0; i < fileIDs.length; i++) {
@@ -7646,7 +7797,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			}
 			if (sbolSynth) {
 				openSBOLSynthesisView();
-			} else {
+			} 
+			else {
 				JPanel synthPanel = new JPanel();
 				// String graphFile = "";
 				if (new File(tree.getFile()).isDirectory()) {
@@ -8694,6 +8846,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	private void enableTreeMenu() {
 		createAnal.setEnabled(false);
 		createSynth.setEnabled(false);
+		createVerilogSyn.setEnabled(false);
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -8704,18 +8857,27 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		viewModel.setEnabled(false);
 		if (tree.getFile() != null) {
 			if (tree.getFile().equals(root)) {
-			} else if (tree.getFile().endsWith(".sbol")) {
-			} else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
+			} 
+			else if (tree.getFile().endsWith(".sbol")) {
+			} 
+			else if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml")) {
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("createAnalysis");
 				createSynth.setEnabled(true);
+				createVerilogSyn.setEnabled(true);
 				createSynth.setActionCommand("createSynthesis");
+				createVerilogSyn.setActionCommand("createVerilogSyn");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 				viewModel.setEnabled(true);
-			} else if (tree.getFile().endsWith(".grf")) {
+			}
+			else if (tree.getFile().endsWith(".v")) {
+				createVerilogSyn.setEnabled(true);
+				createVerilogSyn.setActionCommand("createVerilogSyn");
+			}
+			else if (tree.getFile().endsWith(".grf")) {
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
@@ -8934,7 +9096,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				{
 					try 
 					{
-						Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(
+						Properties synthProps = SBOLUtility.getSBOLUtility().loadSBOLSynthesisProperties(
 								root + File.separator + s, File.separator, Gui.frame);
 						if (synthProps != null) 
 						{

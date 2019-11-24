@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" level="3" arrays:required="true" fbc:required="false" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version1" comp:required="true" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" version="1" layout:required="false">
-  <model id="GeneticToggle" name="Created by libsbml flatten routine" metaid="iBioSim1">
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:arrays="http://www.sbml.org/sbml/level3/version1/arrays/version1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns="http://www.sbml.org/sbml/level3/version2/core" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" level="3" version="2" comp:required="true" fbc:required="false" arrays:required="true" layout:required="false">
+  <model metaid="iBioSim1" id="GeneticToggle" name="Created by libsbml flatten routine" fbc:strict="false">
     <annotation>
       <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
@@ -15,243 +15,127 @@
         </rdf:RDF>
       </ModelToSBOL>
     </annotation>
-      <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <layout:layout layout:id="iBioSim">
-        <layout:dimensions layout:width="1070" layout:height="425"/>
-        <layout:listOfCompartmentGlyphs>
-          <layout:compartmentGlyph layout:id="C1__Glyph__Cell" layout:compartment="Cell">
-            <layout:boundingBox>
-              <layout:position layout:x="0" layout:y="0"/>
-              <layout:dimensions layout:width="1070" layout:height="425"/>
-            </layout:boundingBox>
-          </layout:compartmentGlyph>
-        </layout:listOfCompartmentGlyphs>
-        <layout:listOfSpeciesGlyphs>
-          <layout:speciesGlyph layout:id="C1__Glyph__LacI" layout:species="LacI">
-            <layout:boundingBox>
-              <layout:position layout:x="98" layout:y="66"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-          <layout:speciesGlyph layout:id="C1__Glyph__TetR" layout:species="TetR">
-            <layout:boundingBox>
-              <layout:position layout:x="90" layout:y="290"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-          <layout:speciesGlyph layout:id="C1__Glyph__GFP" layout:species="GFP">
-            <layout:boundingBox>
-              <layout:position layout:x="290" layout:y="290"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-          <layout:speciesGlyph layout:id="C1__Glyph__pLac" layout:species="C1__pLac">
-            <layout:boundingBox>
-              <layout:position layout:x="100" layout:y="170"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-        </layout:listOfSpeciesGlyphs>
-        <layout:listOfTextGlyphs>
-          <layout:textGlyph layout:graphicalObject="C1__Glyph__Cell" layout:id="C1__TextGlyph__Cell" layout:text="Cell">
-            <layout:boundingBox>
-              <layout:position layout:x="0" layout:y="0"/>
-              <layout:dimensions layout:width="1070" layout:height="425"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C1__Glyph__LacI" layout:id="C1__TextGlyph__LacI" layout:text="LacI">
-            <layout:boundingBox>
-              <layout:position layout:x="98" layout:y="66"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C1__Glyph__TetR" layout:id="C1__TextGlyph__TetR" layout:text="TetR">
-            <layout:boundingBox>
-              <layout:position layout:x="90" layout:y="290"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C1__Glyph__GFP" layout:id="C1__TextGlyph__GFP" layout:text="GFP">
-            <layout:boundingBox>
-              <layout:position layout:x="290" layout:y="290"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C1__Glyph__pLac" layout:id="C1__TextGlyph__pLac" layout:text="pLac">
-            <layout:boundingBox>
-              <layout:position layout:x="100" layout:y="170"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-        </layout:listOfTextGlyphs>
-      </layout:layout>
-      <layout:layout layout:id="C2__iBioSim">
-        <layout:dimensions layout:width="1070" layout:height="425"/>
-        <layout:listOfCompartmentGlyphs>
-          <layout:compartmentGlyph layout:id="C2__Glyph__Cell" layout:compartment="Cell">
-            <layout:boundingBox>
-              <layout:position layout:x="0" layout:y="0"/>
-              <layout:dimensions layout:width="1070" layout:height="425"/>
-            </layout:boundingBox>
-          </layout:compartmentGlyph>
-        </layout:listOfCompartmentGlyphs>
-        <layout:listOfSpeciesGlyphs>
-          <layout:speciesGlyph layout:id="C2__Glyph__TetR" layout:species="TetR">
-            <layout:boundingBox>
-              <layout:position layout:x="123" layout:y="65"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-          <layout:speciesGlyph layout:id="C2__Glyph__LacI" layout:species="LacI">
-            <layout:boundingBox>
-              <layout:position layout:x="138" layout:y="216"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:speciesGlyph>
-        </layout:listOfSpeciesGlyphs>
-        <layout:listOfTextGlyphs>
-          <layout:textGlyph layout:graphicalObject="C2__Glyph__Cell" layout:id="C2__TextGlyph__Cell" layout:text="Cell">
-            <layout:boundingBox>
-              <layout:position layout:x="0" layout:y="0"/>
-              <layout:dimensions layout:width="1070" layout:height="425"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C2__Glyph__TetR" layout:id="C2__TextGlyph__TetR" layout:text="TetR">
-            <layout:boundingBox>
-              <layout:position layout:x="123" layout:y="65"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-          <layout:textGlyph layout:graphicalObject="C2__Glyph__LacI" layout:id="C2__TextGlyph__LacI" layout:text="LacI">
-            <layout:boundingBox>
-              <layout:position layout:x="138" layout:y="216"/>
-              <layout:dimensions layout:width="100" layout:height="30"/>
-            </layout:boundingBox>
-          </layout:textGlyph>
-        </layout:listOfTextGlyphs>
-      </layout:layout>
-    </layout:listOfLayouts>
     <listOfCompartments>
-      <compartment id="Cell" constant="true" spatialDimensions="3" size="1"/>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="GFP" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim11" boundaryCondition="false" compartment="Cell"/>
-      <species id="LacI" constant="false" initialAmount="60" hasOnlySubstanceUnits="true" metaid="iBioSim12" boundaryCondition="false" compartment="Cell"/>
-      <species id="TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim13" boundaryCondition="false" compartment="Cell"/>
-      <species id="IPTG" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim14" boundaryCondition="true" compartment="Cell"/>
-      <species id="aTc" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim15" boundaryCondition="true" compartment="Cell"/>
-      <species id="IPTG_LacI" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim16" boundaryCondition="false" compartment="Cell"/>
-      <species id="aTc_TetR" constant="false" initialAmount="0" hasOnlySubstanceUnits="true" metaid="iBioSim17" boundaryCondition="false" compartment="Cell"/>
-      <species id="C1__pLac" constant="false" initialAmount="2" hasOnlySubstanceUnits="true" metaid="C1__iBioSim40" boundaryCondition="false" sboTerm="SBO:0000590" compartment="Cell"/>
-      <species id="C2__P0" constant="false" initialAmount="2" hasOnlySubstanceUnits="true" metaid="C2__iBioSim38" boundaryCondition="false" sboTerm="SBO:0000590" compartment="Cell"/>
+      <species metaid="iBioSim11" id="GFP" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim12" id="LacI" compartment="Cell" initialAmount="60" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim13" id="TetR" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim14" id="IPTG" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="true" constant="false"/>
+      <species metaid="iBioSim15" id="aTc" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="true" constant="false"/>
+      <species metaid="iBioSim16" id="IPTG_LacI" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim17" id="aTc_TetR" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="C1__iBioSim40" sboTerm="SBO:0000590" id="C1__pLac" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="C2__iBioSim38" sboTerm="SBO:0000590" id="C2__P0" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
-      <parameter id="kd" constant="true" name="Degradation rate" metaid="iBioSim3" value="0.0075"/>
-      <parameter id="kc_f" constant="true" name="Forward complex formation rate" metaid="iBioSim4" value="0.05"/>
-      <parameter id="kc_r" constant="true" name="Reverse complex formation rate" metaid="iBioSim5" value="1"/>
-      <parameter id="nc" constant="true" name="Stoichiometry of binding" metaid="iBioSim6" value="2"/>
-      <parameter id="kmdiff_f" constant="true" name="Forward membrane diffusion rate" metaid="iBioSim7" value="1"/>
-      <parameter id="kmdiff_r" constant="true" name="Reverse membrane diffusion rate" metaid="iBioSim8" value="0.01"/>
-      <parameter id="kecd" constant="true" name="Extracellular degradation rate" metaid="iBioSim9" value="0.005"/>
-      <parameter id="kecdiff" constant="true" name="Extracellular diffusion rate" metaid="iBioSim10" value="1"/>
-      <parameter id="C1__kr_f" constant="true" name="Forward repression binding rate" metaid="C1__iBioSim22" value="0.5"/>
-      <parameter id="C1__kr_r" constant="true" name="Reverse repression binding rate" metaid="C1__iBioSim23" value="1"/>
-      <parameter id="C1__ka_f" constant="true" name="Forward activation binding rate" metaid="C1__iBioSim24" value="0.0033"/>
-      <parameter id="C1__ka_r" constant="true" name="Reverse activation binding rate" metaid="C1__iBioSim25" value="1"/>
-      <parameter id="C1__ko_f" constant="true" name="Forward RNAP binding rate" metaid="C1__iBioSim26" value="0.033"/>
-      <parameter id="C1__ko_r" constant="true" name="Reverse RNAP binding rate" metaid="C1__iBioSim27" value="1"/>
-      <parameter id="C1__kao_f" constant="true" name="Forward activated RNAP binding rate" metaid="C1__iBioSim28" value="1"/>
-      <parameter id="C1__kao_r" constant="true" name="Reverse activated RNAP binding rate" metaid="C1__iBioSim29" value="1"/>
-      <parameter id="C1__nc" constant="true" name="Stoichiometry of binding" metaid="C1__iBioSim30" value="2"/>
-      <parameter id="C1__nr" constant="true" name="Initial RNAP count" metaid="C1__iBioSim31" value="30"/>
-      <parameter id="C1__ko" constant="true" name="Open complex production rate" metaid="C1__iBioSim32" value="0.05"/>
-      <parameter id="C1__kb" constant="true" name="Basal production rate" metaid="C1__iBioSim33" value="0.0001"/>
-      <parameter id="C1__ng" constant="true" name="Initial promoter count" metaid="C1__iBioSim34" value="2"/>
-      <parameter id="C1__np" constant="true" name="Stoichiometry of production" metaid="C1__iBioSim35" value="10"/>
-      <parameter id="C1__ka" constant="true" name="Activated production rate" metaid="C1__iBioSim36" value="0.25"/>
-      <parameter id="C2__kr_f" constant="true" name="Forward repression binding rate" metaid="C2__iBioSim21" value="0.5"/>
-      <parameter id="C2__kr_r" constant="true" name="Reverse repression binding rate" metaid="C2__iBioSim22" value="1"/>
-      <parameter id="C2__ka_f" constant="true" name="Forward activation binding rate" metaid="C2__iBioSim23" value="0.0033"/>
-      <parameter id="C2__ka_r" constant="true" name="Reverse activation binding rate" metaid="C2__iBioSim24" value="1"/>
-      <parameter id="C2__ko_f" constant="true" name="Forward RNAP binding rate" metaid="C2__iBioSim25" value="0.033"/>
-      <parameter id="C2__ko_r" constant="true" name="Reverse RNAP binding rate" metaid="C2__iBioSim26" value="1"/>
-      <parameter id="C2__kao_f" constant="true" name="Forward activated RNAP binding rate" metaid="C2__iBioSim27" value="1"/>
-      <parameter id="C2__kao_r" constant="true" name="Reverse activated RNAP binding rate" metaid="C2__iBioSim28" value="1"/>
-      <parameter id="C2__nc" constant="true" name="Stoichiometry of binding" metaid="C2__iBioSim29" value="2"/>
-      <parameter id="C2__nr" constant="true" name="Initial RNAP count" metaid="C2__iBioSim30" value="30"/>
-      <parameter id="C2__ko" constant="true" name="Open complex production rate" metaid="C2__iBioSim31" value="0.05"/>
-      <parameter id="C2__kb" constant="true" name="Basal production rate" metaid="C2__iBioSim32" value="0.0001"/>
-      <parameter id="C2__ng" constant="true" name="Initial promoter count" metaid="C2__iBioSim33" value="2"/>
-      <parameter id="C2__np" constant="true" name="Stoichiometry of production" metaid="C2__iBioSim34" value="10"/>
-      <parameter id="C2__ka" constant="true" name="Activated production rate" metaid="C2__iBioSim35" value="0.25"/>
+      <parameter metaid="iBioSim3" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim4" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim5" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim6" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim7" id="kmdiff_f" name="Forward membrane diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim8" id="kmdiff_r" name="Reverse membrane diffusion rate" value="0.01" constant="true"/>
+      <parameter metaid="iBioSim9" id="kecd" name="Extracellular degradation rate" value="0.005" constant="true"/>
+      <parameter metaid="iBioSim10" id="kecdiff" name="Extracellular diffusion rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim22" id="C1__kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="C1__iBioSim23" id="C1__kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim24" id="C1__ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="C1__iBioSim25" id="C1__ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim26" id="C1__ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="C1__iBioSim27" id="C1__ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim28" id="C1__kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim29" id="C1__kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C1__iBioSim30" id="C1__nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="C1__iBioSim31" id="C1__nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="C1__iBioSim32" id="C1__ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="C1__iBioSim33" id="C1__kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="C1__iBioSim34" id="C1__ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="C1__iBioSim35" id="C1__np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="C1__iBioSim36" id="C1__ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="C2__iBioSim21" id="C2__kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="C2__iBioSim22" id="C2__kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="C2__iBioSim23" id="C2__ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="C2__iBioSim24" id="C2__ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="C2__iBioSim25" id="C2__ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="C2__iBioSim26" id="C2__ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C2__iBioSim27" id="C2__kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C2__iBioSim28" id="C2__kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="C2__iBioSim29" id="C2__nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="C2__iBioSim30" id="C2__nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="C2__iBioSim31" id="C2__ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="C2__iBioSim32" id="C2__kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="C2__iBioSim33" id="C2__ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="C2__iBioSim34" id="C2__np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="C2__iBioSim35" id="C2__ka" name="Activated production rate" value="0.25" constant="true"/>
     </listOfParameters>
     <listOfReactions>
-      <reaction id="Degradation_GFP" metaid="iBioSim18" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim18" sboTerm="SBO:0000179" id="Degradation_GFP" reversible="false" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="GFP" stoichiometry="1"/>
+          <speciesReference species="GFP" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> kd </ci>
               <ci> GFP </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="Degradation_TetR" metaid="iBioSim19" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim19" sboTerm="SBO:0000179" id="Degradation_TetR" reversible="false" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="TetR" stoichiometry="1"/>
+          <speciesReference species="TetR" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> kd </ci>
               <ci> TetR </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="Degradation_IPTG_LacI" metaid="iBioSim20" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim20" sboTerm="SBO:0000179" id="Degradation_IPTG_LacI" reversible="false" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="IPTG_LacI" stoichiometry="1"/>
+          <speciesReference species="IPTG_LacI" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> kd </ci>
               <ci> IPTG_LacI </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="Degradation_aTc_TetR" metaid="iBioSim21" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim21" sboTerm="SBO:0000179" id="Degradation_aTc_TetR" reversible="false" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="aTc_TetR" stoichiometry="1"/>
+          <speciesReference species="aTc_TetR" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> kd </ci>
               <ci> aTc_TetR </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="Complex_IPTG_LacI" metaid="iBioSim22" reversible="true" sboTerm="SBO:0000177" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim22" sboTerm="SBO:0000177" id="Complex_IPTG_LacI" reversible="true" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="IPTG" stoichiometry="1"/>
-          <speciesReference constant="true" species="LacI" stoichiometry="1"/>
+          <speciesReference species="IPTG" stoichiometry="1" constant="true"/>
+          <speciesReference species="LacI" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference constant="true" species="IPTG_LacI" stoichiometry="1"/>
+          <speciesReference species="IPTG_LacI" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <minus/>
               <apply>
@@ -275,22 +159,22 @@
               </apply>
             </apply>
           </math>
-                  <listOfLocalParameters>
+          <listOfLocalParameters>
             <localParameter id="nc_LacI" value="1"/>
             <localParameter id="nc_IPTG" value="1"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="Complex_aTc_TetR" metaid="iBioSim23" reversible="true" sboTerm="SBO:0000177" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim23" sboTerm="SBO:0000177" id="Complex_aTc_TetR" reversible="true" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="TetR" stoichiometry="1"/>
-          <speciesReference constant="true" species="aTc" stoichiometry="1"/>
+          <speciesReference species="TetR" stoichiometry="1" constant="true"/>
+          <speciesReference species="aTc" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference constant="true" species="aTc_TetR" stoichiometry="1"/>
+          <speciesReference species="aTc_TetR" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <minus/>
               <apply>
@@ -314,37 +198,37 @@
               </apply>
             </apply>
           </math>
-                  <listOfLocalParameters>
+          <listOfLocalParameters>
             <localParameter id="nc_aTc" value="1"/>
             <localParameter id="nc_TetR" value="1"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="Degradation_LacI" metaid="iBioSim24" reversible="false" sboTerm="SBO:0000179" fast="false" compartment="Cell">
+      <reaction metaid="iBioSim24" sboTerm="SBO:0000179" id="Degradation_LacI" reversible="false" compartment="Cell">
         <listOfReactants>
-          <speciesReference constant="true" species="LacI" stoichiometry="1"/>
+          <speciesReference species="LacI" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> kd </ci>
               <ci> LacI </ci>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="C1__Production_pLac" metaid="C1__iBioSim41" reversible="false" sboTerm="SBO:0000589" fast="false" compartment="Cell">
+      <reaction metaid="C1__iBioSim41" sboTerm="SBO:0000589" id="C1__Production_pLac" reversible="false" compartment="Cell">
         <listOfProducts>
-          <speciesReference constant="true" species="TetR" stoichiometry="10"/>
-          <speciesReference constant="true" species="GFP" stoichiometry="10"/>
+          <speciesReference species="TetR" stoichiometry="10" constant="true"/>
+          <speciesReference species="GFP" stoichiometry="10" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="C1__pLac" sboTerm="SBO:0000598"/>
-          <modifierSpeciesReference species="LacI" sboTerm="SBO:0000020"/>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="C1__pLac"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="LacI"/>
         </listOfModifiers>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
               <apply>
@@ -386,18 +270,18 @@
               </apply>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
-      <reaction id="C2__Production_P0" metaid="C2__iBioSim39" reversible="false" sboTerm="SBO:0000589" fast="false" compartment="Cell">
+      <reaction metaid="C2__iBioSim39" sboTerm="SBO:0000589" id="C2__Production_P0" reversible="false" compartment="Cell">
         <listOfProducts>
-          <speciesReference constant="true" species="LacI" stoichiometry="10"/>
+          <speciesReference species="LacI" stoichiometry="10" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="C2__P0" sboTerm="SBO:0000598"/>
-          <modifierSpeciesReference species="TetR" sboTerm="SBO:0000020"/>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="C2__P0"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="TetR"/>
         </listOfModifiers>
         <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
               <apply>
@@ -439,86 +323,202 @@
               </apply>
             </apply>
           </math>
-                </kineticLaw>
+        </kineticLaw>
       </reaction>
     </listOfReactions>
     <listOfEvents>
-      <event id="IPTG_High" metaid="iBioSim25" useValuesFromTriggerTime="false">
-        <trigger persistent="false" initialValue="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+      <event metaid="iBioSim25" id="IPTG_High" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <true/>
           </math>
-                </trigger>
+        </trigger>
         <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 2000 </cn>
           </math>
-                </delay>
+        </delay>
         <listOfEventAssignments>
           <eventAssignment variable="IPTG">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
               <cn type="integer"> 60 </cn>
             </math>
-                    </eventAssignment>
+          </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="IPTG_Low" metaid="iBioSim26" useValuesFromTriggerTime="false">
-        <trigger persistent="false" initialValue="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+      <event metaid="iBioSim26" id="IPTG_Low" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <true/>
           </math>
-                </trigger>
+        </trigger>
         <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 4000 </cn>
           </math>
-                </delay>
+        </delay>
         <listOfEventAssignments>
           <eventAssignment variable="IPTG">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
               <cn type="integer"> 0 </cn>
             </math>
-                    </eventAssignment>
+          </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="aTc_High" metaid="iBioSim27" useValuesFromTriggerTime="false">
-        <trigger persistent="false" initialValue="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+      <event metaid="iBioSim27" id="aTc_High" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <true/>
           </math>
-                </trigger>
+        </trigger>
         <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 6000 </cn>
           </math>
-                </delay>
+        </delay>
         <listOfEventAssignments>
           <eventAssignment variable="aTc">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
               <cn type="integer"> 60 </cn>
             </math>
-                    </eventAssignment>
+          </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="aTc_Low" metaid="iBioSim28" useValuesFromTriggerTime="false">
-        <trigger persistent="false" initialValue="false">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+      <event metaid="iBioSim28" id="aTc_Low" useValuesFromTriggerTime="false">
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <true/>
           </math>
-                </trigger>
+        </trigger>
         <delay>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
             <cn type="integer"> 8000 </cn>
           </math>
-                </delay>
+        </delay>
         <listOfEventAssignments>
           <eventAssignment variable="aTc">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
               <cn type="integer"> 0 </cn>
             </math>
-                    </eventAssignment>
+          </eventAssignment>
         </listOfEventAssignments>
       </event>
     </listOfEvents>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="C1__Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="C1__Glyph__LacI" layout:species="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="98" layout:y="66"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__TetR" layout:species="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="90" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__GFP" layout:species="GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="290" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C1__Glyph__pLac" layout:species="C1__pLac">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="170"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="C1__TextGlyph__Cell" layout:text="Cell" layout:graphicalObject="C1__Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C1__TextGlyph__LacI" layout:text="LacI" layout:graphicalObject="C1__Glyph__LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="98" layout:y="66"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C1__TextGlyph__TetR" layout:text="TetR" layout:graphicalObject="C1__Glyph__TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="90" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C1__TextGlyph__GFP" layout:text="GFP" layout:graphicalObject="C1__Glyph__GFP">
+            <layout:boundingBox>
+              <layout:position layout:x="290" layout:y="290"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C1__TextGlyph__pLac" layout:text="pLac" layout:graphicalObject="C1__Glyph__pLac">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="170"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+      <layout:layout layout:id="C2__iBioSim">
+        <layout:dimensions layout:width="1070" layout:height="425"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="C2__Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="C2__Glyph__TetR" layout:species="TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="123" layout:y="65"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="C2__Glyph__LacI" layout:species="LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="138" layout:y="216"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="C2__TextGlyph__Cell" layout:text="Cell" layout:graphicalObject="C2__Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C2__TextGlyph__TetR" layout:text="TetR" layout:graphicalObject="C2__Glyph__TetR">
+            <layout:boundingBox>
+              <layout:position layout:x="123" layout:y="65"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="C2__TextGlyph__LacI" layout:text="LacI" layout:graphicalObject="C2__Glyph__LacI">
+            <layout:boundingBox>
+              <layout:position layout:x="138" layout:y="216"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
   </model>
 </sbml>

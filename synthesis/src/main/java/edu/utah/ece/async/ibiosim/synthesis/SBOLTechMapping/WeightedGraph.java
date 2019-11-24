@@ -13,6 +13,8 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.DecomposedGraph;
+
 /**
  * 
  *
@@ -24,16 +26,16 @@ package edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping;
 public class WeightedGraph
 {
 
-	private SBOLGraph graph;
+	private DecomposedGraph graph;
 	private double weight;
 
-	public WeightedGraph(SBOLGraph g, double weight)
+	public WeightedGraph(DecomposedGraph gate, double weight)
 	{
-		this.graph = g;
+		this.graph = gate;
 		this.weight = weight;
 
 	}
-	public SBOLGraph getSBOLGraph()
+	public DecomposedGraph getDecomposedGraph()
 	{ 
 		return this.graph;
 	}

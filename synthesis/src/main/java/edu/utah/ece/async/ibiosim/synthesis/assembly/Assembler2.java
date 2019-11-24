@@ -37,7 +37,6 @@ import org.sbolstandard.core2.*;
  * 
  *
  * @author Nicholas Roehner
- * @author Tramy Nguyen
  * @author Chris Myers
  * @author <a href="http://www.async.ece.utah.edu/ibiosim#Credits"> iBioSim Contributors </a>
  * @version %I%
@@ -55,16 +54,6 @@ public class Assembler2
 		this.seqValidator = seqValidator;
 	}
 	
-//	public static ComponentDefinition exportDnaComponent(String exportFilePath) {
-//		ComponentDefinition assemblyComp = null;
-////		SBOLDocument sbolDoc = SBOLFactory.createDocument(); 
-//		SBOLDocument sbolDoc = new SBOLDocument();
-//		//		SBOLUtility2.addDNAComponent(assemblyComp, sbolDoc, false);
-//		SBOLUtility2.addDNAComponent(assemblyComp, sbolDoc, false); 
-//		SBOLUtility2.writeSBOLDocument(exportFilePath, sbolDoc);
-//		return assemblyComp;
-//	}
-//	
 	public ComponentDefinition assembleDNAComponent(SBOLDocument sbolDoc, String defaultURIPrefix) throws SBOLValidationException, SBOLException 
 	{	
 		// Orders list of subcomponents (to be assembled into composite component) 
@@ -266,7 +255,6 @@ public class Assembler2
 			Sequence subSeq = subComp.getSequences().iterator().next();
 			if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
 			{
-				//TODO: How to handle this getReverseComplementaryNucleotides()?
 				parentSeq.setElements(parentSeq.getElements()
 						+ getReverseComplementaryNucleotides(subSeq.getElements()));
 			}
@@ -497,8 +485,8 @@ public class Assembler2
 		List<String> types = new LinkedList<String>();
 //		if (dnaComp.getAnnotations().size() == 0) {
 		if (dnaComp.getSequenceAnnotations().size() == 0) {
-			if (SBOLUtility.loadSONumber(dnaComp) != null) {
-				String soNum = SBOLUtility.loadSONumber(dnaComp).replace(":", "_");
+			if (SBOLUtility.getSBOLUtility().loadSONumber(dnaComp) != null) {
+				String soNum = SBOLUtility.getSBOLUtility().loadSONumber(dnaComp).replace(":", "_");
 				if (soNum != null) {
 					types.add(strand);
 					types.add(soNum);
@@ -580,7 +568,7 @@ public class Assembler2
 	}
 	
 	private static List<URI> loadNodeURIs(AssemblyNode2 assemblyNode) {
-		return SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents());
+		return SBOLUtility.getSBOLUtility().loadDNAComponentURIs(assemblyNode.getDNAComponents());
 	}
 	
 	private static List<URI> loadNodeURIs(List<AssemblyNode2> assemblyNodes) {

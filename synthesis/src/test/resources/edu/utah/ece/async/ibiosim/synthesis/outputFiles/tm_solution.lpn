@@ -1,0 +1,49 @@
+.inputs r s 
+.outputs q 
+.internal 
+.dummy sl_instance__assign_0 sl_instance__assign_1 sl_instance__wait_1 sl_instance__wait_0 assign_0 assign_1 assign_2 assign_3 sl_instance__delay_1 sl_instance__T0 sl_instance__delay_0 delay_0 T0 delay_1 delay_2 wait_1 wait_0 delay_3 
+#|.places P0 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 sl_instance__P5 sl_instance__P6 sl_instance__P3 sl_instance__P4 sl_instance__P1 sl_instance__P2 sl_instance__P0 
+#@.init_state [000]
+.graph
+sl_instance__P2 sl_instance__assign_0
+sl_instance__assign_0 sl_instance__P3
+sl_instance__P5 sl_instance__assign_1
+sl_instance__assign_1 sl_instance__P6
+sl_instance__P3 sl_instance__wait_1
+sl_instance__wait_1 sl_instance__P4
+sl_instance__P0 sl_instance__wait_0
+sl_instance__wait_0 sl_instance__P1
+P1 assign_0
+assign_0 P2
+P4 assign_1
+assign_1 P5
+P6 assign_2
+assign_2 P7
+P9 assign_3
+assign_3 P10
+sl_instance__P4 sl_instance__delay_1
+sl_instance__delay_1 sl_instance__P5
+sl_instance__P6 sl_instance__T0
+sl_instance__T0 sl_instance__P0
+sl_instance__P1 sl_instance__delay_0
+sl_instance__delay_0 sl_instance__P2
+P0 delay_0
+delay_0 P1
+P10 T0
+T0 P0
+P3 delay_1
+delay_1 P4
+P5 delay_2
+delay_2 P6
+P7 wait_1
+wait_1 P8
+P2 wait_0
+wait_0 P3
+P8 delay_3
+delay_3 P9
+.marking {P0 sl_instance__P0 }
+#@.enablings {<sl_instance__assign_0=[true]><sl_instance__assign_1=[true]><sl_instance__wait_1=[r]><sl_instance__wait_0=[s]><assign_0=[true]><assign_1=[true]><assign_2=[true]><assign_3=[true]><sl_instance__delay_1=[true]><sl_instance__T0=[true]><sl_instance__delay_0=[true]><delay_0=[true]><T0=[true]><delay_1=[true]><delay_2=[true]><wait_1=[(q=0)]><wait_0=[q]><delay_3=[true]>}
+#@.delay_assignments {<sl_instance__delay_1=[5]><sl_instance__delay_0=[5]><delay_0=[5.0]><delay_1=[5.0]><delay_2=[5.0]><delay_3=[5.0]>}
+#@.boolean_assignments {<sl_instance__assign_0=[q:=1]><sl_instance__assign_1=[q:=0]><assign_0=[s:=1]><assign_1=[s:=0]><assign_2=[r:=1]><assign_3=[r:=0]>}
+#@.continuous 
+.end

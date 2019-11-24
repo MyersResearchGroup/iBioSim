@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -25,9 +26,14 @@ import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.synthesis.GeneticGates.SBOLGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.SynthesisGraph;
 import edu.utah.ece.async.ibiosim.synthesis.SBMLTechMapping.Synthesizer;
-import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMap;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapRunner;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapException;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.SBOLTechMapOptions;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.Synthesis;
+import edu.utah.ece.async.ibiosim.synthesis.SBOLTechMapping.FunctionalComponentNode;
 
 public class TechMapping {
 
@@ -146,28 +152,11 @@ public class TechMapping {
 		{
 			if(sbolTechMap)
 			{
-				SBOLDocument specDoc = SBOLUtility.loadSBOLFile(specFile, defaultPrefix);
-				SBOLDocument libDoc = SBOLUtility.loadSBOLFile(sbolLibDir, defaultPrefix);
-
-				SBOLDocument sbolDoc_sol = SBOLTechMap.runSBOLTechMap(specDoc, libDoc);
-				if(outSBOL)
-				{
-					sbolDoc_sol.write(new File(outFileName));
-				}
-				else if (outSBML)
-				{
-					// TODO: Write solution to one SBML file
-					for (ModuleDefinition moduleDef : sbolDoc_sol.getRootModuleDefinitions())
-					{
-//						List<BioModel> models = SBOL2SBML.generateModel(outFileName, moduleDef, sbolDoc_sol);
-//						SBMLutilities.exportSBMLModels(models, outputDir, outFileName, false, true, true);
-					}
-				}
-				else
-				{
-					// Write to command line
-					sbolDoc_sol.write(System.out);
-				}
+				SBOLTechMapOptions setupOpts = new SBOLTechMapOptions();
+				setupOpts.addLibraryFile(sbolLibDir);
+				setupOpts.setSpecificationFile(specFile);
+				
+//				Synthesis syn = SBOLTechMapRunner.run(setupOpts.getSpefication(), setupOpts.getLibrary());
 			}
 			else if (sbmlTechMap)
 			{

@@ -1,0 +1,1996 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ns0="http://cellocad.org/Terms/cello#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:om="http://www.ontology-of-units-of-measure.org/resource/om-2/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module"/>
+    <sbol:displayId>nand_tu_template_GeneratedInstance121_module</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pBetI/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pBetI"/>
+        <sbol:displayId>pBetI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pSrpR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/BetI_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/BetI_protein"/>
+        <sbol:displayId>BetI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc"/>
+        <sbol:displayId>R1_PsrA_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc/PsrA_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc/PsrA_mapsTo"/>
+            <sbol:displayId>PsrA_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance121_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/pBetI_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/pBetI_mapsTo"/>
+            <sbol:displayId>pBetI_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro1_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pBetI/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/pSrpR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/pSrpR_mapsTo"/>
+            <sbol:displayId>pSrpR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/R1_PsrA_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/R1_PsrA_mapsTo"/>
+            <sbol:displayId>R1_PsrA_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Gen_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/SrpR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/BetI_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_pBetI_pBetI/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub/nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_pBetI_pBetI"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_BetI_protein_pBetI_repression_sub_pBetI_pBetI</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/pBetI/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pBetI/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/SrpR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_PsrA/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_PsrA"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance121_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module"/>
+    <sbol:displayId>nand_tu_template_GeneratedInstance111_module</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance111_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/pSrpR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/pSrpR_mapsTo"/>
+            <sbol:displayId>pSrpR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/pAmeR_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/pAmeR_mapsTo"/>
+            <sbol:displayId>pAmeR_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro1_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pAmeR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/R1_PsrA_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/R1_PsrA_mapsTo"/>
+            <sbol:displayId>R1_PsrA_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Gen_Component/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pSrpR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc"/>
+        <sbol:displayId>R1_PsrA_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc/PsrA_mapsTo/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc/PsrA_mapsTo"/>
+            <sbol:displayId>PsrA_mapsTo</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#useLocal"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/SrpR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/AmeR_protein/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/AmeR_protein"/>
+        <sbol:displayId>AmeR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pAmeR/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pAmeR"/>
+        <sbol:displayId>pAmeR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pSrpR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub/nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/SrpR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pAmeR/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub/nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/AmeR_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_PsrA/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_PsrA"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub/nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>nand_tu_template_GeneratedInstance111_module_PsrA_protein_production_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA_protein/1"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111"/>
+    <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pSrpR">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_GeneratedInstance111_fc">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_GeneratedInstance111_fc"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance111_fc</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pAmeR">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pAmeR"/>
+        <sbol:displayId>pAmeR</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/R1_PsrA_fc">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/R1_PsrA_fc"/>
+        <sbol:displayId>R1_PsrA_fc</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/AmeR_protein">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/AmeR_protein"/>
+        <sbol:displayId>AmeR_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA_protein">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_fc">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_fc"/>
+        <sbol:displayId>nand_tu_template_fc</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/SrpR_protein">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/SrpR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pSrpR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_PsrA">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_PsrA"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_production_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub/TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_module/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_module/nand_tu_template_fc/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pAmeR_pAmeR">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pAmeR_pAmeR"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pAmeR_pAmeR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pAmeR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pAmeR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pSrpR_pSrpR">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/pSrpR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pSrpR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_nand_tu_template_GeneratedInstance111_fc_nand_tu_template_GeneratedInstance111_fc">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_nand_tu_template_GeneratedInstance111_fc_nand_tu_template_GeneratedInstance111_fc"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_nand_tu_template_GeneratedInstance111_fc_nand_tu_template_GeneratedInstance111_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/nand_tu_template_GeneratedInstance111_fc/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/nand_tu_template_GeneratedInstance111_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_R1_PsrA_fc_R1_PsrA_fc">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_R1_PsrA_fc_R1_PsrA_fc"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_R1_PsrA_fc_R1_PsrA_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/R1_PsrA_fc/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/R1_PsrA_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_SrpR_protein_SrpR_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/SrpR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/SrpR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_AmeR_protein_AmeR_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_AmeR_protein_AmeR_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_AmeR_protein_AmeR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/AmeR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/AmeR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_PsrA">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub/TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_PsrA"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_nand_tu_template_GeneratedInstance111_module_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_module/PsrA/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/PsrA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub"/>
+        <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_pAmeR_pAmeR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/pAmeR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub/TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein"/>
+            <sbol:displayId>TopLevel0_nand_tu_template_GeneratedInstance111_AmeR_protein_pAmeR_repression_sub_AmeR_protein_AmeR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
+            <sbol:local rdf:resource="http://async.utah.edu/TopLevel0_nand_tu_template_GeneratedInstance111/AmeR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression"/>
+    <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein"/>
+        <sbol:displayId>AmeR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR"/>
+        <sbol:displayId>pAmeR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression"/>
+        <sbol:displayId>AmeR_protein_pAmeR_repression</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/pAmeR_promoter_participation"/>
+            <sbol:displayId>pAmeR_promoter_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/pAmeR/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein_pAmeR_repression/AmeR_protein_participation"/>
+            <sbol:displayId>AmeR_protein_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein_pAmeR_repression/AmeR_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression"/>
+    <sbol:displayId>SrpR_protein_pSrpR_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression"/>
+        <sbol:displayId>SrpR_protein_pSrpR_repression</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression/pSrpR_promoter_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression/pSrpR_promoter_participation"/>
+            <sbol:displayId>pSrpR_promoter_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression/SrpR_protein_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein_pSrpR_repression/SrpR_protein_participation"/>
+            <sbol:displayId>SrpR_protein_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production"/>
+    <sbol:displayId>PsrA_protein_production</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction"/>
+        <sbol:displayId>PsrA_protein_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000589"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction/PsrA/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction/PsrA"/>
+            <sbol:displayId>PsrA</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000645"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction/PsrA_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein_interaction/PsrA_protein"/>
+            <sbol:displayId>PsrA_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000011"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression"/>
+    <sbol:displayId>BetI_protein_pBetI_repression</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/pBetI/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/pBetI"/>
+        <sbol:displayId>pBetI</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein"/>
+        <sbol:displayId>BetI_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression"/>
+        <sbol:displayId>BetI_protein_pBetI_repression</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000169"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression/BetI_protein_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression/BetI_protein_participation"/>
+            <sbol:displayId>BetI_protein_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000020"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression/pBetI_promoter_participation/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein_pBetI_repression/pBetI_promoter_participation"/>
+            <sbol:displayId>pBetI_promoter_participation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000642"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/pBetI/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121"/>
+    <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121</sbol:displayId>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pSrpR">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pSrpR"/>
+        <sbol:displayId>pSrpR</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pBetI">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pBetI"/>
+        <sbol:displayId>pBetI</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA_protein">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/BetI_protein">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/BetI_protein"/>
+        <sbol:displayId>BetI_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/R1_PsrA_fc">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/R1_PsrA_fc"/>
+        <sbol:displayId>R1_PsrA_fc</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_GeneratedInstance121_fc">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_GeneratedInstance121_fc"/>
+        <sbol:displayId>nand_tu_template_GeneratedInstance121_fc</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/SrpR_protein">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/SrpR_protein"/>
+        <sbol:displayId>SrpR_protein</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_fc">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_fc"/>
+        <sbol:displayId>nand_tu_template_fc</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_BetI_protein_BetI_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/BetI_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/BetI_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_pBetI_pBetI">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_pBetI_pBetI"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_BetI_protein_pBetI_repression_sub_pBetI_pBetI</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein_pBetI_repression/pBetI/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pBetI"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_PsrA">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_PsrA"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_production_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_production/PsrA/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_module/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_module_sub_nand_tu_template_fc_nand_tu_template_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_module/nand_tu_template_fc/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub</sbol:displayId>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pBetI_pBetI">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pBetI_pBetI"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pBetI_pBetI</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pBetI/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pBetI"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_nand_tu_template_GeneratedInstance121_fc_nand_tu_template_GeneratedInstance121_fc">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_nand_tu_template_GeneratedInstance121_fc_nand_tu_template_GeneratedInstance121_fc"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_nand_tu_template_GeneratedInstance121_fc_nand_tu_template_GeneratedInstance121_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/nand_tu_template_GeneratedInstance121_fc/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/nand_tu_template_GeneratedInstance121_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_BetI_protein_BetI_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_BetI_protein_BetI_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_BetI_protein_BetI_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/BetI_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/BetI_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_PsrA">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_PsrA"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_PsrA</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_R1_PsrA_fc_R1_PsrA_fc">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_R1_PsrA_fc_R1_PsrA_fc"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_R1_PsrA_fc_R1_PsrA_fc</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/R1_PsrA_fc/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/R1_PsrA_fc"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_SrpR_protein_SrpR_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/SrpR_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/SrpR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pSrpR_pSrpR">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/pSrpR/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pSrpR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub/TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_nand_tu_template_GeneratedInstance121_module_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121_module/PsrA_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_SrpR_protein_SrpR_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/SrpR_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/SrpR_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub/TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_SrpR_protein_pSrpR_repression_sub_pSrpR_pSrpR</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein_pSrpR_repression/pSrpR/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/pSrpR"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+    <sbol:module>
+      <sbol:Module rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub"/>
+        <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub</sbol:displayId>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/1"/>
+        <sbol:mapsTo>
+          <sbol:MapsTo rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub/TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein"/>
+            <sbol:displayId>TopLevel1_nand_tu_template_GeneratedInstance121_PsrA_protein_degradation_sub_PsrA_protein_PsrA_protein</sbol:displayId>
+            <sbol:refinement rdf:resource="http://sbols.org/v2#verifyIdentical"/>
+            <sbol:remote rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_protein/1"/>
+            <sbol:local rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TopLevel1_nand_tu_template_GeneratedInstance121/PsrA_protein"/>
+          </sbol:MapsTo>
+        </sbol:mapsTo>
+      </sbol:Module>
+    </sbol:module>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="http://async.utah.edu/nand_tu_template_module/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_module"/>
+    <sbol:displayId>nand_tu_template_module</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="http://async.utah.edu/nand_tu_template_module/nand_tu_template_fc/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_module/nand_tu_template_fc"/>
+        <sbol:displayId>nand_tu_template_fc</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#inout"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+  </sbol:ModuleDefinition>
+  <sbol:ModuleDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation"/>
+    <sbol:displayId>PsrA_protein_degradation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:functionalComponent>
+      <sbol:FunctionalComponent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_protein/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_protein"/>
+        <sbol:displayId>PsrA_protein</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:direction rdf:resource="http://sbols.org/v2#in"/>
+      </sbol:FunctionalComponent>
+    </sbol:functionalComponent>
+    <sbol:interaction>
+      <sbol:Interaction rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_degradation_interaction/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_degradation_interaction"/>
+        <sbol:displayId>PsrA_degradation_interaction</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:type rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000179"/>
+        <sbol:participation>
+          <sbol:Participation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_degradation_interaction/PsrA_protein/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_degradation_interaction/PsrA_protein"/>
+            <sbol:displayId>PsrA_protein</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:role rdf:resource="http://identifiers.org/biomodels.sbo/SBO:0000010"/>
+            <sbol:participant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein_degradation/PsrA_protein/1"/>
+          </sbol:Participation>
+        </sbol:participation>
+      </sbol:Interaction>
+    </sbol:interaction>
+  </sbol:ModuleDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR"/>
+    <sbol:displayId>pAmeR</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pAmeR</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/SrpR_protein"/>
+    <sbol:displayId>SrpR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>SrpR_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111"/>
+    <sbol:displayId>nand_tu_template_GeneratedInstance111</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <dcterms:description></dcterms:description>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Gen_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Gen_Component"/>
+        <sbol:displayId>Gen_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro1_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro1_Component"/>
+        <sbol:displayId>Pro1_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/nand_tu_template_SequenceConstraint1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/nand_tu_template_SequenceConstraint1"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro1_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Gen_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111/nand_tu_template_SequenceConstraint/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/nand_tu_template_SequenceConstraint"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111/Pro1_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/Pro1/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Pro1"/>
+    <sbol:displayId>Pro1</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/nand_tu_template/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template"/>
+    <sbol:displayId>nand_tu_template</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <dcterms:description></dcterms:description>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template/Pro1_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/Pro1_Component"/>
+        <sbol:displayId>Pro1_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://async.utah.edu/Pro1/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template/Gen_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/Gen_Component"/>
+        <sbol:displayId>Gen_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://async.utah.edu/Gen/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="http://async.utah.edu/Pro/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation2/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation2"/>
+        <sbol:displayId>nand_tu_template_SequenceAnnotation2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:GenericLocation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation2/GenericLocation/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation2/GenericLocation"/>
+            <sbol:displayId>GenericLocation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:GenericLocation>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/nand_tu_template/Gen_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation1"/>
+        <sbol:displayId>nand_tu_template_SequenceAnnotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:GenericLocation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation1/GenericLocation/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation1/GenericLocation"/>
+            <sbol:displayId>GenericLocation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:GenericLocation>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/nand_tu_template/Pro1_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation"/>
+        <sbol:displayId>nand_tu_template_SequenceAnnotation</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:location>
+          <sbol:GenericLocation rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation/GenericLocation/1">
+            <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceAnnotation/GenericLocation"/>
+            <sbol:displayId>GenericLocation</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:GenericLocation>
+        </sbol:location>
+        <sbol:component rdf:resource="http://async.utah.edu/nand_tu_template/Pro_Component/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceConstraint1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceConstraint1"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template/Pro1_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template/Gen_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceConstraint/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template/nand_tu_template_SequenceConstraint"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template/Pro_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template/Pro1_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA"/>
+    <sbol:displayId>PsrA</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>PsrA</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1"/>
+    <sbol:displayId>R1</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>R1</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI"/>
+    <sbol:displayId>pBetI</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pBetI</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_protein"/>
+    <sbol:displayId>PsrA_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>PsrA_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440"/>
+    <sbol:displayId>ECK120015440</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ECK120015440</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein"/>
+    <sbol:displayId>BetI_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>BetI_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmeR_protein"/>
+    <sbol:displayId>AmeR_protein</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>AmeR_protein</dcterms:title>
+    <dcterms:created>2019-06-06T23:37:10.666Z</dcterms:created>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#Protein"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA"/>
+    <sbol:displayId>R1_PsrA</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>R1_PsrA</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+    <ns0:color_hexcode>C24B9C</ns0:color_hexcode>
+    <ns0:K>0.19</ns0:K>
+    <ns0:family>TetR</ns0:family>
+    <ns0:gate_type>NOR</ns0:gate_type>
+    <ns0:group_name>PsrA</ns0:group_name>
+    <ns0:n>1.8</ns0:n>
+    <ns0:response_function>ymin+(ymax-ymin)/(1.0+(x/K)^n)</ns0:response_function>
+    <ns0:x_off_threshold>0.197556859</ns0:x_off_threshold>
+    <ns0:x_on_threshold>1.197796047</ns0:x_on_threshold>
+    <ns0:ymax>5.9</ns0:ymax>
+    <ns0:ymin>0.2</ns0:ymin>
+    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fmLb1G456shkGoa/1"/>
+    <sbol:attachment rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2flr8yTlp4R2ORw8/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ScmJ/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ScmJ"/>
+        <sbol:displayId>ScmJ</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ECK120015440/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ECK120015440"/>
+        <sbol:displayId>ECK120015440</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/R1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/R1"/>
+        <sbol:displayId>R1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/PsrA/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/PsrA"/>
+        <sbol:displayId>PsrA</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation2/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation2"/>
+        <sbol:displayId>annotation2</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation2/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation2/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+            <sbol:start>114</sbol:start>
+            <sbol:end>827</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/PsrA/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation0/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation0"/>
+        <sbol:displayId>annotation0</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation0/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation0/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+            <sbol:start>1</sbol:start>
+            <sbol:end>79</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ScmJ/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation3/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation3"/>
+        <sbol:displayId>annotation3</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation3/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation3/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+            <sbol:start>828</sbol:start>
+            <sbol:end>876</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/ECK120015440/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequenceAnnotation>
+      <sbol:SequenceAnnotation rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation1/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation1"/>
+        <sbol:displayId>annotation1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+        <sbol:location>
+          <sbol:Range rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation1/range/1">
+            <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/annotation1/range"/>
+            <sbol:displayId>range</sbol:displayId>
+            <sbol:version>1</sbol:version>
+            <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+            <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+            <sbol:start>80</sbol:start>
+            <sbol:end>113</sbol:end>
+            <sbol:orientation rdf:resource="http://sbols.org/v2#inline"/>
+          </sbol:Range>
+        </sbol:location>
+        <sbol:component rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/R1/1"/>
+      </sbol:SequenceAnnotation>
+    </sbol:sequenceAnnotation>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/Gen/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Gen"/>
+    <sbol:displayId>Gen</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR"/>
+    <sbol:displayId>pSrpR</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pSrpR</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ"/>
+    <sbol:displayId>ScmJ</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ScmJ</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000374"/>
+    <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ_sequence/1"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/Pro/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/Pro"/>
+    <sbol:displayId>Pro</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
+  </sbol:ComponentDefinition>
+  <sbol:ComponentDefinition rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121"/>
+    <sbol:displayId>nand_tu_template_GeneratedInstance121</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasDerivedFrom rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1"/>
+    <prov:wasGeneratedBy rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1"/>
+    <dcterms:description></dcterms:description>
+    <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
+    <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro1_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro1_Component"/>
+        <sbol:displayId>Pro1_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Gen_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Gen_Component"/>
+        <sbol:displayId>Gen_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:component>
+      <sbol:Component rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro_Component/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro_Component"/>
+        <sbol:displayId>Pro_Component</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:access rdf:resource="http://sbols.org/v2#public"/>
+        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+      </sbol:Component>
+    </sbol:component>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/nand_tu_template_SequenceConstraint/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/nand_tu_template_SequenceConstraint"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro1_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+    <sbol:sequenceConstraint>
+      <sbol:SequenceConstraint rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance121/nand_tu_template_SequenceConstraint1/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/nand_tu_template_SequenceConstraint1"/>
+        <sbol:displayId>nand_tu_template_SequenceConstraint1</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:restriction rdf:resource="http://sbols.org/v2#precedes"/>
+        <sbol:subject rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Pro1_Component/1"/>
+        <sbol:object rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance121/Gen_Component/1"/>
+      </sbol:SequenceConstraint>
+    </sbol:sequenceConstraint>
+  </sbol:ComponentDefinition>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA_sequence"/>
+    <sbol:displayId>R1_PsrA_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>R1_PsrA_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA_sequence/1"/>
+    <sbol:elements>agCGCTGTCTGTACTTGTATCAGTACACTGACGAGTCCCTAAAGGACGAAACACCGcctctacaaataattttgtttaaTTTAATTCGCGGAAGCGCAGAGATAAGGGGTATCATGGCACAGAGCGAAACCGTTGAACGTATTCTGGATGCAGCAGAACAGCTGTTTGCAGAACGTGGTTTTGCAGAAACCAGCCTGCGTCTGATTACCAGCAAAGCCGGTGTTAATCTGGCAGCAGTGAATTATCATTTTGGCAGCAAAAAAGCACTGATTCAGGCAGTTTTTAGCCGTTTTCTGGGTCCGTTTTGTGCAAGCCTGGAACGTGAACTGGAACGTCGTCAGGCACGTCCGGAACAGAAACCGAGCCTGGAAGAACTGCTGGAAATGCTGGTTGAACAGGCACTGGCAGTTCAGCCTCGTAGCAATAATGATCTGAGCATTTTTATGTGTCTGCTGGGTCTGGCATTTAGCCAGAGCCAGGGTCATCTGCGTCGTTATCTGGAAGATATGTATGGTAAAGTGTTCCGTCGTTATATGCTGCTGGTTAATGAAGCAGCACCGCGTGTTCCGCCTCTGGAACTGTTTTGGCGTGTTCATTTTATGCTGGGTGCAGCAGCATTTAGCATGAGCGGTATTAAAGCACTGCGTGCAATTGCAGAAACCGATTTTGGTATTAACACCAGCATTGAACAGGTTATGCGTCTGATGGTTCCGTTTCTGGCAGCAGGTATGCGTGCAGATAGCGGTGTTACCGATGAAGCAATGGCAGCAGCACAGCTGCGTCCGCGTAGCAAAACCAGCACCAGCGCAACCACCGCAAAAGCATAAtccggcaattAAAAAAGCGGCTAACCACGCCGCTTTTTTtacgtctgca</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI_sequence"/>
+    <sbol:displayId>pBetI_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pBetI_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI_sequence/1"/>
+    <sbol:elements>AGCGCGGGTGAGAGGGATTCGTTACCAATTGACAATTGATTGGACGTTCAATATAATGCTAGC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence"/>
+    <sbol:displayId>ECK120015440_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ECK120015440_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ECK120015440_sequence/1"/>
+    <sbol:elements>tccggcaattAAAAAAGCGGCTAACCACGCCGCTTTTTTtacgtctgca</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR_sequence"/>
+    <sbol:displayId>pAmeR_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pAmeR_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR_sequence/1"/>
+    <sbol:elements>TCGTCACTAGAGGGCGATAGTGACAAACTTGACAACTCATCACTTCCTAGGTATAATGCTAGC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_sequence"/>
+    <sbol:displayId>R1_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>R1_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_sequence/1"/>
+    <sbol:elements>TTTAATTCGCGGAAGCGCAGAGATAAGGGGTATC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ_sequence"/>
+    <sbol:displayId>ScmJ_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>ScmJ_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/ScmJ_sequence/1"/>
+    <sbol:elements>agCGCTGTCTGTACTTGTATCAGTACACTGACGAGTCCCTAAAGGACGAAACACCGcctctacaaataattttgtttaa</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_sequence"/>
+    <sbol:displayId>PsrA_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>PsrA_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PsrA_sequence/1"/>
+    <sbol:elements>ATGGCACAGAGCGAAACCGTTGAACGTATTCTGGATGCAGCAGAACAGCTGTTTGCAGAACGTGGTTTTGCAGAAACCAGCCTGCGTCTGATTACCAGCAAAGCCGGTGTTAATCTGGCAGCAGTGAATTATCATTTTGGCAGCAAAAAAGCACTGATTCAGGCAGTTTTTAGCCGTTTTCTGGGTCCGTTTTGTGCAAGCCTGGAACGTGAACTGGAACGTCGTCAGGCACGTCCGGAACAGAAACCGAGCCTGGAAGAACTGCTGGAAATGCTGGTTGAACAGGCACTGGCAGTTCAGCCTCGTAGCAATAATGATCTGAGCATTTTTATGTGTCTGCTGGGTCTGGCATTTAGCCAGAGCCAGGGTCATCTGCGTCGTTATCTGGAAGATATGTATGGTAAAGTGTTCCGTCGTTATATGCTGCTGGTTAATGAAGCAGCACCGCGTGTTCCGCCTCTGGAACTGTTTTGGCGTGTTCATTTTATGCTGGGTGCAGCAGCATTTAGCATGAGCGGTATTAAAGCACTGCGTGCAATTGCAGAAACCGATTTTGGTATTAACACCAGCATTGAACAGGTTATGCGTCTGATGGTTCCGTTTCTGGCAGCAGGTATGCGTGCAGATAGCGGTGTTACCGATGAAGCAATGGCAGCAGCACAGCTGCGTCCGCGTAGCAAAACCAGCACCAGCGCAACCACCGCAAAAGCATAA</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence"/>
+    <sbol:displayId>pSrpR_sequence</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <prov:wasGeneratedBy rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <dcterms:title>pSrpR_sequence</dcterms:title>
+    <dcterms:created>2019-02-20T23:57:58.276Z</dcterms:created>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR_sequence/1"/>
+    <sbol:elements>TCTATGATTGGTCCAGATTCGTTACCAATTGACAGCTAGCTCAGTCCTAGGTATATACATACATGCTTGTTTGTTTGTAAAC</sbol:elements>
+    <sbol:encoding rdf:resource="http://www.chem.qmul.ac.uk/iubmb/misc/naseq.html"/>
+  </sbol:Sequence>
+  <prov:Activity rdf:about="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity"/>
+    <sbol:displayId>nand_tu_template_SBOLDesignerActivity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dc:creator>Tramy Nguyen</dc:creator>
+    <prov:endedAtTime>2019-04-09T22:40:32.345-06:00</prov:endedAtTime>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/Association/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_SBOLDesignerActivity/Association"/>
+        <sbol:displayId>Association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#sequenceEditor"/>
+        <prov:agent rdf:resource="https://synbiohub.org/public/SBOL_Software/SBOLDesigner/3.0"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+  </prov:Activity>
+  <prov:Activity rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity"/>
+    <sbol:displayId>nand_tu_template_GeneratedInstance111_SBOLDesignerActivity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dc:creator>Tramy Nguyen</dc:creator>
+    <prov:endedAtTime>2019-04-09T22:40:49.205-06:00</prov:endedAtTime>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/Association/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/Association"/>
+        <sbol:displayId>Association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#sequenceEditor"/>
+        <prov:agent rdf:resource="https://synbiohub.org/public/SBOL_Software/SBOLDesigner/3.0"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/nand_tu_template_CombinatorialDerivation_Usage/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_GeneratedInstance111_SBOLDesignerActivity/nand_tu_template_CombinatorialDerivation_Usage"/>
+        <sbol:displayId>nand_tu_template_CombinatorialDerivation_Usage</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <prov:hadRole rdf:resource="http://sbols.org/v2#sequenceEditor"/>
+        <prov:entity rdf:resource="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/1"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Activity rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity"/>
+    <sbol:displayId>CelloUCF2sbol_Activity</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Cello UCF to SBOL conversion</dcterms:title>
+    <dcterms:description>Conversion of the Cello UCF parts and metadata to SBOL 2 documents.</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+    <prov:endedAtTime>2019-02-20T16:57:58.314-07:00</prov:endedAtTime>
+    <prov:qualifiedAssociation>
+      <prov:Association rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/association/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/association"/>
+        <sbol:displayId>association</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+        <prov:agent rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1"/>
+      </prov:Association>
+    </prov:qualifiedAssociation>
+    <prov:qualifiedUsage>
+      <prov:Usage rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/UCF_file/1">
+        <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/UCF_file"/>
+        <sbol:displayId>UCF_file</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+        <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2sbol_Activity/1"/>
+        <prov:entity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1"/>
+      </prov:Usage>
+    </prov:qualifiedUsage>
+  </prov:Activity>
+  <prov:Agent rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL"/>
+    <sbol:displayId>CelloUCF2SBOL</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Cello UCF to SBOL</dcterms:title>
+    <dcterms:description>A script to convert Cello UCF parts and metadata to SBOL 2 documents.</dcterms:description>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <dc:creator>Chris J. Myers</dc:creator>
+    <dc:creator>Prashant Vaidyanathan</dc:creator>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/CelloUCF2SBOL/1"/>
+    <dc:source rdf:resource="https://github.com/MyersResearchGroup/UCF2SBOL"/>
+  </prov:Agent>
+  <sbol:CombinatorialDerivation rdf:about="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/1">
+    <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_CombinatorialDerivation"/>
+    <sbol:displayId>nand_tu_template_CombinatorialDerivation</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <sbol:template rdf:resource="http://async.utah.edu/nand_tu_template/1"/>
+    <sbol:strategy rdf:resource="http://sbols.org/v2#enumerate"/>
+    <sbol:variableComponent>
+      <sbol:VariableComponent rdf:about="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Gen_Component_VariableComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Gen_Component_VariableComponent"/>
+        <sbol:displayId>Gen_Component_VariableComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:variable rdf:resource="http://async.utah.edu/nand_tu_template/Gen_Component/1"/>
+        <sbol:operator rdf:resource="http://sbols.org/v2#one"/>
+        <sbol:variant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/R1_PsrA/1"/>
+      </sbol:VariableComponent>
+    </sbol:variableComponent>
+    <sbol:variableComponent>
+      <sbol:VariableComponent rdf:about="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Pro1_Component_VariableComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Pro1_Component_VariableComponent"/>
+        <sbol:displayId>Pro1_Component_VariableComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:variable rdf:resource="http://async.utah.edu/nand_tu_template/Pro1_Component/1"/>
+        <sbol:operator rdf:resource="http://sbols.org/v2#one"/>
+        <sbol:variant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pBetI/1"/>
+        <sbol:variant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pAmeR/1"/>
+      </sbol:VariableComponent>
+    </sbol:variableComponent>
+    <sbol:variableComponent>
+      <sbol:VariableComponent rdf:about="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Pro_Component_VariableComponent/1">
+        <sbol:persistentIdentity rdf:resource="http://async.utah.edu/nand_tu_template_CombinatorialDerivation/Pro_Component_VariableComponent"/>
+        <sbol:displayId>Pro_Component_VariableComponent</sbol:displayId>
+        <sbol:version>1</sbol:version>
+        <sbol:variable rdf:resource="http://async.utah.edu/nand_tu_template/Pro_Component/1"/>
+        <sbol:operator rdf:resource="http://sbols.org/v2#one"/>
+        <sbol:variant rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/pSrpR/1"/>
+      </sbol:VariableComponent>
+    </sbol:variableComponent>
+  </sbol:CombinatorialDerivation>
+  <sbol:Attachment rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu"/>
+    <sbol:displayId>attachment_00009g2fklS69eiQUeolIu</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>Eco1C1G1T1-synbiohub.UCF.json</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1"/>
+    <sbol:source rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fklS69eiQUeolIu/1/download"/>
+    <sbol:format rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+    <sbol:size>3570439</sbol:size>
+    <sbol:hash>57292cc1b8f9be5abbc7a6e6824fdba12f35fb18</sbol:hash>
+  </sbol:Attachment>
+  <sbol:Attachment rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2flr8yTlp4R2ORw8/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2flr8yTlp4R2ORw8"/>
+    <sbol:displayId>attachment_00009g2flr8yTlp4R2ORw8</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>R1_PsrA_gate_toxicity.json</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2flr8yTlp4R2ORw8/1"/>
+    <sbol:source rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2flr8yTlp4R2ORw8/1/download"/>
+    <sbol:format rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+    <sbol:size>373</sbol:size>
+    <sbol:hash>9735017a73b7d0bf2ff25ae2f904e0db971b4da3</sbol:hash>
+  </sbol:Attachment>
+  <sbol:Attachment rdf:about="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fmLb1G456shkGoa/1">
+    <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fmLb1G456shkGoa"/>
+    <sbol:displayId>attachment_00009g2fmLb1G456shkGoa</sbol:displayId>
+    <sbol:version>1</sbol:version>
+    <dcterms:title>R1_PsrA_gate_cytometry.json</dcterms:title>
+    <sbh:ownedBy rdf:resource="https://synbiohub.programmingbiology.org/user/myers"/>
+    <sbh:topLevel rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fmLb1G456shkGoa/1"/>
+    <sbol:source rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/attachment_00009g2fmLb1G456shkGoa/1/download"/>
+    <sbol:format rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+    <sbol:size>107475</sbol:size>
+    <sbol:hash>b9df2e009d8001396abec3d0f2ca8fc450adf28a</sbol:hash>
+  </sbol:Attachment>
+</rdf:RDF>

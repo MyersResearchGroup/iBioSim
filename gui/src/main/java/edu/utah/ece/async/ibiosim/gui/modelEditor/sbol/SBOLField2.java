@@ -423,7 +423,8 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		if(isComponentDefinition)
 		{
 			ComponentDefinition cd = (ComponentDefinition) sbolObj;
-			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc, false);
+			//ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc, false);
+			ComponentDefinition editedCD = PartEditDialog.editPart(getParent(), null, cd, true, true, workingDoc);
 			if (editedCD == null) {
 				// nothing was changed
 				return;
@@ -488,7 +489,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 	{
 		try 
 		{
-			SBOLUtility.writeSBOLDocument(filePath, workingDoc);
+			SBOLUtility.getSBOLUtility().writeSBOLDocument(filePath, workingDoc);
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -517,7 +518,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 		SBOLDocument doc = null;
 		try 
 		{
-			doc =  SBOLUtility.loadSBOLFile(filePath, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+			doc =  SBOLUtility.getSBOLUtility().loadSBOLFile(filePath, SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -585,7 +586,7 @@ public class SBOLField2 extends JPanel implements ActionListener {
 			for (String filePath : modelEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) 
 			{
 				SBOLDocument sbolDoc = readSBOLFile(filePath);
-				SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
+				SBOLUtility.getSBOLUtility().deleteDNAComponent(removedBioSimURI, sbolDoc);
 				writeSBOLDocument(filePath, sbolDoc);
 			}
 

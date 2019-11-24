@@ -71,15 +71,14 @@ public class SynthesisNode {
 		//NOTE: Get all DnaComponent
 		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<ComponentDefinition> dnaComps = fileManager.resolveURIs(compURIs);
-		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
+		nucleotideCount = SBOLUtility.getSBOLUtility().countNucleotides(dnaComps);
 		Set<URI> soFilterTypes = new HashSet<URI>();
 		soFilterTypes.add(SequenceOntology.CDS);
 		soFilterTypes.add(SequenceOntology.PROMOTER);
 		//NOTE: get dnaComps with the specified SO types of CDS and PROMOTER.
-		List<ComponentDefinition> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
-		//TODO: Why only get the first DnaComponent signal? Assume that signalComps always return 1 or 0?
+		List<ComponentDefinition> signalComps = SBOLUtility.getSBOLUtility().filterDNAComponents(dnaComps, soFilterTypes);
 		if (signalComps.size() > 0)
-			signal = signalComps.get(0).getIdentity().toString(); //TODO: signal will store the uri of the 1st DnaComponent?
+			signal = signalComps.get(0).getIdentity().toString(); 
 		else 
 			signal = "";
 	}

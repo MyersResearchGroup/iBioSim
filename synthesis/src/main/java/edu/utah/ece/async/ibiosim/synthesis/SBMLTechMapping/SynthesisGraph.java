@@ -124,7 +124,6 @@ public class SynthesisGraph {
 				else //NOTE: if edges table does not contain the specified node.
 					node.setType("c");
 			} 
-			//TODO: why check if these types endsWith(), startsWith(), equal()?
 			else if (node.getType().endsWith("m")) 
 			{
 				decomposeOrMotif2(node, interNodes);
@@ -137,9 +136,7 @@ public class SynthesisGraph {
 			} 
 			else if (node.getType().startsWith("v"))
 				typedSpeciesNodes.add(node);
-		//TODO: why remove all nodes from typedSpeciesNodes in edges table when they were determined from the
-		//		edges table if the node type was p and then put this current typedSpeciesNode in the for loop below 
-		//		back into the edges table? (look at the upper for loop code in this method)
+		
 		for (SynthesisNode typedSpeciesNode : typedSpeciesNodes) 
 		{
 			if (edges.containsKey(typedSpeciesNode)) 
@@ -211,9 +208,9 @@ public class SynthesisGraph {
 		nodes.addAll(interPromoterNodes);
 		List<SynthesisNode> interSpeciesNodes = new LinkedList<SynthesisNode>();
 		for (int i = 0; i < 3; i++)
-			interSpeciesNodes.add(new SynthesisNode("s")); //TODO: NOTE: add this node in 3x...why? don't care for duplicate
+			interSpeciesNodes.add(new SynthesisNode("s")); 
 		nodes.addAll(interSpeciesNodes);
-		edges.put(productNode, interPromoterNodes.subList(0, 1)); //NOTE: get @ index = 0 only
+		edges.put(productNode, interPromoterNodes.subList(0, 1)); 
 		edges.put(interPromoterNodes.get(0), interSpeciesNodes.subList(0, 1)); 
 		edges.put(interSpeciesNodes.get(0), interPromoterNodes.subList(1, 2));
 		edges.put(interPromoterNodes.get(1), interSpeciesNodes.subList(1, 3));
@@ -259,7 +256,6 @@ public class SynthesisGraph {
 					constructComplexationMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
 				}
 		}
-		//TODO: why return the value of idToNode and ignore the key?
 		//NOTE: create a table of all the values in idToNode which contains transcription and complex formation reaction
 		return new HashSet<SynthesisNode>(idToNode.values());
 	}
@@ -309,13 +305,11 @@ public class SynthesisGraph {
 	
 	private void constructComplexationMotif(Reaction sbmlReaction, HashMap<String, SynthesisNode> idToNode, 
 			Model sbmlModel, SBOLFileManager fileManager) throws SBOLException {
-		//TODO: complexationMotif = complex formation ?
-		// 		complex formation always has only 1 product?
+		
 		//NOTE: create nodes for products and reactants and add to edges table to represent complex formation
 		SpeciesReference sbmlProduct = sbmlReaction.getProduct(0);
 		SynthesisNode complexNode = constructNode("x", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 				idToNode, fileManager);
-		//TODO: why don't we want to check if complexNode already exist in edges before adding?
 		edges.put(complexNode, new LinkedList<SynthesisNode>());
 		for (int j = 0; j < sbmlReaction.getReactantCount(); j++) 
 		{
@@ -366,7 +360,6 @@ public class SynthesisGraph {
 	
 	private SynthesisNode identifyOutput(Set<SynthesisNode> nodes) {
 		HashMap<SynthesisNode, SynthesisNode> reverseEdges = new HashMap<SynthesisNode, SynthesisNode>();
-		//TODO: Clarify on understanding
 		//NOTE: check if edges has any of the node from set nodes and get all of its children to put into reverseEdges list.
 		//		if reverseEdges does not contain a copy of its parent node, then return that node as the output node. 
 		for (SynthesisNode node : nodes) 

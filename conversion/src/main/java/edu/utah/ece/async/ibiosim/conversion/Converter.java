@@ -19,12 +19,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.math3.ode.ODEIntegrator;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbolstandard.core2.ModuleDefinition;
@@ -32,7 +29,6 @@ import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.TopLevel;
-import org.synbiohub.frontend.SynBioHubException;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
@@ -44,11 +40,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
 
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
-import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
-import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.ext.comp.ReplacedBy;
-import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.Submodel;
 
 

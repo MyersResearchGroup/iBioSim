@@ -27,6 +27,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
@@ -54,8 +55,10 @@ import org.jlibsedml.XPathTarget;
 import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -487,7 +490,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION),
 							SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 					if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
-						String regex = SBOLUtility.convertRegexSOTermsToNumbers(
+						String regex = SBOLUtility.getSBOLUtility().convertRegexSOTermsToNumbers(
 								Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 						SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex);
 						Assembler2 assembler = new Assembler2(assemblyGraph, seqValidator);
@@ -893,6 +896,9 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 		log.addText("Saving SBML file as LPN file:\n" + path + File.separator + newName + "\n");
 		try {
+			org.sbml.jsbml.Model m = biomodel.getSBMLDocument().getModel();
+			CompModelPlugin modelPlug = biomodel.getSBMLCompModel();
+			System.out.println(modelPlug.getPortCount());
 			if (saveLPN(biomodel, path + File.separator + newName)) {
 				biosim.addToTree(newName);
 			}
@@ -3293,19 +3299,23 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 		}
 	}
 
-	public static boolean saveLPN(BioModel biomodel, String filename) throws XMLStreamException, IOException, BioSimException {
+	public static boolean saveLPN2(BioModel biomodel, String filename) throws XMLStreamException, IOException, BioSimException {
 		SBMLDocument sbml = biomodel.getSBMLDocument();
+		
 		HashMap<String, Integer> constants = new HashMap<String, Integer>();
 		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String, String> rates = new HashMap<String, String>();
+		
 		SBMLDocument flatSBML = biomodel.flattenModel(true);
 		if (flatSBML == null)
 			return false;
 		SBMLutilities.expandFunctionDefinitions(flatSBML);
-		SBMLutilities.expandInitialAssignments(flatSBML);
+		SBMLutilities.expandInitialAssignments(flatSBML); 
+		
 		LPN lpn = new LPN();
 		String message = "The following items cannot be converted to an LPN:\n";
 		boolean error = false;
+		
 		if (flatSBML.getModel().getCompartmentCount() > 0) {
 			message += "Compartments: ";
 			for (int i = 0; i < flatSBML.getModel().getCompartmentCount(); i++) {
@@ -3343,6 +3353,302 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
 			}
 		}
+		
+		for (int i = 0; i < flatSBML.getModel().getParameterCount(); i++) {
+			Parameter p = flatSBML.getModel().getParameter(i);
+			if (p.getId().startsWith(GlobalConstants.TRIGGER + "_"))
+				continue;
+			if (SBMLutilities.isPlace(p)) {
+				lpn.addPlace(p.getId(), (p.getValue() == 1));
+			} else if (SBMLutilities.isBoolean(p)) {
+				booleans.add(p.getId());
+				if (p.getId().equals(GlobalConstants.FAIL) || p.getId().endsWith("__" + GlobalConstants.FAIL))
+					continue;
+				Port port = biomodel.getPortByIdRef(p.getId());
+				if (port != null) {
+					if (SBMLutilities.isInputPort(port)) {
+						if (p.getValue() == 0) {
+							lpn.addInput(p.getId(), "boolean", "false");
+						} else {
+							lpn.addInput(p.getId(), "boolean", "true");
+						}
+					} else {
+						if (p.getValue() == 0) {
+							lpn.addOutput(p.getId(), "boolean", "false");
+						} else {
+							lpn.addOutput(p.getId(), "boolean", "true");
+						}
+					}
+				} else {
+					if (p.getValue() == 0) {
+						lpn.addBoolean(p.getId(), "false");
+					} else {
+						lpn.addBoolean(p.getId(), "true");
+					}
+				}
+			} else {
+				// if (rates.containsKey(p.getId())) continue;
+				if (!p.getConstant()) {
+					String type = "integer";
+					if (rates.containsValue(p.getId()))
+						type = "continuous";
+					Port port = biomodel.getPortByIdRef(p.getId());
+					int lower = (int) Math.floor(p.getValue());
+					int upper = (int) Math.ceil(p.getValue());
+					String bound = String.valueOf(lower);
+					if (lower != upper) {
+						bound = "[" + lower + "," + upper + "]";
+					}
+					InitialAssignment ia = flatSBML.getModel().getInitialAssignmentBySymbol(p.getId());
+					if (ia != null) {
+						ASTNode math = ia.getMath();
+						if (math.getType() == ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
+							ASTNode left = math.getLeftChild();
+							ASTNode right = math.getRightChild();
+							if (left.getType() == ASTNode.Type.INTEGER && right.getType() == ASTNode.Type.INTEGER) {
+								lower = left.getInteger();
+								upper = right.getInteger();
+							}
+						}
+					}
+					if (port != null) {
+						if (SBMLutilities.isInputPort(port)) {
+							lpn.addInput(p.getId(), type, bound);
+						} else {
+							lpn.addOutput(p.getId(), type, bound);
+						}
+					}
+					if (type.equals("integer")) {
+						lpn.addInteger(p.getId(), bound);
+					} else {
+						for (String key : rates.keySet()) {
+							if (rates.get(key).equals(p.getId())) {
+								Parameter rp = flatSBML.getModel().getParameter(key);
+								int lrate = (int) Math.floor(rp.getValue());
+								int urate = (int) Math.ceil(rp.getValue());
+								String boundRate = String.valueOf(lrate);
+								if (lrate != urate) {
+									boundRate = "[" + lrate + "," + urate + "]";
+								}
+								ia = flatSBML.getModel().getInitialAssignmentBySymbol(rp.getId());
+								if (ia != null) {
+									ASTNode math = ia.getMath();
+									if (math.getType() == ASTNode.Type.FUNCTION && math.getName().equals("uniform")) {
+										ASTNode left = math.getLeftChild();
+										ASTNode right = math.getRightChild();
+										if (left.getType() == ASTNode.Type.INTEGER
+												&& right.getType() == ASTNode.Type.INTEGER) {
+											lrate = left.getInteger();
+											urate = right.getInteger();
+										}
+									}
+								}
+								lpn.addContinuous(p.getId(), bound, boundRate);
+								break;
+							}
+						}
+					}
+				} else {
+					constants.put(p.getId(), (int) p.getValue());
+				}
+			}
+		}
+		boolean foundFail = false;
+		for (int i = 0; i < flatSBML.getModel().getConstraintCount(); i++) {
+			Constraint c = flatSBML.getModel().getConstraint(i);
+			ASTNode math = c.getMath();
+			if (math.getType() == ASTNode.Type.RELATIONAL_EQ) {
+				ASTNode left = math.getLeftChild();
+				ASTNode right = math.getRightChild();
+				if (left.getType() == ASTNode.Type.NAME
+						&& (left.getName().equals(GlobalConstants.FAIL)
+								|| left.getName().endsWith("__" + GlobalConstants.FAIL))
+						&& right.getType() == ASTNode.Type.INTEGER && right.getInteger() == 0) {
+					foundFail = true;
+					continue;
+				} else {
+					error = true;
+					message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
+				}
+			}
+			/*
+			 * if (math.getType()==ASTNode.Type.FUNCTION &&
+			 * math.getName().equals("G") && math.getChildCount()==2) { ASTNode
+			 * left = c.getMath().getLeftChild(); ASTNode right =
+			 * c.getMath().getRightChild(); if
+			 * (left.getType()==ASTNode.Type.CONSTANT_TRUE &&
+			 * right.getType()==ASTNode.Type.LOGICAL_NOT) { ASTNode child =
+			 * right.getChild(0); if
+			 * (child.getType()==ASTNode.Type.RELATIONAL_EQ) { left =
+			 * child.getLeftChild(); right = child.getRightChild(); if
+			 * (left.getType()==ASTNode.Type.NAME &&
+			 * left.getName().endsWith(GlobalConstants.FAIL) &&
+			 * right.getType()==ASTNode.Type.INTEGER && right.getInteger()==1) {
+			 * foundFail = true; continue; } } } }
+			 */
+			// lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(),
+			// constants, booleans));
+		}
+		for (int i = 0; i < flatSBML.getModel().getEventCount(); i++) {
+			Event e = flatSBML.getModel().getEvent(i);
+			if (SBMLutilities.isTransition(e)) {
+				Transition t = new Transition();
+				t.setLpn(lpn);
+				t.setName(e.getId());
+				t.setPersistent(false);
+				lpn.addTransition(t);
+				ArrayList<String> preset = SBMLutilities.getPreset(flatSBML, e);
+				for (int j = 0; j < preset.size(); j++) {
+					t.addPreset(lpn.getPlace(preset.get(j)));
+				}
+				ArrayList<String> postset = SBMLutilities.getPostset(flatSBML, e);
+				for (int j = 0; j < postset.size(); j++) {
+					t.addPostset(lpn.getPlace(postset.get(j)));
+				}
+				Rule r = sbml.getModel().getRuleByVariable(GlobalConstants.TRIGGER + "_" + e.getId());
+				if (r != null) {
+					t.setPersistent(true);
+					ASTNode triggerMath = r.getMath();
+					String trigger = SBMLutilities.myFormulaToString(triggerMath);
+					if (triggerMath.getType() == ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getChildCount() > 2) {
+						triggerMath = triggerMath.getChild(1);
+						if (triggerMath.getType() == ASTNode.Type.LOGICAL_OR) {
+							triggerMath = triggerMath.getLeftChild();
+							for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
+								Parameter parameter = sbml.getModel().getParameter(j);
+								if (parameter != null && SBMLutilities.isPlace(parameter)) {
+									if (trigger.contains("eq(" + parameter.getId() + ", 1)")
+											|| trigger.contains("(" + parameter.getId() + " == 1)")) {
+										triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
+									}
+								}
+							}
+						}
+					}
+					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath, constants, booleans));
+				} else if (e.isSetTrigger()) {
+					ASTNode triggerMath = e.getTrigger().getMath();
+					String trigger = SBMLutilities.myFormulaToString(triggerMath);
+					for (int j = 0; j < flatSBML.getModel().getParameterCount(); j++) {
+						Parameter parameter = flatSBML.getSBMLDocument().getModel().getParameter(j);
+						if (parameter != null && SBMLutilities.isPlace(parameter)) {
+							if (trigger.contains("eq(" + parameter.getId() + ", 1)")
+									|| trigger.contains("(" + parameter.getId() + " == 1)")) {
+								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
+							}
+						}
+					}
+					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath, constants, booleans));
+				}
+				if (e.isSetDelay()) {
+					t.addDelay(SBMLutilities.SBMLMathToLPNString(e.getDelay().getMath(), constants, booleans));
+				}
+				if (e.isSetPriority()) {
+					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath(), constants, booleans));
+				}
+				for (int j = 0; j < e.getEventAssignmentCount(); j++) {
+					EventAssignment ea = e.getListOfEventAssignments().get(j);
+					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
+					if (p != null && !SBMLutilities.isPlace(p)) {
+						if (rates.containsKey(ea.getVariable())) {
+							t.addContAssign(ea.getVariable(),
+									SBMLutilities.SBMLMathToLPNString(ea.getMath(), constants, booleans));
+							t.addRateAssign(rates.get(ea.getVariable()),
+									SBMLutilities.SBMLMathToLPNString(ea.getMath(), constants, booleans));
+						} else if (rates.containsValue(ea.getVariable())) {
+							t.addContAssign(ea.getVariable(),
+									SBMLutilities.SBMLMathToLPNString(ea.getMath(), constants, booleans));
+						} else if (booleans.contains(ea.getVariable())) {
+							if ((ea.getVariable().equals(GlobalConstants.FAIL)
+									|| ea.getVariable().endsWith("__" + GlobalConstants.FAIL)) && foundFail) {
+								t.setFail(true);
+							} else {
+								t.addBoolAssign(ea.getVariable(),
+										SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(), constants, booleans));
+							}
+						} else {
+							t.addIntAssign(ea.getVariable(),
+									SBMLutilities.SBMLMathToLPNString(ea.getMath(), constants, booleans));
+						}
+					}
+				}
+			} else {
+				error = true;
+				message += "Event: " + e.getId() + "\n";
+			}
+		}
+		if (error) {
+			JTextArea messageArea = new JTextArea(message);
+			messageArea.setEditable(false);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new java.awt.Dimension(400, 400));
+			scroll.setPreferredSize(new java.awt.Dimension(400, 400));
+			scroll.setViewportView(messageArea);
+			Object[] options = { "OK", "Cancel" };
+			int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Conversion Errors", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.NO_OPTION)
+				return false;
+		}
+		lpn.save(filename);
+		return true;
+	}
+	
+	public static boolean saveLPN(BioModel biomodel, String filename) throws XMLStreamException, IOException, BioSimException {
+		SBMLDocument sbml = biomodel.getSBMLDocument();
+		
+		HashMap<String, Integer> constants = new HashMap<String, Integer>();
+		ArrayList<String> booleans = new ArrayList<String>();
+		HashMap<String, String> rates = new HashMap<String, String>();
+		
+		SBMLDocument flatSBML = biomodel.flattenModel(true);
+		if (flatSBML == null)
+			return false;
+		SBMLutilities.expandFunctionDefinitions(flatSBML);
+		SBMLutilities.expandInitialAssignments(flatSBML); 
+		
+		LPN lpn = new LPN();
+		String message = "The following items cannot be converted to an LPN:\n";
+		boolean error = false;
+		
+		if (flatSBML.getModel().getCompartmentCount() > 0) {
+			message += "Compartments: ";
+			for (int i = 0; i < flatSBML.getModel().getCompartmentCount(); i++) {
+				message += flatSBML.getModel().getCompartment(i).getId() + " ";
+			}
+			message += "\n";
+			error = true;
+		}
+		if (flatSBML.getModel().getSpeciesCount() > 0) {
+			message += "Species: ";
+			for (int i = 0; i < flatSBML.getModel().getSpeciesCount(); i++) {
+				message += flatSBML.getModel().getSpecies(i).getId() + " ";
+			}
+			message += "\n";
+			error = true;
+		}
+		for (int i = 0; i < flatSBML.getModel().getRuleCount(); i++) {
+			Rule r = flatSBML.getModel().getRule(i);
+			if (r.isRate()) {
+				if (r.getMath().isName()) {
+					rates.put(r.getMath().getName(), SBMLutilities.getVariable(r));
+				} else {
+					error = true;
+					message += "Rate rule: d(" + SBMLutilities.getVariable(r) + ")/dt := "
+							+ SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+				}
+			} else if (r.isAssignment()) {
+				if (!SBMLutilities.getVariable(r).startsWith(GlobalConstants.TRIGGER + "_")) {
+					error = true;
+					message += "Assignment rule: " + SBMLutilities.getVariable(r) + " := "
+							+ SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+				}
+			} else {
+				error = true;
+				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+			}
+		}
+		
 		for (int i = 0; i < flatSBML.getModel().getParameterCount(); i++) {
 			Parameter p = flatSBML.getModel().getParameter(i);
 			if (p.getId().startsWith(GlobalConstants.TRIGGER + "_"))

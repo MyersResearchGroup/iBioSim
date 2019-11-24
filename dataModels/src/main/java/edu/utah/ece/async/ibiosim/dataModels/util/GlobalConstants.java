@@ -188,10 +188,18 @@ public class GlobalConstants {
 	public static final int TERMINATOR_LENGTH = 12;
 	public static final int MEAN_GENE_LENGTH = 781;
 	public static final int SD_GENE_LENGTH = 269;
+	public static final String XML_FILE_EXTENSION = ".xml";
 	public static final String SBOL_FILE_EXTENSION = ".sbol";
 	public static final String RDF_FILE_EXTENSION = ".rdf";
+	public static final String VERILOG_FILE_EXTENTION = ".v";
 	public static final String SBOL_SYNTH_PROPERTIES_EXTENSION = ".sbolsynth.properties";
+	public static final String SBOL_SYNTH_ATACS_PROPERTY = "synthesis.atacs";
+	public static final String SBOL_SYNTH_YOSYS_NAND= "NAND";
+	public static final String SBOL_SYNTH_YOSYS_NOR = "NOR";
+	public static final String SBOL_SYNTH_YOSYS_PROPERTY = "synthesis.yosys";
 	public static final String SBOL_SYNTH_SPEC_PROPERTY = "synthesis.spec";
+	public static final String SBOL_SYNTH_SPEC_PATH_PROPERTY = "synthesis.specPath";
+	public static final String SBOL_SYNTH_TESTBENCH_PROPERTY = "synthes.testbench";
 	public static final String SBOL_SYNTH_LIBS_PROPERTY = "synthesis.libraries";
 	public static final String SBOL_SYNTH_LIBS_PREFERENCE = "biosim." + SBOL_SYNTH_LIBS_PROPERTY;
 	public static final String SBOL_SYNTH_LIBS_DEFAULT = "";
@@ -200,7 +208,11 @@ public class GlobalConstants {
 	public static final String SBOL_SYNTH_EXHAUST_BB = "Exact Branch and Bound";
 	public static final String SBOL_SYNTH_METHOD_DEFAULT = SBOL_SYNTH_EXHAUST_BB;
 	public static final String SBOL_SYNTH_GREEDY_BB = "Greedy Branch and Bound";
+	public static final String SBOL_SYNTH_GREEDY = "Greedy";
+	public static final String SBOL_SYNTH_EXHAUSTIVE = "Exhaustive";
 	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = SBOL_SYNTH_EXHAUST_BB + "," + SBOL_SYNTH_GREEDY_BB;
+	public static final String SBOL_SYNTH_ATACS_ATOMIC_GATES = "Atomic Gates";
+	public static final String SBOL_SYNTH_ATACS_GC_GATES = "gC Gates";
 	
 	public static final String SBOL_SYNTH_NUM_SOLNS_PROPERTY = "synthesis.numsolutions";
 	public static final String SBOL_SYNTH_NUM_SOLNS_PREFERENCE = "biosim." + SBOL_SYNTH_NUM_SOLNS_PROPERTY;
