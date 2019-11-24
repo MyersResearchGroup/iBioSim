@@ -43,22 +43,4 @@ public class Workflow_Test {
 		SBOLTechMapRunner.main(cmd);
 	}
 	
-	@Test 
-	public void Test_gc() {
-		String files = "/Users/tramyn/Desktop/TechMap/library3";
-		String spec = "/Users/tramyn/Desktop/TechMap/xAE.xml";
-		String[] preselect = new String[] {
-				"http://dummy.org/MD0xAE/FC3_out/1.0",
-				"https://synbiohub.programmingbiology.org/public/Cello_Parts/YFP_protein/1",
-//				"http://dummy.org/MD0Start_Sensor_Actuator_net/FC0_Sensor/1.0",
-//				"https://synbiohub.programmingbiology.org/public/Cello_Parts/LacI_protein/1", 
-//				"http://dummy.org/MD0Start_Sensor_Actuator_net/FC1_Start/1.0",
-//				"https://synbiohub.programmingbiology.org/public/Cello_Parts/TetR_protein/1",
-		};
-		String[] cmd = {"-l", files, "-s", spec, "-bb", //"-nsol", "3",
-				//"-ps", String.join(" ", preselect),
-				"-od", TestingFiles.writeOutputDir, "-o", "xAE_bb"};
-		
-		SBOLTechMapRunner.main(cmd);
-	}
 }

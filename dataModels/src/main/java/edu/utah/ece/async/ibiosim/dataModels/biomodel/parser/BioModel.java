@@ -20,7 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.xml.stream.XMLStreamException;
@@ -86,6 +90,8 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.libsbml.libsbmlConstants;
+import org.sbolstandard.core2.FunctionalComponent;
+import org.sbolstandard.core2.Participation;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
@@ -1279,14 +1285,16 @@ public class BioModel extends CoreObservable{
 	
 	public static boolean isProductionReaction(Reaction react) {
 		if (AnnotationUtility.checkObsoleteAnnotation(react, GlobalConstants.PRODUCTION)) {
-			react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			//react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 			AnnotationUtility.removeObsoleteAnnotation(react);
 			return checkProductionStructure(react);
 		} else if (react.isSetSBOTerm()) {
 			if (react.getSBOTerm() == GlobalConstants.SBO_PRODUCTION) {
-				react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+				//react.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 				return checkProductionStructure(react);
 			} else if (react.getSBOTerm() == GlobalConstants.SBO_GENETIC_PRODUCTION) 
+				return checkProductionStructure(react);
+			 else if (react.getSBOTerm() == GlobalConstants.SBO_TRANSCRIPTION) 
 				return checkProductionStructure(react);
 		} 
 		return false;
@@ -2010,7 +2018,428 @@ public class BioModel extends CoreObservable{
 		}
 		return r;
 	}
+	
+	/**
+	 * Creates the cello SD production reactions.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param mRNA the m RNA
+	 * @param reactionID the reaction ID
+	 * @param TU the tu
+	 * @param kSDdegrad the k S ddegrad
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @param targetModel the target model
+	 * @param promoters the promoters
+	 * @param promoterInteractions the promoter interactions
+	 * @return the reaction
+	 */
+	//TODO PEDRO createCelloSDProductionReaction
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, Set <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+		
+		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
+		
+		
+		//Check if rxnID is unique, if not, add something to it
+		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
+		
+		//createProductionDefaultParameters();
+		
+		Reaction r = sbml.getModel().getReaction(reactionID);
+		KineticLaw k = null;
+		
+		if (mRNA==null) {
+			mRNA = sbml.getModel().createSpecies();
+			//reaction id + mRNA
+			mRNA.setId(reactionID + "_mRNA");
+		}
+		
+		if (r == null) {
+			
+			r = sbml.getModel().createReaction();
+			r.setId(reactionID);
+			r.setSBOTerm(GlobalConstants.SBO_TRANSCRIPTION);
+			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
+			r.setReversible(false);
+			
+			// Make the DNA a promoter for the mRNA production
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(TU);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			
+			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+			for (String promoter : promoters) {
+				if (promoterInteractions.containsKey(promoter)) {
+					for (String modifi : promoterInteractions.get(promoter).keySet()) {
+						if (modifi.equals("sensor")) {
+							ModifierSpeciesReference input = r.createModifier();
+							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
+								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
+								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								smallMolecule.setCompartment(r.getCompartment());
+								smallMolecule.setHasOnlySubstanceUnits(true);
+								smallMolecule.setBoundaryCondition(true);
+								smallMolecule.setConstant(false);
+								smallMolecule.setInitialAmount(0.0);
+								
+								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								
+								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								
+								/*mRNA.setInitialAmount(0.0);
+								mRNA.setBoundaryCondition(false);
+								mRNA.setConstant(false);
+								mRNA.setHasOnlySubstanceUnits(true);
+								mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);*/
+																								
+								input.setSpecies(smallMolecule);
+								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							} else {
+							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							}
+						}
+					}
+				}
+			}
+			
+			mRNA.setCompartment(r.getCompartment());
+			mRNA.setInitialAmount(0.0);
+			mRNA.setBoundaryCondition(false);
+			mRNA.setConstant(false);
+			mRNA.setHasOnlySubstanceUnits(true);
+			mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
+			
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(mRNA.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
+			product.setStoichiometry(1.0);
+			product.setConstant(true);
+			
+			k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
+			p.setValue(GlobalConstants.k_SD_DIM_S);
+		} else {
+			// return r? or search for globalconstantCelloParameters? 
+			// or come here only when passing n, k, yoff and yon?
+		}
+		
+		//produce cello model kinetic law for mRNA production
+		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Creates the cello TF production reactions.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param mRNA the m RNA
+	 * @param rxnID the rxn ID
+	 * @param products the products
+	 * @param celloParameters the cello parameters
+	 * @param kTFdegrad the k T fdegrad
+	 * @param ko the ko
+	 * @param kb the kb
+	 * @param KoStr the ko str
+	 * @param KaoStr the kao str
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @return the reaction
+	 */
+	//TODO PEDRO createCelloTFProductionReaction
+	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<String, List<String>> celloParameters, String kTFdegrad, String ko,
+			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
+		
+		//This method should create a production reaction for all Protein or Products the TU produces.
+				
+		//Check if rxnID is unique, if not, add something to it
+		Reaction r = sbml.getModel().getReaction(rxnID);
+		KineticLaw k = null;
+		
+		if (r == null) {
+			r = sbml.getModel().createReaction();
+			r.setId(rxnID);
+			r.setSBOTerm(GlobalConstants.SBO_TRANSLATION);
+			r.setCompartment(sbml.getModel().getSpecies(mRNA.getId()).getCompartment());
+			r.setReversible(false);
+			
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(mRNA);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			
+			for (Participation product : products) {
+				SpeciesReference TUproduct = r.createProduct();
+				TUproduct.setSpecies(product.getDisplayId());
+				//SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
+				TUproduct.setStoichiometry(1.0);
+				TUproduct.setConstant(true);
+			}
+			
+			k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
+			p.setValue(GlobalConstants.k_TF_DIM_S);
+			
+		} else {
+			/// use parameters passed by user
+		}
+		
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				//SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			}
+		}
+		
+		return r;
+	}
 
+	/**
+	 * Creates a degradation reaction using Hamid's paper for dynamic modeling using Cello parameters.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param s the species (in SBML) or ComponentDefinition (in SBOL) that is being degraded
+	 * @param kdegrad the is the rate of degradation. It's value is obtained from Cello, and it depends if it's mRNA or Protein
+	 * @param onPort the on port
+	 * @param dimensions the dimensions
+	 * @return the reaction is the Degradation Reaction being created for this species
+	 */
+	//TODO PEDRO createCelloDegradationReaction
+	public Reaction createCelloDegradationReaction(String s, double kdegrad, boolean onPort, String[] dimensions) {
+		//createDegradationDefaultParameters();
+		
+		//This method is very similar to the createDegradationReaction() method, except it uses other parameter values (kSDdim or kTFdim insted of kd). 
+		
+		Reaction reaction = getDegradationReaction(s);
+		if (reaction==null) {
+			reaction = sbml.getModel().createReaction();
+			reaction.setId(GlobalConstants.DEGRADATION + "_" + s);
+			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			SBMLutilities.cloneDimensionAddIndex(sbml.getModel().getCompartment(reaction.getCompartment()),reaction,"compartment");
+			reaction.setReversible(false);
+			//reaction.setFast(false);
+			SpeciesReference reactant = reaction.createReactant();
+			reactant.setSpecies(s);
+			reactant.setStoichiometry(1);
+			reactant.setConstant(true);
+		} 
+		String indexStr = "";
+		if (dimensions!=null && dimensions.length>0) {
+			String [] dimIds = SBMLutilities.getDimensionIds("",dimensions.length-1);
+			SBMLutilities.createDimensions(reaction, dimIds, dimensions);
+			SBMLutilities.addIndices(reaction.getReactant(0), "species", dimIds, 0);
+			indexStr = SBMLutilities.getIndicesString(reaction.getReactant(0), "species");
+		}
+		KineticLaw k = reaction.createKineticLaw();
+		if (kdegrad > 0) {
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			p.setValue(kdegrad);
+			//if (sweep != null) {
+			//	AnnotationUtility.setSweepAnnotation(p, sweep);
+			//} 
+		}
+		
+		//Set the math for the degradation reaction
+		k.setMath(SBMLutilities.myParseFormula("kdegrad*"+s+indexStr));
+		Port port = getPortByIdRef(reaction.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+				SBMLutilities.cloneDimensionAddIndex(reaction,port,"comp:idRef");
+			}
+		}
+		return reaction;
+	}
+	
+	/**
+	 * Creates the cello production kinetic law.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param reaction the reaction
+	 * @param celloParameters the cello parameters
+	 * @param promoterInteractions the promoter interactions
+	 * @param promoters the promoters
+	 * @return the string
+	 */
+	//TODO PEDRO createCelloProductionKineticLaw
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
+		String kineticLaw = "";
+		//boolean activated = false;
+		String promoter = "";
+		
+	     for (Object it : promoters.toArray()) {
+	    	 promoter = it.toString();
+	    	 
+	    	 String numerator = "";
+	    	 String denominator = "";
+	    	 String in_parentesis = "";
+	    	 
+	    	 HashMap promInter = (HashMap) promoterInteractions.get(promoter);
+
+	    	 for (Object entry : promInter.keySet()) {
+	    		 String interaction = entry.toString();
+	    		 if (interaction.equals("activation")) {
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
+	    			 
+	    	    	 denominator = "1 + ";
+	    	    	 
+	    			 String activator = promInter.get(entry).toString();
+	    			 String K = "K_" + activator;
+	    			 String n = "n_" + activator;
+	    			 
+	    			 String temp = "("+ K +"/" + activator + ")^" + n;
+	    			 denominator += temp;
+	    			 
+	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
+	    			 n_para.setId(n);
+	    			 if (celloParameters.get(activator).get(0) != null) {
+	    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
+	    				 n_para.setValue(n_value);
+	    			 }
+	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 if (celloParameters.get(activator) != null) {
+	    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
+	    				 K_para.setValue(K_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(activator) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(activator) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
+	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
+
+	    		 } else if (interaction.equals("repression")) {
+	    			 String repressor = promInter.get(entry).toString();
+	    			 String K = "K_" + repressor;
+	    			 String n = "n_" + repressor;
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
+	    			 
+	    	    	 denominator = "1 + ";
+	    			 
+	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
+	    			 denominator += temp;
+	    			 
+	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
+	    			 n_para.setId(n);
+	    			 if (celloParameters.get(repressor) != null) {
+	    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
+	    				 n_para.setValue(n_value);
+	    			 }
+	    			 
+	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
+	    			 K_para.setId(K);
+	    			 if (celloParameters.get(repressor) != null) {
+	    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
+	    				 K_para.setValue(K_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(repressor) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(repressor) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
+	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
+
+	    		 } else if (interaction.equals("sensor")) {
+	    			 String sensor = promInter.get(entry).toString();
+	    	    	 String ymax = "ymax_" + promoter;
+	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
+	    			  
+	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
+	    			 numerator = "piecewise(" + ymin + ", (" + sensor + " == 0), " + ymax + ")"; 
+	    			 	    			 
+	    			 if (celloParameters.get(sensor) != null) {
+		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
+		    			 ymax_p.setValue(ymax_value);
+	    			 }
+	    			 
+	    			 if (celloParameters.get(sensor) != null) {
+		    			 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
+		    			 ymin_p.setValue(ymin_value);
+	    			 }
+	    			 in_parentesis = "(" + numerator + ")"; 
+	    		 }
+	    	 }
+	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
+	     }
+		return kineticLaw;
+	}
+		
 	public static String createComplexKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;

@@ -262,6 +262,8 @@ public class GlobalConstants {
 	public static final int SBO_GENETIC_PRODUCTION = 589;
 	public static final int SBO_ASSOCIATION = 177;
 	public static final int SBO_CONSTITUTIVE = 396;
+	public static final int SBO_TRANSCRIPTION = 183;
+	public static final int SBO_TRANSLATION = 184;
 
 	// obsolete
 	public static final int SBO_REGULATION = 19;
@@ -367,4 +369,11 @@ public class GlobalConstants {
 		return path.substring(0, path.lastIndexOf(File.separator));
 	}
 	
+	//Cello Parameters
+	public static final double k_SD_DIM_S = 1.0/300;
+	public static final double k_TF_DIM_S = 1.0/3600;
+	public static final double CELLO_PARAMETER_N = 2.56;
+	public static final double CELLO_PARAMETER_K = 0.122;
+	public static final double CELLO_PARAMETER_YMAX = 7.54;
+	public static final double CELLO_PARAMETER_YMIN = 0.012;
 }

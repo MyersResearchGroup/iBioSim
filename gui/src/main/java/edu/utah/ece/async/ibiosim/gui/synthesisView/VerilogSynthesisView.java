@@ -131,7 +131,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		this.log = log;
 		this.verilogSpecPath = verilogSpecPath;
 		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
-
+		this.synthDirPath = rootFilePath + File.separator + synthID;
 
 		int textBoxLength = 20;
 		JLabel specFileLabel 			= new JLabel("Specification File:");

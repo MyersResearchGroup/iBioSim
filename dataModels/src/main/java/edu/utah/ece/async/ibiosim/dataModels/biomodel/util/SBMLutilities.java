@@ -223,7 +223,7 @@ public class SBMLutilities extends CoreObservable
 		for (BioModel model : models.values())
 		{
 			String filename =  model.getSBMLDocument().getModel().getId() + ".xml";
-			model.save(outputDir + File.separator + filename);
+			model.save(outputDir + File.separator + filename, false);
 			submodels.add(filename);
 		}
 		return submodels;

@@ -4616,7 +4616,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-				generateSBMLFromSBOL(selection, root);
+				//TODO PEDRO revisit what boolean value to input here
+				generateSBMLFromSBOL(selection, root, false);
 				// TODO: update to attachment class
 				String sedmlFile = null;
 				for (Attachment attachment : selection.getAttachments()) {
@@ -4749,7 +4750,8 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			String filePath = filename.trim();
 			org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
 			inputSBOLDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-			int numGeneratedSBML = generateSBMLFromSBOL(inputSBOLDoc, filePath);
+			//TODO PEDRO revisit what boolean value to input here
+			int numGeneratedSBML = generateSBMLFromSBOL(inputSBOLDoc, filePath, false);
 			getSBOLDocument().createCopy(inputSBOLDoc);
 			writeSBOLDocument();
 			JOptionPane.showMessageDialog(frame, "Successfully Imported SBOL file containing: \n"
@@ -5974,10 +5976,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			chosenDesign = s.getSelection();
 		}
 		
+		boolean celloModel = s.isCelloModel();
 		
 		if(s.isVPRGenerator())
 		{
-			runVPRGenerator(filePath, fileName, chosenDesign);
+			runVPRGenerator(filePath, fileName, chosenDesign, celloModel);
 		}
 		else if(s.isSBOLDesigner())
 		{
@@ -5992,7 +5995,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @param fileName - The name of the SBOL file that the given SBOLDocument was created from.
 	 * @param chosenDesign - The chosen design that the user would like to perform VPR Model Generation from.
 	 */
-	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign)
+	private void runVPRGenerator(String filePath, String fileName, SBOLDocument chosenDesign, boolean CelloModel)
 	{
 		try 
 		{
@@ -6023,7 +6026,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				
 				VPRModelGenerator.generateModel(selectedRepo, chosenDesign, circuitID);
 				//update SBOL library file with newly generated components that vpr model generator created.
-				generateSBMLFromSBOL(chosenDesign, filePath);
+				generateSBMLFromSBOL(chosenDesign, filePath, CelloModel);
 				// TODO: should be using libSBOLj for this
 				SBOLUtility.getSBOLUtility().copyAllTopLevels(chosenDesign, sbolDocument);
 				writeSBOLDocument();
@@ -6203,14 +6206,14 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	 * @param filePath - The file location where the SBOL document is located.
 	 * @return The number of SBML models that was converted from SBOL. 
 	 */
-	public int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath) {
+	public int generateSBMLFromSBOL(SBOLDocument inputSBOLDoc, String filePath, boolean CelloModel) {
 		int numGeneratedSBML = 0;
 		try {
 			for (ModuleDefinition moduleDef : inputSBOLDoc.getRootModuleDefinitions()) {
 				if (moduleDef.getModels().size()==0) {
 					HashMap<String,BioModel> models;
 					try {
-						models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc);
+						models = SBOL2SBML.generateModel(root, moduleDef, inputSBOLDoc, CelloModel);
 						for (BioModel model : models.values()) {
 							if (overwrite(root + File.separator + model.getSBMLDocument().getModel().getId() + ".xml",
 									model.getSBMLDocument().getModel().getId() + ".xml")) {
@@ -7506,7 +7509,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				return;
 			}
 			else if(techmap_sols.isEmpty()) {
-				JOptionPane.showMessageDialog(frame, "No solution was found after perfirming Verilog Synthesis.", "Synthesis Solution Not Found", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "No solution was found after performing Verilog Synthesis.", "Synthesis Solution Not Found", JOptionPane.WARNING_MESSAGE);
 				return;
 			}	
 			else {

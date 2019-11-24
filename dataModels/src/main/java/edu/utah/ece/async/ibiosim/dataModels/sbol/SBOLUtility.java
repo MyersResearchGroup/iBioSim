@@ -84,7 +84,7 @@ public class SBOLUtility
 	 * @param externalSBOLPath - The directory the get the SBOL files from
 	 * @return All SBOL files located in the given SBOL directory.
 	 */
-	public HashSet<String> getSBOLFilesFromPath(String externalSBOLPath)
+	public static HashSet<String> getSBOLFilesFromPath(String externalSBOLPath)
 	{
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>();
 		//Note: this is an optional field. User provided sbol path to read in
@@ -117,7 +117,7 @@ public class SBOLUtility
 	 * @throws SBOLException - Null SBOLDocument
 	 * @deprecated use loadSBOLFile(String fileFullPath)
 	 */
-	public SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException, SBOLException 
+	public static SBOLDocument loadSBOLFile(String filePath, String defaultURIPrefix) throws FileNotFoundException, SBOLValidationException, IOException, SBOLConversionException, SBOLException 
 	{
 		File f = new File(filePath);
 		String fileName = f.getName().replace(".sbol", "");
