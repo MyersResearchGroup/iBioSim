@@ -14,7 +14,10 @@
 package edu.utah.ece.async.ibiosim.gui.synthesisView;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -30,6 +33,7 @@ import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -40,7 +44,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.text.parser.ParseException;
@@ -104,7 +110,10 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 	private JButton addLibButton, removeLibButton, testEnvButton;
 	private JComboBox<String> coverAlgOptBox, atacsAlgBox;
 	private JTextField numSolnsText;
-	private JRadioButton yosysNandDecomp_button, yosysNorDecomp_button, runAtacs_button;
+	private JRadioButton yosysNandDecomp_button, yosysNorDecomp_button;
+	private JCheckBox atacs_checkbox;
+	
+	private DecomposedGraph specGraph;
 
 	/**
 	 * Constructor to create the technology mapping for the UI.
@@ -121,116 +130,198 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		this.rootFilePath = rootFilePath;
 		this.log = log;
 		this.verilogSpecPath = verilogSpecPath;
-		this.synthDirPath = rootFilePath + File.separator + synthID;
-		new File(synthDirPath).mkdir(); // Create the synthesis directory
+		new File(rootFilePath + File.separator + synthID).mkdir(); // Create the synthesis directory
 
-		JPanel optionsPanel = createVerilogSynthPanel(); 
-		addTab("Verilog Synthesis Options", optionsPanel); 
-		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
-	}
 
-	private JPanel createVerilogSynthPanel() {
-		JPanel synthOverviewPanel = new JPanel();
-		JPanel techmapPanel = createTechmapPanel();
-		JPanel synthesisPanel = createSynthesisPanel();
+		int textBoxLength = 20;
+		JLabel specFileLabel 			= new JLabel("Specification File:");
+		JLabel specDecompTypeLabel 	= new JLabel("Specification Decomposition Type:");
+		JLabel testEnvFileLabel 		= new JLabel("Testing Environment File:");
+		JLabel libLabel 			= new JLabel("Library Gate Files:");
+		JLabel coverMethodLabel 	= new JLabel("Covering Method:");
+		JLabel numOfSolLabel 		= new JLabel("# of Solutions:");
+//		JLabel preselectNode = new JLabel("Node Assignment:");
 
-		synthOverviewPanel.add(techmapPanel);
-		synthOverviewPanel.add(synthesisPanel);
-		return synthOverviewPanel;
-	}
+		JPanel verilogSynthPanel = new JPanel();
 
-	private JPanel createTechmapPanel() {
-		JPanel techmapPanel = new JPanel(new GridLayout(4, 1));
-		int textBoxWidth = 20;
-
-		JPanel specPanel = new JPanel(new GridLayout(1, 2));
-		JPanel specLabelPanel = new JPanel(new GridLayout(1,1));
-		specLabelPanel.add(new JLabel("Specification File:"));
-		specTextBox = new JTextField(textBoxWidth);
-		specTextBox.setEnabled(false);
-		specPanel.add(specLabelPanel);
-		specPanel.add(specTextBox);
-		techmapPanel.add(specPanel);
-
-		JPanel testEnvPanel2 = new JPanel(new GridLayout(1, 3));
-		JPanel testEnvLabelPanel2 = new JPanel(new GridLayout(1,1));
-		testEnvLabelPanel2.add(new JLabel("Testing Environment File:"));
-		JPanel testEnvInputPanel = new JPanel(new GridLayout(1, 1));
-		testEnvTextBox = new JTextField();
-		testEnvTextBox.setEnabled(false);
-		testEnvInputPanel.add(testEnvTextBox);
-		JPanel testEnvBrowsePanel = new JPanel(new GridLayout(1,1));
+		//----- Test Env Area -----
+		testEnvTextBox = new JTextField(textBoxLength);
+		testEnvTextBox.setEnabled(true);
 		testEnvButton = new JButton("Browse...");
 		testEnvButton.addActionListener(this);
-		testEnvBrowsePanel.add(testEnvButton);
-		testEnvPanel2.add(testEnvLabelPanel2);
-		testEnvPanel2.add(testEnvInputPanel);
-		testEnvPanel2.add(testEnvBrowsePanel);
-		techmapPanel.add(testEnvPanel2);
 
-		JPanel libPanel = new JPanel(new GridLayout(1, 3));
-		JPanel libLabelPanel = new JPanel(new GridLayout(1,1));
-		libLabelPanel.add(new JLabel("Library Files: "));
-		JPanel libInputPanel = new JPanel(new GridLayout(1, 1));
-		libScroll = new JScrollPane();
-		libScroll.setPreferredSize(new Dimension(276, 55));
-		libInputPanel.add(libScroll);
-		JPanel buttonContainer = new JPanel(new GridLayout(2, 1));
-		addLibButton = new JButton("Add");
-		removeLibButton = new JButton("Remove");
-		addLibButton.addActionListener(this);
-		removeLibButton.addActionListener(this);
-		buttonContainer.add(addLibButton);
-		buttonContainer.add(removeLibButton);
-		libPanel.add(libLabelPanel);
-		libPanel.add(libInputPanel);
-		libPanel.add(buttonContainer);
-		techmapPanel.add(libPanel);
+		//----- Specification Area -----
+		specTextBox = new JTextField(synthID, textBoxLength);
+		specTextBox.setEnabled(false);
 
-		JPanel coverPanel = new JPanel(new GridLayout(2, 1));
-		JPanel coverAlgPanel = new JPanel(new GridLayout(1, 2));
-		coverAlgPanel.add(new JLabel("Covering Method:  "));
-		coverAlgOptBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_GREEDY, GlobalConstants.SBOL_SYNTH_EXHAUSTIVE, GlobalConstants.SBOL_SYNTH_EXHAUST_BB});
-		coverAlgOptBox.addActionListener(this);
-		coverAlgPanel.add(coverAlgOptBox);
-		coverPanel.add(coverAlgPanel);
-		JPanel coverSolPanel = new JPanel(new GridLayout(1, 2));
-		coverSolPanel.add(new JLabel("Number of Solutions:  "));
-		numSolnsText = new JTextField(textBoxWidth); 
-		numSolnsText.addActionListener(this);
-		coverSolPanel.add(numSolnsText);
-		coverPanel.add(coverSolPanel);
-		techmapPanel.add(coverPanel);
+		JPanel yosysOptPanel = new JPanel(new GridLayout(1, 2)); 
 
-		return techmapPanel;
-	}
-
-	private JPanel createSynthesisPanel() {
-		JPanel synthesisPanel = new JPanel(new GridLayout(2, 1));
-		JPanel atacsPanel = new JPanel(new GridLayout(1, 2));
-		runAtacs_button = new JRadioButton("ATACS Synthesis", false);
-		runAtacs_button.addActionListener(this);
-		atacsPanel.add(runAtacs_button);
-		atacsAlgBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES, GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES});
-		atacsAlgBox.setEnabled(false);
-		atacsAlgBox.addActionListener(this);
-		atacsPanel.add(atacsAlgBox);
-		synthesisPanel.add(atacsPanel);
-
-		JPanel decompLabelPanel = new JPanel(new GridLayout(1,1));
-		decompLabelPanel.add(new JLabel("Specification Decomposition Type :"));
 		yosysNandDecomp_button = new JRadioButton("NAND Logic", true);
 		yosysNorDecomp_button = new JRadioButton("NOR Logic", false);
 		yosysNandDecomp_button.addActionListener(this);
 		yosysNorDecomp_button.addActionListener(this);
-		JPanel decompOptPanel = new JPanel(new GridLayout(1, 2));
-		decompOptPanel.add(yosysNandDecomp_button);
-		decompOptPanel.add(yosysNorDecomp_button);
-		JPanel decompPanel = new JPanel(new GridLayout(1, 2));
-		decompPanel.add(decompLabelPanel);
-		decompPanel.add(decompOptPanel);
-		synthesisPanel.add(decompPanel); 
-		return synthesisPanel;
+		yosysOptPanel.add(yosysNandDecomp_button);
+		yosysOptPanel.add(yosysNorDecomp_button);
+
+		atacs_checkbox = new JCheckBox("ATACS Synthesis", false);
+		atacs_checkbox.addActionListener(this);
+		atacsAlgBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES, GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES});
+		atacsAlgBox.setEnabled(false);
+		atacsAlgBox.addActionListener(this);
+
+		//----- Covering Method Area -----
+		coverAlgOptBox = new JComboBox<String>(new String[] {GlobalConstants.SBOL_SYNTH_GREEDY, GlobalConstants.SBOL_SYNTH_EXHAUSTIVE, GlobalConstants.SBOL_SYNTH_EXHAUST_BB});
+		coverAlgOptBox.addActionListener(this);
+		numSolnsText = new JTextField(5); 
+		numSolnsText.addActionListener(this);
+
+		//----- Library  Area -----
+		libScroll = new JScrollPane();
+		libScroll.setPreferredSize(new Dimension(500, 70));
+		addLibButton = new JButton("Add");
+		addLibButton.addActionListener(this);
+		removeLibButton = new JButton("Remove");
+		removeLibButton.addActionListener(this);
+
+		//----- Preselection  Area -----
+//		String[] columnNames = {"Node ID", "Assigned CD"};
+//
+//		String[][] data = new String[1][1];
+//		
+//		JTable table = new JTable(data, columnNames);
+//		table.setPreferredScrollableViewportSize(new Dimension(200, 150));
+//		table.setFillsViewportHeight(true);
+//		JScrollPane scrollPane = new JScrollPane(table);
+
+		//----- Layout Area -----
+		JPanel p1 = new JPanel(); 
+		p1.setLayout(new GridBagLayout()); 
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 0;
+		p1.add(testEnvFileLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 0;
+		p1.add(testEnvTextBox, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 0;
+		p1.add(testEnvButton, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 1;
+		p1.add(specFileLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 1;
+		p1.add(specTextBox, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 2;
+		p1.add(specDecompTypeLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 2;
+		p1.add(yosysOptPanel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 2;
+		p1.add(atacs_checkbox, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 3;
+		c.gridy = 2;
+		p1.add(atacsAlgBox, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 3;
+		p1.add(coverMethodLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 1;
+		c.gridy = 3;
+		p1.add(coverAlgOptBox, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 3;
+		numOfSolLabel.setHorizontalAlignment(CENTER);
+		p1.add(numOfSolLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 3;
+		c.gridy = 3;
+		p1.add(numSolnsText, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(20,0,0,0);
+		p1.add(libLabel, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 4;
+		c.insets = new Insets(20,0,0,0);
+		p1.add(addLibButton, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.gridx = 3;
+		c.gridy = 4;
+		c.insets = new Insets(20,0,0,0);
+		p1.add(removeLibButton, c);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.2;
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 4;
+		p1.add(libScroll, c);
+
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.weightx = 0.2;
+//		c.gridx = 0;
+//		c.gridy = 6;
+//		p1.add(preselectNode, c);
+
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.weightx = 0.2;
+//		c.gridx = 0;
+//		c.gridy = 7;
+//		c.gridwidth = 4;
+//		p1.add(scrollPane, c);
+
+		verilogSynthPanel.add("North", p1);
+
+		addTab("Verilog Synthesis Options", verilogSynthPanel); 
+		getComponentAt(getComponents().length - 1).setName("Verilog Synthesis Options"); 
 	}
 
 
@@ -319,7 +410,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			numSolnsText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 		}
 		if(synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
-			runAtacs_button.setSelected(true);
+			atacs_checkbox.setSelected(true);
 			atacsAlgBox.setEnabled(true);
 			atacsAlgBox.setSelectedItem(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY));
 		}
@@ -388,9 +479,9 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 				yosysNandDecomp_button.setSelected(true);
 			}
 		}
-		else if(e.getSource() == runAtacs_button)
+		else if(e.getSource() == atacs_checkbox)
 		{
-			if(runAtacs_button.isSelected()) {
+			if(atacs_checkbox.isSelected()) {
 				atacsAlgBox.setEnabled(true);
 			}
 			else {
@@ -482,7 +573,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			compilerOptions.setOutputFileName(outputFileName);
 
 			String yosysInputPath = specFile.getAbsolutePath();
-			if(runAtacs_button.isSelected()) {
+			if(atacs_checkbox.isSelected()) {
 				VerilogToLPNCompiler sbmlLPNConverter = new VerilogToLPNCompiler();
 				sbmlLPNConverter.addVerilog(specVerilogModule);
 				sbmlLPNConverter.addVerilog(testEnvVerilogModule);
@@ -523,7 +614,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 			techMapOptions.setOutputFileName(outputFileName);
 
 			List<GeneticGate> libGraph = TechMapUtility.createLibraryGraphFromSbolList(techMapOptions.getLibrary());
-			DecomposedGraph specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
+			this.specGraph = TechMapUtility.createSpecificationGraphFromSBOL(techMapOptions.getSpefication());
 
 			Match m = new PreSelectedMatch(specGraph, libGraph);
 			Cover c = new Cover(m);
@@ -682,7 +773,7 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 					numSolnsText.setText("0");
 				}
 				synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, numSolnsText.getText());
-				if(runAtacs_button.isSelected()) {
+				if(atacs_checkbox.isSelected()) {
 					String atacsAlg = atacsAlgBox.getSelectedItem().toString();
 					synthProps.setProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY, atacsAlg);
 
@@ -698,18 +789,18 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 
 	public boolean tabChanged(int tabIndex) {
 		if (tabIndex == 0) {
-			if(runAtacs_button.isSelected() && !synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
+			if(atacs_checkbox.isSelected() && !synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
 				return true;
 			}
-			else if(!runAtacs_button.isSelected() && synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
+			else if(!atacs_checkbox.isSelected() && synthProps.containsKey(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY)) {
 				String prevAtacsProperty = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_ATACS_PROPERTY);
 				if(prevAtacsProperty.equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES)) {
-					if(runAtacs_button.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)) {
+					if(atacs_checkbox.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)) {
 						return true;
 					}
 				}
 				else if(prevAtacsProperty.equals(GlobalConstants.SBOL_SYNTH_ATACS_GC_GATES)) {
-					if(runAtacs_button.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES)) {
+					if(atacs_checkbox.isSelected() && atacsAlgBox.getSelectedItem().toString().equals(GlobalConstants.SBOL_SYNTH_ATACS_ATOMIC_GATES)) {
 						return true;
 					}
 				}
@@ -786,4 +877,39 @@ public class VerilogSynthesisView extends JTabbedPane implements ActionListener,
 		this.synthID = synthID;
 	}
 
+	class MyTableModel extends AbstractTableModel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5005751891198182584L;
+
+		String[] columnNames = {"Node ID",
+		"Assigned CD"};
+
+		String[][] data; 
+
+		@Override
+		public int getRowCount() {
+			return data == null? 0 : data[0].length;
+		}
+
+		@Override
+		public int getColumnCount() {
+			return data == null? 0 : data.length;
+		}
+
+		@Override
+		public String getValueAt(int rowIndex, int columnIndex) {
+			if(data == null) {
+				return "";
+			}
+			return data[columnIndex][rowIndex];
+		}
+		
+
+		public void setValueAt(String value, int row, int col) {
+			data[row][col] = value;
+		}
+	}
 }
