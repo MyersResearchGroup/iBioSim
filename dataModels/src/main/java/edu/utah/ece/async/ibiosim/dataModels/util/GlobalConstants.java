@@ -360,8 +360,10 @@ public class GlobalConstants {
 	//Cello Parameters
 	public static final double k_SD_DIM_S = 1.0/300;
 	public static final double k_TF_DIM_S = 1.0/3600;
-	public static final double CELLO_PARAMETER_N = 2.56;
-	public static final double CELLO_PARAMETER_K = 0.122;
-	public static final double CELLO_PARAMETER_YMAX = 7.54;
-	public static final double CELLO_PARAMETER_YMIN = 0.012;
+	public static final double CELLO_PARAMETER_K = 0.1295;
+	public static final double CELLO_PARAMETER_N = 2.65;
+	public static final double CELLO_PARAMETER_YMAX = 2.829583333;
+	public static final double CELLO_PARAMETER_YMIN = 0.0464125;
+	public static final double CELLO_PARAMETER_ALPHA = 0.408417245;
+	public static final double CELLO_PARAMETER_BETA = 0.432373669;
 }
