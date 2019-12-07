@@ -2379,7 +2379,6 @@ public class BioModel extends CoreObservable{
 	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
 	    				 }
 	    			 }
-	    			 
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 
 	    		 } else if (interaction.equals("repression")) {
