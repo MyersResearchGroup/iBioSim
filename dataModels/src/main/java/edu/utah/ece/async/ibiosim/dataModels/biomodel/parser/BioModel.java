@@ -2346,6 +2346,8 @@ public class BioModel extends CoreObservable{
 	    			 n_para.setId(n);
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
 	    			 K_para.setId(K);
+	    			 
+	    			 //set parameters to the model, use a default value if there is no parameter found
 	    			 if (celloParameters.get(activator) != null) {
 	    				 if (celloParameters.get(activator).get(0) != null) {
 		    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
