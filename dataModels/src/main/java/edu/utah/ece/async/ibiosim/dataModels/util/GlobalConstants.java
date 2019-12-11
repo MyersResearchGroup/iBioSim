@@ -357,7 +357,8 @@ public class GlobalConstants {
 		return path.substring(0, path.lastIndexOf(File.separator));
 	}
 	
-	//Cello Parameters
+	//Cello Parameters used for dynamical modeling. These parameters are obtained from the Cello paper
+	// and from https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Eco1C1G1T1_collection/1
 	public static final double k_SD_DIM_S = 1.0/300;
 	public static final double k_TF_DIM_S = 1.0/3600;
 	public static final double CELLO_PARAMETER_K = 0.1295;
