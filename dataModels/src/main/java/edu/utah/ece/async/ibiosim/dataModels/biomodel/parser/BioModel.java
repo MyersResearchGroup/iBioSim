@@ -2344,26 +2344,42 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
-	    			 if (celloParameters.get(activator).get(0) != null) {
-	    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
-	    				 n_para.setValue(n_value);
-	    			 }
-	    			 
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
 	    			 K_para.setId(K);
-	    			 if (celloParameters.get(activator) != null) {
-	    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
-	    				 K_para.setValue(K_value);
-	    			 }
 	    			 
+	    			 //set parameters to the model, use a default value if there is no parameter found
 	    			 if (celloParameters.get(activator) != null) {
-		    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
-		    			 ymax_p.setValue(ymax_value);
-	    			 }
-	    			 
-	    			 if (celloParameters.get(activator) != null) {
-		    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
-		    			 ymin_p.setValue(ymin_value);
+	    				 if (celloParameters.get(activator).get(0) != null) {
+		    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
+		    				 n_para.setValue(n_value);
+	    				 }
+	    				 else {
+	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(activator).get(1) != null) {
+		    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
+		    				 K_para.setValue(K_value);
+	    				 }
+	    				 else {
+	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(activator).get(2) != null) {
+			    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
+			    			 ymax_p.setValue(ymax_value);
+	    				 }
+	    				 else {
+	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(activator).get(3) != null) {
+			    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
+			    			 ymin_p.setValue(ymin_value);
+	    				 }
+	    				 else {
+	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+	    				 }
 	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 
@@ -2387,27 +2403,43 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
-	    			 if (celloParameters.get(repressor) != null) {
-	    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
-	    				 n_para.setValue(n_value);
-	    			 }
-	    			 
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
 	    			 K_para.setId(K);
-	    			 if (celloParameters.get(repressor) != null) {
-	    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
-	    				 K_para.setValue(K_value);
-	    			 }
 	    			 
 	    			 if (celloParameters.get(repressor) != null) {
-		    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
-		    			 ymax_p.setValue(ymax_value);
+	    				 if (celloParameters.get(repressor).get(0) != null) {
+		    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
+		    				 n_para.setValue(n_value);
+	    				 }
+	    				 else {
+	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(repressor).get(1) != null) {
+		    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
+		    				 K_para.setValue(K_value);
+	    				 }
+	    				 else {
+	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(repressor).get(2) != null) {
+			    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
+			    			 ymax_p.setValue(ymax_value);
+	    				 }
+	    				 else {
+	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+	    				 }
+	    				 
+	    				 if (celloParameters.get(repressor).get(3) != null) {
+			    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
+			    			 ymin_p.setValue(ymin_value);
+	    				 }
+	    				 else {
+	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+	    				 }
 	    			 }
 	    			 
-	    			 if (celloParameters.get(repressor) != null) {
-		    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
-		    			 ymin_p.setValue(ymin_value);
-	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 
 	    		 } else if (interaction.equals("sensor")) {
