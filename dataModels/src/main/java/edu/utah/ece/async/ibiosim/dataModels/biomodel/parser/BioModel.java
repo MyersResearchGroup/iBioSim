@@ -2459,11 +2459,18 @@ public class BioModel extends CoreObservable{
 		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
 		    			 ymax_p.setValue(ymax_value);
 	    			 }
+    				 else {
+    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+    				 }
 	    			 
 	    			 if (celloParameters.get(sensor) != null) {
 		    			 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
 		    			 ymin_p.setValue(ymin_value);
 	    			 }
+    				 else {
+    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+    				 }
+	    			 
 	    			 in_parentesis = "(" + numerator + ")"; 
 	    		 }
 	    	 }
