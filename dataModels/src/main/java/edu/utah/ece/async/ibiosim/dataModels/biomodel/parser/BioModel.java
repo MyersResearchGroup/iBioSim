@@ -2326,6 +2326,8 @@ public class BioModel extends CoreObservable{
 	    		 if (interaction.equals("activation")) {
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 String alpha = "alpha_" + promoter;
+	    	    	 String beta = "beta_" + promoter;
 	    	    	 
 	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
 	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
@@ -2346,10 +2348,14 @@ public class BioModel extends CoreObservable{
 	    			 n_para.setId(n);
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
 	    			 K_para.setId(K);
+	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
+	    			 alpha_para.setId(alpha);
+	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
+	    			 beta_para.setId(beta);
 	    			 
 	    			 //set parameters to the model, use a default value if there is no parameter found
 	    			 if (celloParameters.get(activator) != null) {
-	    				 if (celloParameters.get(activator).get(0) != null) {
+	    				 if (celloParameters.get(activator).get(0) != null && !celloParameters.get(activator).get(0).equals("")) {
 		    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
 		    				 n_para.setValue(n_value);
 	    				 }
@@ -2357,7 +2363,7 @@ public class BioModel extends CoreObservable{
 	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(activator).get(1) != null) {
+	    				 if (celloParameters.get(activator).get(1) != null && !celloParameters.get(activator).get(1).equals("")) {
 		    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
 		    				 K_para.setValue(K_value);
 	    				 }
@@ -2365,7 +2371,7 @@ public class BioModel extends CoreObservable{
 	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(activator).get(2) != null) {
+	    				 if (celloParameters.get(activator).get(2) != null && !celloParameters.get(activator).get(2).equals("")) {
 			    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
 			    			 ymax_p.setValue(ymax_value);
 	    				 }
@@ -2373,12 +2379,26 @@ public class BioModel extends CoreObservable{
 	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(activator).get(3) != null) {
+	    				 if (celloParameters.get(activator).get(3) != null && !celloParameters.get(activator).get(3).equals("")) {
 			    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
 			    			 ymin_p.setValue(ymin_value);
 	    				 }
 	    				 else {
 	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+	    				 }
+	    				 if (celloParameters.get(activator).get(4) != null && !celloParameters.get(activator).get(4).equals("")) {
+			    			 double alpha_value = Double.parseDouble(celloParameters.get(activator).get(4));
+			    			 alpha_para.setValue(alpha_value);
+	    				 }
+	    				 else {
+	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
+	    				 }
+	    				 if (celloParameters.get(activator).get(5) != null && !celloParameters.get(activator).get(5).equals("")) {
+			    			 double beta_value = Double.parseDouble(celloParameters.get(activator).get(5));
+			    			 beta_para.setValue(beta_value);
+	    				 }
+	    				 else {
+	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
 	    				 }
 	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
@@ -2389,6 +2409,8 @@ public class BioModel extends CoreObservable{
 	    			 String n = "n_" + repressor;
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 String alpha = "alpha_" + promoter;
+	    	    	 String beta = "beta_" + promoter;
 	    	    	 
 	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
 	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
@@ -2405,9 +2427,13 @@ public class BioModel extends CoreObservable{
 	    			 n_para.setId(n);
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
 	    			 K_para.setId(K);
+	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
+	    			 alpha_para.setId(alpha);
+	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
+	    			 beta_para.setId(beta);
 	    			 
 	    			 if (celloParameters.get(repressor) != null) {
-	    				 if (celloParameters.get(repressor).get(0) != null) {
+	    				 if (celloParameters.get(repressor).get(0) != null && !celloParameters.get(repressor).get(0).equals("")) {
 		    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
 		    				 n_para.setValue(n_value);
 	    				 }
@@ -2415,7 +2441,7 @@ public class BioModel extends CoreObservable{
 	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(repressor).get(1) != null) {
+	    				 if (celloParameters.get(repressor).get(1) != null && !celloParameters.get(repressor).get(1).equals("")) {
 		    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
 		    				 K_para.setValue(K_value);
 	    				 }
@@ -2423,7 +2449,7 @@ public class BioModel extends CoreObservable{
 	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(repressor).get(2) != null) {
+	    				 if (celloParameters.get(repressor).get(2) != null && !celloParameters.get(repressor).get(2).equals("")) {
 			    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
 			    			 ymax_p.setValue(ymax_value);
 	    				 }
@@ -2431,12 +2457,26 @@ public class BioModel extends CoreObservable{
 	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
 	    				 }
 	    				 
-	    				 if (celloParameters.get(repressor).get(3) != null) {
+	    				 if (celloParameters.get(repressor).get(3) != null && !celloParameters.get(repressor).get(3).equals("")) {
 			    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
 			    			 ymin_p.setValue(ymin_value);
 	    				 }
 	    				 else {
 	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+	    				 }
+	    				 if (celloParameters.get(repressor).get(4) != null && !celloParameters.get(repressor).get(4).equals("")) {
+			    			 double alpha_value = Double.parseDouble(celloParameters.get(repressor).get(4));
+			    			 alpha_para.setValue(alpha_value);
+	    				 }
+	    				 else {
+	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
+	    				 }
+	    				 if (celloParameters.get(repressor).get(5) != null && !celloParameters.get(repressor).get(5).equals("")) {
+			    			 double beta_value = Double.parseDouble(celloParameters.get(repressor).get(5));
+			    			 beta_para.setValue(beta_value);
+	    				 }
+	    				 else {
+	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
 	    				 }
 	    			 }
 	    			 

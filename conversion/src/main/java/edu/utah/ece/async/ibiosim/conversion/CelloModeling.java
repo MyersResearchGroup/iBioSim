@@ -823,6 +823,8 @@ public class CelloModeling {
 		String K = "";
 		String ymax = "";
 		String ymin = "";
+		String alpha = "";
+		String beta = "";
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
@@ -844,6 +846,12 @@ public class CelloModeling {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
 						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
+						}
 					}
 			}
 		}
@@ -853,6 +861,8 @@ public class CelloModeling {
 		CelloParameters2.add(K);
 		CelloParameters2.add(ymax);
 		CelloParameters2.add(ymin);
+		CelloParameters2.add(alpha);
+		CelloParameters2.add(beta);
 		
 		return CelloParameters2;
 	}
