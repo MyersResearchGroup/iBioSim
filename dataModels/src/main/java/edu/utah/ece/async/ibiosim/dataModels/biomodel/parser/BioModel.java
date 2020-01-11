@@ -2311,9 +2311,11 @@ public class BioModel extends CoreObservable{
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
+		int promoterCnt = 0;
 		
 	     for (Object it : promoters.toArray()) {
 	    	 promoter = it.toString();
+	    	 promoterCnt++;
 	    	 
 	    	 String numerator = "";
 	    	 String denominator = "";
@@ -2402,6 +2404,16 @@ public class BioModel extends CoreObservable{
 	    				 }
 	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
+	    			 
+	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+	    	    		 
+	    	    		 String top = "";
+	    	    		 String bottom = "";
+	    	    		 
+	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + activator + "^" + n + ")";
+	    	    		 bottom = "(" + K + "^" + n + "+ " + activator + "^" + n + ")"; 
+	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
+	    	    	 }
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
@@ -2431,6 +2443,7 @@ public class BioModel extends CoreObservable{
 	    			 alpha_para.setId(alpha);
 	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
 	    			 beta_para.setId(beta);
+	    			 
 	    			 
 	    			 if (celloParameters.get(repressor) != null) {
 	    				 if (celloParameters.get(repressor).get(0) != null && !celloParameters.get(repressor).get(0).equals("")) {
@@ -2481,39 +2494,85 @@ public class BioModel extends CoreObservable{
 	    			 }
 	    			 
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
+	    			 
+	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+	    	    		 
+	    	    		 String top = "";
+	    	    		 String bottom = "";
+	    	    		 
+	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + repressor + "^" + n + ")";
+	    	    		 bottom = "(" + K + "^" + n + "+ " + repressor + "^" + n + ")"; 
+	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
+	    	    	 }
 
 	    		 } else if (interaction.equals("sensor")) {
 	    			 String sensor = promInter.get(entry).toString();
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
+	    	    	 String alpha = "alpha_" + promoter;
+	    	    	 String beta = "beta_" + promoter;
 	    	    	 
 	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
 	    			 ymax_p.setId(ymax);
 	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
 	    			 ymin_p.setId(ymin);
+	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
+	    			 alpha_para.setId(alpha);
+	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
+	    			 beta_para.setId(beta);
 	    			  
 	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
 	    			 numerator = "piecewise(" + ymin + ", (" + sensor + " == 0), " + ymax + ")"; 
-	    			 	    			 
-	    			 if (celloParameters.get(sensor) != null) {
-		    			 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
-		    			 ymax_p.setValue(ymax_value);
-	    			 }
-    				 else {
-    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
-    				 }
 	    			 
 	    			 if (celloParameters.get(sensor) != null) {
-		    			 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
-		    			 ymin_p.setValue(ymin_value);
+	    				 if (celloParameters.get(sensor).get(0) != null && !celloParameters.get(sensor).get(0).equals("")) {
+	    					 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
+	    					 ymax_p.setValue(ymax_value);
+	    				 }
+	    				 else {
+	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+	    				 }
+
+	    				 if (celloParameters.get(sensor).get(1) != null && !celloParameters.get(sensor).get(1).equals("")) {
+	    					 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
+	    					 ymin_p.setValue(ymin_value);
+	    				 }
+	    				 else {
+	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+	    				 }
+	    				 if (celloParameters.get(sensor).get(2) != null && !celloParameters.get(sensor).get(2).equals("")) {
+	    					 double alpha_value = Double.parseDouble(celloParameters.get(sensor).get(2));
+	    					 alpha_para.setValue(alpha_value);
+	    				 }
+	    				 else {
+	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
+	    				 }
+	    				 if (celloParameters.get(sensor).get(3) != null && !celloParameters.get(sensor).get(3).equals("")) {
+	    					 double beta_value = Double.parseDouble(celloParameters.get(sensor).get(3));
+	    					 beta_para.setValue(beta_value);
+	    				 }
+	    				 else {
+	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
+	    				 }
 	    			 }
-    				 else {
-    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
-    				 }
 	    			 
-	    			 in_parentesis = "(" + numerator + ")"; 
+	    			 in_parentesis = "(" + numerator + ")";
+	    			 
+//	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+//	    	    		 
+//	    	    		 String top = "";
+//	    	    		 String bottom = "";
+//	    	    		 
+//	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + sensor + "^" + n + ")";
+//	    	    		 bottom = "(" + K + "^" + n + "+ " + sensor + "^" + n + ")"; 
+//	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
+//	    	    	 }
+	    			 
 	    		 }
-	    	 }
+	    	 }	    	 
+//	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+//	    		 kineticLaw += "*" + alpha + "*(" + ")";
+//	    	 }
 	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
 	     }
 		return kineticLaw;
