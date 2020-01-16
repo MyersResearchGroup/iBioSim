@@ -1020,7 +1020,7 @@ public class CelloModeling {
 		}
 		
 		// each promoter will have a set of interactions
-		Set <String> promoters = new HashSet <String>();
+		List<String> promoters = new ArrayList<>();
 		for (int i = 0; i < promoterCnt; i++) {
 			
 			// if only one promoter in TU, then promoterId will be the name of the TU
