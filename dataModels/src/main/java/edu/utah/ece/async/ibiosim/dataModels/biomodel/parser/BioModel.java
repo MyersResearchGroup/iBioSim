@@ -2035,7 +2035,7 @@ public class BioModel extends CoreObservable{
 	 * @return the reaction
 	 */
 	//TODO PEDRO createCelloSDProductionReaction
-	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, Set <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
 		
@@ -2307,7 +2307,7 @@ public class BioModel extends CoreObservable{
 	 * @return the string
 	 */
 	//TODO PEDRO createCelloProductionKineticLaw
-	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, Set<String> promoters) {
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List<String> promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
@@ -2557,6 +2557,7 @@ public class BioModel extends CoreObservable{
 	    			 }
 	    			 
 	    			 in_parentesis = "(" + numerator + ")";
+	    			 
 	    			 
 //	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
 //	    	    		 

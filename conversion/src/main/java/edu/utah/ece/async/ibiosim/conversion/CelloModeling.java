@@ -571,12 +571,21 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
+					String alpha = "";
+					String beta = "";
+					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -614,7 +623,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -625,12 +634,21 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
+					String alpha = "";
+					String beta = "";
+					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -662,7 +680,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -847,6 +865,8 @@ public class CelloModeling {
 		String K = "";
 		String ymax = "";
 		String ymin = "";
+		String alpha = "";
+		String beta = "";
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
@@ -868,6 +888,12 @@ public class CelloModeling {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin")) || Annot.get(i).getQName().toString().equals(new String("{www.dummy.org#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
 						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
+						}
 					}
 			}
 		}
@@ -877,6 +903,8 @@ public class CelloModeling {
 		CelloParameters2.add(K);
 		CelloParameters2.add(ymax);
 		CelloParameters2.add(ymin);
+		CelloParameters2.add(alpha);
+		CelloParameters2.add(beta);
 		
 		return CelloParameters2;
 	}
@@ -996,7 +1024,7 @@ public class CelloModeling {
 		}
 		
 		// each promoter will have a set of interactions
-		Set <String> promoters = new HashSet <String>();
+		List<String> promoters = new ArrayList<>();
 		for (int i = 0; i < promoterCnt; i++) {
 			
 			// if only one promoter in TU, then promoterId will be the name of the TU
