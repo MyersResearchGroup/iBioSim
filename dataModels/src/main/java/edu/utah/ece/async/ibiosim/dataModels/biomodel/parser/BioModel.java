@@ -2405,8 +2405,8 @@ public class BioModel extends CoreObservable{
 	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
+	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
 	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
-	    	    		 
 	    	    		 String top = "";
 	    	    		 String bottom = "";
 	    	    		 
@@ -2495,8 +2495,8 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
-	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
-	    	    		 
+	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
+	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) { 
 	    	    		 String top = "";
 	    	    		 String bottom = "";
 	    	    		 
@@ -2558,15 +2558,16 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 in_parentesis = "(" + numerator + ")";
 	    			 
-//	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
-//	    	    		 
-//	    	    		 String top = "";
-//	    	    		 String bottom = "";
-//	    	    		 
-//	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + sensor + "^" + n + ")";
-//	    	    		 bottom = "(" + K + "^" + n + "+ " + sensor + "^" + n + ")"; 
-//	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
-//	    	    	 }
+	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
+	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+	    	    		 
+	    	    		 String roadblock = "";
+	    	    		 String delta_function = "";
+	    	    		 
+	    	    		 delta_function = "piecewise( 0 , (" + sensor + " == 0), 1 )";
+	    	    		 roadblock = "("  + alpha + "*" + beta + ")^" + delta_function ;
+	    	    		 kineticLaw += "*(" + roadblock  + ")";
+	    	    	 }
 	    			 
 	    		 }
 	    	 }	    	 
