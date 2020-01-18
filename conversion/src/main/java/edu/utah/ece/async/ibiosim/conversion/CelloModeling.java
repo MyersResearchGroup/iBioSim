@@ -36,6 +36,7 @@ import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.sbolstandard.core2.Measure;
@@ -1019,6 +1020,24 @@ public class CelloModeling {
 			}
 		}
 		
+		//Check if there are two tandem promoters. If there are, then list them in order to have the method createCelloSDProductionReactions create roadblocking effects. 
+		List<String> ordered_promoters = new ArrayList<>();
+		if (promoterCnt == 2) {
+			if (promoter.getDefinition() != null) {
+				ComponentDefinition tuCD = promoter.getDefinition();
+				for (SequenceConstraint SC : tuCD.getSequenceConstraints()) {
+					if (SC.getRestriction().toString().equals("precedes")) {
+						ComponentDefinition object = SC.getObjectDefinition();
+						ComponentDefinition subject = SC.getSubjectDefinition();
+						if (object.getRoles().contains(SequenceOntology.PROMOTER) || object.getRoles().contains(SequenceOntology.OPERATOR) && subject.getRoles().contains(SequenceOntology.PROMOTER) || subject.getRoles().contains(SequenceOntology.OPERATOR)){
+							ordered_promoters.add(SBOL2SBML.getDisplayID(subject));
+							ordered_promoters.add(SBOL2SBML.getDisplayID(object));
+						}
+					}
+				}
+			}
+		}
+		
 		// each promoter will have a set of interactions
 		List<String> promoters = new ArrayList<>();
 		for (int i = 0; i < promoterCnt; i++) {
@@ -1102,7 +1121,7 @@ public class CelloModeling {
 			}
 		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters)));
+		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
 		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+mRNA.getId()));
 		

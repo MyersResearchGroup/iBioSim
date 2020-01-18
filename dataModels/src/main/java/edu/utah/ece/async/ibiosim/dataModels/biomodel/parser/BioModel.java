@@ -2307,11 +2307,15 @@ public class BioModel extends CoreObservable{
 	 * @return the string
 	 */
 	//TODO PEDRO createCelloProductionKineticLaw
-	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters) {
+	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
 		int promoterCnt = 0;
+		
+		if(ordered_promoters.size() == 2) {
+			promoters = ordered_promoters;
+		}
 		
 	     for (Object it : promoters.toArray()) {
 	    	 promoter = it.toString();
@@ -2406,7 +2410,7 @@ public class BioModel extends CoreObservable{
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
 	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+	    	    	 if(ordered_promoters.get(1).equals(promoter)) {
 	    	    		 String top = "";
 	    	    		 String bottom = "";
 	    	    		 
@@ -2496,7 +2500,7 @@ public class BioModel extends CoreObservable{
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
 	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) { 
+	    	    	 if(ordered_promoters.get(1).equals(promoter)) { 
 	    	    		 String top = "";
 	    	    		 String bottom = "";
 	    	    		 
@@ -2559,7 +2563,7 @@ public class BioModel extends CoreObservable{
 	    			 in_parentesis = "(" + numerator + ")";
 	    			 
 	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
+	    	    	 if(ordered_promoters.get(1).equals(promoter)) {
 	    	    		 
 	    	    		 String roadblock = "";
 	    	    		 String delta_function = "";
