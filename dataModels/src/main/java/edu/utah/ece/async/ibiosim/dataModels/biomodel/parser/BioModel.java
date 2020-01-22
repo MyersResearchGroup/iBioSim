@@ -2034,7 +2034,7 @@ public class BioModel extends CoreObservable{
 	 * @param promoterInteractions the promoter interactions
 	 * @return the reaction
 	 */
-	//TODO PEDRO createCelloSDProductionReaction
+
 	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
@@ -2167,7 +2167,7 @@ public class BioModel extends CoreObservable{
 	 * @param dimensions the dimensions
 	 * @return the reaction
 	 */
-	//TODO PEDRO createCelloTFProductionReaction
+
 	public Reaction createCelloTFProductionReactions(Species mRNA, String rxnID, List<Participation> products, HashMap<String, List<String>> celloParameters, String kTFdegrad, String ko,
 			String kb, String KoStr, String KaoStr, boolean onPort, String[] dimensions) {
 		
@@ -2237,7 +2237,6 @@ public class BioModel extends CoreObservable{
 	 * @param dimensions the dimensions
 	 * @return the reaction is the Degradation Reaction being created for this species
 	 */
-	//TODO PEDRO createCelloDegradationReaction
 	public Reaction createCelloDegradationReaction(String s, double kdegrad, boolean onPort, String[] dimensions) {
 		//createDegradationDefaultParameters();
 		
@@ -2306,7 +2305,6 @@ public class BioModel extends CoreObservable{
 	 * @param promoters the promoters
 	 * @return the string
 	 */
-	//TODO PEDRO createCelloProductionKineticLaw
 	public static String createCelloProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;

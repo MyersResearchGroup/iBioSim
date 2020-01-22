@@ -722,7 +722,6 @@ public class CelloModeling {
 	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
 	 */
 	
-	//TODO PEDRO hasCelloParameters
 	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
 		
 		//Initialize the parameters we are looking for
