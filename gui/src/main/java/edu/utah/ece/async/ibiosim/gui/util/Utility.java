@@ -1011,7 +1011,7 @@ public class Utility {
 		
 		if (value == 0) {
 			try {
-				GitHub github = GitHub.connectUsingPassword("buggsley", "ibiosim3280");
+				GitHub github = new GitHubBuilder().withOauthToken("79da2a9510ebdfa5fa2a80416e1598b2ad05190f").build();
 				GHRepository iBioSimRepository = github.getRepository("MyersResearchGroup/iBioSim");
 				GHIssueBuilder issue = iBioSimRepository.createIssue(bugSubject.getText().trim());
 				issue.body(System.getProperty("software.running") + "\n\nOperating system: " + 
