@@ -45,6 +45,7 @@ import javax.swing.JTextField;
 import org.kohsuke.github.GHIssueBuilder;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 
 import edu.utah.ece.async.ibiosim.dataModels.util.GlobalConstants;
 import edu.utah.ece.async.ibiosim.gui.Gui;
@@ -1012,7 +1013,8 @@ public class Utility {
 		if (value == 0) {
 			try {
                 // Split the token in two to fool GitHub
-				GitHub github = new GitHubBuilder().withOauthToken("79da2a9510ebdfa5fa2a" + "80416e1598b2ad05190f").build(); 
+				GitHub github = GitHub.connectUsingPassword("buggsley", "ibiosim3280");
+				//GitHub github = new GitHubBuilder().withOAuthToken("79da2a9510ebdfa5fa2a" + "80416e1598b2ad05190f").build(); 
 				GHRepository iBioSimRepository = github.getRepository("MyersResearchGroup/iBioSim");
 				GHIssueBuilder issue = iBioSimRepository.createIssue(bugSubject.getText().trim());
 				issue.body(System.getProperty("software.running") + "\n\nOperating system: " + 
