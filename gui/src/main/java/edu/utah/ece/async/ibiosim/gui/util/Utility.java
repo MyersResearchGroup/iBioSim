@@ -1025,6 +1025,7 @@ public class Utility {
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(Gui.frame, "Bug report failed, please submit manually.",
 						"Bug Report Failed", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
 				command = command + " http://www.github.com/MyersResearchGroup/iBioSim/issues";
