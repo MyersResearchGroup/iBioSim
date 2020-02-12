@@ -2309,7 +2309,6 @@ public class BioModel extends CoreObservable{
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
-		int promoterCnt = 0;
 		
 		if(ordered_promoters.size() == 2) {
 			promoters = ordered_promoters;
@@ -2317,7 +2316,6 @@ public class BioModel extends CoreObservable{
 		
 	     for (Object it : promoters.toArray()) {
 	    	 promoter = it.toString();
-	    	 promoterCnt++;
 	    	 
 	    	 String numerator = "";
 	    	 String denominator = "";
@@ -2407,15 +2405,17 @@ public class BioModel extends CoreObservable{
 	    			 }
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
-	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(ordered_promoters.get(1).equals(promoter)) {
-	    	    		 String top = "";
-	    	    		 String bottom = "";
-	    	    		 
-	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + activator + "^" + n + ")";
-	    	    		 bottom = "(" + K + "^" + n + "+ " + activator + "^" + n + ")"; 
-	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
-	    	    	 }
+	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
+	    			 if(ordered_promoters.size() == 2) {
+	    				 if(ordered_promoters.get(1).equals(promoter)) {
+	    					 String top = "";
+	    					 String bottom = "";
+
+	    					 top = "(" + K + "^" + n + "+ " + beta + "*" + activator + "^" + n + ")";
+	    					 bottom = "(" + K + "^" + n + "+ " + activator + "^" + n + ")"; 
+	    					 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
+	    				 }
+	    			 }
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
@@ -2497,15 +2497,17 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
-	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(ordered_promoters.get(1).equals(promoter)) { 
-	    	    		 String top = "";
-	    	    		 String bottom = "";
-	    	    		 
-	    	    		 top = "(" + K + "^" + n + "+ " + beta + "*" + repressor + "^" + n + ")";
-	    	    		 bottom = "(" + K + "^" + n + "+ " + repressor + "^" + n + ")"; 
-	    	    		 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
-	    	    	 }
+	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
+	    			 if(ordered_promoters.size() == 2) {
+	    				 if(ordered_promoters.get(1).equals(promoter)) { 
+	    					 String top = "";
+	    					 String bottom = "";
+
+	    					 top = "(" + K + "^" + n + "+ " + beta + "*" + repressor + "^" + n + ")";
+	    					 bottom = "(" + K + "^" + n + "+ " + repressor + "^" + n + ")"; 
+	    					 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
+	    				 }
+	    			 }
 
 	    		 } else if (interaction.equals("sensor")) {
 	    			 String sensor = promInter.get(entry).toString();
@@ -2560,16 +2562,18 @@ public class BioModel extends CoreObservable{
 	    			 
 	    			 in_parentesis = "(" + numerator + ")";
 	    			 
-	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters. 
-	    	    	 if(ordered_promoters.get(1).equals(promoter)) {
-	    	    		 
-	    	    		 String roadblock = "";
-	    	    		 String delta_function = "";
-	    	    		 
-	    	    		 delta_function = "piecewise( 0 , (" + sensor + " == 0), 1 )";
-	    	    		 roadblock = "("  + alpha + "*" + beta + ")^" + delta_function ;
-	    	    		 kineticLaw += "*(" + roadblock  + ")";
-	    	    	 }
+	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
+	    			 if(ordered_promoters.size() == 2) {
+	    				 if(ordered_promoters.get(1).equals(promoter)) {
+
+	    					 String roadblock = "";
+	    					 String delta_function = "";
+
+	    					 delta_function = "piecewise( 0 , (" + sensor + " == 0), 1 )";
+	    					 roadblock = "("  + alpha + "*" + beta + ")^" + delta_function ;
+	    					 kineticLaw += "*(" + roadblock  + ")";
+	    				 }
+	    			 }
 	    			 
 	    		 }
 	    	 }	    	 
