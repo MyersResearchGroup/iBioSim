@@ -36,6 +36,7 @@ import org.sbolstandard.core2.RefinementType;
 import org.sbolstandard.core2.SBOLConversionException;
 import org.sbolstandard.core2.SBOLDocument;
 import org.sbolstandard.core2.SBOLValidationException;
+import org.sbolstandard.core2.SequenceConstraint;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
 import org.sbolstandard.core2.Measure;
@@ -551,12 +552,21 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
+					String alpha = "";
+					String beta = "";
+					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -588,7 +598,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -599,12 +609,21 @@ public class CelloModeling {
 					List<Annotation> Annot = interact.getAnnotations();
 					String ymax = "";
 					String ymin = "";
+					String alpha = "";
+					String beta = "";
+					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
 							ymax = Annot.get(i).getStringValue();
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -636,7 +655,7 @@ public class CelloModeling {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin));
+								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -703,7 +722,6 @@ public class CelloModeling {
 	 * @return the hash map with all the parameters found. If there are no Cello parameters, it will return empty "" strings
 	 */
 	
-	//TODO PEDRO hasCelloParameters
 	private static HashMap<String, String> hasCelloParameters(FunctionalComponent promoter){
 		
 		//Initialize the parameters we are looking for
@@ -823,6 +841,8 @@ public class CelloModeling {
 		String K = "";
 		String ymax = "";
 		String ymin = "";
+		String alpha = "";
+		String beta = "";
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
@@ -844,6 +864,12 @@ public class CelloModeling {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
 							ymin = Annot.get(i).getStringValue();
 						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+							alpha = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+							beta = Annot.get(i).getStringValue();
+						}
 					}
 			}
 		}
@@ -853,6 +879,8 @@ public class CelloModeling {
 		CelloParameters2.add(K);
 		CelloParameters2.add(ymax);
 		CelloParameters2.add(ymin);
+		CelloParameters2.add(alpha);
+		CelloParameters2.add(beta);
 		
 		return CelloParameters2;
 	}
@@ -991,8 +1019,26 @@ public class CelloModeling {
 			}
 		}
 		
+		//Check if there are two tandem promoters. If there are, then list them in order to have the method createCelloSDProductionReactions create roadblocking effects. 
+		List<String> ordered_promoters = new ArrayList<>();
+		if (promoterCnt == 2) {
+			if (promoter.getDefinition() != null) {
+				ComponentDefinition tuCD = promoter.getDefinition();
+				for (SequenceConstraint SC : tuCD.getSequenceConstraints()) {
+					if (SC.getRestriction().toString().equals("precedes")) {
+						ComponentDefinition object = SC.getObjectDefinition();
+						ComponentDefinition subject = SC.getSubjectDefinition();
+						if (object.getRoles().contains(SequenceOntology.PROMOTER) || object.getRoles().contains(SequenceOntology.OPERATOR) && subject.getRoles().contains(SequenceOntology.PROMOTER) || subject.getRoles().contains(SequenceOntology.OPERATOR)){
+							ordered_promoters.add(SBOL2SBML.getDisplayID(subject));
+							ordered_promoters.add(SBOL2SBML.getDisplayID(object));
+						}
+					}
+				}
+			}
+		}
+		
 		// each promoter will have a set of interactions
-		Set <String> promoters = new HashSet <String>();
+		List<String> promoters = new ArrayList<>();
 		for (int i = 0; i < promoterCnt; i++) {
 			
 			// if only one promoter in TU, then promoterId will be the name of the TU
@@ -1074,7 +1120,7 @@ public class CelloModeling {
 			}
 		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters)));
+		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
 		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+mRNA.getId()));
 		
