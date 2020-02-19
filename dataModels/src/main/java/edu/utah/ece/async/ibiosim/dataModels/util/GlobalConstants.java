@@ -379,4 +379,6 @@ public class GlobalConstants {
 	public static final double CELLO_PARAMETER_YMIN = 0.0464125;
 	public static final double CELLO_PARAMETER_ALPHA = 0.408417245;
 	public static final double CELLO_PARAMETER_BETA = 0.432373669;
+	public static final double CELLO_TAU_ON = 1.7;
+	public static final double CELLO_TAU_OFF = 4.044444444;
 }

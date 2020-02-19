@@ -4616,7 +4616,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-				//TODO PEDRO revisit what boolean value to input here
 				generateSBMLFromSBOL(selection, root, false);
 				// TODO: update to attachment class
 				String sedmlFile = null;
@@ -4750,7 +4749,6 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 			String filePath = filename.trim();
 			org.sbolstandard.core2.SBOLDocument inputSBOLDoc = SBOLReader.read(new FileInputStream(filePath));
 			inputSBOLDoc.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-			//TODO PEDRO revisit what boolean value to input here
 			int numGeneratedSBML = generateSBMLFromSBOL(inputSBOLDoc, filePath, false);
 			getSBOLDocument().createCopy(inputSBOLDoc);
 			writeSBOLDocument();

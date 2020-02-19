@@ -2037,6 +2037,7 @@ public class BioModel extends CoreObservable{
 
 	public Reaction createCelloSDProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
+		//TODO PEDRO: Change these values too
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
 		
 		
@@ -2293,6 +2294,122 @@ public class BioModel extends CoreObservable{
 			}
 		}
 		return reaction;
+	}
+	
+	public Reaction createFlowProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+		
+		//TODO PEDRO: Change these values too
+		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
+		
+		
+		//Check if rxnID is unique, if not, add something to it
+		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
+		
+		//createProductionDefaultParameters();
+		
+		Reaction r = sbml.getModel().getReaction(reactionID);
+		KineticLaw k = null;
+		
+		if (mRNA==null) {
+			mRNA = sbml.getModel().createSpecies();
+			//reaction id + mRNA
+			mRNA.setId(reactionID + "_mRNA");
+		}
+		
+		if (r == null) {
+			
+			r = sbml.getModel().createReaction();
+			r.setId(reactionID);
+			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
+			r.setReversible(false);
+			
+			// Make the DNA a promoter for the mRNA production
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(TU);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			
+			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+			for (String promoter : promoters) {
+				if (promoterInteractions.containsKey(promoter)) {
+					for (String modifi : promoterInteractions.get(promoter).keySet()) {
+						if (modifi.equals("sensor")) {
+							ModifierSpeciesReference input = r.createModifier();
+							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
+								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
+								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								smallMolecule.setCompartment(r.getCompartment());
+								smallMolecule.setHasOnlySubstanceUnits(true);
+								smallMolecule.setBoundaryCondition(true);
+								smallMolecule.setConstant(false);
+								smallMolecule.setInitialAmount(0.0);
+								
+								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								
+								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								
+								/*mRNA.setInitialAmount(0.0);
+								mRNA.setBoundaryCondition(false);
+								mRNA.setConstant(false);
+								mRNA.setHasOnlySubstanceUnits(true);
+								mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);*/
+																								
+								input.setSpecies(smallMolecule);
+								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							} else {
+							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							}
+						}
+					}
+				}
+			}
+			
+			mRNA.setCompartment(r.getCompartment());
+			mRNA.setInitialAmount(0.0);
+			mRNA.setBoundaryCondition(false);
+			mRNA.setConstant(false);
+			mRNA.setHasOnlySubstanceUnits(true);
+			mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
+			
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(mRNA.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
+			product.setStoichiometry(1.0);
+			product.setConstant(true);
+			
+			k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kdegrad");
+			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
+			p.setValue(GlobalConstants.k_SD_DIM_S);
+		} else {
+			// return r? or search for globalconstantCelloParameters? 
+			// or come here only when passing n, k, yoff and yon?
+		}
+		
+		//produce cello model kinetic law for mRNA production
+		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			}
+		}
+		return r;
 	}
 	
 	/**
