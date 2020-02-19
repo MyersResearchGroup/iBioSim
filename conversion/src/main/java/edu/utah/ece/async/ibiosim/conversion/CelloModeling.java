@@ -154,6 +154,7 @@ public class CelloModeling {
 		
 		for (Interaction interact : resultMD.getInteractions()) {
 			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {
+				//TODO PEDRO: add generateFlowDegradationRxn
 				generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
 				
 			} else if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
@@ -1229,7 +1230,7 @@ public class CelloModeling {
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
 		gate_flow.setId("Y_" + rxnID);
 		
-		Reaction SDproductionRxn = targetModel.createCelloSDProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
+		Reaction SDproductionRxn = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
 		//targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
 		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(gate_flow, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
@@ -1262,7 +1263,7 @@ public class CelloModeling {
 			}
 		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
+		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
 		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+gate_flow.getId()));
 		
