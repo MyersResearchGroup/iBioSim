@@ -71,7 +71,10 @@ public class CelloModeling {
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
-
+		
+		//TODO PEDRO: change this to be an argument of the method
+		boolean FlowModel = true;
+		
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -125,14 +128,6 @@ public class CelloModeling {
 				}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generateTUSpecies(comp, sbolDoc, targetModel);
-				// If CelloModel, generate only one species for each TU
-//				if (CelloModel) {
-//					generateTUSpecies(comp, sbolDoc, targetModel);
-//				}
-//				// else, we are in normal model generation, which creates one species for each promoter in the TU
-//				else {
-//					SBOL2SBML.generatePromoterSpecies(comp, sbolDoc, targetModel);
-//				}
 				if (SBOL2SBML.isInputComponent(comp)) {
 					SBOL2SBML.generateInputPort(comp, targetModel);
 				} else if (SBOL2SBML.isOutputComponent(comp)){
@@ -262,30 +257,17 @@ public class CelloModeling {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-				
-//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
-//				if (CelloModel) {
-//					//go to the new generateProductionRxn method
-//					System.out.println("you are in new method call");
-//					
-//					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
-//					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-//					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
-//				}
-//				//else call the normal model generating method
-//				else {
-//					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
-//				}
+				if (FlowModel) {
+					generateFlowProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+				} else {
+					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+				}
 			}
 		}
 				
@@ -419,31 +401,7 @@ public class CelloModeling {
 				SBOL2SBML.annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
 			}
 		
-	}
-	
-//	/**
-//	 * This method will remove all Sensor proteins and Complexes species from the SBML document. This is used because Cello modeling
-//	 * doesn't use or model Complex formation between sensor proteins and small molecule inputs
-//	 *
-//	 * @author Pedro Fontanarrosa
-//	 * @param sensorMolecules the sensor proteins and complexes to be removed
-//	 * @param targetModel the target model where the species will be removed
-//	 */
-//	private static void removeSensorProAndMole(HashMap<String, String> sensorMolecules, BioModel targetModel) {
-//		
-//		for (String species : sensorMolecules.keySet()) {
-//			if (targetModel.getSBMLDocument().getModel().containsSpecies(species)) {
-//				targetModel.getSBMLDocument().getModel().removeSpecies(species);
-//				//targetModel.getSBMLCompModel().getListOfPorts();
-//				//targetModel.getSBMLCompModel().getPortCount();
-///*				Port port = targetModel.getPortByIdRef(species);
-//				if (!port.equals(null)) {
-//					targetModel.getSBMLCompModel().removePort(port);
-//				}*/
-//			}	
-//		}
-//	}
-	
+	}	
 
 	/**
 	 * This method will return true, if the MD input is a SensorGate production Module Definition, in which the model should skip the production of 
