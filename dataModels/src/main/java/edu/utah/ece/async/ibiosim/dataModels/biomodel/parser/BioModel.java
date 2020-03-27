@@ -2379,10 +2379,7 @@ public class BioModel extends CoreObservable{
 			product.setConstant(true);
 			
 			k = r.createKineticLaw();
-			LocalParameter p = k.createLocalParameter();
-			p.setId("kdegrad");
-			//use the rate of degradation of mRNA (SD), following Hamid's model using Cello parameters
-			p.setValue(GlobalConstants.k_SD_DIM_S);
+
 		} else {
 			// return r? or search for globalconstantCelloParameters? 
 			// or come here only when passing n, k, yoff and yon?

@@ -253,8 +253,14 @@ public class SBOL2SBML {
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc, boolean CelloModel) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
 		
+		//TODO PEDRO: change this to be an argument of the GUI
+		
+//		if (CelloModel) {
+//			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
+//		}
+		
 		if (CelloModel) {
-			return CelloModeling.generateModel(projectDirectory, moduleDef, sbolDoc);
+			return FlowModel.generateModel(projectDirectory, moduleDef, sbolDoc);
 		}
 		
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
