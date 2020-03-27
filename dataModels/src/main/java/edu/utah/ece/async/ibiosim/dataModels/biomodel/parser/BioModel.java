@@ -2294,7 +2294,7 @@ public class BioModel extends CoreObservable{
 		return reaction;
 	}
 	
-	public Reaction createFlowProductionReactions(Species mRNA, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
 		//TODO PEDRO: Change these values too
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
@@ -2303,17 +2303,16 @@ public class BioModel extends CoreObservable{
 		//Check if rxnID is unique, if not, add something to it
 		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
 		
-		//createProductionDefaultParameters();
 		
 		Reaction r = sbml.getModel().getReaction(reactionID);
 		
 		//TODO PEDRO delete this once I don't have a protein? 2
 		KineticLaw k = null;
 		
-		if (mRNA==null) {
-			mRNA = sbml.getModel().createSpecies();
+		if (flow==null) {
+			flow = sbml.getModel().createSpecies();
 			//reaction id + mRNA
-			mRNA.setId(reactionID + "_mRNA");
+			flow.setId(reactionID);
 		}
 		
 		if (r == null) {
@@ -2367,16 +2366,16 @@ public class BioModel extends CoreObservable{
 				}
 			}
 			
-			mRNA.setCompartment(r.getCompartment());
-			mRNA.setInitialAmount(0.0);
-			mRNA.setBoundaryCondition(false);
-			mRNA.setConstant(false);
-			mRNA.setHasOnlySubstanceUnits(true);
-			mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
+			flow.setCompartment(r.getCompartment());
+			flow.setInitialAmount(0.0);
+			flow.setBoundaryCondition(false);
+			flow.setConstant(false);
+			flow.setHasOnlySubstanceUnits(true);
+			flow.setSBOTerm(GlobalConstants.SBO_MRNA);
 			
 			SpeciesReference product = r.createProduct();
-			product.setSpecies(mRNA.getId());
-			SBMLutilities.copyDimensionsToEdgeIndex(r, mRNA, product, "species");
+			product.setSpecies(flow.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
 			
@@ -2737,7 +2736,9 @@ public class BioModel extends CoreObservable{
 	    			 String activator = promInter.get(entry).toString();
 	    			 activator = activator.replace("_protein", "");
 	    			 String K = "K_" + activator;
+	    			 K = K.replace("_protein", "");
 	    			 String n = "n_" + activator;
+	    			 n = n.replace("_protein", "");
 	    			 
 	    			 String temp = "("+ K +"/" + activator + ")^" + n;
 	    			 denominator += temp;
@@ -2815,9 +2816,10 @@ public class BioModel extends CoreObservable{
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
-	    			 repressor = repressor.replace("_protein", "");
 	    			 String K = "K_" + repressor;
+	    			 K = K.replace("_protein", "");
 	    			 String n = "n_" + repressor;
+	    			 n = n.replace("_protein", "");
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
 	    	    	 String alpha = "alpha_" + promoter;
