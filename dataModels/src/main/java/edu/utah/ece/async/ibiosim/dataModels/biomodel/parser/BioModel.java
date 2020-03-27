@@ -2306,6 +2306,8 @@ public class BioModel extends CoreObservable{
 		//createProductionDefaultParameters();
 		
 		Reaction r = sbml.getModel().getReaction(reactionID);
+		
+		//TODO PEDRO delete this once I don't have a protein? 2
 		KineticLaw k = null;
 		
 		if (mRNA==null) {
@@ -2378,6 +2380,7 @@ public class BioModel extends CoreObservable{
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
 			
+			//TODO PEDRO delete this once I don't have a protein? 2
 			k = r.createKineticLaw();
 
 		} else {
@@ -2732,6 +2735,7 @@ public class BioModel extends CoreObservable{
 	    	    	 denominator = "1 + ";
 	    	    	 
 	    			 String activator = promInter.get(entry).toString();
+	    			 activator = activator.replace("_protein", "");
 	    			 String K = "K_" + activator;
 	    			 String n = "n_" + activator;
 	    			 
@@ -2811,6 +2815,7 @@ public class BioModel extends CoreObservable{
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
+	    			 repressor = repressor.replace("_protein", "");
 	    			 String K = "K_" + repressor;
 	    			 String n = "n_" + repressor;
 	    	    	 String ymax = "ymax_" + promoter;
