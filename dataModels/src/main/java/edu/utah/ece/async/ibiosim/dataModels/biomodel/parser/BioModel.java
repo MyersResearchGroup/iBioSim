@@ -2327,7 +2327,7 @@ public class BioModel extends CoreObservable{
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(TU);
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-			
+						
 			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
 			for (String promoter : promoters) {
 				if (promoterInteractions.containsKey(promoter)) {
@@ -2361,6 +2361,31 @@ public class BioModel extends CoreObservable{
 							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
 							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 							}
+						} else {
+							ModifierSpeciesReference input = r.createModifier();
+							
+							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
+							String promotFlow = promoterInteractions.get(promoter).get(modifi);
+							promotFlow = promotFlow.replace("_protein", "");
+							promotFlow = "Y_" + promotFlow;
+							inputFlow.setId(promotFlow);
+							inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+							inputFlow.setCompartment(r.getCompartment());
+							inputFlow.setHasOnlySubstanceUnits(true);
+							inputFlow.setBoundaryCondition(true);
+							inputFlow.setConstant(false);
+							inputFlow.setInitialAmount(0.0);
+							
+							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+							
+							createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
+							
+																							
+							input.setSpecies(inputFlow);
+							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+							
+//							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+//							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 						}
 					}
 				}
@@ -2371,13 +2396,17 @@ public class BioModel extends CoreObservable{
 			flow.setBoundaryCondition(false);
 			flow.setConstant(false);
 			flow.setHasOnlySubstanceUnits(true);
-			flow.setSBOTerm(GlobalConstants.SBO_MRNA);
+			flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 			
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(flow.getId());
 			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, product, "species");
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
+			
+			createDirPort(flow.getId(), GlobalConstants.OUTPUT);
+			
+			
 			
 			//TODO PEDRO delete this once I don't have a protein? 2
 			k = r.createKineticLaw();
