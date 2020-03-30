@@ -20,6 +20,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
@@ -316,10 +317,31 @@ public class FlowModel {
 				-1, -1, 0, 0, md5);
 		SBOL2SBML.annotateSubModel(targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)), subModule);
 		
+		// This portion of the code creates replacements for input molecules
 		for (FunctionalComponent fc : moduleDef.getFunctionalComponents()) {
 			ComponentDefinition ligand = fc.getDefinition();
 			if (SBOL2SBML.isSmallMoleculeDefinition(ligand)) {
 				generateReplacement(fc, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+			}
+		}
+		
+		// This portion of the method creates SBML species for promoter fluxes (for example "Y_PhlF"). This is because they
+		// are not created for the top level model. It then creates the appropriate replacements.
+		for (String spe : targetModel.getSpecies()) {
+			if (spe.contains("_protein")) {
+				spe = spe.replace("_protein", "");
+				spe = "Y_" + spe;
+				Species pe = targetModel.getSBMLDocument().getModel().getSpecies(spe);
+				if (pe == null) {
+					targetModel.createSpecies(spe, -1, -1);
+					pe = targetModel.getSBMLDocument().getModel().getSpecies(spe);
+					targetModel.createDirPort(spe, GlobalConstants.OUTPUT);
+					//Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(spe);
+					pe.setBoundaryCondition(true);
+					pe.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+					//generateReplacementForFlow(pe, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+				}
+				generateReplacementForFlow(pe, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 			}
 		}
 		
@@ -391,8 +413,8 @@ public class FlowModel {
 				SBOL2SBML.annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
 			}
 		
-	}	
-
+	}
+	
 	/**
 	 * This method will return true, if the MD input is a SensorGate production Module Definition, in which the model should skip the production of 
 	 * a model of this. If it is, it returns true and the model generator doesn't generate a subTargetModel for it
@@ -898,6 +920,59 @@ public class FlowModel {
 		//SBOL2SBML.annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
 	}
 
+	/**
+	 * Creates the appropriate replacements for promoter fluxes in the new Flow Model of Cello.
+	 * 
+	 * @author Pedro Fontanarrosa
+	 * @param mapping - The SBOL MapsTo to be converted to SBML replacement.  
+	 * @param subModule - The SBOL Module that is considered to be the remote model in the replacement object.
+	 * @param moduleDef - The SBOL ModuleDefinition that is considered to be the local model in the replacement object.
+	 * @param sbolDoc - The SBOL Document that contains the SBOL objects to convert to SBML replacement.
+	 * @param subTargetModel - The SBML remote model that contain the SBML replacement.
+	 * @param targetModel - The SBML local model that contain the SBML replacement.
+	 */
+	private static void generateReplacementForFlow(Species ligand, Module subModule, ModuleDefinition moduleDef, 
+			SBOLDocument sbolDoc, BioModel subTargetModel, BioModel targetModel) {
+		ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI()); 
+		//FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(ligand.getDisplayId());
+		//FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(ligand.getDisplayId());
+		
+		
+		Species localSBMLSpecies = targetModel.getSBMLDocument().getModel().getSpecies(ligand.getId());
+		Species remoteSBMLSpecies = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)).getModel().getSpecies(ligand.getId());
+		//Species remoteSBMLSpecies = subTargetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(localSpecies));
+		//Species remoteSBMLSpecies = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)).get
+		
+		if (!localSBMLSpecies.getId().equals("aTc") && !localSBMLSpecies.getId().equals("IPTG") && !localSBMLSpecies.getId().equals("Ara")) {
+		
+		//String port = "input__" + SBOL2SBML.getDisplayID(localSpecies);
+		//Port port = targetModel.getPortByIdRef(remoteSBMLSpecies.getId());
+		Port port = subTargetModel.getPortByIdRef(remoteSBMLSpecies.getId());
+		
+		if (port != null) {
+			Submodel subModel = targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule));
+			
+			if (port.getId().contains("input__")) {
+				SBMLutilities.addReplacement(localSBMLSpecies, subModel, SBOL2SBML.getDisplayID(subModule), port.getId(), "(none)", 
+						new String[]{""}, new String[]{""}, new String[]{""}, new String[]{""}, false);
+			}
+			if (port.getId().contains("output__")) {
+				SBMLutilities.addReplacedBy(localSBMLSpecies, SBOL2SBML.getDisplayID(subModule), port.getId(), new String[]{""}, 
+						new String[]{""}, new String[]{""}, new String[]{""});
+			}
+		}
+
+//		SBMLutilities.addReplacement(localSBMLSpecies, subModel, SBOL2SBML.getDisplayID(subModule), port.getId(), "(none)", 
+//				new String[]{""}, new String[]{""}, new String[]{""}, new String[]{""}, false);
+//		SBMLutilities.addReplacedBy(localSBMLSpecies, getDisplayID(subModule), port.getId(), new String[]{""}, 
+//				new String[]{""}, new String[]{""}, new String[]{""});
+		}
+
+		// Annotate SBML replacement with SBOL maps-to
+		//CompSBasePlugin compSBML = SBMLutilities.getCompSBasePlugin(localSBMLSpecies);
+		//SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), 1);
+		//SBOL2SBML.annotateReplacement(compSBML.getReplacedElement(compSBML.getNumReplacedElements() - 1), mapping);
+	}
 
 
 	/**

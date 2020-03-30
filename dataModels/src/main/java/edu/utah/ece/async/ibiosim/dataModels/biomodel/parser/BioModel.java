@@ -2345,15 +2345,9 @@ public class BioModel extends CoreObservable{
 								smallMolecule.setInitialAmount(0.0);
 								
 								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
-								
-								createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
-								
-								/*mRNA.setInitialAmount(0.0);
-								mRNA.setBoundaryCondition(false);
-								mRNA.setConstant(false);
-								mRNA.setHasOnlySubstanceUnits(true);
-								mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);*/
-																								
+								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+																																
 								input.setSpecies(smallMolecule);
 								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 							} else {
@@ -2378,7 +2372,7 @@ public class BioModel extends CoreObservable{
 							
 							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
 							
-							createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
+							targetModel.createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
 							
 																							
 							input.setSpecies(inputFlow);
@@ -2404,8 +2398,7 @@ public class BioModel extends CoreObservable{
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
 			
-			createDirPort(flow.getId(), GlobalConstants.OUTPUT);
-			
+			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
 			
 			
 			//TODO PEDRO delete this once I don't have a protein? 2
