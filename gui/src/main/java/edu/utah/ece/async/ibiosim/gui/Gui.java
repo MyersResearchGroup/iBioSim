@@ -1516,7 +1516,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				String theFile = "";
 				Preferences biosimrc = Preferences.userRoot();
 				String command = biosimrc.get("biosim.general.browser", "");
-				theFile = "http://www.async.ece.utah.edu/tools/BioSim/docs/iBioSim.html";
+				theFile = "https://myersresearchgroup.github.io/ibiosim.github.io/";
 				log.addText("Executing:\n" + command + " " + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				exec.exec(command + " " + theFile);
