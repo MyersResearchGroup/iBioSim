@@ -3896,6 +3896,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		// if the add compartment button is clicked
 		// if the add parameters button is clicked
 		// if the add reactions button is clicked
+		Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selectedReaction);
 		if (e.getSource() == addReac) {
 			reactionsEditor(bioModel, "Add", "", false);
 		}
@@ -3927,7 +3928,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		}
 		// if the add reactants button is clicked
 		else if (e.getSource() == addReactant) {
-			reactantsEditor(bioModel, "Add", "", null, false, null);
+			reactantsEditor(bioModel, "Add", "", null, false, reaction);
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
@@ -3935,7 +3936,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, null);
+			reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3945,7 +3946,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		}
 		// if the add products button is clicked
 		else if (e.getSource() == addProduct) {
-			productsEditor(bioModel, "Add", "", null, false, null);
+			productsEditor(bioModel, "Add", "", null, false, reaction);
 		}
 		// if the edit products button is clicked
 		else if (e.getSource() == editProduct) {
@@ -3953,7 +3954,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, null);
+			productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -3963,7 +3964,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 		}
 		// if the add modifiers button is clicked
 		else if (e.getSource() == addModifier) {
-			modifiersEditor(bioModel, "Add", "", null, false, null);
+			modifiersEditor(bioModel, "Add", "", null, false, reaction);
 		}
 		// if the edit modifiers button is clicked
 		else if (e.getSource() == editModifier) {
@@ -3971,7 +3972,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 				JOptionPane.showMessageDialog(Gui.frame, "No modifier selected.", "Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, null);
+			modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 		}
 		// if the remove modifiers button is clicked
 		else if (e.getSource() == removeModifier) {
@@ -4023,6 +4024,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selectedReaction);
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == reactions) {
 				if (reactions.getSelectedIndex() == -1) {
@@ -4042,7 +4044,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, null);
+					reactantsEditor(bioModel, "OK", ((String) reactants.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 				}
@@ -4053,7 +4055,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, null);
+					productsEditor(bioModel, "OK", ((String) products.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 				}
@@ -4064,7 +4066,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 						JOptionPane.showMessageDialog(Gui.frame, "No modifier selected.", "Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, null);
+					modifiersEditor(bioModel,"OK", ((String) modifiers.getSelectedValue()).split("\\[| ")[0], null, false, reaction);
 				}
 			}
 		}
