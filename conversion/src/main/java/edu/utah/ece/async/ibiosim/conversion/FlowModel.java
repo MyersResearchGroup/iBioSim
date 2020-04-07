@@ -16,12 +16,18 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbml.libsbml.Rule;
 import org.sbolstandard.core2.Annotation;
 import org.sbolstandard.core2.Component;
 import org.sbolstandard.core2.ComponentDefinition;
@@ -117,13 +123,23 @@ public class FlowModel {
 				continue;
 			}
 			else 
-			if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
-				SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
-				if (SBOL2SBML.isInputComponent(comp)) {
-					SBOL2SBML.generateInputPort(comp, targetModel);
-				} else if (SBOL2SBML.isOutputComponent(comp)){
-					SBOL2SBML.generateOutputPort(comp, targetModel);
-				}
+				if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
+					SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
+					if (SBOL2SBML.isInputComponent(comp)) {
+						SBOL2SBML.generateInputPort(comp, targetModel);
+					} else if (SBOL2SBML.isOutputComponent(comp)){
+						SBOL2SBML.generateOutputPort(comp, targetModel);
+					}
+//					if (SBOL2SBML.isProteinComponent(comp, sbolDoc)) {
+//						continue;
+//					} else {
+//						SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
+//						if (SBOL2SBML.isInputComponent(comp)) {
+//							SBOL2SBML.generateInputPort(comp, targetModel);
+//						} else if (SBOL2SBML.isOutputComponent(comp)){
+//							SBOL2SBML.generateOutputPort(comp, targetModel);
+//						}
+//					}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generateTUSpecies(comp, sbolDoc, targetModel);
 				if (SBOL2SBML.isInputComponent(comp)) {
@@ -147,8 +163,8 @@ public class FlowModel {
 		
 		for (Interaction interact : resultMD.getInteractions()) {
 			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {
-				//TODO PEDRO: add generateFlowDegradationRxn
-				generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
+				//TODO PEDRO: delete this?
+				//generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
 				
 			} else if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
@@ -329,6 +345,7 @@ public class FlowModel {
 		// are not created for the top level model. It then creates the appropriate replacements.
 		for (String spe : targetModel.getSpecies()) {
 			if (spe.contains("_protein")) {
+				String remove_species = spe;
 				spe = spe.replace("_protein", "");
 				spe = "Y_" + spe;
 				Species pe = targetModel.getSBMLDocument().getModel().getSpecies(spe);
@@ -337,7 +354,7 @@ public class FlowModel {
 					pe = targetModel.getSBMLDocument().getModel().getSpecies(spe);
 					targetModel.createDirPort(spe, GlobalConstants.OUTPUT);
 					//Species sbmlSpecies = targetModel.getSBMLDocument().getModel().getSpecies(spe);
-					pe.setBoundaryCondition(true);
+					pe.setBoundaryCondition(false);
 					pe.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 					//generateReplacementForFlow(pe, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
 				}
@@ -347,14 +364,26 @@ public class FlowModel {
 		
 		for (MapsTo mapping : subModule.getMapsTos()) 
 			if (SBOL2SBML.isIOMapping(mapping, subModule, sbolDoc)) {
-				RefinementType refinement = mapping.getRefinement();
-				if (refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
-						|| refinement == RefinementType.USELOCAL) {
-					SBOL2SBML.generateReplacement(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
-				} else if (refinement == RefinementType.USEREMOTE) {
-					SBOL2SBML.generateReplacedBy(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+				FunctionalComponent remoteSpecies = subModuleDef.getFunctionalComponent(mapping.getRemoteIdentity());
+				FunctionalComponent localSpecies = moduleDef.getFunctionalComponent(mapping.getLocalURI());
+				if(remoteSpecies.getDefinition().containsType(ComponentDefinition.PROTEIN) || localSpecies.getDefinition().containsType(ComponentDefinition.PROTEIN)) {
+					continue;
+				} else {
+					RefinementType refinement = mapping.getRefinement();
+					if (refinement == RefinementType.VERIFYIDENTICAL || refinement == RefinementType.MERGE
+							|| refinement == RefinementType.USELOCAL) {
+						SBOL2SBML.generateReplacement(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+					} else if (refinement == RefinementType.USEREMOTE) {
+						SBOL2SBML.generateReplacedBy(mapping, subModule, moduleDef, sbolDoc, subTargetModel, targetModel);
+					}
 				}
 			}
+//		//TODO PEDRO come back to this when removing proteins
+//		for (String spe : targetModel.getSpecies()) {
+//			if (spe.contains("_protein")) {
+//				targetModel.getSBMLDocument().getModel().removeSpecies(spe);
+//			}
+//		}
 	}
 
 	/**
@@ -1009,10 +1038,12 @@ public class FlowModel {
 		
 		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
 		String rxnID = "";
+		String product = "";
 		if (products!=null) {
 			for (Participation production : products) {
 				if (rxnID.equals("")) {
 					rxnID = SBOL2SBML.getDisplayID(production);
+					product = rxnID;
 					rxnID = rxnID.replace("_protein", "");
 
 				} else {
@@ -1102,13 +1133,17 @@ public class FlowModel {
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
 		gate_flow.setId("Y_" + rxnID);
 		
-		Reaction SDproductionRxn = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
-		//targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
+		Parameter gateSS = targetModel.getSBMLDocument().getModel().createParameter();
+		gateSS.setId(rxnID + "_SS");
+		gateSS.setValue(0.0);
+		gateSS.setConstant(false);
 		
-		//TODO PEDRO deleted protein. just need one reaction per gate?
-		//Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(gate_flow, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
+		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
+
+		AssignmentRule steadyState = targetModel.createFlowSteadyStateRule(gateSS, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
+		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, celloParameters, promoterInteractions, promoters, ordered_promoters);
+		steadyState.setMath(math);
 		
-			
 		
 		// Annotate SBML production reaction with SBOL production interactions
 		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
@@ -1116,91 +1151,27 @@ public class FlowModel {
 		productionsRegulations.addAll(activations);
 		productionsRegulations.addAll(repressions);
 		if (!productionsRegulations.isEmpty())
-			SBOL2SBML.annotateRxn(SDproductionRxn, productionsRegulations);
+			SBOL2SBML.annotateRxn(gateDynamics, productionsRegulations);
 		if (!partici.isEmpty()) 
-			SBOL2SBML.annotateSpeciesReference(SDproductionRxn.getModifier(0), partici);
+			SBOL2SBML.annotateSpeciesReference(gateDynamics.getModifier(0), partici);
 		
 		for (Participation activator : activators)
-			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
+			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, gateDynamics, targetModel);
 		
-		for (Participation repressor : repressors)
-			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-		 
-		for (int k = 0; k < transcribed.size(); k++) {
-			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
-			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
-			
-			//TODO PEDRO revise this annotation. maybe I can delete all this or maybe annotate it as flow?
-			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-			if (compDef!=null) {
-				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
-			}
-		}
+//		for (Participation repressor : repressors)
+//			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
+//		 
+//		for (int k = 0; k < transcribed.size(); k++) {
+//			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
+//			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
+//			
+//			//TODO PEDRO revise this annotation. maybe I can delete all this or maybe annotate it as flow?
+//			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
+//			if (compDef!=null) {
+//				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
+//			}
+//		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
-		
-		//TODO PEDRO deleted this because I onle need one reaction per gate?
-		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
-		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+gate_flow.getId()));
-		
-	}
-
-	/**
-	 * Generate cello degradation reaction using Cello optimized parameters of degradation.
-	 *
-	 * @author Pedro Fontanarrosa
-	 * @param degradation the degradation interaction
-	 * @param moduleDef the ModuleDefinition in which the interaction is in
-	 * @param targetModel the target model being constructed for the TU
-	 * @throws BioSimException the bio sim exception
-	 */
-	private static void generateCelloDegradationRxn(Interaction degradation, ModuleDefinition moduleDef, BioModel targetModel, SBOLDocument sbolDoc) throws BioSimException {
-		Participation degraded = null;
-		for(Participation part : degradation.getParticipations())
-		{
-			degraded = part;
-			break;
-		}
-		Set<URI> species2 = degraded.getParticipantDefinition().getTypes();
-		FunctionalComponent species = moduleDef.getFunctionalComponent(degraded.getParticipantURI());
-		boolean onPort = (species.getDirection().equals(DirectionType.IN) 
-				|| species.getDirection().equals(DirectionType.OUT));
-		
-		double kdegrad = 0;
-		
-		if (SBOL2SBML.isProteinComponent(species, sbolDoc)) {
-			kdegrad = GlobalConstants.k_TF_DIM_S;
-		}
-		if (SBOL2SBML.isRNAComponent(species, sbolDoc)) {
-			kdegrad = GlobalConstants.k_SD_DIM_S;
-			System.out.println("mRNA: " + species.getDisplayId());
-		}
-		
-		// if the species is not mRNA or a TF (protein) we should call the normal degradation reaction, using the normal constants
-		if (kdegrad == 0) {
-			Reaction degradationRxn = targetModel.createDegradationReaction(SBOL2SBML.getDisplayID(species), -1, null, onPort, null);
-			degradationRxn.setId(SBOL2SBML.getDisplayID(degradation));
-
-			// Annotate SBML degradation reaction with SBOL interaction
-			SBOL2SBML.annotateRxn(degradationRxn, degradation);
-
-			// Annotate SBML degraded reactant with SBOL participation
-			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
-			SBOL2SBML.annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
-			
-		} 
-		// else, we call the celloDegradationReaction, which uses different degradation reaction rates for this reaction. 
-		else {
-			//create degradation reaction to be added to the model
-			Reaction degradationRxn = targetModel.createCelloDegradationReaction(SBOL2SBML.getDisplayID(species), kdegrad, onPort, null);
-			degradationRxn.setId(SBOL2SBML.getDisplayID(degradation));
-
-			// Annotate SBML degradation reaction with SBOL interaction
-			SBOL2SBML.annotateRxn(degradationRxn, degradation);
-
-			// Annotate SBML degraded reactant with SBOL participation
-			SBMLutilities.setDefaultMetaID(targetModel.getSBMLDocument(), degradationRxn.getReactant(0), 1);
-			SBOL2SBML.annotateSpeciesReference(degradationRxn.getReactant(0), degraded);
-		}
+		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, celloParameters, promoterInteractions, promoters, ordered_promoters)));		
 	}
 }

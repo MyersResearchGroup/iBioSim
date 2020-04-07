@@ -1221,7 +1221,7 @@ public class CelloModeling {
 			}
 		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
+		//SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
 		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+gate_flow.getId()));
 		

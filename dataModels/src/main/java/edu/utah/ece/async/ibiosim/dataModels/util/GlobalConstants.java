@@ -369,6 +369,10 @@ public class GlobalConstants {
 		return path.substring(0, path.lastIndexOf(File.separator));
 	}
 	
+	//SBO terms for PromoterFlow model
+	public static final String SBO_STEADYSTATE = "SBO:0000391";
+	
+	
 	//Cello Parameters used for dynamical modeling. These parameters are obtained from the Cello paper
 	// and from https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Eco1C1G1T1_collection/1
 	public static final double k_SD_DIM_S = 1.0/300;

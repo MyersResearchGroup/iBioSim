@@ -35,6 +35,7 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.XMLException;
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
@@ -2293,144 +2294,7 @@ public class BioModel extends CoreObservable{
 		}
 		return reaction;
 	}
-	
-	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
-		
-		//TODO PEDRO: Change these values too
-		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
-		
-		
-		//Check if rxnID is unique, if not, add something to it
-		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
-		
-		
-		Reaction r = sbml.getModel().getReaction(reactionID);
-		
-		//TODO PEDRO delete this once I don't have a protein? 2
-		KineticLaw k = null;
-		
-		if (flow==null) {
-			flow = sbml.getModel().createSpecies();
-			//reaction id + mRNA
-			flow.setId(reactionID);
-		}
-		
-		if (r == null) {
-			
-			r = sbml.getModel().createReaction();
-			r.setId(reactionID);
-			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
-			r.setReversible(false);
-			
-			// Make the DNA a promoter for the mRNA production
-			ModifierSpeciesReference modifier = r.createModifier();
-			modifier.setSpecies(TU);
-			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-						
-			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
-			for (String promoter : promoters) {
-				if (promoterInteractions.containsKey(promoter)) {
-					for (String modifi : promoterInteractions.get(promoter).keySet()) {
-						if (modifi.equals("sensor")) {
-							ModifierSpeciesReference input = r.createModifier();
-							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
-								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
-								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
-								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
-								smallMolecule.setCompartment(r.getCompartment());
-								smallMolecule.setHasOnlySubstanceUnits(true);
-								smallMolecule.setBoundaryCondition(true);
-								smallMolecule.setConstant(false);
-								smallMolecule.setInitialAmount(0.0);
-								
-								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
-								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
-								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
-																																
-								input.setSpecies(smallMolecule);
-								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-							} else {
-							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-							}
-						} else {
-							ModifierSpeciesReference input = r.createModifier();
-							
-							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
-							String promotFlow = promoterInteractions.get(promoter).get(modifi);
-							promotFlow = promotFlow.replace("_protein", "");
-							promotFlow = "Y_" + promotFlow;
-							inputFlow.setId(promotFlow);
-							inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
-							inputFlow.setCompartment(r.getCompartment());
-							inputFlow.setHasOnlySubstanceUnits(true);
-							inputFlow.setBoundaryCondition(true);
-							inputFlow.setConstant(false);
-							inputFlow.setInitialAmount(0.0);
-							
-							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
-							
-							targetModel.createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
-							
-																							
-							input.setSpecies(inputFlow);
-							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-							
-//							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-//							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-						}
-					}
-				}
-			}
-			
-			flow.setCompartment(r.getCompartment());
-			flow.setInitialAmount(0.0);
-			flow.setBoundaryCondition(false);
-			flow.setConstant(false);
-			flow.setHasOnlySubstanceUnits(true);
-			flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
-			
-			SpeciesReference product = r.createProduct();
-			product.setSpecies(flow.getId());
-			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, product, "species");
-			product.setStoichiometry(1.0);
-			product.setConstant(true);
-			
-			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
-			
-			
-			//TODO PEDRO delete this once I don't have a protein? 2
-			k = r.createKineticLaw();
 
-		} else {
-			// return r? or search for globalconstantCelloParameters? 
-			// or come here only when passing n, k, yoff and yon?
-		}
-		
-		//produce cello model kinetic law for mRNA production
-		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
-		Port port = getPortByIdRef(r.getId());
-		if (port!=null) {
-			if (onPort) {
-				port.setId(r.getId());
-				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
-			} else {
-				sbmlCompModel.removePort(port);
-			}
-		} else {
-			if (onPort) {
-				port = sbmlCompModel.createPort();
-				port.setId(r.getId());
-				port.setIdRef(r.getId());
-				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
-			}
-		}
-		return r;
-	}
-	
 	/**
 	 * Creates the cello production kinetic law.
 	 * 
@@ -2721,7 +2585,172 @@ public class BioModel extends CoreObservable{
 		return kineticLaw;
 	}
 	
-	public static String createFlowProductionKineticLaw(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+		
+		//TODO PEDRO: Change these values too
+		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
+		
+		
+		//Check if rxnID is unique, if not, add something to it
+		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
+		
+		
+		Reaction r = sbml.getModel().getReaction(reactionID);
+		
+		
+		//TODO PEDRO delete this once I don't have a protein? 2
+		KineticLaw k = null;
+		
+		if (flow==null) {
+			flow = sbml.getModel().createSpecies();
+			//reaction id + mRNA
+			flow.setId(reactionID);
+		}
+		
+		if (r == null) {
+			
+			r = sbml.getModel().createReaction();
+			r.setId(reactionID);
+			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
+			r.setReversible(false);
+			
+			// Make the DNA a promoter for the production
+			ModifierSpeciesReference modifier = r.createModifier();
+			modifier.setSpecies(TU);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			
+						
+			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+			for (String promoter : promoters) {
+				if (promoterInteractions.containsKey(promoter)) {
+					for (String modifi : promoterInteractions.get(promoter).keySet()) {
+						if (modifi.equals("sensor")) {
+							ModifierSpeciesReference input = r.createModifier();
+							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
+								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
+								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								smallMolecule.setCompartment(r.getCompartment());
+								smallMolecule.setHasOnlySubstanceUnits(true);
+								smallMolecule.setBoundaryCondition(true);
+								smallMolecule.setConstant(false);
+								smallMolecule.setInitialAmount(0.0);
+								
+								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+																																
+								input.setSpecies(smallMolecule);
+								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							} else {
+							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							}
+						} else {
+							ModifierSpeciesReference input = r.createModifier();
+							
+							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
+							String promotFlow = promoterInteractions.get(promoter).get(modifi);
+							promotFlow = promotFlow.replace("_protein", "");
+							promotFlow = "Y_" + promotFlow;
+							inputFlow.setId(promotFlow);
+							inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+							inputFlow.setCompartment(r.getCompartment());
+							inputFlow.setHasOnlySubstanceUnits(true);
+							inputFlow.setBoundaryCondition(false);
+							inputFlow.setConstant(false);
+							inputFlow.setInitialAmount(0.0);
+							
+							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+							
+							targetModel.createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
+							
+																							
+							input.setSpecies(inputFlow);
+							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+							
+//							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+//							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+						}
+					}
+				}
+			}
+			
+			flow.setCompartment(r.getCompartment());
+			flow.setInitialAmount(0.0);
+			flow.setBoundaryCondition(false);
+			flow.setConstant(false);
+			flow.setHasOnlySubstanceUnits(true);
+			flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+			
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(flow.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, product, "species");
+			product.setStoichiometry(1.0);
+			product.setConstant(true);
+			
+			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
+			
+			
+			//TODO PEDRO delete this once I don't have a protein? 2
+			k = r.createKineticLaw();
+
+		} else {
+			// return r? or search for globalconstantCelloParameters? 
+			// or come here only when passing n, k, yoff and yon?
+		}
+		
+		//produce cello model kinetic law for mRNA production
+		//r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			} else {
+				sbmlCompModel.removePort(port);
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+				SBMLutilities.cloneDimensionAddIndex(r,port,"comp:idRef");
+			}
+		}
+		return r;
+	}
+	
+	public AssignmentRule createFlowSteadyStateRule(Parameter gateSS, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+				
+		
+		
+		//Variable steadyState = sbml.getModel().createAlgebraicRule();
+		
+		AssignmentRule r = sbml.getModel().getAssignmentRuleByVariable(gateSS.getId() + "_Rule");
+		
+		//Variable steady_state = sbml.getModel().findVariable(reactionID);
+		
+
+		if (r == null) {
+			//r = sbml.getModel().createAssignmentRule();
+			r = targetModel.getSBMLDocument().getModel().createAssignmentRule();
+			
+			//Check if rxnID is unique, if not, add something to it
+			String ruleID = gateSS.getId()+ "_Rule";
+			ruleID = SBMLutilities.getUniqueSBMLId(ruleID, targetModel);
+			r.setId(ruleID);
+			r.setMetaId(ruleID);
+			r.setSBOTerm(GlobalConstants.SBO_STEADYSTATE);
+			r.setVariable(gateSS.getId());
+			}	
+		return r;
+	}
+
+	public ASTNode createFlowSteadyState(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 		String kineticLaw = "";
 		//boolean activated = false;
 		String promoter = "";
@@ -2742,29 +2771,21 @@ public class BioModel extends CoreObservable{
 	    	 for (Object entry : promInter.keySet()) {
 	    		 String interaction = entry.toString();
 	    		 if (interaction.equals("activation")) {
+	    			 String activator = promInter.get(entry).toString();
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
 	    	    	 String alpha = "alpha_" + promoter;
 	    	    	 String beta = "beta_" + promoter;
-	    	    	 
-	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
-	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymax_p.setId(ymax);
-	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymin_p.setId(ymin);
-	    			 
-	    	    	 denominator = "1 + ";
-	    	    	 
-	    			 String activator = promInter.get(entry).toString();
-	    			 activator = activator.replace("_protein", "");
+	    			 	    			 
 	    			 String K = "K_" + activator;
 	    			 K = K.replace("_protein", "");
 	    			 String n = "n_" + activator;
 	    			 n = n.replace("_protein", "");
-	    			 
-	    			 String temp = "("+ K +"/" + activator + ")^" + n;
-	    			 denominator += temp;
-	    			 
+
+	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymax_p.setId(ymax);
+	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
+	    			 ymin_p.setId(ymin);
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
@@ -2822,6 +2843,16 @@ public class BioModel extends CoreObservable{
 	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
 	    				 }
 	    			 }
+	    			 
+	    			 activator = activator.replace("_protein", "");
+	    			 activator = "Y_" + activator;
+	    			 
+	    			 numerator = "(" + ymax + "-" + ymin + ")";
+	    	    	 denominator = "1 + ";
+	    	    	 	    			 
+	    			 String temp = "("+ K +"/" + activator + ")^" + n;
+	    			 denominator += temp;
+
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
 	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
@@ -2838,26 +2869,20 @@ public class BioModel extends CoreObservable{
 
 	    		 } else if (interaction.equals("repression")) {
 	    			 String repressor = promInter.get(entry).toString();
-	    			 String K = "K_" + repressor;
-	    			 K = K.replace("_protein", "");
-	    			 String n = "n_" + repressor;
-	    			 n = n.replace("_protein", "");
 	    	    	 String ymax = "ymax_" + promoter;
 	    	    	 String ymin = "ymin_" + promoter;
 	    	    	 String alpha = "alpha_" + promoter;
 	    	    	 String beta = "beta_" + promoter;
 	    	    	 
-	    	    	 numerator = "(" + ymax + "-" + ymin + ")";
+	    			 String K = "K_" + repressor;
+	    			 K = K.replace("_protein", "");
+	    			 String n = "n_" + repressor;
+	    			 n = n.replace("_protein", "");
+	    	    	 
 	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
 	    			 ymax_p.setId(ymax);
 	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
 	    			 ymin_p.setId(ymin);
-	    			 
-	    	    	 denominator = "1 + ";
-	    			 
-	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
-	    			 denominator += temp;
-	    			 
 	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
 	    			 n_para.setId(n);
 	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
@@ -2866,8 +2891,7 @@ public class BioModel extends CoreObservable{
 	    			 alpha_para.setId(alpha);
 	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
 	    			 beta_para.setId(beta);
-	    			 
-	    			 
+	    	    	 
 	    			 if (celloParameters.get(repressor) != null) {
 	    				 if (celloParameters.get(repressor).get(0) != null && !celloParameters.get(repressor).get(0).equals("")) {
 		    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
@@ -2916,6 +2940,15 @@ public class BioModel extends CoreObservable{
 	    				 }
 	    			 }
 	    			 
+	    			 repressor = repressor.replace("_protein", "");
+	    			 repressor = "Y_" + repressor;
+	    	    	 
+	    	    	 numerator = "(" + ymax + "-" + ymin + ")"; 			 
+	    	    	 denominator = "1 + ";
+	    			 
+	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
+	    			 denominator += temp;
+	    			 	    			 
 	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
 	    			 
 	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
@@ -2998,11 +3031,42 @@ public class BioModel extends CoreObservable{
 	    			 
 	    		 }
 	    	 }	    	 
-//	    	 if(promoters.toArray().length == 2 && promoterCnt == 2) {
-//	    		 kineticLaw += "*" + alpha + "*(" + ")";
-//	    	 }
 	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
 	     }
+	     ASTNode math = SBMLutilities.myParseFormula(kineticLaw);
+		return math;
+	}
+	
+	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+		
+		String kineticLaw = "";
+
+		LocalParameter tauON = reaction.getKineticLaw().createLocalParameter();
+		tauON.setId("tauON");
+		LocalParameter tauOFF = reaction.getKineticLaw().createLocalParameter();
+		tauOFF.setId("tauOFF");
+		
+		 if (celloParameters.get(product) != null) {
+			 if (celloParameters.get(product).get(4) != null && !celloParameters.get(product).get(4).equals("")) {
+				 double tauON_value = Double.parseDouble(celloParameters.get(product).get(4));
+				 tauON.setValue(tauON_value);
+			 }
+			 else {
+				 tauON.setValue(GlobalConstants.CELLO_TAU_ON);
+			 }
+
+			 if (celloParameters.get(product).get(5) != null && !celloParameters.get(product).get(5).equals("")) {
+				 double tauOFF_value = Double.parseDouble(celloParameters.get(product).get(5));
+				 tauOFF.setValue(tauOFF_value);
+			 }
+			 else {
+				 tauOFF.setValue(GlobalConstants.CELLO_TAU_OFF);
+			 }
+		 }
+		
+
+		kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (0 == 0), tauOFF*" + gateSS.getId() + ")";
+				
 		return kineticLaw;
 	}
 		
