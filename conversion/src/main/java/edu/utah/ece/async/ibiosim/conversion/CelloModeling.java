@@ -1188,7 +1188,7 @@ public class CelloModeling {
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
 		gate_flow.setId("Y_" + rxnID);
 		
-		Reaction SDproductionRxn = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
+		//Reaction SDproductionRxn = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
 		//targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
 		
 		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(gate_flow, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
@@ -1196,30 +1196,30 @@ public class CelloModeling {
 			
 		
 		// Annotate SBML production reaction with SBOL production interactions
-		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-		if (productions!=null) productionsRegulations.addAll(productions);
-		productionsRegulations.addAll(activations);
-		productionsRegulations.addAll(repressions);
-		if (!productionsRegulations.isEmpty())
-			SBOL2SBML.annotateRxn(SDproductionRxn, productionsRegulations);
-		if (!partici.isEmpty()) 
-			SBOL2SBML.annotateSpeciesReference(SDproductionRxn.getModifier(0), partici);
-		
-		for (Participation activator : activators)
-			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-		
-		for (Participation repressor : repressors)
-			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-		 
-		for (int k = 0; k < transcribed.size(); k++) {
-			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
-			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
-
-			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-			if (compDef!=null) {
-				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
-			}
-		}
+//		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
+//		if (productions!=null) productionsRegulations.addAll(productions);
+//		productionsRegulations.addAll(activations);
+//		productionsRegulations.addAll(repressions);
+//		if (!productionsRegulations.isEmpty())
+//			SBOL2SBML.annotateRxn(SDproductionRxn, productionsRegulations);
+//		if (!partici.isEmpty()) 
+//			SBOL2SBML.annotateSpeciesReference(SDproductionRxn.getModifier(0), partici);
+//		
+//		for (Participation activator : activators)
+//			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
+//		
+//		for (Participation repressor : repressors)
+//			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
+//		 
+//		for (int k = 0; k < transcribed.size(); k++) {
+//			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
+//			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
+//
+//			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
+//			if (compDef!=null) {
+//				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
+//			}
+//		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
 		//SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));

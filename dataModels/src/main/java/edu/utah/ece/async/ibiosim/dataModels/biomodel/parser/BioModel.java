@@ -2585,7 +2585,7 @@ public class BioModel extends CoreObservable{
 		return kineticLaw;
 	}
 	
-	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
 		//TODO PEDRO: Change these values too
 		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
@@ -2750,297 +2750,99 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
-	public ASTNode createFlowSteadyState(Reaction reaction, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public ASTNode createFlowSteadyState(Reaction reaction, String product, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+
 		String kineticLaw = "";
-		//boolean activated = false;
 		String promoter = "";
-		
+
+		String numerator = "";
+		String denominator = "";
+		String in_parentesis = "";
+
 		if(ordered_promoters.size() == 2) {
 			promoters = ordered_promoters;
 		}
+
+		String ymax = "ymax_" + product;
+		ymax = ymax.replace("_protein", "");
+		String ymin = "ymin_" + product;
+		ymin = ymin.replace("_protein", "");
+		String K = "K_" + product;
+		K = K.replace("_protein", "");
+		String n = "n_" + product;
+		n = n.replace("_protein", "");
+
+		Parameter ymax_p = targetModel.getSBMLDocument().getModel().createParameter();
+		ymax_p.setId(ymax);
+		Parameter ymin_p = targetModel.getSBMLDocument().getModel().createParameter();
+		ymin_p.setId(ymin);
+		Parameter n_para = targetModel.getSBMLDocument().getModel().createParameter();
+		n_para.setId(n);
+		Parameter K_para = targetModel.getSBMLDocument().getModel().createParameter();
+		K_para.setId(K);
+
+		//set parameters to the model, use a default value if there is no parameter found
+		if (celloParameters.get(product) != null) {
+			if (celloParameters.get(product).get(0) != null && !celloParameters.get(product).get(0).equals("")) {
+				double n_value = Double.parseDouble(celloParameters.get(product).get(0));
+				n_para.setValue(n_value);
+			}
+			else {
+				n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
+			}
+
+			if (celloParameters.get(product).get(1) != null && !celloParameters.get(product).get(1).equals("")) {
+				double K_value = Double.parseDouble(celloParameters.get(product).get(1));
+				K_para.setValue(K_value);
+			}
+			else {
+				K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
+			}
+
+			if (celloParameters.get(product).get(2) != null && !celloParameters.get(product).get(2).equals("")) {
+				double ymax_value = Double.parseDouble(celloParameters.get(product).get(2));
+				ymax_p.setValue(ymax_value);
+			}
+			else {
+				ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+			}
+
+			if (celloParameters.get(product).get(3) != null && !celloParameters.get(product).get(3).equals("")) {
+				double ymin_value = Double.parseDouble(celloParameters.get(product).get(3));
+				ymin_p.setValue(ymin_value);
+			}
+			else {
+				ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+			}
+			//			 if (celloParameters.get(product).get(4) != null && !celloParameters.get(product).get(4).equals("")) {
+			//   			 double alpha_value = Double.parseDouble(celloParameters.get(product).get(4));
+			//   			 alpha_para.setValue(alpha_value);
+			//			 }
+			//			 else {
+			//				 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
+			//			 }
+			//			 if (celloParameters.get(product).get(5) != null && !celloParameters.get(product).get(5).equals("")) {
+			//   			 double beta_value = Double.parseDouble(celloParameters.get(product).get(5));
+			//   			 beta_para.setValue(beta_value);
+			//			 }
+			//			 else {
+			//				 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
+			//			 }
+		}
+
+		numerator = K + "^" + n;
+		denominator = K + "^" + n + "1^" + n;
 		
-	     for (Object it : promoters.toArray()) {
-	    	 promoter = it.toString();
-	    	 
-	    	 String numerator = "";
-	    	 String denominator = "";
-	    	 String in_parentesis = "";
-	    	 
-	    	 HashMap promInter = (HashMap) promoterInteractions.get(promoter);
+		kineticLaw = "(" + ymin + "*(" + ymax + "-" + ymin + ")*(" + numerator + "/" + denominator + ") - " + ymin +")";
 
-	    	 for (Object entry : promInter.keySet()) {
-	    		 String interaction = entry.toString();
-	    		 if (interaction.equals("activation")) {
-	    			 String activator = promInter.get(entry).toString();
-	    	    	 String ymax = "ymax_" + promoter;
-	    	    	 String ymin = "ymin_" + promoter;
-	    	    	 String alpha = "alpha_" + promoter;
-	    	    	 String beta = "beta_" + promoter;
-	    			 	    			 
-	    			 String K = "K_" + activator;
-	    			 K = K.replace("_protein", "");
-	    			 String n = "n_" + activator;
-	    			 n = n.replace("_protein", "");
-
-	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymax_p.setId(ymax);
-	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymin_p.setId(ymin);
-	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
-	    			 n_para.setId(n);
-	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
-	    			 K_para.setId(K);
-	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
-	    			 alpha_para.setId(alpha);
-	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
-	    			 beta_para.setId(beta);
-	    			 
-	    			 //set parameters to the model, use a default value if there is no parameter found
-	    			 if (celloParameters.get(activator) != null) {
-	    				 if (celloParameters.get(activator).get(0) != null && !celloParameters.get(activator).get(0).equals("")) {
-		    				 double n_value = Double.parseDouble(celloParameters.get(activator).get(0));
-		    				 n_para.setValue(n_value);
-	    				 }
-	    				 else {
-	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(activator).get(1) != null && !celloParameters.get(activator).get(1).equals("")) {
-		    				 double K_value = Double.parseDouble(celloParameters.get(activator).get(1));
-		    				 K_para.setValue(K_value);
-	    				 }
-	    				 else {
-	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(activator).get(2) != null && !celloParameters.get(activator).get(2).equals("")) {
-			    			 double ymax_value = Double.parseDouble(celloParameters.get(activator).get(2));
-			    			 ymax_p.setValue(ymax_value);
-	    				 }
-	    				 else {
-	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(activator).get(3) != null && !celloParameters.get(activator).get(3).equals("")) {
-			    			 double ymin_value = Double.parseDouble(celloParameters.get(activator).get(3));
-			    			 ymin_p.setValue(ymin_value);
-	    				 }
-	    				 else {
-	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
-	    				 }
-	    				 if (celloParameters.get(activator).get(4) != null && !celloParameters.get(activator).get(4).equals("")) {
-			    			 double alpha_value = Double.parseDouble(celloParameters.get(activator).get(4));
-			    			 alpha_para.setValue(alpha_value);
-	    				 }
-	    				 else {
-	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
-	    				 }
-	    				 if (celloParameters.get(activator).get(5) != null && !celloParameters.get(activator).get(5).equals("")) {
-			    			 double beta_value = Double.parseDouble(celloParameters.get(activator).get(5));
-			    			 beta_para.setValue(beta_value);
-	    				 }
-	    				 else {
-	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
-	    				 }
-	    			 }
-	    			 
-	    			 activator = activator.replace("_protein", "");
-	    			 activator = "Y_" + activator;
-	    			 
-	    			 numerator = "(" + ymax + "-" + ymin + ")";
-	    	    	 denominator = "1 + ";
-	    	    	 	    			 
-	    			 String temp = "("+ K +"/" + activator + ")^" + n;
-	    			 denominator += temp;
-
-	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
-	    			 
-	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
-	    			 if(ordered_promoters.size() == 2) {
-	    				 if(ordered_promoters.get(1).equals(promoter)) {
-	    					 String top = "";
-	    					 String bottom = "";
-
-	    					 top = "(" + K + "^" + n + "+ " + beta + "*" + activator + "^" + n + ")";
-	    					 bottom = "(" + K + "^" + n + "+ " + activator + "^" + n + ")"; 
-	    					 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
-	    				 }
-	    			 }
-
-	    		 } else if (interaction.equals("repression")) {
-	    			 String repressor = promInter.get(entry).toString();
-	    	    	 String ymax = "ymax_" + promoter;
-	    	    	 String ymin = "ymin_" + promoter;
-	    	    	 String alpha = "alpha_" + promoter;
-	    	    	 String beta = "beta_" + promoter;
-	    	    	 
-	    			 String K = "K_" + repressor;
-	    			 K = K.replace("_protein", "");
-	    			 String n = "n_" + repressor;
-	    			 n = n.replace("_protein", "");
-	    	    	 
-	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymax_p.setId(ymax);
-	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymin_p.setId(ymin);
-	    			 LocalParameter n_para = reaction.getKineticLaw().createLocalParameter();
-	    			 n_para.setId(n);
-	    			 LocalParameter K_para = reaction.getKineticLaw().createLocalParameter();
-	    			 K_para.setId(K);
-	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
-	    			 alpha_para.setId(alpha);
-	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
-	    			 beta_para.setId(beta);
-	    	    	 
-	    			 if (celloParameters.get(repressor) != null) {
-	    				 if (celloParameters.get(repressor).get(0) != null && !celloParameters.get(repressor).get(0).equals("")) {
-		    				 double n_value = Double.parseDouble(celloParameters.get(repressor).get(0));
-		    				 n_para.setValue(n_value);
-	    				 }
-	    				 else {
-	    					 n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(repressor).get(1) != null && !celloParameters.get(repressor).get(1).equals("")) {
-		    				 double K_value = Double.parseDouble(celloParameters.get(repressor).get(1));
-		    				 K_para.setValue(K_value);
-	    				 }
-	    				 else {
-	    					 K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(repressor).get(2) != null && !celloParameters.get(repressor).get(2).equals("")) {
-			    			 double ymax_value = Double.parseDouble(celloParameters.get(repressor).get(2));
-			    			 ymax_p.setValue(ymax_value);
-	    				 }
-	    				 else {
-	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
-	    				 }
-	    				 
-	    				 if (celloParameters.get(repressor).get(3) != null && !celloParameters.get(repressor).get(3).equals("")) {
-			    			 double ymin_value = Double.parseDouble(celloParameters.get(repressor).get(3));
-			    			 ymin_p.setValue(ymin_value);
-	    				 }
-	    				 else {
-	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
-	    				 }
-	    				 if (celloParameters.get(repressor).get(4) != null && !celloParameters.get(repressor).get(4).equals("")) {
-			    			 double alpha_value = Double.parseDouble(celloParameters.get(repressor).get(4));
-			    			 alpha_para.setValue(alpha_value);
-	    				 }
-	    				 else {
-	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
-	    				 }
-	    				 if (celloParameters.get(repressor).get(5) != null && !celloParameters.get(repressor).get(5).equals("")) {
-			    			 double beta_value = Double.parseDouble(celloParameters.get(repressor).get(5));
-			    			 beta_para.setValue(beta_value);
-	    				 }
-	    				 else {
-	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
-	    				 }
-	    			 }
-	    			 
-	    			 repressor = repressor.replace("_protein", "");
-	    			 repressor = "Y_" + repressor;
-	    	    	 
-	    	    	 numerator = "(" + ymax + "-" + ymin + ")"; 			 
-	    	    	 denominator = "1 + ";
-	    			 
-	    			 String temp = "(" + repressor + "/"+ K +  ")^" + n;
-	    			 denominator += temp;
-	    			 	    			 
-	    			 in_parentesis = "(" + numerator + "/(" + denominator + ") +" + ymin + ")";
-	    			 
-	    			 // This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
-	    			 if(ordered_promoters.size() == 2) {
-	    				 if(ordered_promoters.get(1).equals(promoter)) { 
-	    					 String top = "";
-	    					 String bottom = "";
-
-	    					 top = "(" + K + "^" + n + "+ " + beta + "*" + repressor + "^" + n + ")";
-	    					 bottom = "(" + K + "^" + n + "+ " + repressor + "^" + n + ")"; 
-	    					 kineticLaw += "*" + alpha + "*(" + top + "/" + bottom + ")";
-	    				 }
-	    			 }
-
-	    		 } else if (interaction.equals("sensor")) {
-	    			 String sensor = promInter.get(entry).toString();
-	    	    	 String ymax = "ymax_" + promoter;
-	    	    	 String ymin = "ymin_" + promoter;
-	    	    	 String alpha = "alpha_" + promoter;
-	    	    	 String beta = "beta_" + promoter;
-	    	    	 
-	    			 LocalParameter ymax_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymax_p.setId(ymax);
-	    			 LocalParameter ymin_p = reaction.getKineticLaw().createLocalParameter();
-	    			 ymin_p.setId(ymin);
-	    			 LocalParameter alpha_para = reaction.getKineticLaw().createLocalParameter();
-	    			 alpha_para.setId(alpha);
-	    			 LocalParameter beta_para = reaction.getKineticLaw().createLocalParameter();
-	    			 beta_para.setId(beta);
-	    			  
-	    			 //numerator = "piecewise(piece(" + ymin_p + " ," + sensor + " == 0.0), otherwise(" + ymax_p + "))";
-	    			 numerator = "piecewise(" + ymin + ", (" + sensor + " == 0), " + ymax + ")"; 
-	    			 
-	    			 if (celloParameters.get(sensor) != null) {
-	    				 if (celloParameters.get(sensor).get(0) != null && !celloParameters.get(sensor).get(0).equals("")) {
-	    					 double ymax_value = Double.parseDouble(celloParameters.get(sensor).get(0));
-	    					 ymax_p.setValue(ymax_value);
-	    				 }
-	    				 else {
-	    					 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
-	    				 }
-
-	    				 if (celloParameters.get(sensor).get(1) != null && !celloParameters.get(sensor).get(1).equals("")) {
-	    					 double ymin_value = Double.parseDouble(celloParameters.get(sensor).get(1));
-	    					 ymin_p.setValue(ymin_value);
-	    				 }
-	    				 else {
-	    					 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
-	    				 }
-	    				 if (celloParameters.get(sensor).get(2) != null && !celloParameters.get(sensor).get(2).equals("")) {
-	    					 double alpha_value = Double.parseDouble(celloParameters.get(sensor).get(2));
-	    					 alpha_para.setValue(alpha_value);
-	    				 }
-	    				 else {
-	    					 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
-	    				 }
-	    				 if (celloParameters.get(sensor).get(3) != null && !celloParameters.get(sensor).get(3).equals("")) {
-	    					 double beta_value = Double.parseDouble(celloParameters.get(sensor).get(3));
-	    					 beta_para.setValue(beta_value);
-	    				 }
-	    				 else {
-	    					 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
-	    				 }
-	    			 }
-	    			 
-	    			 in_parentesis = "(" + numerator + ")";
-	    			 
-	    			// This adds roadblocking effects if this promoter is the downstream one of tandem promoters.
-	    			 if(ordered_promoters.size() == 2) {
-	    				 if(ordered_promoters.get(1).equals(promoter)) {
-
-	    					 String roadblock = "";
-	    					 String delta_function = "";
-
-	    					 delta_function = "piecewise( 0 , (" + sensor + " == 0), 1 )";
-	    					 roadblock = "("  + alpha + "*" + beta + ")^" + delta_function ;
-	    					 kineticLaw += "*(" + roadblock  + ")";
-	    				 }
-	    			 }
-	    			 
-	    		 }
-	    	 }	    	 
-	    	 kineticLaw += " + " + "kdegrad" + "*" + in_parentesis;
-	     }
-	     ASTNode math = SBMLutilities.myParseFormula(kineticLaw);
+		ASTNode math = SBMLutilities.myParseFormula(kineticLaw);
 		return math;
 	}
 	
 	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 		
 		String kineticLaw = "";
-
+		
 		LocalParameter tauON = reaction.getKineticLaw().createLocalParameter();
 		tauON.setId("tauON");
 		LocalParameter tauOFF = reaction.getKineticLaw().createLocalParameter();
@@ -3064,7 +2866,6 @@ public class BioModel extends CoreObservable{
 			 }
 		 }
 		
-
 		kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (0 == 0), tauOFF*" + gateSS.getId() + ")";
 				
 		return kineticLaw;

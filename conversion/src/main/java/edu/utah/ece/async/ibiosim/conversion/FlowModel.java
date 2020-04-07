@@ -1127,50 +1127,25 @@ public class FlowModel {
 		
 		//TODO PEDRO: delete these values from here and from methods after flow model is done
 		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
-		String kTFdegrad = String.valueOf(GlobalConstants.k_TF_DIM_S);
 		
-		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
+		//Create the gate flow production reaction species for each TU.
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
 		gate_flow.setId("Y_" + rxnID);
 		
+		//This parameter will store the value of the difference between the steady-state and the current state of the gate flow
 		Parameter gateSS = targetModel.getSBMLDocument().getModel().createParameter();
 		gateSS.setId(rxnID + "_SS");
 		gateSS.setValue(0.0);
 		gateSS.setConstant(false);
 		
-		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
+		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), false, null, targetModel, promoters, promoterInteractions);
 
 		AssignmentRule steadyState = targetModel.createFlowSteadyStateRule(gateSS, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
-		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, celloParameters, promoterInteractions, promoters, ordered_promoters);
+		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, product, targetModel, celloParameters, promoterInteractions, promoters, ordered_promoters);
 		steadyState.setMath(math);
 		
+		//TODO PEDRO: it would be nice to fix sbml annotations to link it to the sbol document
 		
-		// Annotate SBML production reaction with SBOL production interactions
-		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-		if (productions!=null) productionsRegulations.addAll(productions);
-		productionsRegulations.addAll(activations);
-		productionsRegulations.addAll(repressions);
-		if (!productionsRegulations.isEmpty())
-			SBOL2SBML.annotateRxn(gateDynamics, productionsRegulations);
-		if (!partici.isEmpty()) 
-			SBOL2SBML.annotateSpeciesReference(gateDynamics.getModifier(0), partici);
-		
-		for (Participation activator : activators)
-			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, gateDynamics, targetModel);
-		
-//		for (Participation repressor : repressors)
-//			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-//		 
-//		for (int k = 0; k < transcribed.size(); k++) {
-//			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
-//			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
-//			
-//			//TODO PEDRO revise this annotation. maybe I can delete all this or maybe annotate it as flow?
-//			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-//			if (compDef!=null) {
-//				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
-//			}
-//		}
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
 		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, celloParameters, promoterInteractions, promoters, ordered_promoters)));		
 	}
