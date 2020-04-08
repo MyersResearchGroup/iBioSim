@@ -2757,10 +2757,38 @@ public class BioModel extends CoreObservable{
 
 		String numerator = "";
 		String denominator = "";
-		String in_parentesis = "";
+		String input_flux = "";
+		
+		// hacer.. Si product ("YFP_protein") que lo hace YFP engineered region que es un output part, entonces hacer esta otra regla
+		// lo mismo para input engineered regions.
 
 		if(ordered_promoters.size() == 2) {
+			String first_promoter_flux = "";
+			String second_promoter_flux = "";
+			int count = 0;
 			promoters = ordered_promoters;
+		     for (Object it : promoters.toArray()) {
+		    	 count += 1;
+		    	 promoter = it.toString();
+		    	 if (count == 1) {		    		 
+		    		 HashMap<String, String> promInter = promoterInteractions.get(promoter);
+		    		 String value = (String) promInter.values().toArray()[0];
+		    		 first_promoter_flux = value;
+		    		 first_promoter_flux = first_promoter_flux.replace("_protein", "");
+		    		 
+		    	 } else {
+		    		 HashMap<String, String> promInter = promoterInteractions.get(promoter);
+		    		 String value = (String) promInter.values().toArray()[0];
+		    		 second_promoter_flux = value;
+		    		 //buscar parametros alpha y beta aca
+		    		 second_promoter_flux = second_promoter_flux.replace("_protein", "");
+		    	 }
+		    	 
+		    	 
+		    	 
+		     }
+		} else {
+			input_flux = "";
 		}
 
 		String ymax = "ymax_" + product;
@@ -2866,7 +2894,7 @@ public class BioModel extends CoreObservable{
 			 }
 		 }
 		
-		kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (0 == 0), tauOFF*" + gateSS.getId() + ")";
+		kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF*" + gateSS.getId() + ")";
 				
 		return kineticLaw;
 	}
