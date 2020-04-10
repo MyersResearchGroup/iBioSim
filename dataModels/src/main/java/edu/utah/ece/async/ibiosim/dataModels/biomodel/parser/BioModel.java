@@ -2776,7 +2776,7 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
-	public ASTNode createFlowSteadyState(Reaction reaction, String product, boolean reporter_gate, boolean sensor_gate, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public ASTNode createFlowSteadyState(Reaction reaction, String product, boolean reporter_gate, boolean sensor_gate, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters, HashMap<String, HashMap <String, String>> complex2sensor2ligand) {
 
 		String kineticLaw = "";
 		String promoter = "";
@@ -2954,7 +2954,16 @@ public class BioModel extends CoreObservable{
 		if (reporter_gate) {
 			kineticLaw = input_flux;
 		} else if (sensor_gate) {
-			kineticLaw = "piecewise(" + ymax + ", ( == 0), " + ymin + " )";		
+			String ligand = "";
+			for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+				HashMap<String, String> protein2ligand = complex.getValue();
+				for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+					if (product.equals(protein.getKey())) {
+						ligand = protein.getValue();
+					}	
+				}
+			}
+			kineticLaw = "piecewise(" + ymax + ", (" +ligand+ " == 0), " + ymin + " )";		
 		} else {
 			numerator = K + "^" + n;
 			denominator = K + "^" + n + "+ (" + input_flux +")^" + n;
@@ -2994,7 +3003,7 @@ public class BioModel extends CoreObservable{
 		 }
 		 
 		if(reporter_gate) {
-			kineticLaw = "tauON*" + gateSS.getId() + " - tauOFF*" + gateflow.getId() + ")";
+			kineticLaw = "tauON*" + gateSS.getId() + " - tauOFF*" + gateflow.getId();
 		} else {
 			kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF*" + gateSS.getId() + ")";
 		}
