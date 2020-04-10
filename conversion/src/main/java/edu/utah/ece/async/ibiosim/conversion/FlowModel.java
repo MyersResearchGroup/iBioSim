@@ -107,11 +107,16 @@ public class FlowModel {
 		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
 		
+		HashMap<String, HashMap <String, String>> complex2sensor2ligand = mapSensorToLigand(sbolDoc);
+				
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = SBOL2SBML.MDFlattener(sbolDoc, moduleDef);
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
-		removeSensorInteractios(resultMD, sensorMolecules);
+		//TODO PEDRO SENSOR
+		//removeSensorInteractios(resultMD, sensorMolecules);
+
+
 		
 		//CreateMeasureClasses(sbolDoc);
 				
@@ -119,27 +124,28 @@ public class FlowModel {
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
-			if(sensorMolecules.containsKey(comp.getDisplayId())) {
-				continue;
-			}
-			else 
-				if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
-					SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
-					if (SBOL2SBML.isInputComponent(comp)) {
-						SBOL2SBML.generateInputPort(comp, targetModel);
-					} else if (SBOL2SBML.isOutputComponent(comp)){
-						SBOL2SBML.generateOutputPort(comp, targetModel);
-					}
-//					if (SBOL2SBML.isProteinComponent(comp, sbolDoc)) {
-//						continue;
-//					} else {
-//						SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
-//						if (SBOL2SBML.isInputComponent(comp)) {
-//							SBOL2SBML.generateInputPort(comp, targetModel);
-//						} else if (SBOL2SBML.isOutputComponent(comp)){
-//							SBOL2SBML.generateOutputPort(comp, targetModel);
-//						}
-//					}
+			//TODO PEDRO SENSOR
+			//			if(sensorMolecules.containsKey(comp.getDisplayId())) {
+			//				//continue;
+			//			}
+			//			else 
+			if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
+				SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
+				if (SBOL2SBML.isInputComponent(comp)) {
+					SBOL2SBML.generateInputPort(comp, targetModel);
+				} else if (SBOL2SBML.isOutputComponent(comp)){
+					SBOL2SBML.generateOutputPort(comp, targetModel);
+				}
+				//					if (SBOL2SBML.isProteinComponent(comp, sbolDoc)) {
+				//						continue;
+				//					} else {
+				//						SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
+				//						if (SBOL2SBML.isInputComponent(comp)) {
+				//							SBOL2SBML.generateInputPort(comp, targetModel);
+				//						} else if (SBOL2SBML.isOutputComponent(comp)){
+				//							SBOL2SBML.generateOutputPort(comp, targetModel);
+				//						}
+				//					}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generateTUSpecies(comp, sbolDoc, targetModel);
 				if (SBOL2SBML.isInputComponent(comp)) {
@@ -179,7 +185,7 @@ public class FlowModel {
 						ligands.add(partici);
 					}
 				}
-				SBOL2SBML.generateComplexFormationRxn(interact, complex, ligands, resultMD, targetModel);
+				//SBOL2SBML.generateComplexFormationRxn(interact, complex, ligands, resultMD, targetModel);
 			} else if (SBOL2SBML.isProductionInteraction(interact, resultMD, sbolDoc)) {
 				FunctionalComponent promoter = null;
 				for (Participation partici : interact.getParticipations())
@@ -274,7 +280,7 @@ public class FlowModel {
 				generateFlowProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
 						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
 						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions, complex2sensor2ligand);
 			}
 		}
 				
@@ -290,9 +296,9 @@ public class FlowModel {
 			}
 			ModuleDefinition subModuleDef = sbolDoc.getModuleDefinition(subModule.getDefinitionURI());
 			ModuleDefinition subModuleDefFlatt = SBOL2SBML.MDFlattener(sbolDoc, subModuleDef);
-			if (SensorGateModule(subModuleDefFlatt, sensorMolecules, sbolDoc)) {
+/*			if (SensorGateModule(subModuleDefFlatt, sensorMolecules, sbolDoc)) {
 				continue;
-			}
+			}*/
 			BioModel subTargetModel = new BioModel(projectDirectory);
 			if (subTargetModel.load(projectDirectory + File.separator + SBOL2SBML.getDisplayID(subModuleDefFlatt) + ".xml")) {
 				generateSubModel(projectDirectory, subModule, resultMD, sbolDoc, subTargetModel, targetModel);
@@ -334,6 +340,7 @@ public class FlowModel {
 		SBOL2SBML.annotateSubModel(targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)), subModule);
 		
 		// This portion of the code creates replacements for input molecules
+		//TODO PEDRO sensor replacements
 		for (FunctionalComponent fc : moduleDef.getFunctionalComponents()) {
 			ComponentDefinition ligand = fc.getDefinition();
 			if (SBOL2SBML.isSmallMoleculeDefinition(ligand)) {
@@ -346,8 +353,14 @@ public class FlowModel {
 		for (String spe : targetModel.getSpecies()) {
 			if (spe.contains("_protein")) {
 				String remove_species = spe;
+				
+				//TODO PEDRO porai en vez de remover, renombrar y listo
 				spe = spe.replace("_protein", "");
-				spe = "Y_" + spe;
+				
+				//TODO PEDRO ---- TEMPORARY HACK TO SOLVE YFP OUTPUT PROBLEM
+				if (!spe.contains("YFP")) {
+					spe = "Y_" + spe;
+				} 				
 				Species pe = targetModel.getSBMLDocument().getModel().getSpecies(spe);
 				if (pe == null) {
 					targetModel.createSpecies(spe, -1, -1);
@@ -596,8 +609,8 @@ public class FlowModel {
 						if (partici.containsRole(SystemsBiologyOntology.STIMULATOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -653,8 +666,8 @@ public class FlowModel {
 						if (partici.containsRole(SystemsBiologyOntology.INHIBITOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()));
-								Prot_2_Param.put(sensorMolecules.get(partici.getParticipantDefinition().getDisplayId()), Arrays.asList(ymax, ymin, alpha, beta));
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -889,10 +902,55 @@ public class FlowModel {
 	 *
 	 * @author Pedro Fontanarrosa
 	 * @param moduleDef the module def
+	 * @throws SBOLValidationException the SBOL validation exception
+	 */
+	private static HashMap<String, HashMap <String, String>> mapSensorToLigand(SBOLDocument sbolDoc) throws SBOLValidationException{
+		
+		HashMap<String, HashMap <String, String>> complex2ligand2sensor = new HashMap<String, HashMap <String, String>>();
+		//HashMap<String, List<String>> Prot_2_Param = new HashMap <String, List<String>>();		
+		for (ModuleDefinition resultMD : sbolDoc.getModuleDefinitions()) {
+			for (Interaction interact : resultMD.getInteractions()) {
+				if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
+					ComponentDefinition complex = null;
+					ComponentDefinition ligand = null;
+					ComponentDefinition sensor = null;
+					List<Participation> ligands = new LinkedList<Participation>();
+					HashMap <String, String> ligand2sensor = new HashMap <String, String>();
+					for (Participation partici: interact.getParticipations()) {
+						// COMPLEX
+						if (partici.containsRole(SystemsBiologyOntology.PRODUCT) ||
+								partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000253"))) {
+							complex = partici.getParticipantDefinition();
+						} else if (partici.containsRole(SystemsBiologyOntology.REACTANT) ||
+								partici.containsRole(URI.create("http://identifiers.org/biomodels.sbo/SBO:0000280"))) {
+							if (SBOL2SBML.isSmallMoleculeDefinition(partici.getParticipantDefinition())) {
+								sensor = partici.getParticipantDefinition();
+							} else {
+								ligand = partici.getParticipantDefinition();
+							}
+						}
+					}
+					ligand2sensor.put(ligand.getDisplayId(), sensor.getDisplayId());
+					complex2ligand2sensor.put(complex.getDisplayId(), ligand2sensor);
+				}
+			}
+		}
+		return complex2ligand2sensor;
+	}
+
+	
+	
+	/**
+	 * Removes the complex formation interaction (from sensor protein and ligand) from the document. This will remove the need to create these interactions for the SBML document
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param moduleDef the module def
 	 * @param sensorMolecules the sensor molecules
 	 * @throws SBOLValidationException the SBOL validation exception
 	 */
 	private static void removeSensorInteractios(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
+		
+		HashMap <String, String> sensorToLigand = new HashMap <String, String>();
 		
 		for (Interaction interact : moduleDef.getInteractions()) {
 			for (Participation part :interact.getParticipations()){
@@ -1027,10 +1085,32 @@ public class FlowModel {
 	private static void generateFlowProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
 			List<Interaction> activations, List<Interaction> repressions,
 			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
+			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, HashMap<String, HashMap <String, String>> complex2sensor2ligand) throws BioSimException {
 		
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
+		
+		boolean sensor_gate = false;
+		boolean reporter_gate = false;
+		for (Participation TU : transcribed) {
+			ComponentDefinition TUCD = TU.getParticipant().getDefinition();
+			for (Component part : TUCD.getComponents()) {
+				ComponentDefinition partCD = part.getDefinition();
+				if (partCD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
+					List<Annotation> Annot = partCD.getAnnotations();
+					String type = "";
+					for (int i = 0; i < Annot.size(); i++) {
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gate_type"))) {
+							type = Annot.get(i).getStringValue();
+							if (type.equals("output_reporter")) {
+								reporter_gate = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		
 		if (productions == null) {
 			return;
@@ -1054,15 +1134,26 @@ public class FlowModel {
 			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
 			}
 		
+		//TODO PEDRO BORRAR ESTO
+		if (product.equals("YFP_protein")) {
+			reporter_gate = true;
+		}
+		if (product.equals("LacI_protein") || product.equals("TetR_protein") ||  product.equals("AraC_protein")||  product.equals("LuxR_protein")) {
+			sensor_gate = true;
+		}
+		
 		//create reaction ID for the output production flow for each gate,
 		//which is the display ID's of the products separated by underscores, 
 		//check if it's unique using SMBLUtilities.getUniqueSBMLId()
-		String rxnIDSD = "dy_" + rxnID ;
-		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
-		
-		//TODO PEDRO don't need this reaction I think
-		//String rxnIDTF = "d" + rxnID ;
-		//rxnIDTF = SBMLutilities.getUniqueSBMLId(rxnIDTF, targetModel);		
+		String rxnIDSD = "";
+		if (reporter_gate) {
+			rxnIDSD = rxnID;
+			rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
+		} else {
+			rxnIDSD = "dy_" + rxnID;
+			rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
+		}
+
 		
 		// Count promoters
 		int promoterCnt = 0;
@@ -1124,13 +1215,16 @@ public class FlowModel {
 				}
 			}
 		}
-		
-		//TODO PEDRO: delete these values from here and from methods after flow model is done
-		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
-		
+				
 		//Create the gate flow production reaction species for each TU.
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
-		gate_flow.setId("Y_" + rxnID);
+		if(reporter_gate) {
+			gate_flow.setId(rxnID);
+		} else {
+			gate_flow.setId("Y_" + rxnID);
+		}
+		
+		
 		
 		//This parameter will store the value of the difference between the steady-state and the current state of the gate flow
 		Parameter gateSS = targetModel.getSBMLDocument().getModel().createParameter();
@@ -1138,15 +1232,16 @@ public class FlowModel {
 		gateSS.setValue(0.0);
 		gateSS.setConstant(false);
 		
-		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), false, null, targetModel, promoters, promoterInteractions);
+		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, product, promoter.getDisplayId(), reporter_gate, sensor_gate, complex2sensor2ligand, false, null, targetModel, promoters, promoterInteractions);
 
-		AssignmentRule steadyState = targetModel.createFlowSteadyStateRule(gateSS, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
-		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, product, targetModel, celloParameters, promoterInteractions, promoters, ordered_promoters);
+		AssignmentRule steadyState = targetModel.createFlowSteadyStateRule(gateSS, rxnIDSD, promoter.getDisplayId(), false, null, targetModel, promoters, promoterInteractions);
+		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, product, reporter_gate, sensor_gate, targetModel, celloParameters, promoterInteractions, promoters, ordered_promoters);
 		steadyState.setMath(math);
+
 		
 		//TODO PEDRO: it would be nice to fix sbml annotations to link it to the sbol document
 		
 		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, celloParameters, promoterInteractions, promoters, ordered_promoters)));		
+		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, reporter_gate, gate_flow, celloParameters, promoterInteractions, promoters, ordered_promoters)));		
 	}
 }

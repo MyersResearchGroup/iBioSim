@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -2585,20 +2586,16 @@ public class BioModel extends CoreObservable{
 		return kineticLaw;
 	}
 	
-	public Reaction createFlowProductionReactions(Species flow, String reactionID, String TU, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+	public Reaction createFlowProductionReactions(Species flow, String reactionID, String product, String TU, boolean reporter_gate, boolean sensor_gate, HashMap<String, HashMap <String, String>> complex2sensor2ligand, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 		
-		//TODO PEDRO: Change these values too
-		//This method should create a production reaction for the mRNA that is transcribed from the TU. 
-		
-		
-		//Check if rxnID is unique, if not, add something to it
-		reactionID = SBMLutilities.getUniqueSBMLId(reactionID, targetModel);
-		
+		if(reporter_gate) {
+			reactionID = reactionID + "_production";
+		} else {
+			
+		}
 		
 		Reaction r = sbml.getModel().getReaction(reactionID);
 		
-		
-		//TODO PEDRO delete this once I don't have a protein? 2
 		KineticLaw k = null;
 		
 		if (flow==null) {
@@ -2620,16 +2617,17 @@ public class BioModel extends CoreObservable{
 			modifier.setSpecies(TU);
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
-						
-			// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
-			for (String promoter : promoters) {
-				if (promoterInteractions.containsKey(promoter)) {
-					for (String modifi : promoterInteractions.get(promoter).keySet()) {
-						if (modifi.equals("sensor")) {
+			if (sensor_gate) {
+				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+					HashMap<String, String> protein2ligand = complex.getValue();
+
+					for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+						if (product.equals(protein.getKey())) {
+							String ligand = protein.getValue();
 							ModifierSpeciesReference input = r.createModifier();
-							if (sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)) == null) {
+							if (sbml.getModel().getSpecies(ligand) == null) {
 								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
-								smallMolecule.setId(promoterInteractions.get(promoter).get(modifi));
+								smallMolecule.setId(ligand);
 								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
 								smallMolecule.setCompartment(r.getCompartment());
 								smallMolecule.setHasOnlySubstanceUnits(true);
@@ -2637,22 +2635,49 @@ public class BioModel extends CoreObservable{
 								smallMolecule.setConstant(false);
 								smallMolecule.setInitialAmount(0.0);
 								
-								SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
 								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
 								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
 																																
 								input.setSpecies(smallMolecule);
 								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-							} else {
-							//input.setSpecies(targetModel.getSBMLDocument().getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-							input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 							}
-						} else {
-							ModifierSpeciesReference input = r.createModifier();
+						}	
+					}
+				}
+
+			} else {
+				// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+				for (String promoter : promoters) {
+					if (promoterInteractions.containsKey(promoter)) {
+						for (String modifi : promoterInteractions.get(promoter).keySet()) {
+							String input_molecule = promoterInteractions.get(promoter).get(modifi);
 							
+							
+							ModifierSpeciesReference input = r.createModifier();
+
 							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
-							String promotFlow = promoterInteractions.get(promoter).get(modifi);
+							String promotFlow = "";
+							
+							//this will replace AraC_ara for Y_araC instead of Y_AraC_ara
+//							for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+//								HashMap<String, String> protein2ligand = complex.getValue();
+//								for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+//									if (product.equals(protein.getKey())) {
+//										//promotFlow = protein;
+//									}
+//								}	
+//							}
+
+							if (complex2sensor2ligand.keySet().contains(input_molecule)) {
+								HashMap<String, String> protein2ligand = complex2sensor2ligand.get(input_molecule);
+								for (String repressor : protein2ligand.keySet()) {
+									promotFlow = repressor;
+								}
+							} else {
+								promotFlow = promoterInteractions.get(promoter).get(modifi);
+							}
+
 							promotFlow = promotFlow.replace("_protein", "");
 							promotFlow = "Y_" + promotFlow;
 							inputFlow.setId(promotFlow);
@@ -2662,21 +2687,22 @@ public class BioModel extends CoreObservable{
 							inputFlow.setBoundaryCondition(false);
 							inputFlow.setConstant(false);
 							inputFlow.setInitialAmount(0.0);
-							
+
 							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
-							
+
 							targetModel.createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
-							
-																							
+
+
 							input.setSpecies(inputFlow);
 							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-							
-//							input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
-//							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+
+							//input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 						}
 					}
 				}
 			}
+
 			
 			flow.setCompartment(r.getCompartment());
 			flow.setInitialAmount(0.0);
@@ -2685,11 +2711,11 @@ public class BioModel extends CoreObservable{
 			flow.setHasOnlySubstanceUnits(true);
 			flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 			
-			SpeciesReference product = r.createProduct();
-			product.setSpecies(flow.getId());
-			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, product, "species");
-			product.setStoichiometry(1.0);
-			product.setConstant(true);
+			SpeciesReference gate_product = r.createProduct();
+			gate_product.setSpecies(flow.getId());
+			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, gate_product, "species");
+			gate_product.setStoichiometry(1.0);
+			gate_product.setConstant(true);
 			
 			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
 			
@@ -2724,7 +2750,7 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 	
-	public AssignmentRule createFlowSteadyStateRule(Parameter gateSS, String reactionID, String TU, String kSDdegrad, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
+	public AssignmentRule createFlowSteadyStateRule(Parameter gateSS, String reactionID, String TU, boolean onPort, String[] dimensions, BioModel targetModel, List <String> promoters, HashMap<String, HashMap <String, String>> promoterInteractions) {
 				
 		
 		
@@ -2750,7 +2776,7 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
-	public ASTNode createFlowSteadyState(Reaction reaction, String product, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public ASTNode createFlowSteadyState(Reaction reaction, String product, boolean reporter_gate, boolean sensor_gate, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 
 		String kineticLaw = "";
 		String promoter = "";
@@ -2775,20 +2801,84 @@ public class BioModel extends CoreObservable{
 		    		 String value = (String) promInter.values().toArray()[0];
 		    		 first_promoter_flux = value;
 		    		 first_promoter_flux = first_promoter_flux.replace("_protein", "");
+		    		 first_promoter_flux = "Y_" + first_promoter_flux;
 		    		 
 		    	 } else {
 		    		 HashMap<String, String> promInter = promoterInteractions.get(promoter);
 		    		 String value = (String) promInter.values().toArray()[0];
 		    		 second_promoter_flux = value;
-		    		 //buscar parametros alpha y beta aca
+		    		 String value_search = second_promoter_flux;
+		    		 
 		    		 second_promoter_flux = second_promoter_flux.replace("_protein", "");
+		    		 
+		    		 String ymax = "ymax_" + second_promoter_flux;
+		    		 String ymin = "ymin_" + second_promoter_flux;
+		    		 String alpha = "alpha_" + second_promoter_flux;
+		    		 String beta = "beta_" + second_promoter_flux;
+		    		 
+		    		 second_promoter_flux = "Y_" + second_promoter_flux;
+
+
+
+		    		 Parameter ymax_p = targetModel.getSBMLDocument().getModel().createParameter();
+		    		 ymax_p.setId(ymax);
+		    		 Parameter ymin_p = targetModel.getSBMLDocument().getModel().createParameter();
+		    		 ymin_p.setId(ymin);
+		    		 Parameter alpha_para = targetModel.getSBMLDocument().getModel().createParameter();
+		    		 alpha_para.setId(alpha);
+		    		 Parameter beta_para = targetModel.getSBMLDocument().getModel().createParameter();
+		    		 beta_para.setId(beta);
+
+		    		 if (celloParameters.get(value_search) != null) {
+		    			 if (celloParameters.get(value_search).get(2) != null && !celloParameters.get(value_search).get(2).equals("")) {
+		    				 double ymax_value = Double.parseDouble(celloParameters.get(value_search).get(2));
+		    				 ymax_p.setValue(ymax_value);
+		    			 }
+		    			 else {
+		    				 ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
+		    			 }
+
+		    			 if (celloParameters.get(value_search).get(3) != null && !celloParameters.get(value_search).get(3).equals("")) {
+		    				 double ymin_value = Double.parseDouble(celloParameters.get(value_search).get(3));
+		    				 ymin_p.setValue(ymin_value);
+		    			 }
+		    			 else {
+		    				 ymin_p.setValue(GlobalConstants.CELLO_PARAMETER_YMIN);
+		    			 }
+		    			 if (celloParameters.get(value_search).get(4) != null && !celloParameters.get(value_search).get(4).equals("")) {
+		    				 double alpha_value = Double.parseDouble(celloParameters.get(value_search).get(4));
+		    				 alpha_para.setValue(alpha_value);
+		    			 }
+		    			 else {
+		    				 alpha_para.setValue(GlobalConstants.CELLO_PARAMETER_ALPHA);
+		    			 }
+		    			 if (celloParameters.get(value_search).get(5) != null && !celloParameters.get(value_search).get(5).equals("")) {
+		    				 double beta_value = Double.parseDouble(celloParameters.get(value_search).get(5));
+		    				 beta_para.setValue(beta_value);
+		    			 }
+		    			 else {
+		    				 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
+		    			 }
+		    		 }
+		    		 String numerator1 = "(" + second_promoter_flux + "-" + ymin + "+" + beta +"*(" + ymax +"-"+ second_promoter_flux + ")";
+		    		 String denominator1 = ymax + "-" + ymin;
+		    		 input_flux = first_promoter_flux +"*" + alpha + "*((" + numerator1 + ")/(" + denominator1 + "))" + "+" + second_promoter_flux + ")";
+
 		    	 }
-		    	 
-		    	 
-		    	 
+
 		     }
 		} else {
-			input_flux = "";
+
+			if(!sensor_gate) {
+				String single_promoter = promoters.get(0).toString();
+				HashMap<String, String> promInter = promoterInteractions.get(single_promoter);
+				String value = (String) promInter.values().toArray()[0];
+				String input_promoter_flux = value;
+				input_promoter_flux = input_promoter_flux.replace("_protein", "");
+				input_promoter_flux = "Y_" + input_promoter_flux;
+
+				input_flux = input_promoter_flux;
+			}
 		}
 
 		String ymax = "ymax_" + product;
@@ -2799,6 +2889,9 @@ public class BioModel extends CoreObservable{
 		K = K.replace("_protein", "");
 		String n = "n_" + product;
 		n = n.replace("_protein", "");
+		String output_flux = product;
+		output_flux = output_flux.replace("_protein", "");
+		output_flux = "Y_" + output_flux;
 
 		Parameter ymax_p = targetModel.getSBMLDocument().getModel().createParameter();
 		ymax_p.setId(ymax);
@@ -2857,17 +2950,23 @@ public class BioModel extends CoreObservable{
 			//				 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
 			//			 }
 		}
-
-		numerator = K + "^" + n;
-		denominator = K + "^" + n + "1^" + n;
 		
-		kineticLaw = "(" + ymin + "*(" + ymax + "-" + ymin + ")*(" + numerator + "/" + denominator + ") - " + ymin +")";
-
+		if (reporter_gate) {
+			kineticLaw = input_flux;
+		} else if (sensor_gate) {
+			kineticLaw = "piecewise(" + ymax + ", ( == 0), " + ymin + " )";		
+		} else {
+			numerator = K + "^" + n;
+			denominator = K + "^" + n + "+ (" + input_flux +")^" + n;
+			
+			kineticLaw = "(" + ymin + "+(" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
+		}
+		
 		ASTNode math = SBMLutilities.myParseFormula(kineticLaw);
 		return math;
 	}
 	
-	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, boolean reporter_gate, Species gateflow, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
 		
 		String kineticLaw = "";
 		
@@ -2893,8 +2992,14 @@ public class BioModel extends CoreObservable{
 				 tauOFF.setValue(GlobalConstants.CELLO_TAU_OFF);
 			 }
 		 }
+		 
+		if(reporter_gate) {
+			kineticLaw = "tauON*" + gateSS.getId() + " - tauOFF*" + gateflow.getId() + ")";
+		} else {
+			kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF*" + gateSS.getId() + ")";
+		}
 		
-		kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF*" + gateSS.getId() + ")";
+		
 				
 		return kineticLaw;
 	}

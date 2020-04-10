@@ -71,10 +71,7 @@ public class CelloModeling {
 	 */
     
 	public static HashMap<String,BioModel> generateModel(String projectDirectory, ModuleDefinition moduleDef, SBOLDocument sbolDoc) throws XMLStreamException, IOException, BioSimException, SBOLValidationException {
-		
-		//TODO PEDRO: change this to be an argument of the method
-		boolean FlowModel = true;
-		
+
 		HashMap<String,BioModel> models = new HashMap<String,BioModel>();
 
 		BioModel targetModel = new BioModel(projectDirectory);
@@ -108,8 +105,6 @@ public class CelloModeling {
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		removeSensorInteractios(resultMD, sensorMolecules);
-		
-		//CreateMeasureClasses(sbolDoc);
 				
 		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();		
 
@@ -149,7 +144,6 @@ public class CelloModeling {
 		
 		for (Interaction interact : resultMD.getInteractions()) {
 			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {
-				//TODO PEDRO: add generateFlowDegradationRxn
 				generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
 				
 			} else if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
@@ -257,17 +251,30 @@ public class CelloModeling {
 				if (!promoterToPartici.containsKey(promoter))
 					promoterToPartici.put(promoter, new LinkedList<Participation>());
 				
-				if (FlowModel) {
-					generateFlowProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-				} else {
-					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
-							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
-							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
-							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
-				}
+				generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+						promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+						promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+						promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+				
+//				//Check if the TU has Cello Parameters "n", "K", "ymax" and "ymin". If yes, Call new model generating method
+//				if (CelloModel) {
+//					//go to the new generateProductionRxn method
+//					System.out.println("you are in new method call");
+//					
+//					//Generate the Cello production reactions for mRNAs and Products for this TU (promoter)
+//					generateCelloProductionRxns(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel, Prot_2_Param, promoterInteractions);
+//					//generateCelloDegradationRxn for all species produced, and for all mRNAs produced for each TU
+//				}
+//				//else call the normal model generating method
+//				else {
+//					SBOL2SBML.generateProductionRxn(promoter, promoterToPartici.get(promoter), promoterToProductions.get(promoter), 
+//							promoterToActivations.get(promoter), promoterToRepressions.get(promoter), promoterToProducts.get(promoter),
+//							promoterToTranscribed.get(promoter), promoterToActivators.get(promoter),
+//							promoterToRepressors.get(promoter), resultMD, sbolDoc, targetModel);
+//				}
 			}
 		}
 				
@@ -401,8 +408,8 @@ public class CelloModeling {
 				SBOL2SBML.annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
 			}
 		
-	}	
-
+	}
+	
 	/**
 	 * This method will return true, if the MD input is a SensorGate production Module Definition, in which the model should skip the production of 
 	 * a model of this. If it is, it returns true and the model generator doesn't generate a subTargetModel for it
@@ -1081,149 +1088,6 @@ public class CelloModeling {
 		SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createCelloProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
 		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
 		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+mRNA.getId()));
-		
-	}
-
-	private static void generateFlowProductionRxns(FunctionalComponent promoter, List<Participation> partici, List<Interaction> productions,
-			List<Interaction> activations, List<Interaction> repressions,
-			List<Participation> products, List<Participation> transcribed, List<Participation> activators, 
-			List<Participation> repressors, ModuleDefinition moduleDef, SBOLDocument sbolDoc, BioModel targetModel, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions) throws BioSimException {
-		
-		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
-		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
-		
-		if (productions == null) {
-			return;
-		}
-		
-		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
-		String rxnID = "";
-		if (products!=null) {
-			for (Participation production : products) {
-				if (rxnID.equals("")) {
-					rxnID = SBOL2SBML.getDisplayID(production);
-					rxnID = rxnID.replace("_protein", "");
-
-				} else {
-					rxnID = rxnID + "_" + SBOL2SBML.getDisplayID(production);
-				}
-			}
-		} else {
-			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
-			}
-		
-		//create reaction ID for the output production flow and protein production for each gate,
-		//which is the display ID's of the products separated by underscores, 
-		//check if it's unique using SMBLUtilities.getUniqueSBMLId()
-		String rxnIDSD = "dY_" + rxnID ;
-		rxnIDSD = SBMLutilities.getUniqueSBMLId(rxnIDSD, targetModel);
-		String rxnIDTF = "d" + rxnID ;
-		rxnIDTF = SBMLutilities.getUniqueSBMLId(rxnIDTF, targetModel);		
-		
-		// Count promoters
-		int promoterCnt = 0;
-		if (promoter.getDefinition() != null) {
-			ComponentDefinition tuCD = promoter.getDefinition();
-			for (Component comp : tuCD.getComponents()) {
-				if (comp.getDefinition() != null) {
-					if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)||
-							comp.getDefinition().getRoles().contains(SequenceOntology.OPERATOR)) {
-						promoterCnt++;
-					}
-				}
-			}
-		}
-		
-		//Check if there are two tandem promoters. If there are, then list them in order to have the method createCelloSDProductionReactions create roadblocking effects. 
-		List<String> ordered_promoters = new ArrayList<>();
-		if (promoterCnt == 2) {
-			if (promoter.getDefinition() != null) {
-				ComponentDefinition tuCD = promoter.getDefinition();
-				for (SequenceConstraint SC : tuCD.getSequenceConstraints()) {
-					if (SC.getRestriction().toString().equals("precedes")) {
-						ComponentDefinition object = SC.getObjectDefinition();
-						ComponentDefinition subject = SC.getSubjectDefinition();
-						if (object.getRoles().contains(SequenceOntology.PROMOTER) || object.getRoles().contains(SequenceOntology.OPERATOR) && subject.getRoles().contains(SequenceOntology.PROMOTER) || subject.getRoles().contains(SequenceOntology.OPERATOR)){
-							ordered_promoters.add(SBOL2SBML.getDisplayID(subject));
-							ordered_promoters.add(SBOL2SBML.getDisplayID(object));
-						}
-					}
-				}
-			}
-		}
-		
-		// each promoter will have a set of interactions
-		List<String> promoters = new ArrayList<>();
-		for (int i = 0; i < promoterCnt; i++) {
-			
-			// if only one promoter in TU, then promoterId will be the name of the TU
-			String promoterId = SBOL2SBML.getDisplayID(promoter);
-			
-			// Use the id of the actual promoter
-			if (promoterCnt >= 1) {
-				if (promoter.getDefinition() != null) {
-					ComponentDefinition tuCD = promoter.getDefinition();
-					int j = 0;
-					for (Component comp : tuCD.getComponents()) {
-						if (comp.getDefinition() != null) {
-							if (comp.getDefinition().getRoles().contains(SequenceOntology.PROMOTER)) {
-								if (i==j) {
-									promoterId = SBOL2SBML.getDisplayID(comp.getDefinition());
-									promoters.add(promoterId);
-									break;
-								}
-								j++;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		//TODO PEDRO: delete these values from here and from methods after flow model is done
-		String kSDdegrad = String.valueOf(GlobalConstants.k_SD_DIM_S);
-		String kTFdegrad = String.valueOf(GlobalConstants.k_TF_DIM_S);
-		
-		//Create only one mRNA (SD) and Protein (TF) production reaction for each TU.
-		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
-		gate_flow.setId("Y_" + rxnID);
-		
-		//Reaction SDproductionRxn = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, promoter.getDisplayId(), kSDdegrad, false, null, targetModel, promoters, promoterInteractions);
-		//targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
-		
-		Reaction TFproductionRxn = targetModel.createCelloTFProductionReactions(gate_flow, rxnIDTF, products, celloParameters, kTFdegrad, null, null, null, null, false, null);
-		//targetModel.createCelloDegradationReaction(mRNA.getId(), GlobalConstants.k_SD_DIM_S, true, null);
-			
-		
-		// Annotate SBML production reaction with SBOL production interactions
-//		List<Interaction> productionsRegulations = new LinkedList<Interaction>();
-//		if (productions!=null) productionsRegulations.addAll(productions);
-//		productionsRegulations.addAll(activations);
-//		productionsRegulations.addAll(repressions);
-//		if (!productionsRegulations.isEmpty())
-//			SBOL2SBML.annotateRxn(SDproductionRxn, productionsRegulations);
-//		if (!partici.isEmpty()) 
-//			SBOL2SBML.annotateSpeciesReference(SDproductionRxn.getModifier(0), partici);
-//		
-//		for (Participation activator : activators)
-//			SBOL2SBML.generateActivatorReference(activator, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-//		
-//		for (Participation repressor : repressors)
-//			SBOL2SBML.generateRepressorReference(repressor, promoter.getDisplayId(), moduleDef, SDproductionRxn, targetModel);
-//		 
-//		for (int k = 0; k < transcribed.size(); k++) {
-//			FunctionalComponent gene = moduleDef.getFunctionalComponent(transcribed.get(k).getParticipantURI());
-//			FunctionalComponent protein = moduleDef.getFunctionalComponent(products.get(k).getParticipantURI());
-//
-//			ComponentDefinition compDef = sbolDoc.getComponentDefinition(gene.getDefinitionURI());
-//			if (compDef!=null) {
-//				SBOL2SBML.annotateSpecies(targetModel.getSBMLDocument().getModel().getSpecies(SBOL2SBML.getDisplayID(protein)), compDef);
-//			}
-//		}
-		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		//SDproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowProductionKineticLaw(SDproductionRxn, celloParameters, promoterInteractions, promoters, ordered_promoters)));
-		//TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(TFproductionRxn)));
-		TFproductionRxn.getKineticLaw().setMath(SBMLutilities.myParseFormula("kdegrad*"+gate_flow.getId()));
 		
 	}
 
