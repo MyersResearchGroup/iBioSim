@@ -428,7 +428,7 @@ public class ModelEditor extends PanelObservable implements ActionListener, Mous
 
 		// Annotate SBML model with synthesized SBOL DNA component and save
 		// component to local SBOL file
-		if (!lema && !biomodel.isGridEnabled()) {
+		if (!lema && !biomodel.isGridEnabled() && modelPanel != null && modelPanel.getSBOLField() != null) {
 			try {
 				modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			} catch (SBOLValidationException e1) {
