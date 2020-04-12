@@ -371,6 +371,7 @@ public class SBMLutilities extends CoreObservable
 	public static String getDimensionString(SBase sBase)
 	{
 		String dimStr = "";
+		if (sBase==null) return dimStr;
 		ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(sBase);
 		for (int j = sBasePlugin.getDimensionCount() - 1; j >= 0; j--)
 		{
@@ -3164,7 +3165,7 @@ public class SBMLutilities extends CoreObservable
 			varNode.addAttr("varId", inputs[i]);
 			inputNode.addChild(varNode);
 		}
-		draw.setUncertML(xmlNode);
+//		draw.setUncertML(xmlNode);
 	}
 
 	/**
