@@ -1406,7 +1406,7 @@ public class SBOL2SBML {
 	 * @param sbolDoc - The SBOL FunctionalComponent to check if it is a valid SBML species
 	 * @return True if the given FunctionalComponent is Small Molecule SBML species. False otherwise. 
 	 */
-	private static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
+	static boolean isSmallMoleculeComponent(FunctionalComponent comp, SBOLDocument sbolDoc) {
 		ComponentDefinition compDef = sbolDoc.getComponentDefinition(comp.getDefinitionURI());
 		if (compDef==null) return false;
 		return isSmallMoleculeDefinition(compDef);

@@ -107,16 +107,14 @@ public class FlowModel {
 		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
 		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
 		
+		//This maps ligands, small molecules and their complex formation molecule to use in replacements later in the model
 		HashMap<String, HashMap <String, String>> complex2sensor2ligand = mapSensorToLigand(sbolDoc);
 				
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = SBOL2SBML.MDFlattener(sbolDoc, moduleDef);
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
-		//TODO PEDRO SENSOR
 		//removeSensorInteractios(resultMD, sensorMolecules);
-
-
 		
 		//CreateMeasureClasses(sbolDoc);
 				
@@ -124,28 +122,17 @@ public class FlowModel {
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
-			//TODO PEDRO SENSOR
-			//			if(sensorMolecules.containsKey(comp.getDisplayId())) {
-			//				//continue;
-			//			}
-			//			else 
 			if (SBOL2SBML.isSpeciesComponent(comp, sbolDoc)) {
-				SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
-				if (SBOL2SBML.isInputComponent(comp)) {
-					SBOL2SBML.generateInputPort(comp, targetModel);
-				} else if (SBOL2SBML.isOutputComponent(comp)){
-					SBOL2SBML.generateOutputPort(comp, targetModel);
+				if (SBOL2SBML.isSmallMoleculeComponent(comp, sbolDoc)){
+					SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
+					if (SBOL2SBML.isInputComponent(comp)) {
+						SBOL2SBML.generateInputPort(comp, targetModel);
+					} else if (SBOL2SBML.isOutputComponent(comp)){
+						SBOL2SBML.generateOutputPort(comp, targetModel);
+					}
+				} else {
+					continue;
 				}
-				//					if (SBOL2SBML.isProteinComponent(comp, sbolDoc)) {
-				//						continue;
-				//					} else {
-				//						SBOL2SBML.generateSpecies(comp, sbolDoc, targetModel);
-				//						if (SBOL2SBML.isInputComponent(comp)) {
-				//							SBOL2SBML.generateInputPort(comp, targetModel);
-				//						} else if (SBOL2SBML.isOutputComponent(comp)){
-				//							SBOL2SBML.generateOutputPort(comp, targetModel);
-				//						}
-				//					}
 			} else if (SBOL2SBML.isPromoterComponent(resultMD, comp, sbolDoc)) {
 				generateTUSpecies(comp, sbolDoc, targetModel);
 				if (SBOL2SBML.isInputComponent(comp)) {
@@ -168,10 +155,7 @@ public class FlowModel {
 		HashMap<FunctionalComponent, List<Participation>> promoterToPartici = new HashMap<FunctionalComponent, List<Participation>>();
 		
 		for (Interaction interact : resultMD.getInteractions()) {
-			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {
-				//TODO PEDRO: delete this?
-				//generateCelloDegradationRxn(interact, resultMD, targetModel, sbolDoc);
-				
+			if (SBOL2SBML.isDegradationInteraction(interact, resultMD, sbolDoc)) {				
 			} else if (SBOL2SBML.isComplexFormationInteraction(interact, resultMD, sbolDoc)) {
 				Participation complex = null;
 				List<Participation> ligands = new LinkedList<Participation>();
@@ -340,7 +324,6 @@ public class FlowModel {
 		SBOL2SBML.annotateSubModel(targetModel.getSBMLCompModel().getSubmodel(SBOL2SBML.getDisplayID(subModule)), subModule);
 		
 		// This portion of the code creates replacements for input molecules
-		//TODO PEDRO sensor replacements
 		for (FunctionalComponent fc : moduleDef.getFunctionalComponents()) {
 			ComponentDefinition ligand = fc.getDefinition();
 			if (SBOL2SBML.isSmallMoleculeDefinition(ligand)) {
@@ -350,11 +333,13 @@ public class FlowModel {
 		
 		// This portion of the method creates SBML species for promoter fluxes (for example "Y_PhlF"). This is because they
 		// are not created for the top level model. It then creates the appropriate replacements.
-		for (String spe : targetModel.getSpecies()) {
+		for (FunctionalComponent fc : moduleDef.getFunctionalComponents()) {
+			String spe = fc.getDisplayId();
+			ComponentDefinition CD = fc.getDefinition();
+			if (CD.containsType(URI.create("http://www.biopax.org/release/biopax-level3.owl#Complex"))) {
+				continue;				
+			}
 			if (spe.contains("_protein")) {
-				String remove_species = spe;
-				
-				//TODO PEDRO porai en vez de remover, renombrar y listo
 				spe = spe.replace("_protein", "");
 				
 				//TODO PEDRO ---- TEMPORARY HACK TO SOLVE YFP OUTPUT PROBLEM
@@ -391,12 +376,6 @@ public class FlowModel {
 					}
 				}
 			}
-//		//TODO PEDRO come back to this when removing proteins
-//		for (String spe : targetModel.getSpecies()) {
-//			if (spe.contains("_protein")) {
-//				targetModel.getSBMLDocument().getModel().removeSpecies(spe);
-//			}
-//		}
 	}
 
 	/**
@@ -747,9 +726,7 @@ public class FlowModel {
 			for (Component comp : tuCD.getComponents()) {
 				if (comp.getDefinition() != null) {
 					if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
-						ComponentDefinition Part = comp.getDefinition();
-						
-					
+						ComponentDefinition Part = comp.getDefinition();					
 						//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
 						//the location of these parameters can change
 						List<Annotation> Annot = Part.getAnnotations();
@@ -950,8 +927,7 @@ public class FlowModel {
 	 */
 	private static void removeSensorInteractios(ModuleDefinition moduleDef, HashMap<String, String> sensorMolecules) throws SBOLValidationException{
 		
-		HashMap <String, String> sensorToLigand = new HashMap <String, String>();
-		
+
 		for (Interaction interact : moduleDef.getInteractions()) {
 			for (Participation part :interact.getParticipations()){
 				for (String com_prot : sensorMolecules.keySet()) {
@@ -1092,25 +1068,22 @@ public class FlowModel {
 		
 		boolean sensor_gate = false;
 		boolean reporter_gate = false;
-		for (Participation TU : transcribed) {
-			ComponentDefinition TUCD = TU.getParticipant().getDefinition();
-			for (Component part : TUCD.getComponents()) {
-				ComponentDefinition partCD = part.getDefinition();
-				if (partCD.containsRole(SequenceOntology.ENGINEERED_REGION)) {
-					List<Annotation> Annot = partCD.getAnnotations();
-					String type = "";
-					for (int i = 0; i < Annot.size(); i++) {
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gate_type"))) {
-							type = Annot.get(i).getStringValue();
-							if (type.equals("output_reporter")) {
-								reporter_gate = true;
-							}
+		ComponentDefinition TUCD = promoter.getDefinition();
+		for (Component comp : TUCD.getComponents()) {
+			if (comp.getDefinition().getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+				ComponentDefinition Part = comp.getDefinition();
+				List<Annotation> Annot = Part.getAnnotations();
+				String type = "";
+				for (int i = 0; i < Annot.size(); i++) {
+					if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gate_type"))) {
+						type = Annot.get(i).getStringValue();
+						if (type.equals("output_reporter")) {
+							reporter_gate = true;
 						}
 					}
 				}
 			}
-		}
-		
+		}	
 		
 		if (productions == null) {
 			return;
