@@ -7651,6 +7651,7 @@ public class BioModel extends CoreObservable{
 		s = s.replace("/"," / ");
 		s = s.replace("-"," - ");
 		s = s.replace("%"," % ");
+		s = s.replace("^"," ^ ");
 		s = s.replace("&&"," && ");
 		s = s.replace("||"," || ");
 		s = s.replace(">", " > ").replace("> =",">=");
@@ -7663,6 +7664,7 @@ public class BioModel extends CoreObservable{
 		do { 
 			olds = s;
 			s = s.replace("," + origVar + ",", "," + newVar + ",");
+			s = s.replace(" " + origVar + ",", " " + newVar + ",");
 			s = s.replace(" " + origVar + " ", " " + newVar + " ");
 			s = s.replace("," + origVar + ")", "," + newVar + ")");
 			s = s.replace(" " + origVar + "(", " " + newVar + "(");
