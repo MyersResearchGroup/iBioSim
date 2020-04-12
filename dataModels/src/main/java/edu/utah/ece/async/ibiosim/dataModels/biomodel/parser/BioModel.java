@@ -2601,7 +2601,6 @@ public class BioModel extends CoreObservable{
 		
 		if (flow==null) {
 			flow = sbml.getModel().createSpecies();
-			//reaction id + mRNA
 			flow.setId(reactionID);
 		}
 		
@@ -2609,14 +2608,16 @@ public class BioModel extends CoreObservable{
 			
 			r = sbml.getModel().createReaction();
 			r.setId(reactionID);
-			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			//TODO PEDRO SBO
+			//r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 			r.setCompartment(sbml.getModel().getSpecies(TU).getCompartment());
-			r.setReversible(true);
+			r.setReversible(false);
 			
 			// Make the DNA a promoter for the production
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(TU);
-			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			//TODO PEDRO SBO
+			//modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
 			if (sensor_gate) {
 				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
@@ -2629,7 +2630,8 @@ public class BioModel extends CoreObservable{
 							if (sbml.getModel().getSpecies(ligand) == null) {
 								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
 								smallMolecule.setId(ligand);
-								smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								//TODO PEDRO SBO
+								//smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
 								smallMolecule.setCompartment(r.getCompartment());
 								smallMolecule.setHasOnlySubstanceUnits(true);
 								smallMolecule.setBoundaryCondition(true);
@@ -2641,7 +2643,8 @@ public class BioModel extends CoreObservable{
 								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
 																																
 								input.setSpecies(smallMolecule);
-								input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+								//TODO PEDRO SBO
+								//input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 							}
 						}	
 					}
@@ -2682,7 +2685,8 @@ public class BioModel extends CoreObservable{
 							promotFlow = promotFlow.replace("_protein", "");
 							promotFlow = "Y_" + promotFlow;
 							inputFlow.setId(promotFlow);
-							inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+							//TODO PEDRO SBO
+							//inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 							inputFlow.setCompartment(r.getCompartment());
 							inputFlow.setHasOnlySubstanceUnits(true);
 							inputFlow.setBoundaryCondition(false);
@@ -2695,7 +2699,8 @@ public class BioModel extends CoreObservable{
 
 
 							input.setSpecies(inputFlow);
-							input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+							//TODO PEDRO SBO
+							//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 
 							//input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
 							//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
@@ -2723,7 +2728,8 @@ public class BioModel extends CoreObservable{
 
 
 				input.setSpecies(inputFlow);
-				input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+				//TODO PEDRO SBO
+				//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 			}
 
 			
@@ -2732,13 +2738,14 @@ public class BioModel extends CoreObservable{
 			flow.setBoundaryCondition(false);
 			flow.setConstant(false);
 			flow.setHasOnlySubstanceUnits(true);
-			flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+			//TODO PEDRO SBO
+			//flow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
 			
 			SpeciesReference gate_product = r.createProduct();
 			gate_product.setSpecies(flow.getId());
 			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, gate_product, "species");
 			gate_product.setStoichiometry(1.0);
-			gate_product.setConstant(true);
+			gate_product.setConstant(false);
 			
 			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
 			k = r.createKineticLaw();
