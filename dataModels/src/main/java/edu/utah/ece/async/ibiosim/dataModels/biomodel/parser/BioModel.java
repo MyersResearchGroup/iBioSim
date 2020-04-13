@@ -2745,7 +2745,7 @@ public class BioModel extends CoreObservable{
 			gate_product.setSpecies(flow.getId());
 			SBMLutilities.copyDimensionsToEdgeIndex(r, flow, gate_product, "species");
 			gate_product.setStoichiometry(1.0);
-			gate_product.setConstant(false);
+			gate_product.setConstant(true);
 			
 			targetModel.createDirPort(flow.getId(), GlobalConstants.OUTPUT);		
 			k = r.createKineticLaw();
@@ -3027,7 +3027,7 @@ public class BioModel extends CoreObservable{
 					}	
 				}
 			}
-			kineticLaw = "piecewise(" + ymax + ", (" +ligand+ " == 0), " + ymin + " )";		
+			kineticLaw = "piecewise(" + ymin + " - " + output_flux +", (" +ligand+ " > 0), " + ymax + " - " + output_flux + ")";		
 		} else {
 			numerator = "(" + K + "^(" + n + "))";
 			denominator = "(" + K + "^(" + n + ")) + (" + input_flux +")^(" + n + ")";

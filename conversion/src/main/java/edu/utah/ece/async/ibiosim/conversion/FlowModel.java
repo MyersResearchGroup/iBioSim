@@ -1075,10 +1075,12 @@ public class FlowModel {
 				List<Annotation> Annot = Part.getAnnotations();
 				String type = "";
 				for (int i = 0; i < Annot.size(); i++) {
-					if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gate_type"))) {
+					if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gateType"))) {
 						type = Annot.get(i).getStringValue();
 						if (type.equals("output_reporter")) {
 							reporter_gate = true;
+						} else if(type.equals("input_sensor")) {
+							sensor_gate = true;
 						}
 					}
 				}
@@ -1106,14 +1108,7 @@ public class FlowModel {
 		} else {
 			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
 			}
-		
-		//TODO PEDRO BORRAR ESTO
-		if (product.equals("YFP_protein")) {
-			reporter_gate = true;
-		}
-		if (product.equals("LacI_protein") || product.equals("TetR_protein") ||  product.equals("AraC_protein")||  product.equals("LuxR_protein")) {
-			sensor_gate = true;
-		}
+
 		
 		//create reaction ID for the output production flow for each gate,
 		//which is the display ID's of the products separated by underscores, 
