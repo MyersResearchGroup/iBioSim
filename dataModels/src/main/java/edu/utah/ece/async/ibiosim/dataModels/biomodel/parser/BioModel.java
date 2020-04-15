@@ -2965,35 +2965,46 @@ public class BioModel extends CoreObservable{
 		Parameter K_para = targetModel.getSBMLDocument().getModel().createParameter();
 		K_para.setId(K);
 		K_para.setConstant(true);
+		
+		String search_value = "";
+		
+		if (complex2sensor2ligand.keySet().contains(product)) {
+			HashMap<String, String> protein2ligand = complex2sensor2ligand.get(product);
+			for (String repressor : protein2ligand.keySet()) {
+				search_value = repressor;
+			}
+		} else {
+			search_value = product;
+		}
 
 		//set parameters to the model, use a default value if there is no parameter found
-		if (celloParameters.get(product) != null) {
-			if (celloParameters.get(product).get(0) != null && !celloParameters.get(product).get(0).equals("")) {
-				double n_value = Double.parseDouble(celloParameters.get(product).get(0));
+		if (celloParameters.get(search_value) != null) {
+			if (celloParameters.get(search_value).get(0) != null && !celloParameters.get(search_value).get(0).equals("")) {
+				double n_value = Double.parseDouble(celloParameters.get(search_value).get(0));
 				n_para.setValue(n_value);
 			}
 			else {
 				n_para.setValue(GlobalConstants.CELLO_PARAMETER_N);
 			}
 
-			if (celloParameters.get(product).get(1) != null && !celloParameters.get(product).get(1).equals("")) {
-				double K_value = Double.parseDouble(celloParameters.get(product).get(1));
+			if (celloParameters.get(search_value).get(1) != null && !celloParameters.get(search_value).get(1).equals("")) {
+				double K_value = Double.parseDouble(celloParameters.get(search_value).get(1));
 				K_para.setValue(K_value);
 			}
 			else {
 				K_para.setValue(GlobalConstants.CELLO_PARAMETER_K);
 			}
 
-			if (celloParameters.get(product).get(2) != null && !celloParameters.get(product).get(2).equals("")) {
-				double ymax_value = Double.parseDouble(celloParameters.get(product).get(2));
+			if (celloParameters.get(search_value).get(2) != null && !celloParameters.get(search_value).get(2).equals("")) {
+				double ymax_value = Double.parseDouble(celloParameters.get(search_value).get(2));
 				ymax_p.setValue(ymax_value);
 			}
 			else {
 				ymax_p.setValue(GlobalConstants.CELLO_PARAMETER_YMAX);
 			}
 
-			if (celloParameters.get(product).get(3) != null && !celloParameters.get(product).get(3).equals("")) {
-				double ymin_value = Double.parseDouble(celloParameters.get(product).get(3));
+			if (celloParameters.get(search_value).get(3) != null && !celloParameters.get(search_value).get(3).equals("")) {
+				double ymin_value = Double.parseDouble(celloParameters.get(search_value).get(3));
 				ymin_p.setValue(ymin_value);
 			}
 			else {
@@ -3027,7 +3038,7 @@ public class BioModel extends CoreObservable{
 					}	
 				}
 			}
-			kineticLaw = "piecewise(" + ymin + " - " + output_flux +", (" +ligand+ " > 0), " + ymax + " - " + output_flux + ")";		
+			kineticLaw = "piecewise(" + ymax + " - " + output_flux +", (" +ligand+ " > 0), " + ymin + " - " + output_flux + ")";		
 		} else {
 			numerator = "(" + K + "^(" + n + "))";
 			denominator = "(" + K + "^(" + n + ")) + (" + input_flux +")^(" + n + ")";
@@ -3049,16 +3060,16 @@ public class BioModel extends CoreObservable{
 		tauOFF.setId("tauOFF");
 		
 		 if (celloParameters.get(product) != null) {
-			 if (celloParameters.get(product).get(4) != null && !celloParameters.get(product).get(4).equals("")) {
-				 double tauON_value = Double.parseDouble(celloParameters.get(product).get(4));
+			 if (celloParameters.get(product).get(6) != null && !celloParameters.get(product).get(6).equals("")) {
+				 double tauON_value = Double.parseDouble(celloParameters.get(product).get(6));
 				 tauON.setValue(tauON_value);
 			 }
 			 else {
 				 tauON.setValue(GlobalConstants.CELLO_TAU_ON);
 			 }
 
-			 if (celloParameters.get(product).get(5) != null && !celloParameters.get(product).get(5).equals("")) {
-				 double tauOFF_value = Double.parseDouble(celloParameters.get(product).get(5));
+			 if (celloParameters.get(product).get(7) != null && !celloParameters.get(product).get(7).equals("")) {
+				 double tauOFF_value = Double.parseDouble(celloParameters.get(product).get(7));
 				 tauOFF.setValue(tauOFF_value);
 			 }
 			 else {

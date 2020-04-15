@@ -100,15 +100,17 @@ public class FlowModel {
 		//the ligand they interact with.
 		HashMap<String, String> sensorMolecules = sensorMolecules(sbolDoc);
 		
+		//This maps ligands, small molecules and their complex formation molecule to use in replacements later in the model
+		HashMap<String, HashMap <String, String>> complex2sensor2ligand = mapSensorToLigand(sbolDoc);
+		
 		//This method returns a map with each protein, and it's associated Cello parameters.
 		HashMap<String, List<String>> Prot_2_Param = productionInteractions(sbolDoc);
 		
 		//Determine the activations/repressions of each promoter in the SBOLDocument. Returns a map that relates each promoter, if it is activated/repressed
 		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
-		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, sensorMolecules);
+		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, complex2sensor2ligand);
 		
-		//This maps ligands, small molecules and their complex formation molecule to use in replacements later in the model
-		HashMap<String, HashMap <String, String>> complex2sensor2ligand = mapSensorToLigand(sbolDoc);
+
 				
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = SBOL2SBML.MDFlattener(sbolDoc, moduleDef);
@@ -533,7 +535,7 @@ public class FlowModel {
 	 * @param sbolDoc the SBOLDocument
 	 * @return the hash map with all the interactions per promoter
 	 */
-	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, String> sensorMolecules){
+	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, HashMap <String, String>> complex2sensor2ligand){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
 		
@@ -588,8 +590,17 @@ public class FlowModel {
 						if (partici.containsRole(SystemsBiologyOntology.STIMULATOR)) {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
-								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
-								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta));
+								String protein = "";
+								if (complex2sensor2ligand.keySet().contains(partici.getParticipantDefinition().getDisplayId())) {
+									HashMap<String, String> protein2ligand = complex2sensor2ligand.get(partici.getParticipantDefinition().getDisplayId());
+									for (String activator : protein2ligand.keySet()) {
+										protein = activator;
+									}
+								} else {
+									protein = partici.getParticipantDefinition().getDisplayId();
+								}
+								promoterInteractions.get(promoter.getDisplayId()).put("sensor", protein);
+								Prot_2_Param.put(protein, Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -646,7 +657,7 @@ public class FlowModel {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
-								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta));
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -832,6 +843,8 @@ public class FlowModel {
 		String ymin = "";
 		String alpha = "";
 		String beta = "";
+		String TauON = "";
+		String TauOFF = "";
 		
 		if (promoter != null) {
 			if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
@@ -859,6 +872,13 @@ public class FlowModel {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
 							beta = Annot.get(i).getStringValue();
 						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tauon"))) {
+							beta = Annot.get(i).getStringValue();
+						}
+						//TODO PEDRO CHECK IF ANNOTATION IS REALLY TAUON OR HOW.
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tauoff"))) {
+							beta = Annot.get(i).getStringValue();
+						}
 					}
 			}
 		}
@@ -870,6 +890,8 @@ public class FlowModel {
 		CelloParameters2.add(ymin);
 		CelloParameters2.add(alpha);
 		CelloParameters2.add(beta);
+		CelloParameters2.add(TauON);
+		CelloParameters2.add(TauOFF);
 		
 		return CelloParameters2;
 	}
