@@ -1041,7 +1041,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		name = new JLabel("iBioSim", SwingConstants.CENTER);
 		version = new JLabel("Version " + iBioSimVersion, SwingConstants.CENTER);
 		developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
-				+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel";
+				+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel\nPedro Fontanarrosa";
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
 		name.setFont(font);
