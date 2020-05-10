@@ -56,6 +56,7 @@ import org.sbolstandard.core2.SBOLValidationException;
 import org.sbolstandard.core2.Sequence;
 import org.sbolstandard.core2.SequenceOntology;
 import org.sbolstandard.core2.SystemsBiologyOntology;
+import org.sbolstandard.core2.TopLevel;
 
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.annotation.AnnotationUtility;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
@@ -141,6 +142,22 @@ public class SBML2SBOL {
 	}
 	
 	/**
+	 * Remove SBOL objects by their displayId to avoid objects with same displayId but different
+	 * URI prefix
+	 * 
+	 * @param sbolDoc SBOL document to remove objects from
+	 * @param displayId Display id to use to search for objects to remove
+	 * @throws SBOLValidationException Thrown when there is a problem caused by removing the object
+	 */
+	public static void removeByDisplayId(SBOLDocument sbolDoc,String displayId) throws SBOLValidationException {
+		for (TopLevel topLevel : sbolDoc.getTopLevels()) {
+			if (topLevel.getDisplayId().contentEquals(displayId)) {
+				sbolDoc.removeTopLevel(topLevel);
+			}
+		}
+	}
+	
+	/**
 	 * Convert the specified SBML model to its equivalent SBOL ModuleDefinition.
 	 * All SBML SBase referencing this SBML model will be converted to SBOL data object.
 	 * In this case, all SBML species will be converted to SBOL ComponentDefinition and FunctionalComponent.
@@ -175,6 +192,7 @@ public class SBML2SBOL {
 			sbolDoc.removeModel(sbolModel);
 		}
 		
+		removeByDisplayId(sbolDoc,model.getId() + "_model");
 		sbolModel = sbolDoc.createModel(model.getId() + "_model", VERSION, sourceURI, LANGUAGE, FRAMEWORK);
 
 		String identityStr  = model.getId() + "_md";
@@ -182,6 +200,7 @@ public class SBML2SBOL {
 		if (moduleDef!=null) {
 			sbolDoc.removeModuleDefinition(moduleDef);
 		}
+		removeByDisplayId(sbolDoc,identityStr);
 		moduleDef = sbolDoc.createModuleDefinition(identityStr, VERSION);
 		moduleDef.addModel(sbolModel);
 
@@ -378,11 +397,13 @@ public class SBML2SBOL {
 		}
 		compDef = sbolDoc.getComponentDefinition(compDef_identity, VERSION);
 		if (compDef==null) {
+			removeByDisplayId(sbolDoc,compDef_identity);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 			compDef.setName(species.getId());
 			compDef.setRoles(compDef_role);
 		} else if (!compDef.getTypes().containsAll(compDef_type)) {
 			sbolDoc.removeComponentDefinition(compDef);
+			removeByDisplayId(sbolDoc,compDef_identity);
 			compDef = sbolDoc.createComponentDefinition(compDef_identity, VERSION, compDef_type);
 			compDef.setName(species.getId());
 			compDef.setRoles(compDef_role);

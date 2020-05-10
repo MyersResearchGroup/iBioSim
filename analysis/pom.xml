@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>edu.utah.ece.async</groupId>
 		<artifactId>iBioSim</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.1.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<packaging>jar</packaging>
@@ -73,13 +73,13 @@
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>iBioSim-dataModels</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>edu.utah.ece.async</groupId>
 			<artifactId>LEMA-verification</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 			
 		<dependency>
