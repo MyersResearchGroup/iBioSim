@@ -50,6 +50,7 @@ import edu.utah.ece.async.ibiosim.dataModels.util.Executables;
 import edu.utah.ece.async.ibiosim.dataModels.util.Message;
 import edu.utah.ece.async.ibiosim.dataModels.util.MutableString;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
 import edu.utah.ece.async.lema.verification.lpn.Abstraction;
 import edu.utah.ece.async.lema.verification.lpn.LPN;
@@ -474,7 +475,11 @@ public class Run extends CoreObservable implements ActionListener {
       this.notifyObservers(message);
 
       reb2sac = exec.exec(command, env, work);
-      updateReb2SacProgress();
+      ReadStream s1 = new ReadStream("stdin", reb2sac.getInputStream ());
+      ReadStream s2 = new ReadStream("stderr", reb2sac.getErrorStream ());
+      s1.start ();
+      s2.start ();
+      //updateReb2SacProgress();
 
       exitValue = reb2sac.waitFor();
     }
@@ -843,6 +848,71 @@ public class Run extends CoreObservable implements ActionListener {
         }
       }
     }
+  }
+  
+  public class ReadStream implements Runnable {
+	  String name;
+	  InputStream is;
+	  Thread thread; 
+
+	  public ReadStream(String name, InputStream is) {
+		  this.name = name;
+		  this.is = is;
+	  }       
+	  public void start () {
+		  thread = new Thread (this);
+		  thread.start ();
+	  }       
+	  public void run () {
+		  try {
+			  InputStreamReader isr = new InputStreamReader (is);
+			  BufferedReader br = new BufferedReader (isr);      	
+			  double runTime = properties.getSimulationProperties().getRun() * properties.getSimulationProperties().getTimeLimit();
+			  double time = 0;
+			  double oldTime = 0;
+			  int runNum = 0;
+			  int prog = 0;
+			  while (true) {
+				  String line = br.readLine ();
+				  if (line == null) break;
+				  if (name.equals("stdin")) {
+					  try {
+						  if (line.contains("Time")) {
+							  time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
+							  if (oldTime > time) {
+								  runNum++;
+							  }
+							  oldTime = time;
+							  time += (runNum * properties.getSimulationProperties().getTimeLimit());
+							  double d = ((time * 100) / runTime);
+							  String s = d + "";
+							  double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s.length()));
+							  if (decimal >= 0.5) {
+								  prog = (int) (Math.ceil(d));
+							  } else {
+								  prog = (int) (d);
+							  }
+						  }
+					  }
+					  catch (Exception e) {
+						  e.printStackTrace();
+					  }
+					  if (parent!=null) {
+						  message.setInteger(prog);
+						  parent.send(RequestType.REQUEST_PROGRESS, message);
+					  } else{
+						  System.out.println(line);
+					  }
+				  } else {
+					  System.out.println ("[" + name + "] " + line);
+				  }
+			  }	
+			  is.close ();    
+		  } catch (Exception ex) {
+			  System.out.println ("Problem reading stream " + name + "... :" + ex);
+			  ex.printStackTrace ();
+		  }
+	  }
   }
 
   private void updateReb2SacProgress() throws IOException {

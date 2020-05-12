@@ -76,10 +76,6 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbml.jsbml.ext.distrib.DistribConstants;
-import org.sbml.jsbml.ext.distrib.DistribFunctionDefinitionPlugin;
-import org.sbml.jsbml.ext.distrib.DistribInput;
-import org.sbml.jsbml.ext.distrib.DrawFromDistribution;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCReactionPlugin;
@@ -90,10 +86,7 @@ import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
-import org.sbml.jsbml.xml.XMLAttributes;
-import org.sbml.jsbml.xml.XMLNamespaces;
 import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.libsbml.ConversionProperties;
 import org.sbml.libsbml.SBMLNamespaces;
 import org.sbml.libsbml.SBasePlugin;
@@ -3138,35 +3131,35 @@ public class SBMLutilities extends CoreObservable
 		createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 	}
 
-	public static void createDistribution(FunctionDefinition f, String[] inputTypes, String[] inputs, String distribution)
-	{
-		DistribFunctionDefinitionPlugin distrib = SBMLutilities.getDistribFunctionDefinitionPlugin(f);
-		DrawFromDistribution draw = distrib.createDrawFromDistribution();
-		for (int i = 0; i < inputs.length; i++)
-		{
-			DistribInput input = draw.createDistribInput();
-			input.setId(inputs[i]);
-			input.setIndex(i);
-		}
-		// UncertML element
-		XMLNode xmlNode = new XMLNode(new XMLTriple("UncertML"), new XMLAttributes(), new XMLNamespaces());
-		xmlNode.addNamespace("http://www.uncertml.org/3.0");
-
-		// NormalDistribution element
-		XMLNode distNode = new XMLNode(new XMLTriple(distribution), new XMLAttributes(), new XMLNamespaces());
-		distNode.addAttr("definition", "http://www.uncertml.org/distributions");
-		xmlNode.addChild(distNode);
-
-		for (int i = 0; i < inputs.length; i++)
-		{
-			XMLNode inputNode = new XMLNode(new XMLTriple(inputTypes[i]), new XMLAttributes(), new XMLNamespaces());
-			distNode.addChild(inputNode);
-			XMLNode varNode = new XMLNode(new XMLTriple("var"), new XMLAttributes(), new XMLNamespaces());
-			varNode.addAttr("varId", inputs[i]);
-			inputNode.addChild(varNode);
-		}
-//		draw.setUncertML(xmlNode);
-	}
+//	public static void createDistribution(FunctionDefinition f, String[] inputTypes, String[] inputs, String distribution)
+//	{
+//		DistribFunctionDefinitionPlugin distrib = SBMLutilities.getDistribFunctionDefinitionPlugin(f);
+//		DrawFromDistribution draw = distrib.createDrawFromDistribution();
+//		for (int i = 0; i < inputs.length; i++)
+//		{
+//			DistribInput input = draw.createDistribInput();
+//			input.setId(inputs[i]);
+//			input.setIndex(i);
+//		}
+//		// UncertML element
+//		XMLNode xmlNode = new XMLNode(new XMLTriple("UncertML"), new XMLAttributes(), new XMLNamespaces());
+//		xmlNode.addNamespace("http://www.uncertml.org/3.0");
+//
+//		// NormalDistribution element
+//		XMLNode distNode = new XMLNode(new XMLTriple(distribution), new XMLAttributes(), new XMLNamespaces());
+//		distNode.addAttr("definition", "http://www.uncertml.org/distributions");
+//		xmlNode.addChild(distNode);
+//
+//		for (int i = 0; i < inputs.length; i++)
+//		{
+//			XMLNode inputNode = new XMLNode(new XMLTriple(inputTypes[i]), new XMLAttributes(), new XMLNamespaces());
+//			distNode.addChild(inputNode);
+//			XMLNode varNode = new XMLNode(new XMLTriple("var"), new XMLAttributes(), new XMLNamespaces());
+//			varNode.addAttr("varId", inputs[i]);
+//			inputNode.addChild(varNode);
+//		}
+////		draw.setUncertML(xmlNode);
+//	}
 
 	/**
 	 * Add a new function
@@ -3194,50 +3187,50 @@ public class SBMLutilities extends CoreObservable
 			if (id.equals("uniform"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Uniform_distribution_(continuous)");
-				SBMLutilities.createDistribution(f, new String[] { "minimum", "maximum" }, new String[] { "a", "b" }, "UniformDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "minimum", "maximum" }, new String[] { "a", "b" }, "UniformDistribution");
 			}
 			else if (id.equals("normal"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Normal_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "mean", "stddev" }, new String[] { "m", "s" }, "NormalDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "mean", "stddev" }, new String[] { "m", "s" }, "NormalDistribution");
 			}
 			else if (id.equals("exponential"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Exponential_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] { "l" }, "ExponentialDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] { "l" }, "ExponentialDistribution");
 			}
 			else if (id.equals("gamma"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Gamma_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "shape", "scale" }, new String[] { "a", "b" }, "GammaDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "shape", "scale" }, new String[] { "a", "b" }, "GammaDistribution");
 			}
 			else if (id.equals("poisson"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Poisson_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] { "mu" }, "PoissonDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "rate" }, new String[] { "mu" }, "PoissonDistribution");
 			}
 			else if (id.equals("lognormal"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Log-normal_distribution");
 				// TODO: check order
-				SBMLutilities.createDistribution(f, new String[] { "shape", "logScale" }, new String[] { "sh", "lsc" }, "GammaDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "shape", "logScale" }, new String[] { "sh", "lsc" }, "GammaDistribution");
 			}
 			else if (id.equals("chisq"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Chi-squared_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "degreeOfFreedom" }, new String[] { "nu" }, "ChiSquareDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "degreeOfFreedom" }, new String[] { "nu" }, "ChiSquareDistribution");
 			}
 			else if (id.equals("laplace"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Laplace_distribution");
 				// TODO: mine only has one param?
-				SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] { "l", "s" }, "LaplaceDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] { "l", "s" }, "LaplaceDistribution");
 			}
 			else if (id.equals("cauchy"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Cauchy_distribution");
 				// TODO: mine only has one param?
-				SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] { "l", "s" }, "CauchyDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "location", "scale" }, new String[] { "l", "s" }, "CauchyDistribution");
 			}
 			else if (id.equals("rayleigh"))
 			{
@@ -3247,13 +3240,13 @@ public class SBMLutilities extends CoreObservable
 			else if (id.equals("binomial"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Binomial_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "probabilityOfSuccess", "numberOfTrials" }, new String[] { "p", "n" },
-						"BinomialDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "probabilityOfSuccess", "numberOfTrials" }, new String[] { "p", "n" },
+				//		"BinomialDistribution");
 			}
 			else if (id.equals("bernoulli"))
 			{
 				AnnotationUtility.setDistributionAnnotation(f, "http://en.wikipedia.org/wiki/Bernoulli_distribution");
-				SBMLutilities.createDistribution(f, new String[] { "categoryProb" }, new String[] { "p" }, "BernoulliDistribution");
+				//SBMLutilities.createDistribution(f, new String[] { "categoryProb" }, new String[] { "p" }, "BernoulliDistribution");
 			}
 		}
 	}
@@ -4937,16 +4930,16 @@ public class SBMLutilities extends CoreObservable
 		return null;
 	}
 
-	public static DistribFunctionDefinitionPlugin getDistribFunctionDefinitionPlugin(FunctionDefinition function)
-	{
-		if (function.getExtension(DistribConstants.namespaceURI) != null)
-		{
-			return (DistribFunctionDefinitionPlugin) function.getExtension(DistribConstants.namespaceURI);
-		}
-		DistribFunctionDefinitionPlugin distrib = new DistribFunctionDefinitionPlugin(function);
-		function.addExtension(DistribConstants.namespaceURI, distrib);
-		return distrib;
-	}
+//	public static DistribFunctionDefinitionPlugin getDistribFunctionDefinitionPlugin(FunctionDefinition function)
+//	{
+//		if (function.getExtension(DistribConstants.namespaceURI) != null)
+//		{
+//			return (DistribFunctionDefinitionPlugin) function.getExtension(DistribConstants.namespaceURI);
+//		}
+//		DistribFunctionDefinitionPlugin distrib = new DistribFunctionDefinitionPlugin(function);
+//		function.addExtension(DistribConstants.namespaceURI, distrib);
+//		return distrib;
+//	}
 
 	public static LayoutModelPlugin getLayoutModelPlugin(Model model)
 	{

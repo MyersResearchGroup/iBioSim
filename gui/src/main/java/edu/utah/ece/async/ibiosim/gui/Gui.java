@@ -4138,12 +4138,15 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	
 	public void createIBioSimActivity() throws Exception {
 		Activity iBioSimActivity = sbolDocument.getActivity(currentProjectId + "_iBioSim_activity", "1");
-		if (iBioSimActivity==null) {
+		if (iBioSimActivity==null) {		
+			SBML2SBOL.removeByDisplayId(sbolDocument,currentProjectId + "_iBioSim_activity");
 			iBioSimActivity = sbolDocument.createActivity(currentProjectId + "_iBioSim_activity", "1");
 			Association association = iBioSimActivity.createAssociation("association", 
 					URI.create("https://synbiohub.org/public/SBOL_Software/iBioSim/"+iBioSimVersion));
+			SBML2SBOL.removeByDisplayId(sbolDocument,currentProjectId + "_plan");
 			Plan plan = sbolDocument.createPlan(currentProjectId + "_plan", "1");
 			association.setPlan(plan.getIdentity());
+			SBML2SBOL.removeByDisplayId(sbolDocument,currentProjectId + "_sedml");
 			Attachment sedmlFile = sbolDocument.createAttachment(currentProjectId + "_sedml", "1", 
 					URI.create("file:" + currentProjectId + ".sedml"));
 			sedmlFile.setName(currentProjectId + ".sedml"); 
@@ -4174,6 +4177,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
 	        Attachment pngFile = sbolDocument.getAttachment(output.getId()+"_png","1");
 	        if (pngFile==null) {
+				SBML2SBOL.removeByDisplayId(sbolDocument,output.getId()+"_png");
 	        	pngFile = sbolDocument.createAttachment(output.getId()+"_png", "1", 
 	        			URI.create("file:"+output.getId()+".png"));
 	        	pngFile.setFormat(URI.create("http://identifiers.org/edam/format_3603"));
@@ -4189,6 +4193,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 	          root + File.separator + output.getId()+".png",GraphData.PNG_FILE_TYPE,650,400);
 	        Attachment pngFile = sbolDocument.getAttachment(output.getId()+"_png","1");
 	        if (pngFile==null) {
+				SBML2SBOL.removeByDisplayId(sbolDocument,output.getId()+"_png");
 	        	pngFile = sbolDocument.createAttachment(output.getId()+"_png", "1", 
 	        			URI.create("file:"+output.getId()+".png"));
 	        	pngFile.setFormat(URI.create("http://identifiers.org/edam/format_3603"));
