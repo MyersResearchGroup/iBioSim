@@ -2619,7 +2619,96 @@ public class BioModel extends CoreObservable{
 			//TODO PEDRO SBO
 			//modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
-			if (sensor_gate) {
+			if (product.equals("LuxR_protein")) {
+				
+				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+					HashMap<String, String> protein2ligand = complex.getValue();
+
+					for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+						if (product.equals(protein.getKey())) {
+							String ligand = protein.getValue();
+							ModifierSpeciesReference input = r.createModifier();
+							if (sbml.getModel().getSpecies(ligand) == null) {
+								Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+								smallMolecule.setId(ligand);
+								//TODO PEDRO SBO
+								//smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+								smallMolecule.setCompartment(r.getCompartment());
+								smallMolecule.setHasOnlySubstanceUnits(true);
+								smallMolecule.setBoundaryCondition(true);
+								smallMolecule.setConstant(false);
+								smallMolecule.setInitialAmount(0.0);
+								
+								//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+																																
+								input.setSpecies(smallMolecule);
+								//TODO PEDRO SBO
+								//input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							}
+						}	
+					}
+				}
+				
+				// Make the inputs affecting this TU, an activator for the production of mRNA (as per the Cello Model)
+				for (String promoter : promoters) {
+					if (promoterInteractions.containsKey(promoter)) {
+						for (String modifi : promoterInteractions.get(promoter).keySet()) {
+							String input_molecule = promoterInteractions.get(promoter).get(modifi);
+							
+							
+							ModifierSpeciesReference input = r.createModifier();
+
+							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
+							String promotFlow = "";
+							
+							//this will replace AraC_ara for Y_araC instead of Y_AraC_ara
+//							for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+//								HashMap<String, String> protein2ligand = complex.getValue();
+//								for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+//									if (product.equals(protein.getKey())) {
+//										//promotFlow = protein;
+//									}
+//								}	
+//							}
+
+							if (complex2sensor2ligand.keySet().contains(input_molecule)) {
+								HashMap<String, String> protein2ligand = complex2sensor2ligand.get(input_molecule);
+								for (String repressor : protein2ligand.keySet()) {
+									promotFlow = repressor;
+								}
+							} else {
+								promotFlow = promoterInteractions.get(promoter).get(modifi);
+							}
+
+							promotFlow = promotFlow.replace("_protein", "");
+							promotFlow = "Y_" + promotFlow;
+							inputFlow.setId(promotFlow);
+							//TODO PEDRO SBO
+							//inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
+							inputFlow.setCompartment(r.getCompartment());
+							inputFlow.setHasOnlySubstanceUnits(true);
+							inputFlow.setBoundaryCondition(false);
+							inputFlow.setConstant(false);
+							inputFlow.setInitialAmount(0.0);
+
+							//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+
+							targetModel.createDirPort(inputFlow.getId(), GlobalConstants.INPUT);
+
+
+							input.setSpecies(inputFlow);
+							//TODO PEDRO SBO
+							//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+
+							//input.setSpecies(sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)));
+							//input.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+						}
+					}
+				}
+				
+			} else if (sensor_gate) {
 				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
 					HashMap<String, String> protein2ligand = complex.getValue();
 
@@ -2803,7 +2892,7 @@ public class BioModel extends CoreObservable{
 		return r;
 	}
 
-	public ASTNode createFlowSteadyState(Reaction reaction, String product, boolean reporter_gate, boolean sensor_gate, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters, HashMap<String, HashMap <String, String>> complex2sensor2ligand) {
+	public ASTNode createFlowSteadyState(Reaction reaction, String product, boolean LuxRgate, boolean reporter_gate, boolean sensor_gate, BioModel targetModel,  HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters, HashMap<String, HashMap <String, String>> complex2sensor2ligand) {
 
 		String kineticLaw = "";
 		String promoter = "";
@@ -3028,6 +3117,22 @@ public class BioModel extends CoreObservable{
 		
 		if (reporter_gate) {
 			kineticLaw = input_flux;
+		} else if (LuxRgate) {
+			String ligand = "";
+			for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
+				HashMap<String, String> protein2ligand = complex.getValue();
+				for (HashMap.Entry<String, String> protein : protein2ligand.entrySet()) {
+					if (product.equals(protein.getKey())) {
+						ligand = protein.getValue();
+					}	
+				}
+			}
+			numerator = "(" + K + "^(" + n + "))";
+			denominator = "(" + K + "^(" + n + ")) + (" + input_flux +")^(" + n + ")";
+			String LuxRgateLaw = "(" + ymin + "+ (" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
+			
+			kineticLaw = "piecewise(" + LuxRgateLaw + ", (" + ligand+  " > 0), " + ymin + " - " + output_flux + ")"; 
+			
 		} else if (sensor_gate) {
 			String ligand = "";
 			for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {

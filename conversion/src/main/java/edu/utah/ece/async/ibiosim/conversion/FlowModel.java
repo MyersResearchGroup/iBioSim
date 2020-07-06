@@ -1088,6 +1088,17 @@ public class FlowModel {
 		//This method should create a mRNA species for each promoter, since this species are not present in the SBOLdocument returned by VPR
 		// collect data, create mRNA species, mRNA degradation reaction, mRNA Production reaction, TF production reaction
 		
+		boolean LuxRgate = false;
+		
+		for (int i = 0; i < products.size(); i++) {
+			Participation lux = products.get(i);
+			String luxS = lux.getDisplayId();
+			if (luxS.equals("LuxR_protein")) {
+				LuxRgate = true;
+			}
+		}
+		
+		
 		boolean sensor_gate = false;
 		boolean reporter_gate = false;
 		ComponentDefinition TUCD = promoter.getDefinition();
@@ -1225,7 +1236,7 @@ public class FlowModel {
 		Reaction gateDynamics = targetModel.createFlowProductionReactions(gate_flow, rxnIDSD, product, promoter.getDisplayId(), reporter_gate, sensor_gate, complex2sensor2ligand, false, null, targetModel, promoters, promoterInteractions);
 
 		AssignmentRule steadyState = targetModel.createFlowSteadyStateRule(gateSS, rxnIDSD, promoter.getDisplayId(), false, null, targetModel, promoters, promoterInteractions);
-		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, product, reporter_gate, sensor_gate, targetModel, celloParameters, promoterInteractions, promoters, ordered_promoters, complex2sensor2ligand);
+		ASTNode math = targetModel.createFlowSteadyState(gateDynamics, product, LuxRgate, reporter_gate, sensor_gate, targetModel, celloParameters, promoterInteractions, promoters, ordered_promoters, complex2sensor2ligand);
 		steadyState.setMath(math);
 
 		
