@@ -3009,7 +3009,7 @@ public class BioModel extends CoreObservable{
 		     }
 		} else {
 
-			if(!sensor_gate) {
+			if(!sensor_gate || LuxRgate) {
 				String single_promoter = promoters.get(0).toString();
 				HashMap<String, String> promInter = promoterInteractions.get(single_promoter);
 				String value = (String) promInter.values().toArray()[0];
@@ -3127,11 +3127,11 @@ public class BioModel extends CoreObservable{
 					}	
 				}
 			}
-			numerator = "(" + K + "^(" + n + "))";
+			numerator = "(" +  input_flux + "^(" + n + "))";
 			denominator = "(" + K + "^(" + n + ")) + (" + input_flux +")^(" + n + ")";
 			String LuxRgateLaw = "(" + ymin + "+ (" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
 			
-			kineticLaw = "piecewise(" + LuxRgateLaw + ", (" + ligand+  " > 0), " + ymin + " - " + output_flux + ")"; 
+			kineticLaw = "piecewise(" + LuxRgateLaw +  " - " + output_flux + ", (" + ligand+  " > 0), " + ymin + " - " + output_flux + ")"; 
 			
 		} else if (sensor_gate) {
 			String ligand = "";
