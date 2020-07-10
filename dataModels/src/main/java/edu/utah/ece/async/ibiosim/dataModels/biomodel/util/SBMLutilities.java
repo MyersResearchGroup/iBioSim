@@ -5681,7 +5681,7 @@ public class SBMLutilities extends CoreObservable
 		}
 
 		// convert document
-		ConversionProperties prop = new ConversionProperties(new SBMLNamespaces(3, 1));
+		ConversionProperties prop = new ConversionProperties(new SBMLNamespaces(3, 2));
 		prop.addOption("strict", false);
 		prop.addOption("setLevelAndVersion", true);
 		prop.addOption("ignorePackages", true);
@@ -5813,7 +5813,7 @@ public class SBMLutilities extends CoreObservable
 				}
 			}
 			convertToL3(doc);
-			doc.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
+			//doc.setLevelAndVersion(GlobalConstants.SBML_LEVEL, GlobalConstants.SBML_VERSION, false);
 			/*
 			 * for (int i = 0; i < doc.getNumErrors(); i++) {
 			 * System.out.println(doc.getError(i).getMessage()); }

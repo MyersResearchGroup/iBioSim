@@ -212,9 +212,9 @@ public class Analysis implements BioObserver
         analysis.propertiesMap.put(data, value);
         break;
       case "-outDir":
-        analysis.properties.setOutDir(value);
         File file = new File(value);
         file.mkdirs();
+        analysis.properties.setOutDir(file.getAbsolutePath());
         break;
       default:
         usage();
