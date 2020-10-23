@@ -244,6 +244,7 @@ public class SBOL2SBML {
 	 * @param projectDirectory - The location to generate the SBML model
 	 * @param moduleDef - the current ModuleDefinition to convert all SBML object within the ModuleDefinition to its equivalent SBML component.
 	 * @param sbolDoc - The SBOL document to be converted to its equivalent SBML model.
+	 * @param CelloModel - Boolean indicating if you want to use a Cello Model
 	 * @return The list of SBML models converted from SBOL ModuleDefinition. Each of the converted SBML model are stored within iBioSim's BioModel object.
 	 * @throws XMLStreamException - Invalid XML file occurred
 	 * @throws IOException - Unable to read/write file for SBOL2SBML converter.
