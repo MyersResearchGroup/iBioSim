@@ -1231,7 +1231,7 @@ public class FlowModel {
 		
 		//TODO PEDRO: it would be nice to fix sbml annotations to link it to the sbol document
 		
-		//Update the Kinetic Law using the Hamid's Paper for dynamic modeling using Cello Parameters. 
-		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, reporter_gate, gate_flow, celloParameters, promoterInteractions, promoters, ordered_promoters)));		
+		//Update the Kinetic Law using Sins's Paper for dynamic modeling using Cello Parameters. 
+		gateDynamics.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createFlowDynamic(gateDynamics, gateSS, product, reporter_gate, gate_flow, celloParameters, promoterInteractions, targetModel, promoters, ordered_promoters)));		
 	}
 }
