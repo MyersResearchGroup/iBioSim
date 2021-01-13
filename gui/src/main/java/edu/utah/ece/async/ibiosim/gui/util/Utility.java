@@ -29,7 +29,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import javax.mail.PasswordAuthentication;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -138,20 +137,6 @@ public class Utility {
 			int y = screenSize.height / 2 - frameSize.height / 2;
 			exp.setLocation(x, y);
 			exp.setVisible(true);
-		}
-	}
-
-	public static class MyAuthenticator extends javax.mail.Authenticator {
-		String User;
-		String Password;
-		public MyAuthenticator (String user, String password) {
-			User = user;
-			Password = password;
-		}
-	
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			return new javax.mail.PasswordAuthentication(User, Password);
 		}
 	}
 	

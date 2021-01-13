@@ -107,12 +107,6 @@
 			<version>1.0.14</version>
 		</dependency>
 
-		<dependency>
-
-			<groupId>uk.ac.ebi.biomodels</groupId>
-			<artifactId>biomodels-wslib</artifactId>
-			<version>1.21</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.kohsuke</groupId>
