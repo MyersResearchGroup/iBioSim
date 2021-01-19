@@ -872,12 +872,12 @@ public class FlowModel {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
 							beta = Annot.get(i).getStringValue();
 						}
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tauon"))) {
-							beta = Annot.get(i).getStringValue();
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_on"))) {
+							TauON = Annot.get(i).getStringValue();
 						}
 						//TODO PEDRO CHECK IF ANNOTATION IS REALLY TAUON OR HOW.
-						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tauoff"))) {
-							beta = Annot.get(i).getStringValue();
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_off"))) {
+							TauOFF = Annot.get(i).getStringValue();
 						}
 					}
 			}
