@@ -3000,6 +3000,7 @@ public class BioModel extends CoreObservable{
 		    				 beta_para.setValue(GlobalConstants.CELLO_PARAMETER_BETA);
 		    			 }
 		    		 }
+		    		 
 		    		 String numerator1 = "(" + second_promoter_flux + "-" + ymin + "+" + beta +"*(" + ymax +"-"+ second_promoter_flux + "))";
 		    		 String denominator1 = "(" +  ymax + "-" + ymin + ")";
 		    		 input_flux = "(" + first_promoter_flux +"*" + alpha + "*((" + numerator1 + ")/(" + denominator1 + "))" + "+" + second_promoter_flux + ")";
@@ -3155,14 +3156,18 @@ public class BioModel extends CoreObservable{
 		return math;
 	}
 	
-	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, boolean reporter_gate, Species gateflow, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, List <String> promoters, List<String> ordered_promoters) {
+	public static String createFlowDynamic(Reaction reaction, Parameter gateSS, String product, boolean reporter_gate, Species gateflow, HashMap<String, List<String>> celloParameters, HashMap<String, HashMap <String, String>> promoterInteractions, BioModel targetModel, List <String> promoters, List<String> ordered_promoters) {
 		
 		String kineticLaw = "";
+		String gate = product;
+		gate = gate.replace("_protein", "");
 		
-		LocalParameter tauON = reaction.getKineticLaw().createLocalParameter();
-		tauON.setId("tauON");
-		LocalParameter tauOFF = reaction.getKineticLaw().createLocalParameter();
-		tauOFF.setId("tauOFF");
+		Parameter tauON = targetModel.getSBMLDocument().getModel().createParameter();
+		tauON.setId("tauON_"+ gate);
+		tauON.setConstant(true);
+		Parameter tauOFF = targetModel.getSBMLDocument().getModel().createParameter();
+		tauOFF.setId("tauOFF_"+ gate);
+		tauOFF.setConstant(true);
 		
 		 if (celloParameters.get(product) != null) {
 			 if (celloParameters.get(product).get(6) != null && !celloParameters.get(product).get(6).equals("")) {
@@ -3183,9 +3188,9 @@ public class BioModel extends CoreObservable{
 		 }
 		 
 		if(reporter_gate) {
-			kineticLaw = "tauON*" + gateSS.getId() + " - tauOFF*" + gateflow.getId();
+			kineticLaw = "tauON_" + gate +"*" + gateSS.getId() + " - tauOFF_" + gate + "*" + gateflow.getId();
 		} else {
-			kineticLaw = "piecewise( tauON*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF*" + gateSS.getId() + ")";
+			kineticLaw = "piecewise( tauON_" + gate + "*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF_" + gate + "*" + gateSS.getId() + ")";
 		}
 		
 		
