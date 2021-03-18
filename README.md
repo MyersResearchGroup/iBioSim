@@ -5,19 +5,19 @@
 
 [![build](https://github.com/MyersResearchGroup/iBioSim/workflows/build/badge.svg)](https://github.com/MyersResearchGroup/iBioSim/actions)
 
-iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits. 
-While iBioSim primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways, 
-and other biological and chemical systems can also be analyzed. 
+iBioSim is a computer-aided design (CAD) tool aimed for the modeling, analysis, and design of genetic circuits.
+While iBioSim primarily targets models of genetic circuits, models representing metabolic networks, cell-signaling pathways,
+and other biological and chemical systems can also be analyzed.
 
-iBioSim also includes modeling and visualization support for multi-cellular and spatial models as well. 
+iBioSim also includes modeling and visualization support for multi-cellular and spatial models as well.
 
-It is capable of importing and exporting models specified using the Systems Biology Markup Language (SBML). 
-It can import all levels and versions of SBML and is able to export Level 3 Version 1. 
-It supports all core SBML modeling constructs except some types of fast reactions, and also has support for the 
-hierarchical model composition, layout, flux balance constraints, and arrays packages. 
+It is capable of importing and exporting models specified using the Systems Biology Markup Language (SBML).
+It can import all levels and versions of SBML and is able to export Level 3 Version 1.
+It supports all core SBML modeling constructs except some types of fast reactions, and also has support for the
+hierarchical model composition, layout, flux balance constraints, and arrays packages.
 
-It has also been tested successfully on the stochastic benchmark suite and the curated models in the BioModels database. 
-iBioSim also supports the Synthetic Biology Open Language (SBOL), an emerging standard for information exchange in synthetic 
+It has also been tested successfully on the stochastic benchmark suite and the curated models in the BioModels database.
+iBioSim also supports the Synthetic Biology Open Language (SBOL), an emerging standard for information exchange in synthetic
 biology.
 
 ##### Website: [iBioSim](http://www.async.ece.utah.edu/ibiosim)
@@ -29,9 +29,9 @@ Contributor(s): Nathan Barker, Pedro Fontanarrosa, Scott Glass, Kevin Jones, Hir
 Active Developer(s): Pedro Fontanarrosa, Chris Myers, Tramy Nguyen, Leandro Watanabe.
 
 ## Running iBioSim
-1. Download the iBioSim tool from the release page [here](https://github.com/MyersResearchGroup/iBioSim/releases): 
+1. Download the iBioSim tool from the release page [here](https://github.com/MyersResearchGroup/iBioSim/releases):
 2. After downloading the tool, run the corresponding start-up script:
-      * Windows: ```iBioSim.bat``` 
+      * Windows: ```iBioSim.bat```
       * Mac OS X: ```iBioSim.mac64```
       * Linux: ```iBioSim.linux64```
 
@@ -42,8 +42,8 @@ Active Developer(s): Pedro Fontanarrosa, Chris Myers, Tramy Nguyen, Leandro Wata
 1. [Create](https://github.com/) a GitHub account.
 2. [Setup](https://help.github.com/articles/set-up-git) Git on your machine.
 3. [Install](https://maven.apache.org/download.cgi) Maven plugin on your machine.
-4. [Install](http://www.eclipse.org) Eclipse IDE  for Java. 
-5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.17.0/experimental/) libSBML for validation and flattening.
+4. [Install](http://www.eclipse.org) Eclipse IDE  for Java.
+5. [Install](https://sourceforge.net/projects/sbml/files/libsbml/5.17.0/experimental/) the experimental version of libSBML 5.18.0 for validation and flattening.
 6. [Clone](https://help.github.com/articles/cloning-a-repository/) the iBioSim GitHub repository to your machine
 
 
@@ -66,26 +66,25 @@ Active Developer(s): Pedro Fontanarrosa, Chris Myers, Tramy Nguyen, Leandro Wata
   * Set the Environment tab to the following information:
     * Create variables with the corresponding value:
       * BIOSIM: full path to your iBioSim project (i.e. path/to/iBioSim)
-      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin).
+      * PATH: append your copy of iBioSim bin directory to whatever existing PATH already supplied to the value of this variable (i.e. $PATH:path/to/iBioSim/bin)
+      * DDLD_LIBRARY_PATH: path to the libSBML (i.e. path/to/lib). The libSBML is installed by default in ```/usr/local/lib``` in Linux and Mac OS X machines and ```libSBML-5.18.0-win64``` in Windows 64-bit machines.
+      * DYLD_LIBRARY_PATH: same as DDLD_LIBRARY_PATH.
   * Set Arguments tab to the following information:
-    * Program arguments: ```-Xms2048 -Xms2048 -XX:+UseSerialGC -Djava.library.path=/path/to/lib/```
-    * Note: for the java library path, ```/path/to/lib/``` is the location where [libSBML is installed](#pre-installation-requirements). The libSBML is installed by default in ```/usr/local/lib``` in Linux and Mac OS X machines and ```libSBML-5.17.0-win64``` in Windows 64-bit machines. 
-  * If you are running on Mac OS X, also set the following:
+    * VM arguments: ```-Xms2048M -Xms2048M -XX:+UseSerialGC -Djava.library.path=/path/to/lib/```
+    * Note: for the java library path, ```/path/to/lib/``` is the location where [libSBML is installed](#pre-installation-requirements).
     * VM arguments: ```-Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/src/resources/icons/iBioSim.jpg```
   * All run configurations are complete. Make sure to apply all your changes.
-  
+
 ### Building iBioSim
 1. Go to the directory where the iBioSim is checked out and perform ```mvn clean install``` (NOTE: if you do not want to generate javadocs, use the flag ```-Dmaven.javadoc.skip=true```).
 
 ### [Optional] Building reb2sac and GeneNet dependencies
-1. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately. 
-2. The easiest way to install reb2sac and GeneNet is to simply download the pre-compiled binaries for your operating system below: 
+1. iBioSim incorporates tools that are not Java-based, and therefore, have to be installed separately.
+2. The easiest way to install reb2sac and GeneNet is to simply download the pre-compiled binaries for your operating system below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/releases)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/releases)
 3. Another way to install them is to compile these tools on your machine following the instructions below:
    * [reb2sac](https://github.com/MyersResearchGroup/reb2sac/)
    * [GeneNet](https://github.com/MyersResearchGroup/GeneNet/)
-4. After compiling or downloading reb2sac and GeneNet, copy the compiled binaries into the bin directory in the local copy of your iBioSim.
-
-
-   
+   * [Yosys](https://github.com/YosysHQ/yosys)
+4. After compiling or downloading reb2sac, GeneNet, and Yosys copy the compiled binaries into the bin directory in the local copy of your iBioSim.
