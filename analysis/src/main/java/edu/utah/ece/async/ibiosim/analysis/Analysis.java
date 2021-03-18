@@ -425,6 +425,8 @@ public class Analysis implements BioObserver
       Xwriter.write(sbmlDoc, root + File.separator + modelSource + "_");	
 
       properties.setModelFile(modelSource);
+      // If the task is to generate a flat SBML file, skip it
+      if (properties.isSbml()) continue;
       AnalysisPropertiesLoader.loadSEDML(sedmlDoc, "", properties);
       //      File analysisDir = new File(root + File.separator + task.getId());
       /* Replace values with properties given by user */
