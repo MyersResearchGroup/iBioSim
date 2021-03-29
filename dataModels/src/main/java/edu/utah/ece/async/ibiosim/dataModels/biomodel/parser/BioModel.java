@@ -2619,7 +2619,7 @@ public class BioModel extends CoreObservable{
 			//TODO PEDRO SBO
 			//modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			
-			if (product.equals("LuxR_protein")) {
+/*			if (product.equals("LuxR_protein")) {
 				
 				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
 					HashMap<String, String> protein2ligand = complex.getValue();
@@ -2708,7 +2708,8 @@ public class BioModel extends CoreObservable{
 					}
 				}
 				
-			} else if (sensor_gate) {
+			} else */
+			if (sensor_gate && !(product.equals("LuxR_protein"))) {
 				for (Entry<String, HashMap<String, String>> complex : complex2sensor2ligand.entrySet()) {
 					HashMap<String, String> protein2ligand = complex.getValue();
 
@@ -2749,6 +2750,30 @@ public class BioModel extends CoreObservable{
 							
 							ModifierSpeciesReference input = r.createModifier();
 
+							if (input_molecule.equals("LuxR_protein")) {
+								String ligand = "HSL";
+								ModifierSpeciesReference input_mol = r.createModifier();
+								if (sbml.getModel().getSpecies(ligand) == null) {
+									Species smallMolecule = targetModel.getSBMLDocument().getModel().createSpecies();
+									smallMolecule.setId(ligand);
+									//TODO PEDRO SBO
+									//smallMolecule.setSBOTerm(GlobalConstants.SBO_SIMPLE_CHEMICAL);
+									smallMolecule.setCompartment(r.getCompartment());
+									smallMolecule.setHasOnlySubstanceUnits(true);
+									smallMolecule.setBoundaryCondition(true);
+									smallMolecule.setConstant(false);
+									smallMolecule.setInitialAmount(0.0);
+									
+									//SBMLutilities.copyDimensionsToEdgeIndex(r, sbml.getModel().getSpecies(promoterInteractions.get(promoter).get(modifi)), input, "species");
+									targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+									//createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+																																	
+									input_mol.setSpecies(smallMolecule);
+									//TODO PEDRO SBO
+									//input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+								}
+							}
+							
 							Species inputFlow = targetModel.getSBMLDocument().getModel().createSpecies();
 							String promotFlow = "";
 							
@@ -3188,7 +3213,8 @@ public class BioModel extends CoreObservable{
 		 }
 		 
 		if(reporter_gate) {
-			kineticLaw = "tauON_" + gate +"*" + gateSS.getId() + " - tauOFF_" + gate + "*" + gateflow.getId();
+			// Here, I describe the output reporter as in the paper, when HSL is present, and as only TAUOFF*YFP_protein when HSL < 0 (This is only for the delay circuit simulations)
+			kineticLaw = "piecewise(tauON_" + gate +"*" + gateSS.getId() + " - tauOFF_" + gate + "*" + gateflow.getId() + " , ( HSL > 0)," + " - tauOFF_" + gate + "*" + gateflow.getId() + ")";
 		} else {
 			kineticLaw = "piecewise( tauON_" + gate + "*" + gateSS.getId() + " , (" + gateSS.getId() + " > 0), tauOFF_" + gate + "*" + gateSS.getId() + ")";
 		}
