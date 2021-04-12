@@ -3153,11 +3153,14 @@ public class BioModel extends CoreObservable{
 					}	
 				}
 			}
+			// Since LuxR_gate ACTIVATES downstream promoter, the numerator is: "(" +  input_flux + "^(" + n + "))" and not "(" +  K + "^(" + n + "))" 
 			numerator = "(" +  input_flux + "^(" + n + "))";
 			denominator = "(" + K + "^(" + n + ")) + (" + input_flux +")^(" + n + ")";
-			String LuxRgateLaw = "(" + ymin + "+ (" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
+			//String LuxRgateLaw = "(" + ymin + "+ (" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
 			
-			kineticLaw = "piecewise(" + LuxRgateLaw +  " - " + output_flux + ", (" + ligand+  " > 0), " + ymin + " - " + output_flux + ")"; 
+			//kineticLaw = "piecewise(" + LuxRgateLaw +  " - " + output_flux + ", (" + ligand+  " > 0), " + ymin + " - " + output_flux + ")";
+			
+			kineticLaw = "(" + ymin + "+ (" + ymax + "-" + ymin + ")*((" + numerator + ")/(" + denominator + ")) - " + output_flux +")";
 			
 		} else if (sensor_gate) {
 			String ligand = "";
