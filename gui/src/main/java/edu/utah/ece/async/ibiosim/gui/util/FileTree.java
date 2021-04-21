@@ -201,6 +201,9 @@ public class FileTree extends PanelObservable implements MouseListener {
 					}
 					fileLocation = dir.getAbsolutePath() + fileLocation;
 					
+					// Lukas added :
+					if(tree.getSelectionPaths() != null) {
+						
 					fileLocations = new String[tree.getSelectionPaths().length];
 					int i = 0;
 					for (TreePath path : tree.getSelectionPaths()) {
@@ -224,6 +227,7 @@ public class FileTree extends PanelObservable implements MouseListener {
 						fileLocations[i] = dir.getAbsolutePath() + fileLocations[i];
 						i++;
 					}
+				}
 				}
 			});
 			tree.addMouseListener(this);
