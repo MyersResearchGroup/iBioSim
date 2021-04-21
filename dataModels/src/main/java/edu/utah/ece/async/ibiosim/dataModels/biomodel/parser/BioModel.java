@@ -2711,8 +2711,9 @@ public class BioModel extends CoreObservable{
 			
 			if (reporter_gate) {
 				ModifierSpeciesReference input = r.createModifier();
-
-				Species inputFlow = targetModel.getSBMLDocument().getModel().getSpecies("YFP");
+				String TUproduct = product.toString();
+				TUproduct = TUproduct.replace("_protein", "");
+				Species inputFlow = targetModel.getSBMLDocument().getModel().getSpecies(TUproduct);
 /*				String promotFlow = "YFP";
 				inputFlow.setId(promotFlow);
 				inputFlow.setSBOTerm(GlobalConstants.SBO_FLUX_BALANCE);
