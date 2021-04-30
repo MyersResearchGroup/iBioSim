@@ -2645,6 +2645,10 @@ public class BioModel extends CoreObservable{
 								input.setSpecies(smallMolecule);
 								//TODO PEDRO SBO
 								//input.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+							} else {
+								Species smallMolecule = sbml.getModel().getSpecies(ligand);
+								targetModel.createDirPort(smallMolecule.getId(), GlobalConstants.INPUT);
+								input.setSpecies(smallMolecule);
 							}
 						}	
 					}
@@ -2683,6 +2687,7 @@ public class BioModel extends CoreObservable{
 							}
 
 							promotFlow = promotFlow.replace("_protein", "");
+							promotFlow = promotFlow.replace("Y_", "");
 							promotFlow = "Y_" + promotFlow;
 							inputFlow.setId(promotFlow);
 							//TODO PEDRO SBO
@@ -2839,6 +2844,7 @@ public class BioModel extends CoreObservable{
 
 		    		 //first_promoter_flux = value;
 		    		 first_promoter_flux = first_promoter_flux.replace("_protein", "");
+		    		 first_promoter_flux = first_promoter_flux.replace("Y_", "");
 		    		 first_promoter_flux = "Y_" + first_promoter_flux;
 
 		    	 } else {
@@ -2858,6 +2864,7 @@ public class BioModel extends CoreObservable{
 		    		 String value_search = second_promoter_flux;
 		    		 
 		    		 second_promoter_flux = second_promoter_flux.replace("_protein", "");
+		    		 second_promoter_flux = second_promoter_flux.replace("Y_", "");
 		    		 
 		    		 String ymax = "ymax_" + second_promoter_flux;
 		    		 String ymin = "ymin_" + second_promoter_flux;
@@ -2937,6 +2944,7 @@ public class BioModel extends CoreObservable{
 				}
 
 				input_promoter_flux = input_promoter_flux.replace("_protein", "");
+				input_promoter_flux = input_promoter_flux.replace("Y_", "");
 				input_promoter_flux = "Y_" + input_promoter_flux;
 
 				input_flux = input_promoter_flux;
@@ -2953,6 +2961,7 @@ public class BioModel extends CoreObservable{
 		n = n.replace("_protein", "");
 		String output_flux = product;
 		output_flux = output_flux.replace("_protein", "");
+		output_flux = output_flux.replace("Y_", "");
 		output_flux = "Y_" + output_flux;
 
 		Parameter ymax_p = targetModel.getSBMLDocument().getModel().createParameter();

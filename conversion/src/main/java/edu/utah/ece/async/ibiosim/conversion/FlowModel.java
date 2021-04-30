@@ -108,19 +108,14 @@ public class FlowModel {
 		
 		//Determine the activations/repressions of each promoter in the SBOLDocument. Returns a map that relates each promoter, if it is activated/repressed
 		//with the protein/ligand responsible for it's activation/repression and the Cello parameters associated with the interaction.
-		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(sbolDoc, Prot_2_Param, complex2sensor2ligand);
+		HashMap<String, HashMap <String, String>> promoterInteractions = promoterInteractions(targetModel, sbolDoc, Prot_2_Param, complex2sensor2ligand, sensorMolecules);
 		
-
-				
 		// Flatten ModuleDefinition. Combine all parts of a Transcriptional Unit into a single TU. 
 		ModuleDefinition resultMD = SBOL2SBML.MDFlattener(sbolDoc, moduleDef);
 		
 		//Removes the complex formation interaction (from sensor protein and ligand) from the document, so that no species is created for these
 		//removeSensorInteractios(resultMD, sensorMolecules);
 		
-		//CreateMeasureClasses(sbolDoc);
-				
-		HashMap<FunctionalComponent, HashMap<String, String>> celloParameters = new HashMap<FunctionalComponent, HashMap<String, String>>();		
 
 		// Generate SBML Species for each part in the model
 		for (FunctionalComponent comp : resultMD.getFunctionalComponents()) {
@@ -146,7 +141,7 @@ public class FlowModel {
 				//System.out.println("Dropping "+comp.getIdentity());
 			}
 		}
-
+				
 		HashMap<FunctionalComponent, List<Interaction>> promoterToProductions = new HashMap<FunctionalComponent, List<Interaction>>();
 		HashMap<FunctionalComponent, List<Interaction>> promoterToActivations = new HashMap<FunctionalComponent, List<Interaction>>();
 		HashMap<FunctionalComponent, List<Interaction>> promoterToRepressions = new HashMap<FunctionalComponent, List<Interaction>>();
@@ -434,8 +429,7 @@ public class FlowModel {
 			ComponentDefinition compDef = sbolDoc.getComponentDefinition(promoter.getDefinitionURI());
 			if (compDef!=null) {
 				SBOL2SBML.annotateSpecies(sbmlPromoter, promoter, compDef, sbolDoc);
-			}
-		
+			}	
 	}
 	
 	/**
@@ -535,9 +529,11 @@ public class FlowModel {
 	 * @param sbolDoc the SBOLDocument
 	 * @return the hash map with all the interactions per promoter
 	 */
-	private static HashMap<String, HashMap <String, String>> promoterInteractions(SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, HashMap <String, String>> complex2sensor2ligand){
+	private static HashMap<String, HashMap <String, String>> promoterInteractions(BioModel targetModel, SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, HashMap <String, String>> complex2sensor2ligand, HashMap<String, String> sensorMolecules){
 
 		HashMap<String, HashMap <String, String>> promoterInteractions = new HashMap<String, HashMap <String, String>>();
+		
+		boolean SensorPromoterParametersinInteraction = false;
 		
 		for (ModuleDefinition moduleDef : sbolDoc.getModuleDefinitions()) {
 			for (Interaction interact : moduleDef.getInteractions()) {
@@ -565,6 +561,7 @@ public class FlowModel {
 					Boolean sensor = false;
 					if (!ymax.isEmpty() & !ymin.isEmpty()) {
 						sensor = true;
+						SensorPromoterParametersinInteraction = true;
 					}
 					ComponentDefinition promoter = null;
 					for (Participation partici : interact.getParticipations()) {
@@ -602,9 +599,25 @@ public class FlowModel {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", protein);
 								Prot_2_Param.put(protein, Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
 							} else {
-								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
-							}
-							
+								boolean isInputPromoter = false;
+								//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+								//the location of these parameters can change
+								List<Annotation> Annot2 = promoter.getAnnotations();
+
+								for (int j = 0; j < Annot2.size(); j++) {
+									if (Annot2.get(j).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gateType"))) {
+										if (Annot2.get(j).getStringValue().equals("input_sensor")) {
+											isInputPromoter = true;
+										}	
+									}
+								}
+								if (isInputPromoter) {
+									sensorPromoterParametrizationT2Collection2(targetModel, promoterInteractions, sbolDoc, Prot_2_Param, complex2sensor2ligand, sensorMolecules, promoter, partici.getParticipantDefinition());
+								} else {
+									promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
+								}
+								//promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
+							}	
 						}
 					}
 				} else if (SBOL2SBML.isRepressionInteraction(interact, moduleDef, sbolDoc)) {
@@ -631,6 +644,7 @@ public class FlowModel {
 					Boolean sensor = false;
 					if (!ymax.isEmpty() & !ymin.isEmpty()) {
 						sensor = true;
+						SensorPromoterParametersinInteraction = true;
 					}
 					ComponentDefinition promoter = null;
 					for (Participation partici : interact.getParticipations()) {
@@ -649,7 +663,7 @@ public class FlowModel {
 										}
 									}
 								}
-								}
+							}
 						}
 					}
 					for (Participation partici : interact.getParticipations()) {
@@ -659,16 +673,188 @@ public class FlowModel {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
 								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
 							} else {
-								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
+								boolean isInputPromoter = false;
+								//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+								//the location of these parameters can change
+								List<Annotation> Annot2 = promoter.getAnnotations();
+
+								for (int j = 0; j < Annot2.size(); j++) {
+									if (Annot2.get(j).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gateType"))) {
+										if (Annot2.get(j).getStringValue().equals("input_sensor")) {
+											isInputPromoter = true;
+										}	
+									}
+								}
+								if (isInputPromoter) {
+									sensorPromoterParametrizationT2Collection2(targetModel, promoterInteractions, sbolDoc, Prot_2_Param, complex2sensor2ligand, sensorMolecules, promoter, partici.getParticipantDefinition());
+								} else {
+									promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
+								}
+								//promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
-							
 						}
 					}
 				}
 			}
 		}
+		
+		if (!SensorPromoterParametersinInteraction) {
+			//promoterInteractions = sensorPromoterParametrizationT2Collection(promoterInteractions, sbolDoc, Prot_2_Param, complex2sensor2ligand, sensorMolecules);
+		}
 
 		return promoterInteractions;
+	}
+
+	
+	/**
+	 * This method returns a HashMap with a activator/repressor, and Cello Parameters associated with it if it has any. This
+	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param sbolDoc the SBOL document being used
+	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
+	 */
+	private static HashMap<String, HashMap <String, String>> sensorPromoterParametrizationT2Collection2(BioModel targetModel, HashMap<String, HashMap <String, String>> promoterInteractions, SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, HashMap <String, String>> complex2sensor2ligand, HashMap<String, String> sensorMolecules, ComponentDefinition promoter, ComponentDefinition input_molecule){
+
+		String tau_on = "";
+		String tau_off = "";
+		String ymax = "";
+		String ymin = "";
+		String alpha = "";
+		String beta = "";
+		List<Annotation> Annot = promoter.getAnnotations();
+		//circle through all annotations looking for Cello parameters
+		for (int i = 0; i < Annot.size(); i++) {
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_on"))) {
+				tau_on = Annot.get(i).getStringValue();	
+			}
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_off"))) {
+				tau_off = Annot.get(i).getStringValue();
+			}
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+				ymax = Annot.get(i).getStringValue();
+			}
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+				ymin = Annot.get(i).getStringValue();
+			}
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+				alpha = Annot.get(i).getStringValue();
+			}
+			if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+				beta = Annot.get(i).getStringValue();
+			}
+		}
+		
+		promoterInteractions.put(promoter.getDisplayId(), new HashMap <String, String>());
+		//promoterInteractions.get(promoter.getDisplayId()).put("sensor", input_molecule.getDisplayId());
+		promoterInteractions.get(promoter.getDisplayId()).put("sensor", "Y_" + promoter.getDisplayId().replace("p", ""));
+		
+		Species outputFlux = targetModel.getSBMLDocument().getModel().createSpecies();
+		outputFlux.setId("Y_" + promoter.getDisplayId().replace("p", ""));
+		outputFlux.setInitialAmount(0.0);
+		outputFlux.setBoundaryCondition(false);
+		outputFlux.setConstant(false);
+		outputFlux.setHasOnlySubstanceUnits(true);
+		outputFlux.setCompartment(targetModel.getSBMLDocument().getModel().getCompartment(0).getId());
+		
+		//targetModel.createDirPort(outputFlux.getId(), GlobalConstants.OUTPUT);
+		//moduleDef.createFunctionalComponent("Y_" + promoter.getDisplayId().replace("p", ""), URI.create("http://sbols.org/v2#public"), "", GlobalConstants.OUTPUT);
+		
+		
+		Prot_2_Param.put(input_molecule.getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, tau_on, tau_off));
+
+		complex2sensor2ligand.put(input_molecule.getDisplayId(), new HashMap <String, String>());
+		complex2sensor2ligand.get(input_molecule.getDisplayId()).put("Y_" + promoter.getDisplayId().replace("p", ""),input_molecule.getDisplayId());
+
+		sensorMolecules.put("Y_" + promoter.getDisplayId().replace("p", ""), input_molecule.getDisplayId());
+
+		return promoterInteractions;	
+	}
+	
+	/**
+	 * This method returns a HashMap with a activator/repressor, and Cello Parameters associated with it if it has any. This
+	 * will be used later to populate the kinetic model parameters generated for each Transcriptional Unit TU.
+	 *
+	 * @author Pedro Fontanarrosa
+	 * @param sbolDoc the SBOL document being used
+	 * @return the hash map where maps Promoters, to Proteins (or TF) and Cello Parameters
+	 */
+	private static HashMap<String, HashMap <String, String>> sensorPromoterParametrizationT2Collection(HashMap<String, HashMap <String, String>> promoterInteractions, SBOLDocument sbolDoc, HashMap<String, List<String>> Prot_2_Param, HashMap<String, HashMap <String, String>> complex2sensor2ligand, HashMap<String, String> sensorMolecules){
+
+
+		for (ComponentDefinition CD: sbolDoc.getComponentDefinitions()) {
+			for (Component CDcomponent : CD.getComponents()) {
+				ComponentDefinition promoter = CDcomponent.getDefinition();
+				if (promoter.getRoles().contains(SequenceOntology.ENGINEERED_REGION)) {
+
+					boolean isInputPromoter = false;
+					//get all the annotations of the part, which is where the cello parameters are stored as from (09/05/18). Eventually
+					//the location of these parameters can change
+					List<Annotation> Annot = promoter.getAnnotations();
+
+					for (int j = 0; j < Annot.size(); j++) {
+						if (Annot.get(j).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gateType"))) {
+							if (Annot.get(j).getStringValue().equals("input_sensor")) {
+								isInputPromoter = true;
+							}	
+						}
+					}
+					if (isInputPromoter) {
+						String tau_on = "";
+						String tau_off = "";
+						String ymax = "";
+						String ymin = "";
+						String alpha = "";
+						String beta = "";
+						//circle through all annotations looking for Cello parameters
+						for (int i = 0; i < Annot.size(); i++) {
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_on"))) {
+								tau_on = Annot.get(i).getStringValue();	
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_off"))) {
+								tau_off = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
+								ymax = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymin"))) {
+								ymin = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}alpha"))) {
+								alpha = Annot.get(i).getStringValue();
+							}
+							if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
+								beta = Annot.get(i).getStringValue();
+							}
+						}
+
+						for (Component part : promoter.getComponents()) {
+							ComponentDefinition promoter2 = part.getDefinition();
+							if (promoter2.getRoles().contains(SequenceOntology.PROMOTER)) {
+								if (!promoterInteractions.containsKey(promoter2.getDisplayId())) {
+									promoterInteractions.put(promoter2.getDisplayId(), new HashMap <String, String>());
+									promoterInteractions.get(promoter2.getDisplayId()).put("sensor", promoter2.getDisplayId());
+
+								} else {
+									//HashMap<String, String> Sensor = new HashMap <String, String>();
+									//Sensor.put("sensor", promoter2.getDisplayId());
+									promoterInteractions.get(promoter2.getDisplayId()).clear();
+									promoterInteractions.get(promoter2.getDisplayId()).put("sensor", promoter2.getDisplayId());
+								}
+
+								Prot_2_Param.put(promoter2.getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, tau_on, tau_off));
+
+								complex2sensor2ligand.put(promoter2.getDisplayId(), new HashMap <String, String>());
+								complex2sensor2ligand.get(promoter2.getDisplayId()).put(promoter2.getDisplayId(),promoter2.getDisplayId());
+
+								sensorMolecules.put(promoter2.getDisplayId(), promoter2.getDisplayId());
+							}
+						}
+					}
+				}
+			}
+		}
+		return promoterInteractions;	
 	}
 	
 	/**
@@ -1109,13 +1295,32 @@ public class FlowModel {
 			}
 		}	
 		
-		if (productions == null) {
-			return;
-		}
-		
+	
 		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
 		String rxnID = "";
 		String product = "";
+		
+		if (productions == null && sensor_gate) {
+			if (activations != null) {
+				for (Interaction activation : activations) {
+					for (Participation parti : activation.getParticipations()){
+						ComponentDefinition part = parti.getParticipantDefinition();
+							if (complex2sensor2ligand.containsKey(part.getDisplayId())) {
+									HashMap<String, String> protein2ligand = complex2sensor2ligand.get(part.getDisplayId());
+									for (String repressor : protein2ligand.keySet()) {
+										//repressor = repressor.replace("Y_", "");
+										rxnID = repressor;
+										product = repressor;
+									}
+
+							}
+						}
+					}
+				} else if (repressions != null) {
+					
+				} 
+			}
+			
 		if (products!=null) {
 			for (Participation production : products) {
 				if (rxnID.equals("")) {
@@ -1209,6 +1414,8 @@ public class FlowModel {
 		//Create the gate flow production reaction species for each TU.
 		Species gate_flow = targetModel.getSBMLDocument().getModel().createSpecies();
 		if(reporter_gate) {
+			gate_flow.setId(rxnID);
+		} else if (sensor_gate) {
 			gate_flow.setId(rxnID);
 		} else {
 			gate_flow.setId("Y_" + rxnID);
