@@ -1109,9 +1109,6 @@ public class FlowModel {
 			}
 		}	
 		
-		if (productions == null) {
-			return;
-		}
 		
 		// Create reaction ID string using all the productions listed with this Transcriptional Unit (TU).
 		String rxnID = "";
@@ -1131,7 +1128,23 @@ public class FlowModel {
 			throw new BioSimException("The Transcriptional Unit" + promoter.getDisplayId() + "you are trying to model doesn't have any products", "Error while generating model");
 			}
 
-		
+		if (productions == null && sensor_gate) {
+			for (Interaction activation : activations) {
+				for (Participation parti : activation.getParticipations()){
+					ComponentDefinition part = parti.getParticipantDefinition();
+					if (complex2sensor2ligand.containsKey(part.getDisplayId())) {
+						HashMap<String, String> protein2ligand = complex2sensor2ligand.get(part.getDisplayId());
+						for (String repressor : protein2ligand.keySet()) {
+							//repressor = repressor.replace("Y_", "");
+							rxnID = repressor;
+							product = repressor;
+							rxnID = rxnID.replace("_protein", "");
+						}
+					}
+				}
+			}
+		}
+
 		//create reaction ID for the output production flow for each gate,
 		//which is the display ID's of the products separated by underscores, 
 		//check if it's unique using SMBLUtilities.getUniqueSBMLId()
