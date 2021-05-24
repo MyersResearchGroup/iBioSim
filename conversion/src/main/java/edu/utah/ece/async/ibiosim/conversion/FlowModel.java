@@ -547,6 +547,8 @@ public class FlowModel {
 					String ymin = "";
 					String alpha = "";
 					String beta = "";
+					String tauON = "";
+					String tauOFF = "";
 					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
@@ -560,6 +562,12 @@ public class FlowModel {
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
 							beta = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_on"))) {
+							tauON = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_off"))) {
+							tauOFF = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -600,7 +608,7 @@ public class FlowModel {
 									protein = partici.getParticipantDefinition().getDisplayId();
 								}
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", protein);
-								Prot_2_Param.put(protein, Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
+								Prot_2_Param.put(protein, Arrays.asList("", "", ymax, ymin, alpha, beta, tauON, tauOFF));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("activation", partici.getParticipantDefinition().getDisplayId());
 							}
@@ -613,6 +621,8 @@ public class FlowModel {
 					String ymin = "";
 					String alpha = "";
 					String beta = "";
+					String tauON = "";
+					String tauOFF = "";
 					
 					for (int i = 0; i < Annot.size(); i++) {
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}ymax"))) {
@@ -626,6 +636,12 @@ public class FlowModel {
 						}
 						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}beta"))) {
 							beta = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_on"))) {
+							tauON = Annot.get(i).getStringValue();
+						}
+						if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}tau_off"))) {
+							tauOFF = Annot.get(i).getStringValue();
 						}
 					}
 					Boolean sensor = false;
@@ -657,7 +673,7 @@ public class FlowModel {
 							//promoterActivations.put(promoter.getDisplayId(), partici.getParticipantDefinition());
 							if (sensor) {
 								promoterInteractions.get(promoter.getDisplayId()).put("sensor", partici.getParticipantDefinition().getDisplayId());
-								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, "", ""));
+								Prot_2_Param.put(partici.getParticipantDefinition().getDisplayId(), Arrays.asList("", "", ymax, ymin, alpha, beta, tauON, tauOFF));
 							} else {
 								promoterInteractions.get(promoter.getDisplayId()).put("repression", partici.getParticipantDefinition().getDisplayId());
 							}
