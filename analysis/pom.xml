@@ -41,7 +41,7 @@
 		<repository>
 	  		<id>sems-maven-repository-releases</id>
 	  		<name>SEMS Maven Repo</name>
-	  		<url>http://mvn.sems.uni-rostock.de/releases/</url>
+	  		<url>http://mvn.bio.informatik.uni-rostock.de/releases/</url>
 	  		<layout>default</layout>
 	  		<snapshots>
 	    		<enabled>false</enabled>
@@ -50,7 +50,7 @@
 		<repository>
 	  		<id>sems-maven-repository-snapshots</id>
 	  		<name>SEMS Maven Repo</name>
-	  		<url>http://mvn.sems.uni-rostock.de/snapshots/</url>
+	  		<url>http://mvn.bio.informatik.uni-rostock.de/snapshots/</url>
 	  		<layout>default</layout>
 	  		<releases>
 	    		<enabled>false</enabled>
