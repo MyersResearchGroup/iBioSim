@@ -51,7 +51,7 @@
         <repository>
 			<id>ebi</id>
 			<name>ebi</name>
-			<url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
+			<url>https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
 		</repository>
 		<repository>
 			<id>jboss</id>
@@ -61,12 +61,12 @@
 		<repository>
 			<id>netbeans</id>
 			<name>netbeans</name>
-			<url>http://bits.netbeans.org/maven2/</url>
+			<url>https://bits.netbeans.org/maven2/</url>
 		</repository>
 		<repository>
 			<id>osgeo</id>
 			<name>osgeo</name>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
+			<url>https://download.osgeo.org/webdav/geotools/</url>
 		</repository>
 		<repository>
 			<id>alfresco</id>
