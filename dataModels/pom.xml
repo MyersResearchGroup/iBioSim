@@ -12,6 +12,11 @@
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>
+			<id>JSBML-SNAPSHOT</id>
+			<name>The JSBML Snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
 			<id>ebi</id>
 			<name>ebi</name>
 			<url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
@@ -35,11 +40,6 @@
 			<id>alfresco</id>
 			<name>alfresco</name>
 			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
-		</repository>
-		<repository>
-			<id>JSBML-SNAPSHOT</id>
-			<name>The JSBML Snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<dependencies>
