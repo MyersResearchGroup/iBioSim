@@ -470,6 +470,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					parameter.setName(pp.getName());
 					parameter.setValue(pp.getValue());
 					parameter.setUnits(pp.getUnits());
+					parameter.setSBOTerm(pp.getSBOTerm());
 
 					changedParameters.add(parameter);
 					thisReactionParams.add(parameter.getId());
@@ -797,6 +798,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					clearKineticLaw.setEnabled(false);
 					reacParameters.setEnabled(false);
 					useMassAction.setEnabled(false);
+					kineticFluxLabel.setEnabled(false);
 				} else if (BioModel.isConstitutiveReaction(reac) || BioModel.isDegradationReaction(reac) || 
 						BioModel.isDiffusionReaction(reac)) {
 					reacID.setEnabled(false);
@@ -824,8 +826,8 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					useMassAction.setEnabled(false);
 					clearKineticLaw.setEnabled(false);
 					reacParameters.setEnabled(false);
+					kineticFluxLabel.setEnabled(false);
 				} else if (BioModel.isProductionReaction(reac)) {
-					production = reac;
 					reacID.setEnabled(false);
 					reacName.setEnabled(false);
 					onPort.setEnabled(false);
@@ -839,10 +841,37 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 					removeReactant.setEnabled(false);
 					editReactant.setEnabled(false);
 					reactants.removeMouseListener(this);
+					addProduct.setEnabled(false);
+					removeProduct.setEnabled(false);
+					editProduct.setEnabled(false);
+					products.removeMouseListener(this);
+					addModifier.setEnabled(false);
+					removeModifier.setEnabled(false);
+					editModifier.setEnabled(false);
+					modifiers.removeMouseListener(this);
 					kineticLaw.setEditable(false);
+					useMassAction.setEnabled(false);
 					clearKineticLaw.setEnabled(false);
 					reacParameters.setEnabled(false);
-					useMassAction.setEnabled(false);
+					kineticFluxLabel.setEnabled(false);
+//					production = reac;
+//					reacID.setEnabled(false);
+//					reacName.setEnabled(false);
+//					onPort.setEnabled(false);
+//					reacReverse.setEnabled(false);
+//					//reacFast.setEnabled(false);
+//					reactionComp.setEnabled(false);
+//					reacAddParam.setEnabled(false);
+//					reacRemoveParam.setEnabled(false);
+//					reacEditParam.setEnabled(false);
+//					addReactant.setEnabled(false);
+//					removeReactant.setEnabled(false);
+//					editReactant.setEnabled(false);
+//					reactants.removeMouseListener(this);
+//					kineticLaw.setEditable(false);
+//					clearKineticLaw.setEnabled(false);
+//					reacParameters.setEnabled(false);
+//					useMassAction.setEnabled(false);
 				}
 			} 
 		}
@@ -877,6 +906,7 @@ public class Reactions extends PanelObservable implements ActionListener, MouseL
 			reactionComp.setEnabled(false);
 			onPort.setEnabled(false);
 		}
+		//if (BioModel.isComplexReaction(reac) || BioModel.isConstitutiveReaction((reac) || 
 		Object[] options1 = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, reactionPanel, "Reaction Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options1, options1[0]);
