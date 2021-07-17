@@ -334,7 +334,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	protected static final String		iBioSimVersion		= "3.0.0";	
+	protected static final String		iBioSimVersion		= "3.1.0";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
@@ -4622,6 +4622,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 //					e.printStackTrace();
 //				}
 				//TODO PEDRO revisit what boolean value to input here
+				selection.setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
 				generateSBMLFromSBOL(selection, root, false);
 				// TODO: update to attachment class
 				String sedmlFile = null;
