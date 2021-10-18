@@ -497,7 +497,7 @@ public class Converter {
 								
 								try {
 									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, vpr_output);
-									newSbolDoc.write("C:\\Users\\elros\\Desktop\\TestingConverter\\VPRoutput.xml");
+									//newSbolDoc.write("C:\\Users\\elros\\Desktop\\TestingConverter\\VPRoutput.xml");
 									//newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
@@ -526,7 +526,7 @@ public class Converter {
 							if (doVPR) {
 								try {
 									sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, vpr_output);
-									sbolDoc.write("C:\\Users\\elros\\Desktop\\TestingConverter\\VPRoutput.xml");
+									//sbolDoc.write("C:\\Users\\elros\\Desktop\\TestingConverter\\VPRoutput.xml");
 									//sbolDoc = VPRModelGenerator.generateModel(urlVPR, sbolDoc, "topModule");
 								} catch (VPRException e) {
 									System.err.println("ERROR: VPR generation fails");
