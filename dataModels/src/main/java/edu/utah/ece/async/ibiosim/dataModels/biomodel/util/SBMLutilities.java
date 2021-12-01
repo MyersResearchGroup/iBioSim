@@ -5483,7 +5483,11 @@ public class SBMLutilities extends CoreObservable
 	{
 		if (!asb.getMetaId().equals(newId))
 		{
-			asb.setMetaId(newId);
+			try {
+				asb.setMetaId(newId);
+			} catch (Exception e) {
+				setMetaId(asb, newId + "_");
+			}
 		}
 	}
 
