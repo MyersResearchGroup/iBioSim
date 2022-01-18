@@ -1,6 +1,6 @@
-FROM python:3
+FROM ubuntu:18.04
 
-LABEL base_image="python:3"
+LABEL base_image="ubuntu:18.04"
 LABEL version="1.0.0"
 LABEL software="bioSimAPI"
 LABEL software.version="1.0.0"
@@ -15,13 +15,12 @@ LABEL maintainer="Chris Myers <chris.myers@colorado.edu>"
 # Install requirements
 RUN apt-get update --fix-missing \
 	&& DEBIAN_FRONTEND=noninteractive \
-	&& apt-get install -y maven
+	&& apt-get install -y maven \
+	&& apt-get install python3.7 -y \
+	&& apt-get install python3-pip -y \
+	&& apt install openjdk-8-jdk -y 
      
 COPY . .
-
-RUN apt list --installed
-
-RUN apt install openjdk-8-jdk -y 
 
 # Build iBioSim
 WORKDIR /iBioSim
