@@ -15,7 +15,7 @@ LABEL maintainer="Chris Myers <chris.myers@colorado.edu>"
 # Install requirements
 RUN apt-get update --fix-missing \
 	&& DEBIAN_FRONTEND=noninteractive \
-	&& apt-get install -y maven \
+	&& apt-get install -y maven
      
 COPY . .
 
