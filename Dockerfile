@@ -16,9 +16,10 @@ LABEL maintainer="Chris Myers <chris.myers@colorado.edu>"
 RUN apt-get update --fix-missing \
 	&& DEBIAN_FRONTEND=noninteractive \
 	&& apt-get install -y maven \
-	&& apt install openjdk-8-jdk -y 
      
 COPY . .
+
+RUN apt install openjdk-8-jdk -y 
 
 # Build iBioSim
 WORKDIR /iBioSim
