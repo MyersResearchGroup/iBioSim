@@ -19,6 +19,8 @@ RUN apt-get update --fix-missing \
      
 COPY . .
 
+RUN apt list --installed
+
 RUN apt install openjdk-8-jdk -y 
 
 # Build iBioSim
