@@ -23,9 +23,7 @@ RUN apt-get update --fix-missing \
 COPY . .
 
 # Build iBioSim
-WORKDIR /iBioSim
 RUN mvn package -Dmaven.javadoc.skip=true
-WORKDIR /
 RUN apt-get -y install build-essential \
 	&& apt-get -y install dos2unix \
 	&& apt-get -y install libxml2-dev
