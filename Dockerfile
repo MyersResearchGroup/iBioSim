@@ -31,7 +31,7 @@ RUN apt-get -y install build-essential \
 	&& apt-get -y install libxml2-dev
 
 # Build reb2sac
-WORKDIR /Dependencies
+WORKDIR iBioSim/Dependencies
 RUN chmod +x newbuild.sh \
 	&& dos2unix newbuild.sh \
 	&& sh newbuild.sh
