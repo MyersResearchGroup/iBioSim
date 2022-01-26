@@ -19,11 +19,10 @@ RUN apt-get update --fix-missing \
 	&& apt-get install python3.7 -y \
 	&& apt-get install python3-pip -y \
 	&& apt install openjdk-8-jdk -y 
-     
-COPY . .
 
 # Build iBioSim
 WORKDIR /iBioSim
+COPY . .
 RUN mvn package -Dmaven.javadoc.skip=true
 WORKDIR /
 
