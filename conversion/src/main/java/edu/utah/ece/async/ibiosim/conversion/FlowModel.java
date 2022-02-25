@@ -1284,7 +1284,7 @@ public class FlowModel {
 				String type = "";
 				for (int i = 0; i < Annot.size(); i++) {
 					if (Annot.get(i).getQName().toString().equals(new String("{http://cellocad.org/Terms/cello#}gateType"))) {
-						type = Annot.get(i).getStringValue();
+						type = Annot.get(i).getStringValue(); 
 						if (type.equals("output_reporter")) {
 							reporter_gate = true;
 						} else if(type.equals("input_sensor")) {
@@ -1322,6 +1322,10 @@ public class FlowModel {
 			}
 			
 		if (products!=null) {
+			if (sensor_gate) {
+				// product = rxnID;
+				rxnID = rxnID.replace("_protein", "");
+			}
 			for (Participation production : products) {
 				if (rxnID.equals("")) {
 					rxnID = SBOL2SBML.getDisplayID(production);
@@ -1416,7 +1420,7 @@ public class FlowModel {
 		if(reporter_gate) {
 			gate_flow.setId(rxnID);
 		} else if (sensor_gate) {
-			gate_flow.setId(rxnID);
+			gate_flow.setId("Y_" + rxnID);
 		} else {
 			gate_flow.setId("Y_" + rxnID);
 		}
