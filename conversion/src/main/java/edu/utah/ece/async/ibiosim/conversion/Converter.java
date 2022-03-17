@@ -23,6 +23,7 @@ import java.util.HashSet;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbolstandard.core2.ModuleDefinition;
 import org.sbolstandard.core2.SBOLConversionException;
@@ -543,6 +544,26 @@ public class Converter {
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
+						/* TODO: PEDRO FIX ME 
+						if (topModelId != null) {
+							SBMLDocument topModel = SBMLutilities.readSBML(vpr_output+".xml", null, null);
+							topModel.getModel().setId(topModelId);
+							SBMLWriter writer = new SBMLWriter();
+							try {
+							  //SBMLutilities.removeUnusedNamespaces(sbml);
+								writer.writeSBMLToFile(topModel, outputDir + File.separator + topModelId + ".xml");
+							}
+							catch (SBMLException e) {
+								e.printStackTrace();
+							}
+							catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+							catch (XMLStreamException e) {
+								e.printStackTrace();
+							}
+						}
+						 */
 						if (doVPR) {
 							if (topEnvir) {
 								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);
