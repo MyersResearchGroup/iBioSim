@@ -541,6 +541,8 @@ public class Run extends CoreObservable implements ActionListener {
         this.notifyObservers(message);
         message.setLog("Saving PRISM Property file:\n" + filename.replace(".xml", ".pctl"));
         this.notifyObservers(message);
+    	// TODO: LUKAS
+    	// bioModel.convertSBML2PRISM(logFile, filename);
         LPN.convertLPN2PRISM(logFile, lhpnFile, filename.replace(".xml", ".prism"), bioModel.getSBMLDocument());
         Preferences biosimrc = Preferences.userRoot();
         String prismCmd = biosimrc.get("biosim.general.prism", "");

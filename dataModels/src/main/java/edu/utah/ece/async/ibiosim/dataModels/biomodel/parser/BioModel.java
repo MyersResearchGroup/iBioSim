@@ -15,6 +15,7 @@ package edu.utah.ece.async.ibiosim.dataModels.biomodel.parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,7 +105,6 @@ import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObserver;
 import edu.utah.ece.async.ibiosim.dataModels.util.observe.CoreObservable;
-
 
 /**
  * This class describes a GCM file
@@ -4734,6 +4734,78 @@ public class BioModel extends CoreObservable{
 			speciesGlyph.getBoundingBox().getDimensions().setHeight(height);
 		}
 	}
+	
+	// TODO: LUKAS
+	public void convertSBML2PRISM(FileWriter logFile,String filename) {
+		Model model = sbml.getModel();
+		// loop over parameters and write constants, if parameter not constant than error
+		for (int i=0; i < model.getSpeciesCount(); i++) {
+			Species s = model.getSpecies(i);
+			if (s.isConstant()) {
+				// write const 
+			} else {
+				// write modules
+			}
+		}
+		// write pctl file using the SBML constraints
+/*
+		File file = new File(filename);
+		try {
+			FileWriter out = new FileWriter(file);
+			out.write("ctmc\n");
+			for (String var : LPN.getVariables()) {
+				int i=0;
+				Place place;
+				String lastValue="";
+				while ((place = LPN.getPlace(var+i))!=null) {
+					Transition inTrans = place.getPreset()[0];
+					ExprTree assign = inTrans.getAssignTree(var);
+					lastValue = assign.toString();
+					i++;
+				}
+				Variable variable = LPN.getVariable(var);
+				String initValue = variable.getInitValue();
+				initValue = Long.toString((Math.round(Double.valueOf(initValue))));
+				if (lastValue.equals("")) {
+					out.write("const int "+var+"="+initValue+";\n");
+				} else {
+					out.write("module "+var+"_def\n");
+					out.write("  "+var+" : "+"[0.."+lastValue+"] init "+initValue+";\n");
+					i=0;
+					while ((place = LPN.getPlace(var+i))!=null) {
+						Transition inTrans = place.getPreset()[0];
+						ExprTree assign = inTrans.getAssignTree(var);
+						out.write("  [] "+var+"="+assign.toString()+" -> ");
+						boolean first = true;
+						for (Transition outTrans : place.getPostset()) {
+							assign = outTrans.getAssignTree(var);
+							ExprTree delay = outTrans.getDelayTree();
+							String rate = delay.toString("prism");
+							rate = rate.replace("exponential", "");
+							if (!first) out.write(" + ");
+							out.write(rate+":("+var+"'="+assign.toString()+")");
+							first = false;
+						}
+						out.write(";\n");
+						i++;
+					}
+					out.write("endmodule\n");
+				}
+			}
+			out.close();
+			for (int i = 0; i < sbml.getModel().getConstraintCount(); i++) {
+				file = new File(filename.replace(".prism", ".pctl"));
+				out = new FileWriter(file);
+				out.write(SBMLutilities.convertMath2PrismProperty(sbml.getModel().getConstraint(i).getMath()));
+				out.close();
+			}
+		}
+		catch (IOException e) {
+			//TODO: Leandro fix Me
+			//message.setErrorDialog("Error Writing File", "I/O error when writing PRISM file");
+		}
+		*/
+	}
 
 	/**
 	 * creates/removes grid species if a file is updated
@@ -6471,7 +6543,7 @@ public class BioModel extends CoreObservable{
 			SBMLDocument result = null;
 			try {
 				result = flattenModelWithLibSBML(removeComp);
-			} catch (Exception e) {
+			} catch (Exception e) { 
 			}
 			if (result!=null) {
 				result.getModel().setName("Created by libsbml flatten routine");
