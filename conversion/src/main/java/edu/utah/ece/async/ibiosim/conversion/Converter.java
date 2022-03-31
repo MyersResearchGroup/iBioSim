@@ -105,6 +105,7 @@ public class Converter {
 		System.err.println("\t-r  <url> The specified synbiohub repository the user wants VPR model generator to connect to");
 		System.err.println("\t -env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
 		System.err.println("\t-Cello  This option is for dynamic modeling of Cello parts and parametrization");
+		System.err.println("\t-tmID  Set the ID of the top SBML model");
 		System.exit(1);
 	}
 	
@@ -150,6 +151,7 @@ public class Converter {
 		String version = null; //-v
 		String urlVPR = ""; //The specified synbiohub repository the user wants VPR model generator to connect to.
 		String environment ="";
+		String topModelId = null;
 		
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
@@ -309,6 +311,12 @@ public class Converter {
 				topEnvir = true;
 				environment = args[++index];
 				break;
+			case "-tmID":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				topModelId = args[++index];
 			default:
 				fullInputFileName = args[index];
 			}
@@ -544,7 +552,7 @@ public class Converter {
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
-						/* TODO: PEDRO FIX ME 
+						
 						if (topModelId != null) {
 							SBMLDocument topModel = SBMLutilities.readSBML(vpr_output+".xml", null, null);
 							topModel.getModel().setId(topModelId);
@@ -563,7 +571,7 @@ public class Converter {
 								e.printStackTrace();
 							}
 						}
-						 */
+						 
 						if (doVPR) {
 							if (topEnvir) {
 								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);
