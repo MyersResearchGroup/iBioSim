@@ -412,6 +412,7 @@ public class Analysis implements BioObserver
       if (modelSource.indexOf("/")!=-1) {
         modelSource = modelSource.substring(modelSource.lastIndexOf("/")+1);
       }
+      System.out.println("Reading: " + root + File.separator + modelSource);
       SBMLDocument sbmlDoc = SBMLReader.read(new File(root + File.separator + modelSource));
       if (model.getListOfChanges().size() != 0) {
         try {
