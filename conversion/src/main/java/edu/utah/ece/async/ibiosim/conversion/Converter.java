@@ -90,7 +90,7 @@ public class Converter {
 		System.err.println("\t-esf  Export SBML hierarchical models in a single output file.");
 		System.err.println("\t-f  continue after first error");
 		System.err.println("\t-i  allow SBOL document to be incomplete");
-		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML) for output (default=SBOL2). To output FASTA or GenBank, no SBOL default URI prefix is needed.");
+		System.err.println("\t-l  <language> specifies language (SBOL1/SBOL2/GenBank/FASTA/SBML/PRISM) for output (default=SBOL2). To output FASTA or GenBank, no SBOL default URI prefix is needed.");
 		System.err.println("\t-mf The name of the file that will be produced to hold the result of the main SBOL file, if SBOL file diff was selected.");
 		System.err.println("\t-n  allow non-compliant URIs");
 		System.err.println("\t-o  <outputFile> specifies the full path of the output file produced from the converter");
@@ -105,6 +105,8 @@ public class Converter {
 		System.err.println("\t-r  <url> The specified synbiohub repository the user wants VPR model generator to connect to");
 		System.err.println("\t -env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
 		System.err.println("\t-Cello  This option is for dynamic modeling of Cello parts and parametrization");
+		System.err.println("\t-tmID  Set the ID of the top SBML model");
+		System.err.println("\t-prism  SBOL to PRISM converter");
 		System.exit(1);
 	}
 	
@@ -129,6 +131,7 @@ public class Converter {
 		boolean sbolV1out = false; //-l
 		boolean sbolV2out = false; //-l
 		boolean sbmlOut = false; //-l
+		boolean prismOut = false; //-l
 		boolean compliant = true; //-n
 		boolean noOutput = false; //-no
 		boolean typesInURI = false; //-t
@@ -150,6 +153,7 @@ public class Converter {
 		String version = null; //-v
 		String urlVPR = ""; //The specified synbiohub repository the user wants VPR model generator to connect to.
 		String environment ="";
+		String topModelId = null;
 		
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
@@ -222,6 +226,11 @@ public class Converter {
 				else if (args[index+1].equals("SBOL2")) 
 				{
 					sbolV2out = true;
+					++index;
+				} 
+				else if (args[index+1].equals("PRISM")) 
+				{
+					prismOut = true;
 					++index;
 				} 
 				else 
@@ -309,6 +318,12 @@ public class Converter {
 				topEnvir = true;
 				environment = args[++index];
 				break;
+			case "-tmID":
+				if(index+1 >= args.length || (!args[index+1].isEmpty() && args[index+1].charAt(0)=='-'))
+				{
+					usage();
+				}
+				topModelId = args[++index];
 			default:
 				fullInputFileName = args[index];
 			}
@@ -405,7 +420,30 @@ public class Converter {
 		boolean isDirectory = file.isDirectory();
 		if (!isDirectory) 
 		{
-			if(inputIsSBML)
+			if(inputIsSBML && prismOut) 
+			{
+				SBMLDocument inputSBMLDoc;
+				
+				try
+				{	
+					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
+					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, "First.prism");
+				}
+				catch (XMLStreamException e) 
+				{
+					System.err.println("ERROR: Invalid XML file");
+					e.printStackTrace();
+				} 
+				catch (IOException e) 
+				{
+					System.err.println("ERROR: Unable to read or write file");
+					e.printStackTrace();
+				}
+				catch (BioSimException e) {
+					System.err.println("ERROR: Invalid SBML file");
+				}	
+				
+			}else if(inputIsSBML) 
 			{
 				SBOLDocument outSBOLDoc = new SBOLDocument();
 				SBMLDocument inputSBMLDoc;
@@ -544,7 +582,7 @@ public class Converter {
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
-						/* TODO: PEDRO FIX ME 
+						
 						if (topModelId != null) {
 							SBMLDocument topModel = SBMLutilities.readSBML(vpr_output+".xml", null, null);
 							topModel.getModel().setId(topModelId);
@@ -563,7 +601,7 @@ public class Converter {
 								e.printStackTrace();
 							}
 						}
-						 */
+						 
 						if (doVPR) {
 							if (topEnvir) {
 								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);

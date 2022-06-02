@@ -13,7 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.biomodel.parser;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
