@@ -282,55 +282,55 @@ public enum IBioSimPreferences {
 			modelPreferences.put(modelPreference, Preferences.userRoot().get(modelPreference, ""));
 			if (modelPreferences.get(modelPreference).equals("")) {
 				if (modelPreference.equals("biosim.gcm.KREP_VALUE")) {
-					modelPreferences.put("biosim.gcm.KREP_VALUE", ".5");
+					modelPreferences.put("biosim.gcm.KREP_VALUE", GlobalConstants.KREP_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KACT_VALUE")) {
-					modelPreferences.put("biosim.gcm.KACT_VALUE", ".0033");
+					modelPreferences.put("biosim.gcm.KACT_VALUE", GlobalConstants.KACT_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.PROMOTER_COUNT_VALUE")) {
-					modelPreferences.put("biosim.gcm.PROMOTER_COUNT_VALUE", "2");
+					modelPreferences.put("biosim.gcm.PROMOTER_COUNT_VALUE", GlobalConstants.PROMOTER_COUNT_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KBASAL_VALUE")) {
-					modelPreferences.put("biosim.gcm.KBASAL_VALUE", ".0001");
+					modelPreferences.put("biosim.gcm.KBASAL_VALUE", GlobalConstants.KBASAL_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.OCR_VALUE")) {
-					modelPreferences.put("biosim.gcm.OCR_VALUE", ".05");
+					modelPreferences.put("biosim.gcm.OCR_VALUE", GlobalConstants.OCR_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KDECAY_VALUE")) {
-					modelPreferences.put("biosim.gcm.KDECAY_VALUE", ".0075");
+					modelPreferences.put("biosim.gcm.KDECAY_VALUE", GlobalConstants.KDECAY_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KECDECAY_VALUE")) {
-					modelPreferences.put("biosim.gcm.KECDECAY_VALUE", ".005");
+					modelPreferences.put("biosim.gcm.KECDECAY_VALUE", GlobalConstants.KECDECAY_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.RNAP_VALUE")) {
-					modelPreferences.put("biosim.gcm.RNAP_VALUE", "30");
+					modelPreferences.put("biosim.gcm.RNAP_VALUE", GlobalConstants.RNAP_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.RNAP_BINDING_VALUE")) {
-					modelPreferences.put("biosim.gcm.RNAP_BINDING_VALUE", ".033");
+					modelPreferences.put("biosim.gcm.RNAP_BINDING_VALUE", GlobalConstants.RNAP_BINDING_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE")) {
-					modelPreferences.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "1");
+					modelPreferences.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", GlobalConstants.ACTIVATED_RNAP_BINDING_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.STOICHIOMETRY_VALUE")) {
-					modelPreferences.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
+					modelPreferences.put("biosim.gcm.STOICHIOMETRY_VALUE", GlobalConstants.STOICHIOMETRY_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KCOMPLEX_VALUE")) {
-					modelPreferences.put("biosim.gcm.KCOMPLEX_VALUE", "0.05");
+					modelPreferences.put("biosim.gcm.KCOMPLEX_VALUE", GlobalConstants.KCOMPLEX_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.COOPERATIVITY_VALUE")) {
-					modelPreferences.put("biosim.gcm.COOPERATIVITY_VALUE", "2");
+					modelPreferences.put("biosim.gcm.COOPERATIVITY_VALUE", GlobalConstants.COOPERATIVITY_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.ACTIVED_VALUE")) {
-					modelPreferences.put("biosim.gcm.ACTIVED_VALUE", ".25");
+					modelPreferences.put("biosim.gcm.ACTIVED_VALUE", GlobalConstants.ACTIVED_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.FORWARD_MEMDIFF_VALUE")) {
-					modelPreferences.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", "1.0");
+					modelPreferences.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", GlobalConstants.FORWARD_MEMDIFF_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.REVERSE_MEMDIFF_VALUE")) {
-					modelPreferences.put("biosim.gcm.REVERSE_MEMDIFF_VALUE", "0.01");
+					modelPreferences.put("biosim.gcm.REVERSE_MEMDIFF_VALUE", GlobalConstants.REVERSE_MEMDIFF_VALUE);
 				}
 				if (modelPreference.equals("biosim.gcm.KECDIFF_VALUE")) {
-					modelPreferences.put("biosim.gcm.KECDIFF_VALUE", "1.0");
+					modelPreferences.put("biosim.gcm.KECDIFF_VALUE", GlobalConstants.KECDIFF_VALUE);
 				}
 			}
 		}

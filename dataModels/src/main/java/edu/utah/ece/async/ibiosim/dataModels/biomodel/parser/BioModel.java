@@ -195,125 +195,125 @@ public class BioModel extends CoreObservable{
 	private void loadDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", GlobalConstants.KREP_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KREP_STRING, "1");
 		
-		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", GlobalConstants.KACT_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KACT_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", GlobalConstants.RNAP_BINDING_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
 
 		createGlobalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
-				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", GlobalConstants.ACTIVATED_RNAP_BINDING_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", GlobalConstants.KCOMPLEX_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
-		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", GlobalConstants.FORWARD_MEMDIFF_VALUE));
+		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", GlobalConstants.REVERSE_MEMDIFF_VALUE));
 
-		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
-		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", GlobalConstants.KDECAY_VALUE));
+		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", GlobalConstants.KECDECAY_VALUE));
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", GlobalConstants.COOPERATIVITY_VALUE));
+		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", GlobalConstants.RNAP_VALUE));
+		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", GlobalConstants.OCR_VALUE));
+		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", GlobalConstants.KBASAL_VALUE));
+		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", GlobalConstants.PROMOTER_COUNT_VALUE));
+		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", GlobalConstants.STOICHIOMETRY_VALUE));
+		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", GlobalConstants.ACTIVED_VALUE));
+		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", GlobalConstants.KECDIFF_VALUE));
 	}
 
 	private void loadDefaultParameterMap() {
 		Preferences biosimrc = Preferences.userRoot();
 		defaultParameters = new HashMap<String,String>();
 
-		defaultParameters.put(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		defaultParameters.put(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", GlobalConstants.KREP_VALUE));
 		defaultParameters.put(GlobalConstants.REVERSE_KREP_STRING, "1");
 		
-		defaultParameters.put(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		defaultParameters.put(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", GlobalConstants.KACT_VALUE));
 		defaultParameters.put(GlobalConstants.REVERSE_KACT_STRING, "1");
 
-		defaultParameters.put(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		defaultParameters.put(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", GlobalConstants.ACTIVATED_RNAP_BINDING_VALUE));
 		defaultParameters.put(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
 
 		defaultParameters.put(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
-				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", GlobalConstants.ACTIVATED_RNAP_BINDING_VALUE));
 		defaultParameters.put(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
 
-		defaultParameters.put(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		defaultParameters.put(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", GlobalConstants.KCOMPLEX_VALUE));
 		defaultParameters.put(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
 
-		defaultParameters.put(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
-		defaultParameters.put(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+		defaultParameters.put(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", GlobalConstants.FORWARD_MEMDIFF_VALUE));
+		defaultParameters.put(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", GlobalConstants.REVERSE_MEMDIFF_VALUE));
 
-		defaultParameters.put(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
-		defaultParameters.put(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
-		defaultParameters.put(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
-		defaultParameters.put(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-		defaultParameters.put(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-		defaultParameters.put(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
-		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		defaultParameters.put(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
-		defaultParameters.put(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", GlobalConstants.KDECAY_VALUE));
+		defaultParameters.put(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", GlobalConstants.KECDECAY_VALUE));
+		defaultParameters.put(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", GlobalConstants.COOPERATIVITY_VALUE));
+		defaultParameters.put(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", GlobalConstants.RNAP_VALUE));
+		defaultParameters.put(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", GlobalConstants.OCR_VALUE));
+		defaultParameters.put(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", GlobalConstants.KBASAL_VALUE));
+		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", GlobalConstants.PROMOTER_COUNT_VALUE));
+		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", GlobalConstants.STOICHIOMETRY_VALUE));
+		defaultParameters.put(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", GlobalConstants.ACTIVED_VALUE));
+		defaultParameters.put(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", GlobalConstants.KECDIFF_VALUE));
 	}
 
 	private void createDegradationDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", GlobalConstants.KDECAY_VALUE));
 	}
 
 	private void createDiffusionDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
-		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", GlobalConstants.FORWARD_MEMDIFF_VALUE));
+		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", GlobalConstants.REVERSE_MEMDIFF_VALUE));
+		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", GlobalConstants.KECDECAY_VALUE));
+		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", GlobalConstants.KECDIFF_VALUE));
 	}
 
 	private void createComplexDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", GlobalConstants.KCOMPLEX_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
-		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", GlobalConstants.COOPERATIVITY_VALUE));
 	}
 
 	private void createConstitutiveDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", GlobalConstants.STOICHIOMETRY_VALUE));
+		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", GlobalConstants.OCR_VALUE));
 	}
 	
 	private void createProductionDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
-		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", GlobalConstants.KREP_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KREP_STRING, "1");
 		
-		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", GlobalConstants.KACT_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_KACT_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", GlobalConstants.RNAP_BINDING_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
 
 		createGlobalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
-				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", GlobalConstants.ACTIVATED_RNAP_BINDING_VALUE));
 		createGlobalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
-		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", GlobalConstants.COOPERATIVITY_VALUE));
+		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", GlobalConstants.RNAP_VALUE));
+		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", GlobalConstants.OCR_VALUE));
+		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", GlobalConstants.KBASAL_VALUE));
+		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", GlobalConstants.PROMOTER_COUNT_VALUE));
+		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", GlobalConstants.STOICHIOMETRY_VALUE));
+		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", GlobalConstants.ACTIVED_VALUE));
 	}
 	
 	public static boolean IsDefaultParameter(String paramId) {
