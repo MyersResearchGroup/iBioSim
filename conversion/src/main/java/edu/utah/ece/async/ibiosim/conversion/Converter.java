@@ -427,7 +427,7 @@ public class Converter {
 				try
 				{	
 					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
-					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, "First.prism");
+					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName);
 				}
 				catch (XMLStreamException e) 
 				{
