@@ -106,7 +106,6 @@ public class Converter {
 		System.err.println("\t -env <SBML environment file> is the complete directory path of the environmental file to instantiate to your model. This only works when VPR model generator is used");
 		System.err.println("\t-Cello  This option is for dynamic modeling of Cello parts and parametrization");
 		System.err.println("\t-tmID  Set the ID of the top SBML model");
-		System.err.println("\t-prism  SBOL to PRISM converter");
 		System.exit(1);
 	}
 	
@@ -140,6 +139,7 @@ public class Converter {
 		boolean isValidation = false; //indicate if only validate SBOL files
 		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated
 		boolean CelloModel = false; // determines if Cello-based modeling should be done
+		boolean PrismUnbound = true; // determines if the prism model should be bound or unbound
 		
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
@@ -190,6 +190,9 @@ public class Converter {
 				break;
 			case "-t":
 				typesInURI = true;
+				break;
+			case "-bound":
+				PrismUnbound = false;
 				break;
 			case "-s":
 				if(index+1 >= args.length || args[index+1].equals("-"))
@@ -427,7 +430,7 @@ public class Converter {
 				try
 				{	
 					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
-					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName);
+					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
 				}
 				catch (XMLStreamException e) 
 				{
