@@ -33,11 +33,13 @@ import org.sbolstandard.core2.TopLevel;
 import org.virtualparts.VPRException;
 import org.virtualparts.VPRTripleStoreException;
 
+// import edu.utah.ece.async.ibiosim.analysis.properties.AnalysisProperties;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.parser.BioModel;
 import edu.utah.ece.async.ibiosim.dataModels.biomodel.util.SBMLutilities;
 import edu.utah.ece.async.ibiosim.dataModels.sbol.SBOLUtility;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.BioSimException;
 import edu.utah.ece.async.ibiosim.dataModels.util.exceptions.SBOLException;
+import edu.utah.ece.async.ibiosim.dataModels.util.observe.BioObservable;
 
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
@@ -427,10 +429,24 @@ public class Converter {
 			{
 				SBMLDocument inputSBMLDoc;
 				
+				
 				try
 				{	
 					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
+					/*
+					File path = new File(fullInputFileName);
+					BioObservable p = null;
+					BioModel bioModel = BioModel.createBioModel(path.getParent(), p);
+					bioModel.load(fullInputFileName);
+					
+					if (bioModel.flattenModel(true) != null) {
+						SBMLDocument sbml = bioModel.flattenModel(true);
+						SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
+					}
+					*/
+			
 					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
+					
 				}
 				catch (XMLStreamException e) 
 				{
