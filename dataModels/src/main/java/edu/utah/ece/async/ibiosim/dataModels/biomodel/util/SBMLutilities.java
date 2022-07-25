@@ -1968,7 +1968,8 @@ public class SBMLutilities extends CoreObservable
 		{
 			String leftStr = convertMath2PrismProperty(math.getLeftChild());
 			String rightStr = convertMath2PrismProperty(math.getRightChild());
-			return "(" + leftStr + " ^ " + rightStr + ")";
+			//return "(" + leftStr + " ^ " + rightStr + ")";
+			return "pow(" + leftStr + " , " + rightStr + ")";
 		}
 		else if (math.getType() == ASTNode.Type.RATIONAL)
 		{

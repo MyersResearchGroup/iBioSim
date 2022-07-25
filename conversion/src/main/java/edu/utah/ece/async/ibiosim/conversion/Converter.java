@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.lang.reflect.Method;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
@@ -110,7 +112,7 @@ public class Converter {
 		System.err.println("\t-tmID  Set the ID of the top SBML model");
 		System.exit(1);
 	}
-	
+
 
 	/**
 	 * The main method.
@@ -142,7 +144,7 @@ public class Converter {
 		boolean topEnvir = false; // determines if there is a topEnvironment model to be instantiated
 		boolean CelloModel = false; // determines if Cello-based modeling should be done
 		boolean PrismUnbound = true; // determines if the prism model should be bound or unbound
-		
+
 		String compFileResult = ""; //-cf
 		String compareFile = ""; //-e
 		String mainFileResult = ""; //-mf
@@ -156,7 +158,7 @@ public class Converter {
 		String urlVPR = ""; //The specified synbiohub repository the user wants VPR model generator to connect to.
 		String environment ="";
 		String topModelId = null;
-		
+
 		HashSet<String> ref_sbolInputFilePath = new HashSet<String>(); //rsbol
 
 		int index = 0;
@@ -428,25 +430,76 @@ public class Converter {
 			if(inputIsSBML && prismOut) 
 			{
 				SBMLDocument inputSBMLDoc;
-				
-				
+
+
 				try
 				{	
-					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
 					/*
-					File path = new File(fullInputFileName);
-					BioObservable p = null;
-					BioModel bioModel = BioModel.createBioModel(path.getParent(), p);
-					bioModel.load(fullInputFileName);
+					org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
+					org.sbml.libsbml.SBMLDocument document = reader.readSBML(fullInputFileName);
+					document.setPackageRequired("comp", true); 
+					org.sbml.libsbml.CompModelPlugin sbmlCompModel = (org.sbml.libsbml.CompModelPlugin) document.getModel().getPlugin("comp");
+					long numSubModels = sbmlCompModel.getNumSubmodels();
+					System.err.println(numSubModels);
+					 */
+
+					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
+					//SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
 					
+					File path = new File(fullInputFileName);
+					BioModel bioModel = new BioModel(path.getParent());
+					bioModel.load(fullInputFileName);
+					bioModel.createCompPlugin();
+					System.err.println(bioModel.getListOfSubmodels());
+					
+					if(bioModel.getListOfSubmodels().isEmpty()) 
+					{
+						SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
+					}else {
+						if (bioModel.flattenModel(true) != null) {
+							SBMLDocument sbml = bioModel.flattenModel(true);
+							SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
+						}
+					}
+
+					/*
 					if (bioModel.flattenModel(true) != null) {
 						SBMLDocument sbml = bioModel.flattenModel(true);
+						//SBMLDocument sbml = bioModel.getSBMLDocument();
+						//System.err.println(inputSBMLDoc.equals(inputSBMLDoc));
+						//System.err.println(sbml.equals(sbml));
+						//System.err.println(sbml.equals(sbml));
 						SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
-					}
+					}	
+
 					*/
-			
-					SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
-					
+
+
+					/*
+					File path = new File(fullInputFileName);
+					// BioObservable p = null;
+					// BioModel bioModel = BioModel.createBioModel(path.getParent(), p);
+					BioModel bioModel = new BioModel(path.getParent());
+					bioModel.load(fullInputFileName);
+
+
+
+
+
+
+
+
+					if (bioModel.flattenModel(true) != null) {
+						//SBMLDocument sbml = bioModel.flattenModel(true);
+						SBMLDocument sbml = bioModel.getSBMLDocument();
+						//System.err.println(inputSBMLDoc.equals(inputSBMLDoc));
+						//System.err.println(sbml.equals(sbml));
+						//System.err.println(sbml.equals(sbml));
+						//SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
+					}	
+
+					 */
+
 				}
 				catch (XMLStreamException e) 
 				{
@@ -461,7 +514,7 @@ public class Converter {
 				catch (BioSimException e) {
 					System.err.println("ERROR: Invalid SBML file");
 				}	
-				
+
 			}else if(inputIsSBML) 
 			{
 				SBOLDocument outSBOLDoc = new SBOLDocument();
@@ -546,13 +599,13 @@ public class Converter {
 						String circuit_name = file.getName();
 						circuit_name = circuit_name.replace(".xml", "");
 						String vpr_output =  circuit_name + "_topModule";
-					
+
 						if(!topLevelURIStr.isEmpty())
 						{
 							if (doVPR) {
 								TopLevel top = sbolDoc.getTopLevel(URI.create(topLevelURIStr));
 								SBOLDocument newSbolDoc = sbolDoc.createRecursiveCopy(top);
-								
+
 								try {
 									newSbolDoc = VPRModelGenerator.generateModel(urlVPR, newSbolDoc, vpr_output);
 									//newSbolDoc.write("C:\\Users\\elros\\Desktop\\TestingConverter\\VPRoutput.xml");
@@ -565,18 +618,18 @@ public class Converter {
 									e.printStackTrace();
 								}
 								//generateSBMLFromSBOL(newSbolDoc, outputDir);
-								
+
 								for (ModuleDefinition moduleDef : newSbolDoc.getRootModuleDefinitions())
 								{
 									HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, newSbolDoc, CelloModel);
 									SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 								} 
 							}
-							
+
 							else {
-							ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
-							HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc, CelloModel);
-							SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
+								ModuleDefinition topModuleDef = sbolDoc.getModuleDefinition(URI.create(topLevelURIStr));
+								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, topModuleDef, sbolDoc, CelloModel);
+								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							}
 						} 
 						else
@@ -594,20 +647,20 @@ public class Converter {
 									e.printStackTrace();
 								}
 							}
-							
+
 							for (ModuleDefinition moduleDef : sbolDoc.getRootModuleDefinitions())
 							{
 								HashMap<String,BioModel> models = SBOL2SBML.generateModel(outputDir, moduleDef, sbolDoc, CelloModel);
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
-						
+
 						if (topModelId != null) {
 							SBMLDocument topModel = SBMLutilities.readSBML(vpr_output+".xml", null, null);
 							topModel.getModel().setId(topModelId);
 							SBMLWriter writer = new SBMLWriter();
 							try {
-							  //SBMLutilities.removeUnusedNamespaces(sbml);
+								//SBMLutilities.removeUnusedNamespaces(sbml);
 								writer.writeSBMLToFile(topModel, outputDir + File.separator + topModelId + ".xml");
 							}
 							catch (SBMLException e) {
@@ -620,26 +673,26 @@ public class Converter {
 								e.printStackTrace();
 							}
 						}
-						 
+
 						if (doVPR) {
 							if (topEnvir) {
 								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);
-								
-								
+
+
 								CompSBMLDocumentPlugin docPlugin = (CompSBMLDocumentPlugin) topEnvironment.getPlugin("comp");					
 								ExternalModelDefinition exte = docPlugin.getExternalModelDefinition("TopModel");
 								exte.setId(vpr_output);
 								exte.setSource(vpr_output + ".xml");
 								//exte.setId("topModule");
 								//exte.setSource("topModule.xml");
-														
+
 								CompModelPlugin SBMLplugin = (CompModelPlugin) topEnvironment.getModel().getPlugin("comp");
 								Submodel top = SBMLplugin.getSubmodel("C1");
 								top.setModelRef(vpr_output);
 								//top.setModelRef("topModule");
 
 								SBMLWriter writing = new SBMLWriter();
-								
+
 								writing.writeSBMLToFile(topEnvironment, outputDir + File.separator + "Simulation_Environment.xml");
 							}
 						}				
