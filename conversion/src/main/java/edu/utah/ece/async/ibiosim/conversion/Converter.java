@@ -434,71 +434,27 @@ public class Converter {
 
 				try
 				{	
-					/*
-					org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
-					org.sbml.libsbml.SBMLDocument document = reader.readSBML(fullInputFileName);
-					document.setPackageRequired("comp", true); 
-					org.sbml.libsbml.CompModelPlugin sbmlCompModel = (org.sbml.libsbml.CompModelPlugin) document.getModel().getPlugin("comp");
-					long numSubModels = sbmlCompModel.getNumSubmodels();
-					System.err.println(numSubModels);
-					 */
-
+					// Read in the SBML
 					inputSBMLDoc = SBMLutilities.readSBML(fullInputFileName, null, null);
-					//SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
 					
+					// Create BioModel to allow flattening
 					File path = new File(fullInputFileName);
 					BioModel bioModel = new BioModel(path.getParent());
 					bioModel.load(fullInputFileName);
-					bioModel.createCompPlugin();
-					System.err.println(bioModel.getListOfSubmodels());
 					
+					// Check if BioModel is hierarchical by checking the number of submodels
+					bioModel.createCompPlugin();
 					if(bioModel.getListOfSubmodels().isEmpty()) 
 					{
+						// Not hierarchical
 						SBML2PRISM.convertSBML2PRISM(inputSBMLDoc, fullInputFileName, PrismUnbound);
 					}else {
+						// hierarchical, therefore flatten model
 						if (bioModel.flattenModel(true) != null) {
 							SBMLDocument sbml = bioModel.flattenModel(true);
 							SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
 						}
 					}
-
-					/*
-					if (bioModel.flattenModel(true) != null) {
-						SBMLDocument sbml = bioModel.flattenModel(true);
-						//SBMLDocument sbml = bioModel.getSBMLDocument();
-						//System.err.println(inputSBMLDoc.equals(inputSBMLDoc));
-						//System.err.println(sbml.equals(sbml));
-						//System.err.println(sbml.equals(sbml));
-						SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
-					}	
-
-					*/
-
-
-					/*
-					File path = new File(fullInputFileName);
-					// BioObservable p = null;
-					// BioModel bioModel = BioModel.createBioModel(path.getParent(), p);
-					BioModel bioModel = new BioModel(path.getParent());
-					bioModel.load(fullInputFileName);
-
-
-
-
-
-
-
-
-					if (bioModel.flattenModel(true) != null) {
-						//SBMLDocument sbml = bioModel.flattenModel(true);
-						SBMLDocument sbml = bioModel.getSBMLDocument();
-						//System.err.println(inputSBMLDoc.equals(inputSBMLDoc));
-						//System.err.println(sbml.equals(sbml));
-						//System.err.println(sbml.equals(sbml));
-						//SBML2PRISM.convertSBML2PRISM(sbml, fullInputFileName, PrismUnbound);
-					}	
-
-					 */
 
 				}
 				catch (XMLStreamException e) 
@@ -508,7 +464,7 @@ public class Converter {
 				} 
 				catch (IOException e) 
 				{
-					System.err.println("ERROR: Unable to read or write file");
+					System.err.println("ERROR: Unable to read or write prism file");
 					e.printStackTrace();
 				}
 				catch (BioSimException e) {
