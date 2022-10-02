@@ -209,10 +209,14 @@ public class BioGraph extends mxGraph {
 //		SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+product), speciesReferenceGlyph, "layout:speciesGlyph");
 //		SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
-		lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
-				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
-		lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
-				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
+		if (this.getSpeciesOrPromoterCell(reactant)!=null) {
+			lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
+					this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
+		}
+		if (this.getSpeciesOrPromoterCell(product)!=null) {
+			lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
+					this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
+		}
 	}
 
 	private static void addSpeciesReferenceGlyph(Layout layout,mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
@@ -223,8 +227,12 @@ public class BioGraph extends mxGraph {
 //			SBMLutilities.copyIndices(getGlyph(layout,GlobalConstants.GLYPH+"__"+speciesId), speciesReferenceGlyph, "layout:speciesGlyph");
 //			SBMLutilities.copyIndices(reactionGlyph, speciesReferenceGlyph, "layout:id");
 			LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
-			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
-			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+			if (cell.getSource()!=null) {
+				lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
+			}
+			if (cell.getTarget()!=null) {
+				lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+			}
 		}
 	}
 

@@ -461,6 +461,7 @@ public class SBMLutilities extends CoreObservable
 	}
 	
 	public static void copyDimensionsToEdgeIndex(SBase source,SBase target,SBase edge,String attribute) {
+		if (source==null || target==null) return;
 		if (SBMLutilities.dimensionsMatch(source,target)) {
 			ArraysSBasePlugin sBasePlugin = SBMLutilities.getArraysSBasePlugin(source);
 			ArraysSBasePlugin sBasePluginEdge = SBMLutilities.getArraysSBasePlugin(edge);
