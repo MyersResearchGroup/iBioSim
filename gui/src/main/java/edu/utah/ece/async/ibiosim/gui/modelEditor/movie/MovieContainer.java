@@ -819,9 +819,18 @@ public class MovieContainer extends PanelObservable implements ActionListener {
 	public void savePreferences() {
 
 		Gson gson = new Gson();
-		String out = gson.toJson(this.movieScheme.getAllSpeciesSchemes());
+		String out; 
+		String fullPath;
 		
-		String fullPath = getPreferencesFullPath();
+		try {
+			out = gson.toJson(this.movieScheme.getAllSpeciesSchemes());
+			fullPath = getPreferencesFullPath();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "An error occured preparing to save movie preferences " + "\nmessage: " + e.getMessage());
+			return;
+		}
 		
 		FileOutputStream fHandle;
 		
