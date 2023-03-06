@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" comp:required="true" layout:required="false" level="3" version="2" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <model id="TetRsensor_module" metaid="iBioSim1">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:ModuleDefinitions>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://www.async.utah.edu/TetRsensor_module/1"/></rdf:Bag></mts:ModuleDefinitions></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell"/>
+      <comp:port comp:id="output__TetR_protein" comp:idRef="TetR_protein" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="0" layout:width="0"/>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="TetR_protein" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TetR_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TetR_protein/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/TetRsensor/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+    </listOfSpecies>
+  </model>
+</sbml>

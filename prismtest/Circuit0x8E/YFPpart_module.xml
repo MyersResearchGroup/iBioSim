@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" comp:required="true" layout:required="false" level="3" version="2" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <model id="YFPpart_module" metaid="iBioSim13">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:ModuleDefinitions>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/1"/></rdf:Bag></mts:ModuleDefinitions></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__YFP_protein" comp:idRef="YFP_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="input__BetI_protein" comp:idRef="BetI_protein" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="input__PhlF_protein" comp:idRef="PhlF_protein" sboTerm="SBO:0000600"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="425" layout:width="1070"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:compartment="Cell" layout:id="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__pPhlF" layout:species="pPhlF">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="90"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__pBetI" layout:species="pBetI">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="90"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__YFP_protein" layout:species="YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="95" layout:y="194.4775390625"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__BetI_protein" layout:species="BetI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__PhlF_protein" layout:species="PhlF_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="160" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__pPhlF__Production__YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="115" layout:y="214.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__pPhlF__Production__YFP_protein" layout:role="product" layout:speciesGlyph="Glyph__YFP_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="180" layout:y="105"/>
+                      <layout:end layout:x="115" layout:y="214.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__PhlF_protein__repression__pPhlF">
+            <layout:boundingBox>
+              <layout:position layout:x="180" layout:y="105"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__PhlF_protein__repression__pPhlF" layout:role="product" layout:speciesGlyph="Glyph__pPhlF">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="180" layout:y="20"/>
+                      <layout:end layout:x="180" layout:y="105"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__pBetI__Production__YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="115" layout:y="214.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__pBetI__Production__YFP_protein" layout:role="product" layout:speciesGlyph="Glyph__YFP_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="50" layout:y="105"/>
+                      <layout:end layout:x="115" layout:y="214.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__BetI_protein__repression__pBetI">
+            <layout:boundingBox>
+              <layout:position layout:x="50" layout:y="105"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__BetI_protein__repression__pBetI" layout:role="product" layout:speciesGlyph="Glyph__pBetI">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="50" layout:y="20"/>
+                      <layout:end layout:x="50" layout:y="105"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__pPhlF" layout:id="TextGlyph__pPhlF" layout:text="pPhlF">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="90"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__pBetI" layout:id="TextGlyph__pBetI" layout:text="pBetI">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="90"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__YFP_protein" layout:id="TextGlyph__YFP_protein" layout:text="YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="95" layout:y="194.4775390625"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__BetI_protein" layout:id="TextGlyph__BetI_protein" layout:text="BetI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__PhlF_protein" layout:id="TextGlyph__PhlF_protein" layout:text="PhlF_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="160" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfFunctionDefinitions/>
+    <listOfUnitDefinitions/>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="YFP_protein" initialAmount="0" metaid="iBioSim2" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BetI_protein" initialAmount="0" metaid="iBioSim3" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="pPhlF" initialAmount="2" metaid="iBioSim4" sboTerm="SBO:0000590">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim4">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="pBetI" initialAmount="2" metaid="iBioSim5" sboTerm="SBO:0000590">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim5">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Bag></mts:FunctionalComponents><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="PhlF_protein" initialAmount="0" metaid="iBioSim6" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim6">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="kr_f" metaid="iBioSim1" name="Forward repression binding rate" value="0.5"/>
+      <parameter constant="true" id="kr_r" metaid="iBioSim14" name="Reverse repression binding rate" value="1"/>
+      <parameter constant="true" id="ka_f" metaid="iBioSim15" name="Forward activation binding rate" value="0.0033"/>
+      <parameter constant="true" id="ka_r" metaid="iBioSim16" name="Reverse activation binding rate" value="1"/>
+      <parameter constant="true" id="ko_f" metaid="iBioSim17" name="Forward RNAP binding rate" value="0.033"/>
+      <parameter constant="true" id="ko_r" metaid="iBioSim18" name="Reverse RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_f" metaid="iBioSim19" name="Forward activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_r" metaid="iBioSim20" name="Reverse activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="nc" metaid="iBioSim21" name="Stoichiometry of binding" value="2"/>
+      <parameter constant="true" id="nr" metaid="iBioSim22" name="Initial RNAP count" value="30"/>
+      <parameter constant="true" id="ko" metaid="iBioSim23" name="Open complex production rate" value="0.05"/>
+      <parameter constant="true" id="kb" metaid="iBioSim24" name="Basal production rate" value="0.0001"/>
+      <parameter constant="true" id="ng" metaid="iBioSim25" name="Initial promoter count" value="2"/>
+      <parameter constant="true" id="np" metaid="iBioSim26" name="Stoichiometry of production" value="10"/>
+      <parameter constant="true" id="ka" metaid="iBioSim27" name="Activated production rate" value="0.25"/>
+    </listOfParameters>
+    <listOfConstraints/>
+    <listOfReactions>
+      <reaction compartment="Cell" id="YFP_protein_interaction_0" metaid="iBioSim7" reversible="false" sboTerm="SBO:0000589">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim7">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein_interaction/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/PhlF_protein_pPhlF_repression/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/BetI_protein_pBetI_repression/1"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfProducts>
+          <speciesReference constant="true" metaid="iBioSim9" species="YFP_protein" stoichiometry="10">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim9">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="pPhlF">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/PhlF_protein_pPhlF_repression/YFPpart_fc/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein_interaction/YFPpart_fc/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/BetI_protein_pBetI_repression/YFPpart_fc/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </modifierSpeciesReference>
+          <modifierSpeciesReference metaid="iBioSim8" sboTerm="SBO:0000020" species="PhlF_protein">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim8">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/PhlF_protein/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </modifierSpeciesReference>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> pPhlF </ci>
+                    <ci> ko </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> PhlF_protein </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="YFP_protein_interaction_1" metaid="iBioSim10" reversible="false" sboTerm="SBO:0000589">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim10">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein_interaction/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/PhlF_protein_pPhlF_repression/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/BetI_protein_pBetI_repression/1"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfProducts>
+          <speciesReference constant="true" metaid="iBioSim12" species="YFP_protein" stoichiometry="10">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim12">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="pBetI">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/PhlF_protein_pPhlF_repression/YFPpart_fc/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/YFP_protein_interaction/YFPpart_fc/1"/><rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/BetI_protein_pBetI_repression/YFPpart_fc/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </modifierSpeciesReference>
+          <modifierSpeciesReference metaid="iBioSim11" sboTerm="SBO:0000020" species="BetI_protein">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim11">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/BetI_protein/1"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </modifierSpeciesReference>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> pBetI </ci>
+                    <ci> ko </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> BetI_protein </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents/>
+  </model>
+</sbml>
