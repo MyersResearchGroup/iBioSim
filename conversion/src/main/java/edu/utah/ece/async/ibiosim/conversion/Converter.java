@@ -77,7 +77,6 @@ public class Converter {
 				+ "and can convert to/from SBOL 1.1, to/from SBML, GenBank, and FASTA formats.");
 		System.err.println();
 		System.err.println("Usage:");
-		//TODO PEDRO shouldnt this be conersion 3.0.0-SNAPSHOT?
 		System.err.println("\tjava -jar iBioSim-conversion-0.0.1-SNAPSHOT-jar-with-dependencies.jar [options] inputFile ");
 		System.err.println();
 		System.err.println("Convert SBOL to SBML Example:");
@@ -554,6 +553,7 @@ public class Converter {
 						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(fullInputFileName, URIPrefix);
 						String circuit_name = file.getName();
 						circuit_name = circuit_name.replace(".xml", "");
+						circuit_name = circuit_name.replace(".sbol", "");
 						String vpr_output =  circuit_name + "_topModule";
 
 						if(!topLevelURIStr.isEmpty())
@@ -610,9 +610,8 @@ public class Converter {
 								SBMLutilities.exportSBMLModels(models, outputDir, outputFileName, noOutput, sbmlOut, singleSBMLOutput);
 							} 
 						}
-
 						if (topModelId != null) {
-							SBMLDocument topModel = SBMLutilities.readSBML(vpr_output+".xml", null, null);
+							SBMLDocument topModel = SBMLutilities.readSBML(outputDir + File.separator + vpr_output+ ".xml", null, null);
 							topModel.getModel().setId(topModelId);
 							SBMLWriter writer = new SBMLWriter();
 							try {
@@ -629,7 +628,6 @@ public class Converter {
 								e.printStackTrace();
 							}
 						}
-
 						if (doVPR) {
 							if (topEnvir) {
 								SBMLDocument topEnvironment = SBMLutilities.readSBML(environment, null, null);
