@@ -1,0 +1,1478 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" comp:required="true" fbc:required="false" layout:required="false" level="2" version="2" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <model id="Toggle_Switch_C" metaid="iBioSim42">
+    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="input__A" comp:idRef="A" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="input__B" comp:idRef="B" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="reaction__Degradation_C" comp:idRef="Degradation_C" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__C" comp:idRef="C" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="425" layout:width="1070"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__c0" layout:metaidRef="c0">
+            <layout:boundingBox>
+              <layout:position layout:x="831" layout:y="93"/>
+              <layout:dimensions layout:height="40" layout:width="50"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:glyph="Glyph__Y" layout:id="Glyph__c0__substrate__Y" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="660" layout:y="315"/>
+                      <layout:end layout:x="856" layout:y="113"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:glyph="Glyph__Z" layout:id="Glyph__c0__substrate__Z" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="940" layout:y="265"/>
+                      <layout:end layout:x="856" layout:y="113"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:compartment="Cell" layout:id="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__A" layout:species="A">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="50"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__D" layout:species="D">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="200"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__B" layout:species="B">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="50"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__Y" layout:species="Y">
+            <layout:boundingBox>
+              <layout:position layout:x="610" layout:y="300"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__E" layout:species="E">
+            <layout:boundingBox>
+              <layout:position layout:x="420" layout:y="30"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__X" layout:species="X">
+            <layout:boundingBox>
+              <layout:position layout:x="260" layout:y="210"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__FF" layout:species="FF">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__Z" layout:species="Z">
+            <layout:boundingBox>
+              <layout:position layout:x="890" layout:y="250"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__C" layout:species="C">
+            <layout:boundingBox>
+              <layout:position layout:x="540" layout:y="80"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P8" layout:species="P8">
+            <layout:boundingBox>
+              <layout:position layout:x="430" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P1" layout:species="P1">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="120"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P2" layout:species="P2">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="120"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P3" layout:species="P3">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="280"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P4" layout:species="P4">
+            <layout:boundingBox>
+              <layout:position layout:x="560" layout:y="190"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P5" layout:species="P5">
+            <layout:boundingBox>
+              <layout:position layout:x="550" layout:y="140"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P6" layout:species="P6">
+            <layout:boundingBox>
+              <layout:position layout:x="610" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__P7" layout:species="P7">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="280"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_E" layout:reaction="Degradation_E">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="30"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_E__substrate__E" layout:role="substrate" layout:speciesGlyph="Glyph__E">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="470" layout:y="45"/>
+                      <layout:end layout:x="30" layout:y="40"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_C" layout:reaction="Degradation_C">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="60"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_C__substrate__C" layout:role="substrate" layout:speciesGlyph="Glyph__C">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="590" layout:y="95"/>
+                      <layout:end layout:x="50" layout:y="70"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_X" layout:reaction="Degradation_X">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="90"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_X__substrate__X" layout:role="substrate" layout:speciesGlyph="Glyph__X">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="310" layout:y="225"/>
+                      <layout:end layout:x="70" layout:y="100"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_D" layout:reaction="Degradation_D">
+            <layout:boundingBox>
+              <layout:position layout:x="80" layout:y="120"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_D__substrate__D" layout:role="substrate" layout:speciesGlyph="Glyph__D">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="50" layout:y="215"/>
+                      <layout:end layout:x="90" layout:y="130"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_FF" layout:reaction="Degradation_FF">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="150"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_FF__substrate__FF" layout:role="substrate" layout:speciesGlyph="Glyph__FF">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="180" layout:y="395"/>
+                      <layout:end layout:x="110" layout:y="160"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_Y" layout:reaction="Degradation_Y">
+            <layout:boundingBox>
+              <layout:position layout:x="120" layout:y="180"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_Y__substrate__Y" layout:role="substrate" layout:speciesGlyph="Glyph__Y">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="660" layout:y="315"/>
+                      <layout:end layout:x="130" layout:y="190"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Degradation_Z" layout:reaction="Degradation_Z">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="210"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__Degradation_Z__substrate__Z" layout:role="substrate" layout:speciesGlyph="Glyph__Z">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="940" layout:y="265"/>
+                      <layout:end layout:x="150" layout:y="220"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P8__Production__FF">
+            <layout:boundingBox>
+              <layout:position layout:x="180" layout:y="395"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P8__Production__FF" layout:role="product" layout:speciesGlyph="Glyph__FF">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="480" layout:y="395"/>
+                      <layout:end layout:x="180" layout:y="395"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__E__repression__P8">
+            <layout:boundingBox>
+              <layout:position layout:x="480" layout:y="395"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__E__repression__P8" layout:role="product" layout:speciesGlyph="Glyph__P8">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="470" layout:y="45"/>
+                      <layout:end layout:x="480" layout:y="395"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P1__Production__D">
+            <layout:boundingBox>
+              <layout:position layout:x="50" layout:y="215"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P1__Production__D" layout:role="product" layout:speciesGlyph="Glyph__D">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="90" layout:y="135"/>
+                      <layout:end layout:x="50" layout:y="215"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P1__Production__X">
+            <layout:boundingBox>
+              <layout:position layout:x="310" layout:y="225"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P1__Production__X" layout:role="product" layout:speciesGlyph="Glyph__X">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="90" layout:y="135"/>
+                      <layout:end layout:x="310" layout:y="225"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__A__repression__P1">
+            <layout:boundingBox>
+              <layout:position layout:x="90" layout:y="135"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__A__repression__P1" layout:role="product" layout:speciesGlyph="Glyph__P1">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="90" layout:y="65"/>
+                      <layout:end layout:x="90" layout:y="135"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P2__Production__E">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="45"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P2__Production__E" layout:role="product" layout:speciesGlyph="Glyph__E">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="250" layout:y="135"/>
+                      <layout:end layout:x="470" layout:y="45"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P2__Production__X">
+            <layout:boundingBox>
+              <layout:position layout:x="310" layout:y="225"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P2__Production__X" layout:role="product" layout:speciesGlyph="Glyph__X">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="250" layout:y="135"/>
+                      <layout:end layout:x="310" layout:y="225"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__B__repression__P2">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="135"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__B__repression__P2" layout:role="product" layout:speciesGlyph="Glyph__P2">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="250" layout:y="65"/>
+                      <layout:end layout:x="250" layout:y="135"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P3__Production__Y">
+            <layout:boundingBox>
+              <layout:position layout:x="660" layout:y="315"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P3__Production__Y" layout:role="product" layout:speciesGlyph="Glyph__Y">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="320" layout:y="295"/>
+                      <layout:end layout:x="660" layout:y="315"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__X__repression__P3">
+            <layout:boundingBox>
+              <layout:position layout:x="320" layout:y="295"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__X__repression__P3" layout:role="product" layout:speciesGlyph="Glyph__P3">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="310" layout:y="225"/>
+                      <layout:end layout:x="320" layout:y="295"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P4__Production__Z">
+            <layout:boundingBox>
+              <layout:position layout:x="940" layout:y="265"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P4__Production__Z" layout:role="product" layout:speciesGlyph="Glyph__Z">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="610" layout:y="205"/>
+                      <layout:end layout:x="940" layout:y="265"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__FF__repression__P4">
+            <layout:boundingBox>
+              <layout:position layout:x="610" layout:y="205"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__FF__repression__P4" layout:role="product" layout:speciesGlyph="Glyph__P4">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="180" layout:y="395"/>
+                      <layout:end layout:x="610" layout:y="205"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P5__Production__C">
+            <layout:boundingBox>
+              <layout:position layout:x="590" layout:y="95"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P5__Production__C" layout:role="product" layout:speciesGlyph="Glyph__C">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="600" layout:y="155"/>
+                      <layout:end layout:x="590" layout:y="95"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P5__Production__Y">
+            <layout:boundingBox>
+              <layout:position layout:x="660" layout:y="315"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P5__Production__Y" layout:role="product" layout:speciesGlyph="Glyph__Y">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="600" layout:y="155"/>
+                      <layout:end layout:x="660" layout:y="315"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Z__repression__P5">
+            <layout:boundingBox>
+              <layout:position layout:x="600" layout:y="155"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__Z__repression__P5" layout:role="product" layout:speciesGlyph="Glyph__P5">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="940" layout:y="265"/>
+                      <layout:end layout:x="600" layout:y="155"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P6__Production__Z">
+            <layout:boundingBox>
+              <layout:position layout:x="940" layout:y="265"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P6__Production__Z" layout:role="product" layout:speciesGlyph="Glyph__Z">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="660" layout:y="395"/>
+                      <layout:end layout:x="940" layout:y="265"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Y__repression__P6">
+            <layout:boundingBox>
+              <layout:position layout:x="660" layout:y="395"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__Y__repression__P6" layout:role="product" layout:speciesGlyph="Glyph__P6">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="660" layout:y="315"/>
+                      <layout:end layout:x="660" layout:y="395"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__P7__Production__FF">
+            <layout:boundingBox>
+              <layout:position layout:x="180" layout:y="395"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__P7__Production__FF" layout:role="product" layout:speciesGlyph="Glyph__FF">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="50" layout:y="295"/>
+                      <layout:end layout:x="180" layout:y="395"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__D__repression__P7">
+            <layout:boundingBox>
+              <layout:position layout:x="50" layout:y="295"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__D__repression__P7" layout:role="product" layout:speciesGlyph="Glyph__P7">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="50" layout:y="215"/>
+                      <layout:end layout:x="50" layout:y="295"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__A" layout:id="TextGlyph__A" layout:text="A">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="50"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__D" layout:id="TextGlyph__D" layout:text="D">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="200"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__B" layout:id="TextGlyph__B" layout:text="B">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="50"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Y" layout:id="TextGlyph__Y" layout:text="Y">
+            <layout:boundingBox>
+              <layout:position layout:x="610" layout:y="300"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__E" layout:id="TextGlyph__E" layout:text="E">
+            <layout:boundingBox>
+              <layout:position layout:x="420" layout:y="30"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__X" layout:id="TextGlyph__X" layout:text="X">
+            <layout:boundingBox>
+              <layout:position layout:x="260" layout:y="210"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__FF" layout:id="TextGlyph__FF" layout:text="FF">
+            <layout:boundingBox>
+              <layout:position layout:x="130" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Z" layout:id="TextGlyph__Z" layout:text="Z">
+            <layout:boundingBox>
+              <layout:position layout:x="890" layout:y="250"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__C" layout:id="TextGlyph__C" layout:text="C">
+            <layout:boundingBox>
+              <layout:position layout:x="540" layout:y="80"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P8" layout:id="TextGlyph__P8" layout:text="P8">
+            <layout:boundingBox>
+              <layout:position layout:x="430" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P1" layout:id="TextGlyph__P1" layout:text="P1">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="120"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P2" layout:id="TextGlyph__P2" layout:text="P2">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="120"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P3" layout:id="TextGlyph__P3" layout:text="P3">
+            <layout:boundingBox>
+              <layout:position layout:x="270" layout:y="280"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P4" layout:id="TextGlyph__P4" layout:text="P4">
+            <layout:boundingBox>
+              <layout:position layout:x="560" layout:y="190"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P5" layout:id="TextGlyph__P5" layout:text="P5">
+            <layout:boundingBox>
+              <layout:position layout:x="550" layout:y="140"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P6" layout:id="TextGlyph__P6" layout:text="P6">
+            <layout:boundingBox>
+              <layout:position layout:x="610" layout:y="380"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__P7" layout:id="TextGlyph__P7" layout:text="P7">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="280"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__c0" layout:id="TextGlyph__c0" layout:text="c0">
+            <layout:boundingBox>
+              <layout:position layout:x="831" layout:y="93"/>
+              <layout:dimensions layout:height="40" layout:width="50"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_E" layout:id="TextGlyph__Degradation_E" layout:text="Degradation_E">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="30"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_C" layout:id="TextGlyph__Degradation_C" layout:text="Degradation_C">
+            <layout:boundingBox>
+              <layout:position layout:x="40" layout:y="60"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_X" layout:id="TextGlyph__Degradation_X" layout:text="Degradation_X">
+            <layout:boundingBox>
+              <layout:position layout:x="60" layout:y="90"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_D" layout:id="TextGlyph__Degradation_D" layout:text="Degradation_D">
+            <layout:boundingBox>
+              <layout:position layout:x="80" layout:y="120"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_FF" layout:id="TextGlyph__Degradation_FF" layout:text="Degradation_FF">
+            <layout:boundingBox>
+              <layout:position layout:x="100" layout:y="150"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_Y" layout:id="TextGlyph__Degradation_Y" layout:text="Degradation_Y">
+            <layout:boundingBox>
+              <layout:position layout:x="120" layout:y="180"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Degradation_Z" layout:id="TextGlyph__Degradation_Z" layout:text="Degradation_Z">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="210"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfFunctionDefinitions>
+      <functionDefinition id="F" name="Eventually Property">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> t </ci>
+            </bvar>
+            <bvar>
+              <ci> x </ci>
+            </bvar>
+            <apply>
+              <or/>
+              <apply>
+                <not/>
+                <ci> t </ci>
+              </apply>
+              <apply>
+                <not/>
+                <ci> x </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+            </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="A" initialAmount="0" metaid="iBioSim1"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="D" initialAmount="70" metaid="iBioSim3"/>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="B" initialAmount="120" metaid="iBioSim4"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Y" initialAmount="70" metaid="iBioSim5"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="E" initialAmount="0" metaid="iBioSim6"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="X" initialAmount="70" metaid="iBioSim7"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="FF" initialAmount="70" metaid="iBioSim8"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Z" initialAmount="0" metaid="iBioSim9"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="C" initialAmount="70" metaid="iBioSim10"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P8" initialAmount="2" metaid="iBioSim11" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P1" initialAmount="2" metaid="iBioSim13" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P2" initialAmount="2" metaid="iBioSim15" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P3" initialAmount="2" metaid="iBioSim17" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P4" initialAmount="2" metaid="iBioSim19" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P5" initialAmount="2" metaid="iBioSim21" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P6" initialAmount="2" metaid="iBioSim23" sboTerm="SBO:0000590"/>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="P7" initialAmount="2" metaid="iBioSim25" sboTerm="SBO:0000590"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="kr_f" metaid="iBioSim2" name="Forward repression binding rate" value="0.5"/>
+      <parameter constant="true" id="kr_r" metaid="iBioSim28" name="Reverse repression binding rate" value="1"/>
+      <parameter constant="true" id="ka_f" metaid="iBioSim29" name="Forward activation binding rate" value="0.0033"/>
+      <parameter constant="true" id="ka_r" metaid="iBioSim30" name="Reverse activation binding rate" value="1"/>
+      <parameter constant="true" id="ko_f" metaid="iBioSim31" name="Forward RNAP binding rate" value="0.033"/>
+      <parameter constant="true" id="ko_r" metaid="iBioSim32" name="Reverse RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_f" metaid="iBioSim33" name="Forward activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="kao_r" metaid="iBioSim34" name="Reverse activated RNAP binding rate" value="1"/>
+      <parameter constant="true" id="nc" metaid="iBioSim35" name="Stoichiometry of binding" value="2"/>
+      <parameter constant="true" id="nr" metaid="iBioSim36" name="Initial RNAP count" value="30"/>
+      <parameter constant="true" id="ko" metaid="iBioSim37" name="Open complex production rate" value="0.05"/>
+      <parameter constant="true" id="kb" metaid="iBioSim38" name="Basal production rate" value="0.0001"/>
+      <parameter constant="true" id="ng" metaid="iBioSim39" name="Initial promoter count" value="2"/>
+      <parameter constant="true" id="np" metaid="iBioSim40" name="Stoichiometry of production" value="10"/>
+      <parameter constant="true" id="ka" metaid="iBioSim41" name="Activated production rate" value="0.25"/>
+      <parameter constant="true" id="kd" metaid="iBioSim12" name="Degradation rate" value="0.00075"/>
+    </listOfParameters>
+    <listOfConstraints>
+      <constraint metaid="c0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <ci> F </ci>
+            <apply>
+              <leq/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <cn type="integer"> 2100 </cn>
+            </apply>
+            <apply>
+              <and/>
+              <apply>
+                <gt/>
+                <ci> Z </ci>
+                <cn type="integer"> 80 </cn>
+              </apply>
+              <apply>
+                <lt/>
+                <ci> Y </ci>
+                <cn type="integer"> 40 </cn>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+            </constraint>
+    </listOfConstraints>
+    <listOfReactions>
+      <reaction compartment="Cell" id="Production_P8" metaid="iBioSim27" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="FF" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P8"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="E"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P8 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> E </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P1" metaid="iBioSim14" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="D" stoichiometry="10"/>
+          <speciesReference constant="true" species="X" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P1"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="A"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P1 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> A </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P2" metaid="iBioSim16" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="E" stoichiometry="10"/>
+          <speciesReference constant="true" species="X" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P2"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="B"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P2 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> B </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P3" metaid="iBioSim18" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="Y" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P3"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="X"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P3 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> X </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P4" metaid="iBioSim20" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="Z" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P4"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="FF"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P4 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> FF </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P5" metaid="iBioSim22" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="C" stoichiometry="10"/>
+          <speciesReference constant="true" species="Y" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P5"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="Z"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P5 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> Z </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P6" metaid="iBioSim24" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="Z" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P6"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="Y"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P6 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> Y </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Production_P7" metaid="iBioSim26" reversible="false" sboTerm="SBO:0000589">
+        <listOfProducts>
+          <speciesReference constant="true" species="FF" stoichiometry="10"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="P7"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="D"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> P7 </ci>
+                      <ci> ko </ci>
+                    </apply>
+                    <ci> ko_f </ci>
+                  </apply>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_f </ci>
+                      <ci> kr_r </ci>
+                    </apply>
+                    <ci> D </ci>
+                  </apply>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_E" metaid="iBioSim43" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="E" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> E </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_C" metaid="iBioSim44" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="C" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> C </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_X" metaid="iBioSim45" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="X" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> X </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_D" metaid="iBioSim46" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="D" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> D </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_FF" metaid="iBioSim47" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="FF" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> FF </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_Y" metaid="iBioSim48" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="Y" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> Y </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Degradation_Z" metaid="iBioSim49" reversible="false">
+        <listOfReactants>
+          <speciesReference constant="true" species="Z" stoichiometry="10"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> Z </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
