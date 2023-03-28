@@ -413,7 +413,7 @@ public class SBML2PRISM {
 
 		out.close();
 
-		// writePRISMProperty(filename, model);
+		writePRISMProperty(filename, model);
 
 	}
 
