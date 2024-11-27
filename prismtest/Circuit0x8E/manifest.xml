@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<omexManifest xmlns="http://identifiers.org/combine.specifications/omex-manifest">
+  <content location="." format="http://identifiers.org/combine.specifications/omex" />
+  <content location="./manifest.xml" format="http://identifiers.org/combine.specifications/omex-manifest" />
+  <content location="./topModelFlat.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./PhlFpart_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./LacIsensor_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./HlyIIRpart_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./TetRsensor_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./AraCsensor_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./Circuit0x8E_normal.sedml" format="http://identifiers.org/combine.specifications/sed-ml.level-1.version-2" master="true" />
+  <content location="./YFPpart_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./BetIpart_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./Circuit0x8E_normal.sbol" format="http://identifiers.org/combine.specifications/sbol.version-2" />
+  <content location="./topModel.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./AmtRpart_module.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./metadata.rdf" format="http://identifiers.org/combine.specifications/omex-metadata" />
+</omexManifest>

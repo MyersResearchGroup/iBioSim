@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<omexManifest xmlns="http://identifiers.org/combine.specifications/omex-manifest">
+  <content location="." format="http://identifiers.org/combine.specifications/omex" />
+  <content location="./manifest.xml" format="http://identifiers.org/combine.specifications/omex-manifest" />
+  <content location="./SimpleHierachyModel.sbol" format="http://identifiers.org/combine.specifications/sbol.version-2" />
+  <content location="./DSensor.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./SimpleHierachyModel.sedml" format="http://identifiers.org/combine.specifications/sed-ml.level-1.version-2" master="true" />
+  <content location="./topModel.xml" format="http://identifiers.org/combine.specifications/sbml.level-3.version-2.core" />
+  <content location="./metadata.rdf" format="http://identifiers.org/combine.specifications/omex-metadata" />
+</omexManifest>

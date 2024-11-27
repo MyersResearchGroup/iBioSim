@@ -24,9 +24,9 @@ biology.
 ##### Video Demo: [Tools Workflow](https://www.youtube.com/watch?v=g4xayzlyC2Q)
 ##### Contact: Chris Myers (@cjmyers) myers@ece.utah.edu
 
-Contributor(s): Nathan Barker, Pedro Fontanarrosa, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Michael Zhang, Zhen Zhang, and Zach Zundel.
+Contributor(s): Nathan Barker, Lukas Buecherl, Pedro Fontanarrosa, Scott Glass, Kevin Jones, Hiroyuki Kuwahara, Curtis Madsen, Nam Nguyen, Tramy Nguyen, Tyler Patterson, Nicholas Roehner, Jason Stevens, Leandro Watanabe, Michael Zhang, Zhen Zhang, and Zach Zundel.
 
-Active Developer(s): Pedro Fontanarrosa, Chris Myers, Tramy Nguyen, Leandro Watanabe.
+Active Developer(s): Lukas Buecherl, Pedro Fontanarrosa, Chris Myers.
 
 ## Running iBioSim
 1. Download the iBioSim tool from the release page [here](https://github.com/MyersResearchGroup/iBioSim/releases):

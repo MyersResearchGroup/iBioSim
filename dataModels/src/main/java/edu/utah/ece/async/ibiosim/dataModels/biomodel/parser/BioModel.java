@@ -13,7 +13,7 @@
  *******************************************************************************/
 package edu.utah.ece.async.ibiosim.dataModels.biomodel.parser;
 
-import java.io.File;
+import java.io.File; 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -6399,7 +6399,7 @@ public class BioModel extends CoreObservable{
 		}
 	}
 	
-	private ArrayList<String> getListOfSubmodels() throws XMLStreamException, IOException, BioSimException {
+	public ArrayList<String> getListOfSubmodels() throws XMLStreamException, IOException, BioSimException { // Changed private to public (Lukas)
 		ArrayList<String> comps = new ArrayList<String>();
 
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {

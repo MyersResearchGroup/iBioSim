@@ -1,0 +1,1489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" comp:required="true" layout:required="false" level="3" version="2" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+  <comp:listOfExternalModelDefinitions xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+    <comp:externalModelDefinition comp:id="AmtRpart_module" comp:md5="afa5a18689889291becde3bdbff34720" comp:source="AmtRpart_module.xml"/>
+    <comp:externalModelDefinition comp:id="AraCsensor_module" comp:md5="aea8373d33ed14e7c0d1ad9301f057c6" comp:source="AraCsensor_module.xml"/>
+    <comp:externalModelDefinition comp:id="YFPpart_module" comp:md5="17703319ea5f9084328f4079e6e512b5" comp:source="YFPpart_module.xml"/>
+    <comp:externalModelDefinition comp:id="TetRsensor_module" comp:md5="5233d3575ba60c37703789826e19a6f1" comp:source="TetRsensor_module.xml"/>
+    <comp:externalModelDefinition comp:id="BetIpart_module" comp:md5="98ce7971004a43fd7267d6ce346dbf9f" comp:source="BetIpart_module.xml"/>
+    <comp:externalModelDefinition comp:id="LacIsensor_module" comp:md5="d93c75be779f6d6d012d54aa4ed92fa2" comp:source="LacIsensor_module.xml"/>
+    <comp:externalModelDefinition comp:id="PhlFpart_module" comp:md5="2ff643eee1924804a82932e7426dce25" comp:source="PhlFpart_module.xml"/>
+    <comp:externalModelDefinition comp:id="HlyIIRpart_module" comp:md5="ed81d2f77d29e03f03e172aded9b2780" comp:source="HlyIIRpart_module.xml"/>
+  </comp:listOfExternalModelDefinitions>
+  <model id="topModel" metaid="iBioSim39">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:ModuleDefinitions>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://www.async.utah.edu/topModel"/></rdf:Bag></mts:ModuleDefinitions></rdf:Description></rdf:RDF></ModelToSBOL>
+    </annotation>
+      <comp:listOfSubmodels xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:submodel comp:id="topModel_AmtRpart_module_sub" comp:modelRef="AmtRpart_module" metaid="iBioSim43">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim39">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/AmtRpart_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_AraCsensor_module_sub" comp:modelRef="AraCsensor_module" metaid="iBioSim45">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim43">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/AraCsensor_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_YFPpart_module_sub" comp:modelRef="YFPpart_module" metaid="iBioSim49">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim45">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/YFPpart_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_TetRsensor_module_sub" comp:modelRef="TetRsensor_module" metaid="iBioSim51">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim49">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/TetRsensor_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_BetIpart_module_sub" comp:modelRef="BetIpart_module" metaid="iBioSim55">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim51">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/BetIpart_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_LacIsensor_module_sub" comp:modelRef="LacIsensor_module" metaid="iBioSim57">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim55">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/LacIsensor_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_PhlFpart_module_sub" comp:modelRef="PhlFpart_module" metaid="iBioSim61">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim57">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/PhlFpart_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+      <comp:submodel comp:id="topModel_HlyIIRpart_module_sub" comp:modelRef="HlyIIRpart_module" metaid="iBioSim65">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim61">
+                <mts:Modules>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/HlyIIRpart_module/1"/></rdf:Bag></mts:Modules></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </comp:submodel>
+    </comp:listOfSubmodels>
+    <comp:listOfPorts xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+      <comp:port comp:id="compartment__Cell" comp:idRef="Cell" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__AmtR_protein" comp:idRef="AmtR_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="input__IPTG" comp:idRef="IPTG" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="output__Ara_AraC_protein" comp:idRef="Ara_AraC_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__TetR_protein" comp:idRef="TetR_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__LacI_protein" comp:idRef="LacI_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__aTc_TetR_protein" comp:idRef="aTc_TetR_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__AraC_protein" comp:idRef="AraC_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__IPTG_LacI_protein" comp:idRef="IPTG_LacI_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="input__aTc" comp:idRef="aTc" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="output__BetI_protein" comp:idRef="BetI_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__HlyIIR_protein" comp:idRef="HlyIIR_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__PhlF_protein" comp:idRef="PhlF_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="output__YFP_protein" comp:idRef="YFP_protein" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="input__Ara" comp:idRef="Ara" sboTerm="SBO:0000600"/>
+      <comp:port comp:id="AmtR_degradation_interaction" comp:idRef="AmtR_degradation_interaction" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="BetI_degradation_interaction" comp:idRef="BetI_degradation_interaction" sboTerm="SBO:0000601"/>
+      <comp:port comp:id="PhlF_degradation_interaction" comp:idRef="PhlF_degradation_interaction" sboTerm="SBO:0000601"/>
+    </comp:listOfPorts>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:depth="0" layout:height="842.955078125" layout:width="1070"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__topModel_AmtRpart_module_sub" layout:reference="topModel_AmtRpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="165" layout:y="442.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_AraCsensor_module_sub" layout:reference="topModel_AraCsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="59" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_YFPpart_module_sub" layout:reference="topModel_YFPpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="306" layout:y="802.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_TetRsensor_module_sub" layout:reference="topModel_TetRsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="507" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_BetIpart_module_sub" layout:reference="topModel_BetIpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="405" layout:y="442.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_LacIsensor_module_sub" layout:reference="topModel_LacIsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="284" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_PhlFpart_module_sub" layout:reference="topModel_PhlFpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="255" layout:y="622.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__topModel_HlyIIRpart_module_sub" layout:reference="topModel_HlyIIRpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="297" layout:y="262.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:compartment="Cell" layout:id="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__AmtR_protein" layout:species="AmtR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="50"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__IPTG" layout:species="IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="263" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__Ara_AraC_protein" layout:species="Ara_AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="96" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__TetR_protein" layout:species="TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="506" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__LacI_protein" layout:species="LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="336" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__aTc_TetR_protein" layout:species="aTc_TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__AraC_protein" layout:species="AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="167" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__IPTG_LacI_protein" layout:species="IPTG_LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="229" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__aTc" layout:species="aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="429" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__BetI_protein" layout:species="BetI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__HlyIIR_protein" layout:species="HlyIIR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="317" layout:y="352.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__PhlF_protein" layout:species="PhlF_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="240" layout:y="100"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__YFP_protein" layout:species="YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="260" layout:y="150"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__Ara" layout:species="Ara">
+            <layout:boundingBox>
+              <layout:position layout:x="91" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__TetR_protein__complex__aTc_TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="440" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__TetR_protein__complex__aTc_TetR_protein" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="526" layout:y="110"/>
+                      <layout:end layout:x="440" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__aTc__complex__aTc_TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="440" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__aTc__complex__aTc_TetR_protein" layout:role="product" layout:speciesGlyph="Glyph__aTc_TetR_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="439" layout:y="110"/>
+                      <layout:end layout:x="440" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__IPTG__complex__IPTG_LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="279" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__IPTG__complex__IPTG_LacI_protein" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="273" layout:y="110"/>
+                      <layout:end layout:x="279" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__LacI_protein__complex__IPTG_LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="279" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__LacI_protein__complex__IPTG_LacI_protein" layout:role="product" layout:speciesGlyph="Glyph__IPTG_LacI_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="356" layout:y="110"/>
+                      <layout:end layout:x="279" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__AraC_protein__complex__Ara_AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="146" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__AraC_protein__complex__Ara_AraC_protein" layout:role="product" layout:speciesGlyph="Glyph__Ara_AraC_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="187" layout:y="110"/>
+                      <layout:end layout:x="146" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__Ara__complex__Ara_AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="146" layout:y="196.4775390625"/>
+              <layout:dimensions layout:height="0" layout:width="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="ReferenceGlyph__Ara__complex__Ara_AraC_protein" layout:role="product" layout:speciesGlyph="Glyph__Ara_AraC_protein">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="101" layout:y="110"/>
+                      <layout:end layout:x="146" layout:y="196.4775390625"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_AmtRpart_module_sub" layout:id="TextGlyph__topModel_AmtRpart_module_sub" layout:text="topModel_AmtRpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="165" layout:y="442.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_AraCsensor_module_sub" layout:id="TextGlyph__topModel_AraCsensor_module_sub" layout:text="topModel_AraCsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="59" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_YFPpart_module_sub" layout:id="TextGlyph__topModel_YFPpart_module_sub" layout:text="topModel_YFPpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="306" layout:y="802.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_TetRsensor_module_sub" layout:id="TextGlyph__topModel_TetRsensor_module_sub" layout:text="topModel_TetRsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="507" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_BetIpart_module_sub" layout:id="TextGlyph__topModel_BetIpart_module_sub" layout:text="topModel_BetIpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="405" layout:y="442.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_LacIsensor_module_sub" layout:id="TextGlyph__topModel_LacIsensor_module_sub" layout:text="topModel_LacIsensor_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="284" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_PhlFpart_module_sub" layout:id="TextGlyph__topModel_PhlFpart_module_sub" layout:text="topModel_PhlFpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="255" layout:y="622.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__topModel_HlyIIRpart_module_sub" layout:id="TextGlyph__topModel_HlyIIRpart_module_sub" layout:text="topModel_HlyIIRpart_module_sub">
+            <layout:boundingBox>
+              <layout:position layout:x="297" layout:y="262.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="80"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Cell" layout:id="TextGlyph__Cell" layout:text="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:height="425" layout:width="1070"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__AmtR_protein" layout:id="TextGlyph__AmtR_protein" layout:text="AmtR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="50"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG" layout:id="TextGlyph__IPTG" layout:text="IPTG">
+            <layout:boundingBox>
+              <layout:position layout:x="263" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Ara_AraC_protein" layout:id="TextGlyph__Ara_AraC_protein" layout:text="Ara_AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="96" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__TetR_protein" layout:id="TextGlyph__TetR_protein" layout:text="TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="506" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__LacI_protein" layout:id="TextGlyph__LacI_protein" layout:text="LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="336" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc_TetR_protein" layout:id="TextGlyph__aTc_TetR_protein" layout:text="aTc_TetR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="390" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__AraC_protein" layout:id="TextGlyph__AraC_protein" layout:text="AraC_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="167" layout:y="90"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__IPTG_LacI_protein" layout:id="TextGlyph__IPTG_LacI_protein" layout:text="IPTG_LacI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="229" layout:y="181.4775390625"/>
+              <layout:dimensions layout:height="30" layout:width="100"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__aTc" layout:id="TextGlyph__aTc" layout:text="aTc">
+            <layout:boundingBox>
+              <layout:position layout:x="429" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__BetI_protein" layout:id="TextGlyph__BetI_protein" layout:text="BetI_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="200" layout:y="0"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__HlyIIR_protein" layout:id="TextGlyph__HlyIIR_protein" layout:text="HlyIIR_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="317" layout:y="352.955078125"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__PhlF_protein" layout:id="TextGlyph__PhlF_protein" layout:text="PhlF_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="240" layout:y="100"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__YFP_protein" layout:id="TextGlyph__YFP_protein" layout:text="YFP_protein">
+            <layout:boundingBox>
+              <layout:position layout:x="260" layout:y="150"/>
+              <layout:dimensions layout:height="40" layout:width="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="Glyph__Ara" layout:id="TextGlyph__Ara" layout:text="Ara">
+            <layout:boundingBox>
+              <layout:position layout:x="91" layout:y="100"/>
+              <layout:dimensions layout:height="20" layout:width="20"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <listOfFunctionDefinitions/>
+    <listOfUnitDefinitions/>
+    <listOfCompartments>
+      <compartment constant="true" id="Cell" size="1" spatialDimensions="3">
+        <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_AmtRpart_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_AraCsensor_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_YFPpart_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_TetRsensor_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_BetIpart_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_LacIsensor_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_PhlFpart_module_sub"/>
+          <comp:replacedElement comp:portRef="compartment__Cell" comp:submodelRef="topModel_HlyIIRpart_module_sub"/>
+        </comp:listOfReplacedElements>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="AmtR_protein" initialAmount="70" metaid="iBioSim2" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AmtR_protein/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__AmtR_protein" comp:submodelRef="topModel_AmtRpart_module_sub" metaid="iBioSim42">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim42">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_AmtRpart_module_sub/topModel_AmtRpart_module_sub_AmtR_protein_AmtR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__AmtR_protein" comp:submodelRef="topModel_PhlFpart_module_sub" metaid="iBioSim59">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim59">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_PhlFpart_module_sub/topModel_PhlFpart_module_sub_AmtR_protein_AmtR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="IPTG" initialAmount="0" metaid="iBioSim3" sboTerm="SBO:0000247">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim3">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Ara_AraC_protein" initialAmount="0" metaid="iBioSim4" sboTerm="SBO:0000253">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim4">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Ara_AraC_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Ara_AraC_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="input__Ara_AraC_protein" comp:submodelRef="topModel_AmtRpart_module_sub" metaid="iBioSim41">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim41">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_AmtRpart_module_sub/topModel_AmtRpart_module_sub_Ara_AraC_protein_Ara_AraC_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__Ara_AraC_protein" comp:submodelRef="topModel_HlyIIRpart_module_sub" metaid="iBioSim62">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim62">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_HlyIIRpart_module_sub/topModel_HlyIIRpart_module_sub_Ara_AraC_protein_Ara_AraC_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="TetR_protein" initialAmount="0" metaid="iBioSim5" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim5">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TetR_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/TetR_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__TetR_protein" comp:submodelRef="topModel_TetRsensor_module_sub" metaid="iBioSim50">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim50">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_TetRsensor_module_sub/topModel_TetRsensor_module_sub_TetR_protein_TetR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__TetR_protein" comp:submodelRef="topModel_BetIpart_module_sub" metaid="iBioSim54">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim54">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_BetIpart_module_sub/topModel_BetIpart_module_sub_TetR_protein_TetR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__TetR_protein" comp:submodelRef="topModel_HlyIIRpart_module_sub" metaid="iBioSim64">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim64">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_HlyIIRpart_module_sub/topModel_HlyIIRpart_module_sub_TetR_protein_TetR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="LacI_protein" initialAmount="0" metaid="iBioSim6" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim6">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/LacI_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__LacI_protein" comp:submodelRef="topModel_LacIsensor_module_sub" metaid="iBioSim56">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim56">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_LacIsensor_module_sub/topModel_LacIsensor_module_sub_LacI_protein_LacI_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__LacI_protein" comp:submodelRef="topModel_PhlFpart_module_sub" metaid="iBioSim60">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim60">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_PhlFpart_module_sub/topModel_PhlFpart_module_sub_LacI_protein_LacI_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="aTc_TetR_protein" initialAmount="0" metaid="iBioSim7" sboTerm="SBO:0000253">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim7">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/aTc_TetR_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/aTc_TetR_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="AraC_protein" initialAmount="0" metaid="iBioSim8" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim8">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AraC_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/AraC_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__AraC_protein" comp:submodelRef="topModel_AraCsensor_module_sub" metaid="iBioSim44">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim44">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_AraCsensor_module_sub/topModel_AraCsensor_module_sub_AraC_protein_AraC_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="IPTG_LacI_protein" initialAmount="0" metaid="iBioSim9" sboTerm="SBO:0000253">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim9">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/IPTG_LacI_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="aTc" initialAmount="0" metaid="iBioSim10" sboTerm="SBO:0000247">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim10">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/aTc/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/aTc/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="BetI_protein" initialAmount="70" metaid="iBioSim11" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim11">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/BetI_protein/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="input__BetI_protein" comp:submodelRef="topModel_YFPpart_module_sub" metaid="iBioSim48">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim48">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_YFPpart_module_sub/topModel_YFPpart_module_sub_BetI_protein_BetI_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__BetI_protein" comp:submodelRef="topModel_BetIpart_module_sub" metaid="iBioSim53">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim53">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_BetIpart_module_sub/topModel_BetIpart_module_sub_BetI_protein_BetI_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="HlyIIR_protein" initialAmount="0" metaid="iBioSim12" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim12">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/HlyIIR_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/HlyIIR_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="input__HlyIIR_protein" comp:submodelRef="topModel_AmtRpart_module_sub" metaid="iBioSim40">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim40">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_AmtRpart_module_sub/topModel_AmtRpart_module_sub_HlyIIR_protein_HlyIIR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="input__HlyIIR_protein" comp:submodelRef="topModel_BetIpart_module_sub" metaid="iBioSim52">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim52">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_BetIpart_module_sub/topModel_BetIpart_module_sub_HlyIIR_protein_HlyIIR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__HlyIIR_protein" comp:submodelRef="topModel_HlyIIRpart_module_sub" metaid="iBioSim63">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim63">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_HlyIIRpart_module_sub/topModel_HlyIIRpart_module_sub_HlyIIR_protein_HlyIIR_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="PhlF_protein" initialAmount="70" metaid="iBioSim13" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim13">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/PhlF_protein/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="input__PhlF_protein" comp:submodelRef="topModel_YFPpart_module_sub" metaid="iBioSim47">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim47">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_YFPpart_module_sub/topModel_YFPpart_module_sub_PhlF_protein_PhlF_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+          <comp:replacedElement comp:portRef="output__PhlF_protein" comp:submodelRef="topModel_PhlFpart_module_sub" metaid="iBioSim58">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim58">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_PhlFpart_module_sub/topModel_PhlFpart_module_sub_PhlF_protein_PhlF_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="false" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="YFP_protein" initialAmount="0" metaid="iBioSim14" sboTerm="SBO:0000252">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim14">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/></rdf:Bag></mts:ComponentDefinitions><mts:FunctionalComponents>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/YFP_protein/1"/></rdf:Bag></mts:FunctionalComponents></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <comp:listOfReplacedElements xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1">
+          <comp:replacedElement comp:portRef="output__YFP_protein" comp:submodelRef="topModel_YFPpart_module_sub" metaid="iBioSim46">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim46">
+                    <mts:MapsTos>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/topModel_YFPpart_module_sub/topModel_YFPpart_module_sub_YFP_protein_YFP_protein"/></rdf:Bag></mts:MapsTos></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </comp:replacedElement>
+        </comp:listOfReplacedElements>
+      </species>
+      <species boundaryCondition="true" compartment="Cell" constant="false" hasOnlySubstanceUnits="true" id="Ara" initialAmount="60" metaid="iBioSim15" sboTerm="SBO:0000247">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim15">
+                <mts:ComponentDefinitions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Ara/1"/></rdf:Bag></mts:ComponentDefinitions><mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="https://synbiohub.programmingbiology.org/public/Eco1C1G1T1/Ara/1"/></rdf:Seq></mts:DNAComponents><mts:Strand>+</mts:Strand></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+            </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="kd" metaid="iBioSim1" name="Degradation rate" value="0.0075"/>
+      <parameter constant="true" id="kc_f" metaid="iBioSim66" name="Forward complex formation rate" value="0.05"/>
+      <parameter constant="true" id="kc_r" metaid="iBioSim67" name="Reverse complex formation rate" value="1"/>
+      <parameter constant="true" id="nc" metaid="iBioSim68" name="Stoichiometry of binding" value="2"/>
+    </listOfParameters>
+    <listOfInitialAssignments/>
+    <listOfConstraints>
+      <constraint metaid="c0">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <lt/>
+            <ci> YFP_protein </ci>
+            <cn type="integer"> 30 </cn>
+          </apply>
+        </math>
+            </constraint>
+    </listOfConstraints>
+    <listOfReactions>
+      <reaction compartment="Cell" id="AraC_degradation_interaction" metaid="iBioSim69" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/AraC_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim16" species="AraC_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim16">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/AraC_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> AraC_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Complex_aTc_TetR_protein" metaid="iBioSim17" reversible="true" sboTerm="SBO:0000177">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim17">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/aTc_TetR_protein_complex_formation"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim19" species="TetR_protein" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim19">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/TetR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+          <speciesReference constant="true" metaid="iBioSim20" species="aTc" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim20">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/aTc"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" metaid="iBioSim18" species="aTc_TetR_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim18">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/aTc_TetR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kc_f </ci>
+                  <apply>
+                    <power/>
+                    <ci> TetR_protein </ci>
+                    <ci> nc </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> aTc </ci>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> aTc_TetR_protein </ci>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="TetR_degradation_interaction" metaid="iBioSim70" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/TetR_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim21" species="TetR_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim21">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/TetR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> TetR_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Ara_AraC_protein_degradation_interaction" metaid="iBioSim71" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/Ara_AraC_protein_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim22" species="Ara_AraC_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim22">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/Ara_AraC_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> Ara_AraC_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="IPTG_LacI_protein_degradation_interaction" metaid="iBioSim72" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/IPTG_LacI_protein_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim23" species="IPTG_LacI_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim23">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/IPTG_LacI_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> IPTG_LacI_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="PhlF_degradation_interaction" metaid="iBioSim73" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/PhlF_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim24" species="PhlF_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim24">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/PhlF_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> PhlF_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="aTc_TetR_protein_degradation_interaction" metaid="iBioSim74" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/aTc_TetR_protein_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim25" species="aTc_TetR_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim25">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/aTc_TetR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> aTc_TetR_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Complex_IPTG_LacI_protein" metaid="iBioSim26" reversible="true" sboTerm="SBO:0000177">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim26">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/IPTG_LacI_protein_complex_formation"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim28" species="IPTG" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim28">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/IPTG"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+          <speciesReference constant="true" metaid="iBioSim29" species="LacI_protein" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim29">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/LacI_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" metaid="iBioSim27" species="IPTG_LacI_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim27">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/IPTG_LacI_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kc_f </ci>
+                  <apply>
+                    <power/>
+                    <ci> IPTG </ci>
+                    <ci> nc </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> LacI_protein </ci>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> IPTG_LacI_protein </ci>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="YFP_degradation_interaction" metaid="iBioSim75" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/YFP_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim30" species="YFP_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim30">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/YFP_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> YFP_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="LacI_degradation_interaction" metaid="iBioSim76" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/LacI_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim31" species="LacI_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim31">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/LacI_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> LacI_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="Complex_Ara_AraC_protein" metaid="iBioSim32" reversible="true" sboTerm="SBO:0000177">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim32">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/Ara_AraC_protein_complex_formation"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim34" species="AraC_protein" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim34">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/AraC_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+          <speciesReference constant="true" metaid="iBioSim35" species="Ara" stoichiometry="2">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim35">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/Ara"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" metaid="iBioSim33" species="Ara_AraC_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim33">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/Ara_AraC_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kc_f </ci>
+                  <apply>
+                    <power/>
+                    <ci> AraC_protein </ci>
+                    <ci> nc </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <power/>
+                  <ci> Ara </ci>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> Ara_AraC_protein </ci>
+              </apply>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="HlyIIR_degradation_interaction" metaid="iBioSim77" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/HlyIIR_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim36" species="HlyIIR_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim36">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/HlyIIR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> HlyIIR_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="BetI_degradation_interaction" metaid="iBioSim78" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/BetI_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim37" species="BetI_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim37">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/BetI_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> BetI_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+      <reaction compartment="Cell" id="AmtR_degradation_interaction" metaid="iBioSim79" reversible="false" sboTerm="SBO:0000179">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#">
+                <mts:Interactions>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="http://www.async.utah.edu/topModel/AmtR_degradation_interaction"/></rdf:Bag></mts:Interactions></rdf:Description></rdf:RDF></ModelToSBOL>
+        </annotation>
+              <listOfReactants>
+          <speciesReference constant="true" metaid="iBioSim38" species="AmtR_protein" stoichiometry="1">
+            <annotation>
+              <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+                  <rdf:Description rdf:about="#iBioSim38">
+                    <mts:Participations>
+                      <rdf:Bag>
+                        <rdf:li rdf:resource="http://www.async.utah.edu/topModel/AmtR_protein"/></rdf:Bag></mts:Participations></rdf:Description></rdf:RDF></ModelToSBOL>
+            </annotation>
+                    </speciesReference>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> AmtR_protein </ci>
+            </apply>
+          </math>
+                </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents/>
+  </model>
+</sbml>

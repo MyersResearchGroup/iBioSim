@@ -1,0 +1,10 @@
+
+// Hazard for transitions where YFP should remain low: the probability that YFP reaches 30 or above molecules
+
+P=? [ true U[0,1000] (YFP_protein >= 30) ]
+
+//P=? [ true U[0,1000] (YFP_protein > 30) ]
+
+//  // For 010to111 and 100to111
+// P=? [!(true U[0,1000] (YFP_protein > 30)) ]
+
