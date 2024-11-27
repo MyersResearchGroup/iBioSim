@@ -47,6 +47,17 @@ public class PropertiesUtil {
 				algorithm = new Algorithm(GlobalConstants.KISAO_EULER);
 			} else if (sim.contains("rk8pd")) {
 				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
+			} else if (sim.contains("rk4imp")) {
+				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_IMPLICIT);
+			} else if (sim.contains("gear1")||sim.contains("gear2")) {
+				algorithm = new Algorithm(GlobalConstants.KISAO_GEAR);
+				AlgorithmParameter order;
+				if (sim.contains("gear1")) {
+					order = new AlgorithmParameter(GlobalConstants.KISAO_ORDER, "1");
+				} else {
+					order = new AlgorithmParameter(GlobalConstants.KISAO_ORDER, "2");
+				}
+				algorithm.addAlgorithmParameter(order);
 			} else if (sim.contains("rkf45") || sim.contains("Runge-Kutta-Fehlberg")) {
 				algorithm = new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 				para.setAttribute("method", sim);
@@ -57,6 +68,10 @@ public class PropertiesUtil {
 		} else if (properties.isSsa()) {
 			if (sim.equals("gillespie")) {
 				algorithm = new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
+			} else if (sim.equals("bunker")) {
+				algorithm = new Algorithm(GlobalConstants.KISAO_BUNKER);
+			} else if (sim.equals("emc")) {
+				algorithm = new Algorithm(GlobalConstants.KISAO_EMC);
 			}
 
 			else if (sim.contains("Mixed")) {
@@ -146,6 +161,12 @@ public class PropertiesUtil {
 		} else if (kisaoId.equals(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND)) {
 			properties.setOde();
 			properties.setSim("rk8pd");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_BUNKER)) {
+			properties.setOde();
+			properties.setSim("bunker");
+		} else if (kisaoId.equals(GlobalConstants.KISAO_EMC)) {
+			properties.setOde();
+			properties.setSim("emc");
 		} else if (kisaoId.equals(GlobalConstants.KISAO_GILLESPIE) || kisaoId.equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
 			properties.setSsa();
 			properties.setSim("gillespie");

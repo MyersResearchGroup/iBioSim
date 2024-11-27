@@ -8,4 +8,4 @@ export PATH=$BIOSIM/bin:/usr/local/lib:$PATH
 export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
 export DDLD_LIBRARY_PATH=/usr/local/lib:$DDLD_LIBRARY_PATH
 
-exec java -Xmx2048M -Xms2048M -Djava.library.path=/usr/local/lib -XX:+UseSerialGC -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/iBioSim.jpg -jar iBioSim.jar 
+java --add-exports java.desktop/com.apple.eawt=ALL-UNNAMED -Xmx2048M -Xms2048M -Djava.library.path=/usr/local/lib -XX:+UseSerialGC -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/src/main/resources/edu/utah/ece/async/ibiosim/gui/icons/iBioSim.jpg -jar iBioSim.jar 

@@ -36,6 +36,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Desktop;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -210,7 +212,6 @@ import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisView;
 import edu.utah.ece.async.ibiosim.gui.synthesisView.SynthesisViewATACS;
 import edu.utah.ece.async.ibiosim.gui.util.FileTree;
 import edu.utah.ece.async.ibiosim.gui.util.Log;
-import edu.utah.ece.async.ibiosim.gui.util.OSXHandlers;
 import edu.utah.ece.async.ibiosim.gui.util.Utility;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.EditPreferences;
 import edu.utah.ece.async.ibiosim.gui.util.preferences.PreferencesDialog;
@@ -334,7 +335,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
-	protected static final String		iBioSimVersion		= "3.1.0";	
+	protected static final String		iBioSimVersion		= "3.2.0";	
 
 	protected SEDMLDocument 			sedmlDocument		= null;
 
@@ -882,9 +883,31 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		
 		help.add(manual);
 		help.add(bugReport);
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			OSXHandlers osxHandlers = new OSXHandlers(this);
-			osxHandlers.addEventHandlers();
+		if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+
+            // Set the "About" menu handler
+            desktop.setAboutHandler(e -> {
+            	about();
+            });
+
+            // Set the "Preferences" menu handler
+            desktop.setPreferencesHandler(e -> {
+    			PreferencesDialog.showPreferences(Gui.frame);
+    			getFileTree().setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
+    			if (getSBOLDocument() != null) {
+    				getSBOLDocument().setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+    			}
+            });
+
+            // Set the "Quit" menu handler
+            desktop.setQuitHandler((e, response) -> {
+            	exit();
+    			// If we have returned from the above call the user has decided not to quit
+            	response.cancelQuit();
+            	// Perform cleanup before exiting
+                //response.performQuit(); // or response.cancelQuit();
+            });
 		} else {
 			edit.addSeparator();
 			edit.add(pref);
@@ -1040,7 +1063,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		final String developers;
 		name = new JLabel("iBioSim", SwingConstants.CENTER);
 		version = new JLabel("Version " + iBioSimVersion, SwingConstants.CENTER);
-		developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
+		developers = "Nathan Barker\nLukas Buecherl\nPedro Fontanarrosa\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
 				+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTramy Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe\nMichael Zhang\nZhen Zhang\nZach Zundel";
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
@@ -2407,7 +2430,12 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else if (e.getSource().equals(importArchive)) {
 			importArchive();
 		} else if (e.getSource().equals(downloadSynBioHub)) {
-			downloadSynBioHub();
+			try {
+				downloadSynBioHub();
+			} catch (SBOLValidationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		} else if (e.getSource() == downloadBioModel) {
 			downloadBioModel();
 		} else if (e.getSource() == downloadVirtualPart) {
@@ -4524,7 +4552,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		}		
 	}
 	
-	public void createCombineArchive(File archiveFile, String filename) throws IOException, JDOMException, ParseException, CombineArchiveException, TransformerException {
+	public void createCombineArchive(File archiveFile, String filename) throws IOException, JDOMException, ParseException, CombineArchiveException {
 		CombineArchive archive = new CombineArchive(archiveFile);
 		File baseDir = new File(root);
 		if (filename == null) {
@@ -4534,7 +4562,11 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		} else {
 			addFileToCombineArchive(archive,baseDir,filename);
 		} 
-		archive.pack();
+		try {
+			archive.pack();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		archive.close();
 	}
 	
@@ -4569,8 +4601,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 					try {
 						createCombineArchive(file,null);
 					}
-					catch (IOException | JDOMException | ParseException | CombineArchiveException
-							| TransformerException e) {
+					catch (IOException | JDOMException | ParseException | CombineArchiveException e) {
 						JOptionPane.showMessageDialog(frame, "Unable to export COMBINE Archive file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -4605,7 +4636,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		return null;
 	}
 	
-	public void downloadSynBioHub() {
+	public void downloadSynBioHub() throws SBOLValidationException {
 		RegistryInputDialog registryInputDialog = new RegistryInputDialog(Gui.frame, RegistryInputDialog.ALL_PARTS,
 				edu.utah.ece.async.sboldesigner.sbol.SBOLUtils.Types.All_types, null, sbolDocument);
 		registryInputDialog.allowCollectionSelection();
@@ -4638,7 +4669,7 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 				getSBOLDocument().createCopy(selection);
 				writeSBOLDocument();
 			}
-			catch (SBOLValidationException | SynBioHubException | IOException e) {
+			catch (SynBioHubException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to download from SynBioHub.", "Error Exporting to SynBioHub",

@@ -72,10 +72,10 @@
 			<plugin>
 				<!-- settings for javac. -->
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 
 					<testExcludes>
 						<exclude>edu/utah/ece/async/ibiosim/conversion/gcm2sbml/*.java</exclude>

@@ -16,20 +16,10 @@
 			<name>The JSBML Snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
-		<repository>
-			<id>ebi</id>
-			<name>ebi</name>
-			<url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-		</repository>
-		<repository>
+			<repository>
 			<id>jboss</id>
 			<name>jboss</name>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
-		</repository>
-		<repository>
-			<id>netbeans</id>
-			<name>netbeans</name>
-			<url>http://bits.netbeans.org/maven2/</url>
 		</repository>
 		<repository>
 			<id>osgeo</id>
@@ -54,8 +44,26 @@
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 			<version>1.1.4</version>
+			<exclusions>
+            	<exclusion>
+              	  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+           	 	</exclusion>
+            	<exclusion>
+                	<groupId>xerces</groupId>
+  				    <artifactId>xercesImpl</artifactId>
+            	</exclusion>
+            	<exclusion>
+                	<groupId>xom</groupId>
+                	<artifactId>xom</artifactId>
+            	</exclusion>
+            	<exclusion>
+                	<groupId>dom4j</groupId>
+                	<artifactId>dom4j</artifactId>
+            	</exclusion>
+        	</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
@@ -85,6 +93,20 @@
 			<groupId>org.sbolstandard</groupId>
 			<artifactId>libSBOLj</artifactId>
 			<version>2.4.1-SNAPSHOT</version>
+			<exclusions>
+            	<exclusion>
+              	  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+           	 	</exclusion>
+            	<exclusion>
+                	<groupId>xerces</groupId>
+  				    <artifactId>xercesImpl</artifactId>
+            	</exclusion>
+            	<exclusion>
+                	<groupId>dom4j</groupId>
+                	<artifactId>dom4j</artifactId>
+            	</exclusion>
+        	</exclusions>			
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
@@ -98,17 +120,56 @@
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 			<version>1.0.14</version>
+			<exclusions>
+			   <exclusion>
+             	  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+           	   </exclusion>
+           	    <exclusion>
+             	   <groupId>xml-apis</groupId>
+                   <artifactId>xml-apis-ext</artifactId>
+           	    </exclusion>
+       		    <exclusion>
+           			 <groupId>xerces</groupId>
+            		 <artifactId>xercesImpl</artifactId>
+        		</exclusion>
+           	</exclusions>
 		</dependency>
-				<dependency>
+		
+		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-dom</artifactId>
-			<version>1.8</version>
+			<version>1.16</version>
+			<exclusions>
+        		<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+       			</exclusion>
+			       <exclusion>
+             	   <groupId>xml-apis</groupId>
+                   <artifactId>xml-apis-ext</artifactId>
+           	    </exclusion>
+       			<exclusion>
+           			 <groupId>xerces</groupId>
+            		 <artifactId>xercesImpl</artifactId>
+        		</exclusion>
+   			</exclusions>			
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-svggen</artifactId>
-			<version>1.8</version>
+			<version>1.16</version>
+			<exclusions>
+        		<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+       			</exclusion>
+       			<exclusion>
+           			 <groupId>xerces</groupId>
+            		 <artifactId>xercesImpl</artifactId>
+        		</exclusion>
+   			</exclusions>
 		</dependency>
 		
 		<dependency>
@@ -122,11 +183,29 @@
    			<artifactId>VectorGraphics2D</artifactId>
     		<version>0.13</version>
 		</dependency>
-		
+
 		<dependency>
             <groupId>org.jlibsedml</groupId>
             <artifactId>jlibsedml</artifactId>
             <version>2.3.0-SNAPSHOT</version>
+            			<exclusions>
+            	<exclusion>
+              	  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+           	 	</exclusion>
+            	<exclusion>
+                	<groupId>xerces</groupId>
+  				    <artifactId>xercesImpl</artifactId>
+            	</exclusion>
+            	<exclusion>
+                	<groupId>xom</groupId>
+                	<artifactId>xom</artifactId>
+            	</exclusion>
+            	<exclusion>
+                	<groupId>jaxen</groupId>
+                	<artifactId>jaxen</artifactId>
+            	</exclusion>
+        	</exclusions>
         </dependency>
         	
 		<dependency>

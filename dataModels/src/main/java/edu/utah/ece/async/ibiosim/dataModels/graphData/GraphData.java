@@ -19,8 +19,6 @@ import java.util.Scanner;
 
 import javax.swing.JComboBox;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -53,7 +51,8 @@ import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
 import org.jlibsedml.Variable;
 import org.jlibsedml.modelsupport.SBMLSupport;
-import org.w3c.dom.DOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.dom.GenericDOMImplementation;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -301,6 +300,7 @@ public class GraphData extends CoreObservable {
 			doc.writeTo(new FileOutputStream(file));
 		}
 		else if (output == 4) {
+			/*
 			DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 			org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
 			SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
@@ -311,6 +311,7 @@ public class GraphData extends CoreObservable {
 			svgGenerator.stream(out, useCSS);
 			out.close();
 			outStream.close();
+			*/
 		}
 		else if ((output == 5) || (output == 6) || (output == 7)) {
 			exportDataFile(file, output);

@@ -30,7 +30,7 @@
 						</configuration>
 						<phase>package</phase>
 						<goals>
-							<goal>assembly</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -69,6 +69,16 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>3.0.0</version>
+			<exclusions>
+        		<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+       			</exclusion>
+       			<exclusion>
+           			 <groupId>xerces</groupId>
+            		 <artifactId>xercesImpl</artifactId>
+        		</exclusion>
+   			</exclusions>			
 		</dependency>
 	</dependencies>
 	 <repositories>
