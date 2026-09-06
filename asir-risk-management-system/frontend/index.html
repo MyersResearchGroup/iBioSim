@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asir Health Cluster - ERM System</title>
+  <!-- All assets below are vendored locally (frontend/vendor, frontend/css) —
+       this page has zero external CDN or network dependency and works fully
+       offline / in air-gapped hospital networks. -->
+  <link rel="stylesheet" href="./css/tailwind.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <script src="./vendor/chart.umd.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- Runtime config: points the standalone frontend at the backend API.
+       Edit config.js (or template it at container build time) to change. -->
+  <script src="./js/config.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
